@@ -75,6 +75,7 @@ export default function DynaHandlebarPreview({
           </div>
           <ActionButton
             data-test={dataTest || id}
+            open={false}
             tooltip="Open handlebars editor"
             className={clsx(classes.afeButton, { [classes.errorBtn]: !isValid})}
             variant="outlined"
