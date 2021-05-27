@@ -9,6 +9,7 @@ import getJSONPaths, {
   getJSONPathArrayWithSpecialCharactersWrapped,
   pickFirstObject,
 } from '../jsonPaths';
+import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
@@ -1431,5 +1432,15 @@ export default {
       fields: [...fieldsWithoutSubRecord, ...fieldsWithSubRecord],
       lists: orderedLists,
     };
+  },
+  autoMapperRecordTypeForAssistant: resource => {
+    const relativeUri = resource?.rest?.relativeURI || resource?.http?.relativeURI;
+    const firstRelativeUri = Array.isArray(relativeUri) ? relativeUri[0] : relativeUri;
+
+    if (firstRelativeUri) {
+      return getRecordTypeForAutoMapper(firstRelativeUri);
+    }
+
+    return '';
   },
 };
