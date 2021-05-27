@@ -73,6 +73,8 @@ function CustomSettings({ integrationId, sectionId }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+
   const fieldMeta = useMemo(
     () => ({
       fieldMap: {
@@ -135,11 +137,11 @@ function CustomSettings({ integrationId, sectionId }) {
           'integrations',
           integrationId,
           SCOPES.VALUE,
-          {action: 'UpdatedIA2.0Settings'}
+          {action: isFrameWork2 ? 'UpdatedIA2.0Settings' : 'DIYSettings'}
         )
       );
     },
-    [dispatch, integrationId, patchPath]
+    [dispatch, integrationId, isFrameWork2, patchPath]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
