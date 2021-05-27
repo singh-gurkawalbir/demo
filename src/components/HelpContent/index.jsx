@@ -46,16 +46,13 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   actionTitle: {
-    float: 'left',
-    width: '60%',
     paddingTop: 10,
+    width: '60%',
   },
   caption: {
     wordBreak: 'break-word',
   },
   actionButtons: {
-    float: 'right',
-    textAlign: 'right',
     paddingTop: '8px',
     '& Button': {
       borderColor: theme.palette.divider,
@@ -81,6 +78,17 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       '& > textarea': {
         padding: 12,
+      },
+      '& > fieldset': {
+        borderColor: theme.palette.secondary.lightest,
+      },
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: theme.palette.primary.main,
+      },
+    },
+    '& > div.Mui-focused': {
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderWidth: '1px',
       },
     },
   },
