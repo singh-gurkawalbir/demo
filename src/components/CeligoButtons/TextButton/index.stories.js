@@ -69,6 +69,13 @@ large.args = {
 large.parameters = designParameters;
 export const disabled = Template.bind({});
 
+export const bold = Template.bind({});
+
+bold.args = {
+  children: 'Resume',
+  bold,
+  color: 'primary',
+};
 export const statusCircle = Template.bind({});
 
 statusCircle.args = {

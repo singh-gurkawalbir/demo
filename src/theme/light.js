@@ -182,12 +182,12 @@ export default {
         },
       },
       textPrimary: {
-        color: colors.celigoNeutral8,
+        color: colors.celigoAccent2,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
         '&:hover': {
-          color: colors.celigoAccent2,
+          color: colors.celigoAccent1,
           backgroundColor: 'inherit',
         },
         '&:disabled': {
