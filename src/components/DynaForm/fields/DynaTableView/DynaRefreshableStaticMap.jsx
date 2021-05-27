@@ -13,7 +13,7 @@ const fixedListOptions = fixedList => {
   if (fixedList) {
     return {
       type: 'autosuggest',
-      options: fixedList,
+      options: [...fixedList],
 
       supportsRefresh: false,
     };
@@ -86,7 +86,7 @@ export default function DynaRefreshableStaticMap(props) {
     gData, gExportResource, gKey, gKind, keyLabel, keyName, valueLabel, valueName]);
 
   const metadata = useMemo(() => {
-    if (isExportRefresh(gKind, gKey, gExportResource)) return {optionsMap};
+    if (isExportRefresh(gKind, gKey, gExportResource) || isExportRefresh(eKind, eKey, eExportResource)) return {optionsMap};
     if (refreshMetadata) {
       const optionsMapCopy = [...optionsMap];
 
@@ -95,7 +95,7 @@ export default function DynaRefreshableStaticMap(props) {
 
       return { optionsMap: optionsMapCopy };
     }
-  }, [changeIdentifier, gExportResource, gKey, gKind, optionsMap, refreshMetadata]);
+  }, [changeIdentifier, eExportResource, eKey, eKind, gExportResource, gKey, gKind, optionsMap, refreshMetadata]);
 
   const isLoadingMap = useMemo(() => ({
     [optionsMap[0].id]: optionsMap[0].supportsRefresh && eStatus === 'requested',
