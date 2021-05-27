@@ -69,7 +69,6 @@ export default function DynaURI_afe(props) {
         />
         <ActionButton
           data-test={id}
-          open={false}
           tooltip="Open handlebars editor"
           onClick={handleEditorClick}
           className={classes.dynaURIActionButton}>

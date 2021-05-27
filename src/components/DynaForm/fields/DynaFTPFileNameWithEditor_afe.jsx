@@ -96,7 +96,6 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
         <DynaTimestampFileName {...props} />
         <ActionButton
           data-test={id}
-          open={false}
           tooltip="Open handlebars editor"
           onClick={handleEditorClick}
           className={classes.dynaActionButton}>
