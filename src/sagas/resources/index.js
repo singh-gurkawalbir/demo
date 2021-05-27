@@ -264,6 +264,10 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
 
     return { error };
   }
+  if (options?.action === 'UpdatedIA2.0Settings') {
+    yield put(actions.resource.requestCollection('exports', null, true));
+    yield put(actions.resource.requestCollection('imports', null, true));
+  }
 
   // HACK! when updating scripts, since content is stored in s3, it
   // seems the PUT API response does not contain the content. We need to
