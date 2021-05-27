@@ -31,6 +31,12 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.orgIdValidationError = state => state?.status === 'error' && state?.error;
+selectors.orgIdValidationError = state => {
+  if (!state || state.status !== 'error') {
+    return;
+  }
+
+  return state.error;
+};
 selectors.orgIdValidationInProgress = state => state?.status === 'requested';
 selectors.orgIdValidationSuccess = state => state?.status === 'success';
