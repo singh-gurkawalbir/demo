@@ -25,24 +25,24 @@
 }
 @font-face {
   font-family: 'source sans pro';
-  src: url('../../static/fonts/SourceSansPro-Regular.eot');
-  src: url('../../static/fonts/SourceSansPro-Regular.eot?#iefix') format('embedded-opentype'),
-       url('../../static/fonts/SourceSansPro-Regular.woff2') format('woff2'),
-       url('../../static/fonts/SourceSansPro-Regular.woff') format('woff'),
-       url('../../static/fonts/SourceSansPro-Regular.ttf') format('truetype'),
-       url('../../static/fonts/SourceSansPro-Regular.svg#SourceSansPro-Regular') format('svg');
+  src: url('../../static/fonts/sourcesanspro-regular-webfont.eot');
+  src: url('../../static/fonts/sourcesanspro-regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../../static/fonts/sourcesanspro-regular-webfont.woff2') format('woff2'),
+       url('../../static/fonts/sourcesanspro-regular-webfont.woff') format('woff'),
+       url('../../static/fonts/sourcesanspro-regular-webfont.ttf') format('truetype'),
+       url('../../static/fonts/sourcesanspro-regular-webfont.svg#SourceSansPro') format('svg');
   font-weight: normal;
   font-style: normal;
 
 }
 @font-face {
   font-family: 'source sans pro semibold';
-  src: url('../../static/fonts/SourceSansPro-SemiBold.eot');
-  src: url('../../static/fonts/SourceSansPro-SemiBold.eot?#iefix') format('embedded-opentype'),
-       url('../../static/fonts/SourceSansPro-SemiBold.woff2') format('woff2'),
-       url('../../static/fonts/SourceSansPro-SemiBold.woff') format('woff'),
-       url('../../static/fonts/SourceSansPro-SemiBold.ttf') format('truetype'),
-       url('../../static/fonts/SourceSansPro-SemiBold.svg#SourceSansPro-SemiBold') format('svg');
+  src: url('../../static/fonts/sourcesanspro-semibold-webfont.eot');
+  src: url('../../static/fonts/sourcesanspro-semibold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../../static/fonts/sourcesanspro-semibold-webfont.woff2') format('woff2'),
+       url('../../static/fonts/sourcesanspro-semibold-webfont.woff') format('woff'),
+       url('../../static/fonts/sourcesanspro-semibold-webfont.ttf') format('truetype'),
+       url('../../static/fonts/sourcesanspro-semibold-webfont.svg#SourceSansPro') format('svg');
   font-weight: 600;
   font-style: normal;
 }
