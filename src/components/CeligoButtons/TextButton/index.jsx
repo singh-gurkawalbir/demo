@@ -3,11 +3,14 @@ import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     fontFamily: props => props.bold ? 'Source sans pro semibold' : 'Source sans pro',
+    '&:focus': {
+      color: props => props.color === 'secondary' ? theme.palette.text.secondary : theme.palette.primary.main,
+    },
   },
-});
+}));
 export default function TextButton(props) {
   const classes = useStyles(props);
   const {children, error, ...rest} = props;
