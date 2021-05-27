@@ -18,6 +18,7 @@ import {
   updateImportSampleData,
   validateMappings,
   patchGenerateThroughAssistant,
+  getAutoMapperSuggestion,
 } from '.';
 import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import { SCOPES } from '../resourceForm';
@@ -1335,5 +1336,347 @@ describe('patchGenerateThroughAssistant saga', () => {
       ])
       .put(actions.mapping.patchField('generate', lastModifiedRowKey, 'abc'))
       .run();
+  });
+});
+
+describe('getAutoMapperSuggestion saga', () => {
+  const importId = 'i1';
+  const flowId = 'f1';
+  const exportId = 'e1';
+  const subRecordMappingId = undefined;
+
+  test('should trigger autoMapper fail action in case of incorrect import id', () => {
+    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+      .provide([
+        [select(selectors.mapping), {mappings: [], flowId, importId, subRecordMappingId}],
+        [select(selectors.firstFlowPageGenerator, flowId), {name: 'a'}],
+        [select(selectors.resource, 'imports', importId), null],
+      ])
+      .put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'))
+      .run();
+  });
+
+  test('should trigger autoMapper received action correctly', () => {
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+      .provide([
+        [select(selectors.mapping), {mappings: [], flowId, importId, subRecordMappingId}],
+        [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'zendesk', _id: exportId}],
+        [select(selectors.resource, 'imports', importId), {adaptorType: 'NetsuiteImport', _id: importId, netsuite_da: {recordType: 'record1'}}],
+        [select(selectors.mappingGenerates, importId, subRecordMappingId), [{id: 'id1'}]],
+        [select(selectors.mappingExtracts, importId, flowId, subRecordMappingId), [{id: 'id2'}, {id: 'id3'}]],
+        [select(selectors.applicationName, importId), 'Netsuite'],
+        [select(selectors.applicationName, exportId), 'Zendesk'],
+        [select(selectors.recordTypeForAutoMapper, 'imports', importId), 'record1'],
+        [select(selectors.recordTypeForAutoMapper, 'exports', exportId), 'record2'],
+        [call(apiCallWithRetry, {
+          path: '/autoMapperSuggestions',
+          opts: {
+            method: 'PUT',
+            body: {
+              source_application: 'zendesk',
+              source_fields: [{id: 'id2'}, {id: 'id3'}],
+              dest_application: 'netsuite',
+              dest_record_type: '',
+              source_record_type: 'record2',
+              dest_fields: [
+                {
+                  id: 'id1',
+                },
+              ],
+            },
+          },
+          hidden: true,
+          message: 'Loading',
+        }), {
+          mappings: {fields: [
+            {extract: 'e1', generate: 'g1', weight: 120},
+            {extract: 'e2', generate: 'g2', weight: 150},
+            {extract: 'e3', generate: 'g1', weight: 140},
+            {extract: 'e4', generate: 'g3', weight: 30},
+          ],
+          lists: []},
+          suggested_threshold: 100,
+        }],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/autoMapperSuggestions',
+        opts: {
+          method: 'PUT',
+          body: {
+            source_application: 'zendesk',
+            source_fields: [
+              {
+                id: 'id2',
+              },
+              {
+                id: 'id3',
+              },
+            ],
+            dest_application: 'netsuite',
+            dest_record_type: '',
+            source_record_type: 'record2',
+            dest_fields: [
+              {
+                id: 'id1',
+              },
+            ],
+          },
+        },
+        hidden: true,
+        message: 'Loading',
+      })
+      .put(actions.mapping.autoMapper.received(
+        [
+          {
+            generate: 'g1',
+            key: 'mock_key',
+            extract: 'e1',
+          },
+          {
+            generate: 'g2',
+            key: 'mock_key',
+            extract: 'e2',
+          },
+        ]
+      ))
+      .run();
+    mock.mockRestore();
+  });
+  test('should not consider mapping if already present trigger autoMapper received action correctly', () => {
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+      .provide([
+        [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
+        [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'zendesk', _id: exportId}],
+        [select(selectors.resource, 'imports', importId), {adaptorType: 'NetsuiteImport', _id: importId, netsuite_da: {recordType: 'record1'}}],
+        [select(selectors.mappingGenerates, importId, subRecordMappingId), [{id: 'id1'}]],
+        [select(selectors.mappingExtracts, importId, flowId, subRecordMappingId), [{id: 'id2'}, {id: 'id3'}]],
+        [select(selectors.applicationName, importId), 'Netsuite'],
+        [select(selectors.applicationName, exportId), 'Zendesk'],
+        [select(selectors.recordTypeForAutoMapper, 'imports', importId), 'record1'],
+        [select(selectors.recordTypeForAutoMapper, 'exports', exportId), 'record2'],
+        [call(apiCallWithRetry, {
+          path: '/autoMapperSuggestions',
+          opts: {
+            method: 'PUT',
+            body: {
+              source_application: 'zendesk',
+              source_fields: [{id: 'id2'}, {id: 'id3'}],
+              dest_application: 'netsuite',
+              dest_record_type: '',
+              source_record_type: 'record2',
+              dest_fields: [
+                {
+                  id: 'id1',
+                },
+              ],
+            },
+          },
+          hidden: true,
+          message: 'Loading',
+        }), {
+          mappings: {fields: [
+            {extract: 'e1', generate: 'g1', weight: 120},
+            {extract: 'e2', generate: 'g2', weight: 150},
+            {extract: 'e3', generate: 'g1', weight: 140},
+            {extract: 'e4', generate: 'g3', weight: 30},
+            {hardCodedValue: 'h1', generate: 'g4', weight: 130},
+          ],
+          lists: []},
+          suggested_threshold: 100,
+        }],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/autoMapperSuggestions',
+        opts: {
+          method: 'PUT',
+          body: {
+            source_application: 'zendesk',
+            source_fields: [
+              {
+                id: 'id2',
+              },
+              {
+                id: 'id3',
+              },
+            ],
+            dest_application: 'netsuite',
+            dest_record_type: '',
+            source_record_type: 'record2',
+            dest_fields: [
+              {
+                id: 'id1',
+              },
+            ],
+          },
+        },
+        hidden: true,
+        message: 'Loading',
+      })
+      .put(actions.mapping.autoMapper.received(
+        [
+          {
+            generate: 'g2',
+            key: 'mock_key',
+            extract: 'e2',
+          },
+          {
+            generate: 'g4',
+            key: 'mock_key',
+            hardCodedValue: 'h1',
+          },
+        ]
+      ))
+      .run();
+    mock.mockRestore();
+  });
+
+  test('should trigger autoMapper failed action with warning correctly', () => {
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+      .provide([
+        [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
+        [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'zendesk', _id: exportId}],
+        [select(selectors.resource, 'imports', importId), {adaptorType: 'NetsuiteImport', _id: importId, netsuite_da: {recordType: 'record1'}}],
+        [select(selectors.mappingGenerates, importId, subRecordMappingId), [{id: 'id1'}]],
+        [select(selectors.mappingExtracts, importId, flowId, subRecordMappingId), [{id: 'id2'}, {id: 'id3'}]],
+        [select(selectors.applicationName, importId), 'Netsuite'],
+        [select(selectors.applicationName, exportId), 'Zendesk'],
+        [select(selectors.recordTypeForAutoMapper, 'imports', importId), 'record1'],
+        [select(selectors.recordTypeForAutoMapper, 'exports', exportId), 'record2'],
+        [call(apiCallWithRetry, {
+          path: '/autoMapperSuggestions',
+          opts: {
+            method: 'PUT',
+            body: {
+              source_application: 'zendesk',
+              source_fields: [{id: 'id2'}, {id: 'id3'}],
+              dest_application: 'netsuite',
+              dest_record_type: '',
+              source_record_type: 'record2',
+              dest_fields: [
+                {
+                  id: 'id1',
+                },
+              ],
+            },
+          },
+          hidden: true,
+          message: 'Loading',
+        }), {
+          mappings: {fields: [
+            {extract: 'e1', generate: 'g1', weight: 120},
+            {extract: 'e3', generate: 'g1', weight: 140},
+            {extract: 'e4', generate: 'g3', weight: 30},
+          ],
+          lists: []},
+          suggested_threshold: 100,
+        }],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/autoMapperSuggestions',
+        opts: {
+          method: 'PUT',
+          body: {
+            source_application: 'zendesk',
+            source_fields: [
+              {
+                id: 'id2',
+              },
+              {
+                id: 'id3',
+              },
+            ],
+            dest_application: 'netsuite',
+            dest_record_type: '',
+            source_record_type: 'record2',
+            dest_fields: [
+              {
+                id: 'id1',
+              },
+            ],
+          },
+        },
+        hidden: true,
+        message: 'Loading',
+      })
+      .put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'))
+      .run();
+    mock.mockRestore();
+  });
+
+  test('should trigger autoMapper failed action on api failure', () => {
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+      .provide([
+        [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
+        [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'zendesk', _id: exportId}],
+        [select(selectors.resource, 'imports', importId), {adaptorType: 'NetsuiteImport', _id: importId, netsuite_da: {recordType: 'record1'}}],
+        [select(selectors.mappingGenerates, importId, subRecordMappingId), [{id: 'id1'}]],
+        [select(selectors.mappingExtracts, importId, flowId, subRecordMappingId), [{id: 'id2'}, {id: 'id3'}]],
+        [select(selectors.applicationName, importId), 'Netsuite'],
+        [select(selectors.applicationName, exportId), 'Zendesk'],
+        [select(selectors.recordTypeForAutoMapper, 'imports', importId), 'record1'],
+        [select(selectors.recordTypeForAutoMapper, 'exports', exportId), 'record2'],
+        [call(apiCallWithRetry, {
+          path: '/autoMapperSuggestions',
+          opts: {
+            method: 'PUT',
+            body: {
+              source_application: 'zendesk',
+              source_fields: [{id: 'id2'}, {id: 'id3'}],
+              dest_application: 'netsuite',
+              dest_record_type: '',
+              source_record_type: 'record2',
+              dest_fields: [
+                {
+                  id: 'id1',
+                },
+              ],
+            },
+          },
+          hidden: true,
+          message: 'Loading',
+        }), undefined],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/autoMapperSuggestions',
+        opts: {
+          method: 'PUT',
+          body: {
+            source_application: 'zendesk',
+            source_fields: [
+              {
+                id: 'id2',
+              },
+              {
+                id: 'id3',
+              },
+            ],
+            dest_application: 'netsuite',
+            dest_record_type: '',
+            source_record_type: 'record2',
+            dest_fields: [
+              {
+                id: 'id1',
+              },
+            ],
+          },
+        },
+        hidden: true,
+        message: 'Loading',
+      })
+      .put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'))
+      .run();
+    mock.mockRestore();
   });
 });
