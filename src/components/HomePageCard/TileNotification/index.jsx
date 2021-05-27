@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired, supportsMultiStore}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -84,7 +84,7 @@ export default function TileNotification({ content, expired, connectorId, licens
     setUpgradeRequested(true);
     if (resumable) {
       if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
-        enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.' });
+        enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.', variant: 'error' });
       } else {
         dispatch(actions.integrationApp.license.resume(integrationId));
       }
@@ -101,6 +101,8 @@ export default function TileNotification({ content, expired, connectorId, licens
     event.stopPropagation();
     if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
       enquesnackbar({ message: 'Contact your account owner to uninstall this integration app.' });
+    } else if (supportsMultiStore) {
+      enquesnackbar({ message: 'To uninstall, please navigate to Admin → Uninstall inside the Integration App and select the desired store.', variant: 'error' });
     } else {
       confirmDialog({
         title: 'Confirm uninstall',
@@ -123,7 +125,7 @@ export default function TileNotification({ content, expired, connectorId, licens
         ],
       });
     }
-  }, [accessLevel, confirmDialog, enquesnackbar, history, integrationAppTileName, integrationId]);
+  }, [accessLevel, confirmDialog, enquesnackbar, history, integrationAppTileName, integrationId, supportsMultiStore]);
 
   return (
     <div className={classes.trialExpireWrapper}>
