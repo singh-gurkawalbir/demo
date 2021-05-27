@@ -43,9 +43,9 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(3),
     height: theme.spacing(3),
     color: theme.palette.secondary.light,
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
+    // '&:hover': {
+    //   color: theme.palette.primary.main,
+    // },
   },
   status: {
     position: 'relative',
@@ -179,7 +179,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   placement="bottom">
                   <Link
                     color="inherit"
-                    className={classes.action}
+                    // className={classes.action}
                     to={getRoutePath(urlToIntegrationSettings)}>
                     <PermissionsMonitorIcon />
                   </Link>
@@ -191,7 +191,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   placement="bottom">
                   <Link
                     color="inherit"
-                    className={classes.action}
+                    // className={classes.action}
                     to={getRoutePath(urlToIntegrationSettings)}>
                     <PermissionsManageIcon />
                   </Link>

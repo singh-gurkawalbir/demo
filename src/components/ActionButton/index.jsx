@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, IconButton, Tooltip } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   editorButton: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionButton({ className, children, tooltip = '', ...props }) {
+export default function ActionButton({ className, children, placement, tooltip = '', ...props }) {
   const classes = useStyles();
 
   return (
@@ -31,7 +32,7 @@ export default function ActionButton({ className, children, tooltip = '', ...pro
 
     // TODO:(Dave) Tooltip title is a default required prop, undefined throwing a warning
     <Tooltip
-      arrow open={tooltip ? undefined : false} placement="top" title={tooltip}
+      arrow open={tooltip ? undefined : false} placement={placement} title={tooltip}
       aria-label={tooltip}>
       <IconButton className={clsx(classes.editorButton, className)} {...props} aria-label="tooltip">
         <span>{children}</span>
@@ -39,3 +40,13 @@ export default function ActionButton({ className, children, tooltip = '', ...pro
     </Tooltip>
   );
 }
+
+ActionButton.propTypes = {
+  children: PropTypes.node.isRequired,
+  title: PropTypes.string.isRequired,
+};
+
+ActionButton.defaultProps = {
+  placement: 'top',
+};
+
