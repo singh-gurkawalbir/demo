@@ -4,7 +4,7 @@ import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 
-export function* validateOrgId({ orgId }) {
+export function* validateOrgId({ orgId = '' }) {
   yield delay(500);
   try {
     const oidcClient = yield select(selectors.oidcSSOClient);

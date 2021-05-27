@@ -210,7 +210,7 @@ export default function NetSuiteMappingAssistant({
               color="primary">
               Launch NetSuite assistant
             </Button>
-            <ol>
+            <ol data-public>
               <li>
                 Please make sure that you have &quot;Celigo integrator.io&quot;
                 bundle (ID: 20038) version 1.7.4.5 or higher.

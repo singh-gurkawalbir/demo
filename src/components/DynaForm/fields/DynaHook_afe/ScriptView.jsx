@@ -55,6 +55,7 @@ export default function ScriptView({
   isValidHookField,
   handleFieldChange,
   handleCreateScriptClick,
+  dataPublic,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -105,6 +106,7 @@ export default function ScriptView({
             label="Scripts"
             value={value._scriptId}
             disabled={disabled}
+            dataPublic={dataPublic}
             placeholder="None"
             required={required}
             isValid={isValidHookField('_scriptId')}

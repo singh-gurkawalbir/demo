@@ -607,30 +607,8 @@ export function* getAutoMapperSuggestion() {
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
-  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
-    reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
-  } else if (importResource.adaptorType === 'SalesforceImport') {
-    const { sObjectType } = importResource.salesforce;
-
-    reqBody.dest_record_type = sObjectType;
-  } else {
-    reqBody.dest_record_type = '';
-  }
-
-  if (exportResource.adaptorType === 'NetSuiteExport') {
-    const netsuiteType = exportResource.type === 'distributed' ? 'distributed' : 'restlet';
-
-    reqBody.source_record_type = exportResource.netsuite[netsuiteType].recordType;
-  } else if (exportResource.adaptorType === 'SalesforceExport') {
-    const { sObjectType } = exportResource.salesforce;
-
-    reqBody.source_record_type = sObjectType;
-  } else {
-    reqBody.source_record_type = '';
-  }
-
-  // filtering out all duplicates elements from generate fields
-  // there could be multiple generate with same id. Example: addressbook[*].id is common id for [Address : ID] and [Address : Line ID]
+  reqBody.dest_record_type = yield select(selectors.recordTypeForAutoMapper, 'imports', importId, subRecordMappingId);
+  reqBody.source_record_type = yield select(selectors.recordTypeForAutoMapper, 'exports', exportResource._id);
   reqBody.dest_fields = uniqBy(generateFields.map(f => ({id: f.id})), 'id');
 
   const path = '/autoMapperSuggestions';

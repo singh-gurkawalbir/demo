@@ -83,6 +83,7 @@ function FlowSettingsPanel({availableSections, integrationId, childId, sectionPr
   return (
 
     <Section
+      dataPublic
       integrationId={integrationId}
       childId={childId}
       {...sectionProps}
@@ -184,7 +185,8 @@ export default function SettingsPanel({
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
                   to={path}
-                  data-test={id}>
+                  data-test={id}
+                  data-public>
                   {label}
                 </NavLink>
               </ListItem>
