@@ -60,8 +60,8 @@ const useStyles = makeStyles(theme => ({
   filterTypeIcon: {
     width: 9,
     height: 9,
-    marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   PreferredIcon: {
     color: theme.palette.warning.main,
@@ -117,6 +117,13 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.primary.main,
       },
     },
+  },
+  fieldFilterIcon: {
+    marginRight: 0,
+  },
+  paper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -272,6 +279,7 @@ const MappingRow = ({
             noOptionsText=""
             size="small"
             onChange={handleGenerateBlur}
+            classes={{paper: classes.paper}}
             renderOption={Option}
             getOptionLabel={option => option.name || generateFields.find(f => f.id === option)?.name || ''}
             renderInput={params => (
@@ -283,7 +291,7 @@ const MappingRow = ({
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
-                    <InputAdornment position="start">
+                    <InputAdornment position="start" className={classes.fieldFilterIcon}>
                       <Icon filterType={mapping.filterType || generateFields.find(f => f.id === mapping.generate)?.filterType} />
                     </InputAdornment>
                   ),
@@ -307,6 +315,7 @@ const MappingRow = ({
             freeSolo
             forcePopupIcon={false}
             noOptionsText=""
+            classes={{paper: classes.paper}}
             size="small"
             disabled={disabled}
             onBlur={handleExtractBlur}

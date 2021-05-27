@@ -187,6 +187,9 @@ export default {
     }
 
     delete retValues['/inputMode'];
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
 
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;

@@ -1,34 +1,35 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { emptyObject } from '../../../../utils/constants';
 import DynaEditor from '../DynaEditor';
 
 export default function DynaLicenseEditor(props) {
-  const { formKey, id, value, onFieldChange } = props;
+  const { formKey, id, onFieldChange } = props;
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!value) {
+  const customHandleUpdate = useCallback(editorVal => {
+    if (!editorVal) {
       onFieldChange(id, emptyObject);
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
 
       return;
     }
-    if (typeof value === 'object') {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
 
-      return;
-    }
     // try block is for all the string cases
     try {
-      JSON.parse(value);
+      const val = JSON.parse(editorVal);
 
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+      if (typeof val === 'string') {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'Invalid Json format'}));
+      } else {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+      }
     } catch (e) {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'Invalid Json format'}));
     }
-  }, [id, dispatch, formKey, value, onFieldChange]);
+    onFieldChange(id, editorVal);
+  }, [dispatch, formKey, id, onFieldChange]);
 
   // suspend force field state compuation once the component turns invisible
   useEffect(() => () => {
@@ -39,6 +40,7 @@ export default function DynaLicenseEditor(props) {
     <DynaEditor
       {...props}
       skipJsonParse
+      customHandleUpdate={customHandleUpdate}
     />
   );
 }

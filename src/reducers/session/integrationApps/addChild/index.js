@@ -14,13 +14,13 @@ export default (state = {}, action) => {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.STORE.RECEIVED:
+      case actionTypes.INTEGRATION_APPS.CHILD.RECEIVED:
         draft[id] = { steps };
         break;
-      case actionTypes.INTEGRATION_APPS.STORE.FAILURE:
+      case actionTypes.INTEGRATION_APPS.CHILD.FAILURE:
         draft[id] = { error: message };
         break;
-      case actionTypes.INTEGRATION_APPS.STORE.COMPLETE:
+      case actionTypes.INTEGRATION_APPS.CHILD.COMPLETE:
         steps.forEach(step => {
           let stepIndex = -1;
 
@@ -38,10 +38,10 @@ export default (state = {}, action) => {
           }
         });
         break;
-      case actionTypes.INTEGRATION_APPS.STORE.CLEAR:
+      case actionTypes.INTEGRATION_APPS.CHILD.CLEAR:
         delete draft[id];
         break;
-      case actionTypes.INTEGRATION_APPS.STORE.UPDATE:
+      case actionTypes.INTEGRATION_APPS.CHILD.UPDATE:
         if (draft[id] && draft[id].steps) {
           step = draft[id].steps.find(
             s => s.installerFunction === installerFunction
@@ -72,7 +72,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.addNewStoreSteps = (state, id) => {
+selectors.addNewChildSteps = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }

@@ -103,6 +103,10 @@ export default {
       newValues['/pathToMany'] = undefined;
     }
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     delete newValues['/file/compressFiles'];
     newValues['/file/skipAggregation'] = true;
 

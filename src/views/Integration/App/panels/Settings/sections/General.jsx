@@ -25,17 +25,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GeneralPanel({ integrationId, storeId, dataPublic }) {
+export default function GeneralPanel({ integrationId, childId, dataPublic }) {
   const classes = useStyles();
   // TODO: rethink our data-layer just as we would an API. Currently we
   // have selectors that do too much and as such, they are wasteful and
   // hard to understand and reuse. In this example, this component doesn't
   // need the flows returned by the selector.
   const generalSectionMetadata = useSelectorMemo(
-    selectors.mkIntegrationAppGeneralSettings, integrationId, storeId
+    selectors.mkIntegrationAppGeneralSettings, integrationId, childId
   );
   const hasGeneralSettings = useSelector(state =>
-    selectors.hasGeneralSettings(state, integrationId, storeId)
+    selectors.hasGeneralSettings(state, integrationId, childId)
   );
   const translatedMeta = useMemo(
     () =>
@@ -61,13 +61,13 @@ export default function GeneralPanel({ integrationId, storeId, dataPublic }) {
 
         <IAFormStateManager
           {...activeTabProps}
-          key={storeId}
           dataPublic={dataPublic}
+          key={childId}
           fieldMeta={translatedMeta}
           integrationId={integrationId}
           isIAForm
           className={classes.configureform}
-          storeId={storeId}
+          childId={childId}
           formState={formState}
           orientation="horizontal"
           />

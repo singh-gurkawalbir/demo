@@ -19,7 +19,7 @@ import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../../ButtonGroup';
 import notificationsMetadata from './metadata';
 
-function ManageNotifications({ integrationId, storeId, onClose }) {
+function ManageNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -27,7 +27,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const { userEmail } = match.params;
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const notificationsConfig = useMemo(() => ({ storeId, userEmail, ignoreUnusedConnections: true }), [storeId, userEmail]);
+  const notificationsConfig = useMemo(() => ({ childId, userEmail, ignoreUnusedConnections: true }), [childId, userEmail]);
   const notifications = useSelectorMemo(
     selectors.mkIntegrationNotificationResources,
     integrationId,
@@ -64,8 +64,8 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
       subscribedFlows: formVal.flows,
     };
 
-    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId, userEmail }));
-  }, [dispatch, integrationId, storeId, userEmail]);
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId, userEmail }));
+  }, [dispatch, integrationId, childId, userEmail]);
 
   const handleNotificationUpdate = useCallback(() => {
     const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
@@ -126,7 +126,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   );
 }
 
-export default function ManageNotificationsDrawer({ integrationId, storeId }) {
+export default function ManageNotificationsDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
@@ -138,7 +138,7 @@ export default function ManageNotificationsDrawer({ integrationId, storeId }) {
       width="medium"
       hideBackButton>
       <DrawerHeader title="Manage notifications" />
-      <ManageNotifications integrationId={integrationId} storeId={storeId} onClose={handleClose} />
+      <ManageNotifications integrationId={integrationId} childId={childId} onClose={handleClose} />
     </RightDrawer>
   );
 }

@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
-  wrapper: {
+  root: {
     color: props => props.color === 'primary' ? theme.palette.primary.main : theme.palette.secondary.main,
     fontFamily: props => props.bold ? 'source sans pro semibold' : 'source sans pro',
     '&:focus': {
@@ -23,7 +23,7 @@ export default function TertiaryButton(props) {
     <Button
       variant="text"
       color={color}
-      className={classes.wrapper}
+      className={classes.root}
       {...rest}>
       {children}
     </Button>

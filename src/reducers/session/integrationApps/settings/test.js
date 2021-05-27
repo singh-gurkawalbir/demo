@@ -891,7 +891,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.update(
             'integrationId',
             'flowId',
-            'storeId',
+            'childId',
             null,
             'INCORRECT_FUNCTION_NAME'
           )
@@ -911,7 +911,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.update(
             'integrationId',
             'flowId',
-            'storeId',
+            'childId',
             null,
             'INCORRECT_FUNCTION_NAME'
           )
@@ -1130,7 +1130,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.submitFailed({
             integrationId: 'integrationId',
             flowId: 'flowId',
-            storeId: 'storeId',
+            childId: 'childId',
           })
         );
         const expectedValue = {
@@ -1148,7 +1148,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.submitFailed({
             integrationId: 'integrationId',
             flowId: 'flowId',
-            storeId: 'storeId',
+            childId: 'childId',
           })
         );
         const expectedValue = {

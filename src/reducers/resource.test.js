@@ -3488,44 +3488,6 @@ describe('resource region selector testcases', () => {
       expect(resourceDataSel1(state, 'exports', 1)).toBe(r1);
       expect(resourceDataSel2(state, 'exports', 1)).toBe(r2);
     });
-    test('should void the cache and regenerate the same result when we received the same collection again', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const anotherExportsInst = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged(1, patch));
-      const result = resourceData(state, 'exports', 1);
-
-      expect(result).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-
-      // provoke cache to regenerate with another instance of exports
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('exports', anotherExportsInst)
-      );
-
-      const cachedResult = resourceData(state, 'exports', 1);
-
-      // cachedResult is the same as result but different reference
-      expect(cachedResult).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-
-      expect(result).not.toBe(cachedResult);
-    });
     test('should return correct data when staged data exists but no master.', () => {
       const exports = [{ _id: 1, name: 'test X' }];
       const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
@@ -3657,7 +3619,7 @@ describe('resource region selector testcases', () => {
       );
     });
 
-    test('should return logs for IA if storeId is passed as argument', () => {
+    test('should return logs for IA if childId is passed as argument', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -3788,7 +3750,7 @@ describe('resource region selector testcases', () => {
       );
 
       expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
-        storeId: 's1',
+        childId: 's1',
       })).toEqual({
         count: 4,
         logs: [

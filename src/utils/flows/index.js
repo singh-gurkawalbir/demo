@@ -619,11 +619,11 @@ export function getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imp
 
 export function getIAResources(integrationResource = {}, allFlows, allConnections, allExports, allImports, options = {}) {
   const { supportsMultiStore, sections } = integrationResource?.settings || {};
-  const { integrationId, storeId, ignoreUnusedConnections } = options;
+  const { integrationId, childId, ignoreUnusedConnections } = options;
   const integrationConnections = allConnections.filter(c => c._integrationId === integrationId);
   const integrationFlows = allFlows.filter(f => f._integrationId === integrationId);
 
-  if (!supportsMultiStore || !storeId) {
+  if (!supportsMultiStore || !childId) {
     return {
       connections: integrationConnections,
       flows: integrationFlows,
@@ -637,13 +637,13 @@ export function getIAResources(integrationResource = {}, allFlows, allConnection
   const flowConnections = [];
   const exports = [];
   const imports = [];
-  const selectedStore = (sections || []).find(s => s.id === storeId) || {};
+  const selectedChild = (sections || []).find(s => s.id === childId) || {};
 
-  (selectedStore.sections || []).forEach(sec => {
+  (selectedChild.sections || []).forEach(sec => {
     flowIds.push(...map(sec.flows, '_id'));
   });
-  (sections || []).forEach(store => {
-    (store.sections || []).forEach(sec => {
+  (sections || []).forEach(child => {
+    (child.sections || []).forEach(sec => {
       allFlowIds.push(...map(sec.flows, '_id'));
     });
   });

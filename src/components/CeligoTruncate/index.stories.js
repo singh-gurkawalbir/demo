@@ -8,8 +8,8 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(4),
   },
   container: {
-    backgroundColor: theme.palette.background.paper,
-    border: `solid 1px ${theme.palette.secondary.light}`,
+    // backgroundColor: theme.palette.background.paper,
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 2,
     marginBottom: theme.spacing(1),
     width: 160,
@@ -50,6 +50,6 @@ export const TwoLines = Template.bind({});
 TwoLines.args = {
   lines: 2,
   delay: 1000,
-  placement: 'right',
+  placement: 'bottom',
   ellipsis: ' (more)',
 };
