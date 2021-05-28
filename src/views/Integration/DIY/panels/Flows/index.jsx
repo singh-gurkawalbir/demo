@@ -92,7 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowPanelTitle: {
     '&>h4': {
-      minZidth: '300px',
+      minWidth: '300px',
     },
   },
 }));

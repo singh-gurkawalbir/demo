@@ -70,7 +70,7 @@ export default function CeligoTable({
   if (!useColumns) { return null; }
 
   return (
-    <div className={clsx(className, classes.tableContainer)}>
+    <div className={clsx(classes.tableContainer, className)}>
       <TableContextWrapper value={actionProps}>
         <Table data-public className={classes.table}>
           <TableHeader
