@@ -1,5 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {action} from '@storybook/addon-actions';
 import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -26,6 +28,7 @@ export default function FilledButton(props) {
       className={clsx({[classes.error]: error})}
       color="primary"
       disableElevation
+      onClick={action('button-click')}
       {...rest}>
       {children}
     </Button>

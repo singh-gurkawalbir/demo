@@ -12,14 +12,14 @@ export default {
   title: 'CeligoButtons / FilledButton',
   component: FilledButton,
   decorators: [withDesign, jsxDecorator],
+  args: {
+    children: 'Default',
+  },
 };
 const Template = args => <FilledButton {...args} />;
 
 export const defaultButton = Template.bind({});
 
-defaultButton.args = {
-  children: 'Default',
-};
 const designParameters = {
   design: {
     type: 'figma',
