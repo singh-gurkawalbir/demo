@@ -4,11 +4,11 @@ import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import UserFormWrapper from '../../UserFormWrapper';
 
-function ManagePermissions({ integrationId }) {
+function ManagePermissions({ integrationId, dataPublic }) {
   const match = useRouteMatch();
   const { userId } = match.params;
 
-  return <UserFormWrapper integrationId={integrationId} userId={userId} />;
+  return <UserFormWrapper dataPublic={dataPublic} integrationId={integrationId} userId={userId} />;
 }
 export default function ManagePermissionsDrawer({ integrationId }) {
   return (
@@ -17,7 +17,7 @@ export default function ManagePermissionsDrawer({ integrationId }) {
       variant="temporary"
       width="medium">
       <DrawerHeader title="Manage user permissions" />
-      <ManagePermissions integrationId={integrationId} />
+      <ManagePermissions dataPublic integrationId={integrationId} />
     </RightDrawer>
   );
 }

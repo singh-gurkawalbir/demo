@@ -92,6 +92,7 @@ import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5509,6 +5510,45 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 );
 
 // #endregion listener request logs selectors
+
+selectors.assistantName = (state, resourceType, resourceId) => {
+  const _resource = selectors.resource(state, resourceType, resourceId);
+
+  if (!_resource) {
+    return;
+  }
+  const conn = selectors.resource(state, 'connections', _resource._connectionId);
+
+  return _resource.assistant || conn?.assistant;
+};
+
+selectors.recordTypeForAutoMapper = (state, resourceType, resourceId, subRecordMappingId) => {
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  if (!resource?.adaptorType) {
+    return '';
+  }
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
+    return selectors.mappingNSRecordType(state, resourceId, subRecordMappingId);
+  }
+  if (resource.adaptorType === 'NetSuiteExport') {
+    const netsuiteType = resource.netsuite?.type === 'distributed' ? 'distributed' : 'restlet';
+
+    return resource.netsuite[netsuiteType]?.recordType;
+  }
+  if (['SalesforceExport', 'SalesforceImport'].includes(resource.adaptorType)) {
+    const { sObjectType } = resource.salesforce;
+
+    return sObjectType;
+  }
+  const assistantName = selectors.assistantName(state, resourceType, resourceId);
+
+  if (assistantName && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistantName) !== -1) {
+    return mappingUtil.autoMapperRecordTypeForAssistant(resource);
+  }
+
+  return '';
+};
 
 // #region sso selectors
 selectors.oidcSSOClient = state => state?.data?.resources?.ssoclients?.find(client => client.type === 'oidc');

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap, formKey, resourceType, resourceId } = props;
+  const { containers, fieldMap, formKey, resourceType, resourceId, dataPublic} = props;
 
   const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
   const transformedContainers =
@@ -48,6 +48,7 @@ export default function CollapsedComponents(props) {
           header={header}
           fieldMap={fieldMap}
           formKey={formKey}
+          dataPublic={dataPublic}
         />
       );
     });
@@ -56,7 +57,7 @@ export default function CollapsedComponents(props) {
 }
 
 const ExpansionPannelExpandOnInValidState = props => {
-  const { collapsed, layout, classes, header, fieldMap, formKey } = props;
+  const { collapsed, layout, classes, header, fieldMap, formKey, dataPublic } = props;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [expandOnce, setExpandOnce] = useState(false);
   const isPanelErrored = useSelector(state =>
@@ -101,7 +102,7 @@ const ExpansionPannelExpandOnInValidState = props => {
           data-test={header}
           onClick={toggleExpansionPanel}
           expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.expPanelTitle}>{header}</Typography>
+          <Typography data-public={!!dataPublic} className={classes.expPanelTitle}>{header}</Typography>
         </AccordionSummary>
         <AccordionDetails >
           <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />
