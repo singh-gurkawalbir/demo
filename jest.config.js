@@ -27,7 +27,7 @@ module.exports = {
       statements: 80,
       branches: 72,
       functions: 79,
-      lines: 80, // revert it back to 80 once we reach there. Lowering to enable a pre commit hook.
+      lines: 80,
     },
   },
   // these variables are injected through webpack definePlugin and
