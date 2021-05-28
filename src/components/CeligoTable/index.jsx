@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
   actionColHead: {
     width: 125,
   },
+  tableContainer: {
+    overflowX: 'auto',
+  },
 }));
 
 const emptyObj = {};
@@ -67,7 +70,7 @@ export default function CeligoTable({
   if (!useColumns) { return null; }
 
   return (
-    <div className={clsx(className)}>
+    <div className={clsx(className, classes.tableContainer)}>
       <TableContextWrapper value={actionProps}>
         <Table data-public className={classes.table}>
           <TableHeader

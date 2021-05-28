@@ -46,7 +46,6 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     fontSize: '14px',
-    height: theme.spacing(2),
   },
   urlDetails: {
     fontSize: '15px',
