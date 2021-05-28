@@ -846,7 +846,7 @@ export default {
     },
     MuiTooltip: {
       'data-public': true,
-      arrow: 'true',
+      arrow: true,
     },
     MuiTabs: {
       'data-public': true,

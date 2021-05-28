@@ -32,7 +32,7 @@ export default function ActionButton({ className, children, placement, tooltip =
 
     // TODO:(Dave) Tooltip title is a default required prop, undefined throwing a warning
     <Tooltip
-      arrow open={tooltip ? undefined : false} placement={placement} title={tooltip}
+      open={tooltip ? undefined : false} placement={placement} title={tooltip}
       aria-label={tooltip}>
       <IconButton className={clsx(classes.editorButton, className)} {...props} aria-label="tooltip">
         <span>{children}</span>

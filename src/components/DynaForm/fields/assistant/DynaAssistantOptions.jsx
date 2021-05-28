@@ -54,6 +54,8 @@ function DynaAssistantOptions(props) {
     fields: fieldsById,
     value,
     id,
+    helpText,
+    helpKey,
     onFieldChange: onFieldChangeFn,
     flowId,
   } = props;
@@ -217,6 +219,8 @@ function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
+      helpText={helpText}
+      helpKey={helpKey}
       options={[{ items: selectOptionsItems }]}
       onFieldChange={onFieldChange}
     />
