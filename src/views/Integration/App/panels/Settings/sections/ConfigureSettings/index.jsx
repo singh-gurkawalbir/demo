@@ -67,6 +67,7 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
       <IAFormStateManager
         {...activeTabProps}
         key={childId}
+        dataPublic
         formState={formState}
         className={clsx(classes.configureform, {
           [classes.configureCamForm]: section.sections,

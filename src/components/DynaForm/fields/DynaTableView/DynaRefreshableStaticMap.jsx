@@ -14,7 +14,6 @@ const fixedListOptions = fixedList => {
     return {
       type: 'autosuggest',
       options: fixedList,
-
       supportsRefresh: false,
     };
   }
@@ -26,12 +25,12 @@ export default function DynaRefreshableStaticMap(props) {
     connectionId,
     keyName = 'extract',
     keyLabel = 'Export',
-    fixedKeyOptionsList,
+    keyOptions,
     map,
     value,
     valueLabel = 'Import',
     valueName = 'generate',
-    fixedValueOptionsList,
+    valueOptions,
     filterKey,
     commMetaPath,
     disableFetch,
@@ -69,7 +68,7 @@ export default function DynaRefreshableStaticMap(props) {
       options: eOptions,
       type: eOptions.length ? 'autosuggest' : 'input',
       supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
-      ...fixedListOptions(fixedKeyOptionsList),
+      ...fixedListOptions(keyOptions),
     }, {
       id: valueName,
       label: valueLabel,
@@ -78,15 +77,15 @@ export default function DynaRefreshableStaticMap(props) {
       optionsChangeIdentifer: 0,
       options: gOptions,
       supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
-      ...fixedListOptions(fixedValueOptionsList),
+      ...fixedListOptions(valueOptions),
     }];
   },
   [connectionId, eData, eExportResource, eKey, eKind,
-    fixedKeyOptionsList, fixedValueOptionsList,
+    keyOptions, valueOptions,
     gData, gExportResource, gKey, gKind, keyLabel, keyName, valueLabel, valueName]);
 
   const metadata = useMemo(() => {
-    if (isExportRefresh(gKind, gKey, gExportResource)) return {optionsMap};
+    if (isExportRefresh(gKind, gKey, gExportResource) || isExportRefresh(eKind, eKey, eExportResource)) return {optionsMap};
     if (refreshMetadata) {
       const optionsMapCopy = [...optionsMap];
 
@@ -95,7 +94,7 @@ export default function DynaRefreshableStaticMap(props) {
 
       return { optionsMap: optionsMapCopy };
     }
-  }, [changeIdentifier, gExportResource, gKey, gKind, optionsMap, refreshMetadata]);
+  }, [changeIdentifier, eExportResource, eKey, eKind, gExportResource, gKey, gKind, optionsMap, refreshMetadata]);
 
   const isLoadingMap = useMemo(() => ({
     [optionsMap[0].id]: optionsMap[0].supportsRefresh && eStatus === 'requested',

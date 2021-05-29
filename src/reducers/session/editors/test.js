@@ -1471,6 +1471,74 @@ describe('editors reducers', () => {
 
       expect(newState).toEqual(expectedState);
     });
+    test('should reset _init_code to code for javascript single type editor', () => {
+      const options = {
+        id: 'preSavePage',
+        editorType: 'javascript',
+        stage: 'hook',
+        rule: {code: 'some code', _init_code: 'some code123'},
+        originalRule: {code: 'some code', _init_code: 'some code123'},
+        data: '{"id": 123, "name": "Angel"}',
+        originalData: '{"id": 123, "name": "Bob"}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('preSavePage', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('preSavePage')
+      );
+      const expectedState = {
+        preSavePage: {
+          id: 'preSavePage',
+          editorType: 'javascript',
+          stage: 'hook',
+          rule: {code: 'some code', _init_code: 'some code'},
+          originalRule: {code: 'some code', _init_code: 'some code'},
+          data: '{"id": 123, "name": "Angel"}',
+          originalData: '{"id": 123, "name": "Angel"}',
+          saveStatus: 'success',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should reset _init_code to code for javascript dual mode editor', () => {
+      const options = {
+        id: 'settingsForm',
+        activeProcessor: 'script',
+        editorType: 'settingsForm',
+        stage: 'hook',
+        rule: {script: {code: 'some code', _init_code: 'some code123'}},
+        originalRule: {script: {code: 'some code', _init_code: 'some code123'}},
+        data: '{"id": 123, "name": "Angel"}',
+        originalData: '{"id": 123, "name": "Bob"}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('settingsForm', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('settingsForm')
+      );
+      const expectedState = {
+        settingsForm: {
+          id: 'settingsForm',
+          activeProcessor: 'script',
+          editorType: 'settingsForm',
+          stage: 'hook',
+          rule: {script: {code: 'some code', _init_code: 'some code'}},
+          originalRule: {script: {code: 'some code', _init_code: 'some code'}},
+          data: '{"id": 123, "name": "Angel"}',
+          originalData: '{"id": 123, "name": "Angel"}',
+          saveStatus: 'success',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
     test('should not modify any other editor state', () => {
       const initialState = {
         query: {id: 'query'},
