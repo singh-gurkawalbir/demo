@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import clsx from 'clsx';
 import produce from 'immer';
-import React, { useCallback, useReducer, useState } from 'react';
+import React, { useCallback, useReducer } from 'react';
 import CeligoTruncate from '../../CeligoTruncate';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
@@ -48,13 +48,13 @@ const SELECT_OPTION = 'select-option';
 const ON_INPUT = 'input';
 
 const reducer = (state, action) => {
-  const {type, value, label} = action;
+  const {type, value} = action;
 
   return produce(state, draft => {
     switch (type) {
       case SELECT_OPTION: {
         draft.eventOrigin = SELECT_OPTION;
-        draft.inputTextValue = label;
+        draft.inputTextValue = value;
 
         return;
       }
@@ -68,6 +68,24 @@ const reducer = (state, action) => {
   });
 };
 
+const getOptionLabel = (options, option) => options.find(opt => opt.value === option)?.label;
+
+const initializer = options => value => {
+  const label = getOptionLabel(options, value);
+  // if the value is part of the option it is a select else its input value
+
+  if (label) {
+    return {
+      eventOrigin: SELECT_OPTION,
+      inputTextValue: label,
+    };
+  }
+
+  return {
+    eventOrigin: ON_INPUT,
+    inputTextValue: value,
+  };
+};
 export default function DynaAutocomplete(props) {
   const {
     disabled,
@@ -84,37 +102,41 @@ export default function DynaAutocomplete(props) {
     options,
   } = props;
 
-  useReducer(reducer, {});
+  const [inputTextState, setInputTextState] = useReducer(reducer, value, initializer(options));
+
+  const {eventOrigin, inputTextValue} = inputTextState;
+
+  console.log('see ', inputTextState);
   const classes = useStyles();
   const onChange = useCallback((evt, selectedOption) => {
-    // evt comes from the text field and selectedOption comes from the select drop down values
-    // they are both mutually exclusive. evt is for a selectedOption which does not belong to the options
-    // selectedOption comes from the options
-    onFieldChange(id, selectedOption?.value || evt.target.value);
+    // whenever we change the input the text area needs to be updated with the label
+    // also we have to update the external value state as well
+    setInputTextState({type: SELECT_OPTION, value: selectedOption.label });
+    onFieldChange(id, selectedOption.value);
   }, [id, onFieldChange]);
-  const onBlur = useCallback(evt => {
-    // in onChange updates are made either through
-    // 1. entering a text and hitting enter
-    // 2. navigating through the options and hitting enter
-    // On blur is also required when the user enters some text and moves to another field
-    const textFieldValue = evt.target.value;
-
-    if (textFieldValue !== value) {
-      onFieldChange(id, evt.target.value);
-    }
-  }, [id, onFieldChange, value]);
 
   const getOptionLabel = useCallback(option => {
-    const label = option?.label ||
-    options.find(opt => opt.value === option)?.label || value;
+    // if an event originates from the input then render the label
+    if (eventOrigin === ON_INPUT) {
+      return inputTextValue;
+    }
 
-    return label;
+    // if an event originates from the select then render the option.label
+    return getOptionLabel(options, option);
   },
-
-  [options, value]);
+  [eventOrigin, inputTextValue, options]);
 
   const renderInput = useCallback(params => <TextField {...params} name={name} id={id} />, [id, name]);
-  const [inputValue, setInputValue] = useState('');
+  const filteredOptions = useCallback(options =>
+    options.filter(option => option.label.includes(inputTextValue)), [inputTextValue]);
+
+  const onInputChange = useCallback((event, val) => {
+    // any update we make we drive an external input text field
+    // we have to update the external value state to include hardcoded value
+    setInputTextState({type: ON_INPUT, value: val});
+
+    onFieldChange(id, val);
+  }, [id, onFieldChange]);
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -133,20 +155,11 @@ export default function DynaAutocomplete(props) {
           disableClearable
           freeSolo
           options={options}
-          includeInputInList
           getOptionLabel={getOptionLabel}
           data-test={dataTest || id}
           value={value}
-          filterOptions={(options, state) => {
-            console.log('check here', options, state);
-
-            return options;
-          }}
-          onBlur={onBlur}
-          inputValue={inputValue}
-          onInputChange={(event, val) => {
-            setInputValue(val);
-          }}
+          filterOptions={filteredOptions}
+          onInputChange={onInputChange}
           renderOption={renderOption}
           onChange={onChange}
           renderInput={renderInput}
