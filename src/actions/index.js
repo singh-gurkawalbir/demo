@@ -237,6 +237,7 @@ const flowMetrics = {
     action(actionTypes.FLOW_METRICS.RECEIVED, { resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
+  updateLastRunRange: (resourceId, startDate, endDate) => action(actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE, { resourceId, startDate, endDate}),
 };
 const resource = {
   replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
