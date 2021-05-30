@@ -43,7 +43,6 @@ const useStyles = makeStyles(theme => ({
       position: 'absolute',
       width: '450px;',
       justifyContent: 'space-between',
-      // width: '100%',
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -57,7 +56,6 @@ const useStyles = makeStyles(theme => ({
   seperator: {
     width: 'calc(100% - 275px)',
     position: 'absolute',
-    // top: 86,
     marginLeft: 275,
     borderTop: `3px dotted ${theme.palette.divider}`,
     height: 285,

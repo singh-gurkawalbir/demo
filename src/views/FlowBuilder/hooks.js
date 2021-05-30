@@ -90,9 +90,6 @@ export const useHandleMovePP = flowId => {
   const { pageProcessors = [] } = flow;
   const handleMovePP = useCallback(
     ({oldIndex, newIndex}) => {
-      if (oldIndex === newIndex) {
-        return;
-      }
       const newOrder = [...pageProcessors];
       const [removed] = newOrder.splice(oldIndex, 1);
 
