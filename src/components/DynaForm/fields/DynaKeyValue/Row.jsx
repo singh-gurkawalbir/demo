@@ -1,15 +1,13 @@
 import { makeStyles, TextField } from '@material-ui/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { SortableHandle } from 'react-sortable-hoc';
 import TrashIcon from '../../../icons/TrashIcon';
 import AutoSuggest from '../DynaAutoSuggest';
 import ActionButton from '../../../ActionButton';
-import GripperIcon from '../../../icons/GripperIcon';
+import SortableHandle from '../../../Sortable/SortableHandle';
 
 const emptySet = {};
 
-const DragHandle = SortableHandle(() => (<div><GripperIcon /></div>));
 const useStyles = makeStyles(theme => ({
   rowWrapper: {
     display: 'flex',
@@ -76,7 +74,7 @@ export default function KeyValueRow(props) {
       {enableSorting && (
         <div className={compClasses.dragIconWrapper}>
           {showGripper && (
-          <DragHandle />
+            <SortableHandle />
           )}
         </div>
       )}

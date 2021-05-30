@@ -5,10 +5,6 @@ import { useSelector } from 'react-redux';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../../reducers';
 
-/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
-   We use the block const across several components and thus is a maintenance issue to
-   manage as we enhance the FB layout. */
-
 const useStyles = makeStyles({
   pgContainer: {
     display: 'flex',

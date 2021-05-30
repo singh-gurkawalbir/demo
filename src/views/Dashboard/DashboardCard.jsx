@@ -1,13 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual, difference } from 'lodash';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { getTileId } from './util';
 import Tile from './Tile';
 import SuiteScriptTile from './SuiteScriptTile';
+import SortableList from '../../components/Sortable/SortableList';
+import SortableItem from '../../components/Sortable/SortableItem';
+import useSortableList from '../../hooks/useSortableList';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -18,13 +20,6 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
     position: 'relative',
-    marginInlineStart: 0,
-    marginBlockStart: 0,
-    marginBlockEnd: 0,
-    listStyleType: 'none',
-    '& > li': {
-      listStyle: 'none',
-    },
     '& > div': {
       maxWidth: '100%',
     },
@@ -35,21 +30,11 @@ const useStyles = makeStyles(theme => ({
       gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
-  helperClass: {
-    listStyleType: 'none',
-    zIndex: '999999',
-  },
 }));
 
-const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
-const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
 export default function DashboardCard({ sortedTiles }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [dragState, setDragState] = useState({
-    isDragging: false,
-    itemIndex: undefined,
-  });
   const preferences = useSelector(state => selectors.userPreferences(state));
   const tilesFromOtherEnvironment = useMemo(() => {
     const allSortedTileIds =
@@ -59,29 +44,24 @@ export default function DashboardCard({ sortedTiles }) {
     return difference(allSortedTileIds, tileIdsFromCurrEnvironment);
   }, [preferences.dashboard, sortedTiles]);
 
-  const handleSortEnd = useCallback(({oldIndex, newIndex}) => {
-    setDragState({isDragging: false, itemIndex: undefined});
-    if (oldIndex !== newIndex) {
-      const updatedDashboardTiles = [...sortedTiles];
-      const [removed] = updatedDashboardTiles.splice(oldIndex, 1);
+  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
+    const updatedDashboardTiles = [...sortedTiles];
+    const [removed] = updatedDashboardTiles.splice(oldIndex, 1);
 
-      updatedDashboardTiles.splice(newIndex, 0, removed);
-      if (isEqual(sortedTiles, updatedDashboardTiles)) return;
-      // Updated Tiles order merged tiles from other environment and also existing tiles with updated order
-      const updatedTilesOrder = updatedDashboardTiles.map(tile => getTileId(tile));
-      const dashboard = {
-        ...preferences.dashboard,
-        tilesOrder: [...tilesFromOtherEnvironment, ...updatedTilesOrder],
-      };
+    updatedDashboardTiles.splice(newIndex, 0, removed);
+    if (isEqual(sortedTiles, updatedDashboardTiles)) return;
+    // Updated Tiles order merged tiles from other environment and also existing tiles with updated order
+    const updatedTilesOrder = updatedDashboardTiles.map(tile => getTileId(tile));
+    const dashboard = {
+      ...preferences.dashboard,
+      tilesOrder: [...tilesFromOtherEnvironment, ...updatedTilesOrder],
+    };
 
-      dispatch(actions.user.preferences.update({ dashboard }));
-    }
+    dispatch(actions.user.preferences.update({ dashboard }));
     // setIsDragging(false);
   }, [dispatch, preferences.dashboard, sortedTiles, tilesFromOtherEnvironment]);
 
-  const handleSortStart = ({ index }) => {
-    setDragState({isDragging: true, itemIndex: index});
-  };
+  const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   return (
     <>
@@ -90,9 +70,7 @@ export default function DashboardCard({ sortedTiles }) {
         onSortEnd={handleSortEnd}
         updateBeforeSortStart={handleSortStart}
         axis="xy"
-        helperClass={classes.helperClass}
-        useDragHandle
-      >
+        useDragHandle>
         {sortedTiles.map((t, index) => (
           <SortableItem
             key={getTileId(t)}
@@ -104,15 +82,15 @@ export default function DashboardCard({ sortedTiles }) {
                   <SuiteScriptTile
                     tile={t}
                     index={index}
-                    isDragInProgress={dragState.isDragging}
-                    isTileDragged={dragState.itemIndex === index}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isTileDragged={dragItemIndex === index}
                   />
                 ) : (
                   <Tile
                     tile={t}
                     index={index}
-                    isDragInProgress={dragState.isDragging}
-                    isTileDragged={dragState.itemIndex === index}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isTileDragged={dragItemIndex === index}
                   />
                 )}
               </div>

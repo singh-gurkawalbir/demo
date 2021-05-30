@@ -116,9 +116,6 @@ export const useHandleMovePG = flowId => {
   const { pageGenerators = [] } = flow;
   const handleMovePG = useCallback(
     ({oldIndex, newIndex}) => {
-      if (oldIndex === newIndex) {
-        return;
-      }
       const newOrder = [...pageGenerators];
       const [removed] = newOrder.splice(oldIndex, 1);
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import clsx from 'clsx';
 import { useHandleAddGenerator, useHandleDelete, useHandleMovePG } from '../../hooks';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -10,6 +9,9 @@ import AppBlock from '../../AppBlock';
 import itemTypes from '../../itemTypes';
 import PageGenerator from '../../PageGenerator';
 import { emptyObject } from '../../../../utils/constants';
+import SortableList from '../../../../components/Sortable/SortableList';
+import SortableItem from '../../../../components/Sortable/SortableItem';
+import useSortableList from '../../../../hooks/useSortableList';
 
 const useStyles = makeStyles(theme => ({
   generatorContainer: {
@@ -64,14 +66,7 @@ const useStyles = makeStyles(theme => ({
   lastSeperator: {
     borderRight: '0 !important',
   },
-  helperClass: {
-    listStyleType: 'none',
-    zIndex: '999999',
-  },
 }));
-
-const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
-const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
 
 export default function PageGenerators({integrationId, flowId}) {
   const handleDelete = useHandleDelete(flowId);
@@ -90,17 +85,15 @@ export default function PageGenerators({integrationId, flowId}) {
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
-  const handleSortEnd = useHandleMovePG(flowId);
   const handleAddGenerator = useHandleAddGenerator();
+  const {handleSortEnd} = useSortableList(useHandleMovePG(flowId));
 
   return (
     <div className={classes.generatorContainer}>
       <SortableList
         onSortEnd={handleSortEnd}
-        className={classes.listContainer}
         distance={20}
-        axis="y"
-        helperClass={classes.helperClass}>
+        axis="y">
         {pageGenerators.map((pg, i) => (
           <>
             <li

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
@@ -56,7 +56,6 @@ const PageProcessor = ({
   const pending = !!pp._connectionId;
   const resourceId = pp._connectionId || pp._exportId || pp._importId;
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
-  const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
   const resource =
@@ -267,7 +266,6 @@ const PageProcessor = ({
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
-          ref={ref}
           blockType={blockType}
           flowId={flowId}
           index={index}

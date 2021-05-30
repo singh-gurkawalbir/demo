@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
-import { SortableHandle } from 'react-sortable-hoc';
-import GripperIcon from '../../icons/GripperIcon';
+import SortableHandle from '../../Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -51,12 +50,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DragHandle = SortableHandle(({ className }) => (
-  <div className={className}>
-    <GripperIcon />
-  </div>
-));
-
 export default function HomePageCardContainer({ children, onClick, isDragInProgress, isTileDragged }) {
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
@@ -89,7 +82,7 @@ export default function HomePageCardContainer({ children, onClick, isDragInProgr
         onClick={onClick} >
         <div>
           {showGripper && (
-          <DragHandle className={classes.gripper} />
+            <SortableHandle className={classes.gripper} />
           )}
           {children}
         </div>

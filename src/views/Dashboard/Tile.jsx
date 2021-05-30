@@ -238,7 +238,6 @@ function Tile({
     [history, urlToIntegrationSettings]
   );
 
-  // #region Drag&Drop related
   return (
     <div>
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>

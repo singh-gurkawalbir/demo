@@ -1,68 +1,34 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import {selectors} from '../../../reducers';
 import MappingRow from './MappingRow';
 import actions from '../../../actions';
+import SortableList from '../../../components/Sortable/SortableList';
+import SortableItem from '../../../components/Sortable/SortableItem';
+import useSortableList from '../../../hooks/useSortableList';
 
 const emptyObject = {};
-const useStyles = makeStyles({
-  listContainer: {
-    marginInlineStart: 0,
-    marginBlockStart: 0,
-    paddingInlineStart: 0,
-    marginBlockEnd: 0,
-    listStyleType: 'none',
-    '& > li': {
-      listStyle: 'none',
-    },
-  },
-  helperClass: {
-    listStyleType: 'none',
-    zIndex: '999999',
-  },
-});
-
-const SortableItem = SortableElement(({value}) => (
-  <li>
-    {value}
-  </li>
-));
-
-const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
 
 export default function DragContainer({disabled}) {
   const dispatch = useDispatch();
-  const classes = useStyles();
-  const [dragState, setDragState] = useState({
-    isDragging: false,
-    itemIndex: undefined,
-  });
   const mappings = useSelector(state => selectors.suiteScriptMapping(state).mappings);
-  const onDragEnd = useCallback(
+  const onSortEnd = useCallback(
     ({oldIndex, newIndex}) => {
-      if (oldIndex !== newIndex) {
-        dispatch(actions.suiteScript.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
-      }
-      setDragState({isDragging: false, itemIndex: undefined});
+      dispatch(actions.suiteScript.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
     },
     [dispatch, mappings]
   );
-  const handleDragStart = ({ index }) => {
-    setDragState({isDragging: true, itemIndex: index});
-  };
+
+  const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   const emptyRowIndex = mappings.length;
 
   return (
     <>
       <SortableList
-        onSortEnd={onDragEnd}
-        updateBeforeSortStart={handleDragStart}
-        className={classes.listContainer}
+        onSortEnd={handleSortEnd}
+        updateBeforeSortStart={handleSortStart}
         axis="y"
-        helperClass={classes.helperClass}
         useDragHandle>
         {mappings.map((mapping, index) => (
           <SortableItem
@@ -75,8 +41,8 @@ export default function DragContainer({disabled}) {
                 key={mapping.key}
                 mappingKey={mapping.key}
                 // onMove={handleMove}
-                isDragInProgress={dragState.isDragging}
-                isRowDragged={dragState.itemIndex === index}
+                isDragInProgress={dragItemIndex !== undefined}
+                isRowDragged={dragItemIndex === index}
                 disabled={disabled}
           />
           )}

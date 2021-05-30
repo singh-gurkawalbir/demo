@@ -1,8 +1,10 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import SortableItem from '../../../../components/Sortable/SortableItem';
+import SortableList from '../../../../components/Sortable/SortableList';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import useSortableList from '../../../../hooks/useSortableList';
 import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
 import { useHandleAddProcessor, useHandleDelete, useHandleMovePP } from '../../hooks';
@@ -38,14 +40,8 @@ const useStyles = makeStyles(theme => ({
     top: 86,
     position: 'relative',
   },
-  helperClass: {
-    listStyleType: 'none',
-    zIndex: '999999',
-  },
 }));
 
-const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
-const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
 export default function PageProcessors({integrationId, flowId}) {
   const handleDelete = useHandleDelete(flowId);
   const classes = useStyles();
@@ -57,7 +53,6 @@ export default function PageProcessors({integrationId, flowId}) {
   const pageProcessors = flow?.pageProcessors || [];
 
   const handleAddProcessor = useHandleAddProcessor();
-  const handleSortEnd = useHandleMovePP(flowId);
   const {
     data: flowErrorsMap,
   } = useSelector(state => selectors.errorMap(state, flowId));
@@ -71,17 +66,15 @@ export default function PageProcessors({integrationId, flowId}) {
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
 
   const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
+  const {handleSortEnd} = useSortableList(useHandleMovePP(flowId));
 
   return (
     <div className={classes.processorContainer}>
       <div className={classes.dottedLine} />
       <SortableList
         onSortEnd={handleSortEnd}
-        className={classes.listContainer}
-        helperClass={classes.helperClass}
         distance={20}
-        axis="x"
-      >
+        axis="x">
         {pageProcessors.map((pp, i) => (
           <SortableItem
             index={i}

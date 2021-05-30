@@ -2,14 +2,13 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { SortableHandle } from 'react-sortable-hoc';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import ActionButton from '../../../components/ActionButton';
-import GripperIcon from '../../../components/icons/GripperIcon';
 import { selectors } from '../../../reducers';
 import DynaTypeableSelect from '../../../components/DynaForm/fields/DynaTypeableSelect';
 import actions from '../../../actions';
 import MappingSettingsButton from './Settings/SettingsButton';
+import SortableHandle from '../../../components/Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -78,7 +77,6 @@ const useStyles = makeStyles(theme => ({
 const emptySet = [];
 const emptyObject = {};
 
-const DragHandle = SortableHandle(() => (<div><GripperIcon /></div>));
 export default function MappingRow(props) {
   const {
     index,
@@ -174,7 +172,7 @@ export default function MappingRow(props) {
       <div className={classes.innerRow}>
         <div className={classes.dragIconWrapper}>
           {showGripper && (
-          <DragHandle />
+            <SortableHandle />
           )}
         </div>
         <div

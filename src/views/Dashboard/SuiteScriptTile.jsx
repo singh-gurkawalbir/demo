@@ -115,7 +115,6 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
   const getApplication = application =>
     application === 'magento' ? 'magento1' : application;
 
-  // #region Drag&Drop related
   return (
     <div>
       <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>

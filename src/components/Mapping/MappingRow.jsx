@@ -4,11 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
-import { SortableHandle } from 'react-sortable-hoc';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
-import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
 import LookupIcon from '../icons/LookupLetterIcon';
 import MultiFieldIcon from '../icons/MultiFieldIcon';
@@ -16,6 +14,7 @@ import HardCodedIcon from '../icons/HardCodedIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
+import SortableHandle from '../Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -103,11 +102,6 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObject = {};
 
-const DragHandle = SortableHandle(() => (
-  <div>
-    <GripperIcon />
-  </div>
-));
 export default function MappingRow({
   disabled,
   index,
@@ -236,9 +230,7 @@ export default function MappingRow({
         className={classes.rowContainer}>
         <div className={classes.innerRow}>
           <div className={classes.dragIconWrapper}>
-            {showGripper && (
-              <DragHandle />
-            )}
+            {showGripper && (<SortableHandle />)}
           </div>
           <div
             data-public

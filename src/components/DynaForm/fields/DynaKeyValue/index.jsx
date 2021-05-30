@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
 import shortid from 'shortid';
@@ -7,6 +6,9 @@ import { isEqual } from 'lodash';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import KeyValueRow from './Row';
+import SortableList from '../../../Sortable/SortableList';
+import SortableItem from '../../../Sortable/SortableItem';
+import useSortableList from '../../../../hooks/useSortableList';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -15,16 +17,6 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     marginBottom: 6,
-  },
-  listContainer: {
-    marginInlineStart: 0,
-    marginBlockStart: 0,
-    paddingInlineStart: 0,
-    marginBlockEnd: 0,
-    listStyleType: 'none',
-    '& > li': {
-      listStyle: 'none',
-    },
   },
   rowContainer: {
     display: 'grid',
@@ -50,10 +42,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  helperClass: {
-    listStyleType: 'none',
-    zIndex: '999999',
-  },
 }));
 
 /**
@@ -67,14 +55,6 @@ const useStyles = makeStyles(theme => ({
     },
   }
  */
-
-const SortableItem = SortableElement(({value}) => (
-  <li>
-    {value}
-  </li>
-));
-
-const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
 
 export function KeyValueComponent(props) {
   const {
@@ -118,12 +98,6 @@ export function KeyValueComponent(props) {
   const [values, setValues] = useState(getInitVal());
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
-  const [dragState, setDragState] = useState({
-    isDragging: false,
-    dragIndex: undefined,
-  });
-
-  const {isDragging, dragIndex} = dragState;
 
   useEffect(() => {
     // set state in case of lazy loading or value changed by parent
@@ -189,33 +163,27 @@ export function KeyValueComponent(props) {
     handleUpdate(key, value, valueName);
   };
 
-  const handleSortStart = ({ index }) => {
-    setDragState({isDragging: true, dragIndex: index});
-  };
+  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
+    const valuesCopy = [...values];
+    const [removed] = valuesCopy.splice(oldIndex, 1);
 
-  const handleSortEnd = useCallback(({oldIndex, newIndex}) => {
-    setDragState({isDragging: false, dragIndex: undefined});
-    if (oldIndex !== newIndex) {
-      // re-order here
-      const valuesCopy = [...values];
-      const [removed] = valuesCopy.splice(oldIndex, 1);
+    valuesCopy.splice(newIndex, 0, removed);
 
-      valuesCopy.splice(newIndex, 0, removed);
+    const removedEmptyValues = valuesCopy.filter(
+      value => value[keyName] || value[valueName]
+    );
+    const lastRow = valuesCopy[valuesCopy.length - 1];
+    const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
 
-      const removedEmptyValues = valuesCopy.filter(
-        value => value[keyName] || value[valueName]
-      );
-      const lastRow = valuesCopy[valuesCopy.length - 1];
-      const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
-
-      if (isLastRowEmpty) {
-        setValues([...removedEmptyValues, lastRow]);
-      } else {
-        setValues(addEmptyLastRowIfNotExist(removedEmptyValues));
-      }
-      onUpdate(preUpdate(removedEmptyValues));
+    if (isLastRowEmpty) {
+      setValues([...removedEmptyValues, lastRow]);
+    } else {
+      setValues(addEmptyLastRowIfNotExist(removedEmptyValues));
     }
+    onUpdate(preUpdate(removedEmptyValues));
   }, [addEmptyLastRowIfNotExist, keyName, onUpdate, preUpdate, valueName, values]);
+
+  const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   return (
     <FormControl
@@ -230,16 +198,14 @@ export function KeyValueComponent(props) {
         <SortableList
           onSortEnd={handleSortEnd}
           updateBeforeSortStart={handleSortStart}
-          className={classes.listContainer}
           axis="y"
-          helperClass={classes.helperClass}
           useDragHandle>
           {values.map((r, index) => {
             const Row = (
               <KeyValueRow
                 suggestionConfig={suggestionConfig}
-                isDragInProgress={isDragging}
-                isRowDragged={dragIndex === index}
+                isDragInProgress={dragItemIndex !== undefined}
+                isRowDragged={dragItemIndex === index}
                 disabled={disabled}
                 keyName={keyName}
                 valueName={valueName}
