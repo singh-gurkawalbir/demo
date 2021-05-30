@@ -58,7 +58,6 @@ export default function DashboardCard({ sortedTiles }) {
     };
 
     dispatch(actions.user.preferences.update({ dashboard }));
-    // setIsDragging(false);
   }, [dispatch, preferences.dashboard, sortedTiles, tilesFromOtherEnvironment]);
 
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
