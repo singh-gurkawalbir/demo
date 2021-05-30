@@ -112,6 +112,7 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
 };
 
 export const getSourceOptions = (sourceList = [], applicationName) => {
+  if (!sourceList.length) return [];
   const sourceLabelsMap = {
     internal: 'Internal',
     application: `${applicationName || 'Application'}`,
@@ -142,7 +143,7 @@ export const getSourceOptions = (sourceList = [], applicationName) => {
 };
 
 export function getJobDuration(job) {
-  if (job.startedAt && job.endedAt) {
+  if (job?.startedAt && job?.endedAt) {
     const dtDiff = moment(moment(job.endedAt) - moment(job.startedAt)).utc();
     let duration = dtDiff.format('HH:mm:ss');
 
