@@ -65,12 +65,12 @@ const withRedux = (Story, context) => {
         trace: true,
         traceLimit: 25,
       })) || compose;
-  
-  store = createStore(
+
+  const store = createStore(
     rootReducer,
     composeEnhancers(applyMiddleware(...middleware))
   );
-  
+
   sagaMiddleware.run(rootSaga);
 
   return (

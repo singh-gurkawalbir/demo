@@ -1,12 +1,11 @@
 import { Checkbox, Button } from '@material-ui/core';
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
 import { action } from '@storybook/addon-actions';
 import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
-import RightDrawer from '../../../components/drawer/Right';
 import ActionGroup from '../../../components/ActionGroup';
+import withRouterAndDrawer from '../withRouterAndDrawer';
 
 <!--- 
 Note that the div below: <div style={{marginBottom: 38}}/>
@@ -16,64 +15,49 @@ here and in the UI. For now, just using this div to not cut off the
 footer, as it gets partially hidden otherwise.
 -->
 
-<Meta 
-  title="Right Drawer/Footer" 
-  component={DrawerFooter}
-/>
+<Meta title="Right Drawer/Footer" component={DrawerFooter} decorators={[withRouterAndDrawer]} />
 
 <Story name="Empty footer">
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Empty Footer" />
-      <DrawerContent>
-        The footer component is nothing more than a fixed height (and BG color) container.
-        There are no properties, save for a className prop to allow for overrides.
-        Without any components as children, the footer would be empty.
-      </DrawerContent>
-      <DrawerFooter>
-      </DrawerFooter>
-                
-      <div style={{marginBottom: 38}}/>
-    </RightDrawer>
-  </MemoryRouter>
+  <DrawerHeader title="Empty Footer" />
+  <DrawerContent>
+    The footer component is nothing more than a fixed height (and BG color) container.
+    There are no properties, save for a className prop to allow for overrides.
+    Without any components as children, the footer would be empty.
+  </DrawerContent>
+  <DrawerFooter>
+  </DrawerFooter>
+            
+  <div style={{marginBottom: 38}}/>
 </Story>
 
 <Story name="With left actions">
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Left actions" />
-      <DrawerContent>
-        The most practical way to add actions to the footer is to use the ActionGroup
-        component to place 1 or more actions left or right aligned.
-      </DrawerContent>
-      <DrawerFooter>
-        <ActionGroup>
-          <Button variant="contained" color="primary"> OK </Button>
-          <Button variant="text" color="primary"> Cancel </Button>
-        </ActionGroup>
-      </DrawerFooter>
-      
-      <div style={{marginBottom: 38}}/>
-    </RightDrawer>
-  </MemoryRouter>
+  <DrawerHeader title="Left actions" />
+  <DrawerContent>
+    The most practical way to add actions to the footer is to use the ActionGroup
+    component to place 1 or more actions left or right aligned.
+  </DrawerContent>
+  <DrawerFooter>
+    <ActionGroup>
+      <Button variant="contained" color="primary"> OK </Button>
+      <Button variant="text" color="primary"> Cancel </Button>
+    </ActionGroup>
+  </DrawerFooter>
+  
+  <div style={{marginBottom: 38}}/>
 </Story>
 
 <Story name="With right actions">
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Right action" />
-      <DrawerContent>
-        The most practical way to add actions to the footer is to use the ActionGroup
-        component to place 1 or more actions left or right aligned.
-      </DrawerContent>
-      <DrawerFooter>
-        <ActionGroup position="right">
-          <Checkbox />
-          <Button variant="contained" color="secondary"> Preview </Button>
-        </ActionGroup>
-      </DrawerFooter>
-      
-      <div style={{marginBottom: 38}}/>
-    </RightDrawer>
-  </MemoryRouter>
+  <DrawerHeader title="Right action" />
+  <DrawerContent>
+    The most practical way to add actions to the footer is to use the ActionGroup
+    component to place 1 or more actions left or right aligned.
+  </DrawerContent>
+  <DrawerFooter>
+    <ActionGroup position="right">
+      <Checkbox />
+      <Button variant="contained" color="secondary"> Preview </Button>
+    </ActionGroup>
+  </DrawerFooter>
+  
+  <div style={{marginBottom: 38}}/>
 </Story>

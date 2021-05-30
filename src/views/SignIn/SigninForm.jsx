@@ -50,9 +50,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 0,
     width: '100%',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginTop: theme.spacing(-2),
     marginBottom: 0,
+    lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),
