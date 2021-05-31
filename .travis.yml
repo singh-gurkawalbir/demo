@@ -9,9 +9,6 @@ script:
   - yarn run lint 
   - yarn build-storybook
 
-# Script that is run before the script phase
-# before_script:
-
 # Deployment information
 deploy:
   provider: pages # Tell Travis we want to deploy to Github Pages

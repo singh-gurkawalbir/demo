@@ -1452,12 +1452,7 @@ describe('editor sagas', () => {
         insertStubKey: 'formInit',
         activeProcessor: 'script',
         data: JSON.stringify(expectedData, null, 2),
-        originalData: {
-          fieldMap: {},
-          layout: {
-            fields: [],
-          },
-        },
+        originalData: JSON.stringify(expectedData, null, 2),
         rule: {
           script: {
             entryFunction: 'main',

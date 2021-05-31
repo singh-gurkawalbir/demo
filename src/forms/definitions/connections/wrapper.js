@@ -74,7 +74,7 @@ export default {
       for (let i = 0; i < unEncryptedFields.length; i += 1) {
         unEncryptedFields[i] = unEncryptedFields[i].field;
         newfieldMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
-        if (newfieldMeta?.layout?.containers[0]?.containers[1]?.fields) { newfieldMeta.layout.containers[0].containers[1].fields.push(unEncryptedFields[i].id); }
+        if (newfieldMeta?.layout?.containers[1]?.fields) { newfieldMeta.layout.containers[1].fields.push(unEncryptedFields[i].id); }
       }
     }
 

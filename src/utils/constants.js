@@ -156,6 +156,7 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
+export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
 export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
@@ -684,3 +685,4 @@ export const LINE_GRAPH_TYPE_LONG = Object.freeze(
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
+export const SENSITIVE_DATA = ['token', 'password'];
