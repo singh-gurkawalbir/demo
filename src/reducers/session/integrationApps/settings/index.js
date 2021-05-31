@@ -175,8 +175,11 @@ export default (state = {}, action) => {
         draft[licenseId] = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_VARIATION_MAPPINGS:
+
+        mappingUtil.addVariation(draft, cKey, data);
+        // const variations = Object.keys(draft[cKey]?.mappings || {}).filter(key => key.startsWith(`${flowId}-${data?.subCategoryId}-`));
+
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          mappingUtil.addVariation(draft, cKey, data);
           draft[cKey].mappings[id].staged = draft[cKey].mappings[id].mappings;
           draft[cKey].mappings[id].stagedLookups =
             draft[cKey].mappings[id].lookups;
