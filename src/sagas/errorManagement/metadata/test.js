@@ -388,6 +388,7 @@ describe('EM2.0 metadata sagas', () => {
   });
   describe('downloadRetryData saga', () => {
     const retryDataKey = 'id-123';
+    const flowId = 'flow-456';
 
     test('should make api call to download retry data and do nothing if the response does not contain signedURL', () => expectSaga(downloadRetryData, { flowId, resourceId, retryDataKey })
       .provide([
@@ -414,7 +415,7 @@ describe('EM2.0 metadata sagas', () => {
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
-        .call.fn(openExternalUrl)
+        .call(openExternalUrl, { url: response.signedURL })
         .run();
     });
   });
