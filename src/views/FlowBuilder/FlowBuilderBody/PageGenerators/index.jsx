@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
 import { useHandleAddGenerator, useHandleDelete, useHandleMovePG } from '../../hooks';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -12,6 +11,7 @@ import { emptyObject } from '../../../../utils/constants';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
+import ConnectLineListItem from './ConnectLineListItem';
 
 const useStyles = makeStyles(theme => ({
   generatorContainer: {
@@ -53,17 +53,6 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  seperator: {
-    width: 'calc(100% - 275px)',
-    position: 'absolute',
-    marginLeft: 275,
-    borderTop: `3px dotted ${theme.palette.divider}`,
-    height: 285,
-    borderRight: `3px dotted ${theme.palette.divider}`,
-  },
-  lastSeperator: {
-    borderRight: '0 !important',
-  },
 }));
 
 export default function PageGenerators({integrationId, flowId}) {
@@ -94,10 +83,7 @@ export default function PageGenerators({integrationId, flowId}) {
         axis="y">
         {pageGenerators.map((pg, i) => (
           <>
-            <li
-              className={clsx(classes.seperator, {
-                [classes.lastSeperator]: i + 1 === pageGenerators.length,
-              })} style={{top: 86 + 285 * i}} />
+            <ConnectLineListItem index={i} isLastItem={i + 1 === pageGenerators.lengt} />
             <SortableItem
               index={i}
               hideSortableGhost={false}

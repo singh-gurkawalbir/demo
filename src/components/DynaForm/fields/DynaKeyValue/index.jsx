@@ -200,43 +200,35 @@ export function KeyValueComponent(props) {
           updateBeforeSortStart={handleSortStart}
           axis="y"
           useDragHandle>
-          {values.map((r, index) => {
-            const Row = (
-              <KeyValueRow
-                suggestionConfig={suggestionConfig}
-                isDragInProgress={dragItemIndex !== undefined}
-                isRowDragged={dragItemIndex === index}
-                disabled={disabled}
-                keyName={keyName}
-                valueName={valueName}
-                index={index}
-                handleUpdate={handleUpdate}
-                rowInd={rowInd}
-                handleKeyUpdate={handleKeyUpdate}
-                handleValueUpdate={handleValueUpdate}
-                showDelete={showDelete}
-                handleDelete={handleDelete}
-                isKey={isKey}
-                classes={classes}
-                r={r}
-                enableSorting={enableSorting}
-            />
-            );
-
-            if (!r[keyName] && !r[valueName]) {
-              return Row;
-            }
-
-            return (
-              <SortableItem
-                key={r.key}
-                disabled={!enableSorting}
-                index={index}
-                hideSortableGhost={false}
-                value={Row}
+          {values.map((r, index) => (
+            <SortableItem
+              key={r.key}
+              disabled={!enableSorting || (!r[keyName] && !r[valueName])}
+              index={index}
+              hideSortableGhost={false}
+              value={(
+                <KeyValueRow
+                  suggestionConfig={suggestionConfig}
+                  isDragInProgress={dragItemIndex !== undefined}
+                  isRowDragged={dragItemIndex === index}
+                  disabled={disabled}
+                  keyName={keyName}
+                  valueName={valueName}
+                  index={index}
+                  handleUpdate={handleUpdate}
+                  rowInd={rowInd}
+                  handleKeyUpdate={handleKeyUpdate}
+                  handleValueUpdate={handleValueUpdate}
+                  showDelete={showDelete}
+                  handleDelete={handleDelete}
+                  isKey={isKey}
+                  classes={classes}
+                  r={r}
+                  enableSorting={enableSorting}
               />
-            );
-          })};
+              )}
+              />
+          ))};
         </SortableList>
       </>
     </FormControl>
