@@ -408,7 +408,7 @@ describe('EM2.0 metadata sagas', () => {
       .not.call.fn(openExternalUrl)
       .run());
     test('should make api call to download retry data and call openExternalURL with the signedURL from the response', () => {
-      const response = { signedURL: 'https://www.samplesignedurl.com/s3/asdfg'};
+      const response = { signedURL: 'https://www.samplesignedurl.com/s3/retryData'};
 
       expectSaga(downloadRetryData, { flowId, resourceId, retryDataKey })
         .provide([
