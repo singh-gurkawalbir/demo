@@ -10,7 +10,6 @@ import { selectors } from '../../../../reducers';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import actions from '../../../../actions';
-import EditorDrawer from '../../../AFE/Drawer';
 import LoadResources from '../../../LoadResources';
 import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 import hookReducer from './stateReducer';
@@ -207,7 +206,6 @@ export default function DynaHook_afe({
           </div>
         </div>
       </LoadResources>
-      <EditorDrawer />
     </>
   );
 }

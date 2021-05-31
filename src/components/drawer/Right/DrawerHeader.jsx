@@ -35,6 +35,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const CloseIconButton = ({CloseButton, disableClose, onClose}) => {
+  // If the parent drawer provided a custom close button, then use it.
+  if (CloseButton) return CloseButton;
+
+  // Otherwise return the default close button.
+  return (
+    <IconButton
+      size="small"
+      disabled={!!disableClose}
+      data-test="closeRightDrawer"
+      aria-label="Close"
+      onClick={onClose}>
+      <CloseIcon />
+    </IconButton>
+  );
+};
+
 export default function DrawerHeader({
   title,
   infoText,
@@ -52,23 +69,6 @@ export default function DrawerHeader({
   const { fullPath, onClose } = useDrawerContext();
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
-
-  const CloseIconButton = () => {
-    // If the parent drawer provided a custom close button, then use it.
-    if (CloseButton) return CloseButton;
-
-    // Otherwise return the default close button.
-    return (
-      <IconButton
-        size="small"
-        disabled={!!disableClose}
-        data-test="closeRightDrawer"
-        aria-label="Close"
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-    );
-  };
 
   return (
   // <BackgroundToggle>
@@ -98,8 +98,7 @@ export default function DrawerHeader({
 
       {/* Typically children are the action icons/buttons */}
       {children}
-
-      <CloseIconButton />
+      <CloseIconButton CloseButton={CloseButton} disableClose={disableClose} onClose={onClose} />
     </div>
   // </BackgroundToggle>
   );
