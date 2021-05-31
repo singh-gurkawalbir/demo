@@ -2,6 +2,7 @@ import React from 'react';
 import HooksForm from './HooksForm';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import EditorDrawer from '../../../../components/AFE/Drawer';
 
 export default function HooksDrawer({ flowId }) {
   return (
@@ -12,6 +13,7 @@ export default function HooksDrawer({ flowId }) {
         helpTitle="Hooks"
       />
       <HooksForm flowId={flowId} />
+      <EditorDrawer />
     </RightDrawer>
   );
 }
