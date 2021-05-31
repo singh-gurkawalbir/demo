@@ -1,7 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {action} from '@storybook/addon-actions';
 import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -20,15 +19,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function FilledButton(props) {
   const classes = useStyles();
-  const {children, error, ...rest} = props;
+  const {children, error, onClick, ...rest} = props;
 
   return (
     <Button
       variant="contained"
-      className={clsx({[classes.error]: error})}
       color="primary"
+      className={clsx({[classes.error]: error})}
       disableElevation
-      onClick={action('button-click')}
+      onClick={onClick}
       {...rest}>
       {children}
     </Button>
@@ -40,6 +39,7 @@ FilledButton.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   error: PropTypes.bool,
+  color: PropTypes.oneOf(['primary', 'secondary']),
 };
 
 FilledButton.defaultProps = {

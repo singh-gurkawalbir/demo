@@ -1,6 +1,8 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withDesign } from 'storybook-addon-designs';
+// import { storiesOf } from '@storybook/react';
+// import { action } from '@storybook/addon-actions';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -12,9 +14,6 @@ export default {
   title: 'CeligoButtons / FilledButton',
   component: FilledButton,
   decorators: [withDesign, jsxDecorator],
-  args: {
-    children: 'Default',
-  },
 };
 const Template = args => <FilledButton {...args} />;
 
@@ -27,6 +26,10 @@ const designParameters = {
   },
 };
 
+defaultButton.args = {
+  children: 'Default Button',
+
+};
 defaultButton.parameters = designParameters;
 
 export const startIcon = Template.bind();

@@ -16,7 +16,6 @@ export const parameters = {
       a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
   },
 }
- const env = process.env.Node_Env;
 
 export const globalTypes = {
   theme: {
@@ -64,14 +63,12 @@ const withRedux = (Story, context) => {
 
   const composeEnhancers =
     (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
-    // TODO: check if we need to enable it in staging.
-    env === 'development' &&
       window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
         trace: true,
         traceLimit: 25,
       })) || compose;
   
-  store = createStore(
+  const store = createStore(
     rootReducer,
     composeEnhancers(applyMiddleware(...middleware))
   );
