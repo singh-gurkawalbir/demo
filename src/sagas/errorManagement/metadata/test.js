@@ -414,8 +414,7 @@ describe('EM2.0 metadata sagas', () => {
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
-        .call.fn(apiCallWithRetry)
-        .call(openExternalUrl, { url: response.signedURL })
+        .call.fn(openExternalUrl)
         .run();
     });
   });
