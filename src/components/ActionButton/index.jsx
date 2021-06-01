@@ -44,6 +44,7 @@ export default function ActionButton({ className, children, placement, tooltip =
 ActionButton.propTypes = {
   children: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
+  placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
 };
 
 ActionButton.defaultProps = {
