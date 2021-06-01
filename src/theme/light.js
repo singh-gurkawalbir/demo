@@ -216,24 +216,7 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral7,
         padding: [[6, 8, 4, 8]],
-      },
-      tooltipPlacementBottom: {
-        margin: '8px !important',
-        '&:before': {
-          margin: 'auto',
-        },
-        '&:after': {
-          margin: 'auto',
-        },
-      },
-      tooltipPlacementRight: {
         margin: '0px !important',
-      },
-      tooltipPlacementLeft: {
-        margin: '0px !important',
-      },
-      tooltipPlacementTop: {
-        margin: '8px !important',
       },
     },
     MuiPickersDay: {

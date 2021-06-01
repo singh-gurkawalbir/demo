@@ -284,6 +284,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                 </ActionButton>
               ) : (
                 <ActionButton
+                  placement="bottom"
                   data-public
                   tooltip="You have manage permissions"
                   className={classes.action}

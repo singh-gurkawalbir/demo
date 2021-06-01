@@ -19,7 +19,6 @@ import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
-import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,23 +83,14 @@ const useStyles = makeStyles(theme => ({
     width: 'calc(100% - 32px)',
     justifyContent: 'space-between',
   },
-  // title: {
-  //   overflow: 'hidden',
-  //   whiteSpace: 'nowrap',
-  //   maxWidth: '88%',
-  //   textOverflow: 'ellipsis',
-  // },
-  // user: {
-  //   textAlign: 'right',
-  //   // overflow: 'hidden',
-  //   // // whiteSpace: 'nowrap',
-  //   // // textOverflow: 'ellipsis',
-  // },
   cardAction: {
     margin: theme.spacing(1, 0),
     padding: 0,
     position: 'absolute',
     bottom: theme.spacing(5),
+  },
+  user: {
+    maxWidth: '60%',
   },
   link: {
     paddingLeft: theme.spacing(1),
@@ -289,10 +279,8 @@ export default function MarketplaceList() {
               <Typography className={classes.title} variant="body2">
                 Integration app
               </Typography>
-              <Typography className={classes.user} variant="body2">
-                <CeligoTruncate ellipsis="..." lines={1} placement="bottom">
-                  welcome to the world
-                </CeligoTruncate>
+              <Typography className={classes.user} variant="body2" noWrap>
+                { connector?.user?.company || connector?.user?.name || connector?.user?.email || 'Celigo'}
               </Typography>
             </div>
           </Card>
@@ -326,10 +314,8 @@ export default function MarketplaceList() {
               <Typography className={classes.title} variant="body2">
                 Template
               </Typography>
-              <Typography className={classes.user} variant="body2">
-                <CeligoTruncate lines={1} placement="bottom" ellipsis="...">
-                  welcome to the worldssss
-                </CeligoTruncate>
+              <Typography className={classes.user} variant="body2" noWrap>
+                { template?.user?.company || template?.user?.name || template?.user?.email || 'Celigo'}
               </Typography>
             </div>
           </Card>
