@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
   auditLog: {
     '& > div': {
       '&:first-child': {
-        padding: theme.spacing(2),
+        backgroundColor: theme.palette.common.white,
       },
     },
   },
