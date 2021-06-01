@@ -213,8 +213,7 @@ export default function Security() {
 
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
   const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
-  const infoTextSSO =
-  'Configure single sign-on settings in this section';
+  const infoTextSSO = 'Configure single sign-on settings in this section';
 
   return (
     <>
@@ -222,8 +221,8 @@ export default function Security() {
         <div className={classes.root}>
           <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoSwitch}>
-            <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
-            <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
+            <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
+            <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
             <CeligoSwitch
               onChange={handleEnableSSO}
               checked={isSSOEnabled} />
