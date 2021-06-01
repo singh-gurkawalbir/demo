@@ -3,7 +3,7 @@ import { FixedSizeList } from 'react-window';
 import TableRow from '../TableRow';
 
 const ITEM_SIZE = 46;
-const NO_OF_OPTIONS = 10;
+const NO_OF_ROWS = 10;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
   const {items, optionsMapFinal,
@@ -40,7 +40,7 @@ const VirtualizedTable = ({
   setTableState,
   onRowChange,
   disableDeleteRows }) => {
-  const maxHeightOfSelect = items.length > NO_OF_OPTIONS
+  const maxHeightOfSelect = items.length > NO_OF_ROWS
     ? TABLE_VIEW_PORT_HEIGHT
     : ITEM_SIZE * items.length;
 

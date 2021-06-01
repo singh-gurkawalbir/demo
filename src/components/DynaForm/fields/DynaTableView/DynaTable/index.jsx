@@ -37,7 +37,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const LARGE_NUMBER_OF_ITEMS = 200;
 export const generateEmptyRow = optionsMap => optionsMap.reduce((acc, curr) => {
   acc[curr.id] = '';
 
@@ -68,8 +67,6 @@ const initializeTableState = optionsMap => value => {
   };
 };
 
-const shouldEnableVirtualizaton = items => items?.length > LARGE_NUMBER_OF_ITEMS;
-
 const BaseTable = ({
   onFieldChange,
   onRowChange,
@@ -92,8 +89,8 @@ const BaseTable = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
 
-  if (isVirtualizedTable || shouldEnableVirtualizaton(tableValue)) {
-    console.log('should not enter', tableValue);
+  if (isVirtualizedTable) {
+    // not all tables have to be virtualized
 
     return (
       <VirtualizedTable
@@ -139,10 +136,10 @@ export const DynaTable = props => {
     isLoading = false,
     metadata = {},
     id,
-    isVirtualizedTable,
     onFieldChange,
     onRowChange,
     disableDeleteRows,
+    isVirtualizedTable,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 

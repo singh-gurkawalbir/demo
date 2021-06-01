@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../../DynaSelect';
 import DeleteIcon from '../../../../../icons/TrashIcon';
-import DynaTypeableSelect from '../../../DynaTypeableSelect';
+// import DynaTypeableSelect from '../../../DynaTypeableSelect';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
 import DynaAutocomplete from '../../../DynaAutocomplete';
@@ -70,7 +70,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange, isVirtualizedTable}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
