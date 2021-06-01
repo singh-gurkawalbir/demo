@@ -136,17 +136,6 @@ export const isExpansionPanelRequired = (meta, fieldStates) => {
   );
 };
 
-export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
-  const visibleFields = fieldsStateToArray(fieldStates).filter(
-    field => field.visible
-  );
-  const { layout, fieldMap } = meta;
-
-  return visibleFields.some(
-    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
-  );
-};
-
 export const fieldIDsExceptClockedFields = (meta, resourceType) => {
   if (!meta) return null;
   const { fieldMap } = meta;
@@ -349,7 +338,7 @@ export const sanitizePatchSet = ({
 };
 
 // #BEGIN_REGION Integration App form utils
-const convertFieldsToFieldReferneceObj = (acc, curr) => {
+export const convertFieldsToFieldReferneceObj = (acc, curr) => {
   if (!curr.fieldId && !curr.id && !curr.formId) {
     throw new Error('No fieldId , id or formId', curr);
   }
@@ -363,7 +352,7 @@ const convertFieldsToFieldReferneceObj = (acc, curr) => {
   return acc;
 };
 
-const refGeneration = field => {
+export const refGeneration = field => {
   const { fieldId, id, formId } = field;
 
   if (fieldId) return fieldId;
@@ -372,7 +361,7 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
+export const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {

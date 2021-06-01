@@ -1,5 +1,6 @@
 /* global describe, test, expect */
 import jsonPatch from 'fast-json-patch';
+import each from 'jest-each';
 import {
   getMissingPatchSet,
   sanitizePatchSet,
@@ -11,6 +12,14 @@ import {
   translateDependencyProps,
   getAllFormValuesAssociatedToMeta,
   adjustingFieldRules,
+  getFieldWithReferenceById,
+  fieldIDsExceptClockedFields,
+  isFormTouched,
+  alterFileDefinitionRulesVisibility,
+  getFieldConfig,
+  refGeneration,
+  convertFieldsToFieldReferneceObj,
+  integrationSettingsToDynaFormMetadata,
 } from '.';
 
 describe('Form Utils', () => {
@@ -312,6 +321,11 @@ describe('Form Utils', () => {
   });
 
   describe('getPatchPathFromCustomForms', () => {
+    test('should return null if metadata is null ', () => {
+      const res = getPatchPathForCustomForms(null, 'non-existentField');
+
+      expect(res).toEqual(null);
+    });
     test('should return null for meta having a non-existent field ', () => {
       const testMeta = {
         fieldMap: {
@@ -436,6 +450,9 @@ describe('Form Utils', () => {
   });
 
   describe('search field by id through the fieldMap ', () => {
+    test('should return null if there is no metadata', () => {
+      expect(getFieldById({meta: null})).toEqual(null);
+    });
     test('should correctly search for a field in the metadata', () => {
       const testMeta = {
         fieldMap: {
@@ -715,6 +732,11 @@ describe('Form Utils', () => {
         metadata.fieldMap,
         'exportData'
       );
+
+      expect(foundValue).toEqual(null);
+    });
+    test('should return null if the field layout does not not exists', () => {
+      const foundValue = getFieldByIdFromLayout();
 
       expect(foundValue).toEqual(null);
     });
@@ -1133,6 +1155,22 @@ describe('Form Utils', () => {
       });
     });
   });
+  test('should return rmpty object if there is no metadata associated with it', () => {
+    const values = {
+      '/custom/Field': 'a',
+      '/someField': 'b',
+      '/file/decompressFiles': 'c',
+      '/exportData': 'd',
+      '/fieldA': 'somethingA',
+      '/fieldB': 'somethingB',
+      '/fieldC': 'somethingC',
+    };
+    const resultantValues = getAllFormValuesAssociatedToMeta(
+      values
+    );
+
+    expect(resultantValues).toEqual({});
+  });
 });
 
 describe('integrationSettingsToDynaFormMetadata', () => {
@@ -1549,6 +1587,531 @@ describe('integrationSettingsToDynaFormMetadata', () => {
           ],
         });
       });
+    });
+  });
+  describe('getFieldWithReferenceById', () => {
+    test('should return null if metadata is null ', () => {
+      const res = getFieldWithReferenceById({meta: null});
+
+      expect(res).toEqual(null);
+    });
+    test('should get field with reference by id', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['exportData'],
+        },
+      };
+      const res = getFieldWithReferenceById({meta: testMeta, id: 'exportData'});
+
+      expect(res).toEqual({field: {fieldId: 'exportData', visibleWhenAll: [{field: 'fieldA', is: ['someValue']}]}, fieldReference: 'exportData'});
+    });
+  });
+  describe('fieldIDsExceptClockedFields', () => {
+    test('should return null if metadata is null ', () => {
+      const res = fieldIDsExceptClockedFields();
+
+      expect(res).toEqual(null);
+    });
+    test('should return null if fieldMap inside meta data is null ', () => {
+      const res = fieldIDsExceptClockedFields({fieldMap: null});
+
+      expect(res).toEqual(null);
+    });
+    test('should return all field ids except clocked fields for given resource type', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'export1',
+            id: 'export1',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+          pageSize: {
+            fieldId: 'pageSize',
+            id: 'pageSize',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['export1', 'pageSize'],
+        },
+      };
+      const res = fieldIDsExceptClockedFields(testMeta, 'exports');
+
+      expect(res).toEqual(['export1']);
+    });
+  });
+  describe('isFormTouched', () => {
+    test('should return false if fields do not have any touched field', () => {
+      const fields = [{
+        fieldId: 'exportData',
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      }];
+      const res = isFormTouched(fields);
+
+      expect(res).toEqual(false);
+    });
+    test('should return true if any one of the field has a prop touched set to true', () => {
+      const fields = [{
+        fieldId: 'exportData',
+        touched: true,
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      }];
+      const res = isFormTouched(fields);
+
+      expect(res).toEqual(true);
+    });
+  });
+  describe('alterFileDefinitionRulesVisibility', () => {
+    test('should alter fields for filetype csv', () => {
+      const fields = [{
+        defaultRequired: true,
+        defaultValue: '',
+        fieldId: 'file.filedefinition.rules',
+        defaultVisible: false,
+        helpKey: 'export.file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        name: '/file/filedefinition/rules',
+        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filedefinitioneditor',
+        value: '',
+        visible: false,
+      }, {
+        defaultRequired: true,
+        defaultValue: 'csv',
+        fieldId: 'file.type',
+        helpKey: 'export.file.type',
+        id: 'file.type',
+        label: 'File type',
+        name: '/file/type',
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filetypeselect',
+        value: 'csv',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+      const expectedFields = [{
+        defaultRequired: true,
+        defaultValue: '',
+        fieldId: 'file.filedefinition.rules',
+        helpKey: 'export.file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        name: '/file/filedefinition/rules',
+        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filedefinitioneditor',
+        value: '',
+        visible: false,
+        defaultVisible: false,
+      }, {
+        defaultRequired: true,
+        defaultValue: 'csv',
+        fieldId: 'file.type',
+        helpKey: 'export.file.type',
+        id: 'file.type',
+        label: 'File type',
+        name: '/file/type',
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filetypeselect',
+        value: 'csv',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      expect(fields).toEqual(expectedFields);
+    });
+    test('should alter fields if file definition rules contains userDefinitionId', () => {
+      const fields = [{
+        defaultRequired: true,
+        defaultValue: '',
+        fieldId: 'file.filedefinition.rules',
+        helpKey: 'export.file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        name: '/file/filedefinition/rules',
+        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filedefinitioneditor',
+        value: '',
+        userDefinitionId: '1234',
+        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
+      }, {
+        defaultRequired: true,
+        defaultValue: 'csv',
+        fieldId: 'file.type',
+        helpKey: 'export.file.type',
+        id: 'file.type',
+        label: 'File type',
+        name: '/file/type',
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filetypeselect',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'edix12.format',
+        format: 'edi',
+        id: 'edix12.format',
+        name: '/edix12/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        id: 'fixed.format',
+        name: '/fixed/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        defaultVisible: false,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        name: '/edifact/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      ];
+
+      const expectedFields = [{
+        defaultRequired: true,
+        defaultValue: '',
+        fieldId: 'file.filedefinition.rules',
+        helpKey: 'export.file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        name: '/file/filedefinition/rules',
+        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filedefinitioneditor',
+        value: '',
+        visible: false,
+        userDefinitionId: '1234',
+        defaultVisible: false,
+        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
+      }, {
+        defaultRequired: true,
+        defaultValue: 'csv',
+        fieldId: 'file.type',
+        helpKey: 'export.file.type',
+        id: 'file.type',
+        label: 'File type',
+        name: '/file/type',
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filetypeselect',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'edix12.format',
+        defaultVisible: false,
+        format: 'edi',
+        id: 'edix12.format',
+        name: '/edix12/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: false,
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        defaultVisible: false,
+        id: 'fixed.format',
+        name: '/fixed/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: false,
+      },
+      {
+        defaultVisible: false,
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        name: '/edifact/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: false,
+      },
+      ];
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      expect(fields).toEqual(expectedFields);
+    });
+    test('should alter fields if file definition is selected as file type', () => {
+      const fields = [{
+        defaultRequired: true,
+        defaultValue: '',
+        fieldId: 'file.filedefinition.rules',
+        helpKey: 'export.file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        name: '/file/filedefinition/rules',
+        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filedefinitioneditor',
+        value: '',
+        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
+      }, {
+        defaultRequired: true,
+        value: 'filedefinition',
+        fieldId: 'file.type',
+        helpKey: 'export.file.type',
+        id: 'file.type',
+        label: 'File type',
+        name: '/file/type',
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filetypeselect',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        defaultRequired: true,
+        defaultValue: '',
+        disabled: false,
+        fieldId: 'edix12.format',
+        flowId: undefined,
+        format: 'edi',
+        helpKey: 'export.edix12.format',
+        id: 'edix12.format',
+        integrationId: undefined,
+        label: 'EDI x12 format',
+        name: '/edix12/format',
+        required: true,
+        resourceType: 'exports',
+        touched: false,
+        type: 'filedefinitionselect',
+        value: '',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        id: 'fixed.format',
+        name: '/fixed/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        name: '/edifact/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+
+      const expectedFields = [{
+        defaultRequired: true,
+        defaultValue: '',
+        defaultVisible: false,
+        fieldId: 'file.filedefinition.rules',
+        helpKey: 'export.file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        name: '/file/filedefinition/rules',
+        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filedefinitioneditor',
+        value: '',
+        visible: false,
+      }, {
+        defaultRequired: true,
+        value: 'filedefinition',
+        fieldId: 'file.type',
+        helpKey: 'export.file.type',
+        id: 'file.type',
+        label: 'File type',
+        name: '/file/type',
+        required: true,
+        resourceId: '60ab7cd46d5f912197362ca7',
+        resourceType: 'exports',
+        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
+        type: 'filetypeselect',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        defaultRequired: true,
+        defaultValue: '',
+        disabled: false,
+        fieldId: 'edix12.format',
+        flowId: undefined,
+        format: 'edi',
+        helpKey: 'export.edix12.format',
+        id: 'edix12.format',
+        integrationId: undefined,
+        label: 'EDI x12 format',
+        name: '/edix12/format',
+        required: true,
+        resourceType: 'exports',
+        touched: false,
+        type: 'filedefinitionselect',
+        value: '',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        id: 'fixed.format',
+        name: '/fixed/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        name: '/edifact/format',
+        resourceType: 'exports',
+        type: 'filedefinitionselect',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      expect(fields).toEqual(expectedFields);
+    });
+  });
+  describe('getFieldConfig', () => {
+    const testCases = [
+      [{type: 'text'}, {}, {}, false],
+      [{type: 'refreshabletext', supportsRefresh: true}, {supportsRefresh: true}, {}, false],
+      [{type: 'text'}, {type: 'input'}, {}, false],
+      [{type: 'iaexpression', flowId: '1234'}, {type: 'expression'}, {_id: '1234'}, false],
+      [{type: 'radiogroup'}, {type: 'radio'}, {}, false],
+      [{type: 'uploadfile', isIAField: true}, {type: 'file'}, {}, false],
+      [{type: 'matchingcriteria'}, {type: 'matchingCriteria'}, {}, false],
+      [{type: 'integrationapprefreshableselect', supportsRefresh: true}, {type: 'select', supportsRefresh: true}, {}, false],
+      [{type: 'integrationapprefreshableselect', supportsRefresh: true, multiselect: true}, {type: 'multiselect', supportsRefresh: true}, {}, false],
+      [{type: 'iaselect', multiselect: false}, {type: 'select'}, {}, false],
+      [{type: 'iaselect', multiselect: true}, {type: 'multiselect'}, {}, false],
+      [{type: 'suitescriptsettings', supportsRefresh: true}, {type: 'select', supportsRefresh: true}, {}, true],
+      [{type: 'suitescriptsettings', multiselect: true, supportsRefresh: true}, {type: 'multiselect', supportsRefresh: true}, {}, true],
+      [{type: 'iaselect', multiselect: false}, {type: 'select'}, {}, true],
+      [{type: 'iaselect', multiselect: true}, {type: 'multiselect'}, {}, true],
+      [{type: 'salesforcereferencedfieldsia', resource: {}}, {type: 'referencedFieldsDialog'}, {}, false],
+      [{type: 'salesforcerelatedlistia', resource: {}}, {type: 'relatedListsDialog'}, {}, true],
+      [{type: 'suitescripttable'}, {type: 'link'}, {}, true],
+      [{type: 'staticMap'}, {type: 'staticMapWidget'}, {}, true],
+      [{type: 'textarea', multiline: true, rowsMax: 10}, {type: 'textarea'}, {}, true],
+      [{type: 'featurecheck', featureName: 'cbox', featureCheckConfig: {featureName: 'cbox'}}, {type: 'checkbox', featureCheckConfig: {featureName: 'cbox'}}, {}, true],
+      [{type: 'staticMap', defaultDisabled: true, disabled: true}, {type: 'staticMapWidget', disabled: true}, {}, true],
+      [{type: 'staticMap', visible: false, hidden: true}, {type: 'staticMapWidget', hidden: true}, {}, true],
+
+    ];
+
+    each(testCases).test(
+      'should return %o when field = %o, resource = %s and isSuiteScript = %s',
+      (expected, field, resource, isSuiteScript) => {
+        expect(getFieldConfig(field, resource, isSuiteScript)).toEqual(expected);
+      }
+    );
+  });
+  describe('refGeneration', () => {
+    const testCases = [
+      ['1234', {fieldId: '1234'}],
+      ['abc', {id: 'abc'}],
+      ['456', {formId: '456'}],
+    ];
+
+    each(testCases).test(
+      'should return %o when field = %o',
+      (expected, field) => {
+        expect(refGeneration(field)).toEqual(expected);
+      }
+    );
+  });
+  describe('convertFieldsToFieldReferneceObj', () => {
+    const testCases = [
+      [{a: {}, 1234: {fieldId: '1234'}}, {a: {}}, {fieldId: '1234'}],
+      [{b: {}, abc: {id: 'abc'}}, {b: {}}, {id: 'abc'}],
+      [{c: {}, 456: {formId: '456'}}, {c: {}}, {formId: '456'}],
+    ];
+
+    each(testCases).test(
+      'should return %o when acc = %o and curr = %o',
+      (expected, acc, curr) => {
+        expect(convertFieldsToFieldReferneceObj(acc, curr)).toEqual(expected);
+      }
+    );
+  });
+  describe('integrationSettingsToDynaFormMetadata', () => {
+    test('should return null if metadata is null ', () => {
+      const res = integrationSettingsToDynaFormMetadata();
+
+      expect(res).toEqual(null);
+    });
+    test('should return null if metadata is empty object ', () => {
+      const res = integrationSettingsToDynaFormMetadata({});
+
+      expect(res).toEqual(null);
+    });
+    test('should get dyna form data from integration settings  for given metadata with fields', () => {
+      const meta = {fields: [{label: 'Unique key for an Item in NetSuite', value: 'itemid', tooltip: 'Select the NetSuite field that holds the unique ke…sk.com/hc/en-us/articles/360033312132', type: 'select', name: 'general_state_invokeSKUFieldsAction_listNSItemMetadat'}, {label: 'Set Go-Live date', name: 'abc', required: false, value: '', tooltip: 'The  is the day when you turn off before the  sync via version v2.', type: 'date'}], sections: ''};
+      const res = integrationSettingsToDynaFormMetadata(meta, '1234', false);
+      const expected = {actions: [{id: 'saveintegrationsettings'}], fieldMap: {abc: {_integrationId: '1234', helpText: 'The  is the day when you turn off before the  sync via version v2.', id: 'abc', label: 'Set Go-Live date', name: '/abc', options: [{items: []}], required: false, tooltip: 'The  is the day when you turn off before the  sync via version v2.', type: 'date', value: ''}, general_state_invokeSKUFieldsAction_listNSItemMetadat: {_integrationId: '1234', helpText: 'Select the NetSuite field that holds the unique ke…sk.com/hc/en-us/articles/360033312132', id: 'general_state_invokeSKUFieldsAction_listNSItemMetadat', label: 'Unique key for an Item in NetSuite', multiselect: false, name: '/general_state_invokeSKUFieldsAction_listNSItemMetadat', options: [{items: []}], tooltip: 'Select the NetSuite field that holds the unique ke…sk.com/hc/en-us/articles/360033312132', type: 'iaselect', value: 'itemid'}}, layout: {containers: [{containers: [{fields: ['general_state_invokeSKUFieldsAction_listNSItemMetadat']}, {fields: ['abc']}], label: 'Advanced'}], type: 'collapse'}};
+
+      expect(res).toEqual(expected);
+    });
+    test('should get dynaformdata from integration settings  for given metadata with sections', () => {
+      const meta = { sections: [{title: 'Oppurtuniry', fields: [{label: 'Unique key for an Item in NetSuite', value: 'itemid', tooltip: 'Select the NetSuite field that holds the unique ke…sk.com/hc/en-us/articles/360033312132', type: 'select', name: 'general_state_invokeSKUFieldsAction_listNSItemMetadat'}, {label: 'Set Go-Live date', name: 'abc', required: false, value: '', tooltip: 'The  is the day when you turn off before the  sync via version v2.', type: 'date'}]}]};
+      const res = integrationSettingsToDynaFormMetadata(meta, '1234', false, {isSuiteScriptIntegrator: true});
+      const expected = {actions: [], fieldMap: {abc: {_integrationId: '1234', helpText: 'The  is the day when you turn off before the  sync via version v2.', id: 'abc', label: 'Set Go-Live date', name: '/abc', options: [{items: []}], required: false, tooltip: 'The  is the day when you turn off before the  sync via version v2.', type: 'date', value: ''}, general_state_invokeSKUFieldsAction_listNSItemMetadat: {_integrationId: '1234', helpText: 'Select the NetSuite field that holds the unique ke…sk.com/hc/en-us/articles/360033312132', id: 'general_state_invokeSKUFieldsAction_listNSItemMetadat', label: 'Unique key for an Item in NetSuite', multiselect: false, name: '/general_state_invokeSKUFieldsAction_listNSItemMetadat', options: [{items: []}], tooltip: 'Select the NetSuite field that holds the unique ke…sk.com/hc/en-us/articles/360033312132', type: 'iaselect', value: 'itemid'}}, layout: {containers: [{containers: [{collapsed: true, containers: [{fields: ['general_state_invokeSKUFieldsAction_listNSItemMetadat']}, {fields: ['abc']}], label: 'Oppurtuniry'}], label: 'Advanced', type: 'suitScriptTabIA'}], type: 'collapse'}};
+
+      expect(res).toEqual(expected);
     });
   });
 });
