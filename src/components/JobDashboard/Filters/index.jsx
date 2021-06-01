@@ -25,17 +25,18 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
-    padding: theme.spacing(0, 0, 1.5, 2),
+    paddingBottom: theme.spacing(1.5),
     backgroundColor: theme.palette.common.white,
+    overflowX: 'auto',
   },
   filterContainer: {
-    padding: theme.spacing(2, 0),
+    padding: theme.spacing(2, 0, 2, 2),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderWidth: [[1, 0]],
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-
+    minWidth: '1200px',
     '& > *': {
       marginRight: 10,
       '&:first-child': {

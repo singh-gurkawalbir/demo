@@ -14,6 +14,7 @@ const attachSuiteScriptHooks = (metadata, resourceType, defaultValues, isNSApiVe
       id: 'suiteScript-header',
       name: 'suiteScript-header',
       type: 'labeltitle',
+      disablePopover: true,
       label: `SuiteScript Hooks (NetSuite ${
         resourceType === 'exports' ? 'Exports' : 'Imports'
       } Only)`,
