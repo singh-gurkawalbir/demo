@@ -21,7 +21,7 @@ export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
     return undefined;
   }
   if (response?.signedURL) {
-    openExternalUrl({url: response?.signedURL});
+    yield call(openExternalUrl, { url: response.signedURL });
   }
 }
 
