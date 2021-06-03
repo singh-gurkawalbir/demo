@@ -22,12 +22,15 @@
     -webkit-box-shadow: none;
     box-shadow: none;
   }
-  
+  .query-builder .glyphicon{
+    font-style: normal;
+    font-size: 16px;
+  }
   .query-builder .glyphicon-check:before {
-    content: '\e067';
+    content: '\2611';
   }
   .query-builder .glyphicon-unchecked:before {
-    content: '';
+    content: '\2610';
   }
   .query-builder .glyphicon-remove:before {
     content: '\2715';

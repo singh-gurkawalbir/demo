@@ -3508,12 +3508,6 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.resourceFormField test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceFormField()).toEqual();
-    });
-  });
-
   describe('selectors.auditLogs test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.auditLogs({}, 'flows', 'id')).toEqual({count: 0, logs: [], totalCount: 0});
@@ -5043,6 +5037,45 @@ describe('resource region selector testcases', () => {
           title: 'Miscellaneous',
         },
       ]);
+    });
+  });
+
+  describe('selectors.getResourceType saga', () => {
+    const state = {
+      session: {
+        resource: {
+          'res-id1': 'temp-id1',
+          'res-id2': 'temp-id2',
+        },
+      },
+      data: {
+        resources: {
+          imports: [{
+            name: 'import name 1',
+            _id: 'import1',
+          }, {
+            name: 'import name 2',
+            _id: 'temp-id1',
+          }],
+          exports: [{
+            name: 'export name 1',
+            _id: 'temp-id2',
+          }],
+        },
+      },
+    };
+
+    test('should return exports if passed resource type is pageGenerator', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageGenerator', resourceId: 'res-123' })).toEqual('exports');
+    });
+    test('should return imports if passed resource type is pageProcessor and an import resource exists with that id', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id1' })).toEqual('imports');
+    });
+    test('should return exports if passed resource type is pageProcessor and no import resource exists with that id', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id2' })).toEqual('exports');
+    });
+    test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toEqual('imports');
     });
   });
 });

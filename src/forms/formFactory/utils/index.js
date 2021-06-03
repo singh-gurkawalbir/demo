@@ -28,56 +28,6 @@ export const defaultPatchSetConverter = values =>
   }));
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
-const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
-  if (!meta || !meta.layout || !meta.fieldMap) return null;
-
-  const { layout, fieldMap } = meta;
-  const { fields, containers } = layout;
-
-  if (fields && fields.length > 0) {
-    const foundFieldIndex = fields.findIndex(f => byId(fieldMap[f], id));
-
-    if (foundFieldIndex !== -1) {
-      let res = queryRes;
-
-      res += `/fields/${foundFieldIndex + offset}`;
-
-      return res;
-    }
-  }
-
-  return (
-    containers &&
-    containers
-      .map((container, index) =>
-        fieldSearchQueryObj(
-          {
-            fieldMap,
-            layout: container,
-          },
-          id,
-          `${queryRes}/containers/${index}`,
-          offset
-        )
-      )
-      .reduce((acc, curr) => {
-        let res = acc;
-
-        if (!res) res = curr;
-
-        return res;
-      }, null)
-  );
-};
-
-export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
-  const baseCustomFormPath = '/customForm/form/layout';
-  const res = fieldSearchQueryObj(meta, id, baseCustomFormPath, offset);
-
-  if (!res || res === baseCustomFormPath) return null;
-
-  return res;
-};
 
 const fieldsStateToArray = fields => Object.values(fields);
 

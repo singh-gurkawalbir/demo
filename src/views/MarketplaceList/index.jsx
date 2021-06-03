@@ -74,32 +74,23 @@ const useStyles = makeStyles(theme => ({
   },
   cardFooter: {
     marginBottom: theme.spacing(1),
-    display: 'grid',
+    display: 'flex',
     paddingTop: theme.spacing(1),
-    gridTemplateColumns: '1fr 1fr',
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.secondary.light,
     position: 'absolute',
     bottom: 0,
     width: 'calc(100% - 32px)',
-  },
-  title: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    maxWidth: '88%',
-    textOverflow: 'ellipsis',
-  },
-  user: {
-    textAlign: 'right',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
+    justifyContent: 'space-between',
   },
   cardAction: {
     margin: theme.spacing(1, 0),
     padding: 0,
     position: 'absolute',
     bottom: theme.spacing(5),
+  },
+  user: {
+    maxWidth: '60%',
   },
   link: {
     paddingLeft: theme.spacing(1),
@@ -288,7 +279,7 @@ export default function MarketplaceList() {
               <Typography className={classes.title} variant="body2">
                 Integration app
               </Typography>
-              <Typography className={classes.user} variant="body2">
+              <Typography className={classes.user} variant="body2" noWrap>
                 { connector?.user?.company || connector?.user?.name || connector?.user?.email || 'Celigo'}
               </Typography>
             </div>
@@ -323,7 +314,7 @@ export default function MarketplaceList() {
               <Typography className={classes.title} variant="body2">
                 Template
               </Typography>
-              <Typography className={classes.user} variant="body2">
+              <Typography className={classes.user} variant="body2" noWrap>
                 { template?.user?.company || template?.user?.name || template?.user?.email || 'Celigo'}
               </Typography>
             </div>
