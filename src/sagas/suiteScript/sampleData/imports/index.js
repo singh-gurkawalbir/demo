@@ -82,6 +82,9 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       return yield put(
         actions.suiteScript.importSampleData.received({ ssLinkedConnectionId, integrationId, flowId, data: previewData}));
     }
+
+    return yield put(
+      actions.suiteScript.importSampleData.receivedError({ ssLinkedConnectionId, integrationId, flowId}));
   }
 }
 export const importSampleDataSagas = [
