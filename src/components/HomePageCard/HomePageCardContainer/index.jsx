@@ -81,9 +81,7 @@ export default function HomePageCardContainer({ children, onClick, isDragInProgr
         elevation={0}
         onClick={onClick} >
         <div>
-          {showGripper && (
-            <SortableHandle className={classes.gripper} />
-          )}
+          <SortableHandle className={classes.gripper} isVisible={showGripper} />
           {children}
         </div>
       </Paper>

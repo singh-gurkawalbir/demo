@@ -23,11 +23,6 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr 1fr auto',
     marginBottom: 6,
   },
-  dragIconWrapper: {
-    cursor: 'move',
-    background: 'none',
-    minWidth: theme.spacing(3.5),
-  },
   dynaField: {
     flex: 1,
   },

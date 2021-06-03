@@ -8,19 +8,14 @@ import SortableHandle from '../../../Sortable/SortableHandle';
 
 const emptySet = {};
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   rowWrapper: {
     display: 'flex',
-  },
-  dragIconWrapper: {
-    minWidth: theme.spacing(3.5),
-    cursor: 'move',
-    background: 'none',
   },
   rowContainer: {
     flexGrow: 1,
   },
-}));
+});
 
 export default function KeyValueRow(props) {
   const {
@@ -72,11 +67,7 @@ export default function KeyValueRow(props) {
       onMouseLeave={handleOnMouseLeave}
     >
       {enableSorting && (
-        <div className={compClasses.dragIconWrapper}>
-          {showGripper && (
-            <SortableHandle />
-          )}
-        </div>
+        <SortableHandle isVisible={showGripper} />
       )}
       <div
         className={clsx(classes.rowContainer, compClasses.rowContainer)}

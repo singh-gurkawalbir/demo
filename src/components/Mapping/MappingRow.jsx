@@ -29,11 +29,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     alignItems: 'center',
   },
-  dragIconWrapper: {
-    cursor: 'move',
-    background: 'none',
-    minWidth: theme.spacing(3.5),
-  },
   mapField: {
     display: 'flex',
     position: 'relative',
@@ -229,9 +224,7 @@ export default function MappingRow({
         onMouseLeave={handleOnMouseLeave}
         className={classes.rowContainer}>
         <div className={classes.innerRow}>
-          <div className={classes.dragIconWrapper}>
-            {showGripper && (<SortableHandle />)}
-          </div>
+          <SortableHandle isVisible={showGripper} />
           <div
             data-public
             className={clsx(classes.childHeader, classes.mapField, {
