@@ -412,13 +412,7 @@ describe('EM2.0 metadata sagas', () => {
 
       expectSaga(downloadRetryData, { flowId, resourceId, retryDataKey })
         .provide([
-          [call(apiCallWithRetry, {
-            path: `/flows/${flowId}/${resourceId}/${retryDataKey}/signedURL`,
-            opts: {
-              method: 'GET',
-            },
-            hidden: true,
-          }), response],
+          [matchers.call.fn(apiCallWithRetry), response],
         ])
         .call(openExternalUrl, { url: response.signedURL })
         .run();
