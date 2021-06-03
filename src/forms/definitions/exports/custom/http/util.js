@@ -230,7 +230,7 @@ export function fieldMeta({ resource, assistantData }) {
           parameters: operationDetails.queryParameters,
           oneMandatoryQueryParamFrom:
             operationDetails.oneMandatoryQueryParamFrom,
-          value: assistantConfig.queryParams,
+          value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&
@@ -247,7 +247,7 @@ export function fieldMeta({ resource, assistantData }) {
           label: operationDetails.bodyParametersLabel,
           paramLocation: PARAMETER_LOCATION.BODY,
           parameters: operationDetails.bodyParameters,
-          value: assistantConfig.bodyParams,
+          value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.bodyParams,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&

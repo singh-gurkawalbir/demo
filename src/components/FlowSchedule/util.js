@@ -133,25 +133,7 @@ export const getCronExpression = (data, scheduleStartMinute) => {
       break;
     case 'twice_daily':
       toReturn[MINUTES] = '0';
-
-      if (!data.startTime && !data.endTime) {
-        toReturn[HOURS] = '*/12';
-      } else {
-        toReturn[HOURS] = getHours(
-          data.startTime
-            ? data.startTime
-            : moment()
-              .startOf('day')
-              .format('LT'),
-          data.endTime
-            ? data.endTime
-            : moment()
-              .endOf('day')
-              .format('LT'),
-          12 * 60
-        );
-      }
-
+      toReturn[HOURS] = `${getHoursValue(moment(data.startTime, 'LT').format('LT'))},${getHoursValue(moment(data.endTime, 'LT').format('LT'))}`;
       toReturn[DATE] = '?';
       toReturn[WEEKDAY] = data.daysToRunOn ? data.daysToRunOn.toString() : '*';
       break;
@@ -473,10 +455,17 @@ export const getMetadata = ({
         label: 'Start time',
         helpKey: 'flow.startTime',
         skipSort: true,
+        missingValueMessage: 'Please select both a start time and an end time for your flow.',
         defaultValue: resource && resource.startTime,
         options: [
           {
             items: startTimeOptions,
+          },
+        ],
+        requiredWhen: [
+          {
+            field: 'frequency',
+            is: ['twice_daily'],
           },
         ],
         visibleWhenAll: [
@@ -497,6 +486,7 @@ export const getMetadata = ({
         label: 'End time',
         helpKey: 'flow.endTime',
         skipSort: true,
+        missingValueMessage: 'Please select both a start time and an end time for your flow.',
         defaultValue: resource && resource.endTime,
         omitWhenHidden: true,
         options: [
@@ -505,6 +495,12 @@ export const getMetadata = ({
           },
         ],
         refreshOptionsOnChangesTo: ['frequency'],
+        requiredWhen: [
+          {
+            field: 'frequency',
+            is: ['twice_daily'],
+          },
+        ],
         visibleWhenAll: [
           {
             field: 'activeTab',
@@ -816,7 +812,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
       }
 
       if (symDiff) {
-        resource.frequency = frequency[diff.toString()];
+        resource.frequency = frequency[hours.length === 2 ? '12' : diff.toString()];
         resource.startTime = moment()
           .startOf('day')
           .add(hours[0], 'h')

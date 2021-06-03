@@ -14,7 +14,6 @@ import { isNewId } from '../../utils/resource';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    wordBreak: 'break-word',
     height: '100%',
   },
   title: {

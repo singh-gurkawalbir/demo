@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   afeButton: {
-    marginTop: theme.spacing(0.75),
+    paddingTop: theme.spacing(0.75),
   },
   errorBtn: {
     color: theme.palette.error.dark,

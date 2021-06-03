@@ -1,7 +1,7 @@
 import { SENSITIVE_DATA } from './constants';
 
 export default function (id, dataPublic) {
-  if (!dataPublic) return false;
+  if (!id || !dataPublic) return false;
 
   const isSensitive = SENSITIVE_DATA.some(value => id.toLowerCase().includes(value));
 

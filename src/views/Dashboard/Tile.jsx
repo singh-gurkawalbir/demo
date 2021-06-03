@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles, Button, IconButton } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -30,6 +30,7 @@ import { getTemplateUrlName } from '../../utils/template';
 import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 import CeligoTruncate from '../../components/CeligoTruncate';
+import ActionButton from '../../components/ActionButton';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -40,12 +41,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   action: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-    color: theme.palette.secondary.light,
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
+    marginLeft: 0,
   },
   status: {
     position: 'relative',
@@ -273,29 +269,21 @@ function Tile({
             {accessLevel && (
             <Manage>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                <Tooltip
+                <ActionButton
+                  tooltip="You have monitor permissions"
                   data-public
-                  title="You have monitor permissions"
-                  placement="bottom">
-                  <Button
-                    color="inherit"
-                    className={classes.action}
-                    onClick={handleUsersClick}>
-                    <PermissionsMonitorIcon />
-                  </Button>
-                </Tooltip>
+                  onClick={handleUsersClick}>
+                  <PermissionsMonitorIcon />
+                </ActionButton>
               ) : (
-                <Tooltip
+                <ActionButton
+                  placement="bottom"
                   data-public
-                  title="You have manage permissions"
-                  placement="bottom">
-                  <Button
-                    color="inherit"
-                    className={classes.action}
-                    onClick={handleUsersClick}>
-                    <PermissionsManageIcon />
-                  </Button>
-                </Tooltip>
+                  tooltip="You have manage permissions"
+                  className={classes.action}
+                  onClick={handleUsersClick}>
+                  <PermissionsManageIcon />
+                </ActionButton>
               )}
             </Manage>
             )}
