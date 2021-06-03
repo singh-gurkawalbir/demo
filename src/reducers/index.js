@@ -51,7 +51,6 @@ import {
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
-import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -528,7 +527,7 @@ selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessi
 selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
 
-// #region resouce selectors
+// #region resource selectors
 
 selectors.mkTileApplications = () => createSelector(
   (_, tile) => tile,
@@ -1588,23 +1587,6 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.resourceFormField = (state, resourceType, resourceId, id) => {
-  const data = selectors.resourceData(state, resourceType, resourceId);
-
-  if (!data || !data.merged) return;
-
-  const { merged } = data;
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return;
-
-  const field = getFieldById({ meta, id });
-
-  if (!field) return;
-
-  return field;
-};
-
 selectors.auditLogs = (
   state,
   resourceType,
@@ -1914,6 +1896,28 @@ selectors.mkIntegrationFlowsByGroup = () => {
       });
     }
   );
+};
+
+selectors.getResourceType = (state, { resourceType, resourceId }) => {
+  let updatedResourceType;
+
+  if (resourceType === 'pageGenerator') {
+    updatedResourceType = 'exports';
+  } else if (resourceType === 'pageProcessor') {
+    const createdId = selectors.createdResourceId(state, resourceId);
+    const importResource = selectors.resource(state, 'imports', createdId);
+
+    // it should be either an export or an import
+    if (importResource) {
+      updatedResourceType = 'imports';
+    } else {
+      updatedResourceType = 'exports';
+    }
+  } else {
+    updatedResourceType = resourceType;
+  }
+
+  return updatedResourceType;
 };
 
 // #endregion resource selectors
@@ -2501,23 +2505,6 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
 };
 
 // #endregion integrationApps selectors
-
-selectors.resourceFormField = (state, resourceType, resourceId, id) => {
-  const data = selectors.resourceData(state, resourceType, resourceId);
-
-  if (!data || !data.merged) return;
-
-  const { merged } = data;
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return;
-
-  const field = getFieldById({ meta, id });
-
-  if (!field) return;
-
-  return field;
-};
 
 // #region PUBLIC ACCOUNTS SELECTORS
 

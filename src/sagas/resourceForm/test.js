@@ -6,11 +6,10 @@ import { throwError } from 'redux-saga-test-plan/providers';
 import { APIException } from '../api';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
-import { getResource, commitStagedChanges } from '../resources';
+import { commitStagedChanges } from '../resources';
 import { uploadRawData } from '../uploadFile';
 import {
   SCOPES,
-  runHook,
   createFormValuesPatchSet,
   saveDataLoaderRawData,
   deleteUISpecificValues,
@@ -19,7 +18,6 @@ import {
   submitFormValues,
   getFlowUpdatePatchesForNewPGorPP,
   skipRetriesPatches,
-  getResourceType,
   touchFlow,
   updateFlowDoc,
   submitResourceForm,
@@ -46,64 +44,6 @@ const apiError = throwError(new APIException({
 describe('resourceForm sagas', () => {
   describe('patchFormField saga', () => {});
 
-  describe('runHook saga', () => {
-    const hook = { entryFunction: 'test', scriptId: '123' };
-    const data = {
-      id: 123,
-      name: 'Bob',
-    };
-
-    test('should return undefined if script data does not exist in state for given script id', () => expectSaga(runHook, {hook, data})
-      .provide([
-        [select(selectors.resourceData, 'scripts', '123'), {}],
-      ])
-      .returns(undefined)
-      .run());
-    test('should call getResource and dispatch resource received action if script content does not exist', () => expectSaga(runHook, {hook, data})
-      .provide([
-        [select(selectors.resourceData, 'scripts', '123'), {merged: {name: 'Test script'}}],
-        [matchers.call.fn(getResource), {content: 'some script code'}],
-        [matchers.call.fn(apiCallWithRetry), {}],
-      ])
-      .call(getResource, {
-        resourceType: 'scripts',
-        id: '123',
-        message: 'Loading Test script script content.',
-      })
-      .put(actions.resource.received('scripts', {content: 'some script code'}))
-      .run());
-    test('should make processors api call and return the response data if call succeeds', () => {
-      const opts = {
-        method: 'post',
-        body: {
-          rules: {
-            function: hook.entryFunction,
-            code: 'some script code',
-          },
-          options: undefined,
-          data,
-        },
-      };
-
-      return expectSaga(runHook, {hook, data})
-        .provide([
-          [select(selectors.resourceData, 'scripts', '123'), {merged: {name: 'Test script', content: 'some script code'}}],
-          [matchers.call.fn(apiCallWithRetry), {data: {id: 123, name: 'Bob', key: 1}}],
-        ])
-        .call(apiCallWithRetry, { path: '/processors/javascript', opts })
-        .returns({id: 123, name: 'Bob', key: 1})
-        .run();
-    });
-    test('should return undefined if API call fails', () => expectSaga(runHook, {hook, data})
-      .provide([
-        [select(selectors.resourceData, 'scripts', '123'), {merged: {name: 'Test script', content: 'some script code'}}],
-        [matchers.call.fn(apiCallWithRetry), apiError],
-      ])
-      .call.fn(apiCallWithRetry)
-      .returns(undefined)
-      .run());
-  });
-
   describe('createFormValuesPatchSet saga', () => {
     const resourceType = 'imports';
     const resourceId = '123';
@@ -125,27 +65,6 @@ describe('resourceForm sagas', () => {
       .returns({ patchSet: [], finalValues: null })
       .run()
     );
-    test('should call runHook if resource has custom form with preSave and return the sanitized patchSet', () => expectSaga(createFormValuesPatchSet, {resourceType, resourceId, values, scope})
-      .provide([
-        [select(
-          selectors.resourceData,
-          resourceType,
-          resourceId,
-          scope
-        ), {merged: {customForm: {preSave: {}}}}],
-        [matchers.call.fn(runHook), {'/id': 123, '/name': 'Bob'}],
-      ])
-      .call(runHook, {
-        hook: {},
-        data: values,
-      })
-      .returns({ patchSet:
-        [{ path: '/id', op: 'add', value: {} },
-          { op: 'replace', path: '/id', value: 123 },
-          { path: '/name', op: 'add', value: {} },
-          { op: 'replace', path: '/name', value: 'Bob' }],
-      finalValues: { '/id': 123, '/name': 'Bob' } })
-      .run());
     test('should call getResourceFormAssets and then preSave if exists, if resource custom form does not have preSave', async () => {
       const preSave = jest.fn().mockImplementationOnce(() => ({'/id': 123, '/name': 'Bob'}));
 
@@ -163,9 +82,8 @@ describe('resourceForm sagas', () => {
             selectors.resource,
             'connections',
             'conn1'
-          ), {}],
+          ), {_id: 'conn1'}],
         ])
-        .not.call.fn(runHook)
         .returns({ patchSet:
         [{ path: '/id', op: 'add', value: {} },
           { op: 'replace', path: '/id', value: 123 },
@@ -175,6 +93,14 @@ describe('resourceForm sagas', () => {
         .run();
 
       expect(getResourceFormAssets.mock.calls.length).toBe(1);
+      expect(getResourceFormAssets).toHaveBeenCalledWith(
+        {
+          resourceType,
+          resource: {_connectionId: 'conn1'},
+          connection: {_id: 'conn1'},
+          isNew: undefined,
+        }
+      );
     });
   });
 
@@ -209,7 +135,8 @@ describe('resourceForm sagas', () => {
         .returns(values)
         .run();
 
-      return emptyRes && nonSimpleRes;
+      expect(emptyRes).toBeTruthy();
+      expect(nonSimpleRes).toBeTruthy();
     });
     test('should return passed values if resource raw data is empty', () => expectSaga(saveDataLoaderRawData, { resourceId, resourceType, values })
       .provide([
@@ -346,7 +273,8 @@ describe('resourceForm sagas', () => {
         .returns(null)
         .run();
 
-      return emptyPatch && missingPatch;
+      expect(emptyPatch).toBeTruthy();
+      expect(missingPatch).toBeTruthy();
     });
     test('should return correct value with assistant and connection type if /newIA patch path', () => {
       const patch = [{
@@ -421,6 +349,7 @@ describe('resourceForm sagas', () => {
         [call(newIAFrameWorkPayload, {
           resourceId,
         }), null],
+        [matchers.call.fn(deleteUISpecificValues), {'/rawData': 'someValue', '/somepath': '123' }],
       ])
       .call(deleteFormViewAssistantValue, {
         resourceType: 'exports',
@@ -433,7 +362,7 @@ describe('resourceForm sagas', () => {
       .call(saveDataLoaderRawData, {
         resourceType: 'exports',
         resourceId,
-        values: {},
+        values: {'/somepath': '123'},
       })
       .run());
     test('should dispatch submitFailed action and return if createFormValuesPatchSet failed with exception', () => expectSaga(submitFormValues, { resourceType, resourceId})
@@ -601,7 +530,8 @@ describe('resourceForm sagas', () => {
         .returns([])
         .run();
 
-      return invalidType && invalidFlow;
+      expect(invalidType).toBeTruthy();
+      expect(invalidFlow).toBeTruthy();
     });
     test('should return empty array if its an existing resource and flow is already updated with its reference', () => {
       const data = {
@@ -764,37 +694,6 @@ describe('resourceForm sagas', () => {
           value: true,
         },
       ])
-      .run());
-  });
-
-  describe('getResourceType saga', () => {
-    test('should return exports if passed resource type is pageGenerator', () => expectSaga(getResourceType, { resourceType: 'pageGenerator', resourceId: 'res-123' })
-      .returns('exports')
-      .run());
-    test('should return imports if passed resource type is pageProcessor and an import resource exists with that id', () => expectSaga(getResourceType, { resourceType: 'pageProcessor', resourceId: 'res-123' })
-      .provide([
-        [select(selectors.createdResourceId, 'res-123'), 'res-123'],
-        [select(
-          selectors.resource,
-          'imports',
-          'res-123'
-        ), {}],
-      ])
-      .returns('imports')
-      .run());
-    test('should return exports if passed resource type is pageProcessor and no import resource exists with that id', () => expectSaga(getResourceType, { resourceType: 'pageProcessor', resourceId: 'res-123' })
-      .provide([
-        [select(selectors.createdResourceId, 'res-123'), 'res-123'],
-        [select(
-          selectors.resource,
-          'imports',
-          'res-123'
-        ), undefined],
-      ])
-      .returns('exports')
-      .run());
-    test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => expectSaga(getResourceType, { resourceType: 'imports', resourceId: 'res-123' })
-      .returns('imports')
       .run());
   });
 
@@ -1408,17 +1307,6 @@ describe('resourceForm sagas', () => {
         },
       };
 
-      const finalFieldMeta = {
-        name: {
-          defaultValue: 'nnnn',
-          fieldId: 'name',
-          id: 'name',
-          label: 'Name',
-          name: '/name',
-          required: true,
-        },
-      };
-
       getResourceFormAssets.mockReturnValue(defaultFormAssets);
       getFieldsWithDefaults.mockReturnValue(fieldMeta);
 
@@ -1435,18 +1323,13 @@ describe('resourceForm sagas', () => {
             resourceType,
             resourceId,
             SCOPES.VALUE
-          ), {merged: {adaptorType: 'RESTExport', customForm: {init: { entryFunction: 'main', scriptId: '999' }}}}],
-          [matchers.call.fn(runHook), finalFieldMeta],
+          ), {merged: {adaptorType: 'RESTExport'}}],
         ])
-        .call(runHook, {
-          hook: { entryFunction: 'main', scriptId: '999' },
-          data: fieldMeta,
-        })
         .put(
           actions.resourceForm.initComplete(
             resourceType,
             resourceId,
-            finalFieldMeta,
+            fieldMeta,
             true,
             undefined,
             flowId

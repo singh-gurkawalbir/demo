@@ -8,8 +8,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
-import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
-import { getResource, commitStagedChanges } from '../resources';
+import { commitStagedChanges } from '../resources';
 import connectionSagas, { createPayload } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
@@ -27,48 +26,6 @@ export const SCOPES = {
 };
 
 Object.freeze(SCOPES);
-
-export function* runHook({ hook, data }) {
-  const { entryFunction, scriptId } = hook;
-  const { merged } = yield select(selectors.resourceData, 'scripts', scriptId);
-
-  // okay extracting script from the session
-  // if it isn't there, make a call to receive the resource
-  // Aren't we loading all the scripts?
-  if (!merged) return; // nothing to do.
-
-  let code = merged.content;
-
-  if (code === undefined) {
-    const origin = yield call(getResource, {
-      resourceType: 'scripts',
-      id: scriptId,
-      message: `Loading ${merged.name} script content.`,
-    });
-
-    yield put(actions.resource.received('scripts', origin));
-    code = origin.content;
-  }
-
-  const path = '/processors/javascript';
-  const opts = {
-    method: 'post',
-    body: processorLogic.requestBody({
-      data,
-      rule: {code,
-        entryFunction,
-      },
-    }),
-  };
-
-  try {
-    const results = yield call(apiCallWithRetry, { path, opts });
-
-    return results.data;
-  } catch (e) {
-    return undefined;
-  }
-}
 
 export function* createFormValuesPatchSet({
   resourceType,
@@ -91,43 +48,32 @@ export function* createFormValuesPatchSet({
     resourceType,
     resourceId
   );
-  const { customForm } = resource;
   let finalValues = values;
 
-  if (customForm?.preSave) {
-    // pre-save-resource
-    // this resource has an embedded custom form.
+  let connection;
 
-    finalValues = yield call(runHook, {
-      hook: customForm.preSave,
-      data: values,
-    });
-  } else {
-    let connection;
+  if (resource?._connectionId) {
+    connection = yield select(
+      selectors.resource,
+      'connections',
+      resource._connectionId
+    );
+  }
 
-    if (resource?._connectionId) {
-      connection = yield select(
-        selectors.resource,
-        'connections',
-        resource._connectionId
-      );
-    }
+  const { preSave } = getResourceFormAssets({
+    resourceType,
+    resource,
+    connection,
+    isNew: formState.isNew,
+  });
 
-    const { preSave } = getResourceFormAssets({
-      resourceType,
-      resource,
-      connection,
-      isNew: formState.isNew,
+  if (typeof preSave === 'function') {
+    const iClients = yield select(selectors.resourceList, {
+      type: 'iClients',
     });
 
-    if (typeof preSave === 'function') {
-      const iClients = yield select(selectors.resourceList, {
-        type: 'iClients',
-      });
-
-      // stock preSave handler present...
-      finalValues = preSave(values, resource, {iClients});
-    }
+    // stock preSave handler present...
+    finalValues = preSave(values, resource, {iClients});
   }
 
   const patchSet = sanitizePatchSet({
@@ -252,11 +198,11 @@ export function* submitFormValues({
   match,
 }) {
   let formValues = { ...values };
-  const isNewIA = yield call(newIAFrameWorkPayload, {
+  const isNewIAPayload = yield call(newIAFrameWorkPayload, {
     resourceId,
   });
 
-  if (isNewIA?.installStepConnection) {
+  if (isNewIAPayload?.installStepConnection) {
     // UI will not create a connection in New IA installer. Connection payload will be given to backend.
     // Backend will create a connection and connection id will get back in response.
     const connectionPayload = yield call(createPayload, {
@@ -556,32 +502,6 @@ export function* skipRetriesPatches(
   ];
 }
 
-export function* getResourceType({ resourceType, resourceId }) {
-  let updatedResourceType;
-
-  if (resourceType === 'pageGenerator') {
-    updatedResourceType = 'exports';
-  } else if (resourceType === 'pageProcessor') {
-    const createdId = yield select(selectors.createdResourceId, resourceId);
-    const importResource = yield select(
-      selectors.resource,
-      'imports',
-      createdId
-    );
-
-    // it should be either an export or an import
-    if (importResource) {
-      updatedResourceType = 'imports';
-    } else {
-      updatedResourceType = 'exports';
-    }
-  } else {
-    updatedResourceType = resourceType;
-  }
-
-  return updatedResourceType;
-}
-
 export function* touchFlow(flowId, resourceType, resourceId) {
   const out = [];
   const flow = yield select(selectors.resource, 'flows', flowId);
@@ -626,10 +546,7 @@ export function* touchFlow(flowId, resourceType, resourceId) {
 }
 
 export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
-  const updatedResourceType = yield call(getResourceType, {
-    resourceType,
-    resourceId,
-  });
+  const updatedResourceType = yield select(selectors.getResourceType, {resourceType, resourceId });
   let flowPatches = yield call(
     getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
@@ -834,7 +751,7 @@ export function* initFormValues({
 
     return; // nothing to do.
   }
-  const { assistant, assistantMetadata, _connectionId, customForm } = resource;
+  const { assistant, assistantMetadata, _connectionId } = resource;
   const adaptorType = ['RESTExport', 'RESTImport'].includes(resource.adaptorType) ? 'rest' : 'http';
 
   let assistantData;
@@ -874,7 +791,7 @@ export function* initFormValues({
       connection,
     });
 
-    const form = customForm?.form ? customForm.form : defaultFormAssets.fieldMeta;
+    const form = defaultFormAssets.fieldMeta;
 
     const fieldMeta = getFieldsWithDefaults(
       form,
@@ -884,17 +801,7 @@ export function* initFormValues({
     );
     let finalFieldMeta = fieldMeta;
 
-    if (customForm?.init) {
-      // pre-save-resource
-      // this resource has an embedded custom form.
-      // TODO: if there is an error here we should show that message
-      // in the UI.....and point them to the link to edit the
-      // script or maybe prevent them from saving the script
-      finalFieldMeta = yield call(runHook, {
-        hook: customForm.init,
-        data: fieldMeta,
-      });
-    } else if (typeof defaultFormAssets.init === 'function') {
+    if (typeof defaultFormAssets.init === 'function') {
       // standard form init fn...
 
       finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
