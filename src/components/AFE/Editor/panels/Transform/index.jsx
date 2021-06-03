@@ -98,6 +98,7 @@ export default function TransformPanel({ editorId }) {
       value={rule}
       keyName="extract"
       valueName="generate"
+      enableSorting
     />
   );
 }

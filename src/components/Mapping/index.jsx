@@ -68,14 +68,12 @@ const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
               )}
             </div>
           </div>
-
           <PreviewPanel
             importId={importId}
             disabled={disabled}
             subRecordMappingId={subRecordMappingId} />
         </div>
       </DrawerContent>
-
       <DrawerFooter>
         <ButtonPanel
           flowId={flowId}
