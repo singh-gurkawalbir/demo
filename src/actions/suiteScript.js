@@ -250,6 +250,12 @@ export default {
     request: ({ssLinkedConnectionId, integrationId, flowId, options}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST, {
       ssLinkedConnectionId, integrationId, flowId, options,
     }),
+    received: ({ssLinkedConnectionId, integrationId, flowId, data}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED, {
+      ssLinkedConnectionId, integrationId, flowId, data,
+    }),
+    receivedError: ({ssLinkedConnectionId, integrationId, flowId}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED_ERROR, {
+      ssLinkedConnectionId, integrationId, flowId,
+    }),
   },
   sampleData: {
     request: ({
