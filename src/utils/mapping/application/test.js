@@ -273,6 +273,45 @@ describe('tests for netsuite mapping util', () => {
       ]);
     });
 
+    test('should mark all the required mappings as isRequired true if selected import operation is attach', () => {
+      const mappings = {
+        fields: [
+          {
+            generate: 'celigo_nlobjAttachToId',
+          },
+          {
+            generate: 'celigo_nlobjAttachedType',
+          },
+          {
+            generate: 'celigo_nlobjAttachedId',
+          },
+        ],
+        lists: [],
+      };
+
+      expect(util.getFieldsAndListMappings({
+        mappings,
+        recordType,
+        resource: nsImportResourceForAttach,
+      })).toEqual([
+        {
+          generate: 'celigo_nlobjAttachToId',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'celigo_nlobjAttachedType',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'celigo_nlobjAttachedId',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+      ]);
+    });
+
     test('should remove detach related mappings if selected import operation is attach', () => {
       const mappings = {
         fields: [
@@ -340,6 +379,45 @@ describe('tests for netsuite mapping util', () => {
         },
         {
           generate: 'celigo_nlobjAttachDetachAttributesField',
+        },
+      ]);
+    });
+
+    test('should mark all the required mappings as isRequired true if selected import operation is attach', () => {
+      const mappings = {
+        fields: [
+          {
+            generate: 'celigo_nlobjDetachFromId',
+          },
+          {
+            generate: 'celigo_nlobjDetachedType',
+          },
+          {
+            generate: 'celigo_nlobjDetachedId',
+          },
+        ],
+        lists: [],
+      };
+
+      expect(util.getFieldsAndListMappings({
+        mappings,
+        recordType,
+        resource: nsImportResourceForDetach,
+      })).toEqual([
+        {
+          generate: 'celigo_nlobjDetachFromId',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'celigo_nlobjDetachedType',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'celigo_nlobjDetachedId',
+          isRequired: true,
+          useAsAnInitializeValue: false,
         },
       ]);
     });
@@ -564,12 +642,12 @@ describe('tests for netsuite mapping util', () => {
             {
               generate: 'itemid',
               internalId: false,
-              extract: '[*.itemid]',
+              extract: '*.[item id]',
             },
             {
               generate: 'quantity',
               internalId: false,
-              extract: '[0.quantity]',
+              extract: '0.[quantity]',
             },
           ],
         }],
@@ -582,15 +660,17 @@ describe('tests for netsuite mapping util', () => {
         isGroupedSampleData: true,
       })).toEqual([
         {
-          extract: 'itemid',
+          extract: 'item id',
           generate: 'item[*].itemid',
           internalId: false,
+          useIterativeRow: true,
         },
         {
-          extract: 'quantity',
+          extract: '[quantity]',
           generate: 'item[*].quantity',
           internalId: false,
           useFirstRow: true,
+          useIterativeRow: true,
         },
       ]);
     });
@@ -717,6 +797,9 @@ describe('tests for netsuite mapping util', () => {
         {
           generate: 'trandate',
           hardCodedValue: '11/11/2021',
+        },
+        {
+          extract: 'skip if no generate',
         },
       ];
 
@@ -917,6 +1000,67 @@ describe('tests for netsuite mapping util', () => {
       });
     });
 
+    test('should keep the addressbook field in generate as is with . notation and trim for item subtype mapping', () => {
+      const mappings = [
+        {
+          generate: 'shippingaddress.city',
+          extract: 'city',
+        },
+        {
+          generate: 'subtype.internalid',
+          hardCodedValue: 'Resale',
+        },
+      ];
+
+      expect(util.generateMappingFieldsAndList({
+        mappings,
+        recordType: 'inventoryitem',
+        importResource: nsImportResource,
+      })).toEqual({
+        fields: [
+          {
+            generate: 'shippingaddress.city',
+            extract: 'city',
+          },
+          {
+            generate: 'subtype',
+            hardCodedValue: 'Resale',
+            internalId: true,
+          },
+        ],
+        lists: [
+        ],
+      });
+    });
+
+    test('should add *. prefix to the extract of the mapping in case of groupedSampledData', () => {
+      const mappings = [
+        {
+          generate: 'item[*].name',
+          extract: 'name',
+        },
+      ];
+
+      expect(util.generateMappingFieldsAndList({
+        mappings,
+        recordType,
+        importResource: nsImportResource,
+        isGroupedSampleData: true,
+      })).toEqual({
+        fields: [
+        ],
+        lists: [{
+          fields: [{
+            extract: '*.name',
+            generate: 'name',
+            internalId: false,
+          }],
+          generate: 'item',
+        },
+        ],
+      });
+    });
+
     test('should delete subrecord mapping special keys added and shift subrecord mapping to last', () => {
       const mappings = [
         {
@@ -1038,6 +1182,36 @@ describe('tests for netsuite mapping util', () => {
           {
             extract: 'Name',
             generate: 'Name',
+            internalId: false,
+          },
+        ],
+        lists: [],
+      });
+    });
+
+    test('should push celigo_recordmode_dynamic to the mapping if value is true', () => {
+      const mappings = [{
+        extract: 'Name',
+        generate: 'Name',
+      }, {
+        hardCodedValue: true,
+        generate: 'celigo_recordmode_dynamic',
+      }];
+
+      expect(util.generateMappingFieldsAndList({
+        mappings,
+        recordType,
+        importResource: nsImportResource,
+      })).toEqual({
+        fields: [
+          {
+            extract: 'Name',
+            generate: 'Name',
+            internalId: false,
+          },
+          {
+            hardCodedValue: true,
+            generate: 'celigo_recordmode_dynamic',
             internalId: false,
           },
         ],
