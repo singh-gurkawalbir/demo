@@ -17,7 +17,7 @@ import {
   alterFileDefinitionRulesVisibility,
   getFieldConfig,
   refGeneration,
-  convertFieldsToFieldReferneceObj,
+  convertFieldsToFieldReferenceObj,
   integrationSettingsToDynaFormMetadata,
 } from '.';
 
@@ -1025,7 +1025,7 @@ describe('Form Utils', () => {
       });
     });
   });
-  test('should return rmpty object if there is no metadata associated with it', () => {
+  test('should return empty object if there is no metadata associated with it', () => {
     const values = {
       '/custom/Field': 'a',
       '/someField': 'b',
@@ -1517,6 +1517,17 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     });
   });
   describe('isFormTouched', () => {
+    test('should return undefined when fields is null', () => {
+      const res = isFormTouched();
+
+      expect(res).toEqual(undefined);
+    });
+    test('should return false if there are no fields at all', () => {
+      const fields = [];
+      const res = isFormTouched(fields);
+
+      expect(res).toEqual(false);
+    });
     test('should return false if fields do not have any touched field', () => {
       const fields = [{
         fieldId: 'exportData',
@@ -1540,68 +1551,32 @@ describe('integrationSettingsToDynaFormMetadata', () => {
   describe('alterFileDefinitionRulesVisibility', () => {
     test('should alter fields for filetype csv', () => {
       const fields = [{
-        defaultRequired: true,
-        defaultValue: '',
         fieldId: 'file.filedefinition.rules',
         defaultVisible: false,
-        helpKey: 'export.file.filedefinition.rules',
         id: 'file.filedefinition.rules',
         label: 'File parser helper',
-        name: '/file/filedefinition/rules',
-        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
         resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filedefinitioneditor',
         value: '',
         visible: false,
       }, {
-        defaultRequired: true,
-        defaultValue: 'csv',
         fieldId: 'file.type',
-        helpKey: 'export.file.type',
         id: 'file.type',
         label: 'File type',
-        name: '/file/type',
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filetypeselect',
         value: 'csv',
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }];
       const expectedFields = [{
-        defaultRequired: true,
-        defaultValue: '',
         fieldId: 'file.filedefinition.rules',
-        helpKey: 'export.file.filedefinition.rules',
         id: 'file.filedefinition.rules',
         label: 'File parser helper',
-        name: '/file/filedefinition/rules',
-        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
         resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filedefinitioneditor',
         value: '',
         visible: false,
         defaultVisible: false,
       }, {
-        defaultRequired: true,
-        defaultValue: 'csv',
         fieldId: 'file.type',
-        helpKey: 'export.file.type',
         id: 'file.type',
         label: 'File type',
-        name: '/file/type',
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filetypeselect',
         value: 'csv',
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }];
@@ -1612,43 +1587,19 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     });
     test('should alter fields if file definition rules contains userDefinitionId', () => {
       const fields = [{
-        defaultRequired: true,
-        defaultValue: '',
         fieldId: 'file.filedefinition.rules',
-        helpKey: 'export.file.filedefinition.rules',
         id: 'file.filedefinition.rules',
-        label: 'File parser helper',
-        name: '/file/filedefinition/rules',
-        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filedefinitioneditor',
         value: '',
         userDefinitionId: '1234',
         visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
       }, {
-        defaultRequired: true,
-        defaultValue: 'csv',
         fieldId: 'file.type',
-        helpKey: 'export.file.type',
         id: 'file.type',
-        label: 'File type',
-        name: '/file/type',
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filetypeselect',
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }, {
         fieldId: 'edix12.format',
         format: 'edi',
         id: 'edix12.format',
-        name: '/edix12/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       },
@@ -1656,9 +1607,6 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'fixed.format',
         format: 'edi',
         id: 'fixed.format',
-        name: '/fixed/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         defaultVisible: false,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
@@ -1667,55 +1615,28 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'edifact.format',
         format: 'edifact',
         id: 'edifact.format',
-        name: '/edifact/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       },
       ];
 
       const expectedFields = [{
-        defaultRequired: true,
-        defaultValue: '',
         fieldId: 'file.filedefinition.rules',
-        helpKey: 'export.file.filedefinition.rules',
         id: 'file.filedefinition.rules',
-        label: 'File parser helper',
-        name: '/file/filedefinition/rules',
-        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filedefinitioneditor',
         value: '',
         visible: false,
         userDefinitionId: '1234',
         defaultVisible: false,
         visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
       }, {
-        defaultRequired: true,
-        defaultValue: 'csv',
         fieldId: 'file.type',
-        helpKey: 'export.file.type',
         id: 'file.type',
-        label: 'File type',
-        name: '/file/type',
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filetypeselect',
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }, {
         fieldId: 'edix12.format',
         defaultVisible: false,
         format: 'edi',
         id: 'edix12.format',
-        name: '/edix12/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: false,
       },
       {
@@ -1723,9 +1644,6 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         format: 'edi',
         defaultVisible: false,
         id: 'fixed.format',
-        name: '/fixed/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: false,
       },
       {
@@ -1733,9 +1651,6 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'edifact.format',
         format: 'edifact',
         id: 'edifact.format',
-        name: '/edifact/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: false,
       },
       ];
@@ -1746,52 +1661,20 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     });
     test('should alter fields if file definition is selected as file type', () => {
       const fields = [{
-        defaultRequired: true,
-        defaultValue: '',
         fieldId: 'file.filedefinition.rules',
-        helpKey: 'export.file.filedefinition.rules',
         id: 'file.filedefinition.rules',
-        label: 'File parser helper',
-        name: '/file/filedefinition/rules',
-        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filedefinitioneditor',
         value: '',
         visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
       }, {
-        defaultRequired: true,
         value: 'filedefinition',
         fieldId: 'file.type',
-        helpKey: 'export.file.type',
         id: 'file.type',
-        label: 'File type',
-        name: '/file/type',
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filetypeselect',
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       },
       {
-        defaultRequired: true,
-        defaultValue: '',
-        disabled: false,
         fieldId: 'edix12.format',
-        flowId: undefined,
         format: 'edi',
-        helpKey: 'export.edix12.format',
         id: 'edix12.format',
-        integrationId: undefined,
-        label: 'EDI x12 format',
-        name: '/edix12/format',
-        required: true,
-        resourceType: 'exports',
-        touched: false,
-        type: 'filedefinitionselect',
         value: '',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
@@ -1800,9 +1683,6 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'fixed.format',
         format: 'edi',
         id: 'fixed.format',
-        name: '/fixed/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       },
@@ -1810,61 +1690,26 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'edifact.format',
         format: 'edifact',
         id: 'edifact.format',
-        name: '/edifact/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }];
 
       const expectedFields = [{
-        defaultRequired: true,
-        defaultValue: '',
         defaultVisible: false,
         fieldId: 'file.filedefinition.rules',
-        helpKey: 'export.file.filedefinition.rules',
         id: 'file.filedefinition.rules',
-        label: 'File parser helper',
-        name: '/file/filedefinition/rules',
-        refreshOptionsOnChangesTo: ['edix12.format', 'fixed.format', 'edifact.format', 'file.fileDefinition.resourcePath', 'file.type'],
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filedefinitioneditor',
         value: '',
         visible: false,
       }, {
-        defaultRequired: true,
         value: 'filedefinition',
         fieldId: 'file.type',
-        helpKey: 'export.file.type',
         id: 'file.type',
-        label: 'File type',
-        name: '/file/type',
-        required: true,
-        resourceId: '60ab7cd46d5f912197362ca7',
-        resourceType: 'exports',
-        sampleData: 'orderId,ItemName,Quantity,Vendor,Place,Price\n1234,Horlicks,6,Nestle,Bangalore,250\n2345,Milk,2,Nandini,Dwd,36\n2345,Biscuits,5,Borboun,hyd,25\n1235,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250\n7881,Bournvita,6,Cadburry,Hbl,250',
-        type: 'filetypeselect',
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       },
       {
-        defaultRequired: true,
-        defaultValue: '',
-        disabled: false,
         fieldId: 'edix12.format',
-        flowId: undefined,
         format: 'edi',
-        helpKey: 'export.edix12.format',
         id: 'edix12.format',
-        integrationId: undefined,
-        label: 'EDI x12 format',
-        name: '/edix12/format',
-        required: true,
-        resourceType: 'exports',
-        touched: false,
-        type: 'filedefinitionselect',
         value: '',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
@@ -1873,9 +1718,6 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'fixed.format',
         format: 'edi',
         id: 'fixed.format',
-        name: '/fixed/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       },
@@ -1883,9 +1725,6 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         fieldId: 'edifact.format',
         format: 'edifact',
         id: 'edifact.format',
-        name: '/edifact/format',
-        resourceType: 'exports',
-        type: 'filedefinitionselect',
         visible: true,
         visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }];
@@ -1944,7 +1783,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
       }
     );
   });
-  describe('convertFieldsToFieldReferneceObj', () => {
+  describe('convertFieldsToFieldReferenceObj', () => {
     const testCases = [
       [{a: {}, 1234: {fieldId: '1234'}}, {a: {}}, {fieldId: '1234'}],
       [{b: {}, abc: {id: 'abc'}}, {b: {}}, {id: 'abc'}],
@@ -1954,7 +1793,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     each(testCases).test(
       'should return %o when acc = %o and curr = %o',
       (expected, acc, curr) => {
-        expect(convertFieldsToFieldReferneceObj(acc, curr)).toEqual(expected);
+        expect(convertFieldsToFieldReferenceObj(acc, curr)).toEqual(expected);
       }
     );
   });

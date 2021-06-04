@@ -112,7 +112,7 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
-export const isFormTouched = fields => fields.some(field => field.touched);
+export const isFormTouched = fields => fields?.some(field => field.touched);
 
 export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
   fieldsStateToArray(fields)
@@ -288,7 +288,7 @@ export const sanitizePatchSet = ({
 };
 
 // #BEGIN_REGION Integration App form utils
-export const convertFieldsToFieldReferneceObj = (acc, curr) => {
+export const convertFieldsToFieldReferenceObj = (acc, curr) => {
   if (!curr.fieldId && !curr.id && !curr.formId) {
     throw new Error('No fieldId , id or formId', curr);
   }
@@ -587,7 +587,7 @@ export const integrationSettingsToDynaFormMetadata = (
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
-      convertFieldsToFieldReferneceObj,
+      convertFieldsToFieldReferenceObj,
       {}
     );
     finalData.layout = {};
@@ -602,7 +602,7 @@ export const integrationSettingsToDynaFormMetadata = (
         resource,
         ssLinkedConnectionId,
         propsSpreadToFields
-      ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
+      ).reduce(convertFieldsToFieldReferenceObj, finalData.fieldMap || {});
     });
 
     // check for title
