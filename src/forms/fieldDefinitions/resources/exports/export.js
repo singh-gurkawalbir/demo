@@ -134,6 +134,7 @@ export default {
 
       return [];
     },
+    showLookup: false,
   },
   oneToMany: {
     type: 'radiogroup',
