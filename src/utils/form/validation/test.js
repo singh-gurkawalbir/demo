@@ -669,7 +669,7 @@ describe('validator', () => {
   });
 
   describe('someAreTrue', () => {
-    test('when both field conditions are not meet return errored message', () => {
+    test('when both field conditions are not met return errored message', () => {
       const inValidSomeAreTrueField = {
         message: 'some error',
         conditions: [
@@ -710,11 +710,11 @@ describe('validator', () => {
         ],
       };
 
-      expect(someAreTrue({allFields: [fieldA, fieldB], ...validSomeAreTrueField})).toBe(undefined);
+      expect(someAreTrue({allFields: [fieldA, fieldB], ...validSomeAreTrueField})).toBeUndefined();
     });
   });
   describe('noneAreTrue', () => {
-    test('when both field conditions are not meet return undefined', () => {
+    test('when both field conditions are not met return undefined', () => {
       const inValidSomeAreTrueField = {
         message: 'some error',
         conditions: [
@@ -733,9 +733,9 @@ describe('validator', () => {
         ],
       };
 
-      expect(noneAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBe(undefined);
+      expect(noneAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBeUndefined();
     });
-    test('when atleast one field condition is meet do return errored message', () => {
+    test('when atleast one field condition is met return errored message', () => {
       const validSomeAreTrueField = {
         message: 'some error',
         conditions: [
@@ -759,7 +759,7 @@ describe('validator', () => {
     });
   });
   describe('allAreTrue', () => {
-    test('when both field conditions are meet return undefined', () => {
+    test('when both field conditions are met return undefined', () => {
       const inValidSomeAreTrueField = {
         message: 'some error',
         conditions: [
@@ -778,7 +778,7 @@ describe('validator', () => {
         ],
       };
 
-      expect(allAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBe(undefined);
+      expect(allAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBeUndefined();
     });
     test('when atleast one field condition is not met return errored message', () => {
       const validSomeAreTrueField = {
