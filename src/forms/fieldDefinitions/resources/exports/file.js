@@ -72,6 +72,7 @@ export default {
 
       return 'export.file.backupPath';
     },
+    showLookup: false,
   },
   'file.encoding': {
     type: 'select',
