@@ -1557,7 +1557,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
         label: 'File parser helper',
         resourceType: 'exports',
         value: '',
-        visible: false,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
       }, {
         fieldId: 'file.type',
         id: 'file.type',
