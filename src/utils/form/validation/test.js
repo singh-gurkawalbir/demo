@@ -690,7 +690,7 @@ describe('validator', () => {
 
       expect(someAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBe('some error');
     });
-    test('when atleast one field conditions is met do not return errored message', () => {
+    test('when atleast one field condition is met do not return errored message', () => {
       const validSomeAreTrueField = {
         message: 'some error',
         conditions: [
