@@ -43,6 +43,7 @@ export default {
         is: ['true'],
       },
     ],
+    showLookup: false,
   },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
