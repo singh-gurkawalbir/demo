@@ -17,6 +17,7 @@ import {
 } from '.';
 import { REQUIRED_MESSAGE } from '../../messageStore';
 import { createField } from '../test';
+import { allAreTrue, noneAreTrue, someAreTrue } from './validator';
 
 const field1 = createField({
   id: 'one',
@@ -652,6 +653,155 @@ describe('isValue', () => {
         message: 'Fail',
       })
     ).toBe('Fail');
+  });
+});
+
+describe('validator', () => {
+  const fieldA = createField({
+    id: 'fieldA',
+    name: 'fieldA',
+    value: 'a',
+  });
+  const fieldB = createField({
+    id: 'fieldB',
+    name: 'fieldB',
+    value: 'b',
+  });
+
+  describe('someAreTrue', () => {
+    test('when both field conditions are not meet return errored message', () => {
+      const inValidSomeAreTrueField = {
+        message: 'some error',
+        conditions: [
+          {
+            field: 'fieldA',
+            is: {
+              values: ['someValue'],
+            },
+          },
+          {
+            field: 'fieldB',
+            is: {
+              values: ['someValue'],
+            },
+          },
+        ],
+      };
+
+      expect(someAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBe('some error');
+    });
+    test('when atleast one field conditions is met do not return errored message', () => {
+      const validSomeAreTrueField = {
+        message: 'some error',
+        conditions: [
+          {
+            field: 'fieldA',
+            // lets
+            is: {
+              values: ['a'],
+            },
+          },
+          {
+            field: 'fieldB',
+            is: {
+              values: ['some value'],
+            },
+          },
+        ],
+      };
+
+      expect(someAreTrue({allFields: [fieldA, fieldB], ...validSomeAreTrueField})).toBe(undefined);
+    });
+  });
+  describe('noneAreTrue', () => {
+    test('when both field conditions are not meet return undefined', () => {
+      const inValidSomeAreTrueField = {
+        message: 'some error',
+        conditions: [
+          {
+            field: 'fieldA',
+            is: {
+              values: ['someValue'],
+            },
+          },
+          {
+            field: 'fieldB',
+            is: {
+              values: ['someValue'],
+            },
+          },
+        ],
+      };
+
+      expect(noneAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBe(undefined);
+    });
+    test('when atleast one field condition is meet do return errored message', () => {
+      const validSomeAreTrueField = {
+        message: 'some error',
+        conditions: [
+          {
+            field: 'fieldA',
+            // lets
+            is: {
+              values: ['a'],
+            },
+          },
+          {
+            field: 'fieldB',
+            is: {
+              values: ['someValue'],
+            },
+          },
+        ],
+      };
+
+      expect(noneAreTrue({allFields: [fieldA, fieldB], ...validSomeAreTrueField})).toBe('some error');
+    });
+  });
+  describe('allAreTrue', () => {
+    test('when both field conditions are meet return undefined', () => {
+      const inValidSomeAreTrueField = {
+        message: 'some error',
+        conditions: [
+          {
+            field: 'fieldA',
+            is: {
+              values: ['a'],
+            },
+          },
+          {
+            field: 'fieldB',
+            is: {
+              values: ['b'],
+            },
+          },
+        ],
+      };
+
+      expect(allAreTrue({allFields: [fieldA, fieldB], ...inValidSomeAreTrueField})).toBe(undefined);
+    });
+    test('when atleast one field condition is not met return errored message', () => {
+      const validSomeAreTrueField = {
+        message: 'some error',
+        conditions: [
+          {
+            field: 'fieldA',
+            // lets
+            is: {
+              values: ['a'],
+            },
+          },
+          {
+            field: 'fieldB',
+            is: {
+              values: ['someValue'],
+            },
+          },
+        ],
+      };
+
+      expect(allAreTrue({allFields: [fieldA, fieldB], ...validSomeAreTrueField})).toBe('some error');
+    });
   });
 });
 
