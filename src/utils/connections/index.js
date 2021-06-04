@@ -4,13 +4,14 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   let options = {};
   const expression = [];
   const integratorExpression = [];
+  const { _id, type, assistant} = connection || {};
 
-  if (hideOwnConnection) { expression.push({ _id: {$ne: connection._id} }); }
+  if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
 
-  if (RDBMS_TYPES.includes(connection.type)) {
-    expression.push({ 'rdbms.type': connection.type });
+  if (RDBMS_TYPES.includes(type)) {
+    expression.push({ 'rdbms.type': type });
   } else {
-    expression.push({ type: connection.type });
+    expression.push({ type });
   }
 
   if (connectorId) {
@@ -24,21 +25,22 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     expression.push({ _connectorId: { $exists: false } });
   }
 
-  if (connection.assistant) {
-    expression.push({ assistant: connection.assistant });
+  if (assistant) {
+    expression.push({ assistant });
 
     const andingExpressions = { $and: expression };
 
-    options = { filter: andingExpressions, appType: connection.assistant };
+    options = { filter: andingExpressions, appType: assistant };
   } else {
     const andingExpressions = { $and: expression };
 
-    options = { filter: andingExpressions, appType: connection.type };
+    options = { filter: andingExpressions, appType: type };
   }
 
   return options;
 };
-export const KBDocumentation = {http: 'https://docs.celigo.com/hc/en-us/sections/360007388192-HTTP-',
+export const KBDocumentation = {
+  http: 'https://docs.celigo.com/hc/en-us/sections/360007388192-HTTP-',
   rest: 'https://docs.celigo.com/hc/en-us/sections/360007479711-REST',
   ftp: 'https://docs.celigo.com/hc/en-us/articles/360045263152-Set-up-an-FTP-connection-',
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
@@ -50,5 +52,6 @@ export const KBDocumentation = {http: 'https://docs.celigo.com/hc/en-us/sections
   dynamodb: 'https://docs.celigo.com/hc/en-us/articles/360039720112-Set-up-a-connection-to-DynamoDB',
   netsuite: 'https://docs.celigo.com/hc/en-us/articles/360038996151-Set-up-a-connection-to-NetSuite',
   s3: 'https://docs.celigo.com/hc/en-us/articles/360038373912-Set-up-a-connection-to-Amazon-S3',
-  salesforce: 'https://docs.celigo.com/hc/en-us/sections/360007478991-Salesforce-'};
+  salesforce: 'https://docs.celigo.com/hc/en-us/sections/360007478991-Salesforce-',
+};
 
