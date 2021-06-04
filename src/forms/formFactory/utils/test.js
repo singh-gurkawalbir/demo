@@ -3,7 +3,6 @@ import jsonPatch from 'fast-json-patch';
 import {
   getMissingPatchSet,
   sanitizePatchSet,
-  getPatchPathForCustomForms,
   getFieldById,
   getFieldByName,
   getFieldByIdFromLayout,
@@ -308,130 +307,6 @@ describe('Form Utils', () => {
       expect(merged).toEqual({
         html: { name: 'hello', rateLimit: { failValues: ['bad', 'fail'] } },
       });
-    });
-  });
-
-  describe('getPatchPathFromCustomForms', () => {
-    test('should return null for meta having a non-existent field ', () => {
-      const testMeta = {
-        fieldMap: {
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          fields: ['exportData'],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'non-existentField', 1);
-
-      expect(res).toEqual(null);
-    });
-    test('should generate field path for meta having just fields in the root ', () => {
-      const testMeta = {
-        fieldMap: {
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          fields: ['exportData'],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual('/customForm/form/layout/fields/1');
-    });
-    test('should generate field path for meta having fields in containers ', () => {
-      const testMeta = {
-        fieldMap: {
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          type: 'tab||col||collapse',
-          containers: [
-            {
-              label: 'optional some label or tab name',
-              fields: ['exportData'],
-            },
-            // either or containers or fields
-          ],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual('/customForm/form/layout/containers/0/fields/1');
-    });
-
-    test('generate field path for meta having fields in containers and in the root', () => {
-      const testMeta = {
-        fieldMap: {
-          someField: {
-            fieldId: 'someField',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          fields: ['someField'],
-          type: 'tab||col||collapse',
-          containers: [
-            {
-              label: 'optional some label or tab name',
-              fields: ['exportData'],
-            },
-          ],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual('/customForm/form/layout/containers/0/fields/1');
-    });
-
-    test('generate field path for meta having fields in deep containers', () => {
-      const testMeta = {
-        fieldMap: {
-          someField: {
-            fieldId: 'someField',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          type: 'tab||col||collapse',
-          containers: [
-            {
-              type: 'tab||col||collapse',
-              containers: [
-                {
-                  label: 'optional some label or tab name',
-                  fields: ['someField'],
-                },
-                {
-                  label: 'optional some label or tab name',
-                  fields: ['exportData'],
-                },
-              ],
-            },
-          ],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual(
-        '/customForm/form/layout/containers/0/containers/1/fields/1'
-      );
     });
   });
 

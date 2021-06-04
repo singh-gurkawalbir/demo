@@ -1,9 +1,11 @@
-/* global describe, test */
+/* global expect,describe, test */
 import { expectSaga } from 'redux-saga-test-plan';
-import { select, call } from 'redux-saga/effects';
+import { createMockTask } from '@redux-saga/testing-utils';
+import { select, call, delay, put, fork, take, cancel } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../../actions';
+import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import {
   updateRetryData,
@@ -12,6 +14,9 @@ import {
   requestFilterMetadata,
   requestErrorHttpDocument,
   downloadBlobDocument,
+  downloadRetryData,
+  _pollForRetryStatus,
+  startPollingForRetryStatus,
 } from './index';
 import { selectors } from '../../../reducers';
 import { getMockHttpErrorDoc } from '../../../utils/errorManagement';
@@ -379,6 +384,62 @@ describe('EM2.0 metadata sagas', () => {
         ])
         .call(openExternalUrl, { url: response.signedURL })
         .run();
+    });
+  });
+  describe('downloadRetryData saga', () => {
+    const retryDataKey = 'id-123';
+
+    test('should make api call to download retry data and do nothing if the response does not contain signedURL', () => expectSaga(downloadRetryData, { flowId, resourceId, retryDataKey })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/flows/${flowId}/${resourceId}/${retryDataKey}/signedURL`,
+          opts: {
+            method: 'GET',
+          },
+          hidden: true,
+        }), {}],
+      ])
+      .not.call.fn(openExternalUrl)
+      .run());
+    test('should make api call to download retry data and do nothing if the api call fails', () => expectSaga(downloadRetryData, { flowId, resourceId, retryDataKey })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError({ status: 500, message: 'invalid id'})],
+      ])
+      .not.call.fn(openExternalUrl)
+      .run());
+    test('should make api call to download retry data and call openExternalURL with the signedURL from the response', () => {
+      const response = { signedURL: 'https://www.samplesignedurl.com/s3/retryData'};
+
+      expectSaga(downloadRetryData, { flowId, resourceId, retryDataKey })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+        ])
+        .call(openExternalUrl, { url: response.signedURL })
+        .run();
+    });
+  });
+  describe('_pollForRetryStatus saga', () => {
+    test('should dispatch request action and call _requestRetryStatus after 5 seconds delay continuously', () => {
+      const saga = _pollForRetryStatus({ flowId, resourceId });
+
+      expect(saga.next().value).toEqual(put(actions.errorManager.retryStatus.request({ flowId, resourceId })));
+      expect(saga.next().value).toEqual(call(_requestRetryStatus, { flowId, resourceId }));
+      expect(saga.next().value).toEqual(delay(5000));
+
+      expect(saga.next().done).toEqual(false);
+    });
+  });
+  describe('startPollingForRetryStatus saga', () => {
+    test('should fork _pollForRetryStatus, waits for STOP_POLL action and then cancels _pollForRetryStatus', () => {
+      const mockTask = createMockTask();
+
+      const saga = startPollingForRetryStatus({flowId, resourceId});
+
+      expect(saga.next().value).toEqual(fork(_pollForRetryStatus, {flowId, resourceId}));
+
+      expect(saga.next(mockTask).value).toEqual(take(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL));
+      expect(saga.next({type: actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL}).value).toEqual(cancel(mockTask));
+      expect(saga.next().done).toEqual(true);
     });
   });
 });

@@ -79,14 +79,14 @@ export function* _requestIntegrationErrors({ integrationId }) {
   }
 }
 
-function* pollForIntegrationErrors({ integrationId }) {
+export function* _pollForIntegrationErrors({ integrationId }) {
   yield put(actions.errorManager.integrationErrors.request({ integrationId }));
   while (true) {
     yield call(_requestIntegrationErrors, { integrationId });
     yield delay(5 * 1000);
   }
 }
-function* pollForOpenErrors({ flowId }) {
+export function* _pollForOpenErrors({ flowId }) {
   yield put(actions.errorManager.openFlowErrors.request({ flowId }));
   while (true) {
     yield call(_requestFlowOpenErrors, { flowId });
@@ -94,14 +94,14 @@ function* pollForOpenErrors({ flowId }) {
   }
 }
 
-function* startPollingForOpenErrors({ flowId }) {
-  const watcher = yield fork(pollForOpenErrors, { flowId });
+export function* startPollingForOpenErrors({ flowId }) {
+  const watcher = yield fork(_pollForOpenErrors, { flowId });
 
   yield take(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL);
   yield cancel(watcher);
 }
-function* startPollingForIntegrationErrors({ integrationId }) {
-  const watcher = yield fork(pollForIntegrationErrors, { integrationId });
+export function* startPollingForIntegrationErrors({ integrationId }) {
+  const watcher = yield fork(_pollForIntegrationErrors, { integrationId });
 
   yield take(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL);
   yield cancel(watcher);

@@ -1,60 +1,35 @@
 import { Button } from '@material-ui/core';
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
-import { action } from '@storybook/addon-actions';
 import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
-import RightDrawer from '../../../components/drawer/Right';
 import Spinner from '../../../components/Spinner';
 import ActionGroup from '../../../components/ActionGroup';
+import withRouterAndDrawer from '../withRouterAndDrawer';
 
-<Meta 
-  title="Right Drawer/Header" 
-  component={DrawerHeader}
-/>
+<Meta title="Right Drawer/Header" component={DrawerHeader} />
 
-<Story name="No Frills">
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Drawer title"  />
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="No Frills" decorators={[ withRouterAndDrawer ]}>
+  <DrawerHeader title="Drawer title"  />
 </Story>
 
-<Story name="With back button">
-  <MemoryRouter initialEntries={["drawer", "drawer/next"]} initialIndex={1}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Drawer with back button" />
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="With back button" decorators={[ withRouterAndDrawer ]}>
+  <DrawerHeader title="Drawer with back button" />
 </Story>
 
-<Story name="With info text">
-  <MemoryRouter initialEntries={["drawer", "drawer/next"]} initialIndex={1}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Drawer with info text" infoText="This is info text" />
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="With info text" decorators={[ withRouterAndDrawer ]}>
+  <DrawerHeader title="Drawer with info text" infoText="This is info text" />
 </Story>
 
-<Story name="With help">
-  <MemoryRouter initialEntries={["drawer", "drawer/next"]} initialIndex={1}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Drawer with help" helpTitle="Help title" helpKey="autoMapFields" />
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="With help" decorators={[ withRouterAndDrawer ]}>
+  <DrawerHeader title="Drawer with help" helpTitle="Help title" helpKey="autoMapFields" />
 </Story>
 
-<Story name="With refresh and actions">
-  <MemoryRouter initialEntries={["drawer", "drawer/next"]} initialIndex={1}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Refreshing and actions">
-        <Spinner size="small" /> Refreshing
-        <ActionGroup position="right">
-          <Button variant="text">Text Action 1</Button>
-          <Button variant="text">Text Action 2</Button>
-        </ActionGroup>
-      </DrawerHeader>
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="With refresh and actions" decorators={[ withRouterAndDrawer ]}>
+  <DrawerHeader title="Refreshing and actions">
+    <Spinner size="small" />Refreshing
+    <ActionGroup position="right">
+      <Button variant="text">Text Action 1</Button>
+      <Button variant="text">Text Action 2</Button>
+    </ActionGroup>
+  </DrawerHeader>
 </Story>
 
