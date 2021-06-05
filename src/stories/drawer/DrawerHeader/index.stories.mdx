@@ -5,25 +5,29 @@ import Spinner from '../../../components/Spinner';
 import ActionGroup from '../../../components/ActionGroup';
 import withRouterAndDrawer from '../withRouterAndDrawer';
 
-<Meta title="Right Drawer/Header" component={DrawerHeader} />
+<Meta 
+  title="Right Drawer/Header" 
+  component={DrawerHeader} 
+  decorators={[ withRouterAndDrawer ]} 
+/>
 
-<Story name="No Frills" decorators={[ withRouterAndDrawer ]}>
+<Story name="No Frills">
   <DrawerHeader title="Drawer title"  />
 </Story>
 
-<Story name="With back button" decorators={[ withRouterAndDrawer ]}>
+<Story name="With back button">
   <DrawerHeader title="Drawer with back button" />
 </Story>
 
-<Story name="With info text" decorators={[ withRouterAndDrawer ]}>
+<Story name="With info text" >
   <DrawerHeader title="Drawer with info text" infoText="This is info text" />
 </Story>
 
-<Story name="With help" decorators={[ withRouterAndDrawer ]}>
+<Story name="With help">
   <DrawerHeader title="Drawer with help" helpTitle="Help title" helpKey="autoMapFields" />
 </Story>
 
-<Story name="With refresh and actions" decorators={[ withRouterAndDrawer ]}>
+<Story name="With refresh and actions">
   <DrawerHeader title="Refreshing and actions">
     <Spinner size="small" />Refreshing
     <ActionGroup position="right">
