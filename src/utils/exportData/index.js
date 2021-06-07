@@ -1,4 +1,4 @@
-import { hashCode } from './string';
+import { hashCode } from '../string';
 
 export const makeExportResource = (resource, connectionId, connectorId) => {
   const kind = resource?.kind || 'virtual';
