@@ -7,7 +7,6 @@ import { shallowEqual, useSelector } from 'react-redux';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 
 const flowsConfig = {type: 'flows'};
 
@@ -16,16 +15,13 @@ const eventReportDetailRows = [
   {
     heading: 'Integration',
     value: function IntegrationName(r) {
-      const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
-      const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
-
-      return integration?.name || STANDALONE_INTEGRATION.name;
+      return useSelector(state => selectors.getEventReportIntegrationName(state, r));
     },
   },
   {
     heading: 'Stores',
     value: function StoreNames(r) {
-      const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
+      const integrationId = useSelector(state => selectors.getIntegrationIdForEventReport(state, r));
 
       const childIntegrationsLabels = useSelector(state => selectors.getChildIntegrationLabelsTiedToFlows(state, integrationId, r?._flowIds), shallowEqual);
 
@@ -46,14 +42,14 @@ const eventReportDetailRows = [
         flowsConfig
       ).resources;
 
-      const flows = r._flowIds.map(id => allFlows.find(f => f._id === id));
+      const flows = r._flowIds.map(id => allFlows.find(f => f._id === id) || { id});
 
       return (
         <>
           <Typography>{flows?.length} flows</Typography>
-          {flows?.map(({name}) => (
-            <Fragment key={name}>
-              <Typography>{name}</Typography>
+          {flows?.map(({name, id}) => (
+            <Fragment key={name || id}>
+              <Typography>{name || `Flow deleted (id: ${id})`}</Typography>
             </Fragment>
           ))}
         </>

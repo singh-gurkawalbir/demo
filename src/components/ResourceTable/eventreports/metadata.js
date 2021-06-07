@@ -12,7 +12,6 @@ import Spinner from '../../Spinner';
 import CeligoTruncate from '../../CeligoTruncate';
 import {EVENT_REPORTS_DEFAULT} from '../../DynaForm/fields/integrations/DynaReportDateRange';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 
 const EVENT_REPORT_STATUS = {
   QUEUED: 'queued',
@@ -56,11 +55,7 @@ const metadata = {
         );
       },
       Value: function IntegrationName({rowData: r}) {
-        const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
-        const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
-
-        // if there is no integration associated to a flow then its a standalone flow
-        return integration?.name || STANDALONE_INTEGRATION.name;
+        return useSelector(state => selectors.getEventReportIntegrationName(state, r));
       },
     },
     {
@@ -83,7 +78,7 @@ const metadata = {
           flowsConfig
         ).resources;
 
-        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
+        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name || `Flow deleted (id: ${id})`).join(',');
 
         return (
           <CeligoTruncate dataPublic placement="top" lines={3} >
