@@ -217,6 +217,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         meta = formMeta.connections.rdbms[rdbmsSubType];
       } else if (RDBMS_TYPES.includes(type)) {
         meta = formMeta.connections.rdbms[type];
+      } else if (resource?.useTechAdaptorForm && type === 'http') {
+        meta = formMeta.connections.rest;
       } else {
         meta = formMeta.connections[type];
       }
@@ -261,6 +263,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             resource,
             assistantData
           );
+        } else if (resource?.useTechAdaptorForm && type === 'http') {
+          meta = meta.rest;
         } else {
           meta = meta[type];
         }
