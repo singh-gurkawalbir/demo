@@ -156,7 +156,7 @@ export default function MarketplaceList() {
                   tag
                 )
               );
-              history.push(getRoutePath('/dashboard'));
+              history.push(getRoutePath('/home'));
             },
           },
           {
@@ -167,7 +167,7 @@ export default function MarketplaceList() {
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
-      history.push(getRoutePath('/dashboard'));
+      history.push(getRoutePath('/home'));
     }
   };
 

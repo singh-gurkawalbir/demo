@@ -47,10 +47,10 @@ describe('shouldRedirect selector test', () => {
         meta: {
           data: 'dummy',
         },
-        redirectTo: '/dashboard',
+        redirectTo: '/home',
       },
     };
 
-    expect(selectors.shouldRedirect(state, 'integration')).toEqual('/dashboard');
+    expect(selectors.shouldRedirect(state, 'integration')).toEqual('/home');
   });
 });

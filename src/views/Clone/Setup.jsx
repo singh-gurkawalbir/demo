@@ -21,7 +21,7 @@ export default function Clone(props) {
     (redirectTo, isInstallFailed, environment) => {
       // Incase clone is failed, then redirect to the dashboard
       if (isInstallFailed) {
-        history.replace(getRoutePath('/dashboard'));
+        history.replace(getRoutePath('/home'));
       } else {
         if (environment) {
           dispatch(

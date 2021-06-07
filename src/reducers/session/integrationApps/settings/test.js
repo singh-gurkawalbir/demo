@@ -10363,7 +10363,7 @@ describe('integrationApps selectors test cases', () => {
           meta: {
             data: 'dummy',
           },
-          redirectTo: '/dashboard',
+          redirectTo: '/home',
         },
         licenseId: true,
         licenseId2: false,

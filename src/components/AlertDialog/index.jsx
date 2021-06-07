@@ -33,7 +33,7 @@ const LoggedInWithADifferentAccount = () => (
     <Button
       data-test="ok"
       onClick={() => {
-        window.location.replace(getRoutePath('/dashboard'));
+        window.location.replace(getRoutePath('/home'));
       }}
       variant="outlined"
       color="primary">

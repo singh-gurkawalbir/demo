@@ -232,7 +232,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe(getRoutePath('/dashboard'));
+      expect(history.location.pathname).toBe(getRoutePath('/home'));
       expect(history.location.state).toBe(undefined);
     });
   });
@@ -264,7 +264,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       })
     );
 
-    expect(history.location.pathname).toBe(getRoutePath('/dashboard'));
+    expect(history.location.pathname).toBe(getRoutePath('/home'));
   });
 
   const loggedOut = {

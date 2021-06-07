@@ -101,7 +101,7 @@ export default function AppRouting() {
       <Route
         path={['/pg', '']}
         exact
-        render={({ history }) => history.replace(getRoutePath('/dashboard'))}
+        render={({ history }) => history.replace(getRoutePath('/home'))}
         />
       <Route
         path={['/pg/*']}
@@ -232,7 +232,7 @@ export default function AppRouting() {
         />
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
-      <Route path={getRoutePath('/dashboard')} component={Dashboard} />
+      <Route path={getRoutePath('/home')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route
         path={[

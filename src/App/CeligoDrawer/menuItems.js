@@ -1,4 +1,5 @@
 import HomeIcon from '../../components/icons/HomeIcon';
+import DashboardIcon from '../../components/icons/DashboardIcon';
 import ToolsIcon from '../../components/icons/ToolsIcon';
 import ResourcesIcon from '../../components/icons/ResourcesIcon';
 import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
@@ -39,7 +40,16 @@ export default function menuItems(
       Icon: HomeIcon,
       path: '/',
       routeProps: {
-        path: [getRoutePath(''), getRoutePath('/dashboard')],
+        path: [getRoutePath(''), getRoutePath('/home')],
+        exact: true,
+      },
+    },
+    {
+      label: 'Dashboard',
+      Icon: DashboardIcon,
+      path: '/',
+      routeProps: {
+        path: [getRoutePath(''), getRoutePath('/home')],
         exact: true,
       },
     },
