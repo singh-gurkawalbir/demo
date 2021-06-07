@@ -49,7 +49,7 @@ const eventReportDetailRows = [
           <Typography>{flows?.length} flows</Typography>
           {flows?.map(({name, id}) => (
             <Fragment key={name || id}>
-              <Typography>{name || `Flow deleted (id: ${id})`}</Typography>
+              <Typography>{name || `Flow id: ${id}(Flow deleted)`}</Typography>
             </Fragment>
           ))}
         </>

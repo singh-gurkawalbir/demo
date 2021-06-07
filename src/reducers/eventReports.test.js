@@ -108,7 +108,7 @@ describe('selectors.mkEventReportsFiltered', () => {
         {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
       ]);
     });
-    test('should not return a report multiflow if all flows are deleted', () => {
+    test('should not return a multiflow report if all flows are deleted', () => {
       const stateWithDeletedflow2 = produce(state, draft => {
         draft.data.resources.flows.splice(0, 2);
       });
