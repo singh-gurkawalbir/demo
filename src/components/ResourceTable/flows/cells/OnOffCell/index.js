@@ -91,7 +91,7 @@ export default function OnOffCell({
                 )
               );
             } else {
-              if (disabled && !isFree && !isDataLoader) {
+              if (disabled && !isFree && !isDataLoader && !istwoDotZeroFrameWork) {
                 if (!isLicenseValidToEnableFlow.enable) {
                   return enqueueSnackbar({
                     message: isLicenseValidToEnableFlow.message,
