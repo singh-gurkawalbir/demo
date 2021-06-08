@@ -127,7 +127,6 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
-  { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
     path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationAppCrumb,
@@ -201,6 +200,10 @@ const routes = [
           { path: '/connectorLicenses', breadcrumb: 'Licenses' },
           { path: '/installBase', breadcrumb: 'Install base' }]},
     ],
+  },
+  {
+    path: getRoutePath('/dashboard'),
+    breadcrumb: 'Dashboard',
   },
   {
     path: getRoutePath('/marketplace'),

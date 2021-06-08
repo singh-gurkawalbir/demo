@@ -47,11 +47,7 @@ export default function menuItems(
     {
       label: 'Dashboard',
       Icon: DashboardIcon,
-      path: '/',
-      routeProps: {
-        path: [getRoutePath(''), getRoutePath('/home')],
-        exact: true,
-      },
+      path: '/dashboard',
     },
     {
       label: 'Tools',

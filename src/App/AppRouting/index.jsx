@@ -18,8 +18,11 @@ import ResourceListInfo from '../../views/ResourceList/infoText';
 const RecycleBin = loadable(() =>
   retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
 );
+const Home = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'Home' */ '../../views/Home'))
+);
 const Dashboard = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard'))
+  retry(() => import(/* webpackChunkName: 'Home' */ '../../views/Dashboard'))
 );
 const NotFound = loadable(() =>
   retry(() => import(/* webpackChunkName: 'NotFound' */ '../../views/NotFound'))
@@ -148,6 +151,14 @@ export default function AppRouting() {
             getRoutePath(`/integrations/${match.params.integrationId}/flows`)
           )}
         />
+      <Route
+        path={getRoutePath('/dashboard')}
+        exact
+        render={({ history }) =>
+          history.replace(
+            getRoutePath('/dashboard/runningjobs')
+          )}
+        />
 
       <Route
         path={getRoutePath('/marketplace/templates/:templateId')}
@@ -232,7 +243,8 @@ export default function AppRouting() {
         />
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
-      <Route path={getRoutePath('/home')} component={Dashboard} />
+      <Route path={getRoutePath('/home')} component={Home} />
+      <Route path={getRoutePath('/dashboard/:tab')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route
         path={[
