@@ -1,4 +1,5 @@
 /* global describe, expect, test */
+import produce from 'immer';
 import { selectors } from '.';
 
 const state = {
@@ -63,6 +64,67 @@ describe('selectors.mkEventReportsFiltered', () => {
         {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
         {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
 
+      ]);
+    });
+
+    test('should not return a report after its corresponding flow is deleted ', () => {
+      const stateWithDeletedflow3 = produce(state, draft => {
+        draft.data.resources.flows.splice(2, 1);
+      });
+      const updatedState = {...stateWithDeletedflow3,
+        user: {
+          preferences: {
+            environment: 'production',
+          },
+        }};
+
+      const result = eventReportsSelector(updatedState, { type: 'eventreports' });
+
+      expect(result.count).toEqual(3);
+      expect(result.resources).toEqual([
+        {_id: '1', type: 'flow_events', _flowIds: ['flow1', 'flow2'], startTime: '2021-03-11T18:30:00.000Z', endTime: '2021-03-13T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T04:53:56.156Z', startedAt: '2021-03-16T04:53:57.129Z', endedAt: '2021-03-16T04:54:24.920Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+      ]);
+    });
+    test('should return a multiflow report if atleast one flow not deleted', () => {
+      const stateWithDeletedflow2 = produce(state, draft => {
+        draft.data.resources.flows.splice(1, 1);
+      });
+      const updatedState = {...stateWithDeletedflow2,
+        user: {
+          preferences: {
+            environment: 'production',
+          },
+        }};
+
+      const result = eventReportsSelector(updatedState, { type: 'eventreports' });
+
+      expect(result.count).toEqual(4);
+      expect(result.resources).toEqual([
+        {_id: '1', type: 'flow_events', _flowIds: ['flow1', 'flow2'], startTime: '2021-03-11T18:30:00.000Z', endTime: '2021-03-13T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T04:53:56.156Z', startedAt: '2021-03-16T04:53:57.129Z', endedAt: '2021-03-16T04:54:24.920Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+      ]);
+    });
+    test('should not return a multiflow report if all flows are deleted', () => {
+      const stateWithDeletedflow2 = produce(state, draft => {
+        draft.data.resources.flows.splice(0, 2);
+      });
+      const updatedState = {...stateWithDeletedflow2,
+        user: {
+          preferences: {
+            environment: 'production',
+          },
+        }};
+
+      const result = eventReportsSelector(updatedState, { type: 'eventreports' });
+
+      expect(result.count).toEqual(2);
+      expect(result.resources).toEqual([
+        {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
       ]);
     });
   });
