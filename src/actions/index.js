@@ -669,7 +669,6 @@ const integrationApp = {
             .PATCH_SETTINGS,
           { integrationId, flowId, id, key, value }
         ),
-      updateLastFieldTouched: key => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD, { key }),
       delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,

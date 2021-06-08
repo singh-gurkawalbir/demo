@@ -174,18 +174,20 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_VARIATION_MAPPINGS:
-
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_VARIATION_MAPPINGS: {
         mappingUtil.addVariation(draft, cKey, data);
-        // const variations = Object.keys(draft[cKey]?.mappings || {}).filter(key => key.startsWith(`${flowId}-${data?.subCategoryId}-`));
+        const variations = Object.keys(draft[cKey]?.mappings || {}).filter(key => key.startsWith(`${flowId}-${data?.subCategoryId}-${data.depth}-`));
 
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          draft[cKey].mappings[id].staged = draft[cKey].mappings[id].mappings;
-          draft[cKey].mappings[id].stagedLookups =
-            draft[cKey].mappings[id].lookups;
-        }
+        variations.forEach(variation => {
+          if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[variation]) {
+            draft[cKey].mappings[variation].staged = draft[cKey].mappings[variation].mappings;
+            draft[cKey].mappings[variation].stagedLookups =
+              draft[cKey].mappings[variation].lookups;
+          }
+        });
 
         break;
+      }
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CANCEL_VARIATION_MAPPINGS:
         if (
           draft[cKey] &&
@@ -204,10 +206,8 @@ export default (state = {}, action) => {
           const mappingToDelete = draft[cKey].mappings[id].mappings?.find(m => m.key === mappingKey);
 
           if (mappingToDelete?.lookupName) {
-          // delete lookup
-            const lookupIndex = draft[cKey].mappings[id].lookups.findIndex(l => l.lookupName === mappingToDelete.lookupName);
-
-            if (lookupIndex !== -1) { draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.splice(lookupIndex, 1); }
+            // delete lookup
+            draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.filter(l => l.lookupName !== mappingToDelete.lookupName);
           }
           draft[cKey].mappings[id].mappings = draft[cKey].mappings[id].mappings.filter(m => m.key !== mappingKey);
           if (draft[cKey].mappings[id].lastModifiedRowKey === key) { delete draft[cKey].mappings[id].lastModifiedRowKey; }
@@ -277,11 +277,7 @@ export default (state = {}, action) => {
         }
         break;
       }
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD:
-        if (draft?.[cKey]?.mappings?.[id]) {
-          draft[cKey].mappings[id].lastModifiedRowKey = mappingKey || 'new';
-        }
-        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_GENERATES: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           draft[cKey].mappings[id].generateFields = generateFields;

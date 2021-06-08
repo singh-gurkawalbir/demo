@@ -178,6 +178,7 @@ const setVariationMappingData = (
               rowIdentifier,
               description,
               name,
+              key,
               filterType,
               showListOption,
               hardCodedValueTmp,

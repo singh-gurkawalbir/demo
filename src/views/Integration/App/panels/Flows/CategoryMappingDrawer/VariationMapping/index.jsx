@@ -156,8 +156,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
         `${flowId}-${subCategoryId}-${depth}-${
           isVariationAttributes ? 'variationAttributes' : variation
         }`,
-        { categoryId, subCategoryId, isVariationAttributes },
-        isVariationAttributes
+        { categoryId, subCategoryId, isVariationAttributes, depth }
       )
     );
     handleClose();
