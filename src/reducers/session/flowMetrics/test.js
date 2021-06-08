@@ -107,6 +107,37 @@ describe('flowMetrics status reducer', () => {
       actions.flowMetrics.clear(resourceId))).toEqual(initialState);
   });
 });
+
+describe('flowMetrics update last run reducer', () => {
+  test('should update the state with updated lastrun data and not affect other resource data', () => {
+    const state = reducer({resourceId1: { dummy: 'data'}}, actions.flowMetrics.updateLastRunRange('resourceId', 'startDate', 'endDate'));
+
+    expect(state).toEqual({
+      resourceId1: {
+        dummy: 'data',
+      },
+      resourceId: {
+        lastRun: {
+          startDate: 'startDate',
+          endDate: 'endDate',
+        },
+      },
+    });
+  });
+  test('should update the state with updated lastrun data', () => {
+    const state = reducer({resourceId: { other: 'data'}}, actions.flowMetrics.updateLastRunRange('resourceId', 'startDate', 'endDate'));
+
+    expect(state).toEqual({
+      resourceId: {
+        other: 'data',
+        lastRun: {
+          startDate: 'startDate',
+          endDate: 'endDate',
+        },
+      },
+    });
+  });
+});
 describe('selectors testcases', () => {
   describe('flowMetricsData selector', () => {
     test('should return state correctly when valid ids are sent through', () => {
@@ -188,6 +219,25 @@ describe('selectors testcases', () => {
       timeInMills: 1616657880000,
       type: 'sei',
       value: 10,
+    }, {
+      _time: '2021-03-25T07:38:00.000Z',
+      attribute: 'r',
+      by: '_userId',
+      flowId: 'flowId1',
+      resourceId: 'id3',
+      timeInMills: 1616657880000,
+      type: 'seir',
+      value: 10,
+    },
+    {
+      _time: '2021-03-25T07:38:00.000Z',
+      attribute: 'r',
+      by: 'autopilot',
+      flowId: 'flowId1',
+      resourceId: 'id3',
+      timeInMills: 1616657880000,
+      type: 'seir',
+      value: 20,
     }];
     const parsedDBFlowData = [{
       _time: '2021-03-25T07:36:21.1Z',
@@ -221,7 +271,7 @@ describe('selectors testcases', () => {
       flowId: '_integrationId',
       resourceId: '_flowId',
       timeInMills: 1616657781100,
-      type: 'sei',
+      type: 'seir',
       value: 0,
     },
     {
@@ -230,7 +280,7 @@ describe('selectors testcases', () => {
       flowId: 'flowId1',
       resourceId: '5e5df235f6f85b2b9ae4a45e',
       timeInMills: 1616657820000,
-      type: 'sei',
+      type: 'seir',
       value: 0,
     },
     {
@@ -239,8 +289,28 @@ describe('selectors testcases', () => {
       flowId: '5f6de9478438573a31d8a982',
       resourceId: '5e5df235f6f85b2b9ae4a45e',
       timeInMills: 1616657880000,
-      type: 'sei',
+      type: 'seir',
       value: 10,
+    },
+    {
+      _time: '2021-03-25T07:38:00.000Z',
+      attribute: 'r',
+      by: '_userId',
+      flowId: 'flowId1',
+      resourceId: 'id3',
+      timeInMills: 1616657880000,
+      type: 'seir',
+      value: 10,
+    },
+    {
+      _time: '2021-03-25T07:38:00.000Z',
+      attribute: 'r',
+      by: 'autopilot',
+      flowId: 'flowId1',
+      resourceId: 'id3',
+      timeInMills: 1616657880000,
+      type: 'seir',
+      value: 20,
     }];
 
     test('should not throw error for bad params', () => {
@@ -248,6 +318,61 @@ describe('selectors testcases', () => {
       expect(() => selector(null)).not.toThrow();
       expect(() => selector(null, null, null)).not.toThrow();
       expect(() => selector({}, null, null)).not.toThrow();
+    });
+
+    test('should return data correctly when valid ids are sent through for resolved attribute and resourceType is integrations', () => {
+      const state = reducer(initialState, actions.flowMetrics.received(resourceId, parsedDBIntegrationData));
+      const data = selector(state, 'integrations', resourceId, 'resolved', ['flowId1', 'id3']);
+
+      expect(data).toEqual({
+        autopilot: [{
+          _time: '2021-03-25T07:38:00.000Z',
+          attribute: 'r',
+          by: 'autopilot',
+          flowId: 'flowId1',
+          resourceId: 'id3',
+          timeInMills: 1616657880000,
+          type: 'seir',
+          value: 20,
+        }],
+        users: [{
+          _time: '2021-03-25T07:38:00.000Z',
+          attribute: 'r',
+          by: '_userId',
+          flowId: 'flowId1',
+          resourceId: 'id3',
+          timeInMills: 1616657880000,
+          type: 'seir',
+          value: 10,
+        }],
+      });
+    });
+    test('should return data correctly when valid ids are sent through for resolved attribute and resourceType is flows', () => {
+      const state = reducer(initialState, actions.flowMetrics.received(resourceId, parsedDBIntegrationData));
+      const data = selector(state, 'flows', resourceId, 'resolved', ['flowId1', 'id3']);
+
+      expect(data).toEqual({
+        autopilot: [{
+          _time: '2021-03-25T07:38:00.000Z',
+          attribute: 'r',
+          by: 'autopilot',
+          flowId: 'flowId1',
+          resourceId: 'id3',
+          timeInMills: 1616657880000,
+          type: 'seir',
+          value: 20,
+        }],
+        users: [{
+          _time: '2021-03-25T07:38:00.000Z',
+          attribute: 'r',
+          by: '_userId',
+          flowId: 'flowId1',
+          resourceId: 'id3',
+          timeInMills: 1616657880000,
+          type: 'seir',
+          value: 10,
+        }],
+      });
     });
 
     test('should return data correctly when valid ids are sent through for att attribute and resourceType is integrations', () => {
@@ -344,7 +469,7 @@ describe('selectors testcases', () => {
             flowId: '_integrationId',
             resourceId: '_flowId',
             timeInMills: 1616657781100,
-            type: 'sei',
+            type: 'seir',
             value: 0,
           },
         ],
