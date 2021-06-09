@@ -3433,6 +3433,18 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (state, { flowId }) => {
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+      const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
+
+      if (integration._parentId) {
+        return (
+          selectors.resource(state, 'integrations', integration._parentId) || emptyObject
+        );
+      }
+
+      return null;
+    },
   ],
   (
     sampleData,
@@ -3444,6 +3456,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -3452,7 +3465,8 @@ selectors.sampleDataWrapper = createSelector(
     resource,
     connection,
     stage,
-    fieldType})
+    fieldType,
+    parentIntegration})
 );
 
 /**
