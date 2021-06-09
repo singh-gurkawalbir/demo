@@ -39,10 +39,10 @@ export default function DashboardTabs() {
   const history = useHistory();
   const match = useRouteMatch();
   const tabs = [
-    { path: 'runningjobs', label: 'Running', Icon: RunningIcon, Panel: Running },
+    { path: 'runningflows', label: 'Running flows', Icon: RunningIcon, Panel: Running },
     {
-      path: 'completedjobs',
-      label: 'Completed',
+      path: 'completedflows',
+      label: 'Completed flows',
       Icon: CompletedIcon,
       Panel: Completed,
     }];

@@ -156,7 +156,7 @@ export default function AppRouting() {
         exact
         render={({ history }) =>
           history.replace(
-            getRoutePath('/dashboard/runningjobs')
+            getRoutePath('/dashboard/runningflows')
           )}
         />
 

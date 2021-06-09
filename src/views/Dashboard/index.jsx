@@ -1,8 +1,12 @@
 import React from 'react';
 import Tabs from './Tabs';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
 export default function Dashboard() {
   return (
-    <Tabs />
+    <><CeligoPageBar
+      title="Dashboard" />
+      <Tabs />
+    </>
   );
 }
