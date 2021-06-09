@@ -1,6 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useCallback, useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 // import { withDesign } from 'storybook-addon-designs';
+import { action } from '@storybook/addon-actions';
 import { Button } from '@material-ui/core';
 import SaveAndCloseButtonGroup from '../../components/SaveAndCloseButtonGroup';
 
@@ -23,6 +24,8 @@ const Template = ({ isDirty, ...rest }) => {
   const onClose = useCallback(() => {
     setStatus();
     setDirty(false);
+    // console.log('onClose fired');
+    action('Parent component was closed!');
   }, []);
 
   return (
@@ -36,10 +39,10 @@ const Template = ({ isDirty, ...rest }) => {
 
       {!dirty && (
         <Button
-          style={{marginTop: 24}}
+          style={{marginTop: 48}}
           variant="outlined"
           onClick={() => setDirty(true)}>
-          Make form context dirty
+          Make the button context dirty
         </Button>
       )}
     </>

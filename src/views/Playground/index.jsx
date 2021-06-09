@@ -72,8 +72,8 @@ export default function Editors() {
             </IconButton>
           </Tooltip>
         )}
-
       </CeligoPageBar>
+
       <div className={clsx(classes.root, {[classes.rootExpanded]: !editorId})}>
         <div className={classes.leftNav}>
           <div className={classes.menuSection}>
