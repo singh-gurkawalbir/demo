@@ -7,7 +7,6 @@ import { jsxDecorator } from 'storybook-addon-jsx';
 import TextButton from './index';
 import AddIcon from '../../icons/AddIcon';
 import DeleteIcon from '../../icons/TrashIcon';
-import StatusCircle from '../../StatusCircle';
 
 export default {
   title: 'CeligoButtons / TextButton',
@@ -76,13 +75,7 @@ bold.args = {
   bold,
   color: 'primary',
 };
-export const statusCircle = Template.bind({});
 
-statusCircle.args = {
-  startIcon: <StatusCircle variant="success" />,
-  children: 'Success',
-  size: 'small',
-};
 disabled.args = {
   disabled: true,
   children: 'Disabled',

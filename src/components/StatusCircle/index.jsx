@@ -12,8 +12,8 @@ const useStyles = makeStyles(theme => ({
     marginRight: '5px',
   },
   large: {
-    width: 24,
-    height: 24,
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   small: {
     width: 12,

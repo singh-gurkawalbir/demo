@@ -6,21 +6,24 @@ import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import FilledButton from './index';
-import RefreshIcon from '../../icons/RefreshIcon';
-import DeleteIcon from '../../icons/TrashIcon';
+import StatusButton from './index';
 
 export default {
-  title: 'CeligoButtons / FilledButton',
-  component: FilledButton,
+  title: 'CeligoButtons / StatusButton',
+  component: StatusButton,
   decorators: [withDesign, jsxDecorator],
   argTypes: {
     size: {
       control: { type: 'select' },
     },
+    disabled: {
+      control: {
+        type: 'boolean',
+      },
+    },
   },
 };
-const Template = args => <FilledButton {...args} />;
+const Template = args => <StatusButton {...args} />;
 
 export const defaultButton = Template.bind({});
 
@@ -32,55 +35,28 @@ const designParameters = {
 };
 
 defaultButton.args = {
-  children: 'Default Button',
+  children: 'Success',
+  variant: 'success',
 
 };
 defaultButton.parameters = designParameters;
 
-export const startIcon = Template.bind();
-
-startIcon.args = {
-  startIcon: <RefreshIcon />,
-  children: 'Load more',
-};
-
-startIcon.parameters = designParameters;
-export const endIcon = Template.bind({});
-
-endIcon.args = {
-  endIcon: <DeleteIcon />,
-  children: 'End Icon',
-};
-endIcon.parameters = designParameters;
 export const errorButton = Template.bind({});
 
 errorButton.args = {
-  error: true,
-  children: 'Error',
+  variant: 'error',
+  children: '118 errors',
 };
-
 errorButton.parameters = designParameters;
-export const small = Template.bind({});
 
-small.args = {
-  size: 'small',
-  children: 'Small',
+export const warning = Template.bind({});
+
+warning.args = {
+  children: 'Continue setup',
+  variant: 'warning',
 };
-export const medium = Template.bind({});
+warning.parameters = designParameters;
 
-medium.args = {
-  size: 'medium',
-  children: 'Medium',
-};
-
-medium.parameters = designParameters;
-export const large = Template.bind({});
-
-large.args = {
-  size: 'large',
-  children: 'Large',
-};
-large.parameters = designParameters;
 export const disabled = Template.bind({});
 
 disabled.args = {
