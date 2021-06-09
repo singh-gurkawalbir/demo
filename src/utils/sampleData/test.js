@@ -1391,4 +1391,43 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
+  test('should include parentIntegration settings if flow is part of a child integration', () => {
+    integration._parentId = 'parent-id';
+    const parentIntegration = {
+      _id: 'parent-id',
+      name: 'Parent integration',
+      settings: {
+        abc: 'xyz',
+      },
+    };
+    const stage = 'preMap';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+          parentIntegration: {
+            abc: 'xyz',
+          },
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage, parentIntegration})).toEqual(expectedData);
+  });
 });

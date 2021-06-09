@@ -495,7 +495,8 @@ export const wrapSampleDataWithContext = ({
   resource,
   connection,
   stage,
-  fieldType}) => {
+  fieldType,
+  parentIntegration}) => {
   const { status, data, templateVersion } = sampleData || {};
 
   let resourceType = 'export';
@@ -532,6 +533,10 @@ export const wrapSampleDataWithContext = ({
     const index = integration.flowGroupings.findIndex(f => f._id === flow._flowGroupingId);
 
     settings.flowGrouping = integration.flowGroupings[index]?.settings || {};
+  }
+  // if integration is a child, then show parent settings as well
+  if (parentIntegration) {
+    settings.parentIntegration = parentIntegration.settings || {};
   }
 
   const resourceIds = {
