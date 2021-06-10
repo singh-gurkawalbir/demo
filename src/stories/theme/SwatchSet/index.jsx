@@ -32,6 +32,7 @@ function Swatch({colorName, color}) {
     <div className={classes.swatchContainer}>
       <div className={classes.swatch} style={{ backgroundColor: color}} />
       <Typography>{colorName}</Typography>
+      <Typography>{color}</Typography>
     </div>
   );
 }
