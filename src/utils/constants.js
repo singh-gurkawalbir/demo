@@ -302,7 +302,6 @@ export const REST_ASSISTANTS = [
   'namely',
   'servicenow',
   'squareup',
-  'authorize.net',
   'stripe',
   'twilio',
   'woocommerce',
