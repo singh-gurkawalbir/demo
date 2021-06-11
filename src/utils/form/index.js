@@ -119,6 +119,9 @@ export const evaluateAllRules = ({
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
 
+      // eslint-disable-next-line no-console
+      console.error(`invalid rule properties ${rule} passed returning default result`);
+
       return defaultResult;
     });
   }
@@ -138,6 +141,8 @@ export const evaluateSomeRules = ({
       if (rule.field && fieldsById.hasOwnProperty(rule.field)) {
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
+      // eslint-disable-next-line no-console
+      console.error(`invalid rule properties ${rule} passed returning default result`);
 
       return defaultResult;
     });
@@ -268,67 +273,12 @@ export const processOptions = ({
         parentContext
       );
 
-      if (handlerOptions instanceof Promise) {
-        field.options = [];
-        field.pendingOptions = handlerOptions;
-      } else if (handlerOptions) {
+      if (handlerOptions) {
         field.options = handlerOptions;
         field.pendingOptions = undefined;
       }
     }
   });
-
-// NOTE: Just used for test purposes...
-// TODO: Move to test file...
-export const createField = field => {
-  const {
-    id = '',
-    name = '',
-    type = '',
-    placeholder = '',
-    value = undefined,
-    visible = true,
-    required = false,
-    disabled = false,
-    visibleWhen = [],
-    visibleWhenAll = [],
-    requiredWhen = [],
-    requiredWhenAll = [],
-    disabledWhen = [],
-    disabledWhenAll = [],
-    validWhen = {},
-    isValid = true,
-    errorMessages = '',
-    touched = false,
-  } = field;
-
-  return {
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    visible,
-    required,
-    disabled,
-    visibleWhen,
-    visibleWhenAll,
-    requiredWhen,
-    requiredWhenAll,
-    disabledWhen,
-    disabledWhenAll,
-    isValid,
-    validWhen,
-    errorMessages,
-    touched,
-  };
-};
-
-export const updateFieldTouchedState = (field, touched) => {
-  field.touched = touched;
-
-  return field;
-};
 
 export const updateFieldValue = (field, value) => {
   const updateValue = typeof value !== 'undefined' && value;

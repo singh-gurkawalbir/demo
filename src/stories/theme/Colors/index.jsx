@@ -3,9 +3,7 @@ import { Typography } from '@material-ui/core';
 import SwatchSet from '../SwatchSet';
 
 const colorSets = {
-  Misc: {
-    celigoWhite: '#FFFFFF',
-  },
+
   Error: {
     celigoError: '#FF3C3C',
     celigoErrorDark: '#D9534F',
@@ -17,7 +15,6 @@ const colorSets = {
   Warning: {
     celigoWarning: '#FFB30C',
   },
-
   Accent: {
     celigoAccent1: '#0E7DC1',
     celigoAccent2: '#1D76C7',
@@ -44,6 +41,9 @@ const colorSets = {
     celigoSandbox4: '#806A4B',
     celigoSandbox5: '#625544',
   },
+  Other: {
+    celigoWhite: '#FFFFFF',
+  },
 };
 
 export default function CeligoColor() {
@@ -57,7 +57,7 @@ export default function CeligoColor() {
       <SwatchSet name="Success" colors={colorSets.Success} />
       <SwatchSet name="Warning" colors={colorSets.Warning} />
       <SwatchSet name="Error" colors={colorSets.Error} />
-      <SwatchSet name="Misc" colors={colorSets.Misc} />
+      <SwatchSet name="Other" colors={colorSets.other} />
     </>
   );
 }

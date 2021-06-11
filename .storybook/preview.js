@@ -72,7 +72,7 @@ const withRedux = (Story, context) => {
     rootReducer,
     composeEnhancers(applyMiddleware(...middleware))
   );
-  
+
   sagaMiddleware.run(rootSaga);
 
   return (

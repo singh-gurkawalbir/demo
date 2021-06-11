@@ -1,16 +1,22 @@
-/* global describe, test */
+/* global expect,describe, test */
 
-import { call, select } from 'redux-saga/effects';
+import { call, select, put, delay, take, cancel, fork } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
+import { createMockTask } from '@redux-saga/testing-utils';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../../actions';
+import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
 import {
   _requestFlowOpenErrors,
   _requestIntegrationErrors,
   _notifyErrorListOnUpdate,
+  _pollForOpenErrors,
+  _pollForIntegrationErrors,
+  startPollingForOpenErrors,
+  startPollingForIntegrationErrors,
 } from '.';
 
 const flowId = 'flow-1234';
@@ -163,6 +169,54 @@ describe('openErrors info related sagas', () => {
           diff: -10,
         }))
         .run();
+    });
+  });
+  describe('_pollForOpenErrors saga', () => {
+    test('should dispatch request action and call _requestFlowOpenErrors after 5 seconds delay continuously', () => {
+      const saga = _pollForOpenErrors({ flowId });
+
+      expect(saga.next().value).toEqual(put(actions.errorManager.openFlowErrors.request({ flowId })));
+      expect(saga.next().value).toEqual(call(_requestFlowOpenErrors, { flowId }));
+      expect(saga.next().value).toEqual(delay(5000));
+
+      expect(saga.next().done).toEqual(false);
+    });
+  });
+  describe('_pollForIntegrationErrors saga', () => {
+    test('should dispatch request action and call _requestIntegrationErrors after 5 seconds delay continuously', () => {
+      const saga = _pollForIntegrationErrors({ integrationId });
+
+      expect(saga.next().value).toEqual(put(actions.errorManager.integrationErrors.request({ integrationId })));
+      expect(saga.next().value).toEqual(call(_requestIntegrationErrors, { integrationId }));
+      expect(saga.next().value).toEqual(delay(5000));
+
+      expect(saga.next().done).toEqual(false);
+    });
+  });
+  describe('startPollingForOpenErrors saga', () => {
+    test('should fork _pollForOpenErrors, waits for STOP_POLL action and then cancels _pollForOpenErrors', () => {
+      const mockTask = createMockTask();
+
+      const saga = startPollingForOpenErrors({flowId});
+
+      expect(saga.next().value).toEqual(fork(_pollForOpenErrors, {flowId}));
+
+      expect(saga.next(mockTask).value).toEqual(take(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL));
+      expect(saga.next({type: actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL}).value).toEqual(cancel(mockTask));
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+  describe('startPollingForIntegrationErrors saga', () => {
+    test('should fork _pollForIntegrationErrors, waits for STOP_POLL action and then cancels _pollForIntegrationErrors', () => {
+      const mockTask = createMockTask();
+
+      const saga = startPollingForIntegrationErrors({ integrationId });
+
+      expect(saga.next().value).toEqual(fork(_pollForIntegrationErrors, { integrationId }));
+
+      expect(saga.next(mockTask).value).toEqual(take(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL));
+      expect(saga.next({type: actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL}).value).toEqual(cancel(mockTask));
+      expect(saga.next().done).toEqual(true);
     });
   });
 });

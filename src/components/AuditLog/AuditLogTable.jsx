@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   messageContainer: {
     padding: theme.spacing(3),
+    backgroundColor: theme.palette.common.white,
   },
 }));
 

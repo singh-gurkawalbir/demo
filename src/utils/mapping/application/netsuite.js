@@ -36,17 +36,15 @@ export default {
       ) > -1;
     let initializeValues = [];
     const fmInitializeValues =
-      mappings.fields &&
-      mappings.fields.find(
+      mappings.fields?.find(
         mapping => mapping.generate === 'celigo_initializeValues'
       );
 
-    if (fmInitializeValues && fmInitializeValues.hardCodedValue) {
+    if (fmInitializeValues?.hardCodedValue) {
       initializeValues = fmInitializeValues.hardCodedValue.split(',');
     }
 
-    mappings.fields &&
-      mappings.fields.forEach(mapping => {
+      mappings.fields?.forEach(mapping => {
         if (mapping.generate !== 'celigo_initializeValues') {
           const tempFm = { ...mapping };
 
@@ -70,9 +68,7 @@ export default {
           }
 
           if (
-            mapping.subRecordMapping &&
-            mapping.subRecordMapping.recordType &&
-            mapping.generate === 'celigo_initializeValues'
+            mapping.subRecordMapping?.recordType
           ) {
             tempFm.extract = 'Subrecord Mapping';
             tempFm.isSubRecordMapping = true;
@@ -81,114 +77,116 @@ export default {
           toReturn.push(tempFm);
         }
       });
-    let index;
-    let isPrevOperationAttachOrDetach = false;
+      let index;
+      let isPrevOperationAttachOrDetach = false;
 
-    if (resource && (resource.netsuite_da?.operation === 'attach' || resource.netsuite_da?.operation === 'detach')) {
-      index = toReturn.findIndex(
-        mapping => (mapping.generate === 'celigo_nlobjAttachToId' || mapping.generate === 'celigo_nlobjDetachFromId')
-      );
-      if (index >= 0) { isPrevOperationAttachOrDetach = true; }
-    }
-
-    if (resource && resource.netsuite_da?.operation === 'attach') {
-      toReturn = toReturn.filter(m => (!['celigo_nlobjDetachFromId', 'celigo_nlobjDetachedType', 'celigo_nlobjDetachedId'].includes(m.generate)));
-
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjAttachToId'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjAttachToId',
-          isRequired: true,
-        });
-      } else {
-        toReturn[index].isRequired = true;
+      // eslint-disable-next-line camelcase
+      if (resource?.netsuite_da?.operation === 'attach' || resource?.netsuite_da?.operation === 'detach') {
+        index = toReturn.findIndex(
+          mapping => (mapping.generate === 'celigo_nlobjAttachToId' || mapping.generate === 'celigo_nlobjDetachFromId')
+        );
+        if (index >= 0) { isPrevOperationAttachOrDetach = true; }
       }
 
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjAttachedType'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjAttachedType',
-          isRequired: true,
-        });
-      } else {
-        toReturn[index].isRequired = true;
+      // eslint-disable-next-line camelcase
+      if (resource?.netsuite_da?.operation === 'attach') {
+        toReturn = toReturn.filter(m => (!['celigo_nlobjDetachFromId', 'celigo_nlobjDetachedType', 'celigo_nlobjDetachedId'].includes(m.generate)));
+
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjAttachToId'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjAttachToId',
+            isRequired: true,
+          });
+        } else {
+          toReturn[index].isRequired = true;
+        }
+
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjAttachedType'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjAttachedType',
+            isRequired: true,
+          });
+        } else {
+          toReturn[index].isRequired = true;
+        }
+
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjAttachedId'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjAttachedId',
+            isRequired: true,
+          });
+        } else {
+          toReturn[index].isRequired = true;
+        }
+      // eslint-disable-next-line camelcase
+      } else if (resource?.netsuite_da?.operation === 'detach') {
+        toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjAttachedType', 'celigo_nlobjAttachedId'].includes(m.generate)));
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjDetachFromId'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjDetachFromId',
+            isRequired: true,
+          });
+        } else {
+          toReturn[index].isRequired = true;
+        }
+
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjDetachedType'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjDetachedType',
+            isRequired: true,
+          });
+        } else {
+          toReturn[index].isRequired = true;
+        }
+
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjDetachedId'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjDetachedId',
+            isRequired: true,
+          });
+        } else {
+          toReturn[index].isRequired = true;
+        }
       }
 
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjAttachedId'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjAttachedId',
-          isRequired: true,
-        });
-      } else {
-        toReturn[index].isRequired = true;
-      }
-    } else if (resource && resource.netsuite_da?.operation === 'detach') {
-      toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjAttachedType', 'celigo_nlobjAttachedId'].includes(m.generate)));
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjDetachFromId'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjDetachFromId',
-          isRequired: true,
-        });
-      } else {
-        toReturn[index].isRequired = true;
-      }
+      if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation) && !isPrevOperationAttachOrDetach) {
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesRole'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjAttachDetachAttributesRole',
+          });
+        }
 
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjDetachedType'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjDetachedType',
-          isRequired: true,
-        });
-      } else {
-        toReturn[index].isRequired = true;
+        index = toReturn.findIndex(
+          mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesField'
+        );
+        if (index === -1) {
+          toReturn.push({
+            generate: 'celigo_nlobjAttachDetachAttributesField',
+          });
+        }
       }
-
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjDetachedId'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjDetachedId',
-          isRequired: true,
-        });
-      } else {
-        toReturn[index].isRequired = true;
-      }
-    }
-
-    if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation) && !isPrevOperationAttachOrDetach) {
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesRole'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjAttachDetachAttributesRole',
-        });
-      }
-
-      index = toReturn.findIndex(
-        mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesField'
-      );
-      if (index === -1) {
-        toReturn.push({
-          generate: 'celigo_nlobjAttachDetachAttributesField',
-        });
-      }
-    }
-    mappings.lists &&
-      mappings.lists.forEach(lm => {
+      mappings.lists?.forEach(lm => {
         lm.fields.forEach(fm => {
           const tempFm = { ...fm };
 
@@ -233,10 +231,10 @@ export default {
             );
           }
 
-          if (isGroupedSampleData && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
+          if (isGroupedSampleData && tempFm.extract?.indexOf('*.') !== 0) {
             tempFm.useFirstRow = true;
           }
-          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+          if (tempFm.extract?.indexOf('*.') === 0) {
             tempFm.extract = tempFm.extract.substr('*.'.length);
           } else if (tempFm.extract && /^0\./.test(tempFm.extract)) {
             tempFm.extract = tempFm.extract.substr('0.'.length);
@@ -250,7 +248,7 @@ export default {
             tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2');
           }
 
-          if (fm.subRecordMapping && fm.subRecordMapping.recordType) {
+          if (fm.subRecordMapping?.recordType) {
             tempFm.extract = 'Subrecord Mapping';
             tempFm.isSubRecordMapping = true;
           }
@@ -259,10 +257,10 @@ export default {
         });
       });
 
-    // removing duplicate items if present
-    const _toReturn = uniqBy(toReturn, item => item.generate);
+      // removing duplicate items if present
+      const _toReturn = uniqBy(toReturn, item => item.generate);
 
-    return _toReturn;
+      return _toReturn;
   },
 
   generateMappingFieldsAndList: ({
@@ -295,7 +293,7 @@ export default {
       generateParts = mapping.generate ? mapping.generate.split('[*].') : null;
       let list;
 
-      if (generateParts && generateParts.length > 1) {
+      if (generateParts?.length > 1) {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
@@ -311,8 +309,7 @@ export default {
 
         if (
           (isGroupedSampleData || mapping.useIterativeRow) &&
-          mapping.extract &&
-          mapping.extract.indexOf('[*].') === -1 &&
+          mapping.extract?.indexOf('[*].') === -1 &&
           !handlebarRegex.test(mapping.extract)
         ) {
           if (!mapping.useFirstRow) {
@@ -345,13 +342,11 @@ export default {
       }
 
       const fieldMetadata =
-        generateFields &&
-        generateFields.find(generate => generate.id === mappingTmp.generate);
+        generateFields?.find(generate => generate.id === mappingTmp.generate);
 
       // TODO (Aditya): Check for below object type comparison
       if (
-        fieldMetadata &&
-        fieldMetadata.type === 'multiselect' &&
+        fieldMetadata?.type === 'multiselect' &&
         mapping.hardCodedValue &&
         !mapping.internalId &&
         Object.prototype.toString.apply(mapping.hardCodedValue) ===

@@ -56,6 +56,7 @@ export default function FlowBuilder() {
         <EditorDrawer />
         <ErrorDetailsDrawer flowId={flowId} />
         <SettingsDrawer
+          dataPublic
           integrationId={integrationId}
           resourceType="flows"
           resourceId={flowId}

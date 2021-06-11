@@ -1,9 +1,8 @@
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles, Button, IconButton } from '@material-ui/core';
-import { useDrag, useDrop } from 'react-dnd-cjs';
+import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -23,7 +22,7 @@ import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon'
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
+import { tileStatus, isTileStatusConnectionDown } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
@@ -31,6 +30,7 @@ import { getTemplateUrlName } from '../../utils/template';
 import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 import CeligoTruncate from '../../components/CeligoTruncate';
+import ActionButton from '../../components/ActionButton';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -41,12 +41,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   action: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-    color: theme.palette.secondary.light,
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
+    marginLeft: 0,
   },
   status: {
     position: 'relative',
@@ -102,7 +97,12 @@ function AppLogosContainer({ tile }) {
   );
 }
 
-function Tile({ tile, history, onMove, onDrop, index }) {
+function Tile({
+  tile,
+  history,
+  isDragInProgress,
+  isTileDragged,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
@@ -113,6 +113,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const supportsMultiStore = integration?.settings?.supportsMultiStore;
   const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId} = useSelector(state =>
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
@@ -233,20 +234,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     [history, urlToIntegrationSettings]
   );
 
-  // #region Drag&Drop related
-  const ref = useRef(null);
-  // isOver is set to true when hover happens over component
-  const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag, preview] = useDrag(dragTileConfig(index, onDrop, ref));
-  // need to show different style for selected tile
-  const isCardSelected = !!isDragging;
-
-  drop(preview(ref));
-  // #endregion
-
   return (
-    <div ref={ref}>
-      <HomePageCardContainer drag={drag} isCardSelected={isCardSelected} >
+    <div>
+      <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
           <Status
             label={status.label}
@@ -279,29 +269,21 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             {accessLevel && (
             <Manage>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                <Tooltip
+                <ActionButton
+                  tooltip="You have monitor permissions"
                   data-public
-                  title="You have monitor permissions"
-                  placement="bottom">
-                  <Button
-                    color="inherit"
-                    className={classes.action}
-                    onClick={handleUsersClick}>
-                    <PermissionsMonitorIcon />
-                  </Button>
-                </Tooltip>
+                  onClick={handleUsersClick}>
+                  <PermissionsMonitorIcon />
+                </ActionButton>
               ) : (
-                <Tooltip
+                <ActionButton
+                  placement="bottom"
                   data-public
-                  title="You have manage permissions"
-                  placement="bottom">
-                  <Button
-                    color="inherit"
-                    className={classes.action}
-                    onClick={handleUsersClick}>
-                    <PermissionsManageIcon />
-                  </Button>
-                </Tooltip>
+                  tooltip="You have manage permissions"
+                  className={classes.action}
+                  onClick={handleUsersClick}>
+                  <PermissionsManageIcon />
+                </ActionButton>
               )}
             </Manage>
             )}
@@ -318,6 +300,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
             trialExpired={trialExpired}
             licenseId={licenseId}
+            supportsMultiStore={supportsMultiStore}
             tileStatus={tile.status}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
