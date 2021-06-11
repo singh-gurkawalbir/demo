@@ -1,33 +1,11 @@
-import clsx from 'clsx';
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import ActionGroup from '../ActionGroup';
 import useConfirmDialog from '../ConfirmDialog';
 import Spinner from '../Spinner';
 
-const useStyles = makeStyles({
-  waitCursor: {
-    pointerEvents: 'unset !important',
-    cursor: 'wait !important',
-    // need to figure out how to prevent the border hover state...
-    // '&:hover': {
-    //   borderColor: 'red',
-    //   borderSize: 0,
-    // },
-  },
-  disabledCursor: {
-    pointerEvents: 'unset !important',
-    cursor: 'not-allowed !important',
-    // '&:hover': {
-    //   borderColor: 'red',
-    //   borderSize: 0,
-    // },
-  },
-});
-
 export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, onSave }) {
-  const classes = useStyles();
   const { saveDiscardDialog } = useConfirmDialog();
   const [closeTriggered, setCloseTriggered] = useState(false);
   const isSuccess = status === 'success';
@@ -58,10 +36,6 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
   return (
     <ActionGroup>
       <Button
-        className={clsx({
-          [classes.waitCursor]: inProgress,
-          [classes.disabledCursor]: !isDirty || disabled,
-        })}
         variant="outlined"
         data-test="saveEditor"
         disabled={disabled || !isDirty || inProgress}
@@ -81,7 +55,6 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
       )}
 
       <Button
-        className={clsx({[classes.waitCursor]: disabled})}
         variant="text"
         color="primary"
         data-test="closeEditor"

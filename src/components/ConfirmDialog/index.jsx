@@ -151,6 +151,7 @@ export default function useConfirmDialog() {
   );
   const saveDiscardDialog = useCallback(
     ({onSave, onDiscard}) => {
+      // console.log(({onSave, onDiscard}));
       setConfirmDialogProps({
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',

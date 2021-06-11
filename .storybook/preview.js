@@ -6,6 +6,7 @@ import { createLogger } from 'redux-logger';
 import { ThemeProvider } from '@material-ui/core/styles';
 import themeProvider from '../src/theme/themeProvider';
 import FontStager from '../src/components/FontStager';
+import { ConfirmDialogProvider } from '../src/components/ConfirmDialog';
 import rootReducer from '../src/reducers';
 import rootSaga from '../src/sagas';
 export const parameters = {
@@ -27,6 +28,16 @@ export const globalTypes = {
     },
   },
 };
+
+
+const withConfirmDialogProvider = (Story, context) => {
+  return (
+    <ConfirmDialogProvider>
+      <Story {...context} />
+    </ConfirmDialogProvider>
+  )
+}
+
 const withThemeProvider = (Story, context) => {
   const theme = themeProvider(context.globals.theme);
   return (
@@ -69,11 +80,24 @@ const withRedux = (Story, context) => {
     </Provider>
   )
 }
+
+// NOTE! The order of decorators is important. The first items
+// are the inner-most and as such do not have the context of
+// the other decorators. Below for example, the Confirm Provider
+// requires the Theme Provider, so it must be ordered prior to
+// the theme provider. Basic rule is to use the same hierarchy as
+// what the UI code (App.js) does.
 export const decorators = [
   // provide access to react-redux store to all stories.
   // possibly this does not need to be global as many
   // atomic components do not need redux.
   withRedux,
+
+  // This decorator adds support for confirmation dialogs
+  // The provider code is what injects the modal into the document 
+  // body.
+  withConfirmDialogProvider,
+
   // this decorator forces stories to re-render any time the
   // global storybook context changes. This happens when a
   // user changes the global theme value in the Storybook toolbar.
