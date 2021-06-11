@@ -6,7 +6,7 @@ import { deepClone } from 'fast-json-patch';
 import {v4} from 'uuid';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
+import { IconButton } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
@@ -14,6 +14,8 @@ import { getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import WarningIcon from '../../icons/WarningIcon';
+import CopyIcon from '../../icons/CopyIcon';
+import AddIcon from '../../icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
@@ -24,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   dynaWebhookTokenbtn: {
-    marginTop: 26,
+    marginTop: theme.spacing(3.5),
     marginLeft: theme.spacing(1),
   },
   tokenWarning: {
@@ -129,21 +131,14 @@ export default function DynaWebhookTokenGenerator(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <Button
-                data-test="copyToClipboard"
-                title="Copy to clipboard"
-                variant="outlined"
-                color="secondary">
-                Copy token
-              </Button>
+              <IconButton aria-label="Copy to clipboard" size="small" color="inherit">
+                <CopyIcon />
+              </IconButton>
             </CopyToClipboard>
           ) : (
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleGenerateClick}>
-              {buttonLabel}
-            </Button>
+            <IconButton aria-label={buttonLabel} onClick={handleGenerateClick} size="small" color="inherit">
+              <AddIcon />
+            </IconButton>
           )}
         </div>
       </div>
