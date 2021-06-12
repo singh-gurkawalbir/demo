@@ -173,7 +173,10 @@ export function* exportPreview({
   // if in case integration settings were used in export
   const flow = yield select(selectors.resource, 'flows', flowId);
 
-  body._flowId = flowId;
+  if (!isNewId(flowId)) {
+    body._flowId = flowId;
+  }
+
   body._integrationId = flow?._integrationId;
   try {
     const previewData = yield call(apiCallWithRetry, {
