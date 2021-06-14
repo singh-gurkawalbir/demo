@@ -524,7 +524,7 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
+selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resource selectors
@@ -1425,11 +1425,6 @@ selectors.mkTiles = () => createSelector(
       };
     });
   });
-
-selectors.isDataReady = (state, resource) => (
-  fromData.hasData(state?.data, resource) &&
-      !fromComms.isLoading(state?.comms, resource)
-);
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
@@ -4705,7 +4700,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+    name: resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name,
   };
 };
 
