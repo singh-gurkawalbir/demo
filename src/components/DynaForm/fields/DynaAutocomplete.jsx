@@ -39,7 +39,6 @@ export default function DynaAutocomplete(props) {
     dataTest,
     options: actualOptions,
   } = props;
-  // const renderOption = useCallback(optionValue => <Row optionValue={optionValue} options={actualOptions} />, [actualOptions]);
 
   const classes = useStyles();
   const options = useMemo(() => actualOptions.map(opt => opt.value), [actualOptions]);
@@ -64,7 +63,7 @@ export default function DynaAutocomplete(props) {
           freeSolo
           options={options}
           getOptionLabel={option => (
-              actualOptions.find(opt => opt.value === `${option}`)?.label || option
+              actualOptions.find(opt => opt.value === `${option}`)?.label || `${option}`
           )}
           data-test={dataTest || id}
           value={value}
@@ -84,7 +83,7 @@ export default function DynaAutocomplete(props) {
           }}
           renderInput={params => (
             <TextField
-              {...params} name={name} inputVal={value}
+              {...params} name={name}
               id={id} />
           )}
         />

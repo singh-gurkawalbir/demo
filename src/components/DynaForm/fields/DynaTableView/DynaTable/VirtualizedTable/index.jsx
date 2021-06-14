@@ -42,26 +42,15 @@ const isRowInvalid = (optionsMap, rowValue, rowIndex, items, touched) => options
 
   return !isCellValid({fieldValue, required, rowIndex, tableSize: items.length, touched});
 });
-const VirtualizedTable = ({
-  items,
-  optionsMapFinal,
-  touched,
-  isAnyColumnFetching,
-  setTableState,
-  onRowChange,
-  disableDeleteRows }) => {
-  const listRef = React.createRef();
 
-  const [, setItemCount] = useState(items.length);
-  const [scrollIndex, setScrollIndex] = useState(0);
-  const maxHeightOfSelect = items.length > NO_OF_ROWS
-    ? TABLE_VIEW_PORT_HEIGHT
-    : ITEM_SIZE * items.length;
-
+const useResetErroredRowHeights = (listRef, items, optionsMap, touched) => {
   useEffect(() => {
+    if (!listRef.current) {
+      return () => {};
+    }
     const {resetAfterIndex} = listRef.current;
     const invalidRows = items.reduce((acc, curr, ind) => {
-      const rowInvalid = isRowInvalid(optionsMapFinal, curr, ind, items, touched);
+      const rowInvalid = isRowInvalid(optionsMap, curr, ind, items, touched);
 
       if (rowInvalid) {
         acc.push(ind);
@@ -82,7 +71,24 @@ const VirtualizedTable = ({
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
+};
+const VirtualizedTable = ({
+  items,
+  optionsMapFinal,
+  touched,
+  isAnyColumnFetching,
+  setTableState,
+  onRowChange,
+  disableDeleteRows }) => {
+  const listRef = React.createRef();
 
+  const [, setItemCount] = useState(items.length);
+  const [scrollIndex, setScrollIndex] = useState(0);
+  const maxHeightOfSelect = items.length > NO_OF_ROWS
+    ? TABLE_VIEW_PORT_HEIGHT
+    : ITEM_SIZE * items.length;
+
+  useResetErroredRowHeights(listRef, items, optionsMapFinal, touched);
   const getItemSize = useCallback(rowIndex => {
     const rowValue = items[rowIndex];
     const rowInvalid = isRowInvalid(optionsMapFinal, rowValue, rowIndex, items, touched);
