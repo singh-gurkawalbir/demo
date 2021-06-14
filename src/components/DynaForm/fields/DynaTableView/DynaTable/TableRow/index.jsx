@@ -167,20 +167,18 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   return null;
 };
 
-const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange, isVirtualizedTable}) => {
+export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}) => {
+  if (rowIndex === tableSize - 1 || !touched) { return true; }
+
+  return !required || (required && fieldValue);
+};
+
+const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
   const {required } = op;
-
-  const isCellValid = useCallback(() => {
-    if (rowIndex === tableSize - 1 || !touched) { return true; }
-
-    return !required || (required && fieldValue);
-  }, [fieldValue, required, rowIndex, tableSize, touched]);
-
-  const isValid = isCellValid();
+  const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
     <RowCell
-      isVirtualizedTable={isVirtualizedTable}
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
@@ -189,7 +187,7 @@ const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize,
       setTableState={setTableState}
       onRowChange={onRowChange}
   />
-  ), [fieldValue, isValid, isVirtualizedTable, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -215,7 +213,6 @@ export default function TableRow({
   setTableState,
   onRowChange,
   disableDeleteRows,
-  isVirtualizedTable,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -229,7 +226,6 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
-              isVirtualizedTable={isVirtualizedTable}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}

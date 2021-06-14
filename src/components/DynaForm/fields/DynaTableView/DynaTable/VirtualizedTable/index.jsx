@@ -1,10 +1,11 @@
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FixedSizeList } from 'react-window';
+import { VariableSizeList } from 'react-window';
 import Spinner from '../../../../../Spinner';
-import TableRow from '../TableRow';
+import TableRow, { isCellValid } from '../TableRow';
 
 const ITEM_SIZE = 46;
+const INVALID_ITEM_SIZE = 55;
 const NO_OF_ROWS = 10;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
@@ -35,6 +36,12 @@ const VirtualizedListRow = ({index, style, data}) => {
   );
 };
 
+const isRowInvalid = (optionsMap, rowValue, rowIndex, items, touched) => optionsMap.some(op => {
+  const {required, id} = op;
+  const fieldValue = rowValue.value[id];
+
+  return !isCellValid({fieldValue, required, rowIndex, tableSize: items.length, touched});
+});
 const VirtualizedTable = ({
   items,
   optionsMapFinal,
@@ -51,6 +58,39 @@ const VirtualizedTable = ({
     ? TABLE_VIEW_PORT_HEIGHT
     : ITEM_SIZE * items.length;
 
+  useEffect(() => {
+    const {resetAfterIndex} = listRef.current;
+    const invalidRows = items.reduce((acc, curr, ind) => {
+      const rowInvalid = isRowInvalid(optionsMapFinal, curr, ind, items, touched);
+
+      if (rowInvalid) {
+        acc.push(ind);
+      }
+
+      return acc;
+    }, []);
+
+    invalidRows.forEach(ind => {
+      resetAfterIndex(ind);
+    });
+
+    return () => {
+      // clean up required to reset previously errored rows
+      invalidRows.forEach(ind => {
+        resetAfterIndex(ind);
+      });
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
+  const getItemSize = useCallback(rowIndex => {
+    const rowValue = items[rowIndex];
+    const rowInvalid = isRowInvalid(optionsMapFinal, rowValue, rowIndex, items, touched);
+
+    if (rowInvalid) return INVALID_ITEM_SIZE;
+
+    return ITEM_SIZE;
+  }, [items, optionsMapFinal, touched]);
   const rowProps = useMemo(() => ({
     items,
     optionsMapFinal,
@@ -82,9 +122,9 @@ const VirtualizedTable = ({
 
   return (
 
-    <FixedSizeList
+    <VariableSizeList
       ref={listRef}
-      itemSize={ITEM_SIZE}
+      itemSize={getItemSize}
       height={
       maxHeightOfSelect
     }
@@ -97,7 +137,7 @@ const VirtualizedTable = ({
       {/*  // when options are loading we have to return the spinner this is to block the user from accessing the table till
   // the DynaAutocomplete initial value state settles */}
       { VirtualizedListRow}
-    </FixedSizeList>
+    </VariableSizeList>
   );
 };
 
