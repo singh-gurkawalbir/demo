@@ -52,6 +52,7 @@ const Template = ({ isDirty, ...rest }) => {
 const designParams = {
   design: {
     type: 'figma',
+    allowFullscreen: true,
     url: 'https://www.figma.com/file/XeXHoQxESkwlENWxfRY3Jq/Fuse-Design-System%3A-Integrator.io?node-id=6005%3A72',
   },
 };

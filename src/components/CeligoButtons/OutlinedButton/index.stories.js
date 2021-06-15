@@ -23,6 +23,7 @@ defaultButton.args = {
 const designParameters = {
   design: {
     type: 'figma',
+    allowFullscreen: true,
     url: 'https://www.figma.com/file/GLx3BVbon8pPYQP5AJFNeZ/Fuse-Storybook-Design-System?node-id=1%3A3',
   },
 };
