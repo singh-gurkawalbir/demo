@@ -8,7 +8,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', errorMsg } = action;
+  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', errorMsg, fetchStatus } = action;
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
@@ -20,11 +20,12 @@ export default (state = {}, action) => {
         if (!draft.scripts[key]) {
           draft.scripts[key] = {};
         }
+        delete draft.scripts[key].fetchStatus;
+        delete draft.scripts[key].currQueryTime;
         draft.scripts[key].scriptId = scriptId;
         draft.scripts[key].flowId = flowId;
         draft.scripts[key].dateRange = {
           startDate: addMinutes(new Date(), -15),
-          endDate: new Date(),
           preset: 'last15minutes',
         };
         draft.scripts[key].status = 'requested';
@@ -37,6 +38,8 @@ export default (state = {}, action) => {
             draft.scripts[key].errorMsg = errorMsg;
           }
           delete draft.scripts[key].nextPageURL;
+          delete draft.scripts[key].fetchStatus;
+          delete draft.scripts[key].currQueryTime;
         }
 
         break;
@@ -70,6 +73,8 @@ export default (state = {}, action) => {
             delete draft.scripts[key].logs;
             delete draft.scripts[key].nextPageURL;
             delete draft.scripts[key].errorMsg;
+            delete draft.scripts[key].fetchStatus;
+            delete draft.scripts[key].currQueryTime;
           }
         }
         break;
@@ -79,7 +84,7 @@ export default (state = {}, action) => {
           if (draft.scripts[key].dateRange) {
             const newDateRange = getSelectedRange({
               preset: draft.scripts[key]?.dateRange?.preset,
-            });
+            }, true);
 
             draft.scripts[key].dateRange = newDateRange;
           }
@@ -87,9 +92,33 @@ export default (state = {}, action) => {
           delete draft.scripts[key].logs;
           delete draft.scripts[key].nextPageURL;
           delete draft.scripts[key].errorMsg;
+          delete draft.scripts[key].fetchStatus;
+          delete draft.scripts[key].currQueryTime;
         }
 
         break;
+
+      case actionTypes.LOGS.SCRIPTS.FETCH_STATUS: {
+        if (!draft?.scripts?.[key]) break;
+        draft.scripts[key].fetchStatus = fetchStatus;
+        const {nextPageURL} = draft.scripts[key];
+
+        if (fetchStatus !== 'completed' && nextPageURL) {
+          const queryParams = new URLSearchParams(nextPageURL);
+
+          const timeLte = queryParams.get('time_lte');
+
+          const logsLength = draft.scripts[key].logs?.length;
+          let lastLogTime = logsLength && draft.scripts[key].logs?.[logsLength - 1].time;
+
+          lastLogTime = lastLogTime && Date.parse(lastLogTime);
+
+          // if nextPageURL does not have time_lte, we use the oldest log time
+          // or if logs list is also empty, we use current time
+          draft.scripts[key].currQueryTime = parseInt(timeLte || lastLogTime || Date.now(), 10);
+        }
+        break;
+      }
       case actionTypes.LOGS.SCRIPTS.CLEAR:
         if (draft.scripts) {
           if (!scriptId && flowId) {
