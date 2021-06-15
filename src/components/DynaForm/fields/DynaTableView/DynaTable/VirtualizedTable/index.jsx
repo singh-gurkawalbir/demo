@@ -124,6 +124,9 @@ const VirtualizedTable = ({
       return items.length;
     });
   }, [items.length, listRef]);
+
+  // The autocomplete component needs the options during an initial load
+  // this is helpful for that component to resolve the corresponding label in the input text field
   if (isAnyColumnFetching) { return (<div style={{height: `${maxHeightOfSelect}px`}}><Spinner centerAll /></div>); }
 
   return (
