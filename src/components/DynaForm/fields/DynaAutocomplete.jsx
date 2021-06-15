@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import clsx from 'clsx';
 import React, { useMemo, useState } from 'react';
+import { FixedSizeList } from 'react-window';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 
@@ -23,6 +24,55 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
 }));
+
+const Row = props => {
+  const { data, index, style } = props;
+
+  return React.cloneElement(data[index], {
+    style: {
+      ...style,
+    },
+  });
+};
+
+const OuterElementContext = React.createContext({});
+
+const OuterElementType = React.forwardRef((props, ref) => {
+  const outerProps = React.useContext(OuterElementContext);
+
+  return <div ref={ref} {...props} {...outerProps} />;
+});
+
+const NO_OF_OPTIONS = 6;
+const ITEM_SIZE = 40;
+const OPTIONS_VIEW_PORT_HEIGHT = 250;
+
+const ListboxComponent = props => {
+  const {children, ...other} = props;
+
+  const itemData = React.Children.toArray(children);
+
+  const itemCount = itemData.length;
+
+  const maxHeightOfSelect = itemData.length > NO_OF_OPTIONS
+    ? OPTIONS_VIEW_PORT_HEIGHT
+    : ITEM_SIZE * itemData.length;
+
+  return (
+    <OuterElementContext.Provider value={other}>
+      <FixedSizeList
+        itemData={itemData}
+        itemCount={itemCount}
+        outerElementType={OuterElementType}
+        itemSize={ITEM_SIZE}
+        height={maxHeightOfSelect}
+    >
+        {Row}
+      </FixedSizeList>
+    </OuterElementContext.Provider>
+
+  );
+};
 
 export default function DynaAutocomplete(props) {
   const {
@@ -67,6 +117,7 @@ export default function DynaAutocomplete(props) {
           )}
           data-test={dataTest || id}
           value={value}
+          ListboxComponent={ListboxComponent}
           inputValue={inputValue}
           onInputChange={(event, newInputValue) => {
             setInputValue(newInputValue);
