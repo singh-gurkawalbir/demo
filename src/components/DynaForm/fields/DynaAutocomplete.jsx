@@ -101,13 +101,15 @@ export default function DynaAutocomplete(props) {
     options: actualOptions,
   } = props;
 
+  const actualValueInString = `${actualValue}`;
+
   const classes = useStyles();
   const options = useMemo(() => actualOptions.map(opt => opt.value), [actualOptions]);
-  const [value, setValue] = useState(`${actualValue}`);
-  const [inputValue, setInputValue] = useState(actualOptions.find(opt => opt.value === `${actualValue}`)?.label || actualValue);
+  const [value, setValue] = useState(actualValueInString);
+  const [inputValue, setInputValue] = useState(actualOptions.find(opt => opt.value === actualValueInString)?.label || actualValueInString);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const selectedItemIndex = actualOptions.findIndex(opt => opt.value === `${actualValue}`);
+  const selectedItemIndex = actualOptions.findIndex(opt => opt.value === actualValueInString);
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
