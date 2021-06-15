@@ -8,12 +8,12 @@ export default function CeligoColor() {
     <>
       <Typography variant="h3">Celigo Colors</Typography>
 
-      <SwatchSet name="Accent" colors={colors.accent} />
-      <SwatchSet name="Neutral" colors={colors.neutral} />
-      <SwatchSet name="Sandbox" colors={colors.sandbox} />
-      <SwatchSet name="Success" colors={colors.success} />
-      <SwatchSet name="Warning" colors={colors.warning} />
-      <SwatchSet name="Error" colors={colors.error} />
+      <SwatchSet name="Accent Colors" colors={colors.accent} />
+      <SwatchSet name="Neutral Colors" colors={colors.neutral} />
+      <SwatchSet name="Sandbox Colors" colors={colors.sandbox} />
+      <SwatchSet name="Success Colors" colors={colors.success} />
+      <SwatchSet name="Warning Colors" colors={colors.warning} />
+      <SwatchSet name="Error Colors" colors={colors.error} />
     </>
   );
 }
