@@ -51,7 +51,6 @@ import {
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
-import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -92,6 +91,7 @@ import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -527,7 +527,7 @@ selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessi
 selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
 
-// #region resouce selectors
+// #region resource selectors
 
 selectors.mkTileApplications = () => createSelector(
   (_, tile) => tile,
@@ -818,13 +818,33 @@ const reportsFilter = {
   type: 'eventreports',
 };
 
+selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+  const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId;
+};
+
+selectors.getEventReportIntegrationName = (state, r) => {
+  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  // if there is no integration associated to a flow then its a standalone flow
+
+  return integration?.name || STANDALONE_INTEGRATION.name;
+};
+
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;
 
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId;
+    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+    // integration has been deleted
+    if (!integrationId) return null;
+
     const integration = selectors.resource(state, 'integrations', integrationId);
 
     if (!integration) {
@@ -882,7 +902,12 @@ selectors.mkEventReportsFiltered = () => {
       // checking filtering by integration
 
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
-        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.[0] === _id);
+        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
+
+        // flow is deleted do not list the report
+        if (!flow) {
+          return false;
+        }
 
         return integrationIdFilter.includes(flow._integrationId);
       });
@@ -1587,23 +1612,6 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.resourceFormField = (state, resourceType, resourceId, id) => {
-  const data = selectors.resourceData(state, resourceType, resourceId);
-
-  if (!data || !data.merged) return;
-
-  const { merged } = data;
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return;
-
-  const field = getFieldById({ meta, id });
-
-  if (!field) return;
-
-  return field;
-};
-
 selectors.auditLogs = (
   state,
   resourceType,
@@ -1913,6 +1921,28 @@ selectors.mkIntegrationFlowsByGroup = () => {
       });
     }
   );
+};
+
+selectors.getResourceType = (state, { resourceType, resourceId }) => {
+  let updatedResourceType;
+
+  if (resourceType === 'pageGenerator') {
+    updatedResourceType = 'exports';
+  } else if (resourceType === 'pageProcessor') {
+    const createdId = selectors.createdResourceId(state, resourceId);
+    const importResource = selectors.resource(state, 'imports', createdId);
+
+    // it should be either an export or an import
+    if (importResource) {
+      updatedResourceType = 'imports';
+    } else {
+      updatedResourceType = 'exports';
+    }
+  } else {
+    updatedResourceType = resourceType;
+  }
+
+  return updatedResourceType;
 };
 
 // #endregion resource selectors
@@ -2500,23 +2530,6 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
 };
 
 // #endregion integrationApps selectors
-
-selectors.resourceFormField = (state, resourceType, resourceId, id) => {
-  const data = selectors.resourceData(state, resourceType, resourceId);
-
-  if (!data || !data.merged) return;
-
-  const { merged } = data;
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return;
-
-  const field = getFieldById({ meta, id });
-
-  if (!field) return;
-
-  return field;
-};
 
 // #region PUBLIC ACCOUNTS SELECTORS
 
@@ -3445,6 +3458,18 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (state, { flowId }) => {
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+      const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
+
+      if (integration._parentId) {
+        return (
+          selectors.resource(state, 'integrations', integration._parentId) || emptyObject
+        );
+      }
+
+      return null;
+    },
   ],
   (
     sampleData,
@@ -3456,6 +3481,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -3464,7 +3490,8 @@ selectors.sampleDataWrapper = createSelector(
     resource,
     connection,
     stage,
-    fieldType})
+    fieldType,
+    parentIntegration})
 );
 
 /**
@@ -5438,11 +5465,6 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
 
 selectors.tileLicenseDetails = (state, tile) => {
   const licenses = selectors.licenses(state);
-  const accessLevel =
-    tile.integration &&
-    tile.integration.permissions &&
-    tile.integration.permissions.accessLevel;
-
   const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
@@ -5451,7 +5473,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   let expired = false;
   let trialExpired = false;
   let showTrialLicenseMessage = false;
-  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
+  const resumable = license?.resumable;
 
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
@@ -5514,6 +5536,45 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 );
 
 // #endregion listener request logs selectors
+
+selectors.assistantName = (state, resourceType, resourceId) => {
+  const _resource = selectors.resource(state, resourceType, resourceId);
+
+  if (!_resource) {
+    return;
+  }
+  const conn = selectors.resource(state, 'connections', _resource._connectionId);
+
+  return _resource.assistant || conn?.assistant;
+};
+
+selectors.recordTypeForAutoMapper = (state, resourceType, resourceId, subRecordMappingId) => {
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  if (!resource?.adaptorType) {
+    return '';
+  }
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
+    return selectors.mappingNSRecordType(state, resourceId, subRecordMappingId);
+  }
+  if (resource.adaptorType === 'NetSuiteExport') {
+    const netsuiteType = resource.netsuite?.type === 'distributed' ? 'distributed' : 'restlet';
+
+    return resource.netsuite[netsuiteType]?.recordType;
+  }
+  if (['SalesforceExport', 'SalesforceImport'].includes(resource.adaptorType)) {
+    const { sObjectType } = resource.salesforce;
+
+    return sObjectType;
+  }
+  const assistantName = selectors.assistantName(state, resourceType, resourceId);
+
+  if (assistantName && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistantName) !== -1) {
+    return mappingUtil.autoMapperRecordTypeForAssistant(resource);
+  }
+
+  return '';
+};
 
 // #region sso selectors
 selectors.oidcSSOClient = state => state?.data?.resources?.ssoclients?.find(client => client.type === 'oidc');

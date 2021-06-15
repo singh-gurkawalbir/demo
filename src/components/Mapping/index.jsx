@@ -52,7 +52,7 @@ const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
       <DrawerContent>
         <div className={classes.mappingDrawerContent}>
           <div className={classes.mappingColumn}>
-            <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
+            <TopPanel dataPublic flowId={flowId} importId={importId} disabled={disabled} />
 
             <div className={classes.mappingTable}>
               <DragContainer
@@ -68,14 +68,12 @@ const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
               )}
             </div>
           </div>
-
           <PreviewPanel
             importId={importId}
             disabled={disabled}
             subRecordMappingId={subRecordMappingId} />
         </div>
       </DrawerContent>
-
       <DrawerFooter>
         <ButtonPanel
           flowId={flowId}

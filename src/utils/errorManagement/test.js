@@ -1,6 +1,6 @@
 /* global expect, describe, test */
-
-import { getFilteredErrors, getErrorMapWithTotal, getErrorCountDiffMap } from '.';
+import moment from 'moment';
+import { getFilteredErrors, getErrorMapWithTotal, getErrorCountDiffMap, getSourceOptions, getJobStatus, getJobDuration } from '.';
 
 describe('getFilteredErrors util', () => {
   test('should return empty list when no errors or empty errors are passed', () => {
@@ -57,6 +57,7 @@ describe('getErrorMapWithTotal util', () => {
   test('should return empty map and count as 0 when there is empty list or no resourceId', () => {
     const expectedEmptyMap = { data: {}, total: 0 };
 
+    expect(getErrorMapWithTotal()).toEqual(expectedEmptyMap);
     expect(getErrorMapWithTotal([], '_flowId')).toEqual(expectedEmptyMap);
     expect(getErrorMapWithTotal(flowErrors)).toEqual(expectedEmptyMap);
     expect(getErrorMapWithTotal(flowErrors, '_exportId')).toEqual(expectedEmptyMap);
@@ -148,3 +149,92 @@ describe('getErrorCountDiffMap util', () => {
     expect(getErrorCountDiffMap(prevErrorMap, currErrorMap)).toEqual({});
   });
 });
+
+describe('getSourceOptions util', () => {
+  test('should return  empty list when there are no sources', () => {
+    expect(getSourceOptions()).toEqual([]);
+    expect(getSourceOptions([])).toEqual([]);
+  });
+  test('should return sorted list with source names and ids', () => {
+    const sampleSourceList = ['internal', 'resource', 'output_filter'];
+    const result = [
+      { _id: 'all', name: 'All sources'},
+      { _id: 'internal', name: 'Internal' },
+      { _id: 'output_filter', name: 'Output filter' },
+      { _id: 'resource', name: 'Resource' },
+    ];
+
+    expect(getSourceOptions(sampleSourceList)).toEqual(result);
+  });
+  test('should return passed sourceId as name also if the passed id is not a valid one from the list ', () => {
+    const sampleSourceList = ['internal', 'resource', 'invalidId'];
+    const result = [
+      { _id: 'all', name: 'All sources'},
+      { _id: 'internal', name: 'Internal' },
+      { _id: 'resource', name: 'Resource' },
+      { _id: 'invalidId', name: 'invalidId' },
+    ];
+
+    expect(getSourceOptions(sampleSourceList)).toEqual(result);
+  });
+  test('should return list with passed application name or default to Application if the source has application as id ', () => {
+    const sampleSourceList = ['internal', 'resource', 'application'];
+    const applicationName = 'Zendesk';
+    const result = [
+      { _id: 'all', name: 'All sources'},
+      { _id: 'internal', name: 'Internal' },
+      { _id: 'resource', name: 'Resource' },
+      { _id: 'application', name: applicationName},
+    ];
+    const resultWithoutApplicationName = [
+      { _id: 'all', name: 'All sources'},
+      { _id: 'application', name: 'Application'},
+      { _id: 'internal', name: 'Internal' },
+      { _id: 'resource', name: 'Resource' },
+    ];
+
+    expect(getSourceOptions(sampleSourceList, applicationName)).toEqual(result);
+    expect(getSourceOptions(sampleSourceList)).toEqual(resultWithoutApplicationName);
+  });
+});
+
+describe('getJobDuration util', () => {
+  test('should return undefined incase of invalid job or job with no startedAt and endedAt', () => {
+    expect(getJobDuration()).toBeUndefined();
+    expect(getJobDuration({})).toBeUndefined();
+    expect(getJobDuration({})).toBeUndefined();
+    expect(getJobDuration({ endedAt: moment().toISOString() })).toBeUndefined();
+    expect(getJobDuration({ startedAt: moment().toISOString() })).toBeUndefined();
+  });
+  test('should return the valid job duration when valid startedAt and endedAt properties exist on the passed job', () => {
+    const job1 = {startedAt: moment().toISOString(), endedAt: moment().add(100, 'ms').toISOString() };
+    const job2 = { startedAt: moment().toISOString(), endedAt: moment().add(1, 's').toISOString() };
+    const job3 = {
+      startedAt: moment().toISOString(),
+      endedAt: moment()
+        .add(2, 'd')
+        .add(11, 'h')
+        .add(59, 'm')
+        .add(59, 's')
+        .toISOString(),
+    };
+
+    expect(getJobDuration(job1)).toBe('00:00:00');
+    expect(getJobDuration(job2)).toBe('00:00:01');
+    expect(getJobDuration(job3)).toBe('59:59:59');
+  });
+});
+describe('getJobStatus util', () => {
+  test('should return undefined incase of invalid job or job with no status', () => {
+    expect(getJobStatus()).toBeUndefined();
+    expect(getJobStatus({})).toBeUndefined();
+  });
+  test('should return mapped status name if the status is valid else return the passed job status', () => {
+    const jobWithValidStatus = { _id: 'job123', status: 'completed' };
+    const jobWithInValidStatus = { _id: 'job123', status: 'INVALID' };
+
+    expect(getJobStatus(jobWithValidStatus)).toBe('Completed');
+    expect(getJobStatus(jobWithInValidStatus)).toBe('INVALID');
+  });
+});
+

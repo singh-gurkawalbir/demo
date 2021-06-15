@@ -4,7 +4,7 @@ import { withDesign } from 'storybook-addon-designs';
 import { Button } from '@material-ui/core';
 
 export default {
-  title: 'Buttons',
+  title: 'Components/Buttons',
   component: Button,
   decorators: [withDesign],
   argTypes: {

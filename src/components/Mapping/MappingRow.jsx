@@ -1,14 +1,12 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Tooltip, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
-import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
 import LookupIcon from '../icons/LookupLetterIcon';
 import MultiFieldIcon from '../icons/MultiFieldIcon';
@@ -16,6 +14,7 @@ import HardCodedIcon from '../icons/HardCodedIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
+import SortableHandle from '../Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -29,20 +28,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(1),
     alignItems: 'center',
-  },
-  dragRow: {
-    '& > div[class*="dragIcon"]': {
-      visibility: 'hidden',
-    },
-    '&:hover': {
-      '& > div[class*="dragIcon"]': {
-        visibility: 'visible',
-      },
-    },
-  },
-  dragIcon: {
-    cursor: 'move',
-    background: 'none',
   },
   mapField: {
     display: 'flex',
@@ -111,17 +96,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const emptyObject = {};
+
 export default function MappingRow({
   disabled,
-  onMove,
   index,
   importId,
   flowId,
   mappingKey,
   subRecordMappingId,
   isDragInProgress = false,
-  isDraggable = false,
+  isRowDragged = false,
 }) {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const [showGripper, setShowGripper] = useState(false);
+
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
     const mapping = mappings.find(({key}) => key === mappingKey);
@@ -138,10 +127,7 @@ export default function MappingRow({
     hardCodedValue,
     lookupName,
   } = mapping;
-  const dispatch = useDispatch();
-  const classes = useStyles();
-  const [isActive, setIsActive] = useState(false);
-  const ref = useRef(null);
+
   const generateFields = useSelector(state =>
     selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
@@ -153,38 +139,6 @@ export default function MappingRow({
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-
-  const [, drop] = useDrop({
-    accept: 'MAPPING',
-    hover(item) {
-      if (!ref.current || !isDraggable) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: 'MAPPING', index, key: mappingKey },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: isDraggable,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-
-  drop(preview(ref));
-
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
     if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
@@ -234,11 +188,19 @@ export default function MappingRow({
   }, [dispatch, mappingKey]);
 
   const handleOnMouseEnter = useCallback(() => {
-    setIsActive(true);
-  }, []);
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  }, [isDragInProgress]);
   const handleOnMouseLeave = useCallback(() => {
-    setIsActive(false);
+    setShowGripper(false);
   }, []);
+
+  useEffect(() => {
+    if (isRowDragged) {
+      setShowGripper(true);
+    }
+  }, [isRowDragged]);
 
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const isLookup = !!lookupName;
@@ -258,15 +220,11 @@ export default function MappingRow({
         </div>
       )}
       <div
-        ref={ref}
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
-        style={{ opacity }}
         className={classes.rowContainer}>
-        <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-          <div className={classes.dragIcon} ref={drag}>
-            <GripperIcon />
-          </div>
+        <div className={classes.innerRow}>
+          <SortableHandle isVisible={showGripper} />
           <div
             data-public
             className={clsx(classes.childHeader, classes.mapField, {
@@ -347,7 +305,7 @@ export default function MappingRow({
                 disabled={disableDelete}
                 onClick={handleDeleteClick}
                 className={clsx(classes.deleteBtn, {
-                  [classes.hide]: !isActive,
+                  [classes.hide]: !showGripper,
                 })}>
                 <TrashIcon />
               </ActionButton>

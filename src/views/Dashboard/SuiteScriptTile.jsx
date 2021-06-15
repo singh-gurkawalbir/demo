@@ -1,8 +1,7 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -24,8 +23,6 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '
 import {
   tileStatus,
   isTileStatusConnectionDown,
-  dragTileConfig,
-  dropTileConfig,
 } from './util';
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
@@ -61,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
+function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
   const classes = useStyles();
   const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
   const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
@@ -117,20 +114,10 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   // IO-13418
   const getApplication = application =>
     application === 'magento' ? 'magento1' : application;
-  // #region Drag&Drop related
-  const ref = useRef(null);
-  // isOver is set to true when hover happens over component
-  const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop, ref));
-  // need to show different styling for selected card
-  const isCardSelected = !!isDragging;
 
-  drag(drop(ref));
-
-  // #endregion
   return (
-    <div ref={ref}>
-      <HomePageCardContainer onClick={handleTileClick} drag={drag} isCardSelected={isCardSelected}>
+    <div>
+      <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
           <Status
             label={status.label}

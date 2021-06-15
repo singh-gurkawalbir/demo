@@ -1,8 +1,6 @@
 import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
@@ -148,36 +146,33 @@ export default function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <CrashReporter>
-        {/* the provider has to be pushed out because of new instance html5 instance */}
-        <DndProvider backend={HTML5Backend}>
-          <Fragment key={reloadCount}>
-            <ConfirmDialogProvider>
-              <SnackbarProvider
-                classes={snackbarClasses} maxSnack={3} ContentProps={{
-                  classes: { root: classes.root },
-                }}>
-                <FontStager />
-                <CssBaseline />
-                <BrowserRouter>
-                  <div className={classes.root}>
-                    <LoadingNotification />
-                    <ErrorNotifications />
-                    {/* Headers */}
-                    <Switch>
-                      <Route path={getRoutePath('/signin')} component={null} />
-                      <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
-                    </Switch>
-                    {/* page content */}
-                    <WithAuth>
-                      <PageContentComponents />
-                    </WithAuth>
-                  </div>
-                </BrowserRouter>
-                <ConflictAlertDialog />
-              </SnackbarProvider>
-            </ConfirmDialogProvider>
-          </Fragment>
-        </DndProvider>
+        <Fragment key={reloadCount}>
+          <ConfirmDialogProvider>
+            <SnackbarProvider
+              classes={snackbarClasses} maxSnack={3} ContentProps={{
+                classes: { root: classes.root },
+              }}>
+              <FontStager />
+              <CssBaseline />
+              <BrowserRouter>
+                <div className={classes.root}>
+                  <LoadingNotification />
+                  <ErrorNotifications />
+                  {/* Headers */}
+                  <Switch>
+                    <Route path={getRoutePath('/signin')} component={null} />
+                    <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
+                  </Switch>
+                  {/* page content */}
+                  <WithAuth>
+                    <PageContentComponents />
+                  </WithAuth>
+                </div>
+              </BrowserRouter>
+              <ConflictAlertDialog />
+            </SnackbarProvider>
+          </ConfirmDialogProvider>
+        </Fragment>
       </CrashReporter>
     </MuiThemeProvider>
   );

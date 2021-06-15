@@ -28,56 +28,6 @@ export const defaultPatchSetConverter = values =>
   }));
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
-const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
-  if (!meta || !meta.layout || !meta.fieldMap) return null;
-
-  const { layout, fieldMap } = meta;
-  const { fields, containers } = layout;
-
-  if (fields && fields.length > 0) {
-    const foundFieldIndex = fields.findIndex(f => byId(fieldMap[f], id));
-
-    if (foundFieldIndex !== -1) {
-      let res = queryRes;
-
-      res += `/fields/${foundFieldIndex + offset}`;
-
-      return res;
-    }
-  }
-
-  return (
-    containers &&
-    containers
-      .map((container, index) =>
-        fieldSearchQueryObj(
-          {
-            fieldMap,
-            layout: container,
-          },
-          id,
-          `${queryRes}/containers/${index}`,
-          offset
-        )
-      )
-      .reduce((acc, curr) => {
-        let res = acc;
-
-        if (!res) res = curr;
-
-        return res;
-      }, null)
-  );
-};
-
-export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
-  const baseCustomFormPath = '/customForm/form/layout';
-  const res = fieldSearchQueryObj(meta, id, baseCustomFormPath, offset);
-
-  if (!res || res === baseCustomFormPath) return null;
-
-  return res;
-};
 
 const fieldsStateToArray = fields => Object.values(fields);
 
@@ -136,17 +86,6 @@ export const isExpansionPanelRequired = (meta, fieldStates) => {
   );
 };
 
-export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
-  const visibleFields = fieldsStateToArray(fieldStates).filter(
-    field => field.visible
-  );
-  const { layout, fieldMap } = meta;
-
-  return visibleFields.some(
-    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
-  );
-};
-
 export const fieldIDsExceptClockedFields = (meta, resourceType) => {
   if (!meta) return null;
   const { fieldMap } = meta;
@@ -173,7 +112,7 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
-export const isFormTouched = fields => fields.some(field => field.touched);
+export const isFormTouched = fields => fields?.some(field => field.touched);
 
 export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
   fieldsStateToArray(fields)
@@ -349,7 +288,7 @@ export const sanitizePatchSet = ({
 };
 
 // #BEGIN_REGION Integration App form utils
-const convertFieldsToFieldReferneceObj = (acc, curr) => {
+export const convertFieldsToFieldReferenceObj = (acc, curr) => {
   if (!curr.fieldId && !curr.id && !curr.formId) {
     throw new Error('No fieldId , id or formId', curr);
   }
@@ -363,7 +302,7 @@ const convertFieldsToFieldReferneceObj = (acc, curr) => {
   return acc;
 };
 
-const refGeneration = field => {
+export const refGeneration = field => {
   const { fieldId, id, formId } = field;
 
   if (fieldId) return fieldId;
@@ -372,7 +311,7 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
+export const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
@@ -648,7 +587,7 @@ export const integrationSettingsToDynaFormMetadata = (
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
-      convertFieldsToFieldReferneceObj,
+      convertFieldsToFieldReferenceObj,
       {}
     );
     finalData.layout = {};
@@ -663,7 +602,7 @@ export const integrationSettingsToDynaFormMetadata = (
         resource,
         ssLinkedConnectionId,
         propsSpreadToFields
-      ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
+      ).reduce(convertFieldsToFieldReferenceObj, finalData.fieldMap || {});
     });
 
     // check for title

@@ -377,7 +377,7 @@ export function* previewMappings() {
   if (!_importRes) {
     return yield put(actions.mapping.previewFailed());
   }
-  let importResource = deepClone(_importRes);
+  const importResource = deepClone(_importRes);
   let netsuiteRecordType;
 
   if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
@@ -403,7 +403,6 @@ export function* previewMappings() {
     netsuiteRecordType,
     exportResource,
   });
-
   const { _connectionId } = importResource;
   let path = `/connections/${_connectionId}/mappingPreview`;
   const requestBody = {
@@ -436,13 +435,14 @@ export function* previewMappings() {
       });
     }
 
-    importResource = importResource.netsuite_da || importResource.netsuite;
+    const importConfig = importResource.netsuite_da || importResource.netsuite;
 
     if (!subRecordMappingId) {
-      importResource.lookups = filteredLookups;
+      importConfig.lookups = filteredLookups;
     }
 
-    importResource.mapping = _mappings;
+    importConfig.mapping = _mappings;
+    requestBody.importConfig = importConfig;
     requestBody.data = [requestBody.data];
     requestBody.celigo_resource = 'previewImportMappingFields';
   } else if (importResource.adaptorType === 'HTTPImport') {
@@ -451,7 +451,9 @@ export function* previewMappings() {
     if (filteredLookups) importResource.http.lookups = filteredLookups;
   }
 
-  requestBody.importConfig = importResource;
+  if (!requestBody.importConfig) {
+    requestBody.importConfig = importResource;
+  }
 
   const opts = {
     method: 'PUT',
@@ -607,30 +609,8 @@ export function* getAutoMapperSuggestion() {
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
-  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
-    reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
-  } else if (importResource.adaptorType === 'SalesforceImport') {
-    const { sObjectType } = importResource.salesforce;
-
-    reqBody.dest_record_type = sObjectType;
-  } else {
-    reqBody.dest_record_type = '';
-  }
-
-  if (exportResource.adaptorType === 'NetSuiteExport') {
-    const netsuiteType = exportResource.type === 'distributed' ? 'distributed' : 'restlet';
-
-    reqBody.source_record_type = exportResource.netsuite[netsuiteType].recordType;
-  } else if (exportResource.adaptorType === 'SalesforceExport') {
-    const { sObjectType } = exportResource.salesforce;
-
-    reqBody.source_record_type = sObjectType;
-  } else {
-    reqBody.source_record_type = '';
-  }
-
-  // filtering out all duplicates elements from generate fields
-  // there could be multiple generate with same id. Example: addressbook[*].id is common id for [Address : ID] and [Address : Line ID]
+  reqBody.dest_record_type = yield select(selectors.recordTypeForAutoMapper, 'imports', importId, subRecordMappingId);
+  reqBody.source_record_type = yield select(selectors.recordTypeForAutoMapper, 'exports', exportResource._id);
   reqBody.dest_fields = uniqBy(generateFields.map(f => ({id: f.id})), 'id');
 
   const path = '/autoMapperSuggestions';
