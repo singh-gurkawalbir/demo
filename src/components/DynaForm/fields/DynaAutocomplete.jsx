@@ -3,7 +3,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import clsx from 'clsx';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
@@ -37,6 +37,8 @@ const Row = props => {
 
 const OuterElementContext = React.createContext({});
 
+const SelectedIndexContext = React.createContext({});
+
 const OuterElementType = React.forwardRef((props, ref) => {
   const outerProps = React.useContext(OuterElementContext);
 
@@ -47,12 +49,20 @@ const NO_OF_OPTIONS = 6;
 const ITEM_SIZE = 40;
 const OPTIONS_VIEW_PORT_HEIGHT = 250;
 
-const ListboxComponent = props => {
+const ListboxComponent = React.forwardRef(props => {
   const {children, ...other} = props;
+  const listRef = React.useRef();
 
   const itemData = React.Children.toArray(children);
 
   const itemCount = itemData.length;
+
+  const {selectedItemIndex, modalOpen} = React.useContext(SelectedIndexContext);
+
+  useEffect(() => {
+    if (modalOpen) { listRef?.current?.scrollToItem(selectedItemIndex, 'start'); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalOpen]);
 
   const maxHeightOfSelect = itemData.length > NO_OF_OPTIONS
     ? OPTIONS_VIEW_PORT_HEIGHT
@@ -61,6 +71,7 @@ const ListboxComponent = props => {
   return (
     <OuterElementContext.Provider value={other}>
       <FixedSizeList
+        ref={listRef}
         itemData={itemData}
         itemCount={itemCount}
         outerElementType={OuterElementType}
@@ -72,7 +83,7 @@ const ListboxComponent = props => {
     </OuterElementContext.Provider>
 
   );
-};
+});
 
 export default function DynaAutocomplete(props) {
   const {
@@ -93,7 +104,10 @@ export default function DynaAutocomplete(props) {
   const classes = useStyles();
   const options = useMemo(() => actualOptions.map(opt => opt.value), [actualOptions]);
   const [value, setValue] = useState(actualValue);
-  const [inputValue, setInputValue] = useState(actualOptions.find(opt => opt.value === actualValue)?.label || actualValue);
+  const [inputValue, setInputValue] = useState(actualOptions.find(opt => opt.value === `${actualValue}`)?.label || actualValue);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const selectedItemIndex = actualOptions.findIndex(opt => opt.value === `${actualValue}`);
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -108,36 +122,46 @@ export default function DynaAutocomplete(props) {
         disabled={disabled}
         required={required}
         className={classes.dynaSelectWrapper}>
-        <Autocomplete
-          disableClearable
-          freeSolo
-          options={options}
-          getOptionLabel={option => (
+        {/* we need to pass these props to the options list element(ListboxComponent)
+        there is no other way to inject these props */}
+        <SelectedIndexContext.Provider value={{selectedItemIndex, modalOpen}}>
+          <Autocomplete
+            disableClearable
+            freeSolo
+            options={options}
+            onOpen={() => {
+              setModalOpen(true);
+            }}
+            onClose={() => {
+              setModalOpen(false);
+            }}
+            getOptionLabel={option => (
               actualOptions.find(opt => opt.value === `${option}`)?.label || `${option}`
-          )}
-          data-test={dataTest || id}
-          value={value}
-          ListboxComponent={ListboxComponent}
-          inputValue={inputValue}
-          onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue);
-            const corrVal = actualOptions.find(
-              opt => opt.label === newInputValue
-            );
+            )}
+            data-test={dataTest || id}
+            value={value}
+            ListboxComponent={ListboxComponent}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
+              const corrVal = actualOptions.find(
+                opt => opt.label === newInputValue
+              );
 
-            if (corrVal) onFieldChange(id, corrVal.value);
-            else onFieldChange(id, newInputValue);
-          }}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-            onFieldChange(id, newValue);
-          }}
-          renderInput={params => (
-            <TextField
-              {...params} name={name}
-              id={id} />
-          )}
+              if (corrVal) onFieldChange(id, corrVal.value);
+              else onFieldChange(id, newInputValue);
+            }}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+              onFieldChange(id, newValue);
+            }}
+            renderInput={params => (
+              <TextField
+                {...params} name={name}
+                id={id} />
+            )}
         />
+        </SelectedIndexContext.Provider>
       </FormControl>
 
       {!removeHelperText && <FieldMessage {...props} />}
