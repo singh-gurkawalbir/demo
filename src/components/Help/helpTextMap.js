@@ -221,6 +221,8 @@ export default {
   'asana.connection.http.auth.token.token':
     'Enter your personal access token. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Personal access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'slack.connection.http.auth.type': 'Please select Authentication Type.',
+  'slack.import.resource': 'Choose the API resource to send the records to Slack, such as <b>chat</b>, <b>groups</b>, or <b>team</b>. The methods below will change according to the resource you apply.',
+  'slack.import.operation': 'Choose the Slack API method for the selected resource. For example, if you’re posting a field to a specific channel, select <b>chat</b> for the resource and <b>chat.postMessage</b> for the method.',
   'bigcommerce.connection.http.auth.type': 'Please select Authentication Type.',
   'bigcommerce.connection.http.auth.basic.username':
     'Client ID will be the Username.',
