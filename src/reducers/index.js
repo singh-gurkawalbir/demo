@@ -5505,22 +5505,22 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
 selectors.canEnableDebug = (state, exportId, flowId) => {
   if (!exportId || !flowId) return false;
 
-  const flow = selectors.resource(state, 'flows', flowId);
+  const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+  const permissions = selectors.userPermissions(state) || emptyObject;
 
-  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
+  if ([
+    USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+    USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+  ].includes(permissions.accessLevel)) {
+    return true;
+  }
+
+  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow._integrationId)?.accessLevel;
 
   if (userPermissionsOnIntegration && userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
 
-  const resource = selectors.resource(state, 'exports', exportId) || {};
-
-  // webhook exports have no attached connection
-  if (resource.type === 'webhook') {
-    return false;
-  }
-
-  const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
-
-  return !!userPermissionsOnConnection;
+  return false;
 };
 
 selectors.mkLogsInCurrPageSelector = () => createSelector(
