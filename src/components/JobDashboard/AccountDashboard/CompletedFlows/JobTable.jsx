@@ -201,7 +201,6 @@ export default function JobTable({
                 <TableCell className={classes.pages}>Pages</TableCell>
                 <TableCell className={classes.duration}>Duration</TableCell>
                 <TableCell className={classes.completed}>Completed</TableCell>
-                <TableCell className={classes.actions}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody data-test="Dashboard">
@@ -222,4 +221,3 @@ export default function JobTable({
     </>
   );
 }
-

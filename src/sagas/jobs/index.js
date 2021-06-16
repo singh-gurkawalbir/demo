@@ -194,8 +194,69 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
   yield put(actions.job.requestInProgressJobStatus());
 }
 
+export function* requestCompletedJobCollection() {
+  let collection;
+
+  try {
+    collection = yield call(apiCallWithRetry, {
+      path: '/jobs',
+    });
+  } catch (error) {
+    return true;
+  }
+  collection = collection.filter(j => !['running', 'queued', 'retrying'].includes(j.status));
+
+  if (!Array.isArray(collection)) {
+    collection = [];
+  }
+
+  yield put(actions.job.receivedCollection({ collection }));
+  yield put(actions.job.requestInProgressJobStatus());
+}
+
+export function* requestRunningJobCollection() {
+  let collection;
+
+  try {
+    collection = yield call(apiCallWithRetry, {
+      path: '/jobs',
+    });
+  } catch (error) {
+    return true;
+  }
+  collection = collection.filter(j => ['running', 'queued', 'retrying', 'failed'].includes(j.status));
+
+  if (!Array.isArray(collection)) {
+    collection = [];
+  }
+
+  yield put(actions.job.receivedCollection({ collection }));
+  yield put(actions.job.requestInProgressJobStatus());
+}
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const watcher = yield fork(requestJobCollection, {
+    integrationId,
+    flowId,
+    filters,
+    options,
+  });
+
+  yield take(actionTypes.JOB.CLEAR);
+  yield cancel(watcher);
+}
+export function* getDashboardRunningJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
+  const watcher = yield fork(requestRunningJobCollection, {
+    integrationId,
+    flowId,
+    filters,
+    options,
+  });
+
+  yield take(actionTypes.JOB.CLEAR);
+  yield cancel(watcher);
+}
+export function* getDashboardCompletedJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
+  const watcher = yield fork(requestCompletedJobCollection, {
     integrationId,
     flowId,
     filters,
@@ -755,6 +816,8 @@ export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
 
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
+  takeEvery(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, getDashboardRunningJobCollection),
+  takeEvery(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, getDashboardCompletedJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
   takeEvery(
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,

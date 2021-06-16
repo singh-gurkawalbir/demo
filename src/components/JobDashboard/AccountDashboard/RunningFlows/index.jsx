@@ -29,7 +29,7 @@ export default function RunningFlows({
   );
 
   const filters = useSelector(state => selectors.filter(state, filterKey));
-  const jobs = useSelector(state => selectors.flowJobs(state));
+  const jobs = useSelector(state => selectors.accountDashboardRunningJobs(state));
 
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
@@ -63,7 +63,7 @@ export default function RunningFlows({
   }, [dispatch, rowsPerPage]);
   useEffect(() => {
     dispatch(
-      actions.job.requestCollection({
+      actions.job.dashboard.running.requestCollection({
         integrationId,
         filters,
         options: { },

@@ -12,7 +12,6 @@ import actions from '../../../../actions';
 import { JOB_STATUS } from '../../../../utils/constants';
 import JobStatus from '../../JobStatus';
 import { getPages, getSuccess } from '../../util';
-import JobActionsMenu from './JobActionsMenu';
 // import Spinner from '../Spinner';
 // import ArrowDownIcon from '../icons/ArrowDownIcon';
 // import ArrowUpIcon from '../icons/ArrowUpIcon';
@@ -90,7 +89,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function JobDetail({
   job,
-  userPermissionsOnIntegration,
   onViewErrorsClick,
 }) {
   const classes = useStyles();
@@ -148,13 +146,6 @@ export default function JobDetail({
         <TableCell className={classes.duration}>{job.duration}</TableCell>
         <TableCell className={classes.completed}>
           <DateTimeDisplay dateTime={job.endedAt} />
-        </TableCell>
-        <TableCell className={classes.actions}>
-          <JobActionsMenu
-            job={job}
-            userPermissionsOnIntegration={userPermissionsOnIntegration}
-            integrationName="integrationName"
-          />
         </TableCell>
       </TableRow>
     </>

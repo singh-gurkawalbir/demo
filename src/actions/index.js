@@ -1591,6 +1591,34 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
+  dashboard: {
+    running: {
+      requestCollection: ({ integrationId, flowId, filters, options }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, {
+          integrationId,
+          flowId,
+          filters,
+          options,
+        }),
+      receivedCollection: ({ collection }) =>
+        action(actionTypes.JOB.RECEIVED_COLLECTION, {
+          collection,
+        }),
+    },
+    completed: {
+      requestCollection: ({ integrationId, flowId, filters, options }) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, {
+          integrationId,
+          flowId,
+          filters,
+          options,
+        }),
+      receivedCollection: ({ collection }) =>
+        action(actionTypes.JOB.RECEIVED_COLLECTION, {
+          collection,
+        }),
+    },
+  },
   requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,

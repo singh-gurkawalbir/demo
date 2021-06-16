@@ -4663,6 +4663,25 @@ selectors.flowDashboardJobs = createSelector(
       data: dashboardSteps,
     };
   });
+selectors.accountDashboardRunningJobs = createSelector(
+  (state, options) => selectors.flowJobs(state, options),
+  flowJobs => {
+    let dashboardJobs = [...flowJobs];
+
+    dashboardJobs = dashboardJobs.filter(j => ['running', 'queued', 'retrying'].includes(j.status));
+
+    return dashboardJobs;
+  });
+
+selectors.accountDashboardCompletedJobs = createSelector(
+  (state, options) => selectors.flowJobs(state, options),
+  flowJobs => {
+    let dashboardJobs = [...flowJobs];
+
+    dashboardJobs = dashboardJobs.filter(j => !['running', 'queued', 'retrying'].includes(j.status));
+
+    return dashboardJobs;
+  });
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);

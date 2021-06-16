@@ -22,7 +22,7 @@ const Home = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Home' */ '../../views/Home'))
 );
 const Dashboard = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Home' */ '../../views/Dashboard'))
+  retry(() => import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard'))
 );
 const NotFound = loadable(() =>
   retry(() => import(/* webpackChunkName: 'NotFound' */ '../../views/NotFound'))
