@@ -617,7 +617,6 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'templates',
       'published',
       'transfers',
-      'apis',
       'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
