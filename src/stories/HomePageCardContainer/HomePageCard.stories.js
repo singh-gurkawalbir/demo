@@ -1,9 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import HomePageCardsContainer from './index';
-import CeligoTruncate from '../../CeligoTruncate';
-import StatusButton from '../../CeligoButtons/StatusButton';
+import HomePageCardsContainer from '../../components/HomePageCard/HomePageCardContainer/index';
+import CeligoTruncate from '../../components/CeligoTruncate';
+import StatusButton from '../../components/CeligoButtons/StatusButton';
 
 const useStyles = makeStyles(theme => ({
   root: {

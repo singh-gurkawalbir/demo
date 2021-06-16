@@ -4,16 +4,16 @@ import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import TextButton from './index';
-import AddIcon from '../../icons/AddIcon';
-import DeleteIcon from '../../icons/TrashIcon';
+import OutlinedButton from '../../../components/CeligoButtons/OutlinedButton/index';
+import AddIcon from '../../../components/icons/AddIcon';
+import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'CeligoButtons / TextButton',
-  component: TextButton,
+  title: 'CeligoButtons / OutlinedButton',
+  component: OutlinedButton,
   decorators: [withDesign, jsxDecorator],
 };
-const Template = args => <TextButton {...args} />;
+const Template = args => <OutlinedButton {...args} />;
 
 export const defaultButton = Template.bind({});
 
@@ -36,8 +36,14 @@ startIcon.args = {
   startIcon: <AddIcon />,
   children: 'Start icon',
 };
-
 startIcon.parameters = designParameters;
+
+export const secondary = Template.bind({});
+
+secondary.args = {
+  children: 'secondary',
+  color: 'secondary',
+};
 export const endIcon = Template.bind({});
 
 endIcon.args = {
@@ -45,7 +51,14 @@ endIcon.args = {
   children: 'End Icon',
 };
 endIcon.parameters = designParameters;
+export const errorButton = Template.bind({});
 
+errorButton.args = {
+  error: true,
+  children: 'Error',
+};
+
+errorButton.parameters = designParameters;
 export const small = Template.bind({});
 
 small.args = {
@@ -68,14 +81,6 @@ large.args = {
 };
 large.parameters = designParameters;
 export const disabled = Template.bind({});
-
-export const bold = Template.bind({});
-
-bold.args = {
-  children: 'Resume',
-  bold,
-  color: 'primary',
-};
 
 disabled.args = {
   disabled: true,

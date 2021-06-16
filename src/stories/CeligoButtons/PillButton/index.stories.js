@@ -1,29 +1,25 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withDesign } from 'storybook-addon-designs';
-// import { storiesOf } from '@storybook/react';
-// import { action } from '@storybook/addon-actions';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import FilledButton from './index';
-import RefreshIcon from '../../icons/RefreshIcon';
-import DeleteIcon from '../../icons/TrashIcon';
+import PillButton from '../../../components/CeligoButtons/PillButton/index';
+import RefreshIcon from '../../../components/icons/RefreshIcon';
+import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'CeligoButtons / FilledButton',
-  component: FilledButton,
+  title: 'CeligoButtons / PillButton',
+  component: PillButton,
   decorators: [withDesign, jsxDecorator],
-  argTypes: {
-    size: {
-      control: { type: 'select' },
-    },
-  },
 };
-const Template = args => <FilledButton {...args} />;
+const Template = args => <PillButton {...args} />;
 
 export const defaultButton = Template.bind({});
 
+defaultButton.args = {
+  children: 'Default',
+};
 const designParameters = {
   design: {
     type: 'figma',
@@ -32,17 +28,19 @@ const designParameters = {
   },
 };
 
-defaultButton.args = {
-  children: 'Default Button',
-
-};
 defaultButton.parameters = designParameters;
 
+export const primary = Template.bind({});
+
+primary.args = {
+  color: 'primary',
+  children: 'Primary',
+};
 export const startIcon = Template.bind();
 
 startIcon.args = {
   startIcon: <RefreshIcon />,
-  children: 'Load more',
+  children: 'Refresh',
 };
 
 startIcon.parameters = designParameters;
@@ -50,17 +48,10 @@ export const endIcon = Template.bind({});
 
 endIcon.args = {
   endIcon: <DeleteIcon />,
-  children: 'End Icon',
+  children: 'Refresh',
 };
 endIcon.parameters = designParameters;
-export const errorButton = Template.bind({});
 
-errorButton.args = {
-  error: true,
-  children: 'Error',
-};
-
-errorButton.parameters = designParameters;
 export const small = Template.bind({});
 
 small.args = {
@@ -80,6 +71,15 @@ export const large = Template.bind({});
 large.args = {
   size: 'large',
   children: 'Large',
+};
+large.parameters = designParameters;
+
+export const fill = Template.bind({});
+
+fill.args = {
+  size: 'small',
+  fill,
+  children: 'Fill',
 };
 large.parameters = designParameters;
 export const disabled = Template.bind({});
