@@ -1,31 +1,29 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 import React, { useCallback, useState } from 'react';
 // import { withDesign } from 'storybook-addon-designs';
 import { action } from '@storybook/addon-actions';
 import { Button } from '@material-ui/core';
-import SaveAndCloseButtonGroup from '../../components/SaveAndCloseButtonGroup';
-
-export default {
-  title: 'Components/Buttons',
-  component: SaveAndCloseButtonGroup,
-  // decorators: [withDesign],
-};
+import SaveAndCloseButtonGroup from '../../../../components/SaveAndCloseButtonGroup';
 
 const Template = ({ isDirty, ...rest }) => {
   const [status, setStatus] = useState();
   const [dirty, setDirty] = useState(isDirty);
+
   const onSave = useCallback(() => {
     setStatus('inProgress');
     setTimeout(() => {
       setDirty(false);
       setStatus('success');
+      action('Changes were saved!');
     }, 2000);
   }, []);
+
   const onClose = useCallback(() => {
     setStatus();
     setDirty(false);
     // console.log('onClose fired');
-    action('Parent component was closed!');
+    action('Close request fired!');
   }, []);
 
   return (
@@ -49,13 +47,4 @@ const Template = ({ isDirty, ...rest }) => {
   );
 };
 
-const designParams = {
-  design: {
-    type: 'figma',
-    url: 'https://www.figma.com/file/XeXHoQxESkwlENWxfRY3Jq/Fuse-Design-System%3A-Integrator.io?node-id=6005%3A72',
-  },
-};
-
-export const SaveAndClose = Template.bind({});
-
-SaveAndClose.parameters = designParams;
+export default Template;

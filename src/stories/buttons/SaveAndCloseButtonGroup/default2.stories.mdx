@@ -1,0 +1,17 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import SaveAndCloseButtonGroup from '../../../components/SaveAndCloseButtonGroup';
+import Template from './Template';
+
+<Meta 
+  title="Components/SaveAndClose" 
+  component={SaveAndCloseButtonGroup}
+/>
+
+<Story name="no form changes" >
+  {Template.bind({})}
+</Story>
+
+# 
+<Story name="with form changes" args={{isDirty: true}} >
+  {Template.bind({})}
+</Story>
