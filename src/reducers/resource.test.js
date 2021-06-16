@@ -3190,6 +3190,32 @@ describe('resource region selector testcases', () => {
     test('should return false when the api request is complete', () => {
       expect(selectors.isResourceCollectionLoading(state, resource)).toEqual(false);
     });
+
+    const resource2 = 'transfers';
+    const path1 = getRoutePath(resource2);
+    const path2 = getRoutePath(`${resource2}/invited`);
+
+    const state1 = reducer(undefined, actions.api.request(path1, method));
+
+    test('should return true when the api request is made', () => {
+      expect(selectors.isResourceCollectionLoading(state1, resource2)).toEqual(true);
+    });
+    const state2 = reducer(state1, actions.api.complete(path1, method));
+
+    test('should return false when the api request is complete', () => {
+      expect(selectors.isResourceCollectionLoading(state2, resource2)).toEqual(false);
+    });
+
+    const state3 = reducer(undefined, actions.api.request(path2, method));
+
+    test('should return true when the api request is made', () => {
+      expect(selectors.isResourceCollectionLoading(state3, resource2)).toEqual(true);
+    });
+    const state4 = reducer(state3, actions.api.complete(path2, method));
+
+    test('should return false when the api request is complete', () => {
+      expect(selectors.isResourceCollectionLoading(state4, resource2)).toEqual(false);
+    });
   });
 
   describe('resourceStatus ', () => {

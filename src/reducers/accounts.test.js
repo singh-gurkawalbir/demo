@@ -1371,21 +1371,37 @@ describe('Accounts region selector testcases', () => {
         {
           user: {
             profile: {},
-            preferences: { defaultAShareId: 'ashare1' },
+            preferences: { defaultAShareId: 'aShare2' },
             org: {
+              users: [],
               accounts: [
                 {
-                  _id: 'ashare1',
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
                   accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-                  ownerUser: {
-                    company: 'Company One',
-                    licenses: [
-                      { _id: 'license1', type: 'integrator', sandbox: true },
-                    ],
-                  },
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
                 },
               ],
-              users: [],
             },
           },
         },
@@ -1399,21 +1415,37 @@ describe('Accounts region selector testcases', () => {
         {
           user: {
             profile: {},
-            preferences: { defaultAShareId: 'ashare1' },
+            preferences: { defaultAShareId: 'aShare1' },
             org: {
+              users: [],
               accounts: [
                 {
-                  _id: 'ashare1',
+                  _id: 'aShare1',
                   accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-                  ownerUser: {
-                    company: 'Company One',
-                    licenses: [
-                      { _id: 'license1', type: 'integrator', sandbox: true },
-                    ],
-                  },
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
                 },
               ],
-              users: [],
             },
           },
         },
@@ -1427,38 +1459,45 @@ describe('Accounts region selector testcases', () => {
         {
           user: {
             profile: {},
-            preferences: { defaultAShareId: 'ashare1' },
+            preferences: { defaultAShareId: 'aShare3' },
             org: {
+              users: [],
               accounts: [
                 {
-                  _id: 'ashare1',
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
                   integrationAccessLevel: [
                     {
                       _integrationId: 'i1',
-                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
                     },
                     {
                       _integrationId: 'i2',
-                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
                     },
                   ],
-                  ownerUser: {
-                    company: 'Company One',
-                    licenses: [
-                      { _id: 'license1', type: 'integrator', sandbox: true },
-                    ],
-                  },
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
                 },
               ],
-              users: [],
             },
           },
         },
         'some-action'
       );
 
-      expect(selectors.isFormAMonitorLevelAccess(state, 'i1')).toEqual(true);
-      expect(selectors.isFormAMonitorLevelAccess(state, 'i2')).toEqual(false);
+      expect(selectors.isFormAMonitorLevelAccess(state, 'i1')).toEqual(false);
+      expect(selectors.isFormAMonitorLevelAccess(state, 'i2')).toEqual(true);
     });
   });
 
