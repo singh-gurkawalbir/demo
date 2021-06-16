@@ -1,7 +1,6 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback} from 'react';
 import { Typography, Button, Link} from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
@@ -137,7 +136,18 @@ export default function SignIn({dialogOpen}) {
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
 
-  let error = useSelector(state => selectors.authenticationErrored(state));
+  const error = useSelector(state => {
+    const errorMessage = selectors.authenticationErrored(state);
+
+    if (errorMessage === AUTH_FAILURE_MESSAGE) {
+      return 'Sign in failed. Please try again.';
+    }
+    if (window.signInError) {
+      return window.signInError;
+    }
+
+    return errorMessage;
+  });
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
   const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
@@ -181,12 +191,6 @@ export default function SignIn({dialogOpen}) {
 
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
-
-  if (error && error === AUTH_FAILURE_MESSAGE) {
-    error = 'Sign in failed. Please try again.';
-  } else if (window.signInError) {
-    error = window.signInError;
-  }
 
   return (
     <div className={classes.editableFields}>

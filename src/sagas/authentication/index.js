@@ -323,12 +323,13 @@ export function* auth({ email, password }) {
     yield call(initializeApp, { reload: isExpired });
     // Important: initializeApp should be the last thing to happen in this function
   } catch (error) {
-    let authError = inferErrorMessages(error?.message)?.[0];
+    const authErrorMessage = inferErrorMessages(error?.message)?.[0];
 
-    if (typeof authError !== 'string') {
-      authError = AUTH_FAILURE_MESSAGE;
+    if (typeof authErrorMessage !== 'string') {
+      yield put(actions.auth.failure(AUTH_FAILURE_MESSAGE));
+    } else {
+      yield put(actions.auth.failure(AUTH_FAILURE_MESSAGE, authErrorMessage));
     }
-    yield put(actions.auth.failure(authError));
     yield put(actions.user.profile.delete());
   }
 }

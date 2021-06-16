@@ -32,6 +32,7 @@ export default function (state = defaultState, action) {
       case actionTypes.AUTH_REQUEST:
         if (showAuthError) { draft.showAuthError = true; }
         delete draft.failure;
+        delete draft.customFailureMessage;
         draft.authenticated = false;
         draft.commStatus = COMM_STATES.LOADING;
         delete draft.loggedOut;
@@ -45,12 +46,15 @@ export default function (state = defaultState, action) {
         draft.commStatus = COMM_STATES.SUCCESS;
         delete draft.sessionExpired;
         delete draft.failure;
+        delete draft.customFailureMessage;
         break;
 
       case actionTypes.AUTH_FAILURE:
         draft.failure = action.message;
         draft.commStatus = COMM_STATES.ERROR;
-
+        if (action.customMessage) {
+          draft.customFailureMessage = action.customMessage;
+        }
         if (draft.authenticated) {
           draft.sessionExpired = true;
         }

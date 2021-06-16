@@ -99,7 +99,7 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
-  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  failure: (message, customMessage) => action(actionTypes.AUTH_FAILURE, { message, customMessage }),
   warning: () => action(actionTypes.AUTH_WARNING),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
