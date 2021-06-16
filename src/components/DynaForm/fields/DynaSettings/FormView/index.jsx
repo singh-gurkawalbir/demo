@@ -7,8 +7,6 @@ import actions from '../../../../../actions';
 import DynaForm from '../../..';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
-import useFormContext from '../../../../Form/FormContext';
-import { isFormTouched } from '../../../../../forms/formFactory/utils';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles({
@@ -17,12 +15,13 @@ const useStyles = makeStyles({
   },
 });
 
+export const settingsFormKey = 'settingsForm';
+
 export default function FormView({
   resourceId,
   resourceType,
   sectionId,
   disabled,
-  onFormChange,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -50,21 +49,14 @@ export default function FormView({
   );
 
   // TODO:verify this behaviour
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
+    formKey: settingsFormKey,
     remount: settingsFormState?.key,
     disabled,
     fieldMeta: settingsFormState?.meta,
     resourceId,
     resourceType,
   });
-
-  const {fields, value, isValid} = useFormContext(formKey);
-
-  const isTouched = (fields && isFormTouched(Object.values(fields))) || false;
-
-  useEffect(() => {
-    if (isTouched) { onFormChange(value, isValid); }
-  }, [isTouched, isValid, onFormChange, value]);
 
   if (settingsFormState && settingsFormState.error) {
     return (
@@ -84,7 +76,7 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm formKey={formKey} />
+      <DynaForm formKey={settingsFormKey} />
     </div>
   );
 }
