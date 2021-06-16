@@ -32,15 +32,9 @@ const ALL_EVENT_STATUS = [
 
 Object.freeze(ALL_EVENT_STATUS);
 const FILTER_KEY = 'eventreports';
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   flex: {
     display: 'flex',
-    alignItems: 'center',
-  },
-  icon: {
-    height: theme.spacing(2),
-    width: theme.spacing(2),
-    marginRight: theme.spacing(0.5),
   },
 }));
 
@@ -149,7 +143,7 @@ const metadata = {
         const classes = useStyles();
 
         if ([EVENT_REPORT_STATUS.QUEUED, EVENT_REPORT_STATUS.RUNNING].includes(r.status)) {
-          return <div className={classes.flex}><Spinner size={16} className={classes.icon} /> <span>{capitalize(r?.status)}</span> </div>;
+          return <div className={classes.flex}><Spinner size="small"> {capitalize(r?.status)}</Spinner> </div>;
         }
 
         return capitalize(r?.status);
