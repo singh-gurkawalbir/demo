@@ -135,7 +135,7 @@ export default function MarketplaceList() {
   );
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
-  const applicationName = connector ? connector.name : application;
+  const applicationName = connector?.name || (application.charAt(0).toUpperCase() + application.slice(1));
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -228,20 +228,12 @@ export default function MarketplaceList() {
     <LoadResources required resources="integrations">
       <InstallTemplateDrawer />
 
-      <CeligoPageBar
-        title={`${
-          applicationName
-            ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
-            : ''
-        } Integrations`}
-        >
-        {(templates.length || connectors.length) ? (
-          <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
-        ) : ''}
+      <CeligoPageBar title={`${applicationName} Integrations`}>
+        <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-        <Typography component="div" variant="body2" className={classes.noDataTitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
+        <Typography component="div" variant="body2" className={classes.noDataTitle}> Prebuilt templates and integration apps are not yet available for this application. {applicationName} is already supported with a built-in integrator․io connector. Anyone with account manager permission and above can navigate to Tools → Flow Builder to create custom flows to this application.</Typography>
       )}
       <div className={classes.root}>
         {connectors.map(connector => (
