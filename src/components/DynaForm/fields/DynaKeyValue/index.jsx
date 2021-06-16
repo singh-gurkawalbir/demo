@@ -223,7 +223,7 @@ export function KeyValueComponent(props) {
               />
               )}
               />
-          ))};
+          ))}
         </SortableList>
       </>
     </FormControl>

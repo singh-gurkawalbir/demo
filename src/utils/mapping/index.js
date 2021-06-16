@@ -166,7 +166,7 @@ const setVariationMappingData = (
     if (
       relation.variation_attributes?.length
     ) {
-      const key = `${flowId}-${mapping.id}-variationAttributes`;
+      const key = `${flowId}-${mapping.id}-${options.depth}-variationAttributes`;
 
       if (mappings[key]) {
         // eslint-disable-next-line no-param-reassign
@@ -178,6 +178,7 @@ const setVariationMappingData = (
               rowIdentifier,
               description,
               name,
+              key,
               filterType,
               showListOption,
               hardCodedValueTmp,
@@ -199,7 +200,7 @@ const setVariationMappingData = (
 
       if (variationTheme) {
         variationTheme.variation_attributes.forEach(vm => {
-          const key = `${flowId}-${mapping.id}-${vm}`;
+          const key = `${flowId}-${mapping.id}-${options.depth}-${vm}`;
 
           if (mappings[key]) {
             const stagedMappings =
@@ -251,7 +252,7 @@ const setVariationMappingData = (
         if (!childExists) {
           const mappingFound = mappingKeys.some(key =>
             isVariationAttributes
-              ? key === `${flowId}-${child.id}-variationAttributes`
+              ? key === `${flowId}-${child.id}-${options.depth}-variationAttributes`
               : key.startsWith(`${flowId}-${child.id}`)
           );
 
