@@ -68,7 +68,11 @@ import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
 
 export function* unauthenticateAndDeleteProfile() {
-  yield put(actions.auth.failure(AUTH_FAILURE_MESSAGE));
+  const authFailure = yield select(selectors.authenticationErrored);
+
+  if (!authFailure) {
+    yield put(actions.auth.failure(AUTH_FAILURE_MESSAGE));
+  }
   yield put(actions.user.profile.delete());
 }
 

@@ -498,7 +498,7 @@ selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.de
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
-selectors.authenticationErrored = state => state?.auth?.customFailureMessage || state?.auth?.failure;
+selectors.authenticationErrored = state => state?.auth?.failure;
 
 selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);
 

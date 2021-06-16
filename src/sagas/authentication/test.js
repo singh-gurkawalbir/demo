@@ -334,7 +334,7 @@ describe('auth saga flow', () => {
       })
     );
     expect(saga.throw(signInErrorResponse).value).toEqual(
-      put(actions.auth.failure(AUTH_FAILURE_MESSAGE, SIGN_IN_ERROR_MESSAGE))
+      put(actions.auth.failure(SIGN_IN_ERROR_MESSAGE))
     );
   });
 
