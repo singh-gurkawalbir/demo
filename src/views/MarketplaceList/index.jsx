@@ -19,6 +19,7 @@ import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
+import { capitalizeFirstLetter } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -135,7 +136,7 @@ export default function MarketplaceList() {
   );
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
-  const applicationName = connector?.name || (application.charAt(0).toUpperCase() + application.slice(1));
+  const applicationName = connector?.name || capitalizeFirstLetter(application);
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
