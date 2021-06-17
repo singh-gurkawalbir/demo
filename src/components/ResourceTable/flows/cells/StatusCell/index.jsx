@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import { selectors } from '../../../../../reducers';
-import { JOB_UI_STATUS } from '../../../../JobDashboard/util';
 import CeligoTimeAgo from '../../../../CeligoTimeAgo';
 
 const useStyles = makeStyles(theme => ({
@@ -21,25 +18,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function StatusCell({
-  flowId,
-  integrationId,
-  actionProps,
+  _id: flowId,
+  lastExecutedAtSort,
+  lastExecutedAtSortType,
+  isJobInQueuedStatus,
+  lastExecutedAtSortJobStatus,
 }) {
   const classes = useStyles();
   const history = useHistory();
-  const {isUserInErrMgtTwoDotZero} = actionProps;
 
-  const {type, date, status, isJobInQueuedStatus } = useSelector(state => selectors.getFlowLastRunStatusValue(state, integrationId, flowId, isUserInErrMgtTwoDotZero));
-
-  if (type === 'date') {
-    return <CeligoTimeAgo date={date} />;
+  if (lastExecutedAtSortType === 'date') {
+    return <CeligoTimeAgo date={lastExecutedAtSort} />;
   }
 
   return (
     <div className={classes.root}>
       {isJobInQueuedStatus
-        ? <Link to={`${history.location.pathname}/${flowId}/queuedJobs`}>{status}</Link>
-        : <>{status}</>}
+        ? (
+          <Link to={`${history.location.pathname}/${flowId}/queuedJobs`}>
+            {lastExecutedAtSortJobStatus}
+          </Link>
+        )
+        : <>{lastExecutedAtSortJobStatus}</>}
     </div>
   );
 }
