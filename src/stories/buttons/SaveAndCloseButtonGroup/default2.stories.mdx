@@ -11,7 +11,7 @@ export const designParams = {
 };
 
 <Meta 
-  title="Components/SaveAndClose" 
+  title="Components/SaveAndCloseButtonGroup" 
   component={SaveAndCloseButtonGroup}
   decorators={[ withDesign ]}
   parameters={designParams}
@@ -22,18 +22,24 @@ export const designParams = {
 If no changes have been made, then the Save button should be disabled, 
 and the Close button should be active
 
-<Story name="No unsaved changes" >
-  {Template.bind({})}
-</Story>
+<Canvas>
+  <Story name="No unsaved changes" >
+    {Template.bind({})}
+  </Story>
+</Canvas>
 
 If there are unsaved changes, then all buttons and links should be active.
 
-<Story name="Unsaved changes" args={{isDirty: true}} >
-  {Template.bind({})}
-</Story>
+<Canvas>
+  <Story name="Unsaved changes" args={{isDirty: true}} >
+    {Template.bind({})}
+  </Story>
+</Canvas>
 
 If changes are being saved, then the Saving... and Close buttons should be disabled
 
-<Story name="Save in progress" args={{status: 'inProgress'}} >
-  {Template.bind({})}
-</Story>
+<Canvas>
+  <Story name="Save in progress" args={{status: 'inProgress'}} >
+    {Template.bind({})}
+  </Story>
+</Canvas>
