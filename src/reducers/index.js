@@ -822,7 +822,10 @@ const reportsFilter = {
 selectors.getIntegrationIdForEventReport = (state, eventReport) => {
   const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
 
-  return selectors.resource(state, 'flows', foundFlow)?._integrationId;
+  // deleted flows case
+  if (!foundFlow) { return null; }
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
 };
 
 selectors.getEventReportIntegrationName = (state, r) => {
