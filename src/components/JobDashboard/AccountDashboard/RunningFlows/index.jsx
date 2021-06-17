@@ -20,7 +20,7 @@ export default function RunningFlows({
   integrationId,
   rowsPerPage = 100,
 }) {
-  const filterKey = 'runningflows';
+  const filterKey = 'runningFlows';
   const classes = useStyles();
 
   const dispatch = useDispatch();

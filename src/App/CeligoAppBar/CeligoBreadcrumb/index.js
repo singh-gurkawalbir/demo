@@ -127,6 +127,7 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
+  { path: getRoutePath('/home') }, // exclusion of breadcrumb prop will skip this segment.
   {
     path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationAppCrumb,
