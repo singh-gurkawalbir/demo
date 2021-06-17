@@ -92,6 +92,7 @@ import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { JOB_UI_STATUS } from '../components/JobDashboard/util';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1838,6 +1839,31 @@ selectors.mkChildIntegration = () => {
     },
     childIntegration => childIntegration
   );
+};
+
+selectors.getFlowLastRunStatusValue = (state, integrationId, flowId, isUserInErrMgtTwoDotZero) => {
+  const latestFlowJobs = selectors.latestJobMap(state, integrationId)?.data;
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  let job;
+
+  if (Array.isArray(latestFlowJobs)) {
+    job = latestFlowJobs.find(job => job._flowId === flowId);
+  }
+
+  if (!job || !isUserInErrMgtTwoDotZero) {
+    return { date: flow.lastExecutedAt, type: 'date' };
+  }
+
+  if (['completed', 'canceled', 'failed'].includes(job.status)) {
+    return { date: job.lastExecutedAt, type: 'date' };
+  }
+
+  const isJobInQueuedStatus =
+  (job.status === 'queued' ||
+    (job.status === 'running' && !job.doneExporting));
+
+  return {status: JOB_UI_STATUS[job.status], isJobInQueuedStatus, type: 'status'};
 };
 
 selectors.mkDIYIntegrationFlowList = () => createSelector(
