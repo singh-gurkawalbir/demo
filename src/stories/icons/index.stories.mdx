@@ -1,0 +1,37 @@
+import { withDesign } from 'storybook-addon-designs';
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import { IconButton, Button } from '@material-ui/core';
+import AdminIcon from '../../components/icons/AdminIcon';
+import ButtonIcon from '../../components/icons/AdminIcon';
+
+<Meta title="Icons/Uses" />
+
+# Icon Use
+
+An Icon with no behaviors
+
+<Canvas>
+  <Story name="Simple Icon">
+    <AdminIcon />
+  </Story>
+</Canvas>
+
+An Icon used as a button
+
+<Canvas>
+  <Story name="Icon Button">
+    <IconButton>
+      <AdminIcon />
+    </IconButton>
+  </Story>
+</Canvas>
+
+An Icon button with Text
+
+<Canvas>
+  <Story name="Icon Text Button">
+    <Button startIcon={<AdminIcon/>}>
+      Icon button
+    </Button>
+  </Story>
+</Canvas>
