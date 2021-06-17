@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography} from '@material-ui/core';
 import Spinner from '../Spinner';
-import TextButton from '../CeligoButtons/TextButton';
+import TextButton from '../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   fetchLogTextWrapper: {

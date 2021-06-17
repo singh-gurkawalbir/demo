@@ -4,12 +4,12 @@ import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import OutlinedButton from '../../../components/CeligoButtons/OutlinedButton/index';
+import OutlinedButton from '../../../components/Buttons/OutlinedButton/index';
 import AddIcon from '../../../components/icons/AddIcon';
 import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'CeligoButtons / OutlinedButton',
+  title: 'Buttons / OutlinedButton',
   component: OutlinedButton,
   decorators: [withDesign, jsxDecorator],
 };

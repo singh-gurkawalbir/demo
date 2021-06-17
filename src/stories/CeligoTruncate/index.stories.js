@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import CeligoTruncate from '.';
+import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default {
-  title: 'CeligoTruncate',
+  title: 'Components / CeligoTruncate',
   component: CeligoTruncate,
 };
 

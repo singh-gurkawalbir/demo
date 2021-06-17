@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 import SaveAndCloseButtonGroup from '../../components/SaveAndCloseButtonGroup';
 
 export default {
-  title: 'Components/Buttons',
+  title: 'Components/ButtonGroups',
   component: SaveAndCloseButtonGroup,
   // decorators: [withDesign],
 };

@@ -1,9 +1,26 @@
 import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { withDesign } from 'storybook-addon-designs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { jsxDecorator } from 'storybook-addon-jsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import HomePageCardsContainer from '../../components/HomePageCard/HomePageCardContainer/index';
+import Header from '../../components/HomePageCard/Header/index';
+import HeaderAction from '../../components/HomePageCard/Header/HeaderAction/index';
+import Content from '../../components/HomePageCard/Content';
+import CardTitle from '../../components/HomePageCard/Content/CardTitle/index';
+import ApplicationImages from '../../components/HomePageCard/Content/ApplicationImages';
+import ApplicationImg from '../../components/icons/ApplicationImg';
+import Footer from '../../components/HomePageCard/Footer/index';
+import Tag from '../../components/HomePageCard/Footer/Tag/index';
+import FooterActions from '../../components/HomePageCard/Footer/FooterActions/index';
+import Info from '../../components/HomePageCard/Footer/Info/index';
+import Manage from '../../components/HomePageCard/Footer/Manage/index';
 import CeligoTruncate from '../../components/CeligoTruncate';
-import StatusButton from '../../components/CeligoButtons/StatusButton';
+import StatusButton from '../../components/Buttons/StatusButton/index';
+import AddIcon from '../../components/icons/AddIcon';
+import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,38 +42,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
   wrapper: {
-    maxWidth: 300,
+    maxWidth: 310,
   },
-//   wrapper: {
-//     borderRadius: 4,
-//     padding: 22,
-//     minHeight: 318,
-//     width: '100%',
-//     boxSizing: 'border-box',
-//     border: '1px solid',
-//     borderColor: fade(theme.palette.common.black, 0.1),
-//     transitionProperty: 'all',
-//     transitionDuration: theme.transitions.duration.short,
-//     transitionTimingFunction: theme.transitions.easing.easeIn,
-//     overflow: 'hidden',
-//     position: 'relative',
-//     display: 'inline-block',
-//     '&:hover': {
-//       transform: 'translateY(-5px)',
-//       boxShadow: '0 0 7px rgba(0,0,0,0.1)',
-//     },
-//     [theme.breakpoints.between('sm', 'md')]: {
-//       minWidth: '100%',
-//       maxWidth: '100%',
-//     },
-//   },
 }));
+
+const options = ['view errors', 'settings', 'dashboard', 'generate zip', 'add flow', 'clone', 'delete'];
 export default {
-  title: 'HomePageCardsContainer',
+  title: 'Components / HomePageCardsContainer',
   component: HomePageCardsContainer,
-//   argTypes: {
-//    backgroundColor:
-//   },
+  decorators: [withDesign, jsxDecorator],
+};
+
+const designParameters = {
+  design: {
+    type: 'figma',
+    allowFullscreen: true,
+    url: 'https://projects.invisionapp.com/share/MTMYGGZQ4G9#/screens/378481276_Home_Cards_-_DEV',
+  },
 };
 
 const Template = args => {
@@ -64,30 +66,66 @@ const Template = args => {
 
   return (
     <>
-      <HomePageCardsContainer>
+      <HomePageCardsContainer {...args}>
         <div className={classes.wrapper}>
-          <StatusButton variant="success">
-            Success
-          </StatusButton>
-          <div className={classes.container}>
-            <Typography>
-              <CeligoTruncate lines={2} {...args}>
-                This is long text that should get truncated and a tooltip should display the full text.
-                If it does not get truncated or the tooltip doesn&apos;t show up, we have a bug!
-              </CeligoTruncate>
-            </Typography>
-          </div>
+          <Header>
+            <StatusButton variant="success" {...args}>
+              error
+            </StatusButton>
+            <HeaderAction variants={options} />
+          </Header>
+          <Content>
+            <CardTitle>
+              <Typography variant="h3" >
+                <CeligoTruncate lines={2} {...args}>
+                  Magento & NetSuite 2018 Sales ReportMagento & NetSuite 2018 Sales Report
+                </CeligoTruncate>
+              </Typography>
+            </CardTitle>
+            <ApplicationImages>
+              <ApplicationImg type="magento" {...args} />
+              <span><AddIcon /></span>
+              <ApplicationImg type="netsuite" {...args} />
+            </ApplicationImages>
+          </Content>
+          <Footer>
+            <FooterActions>
+              <Manage>
+                <PermissionsManageIcon />
+              </Manage>
+              <Tag {...args}>{args.test}</Tag>
+            </FooterActions>
+            <Info variant="Integration app" label="celigo" />
+          </Footer>
         </div>
       </HomePageCardsContainer>
     </>
   );
 };
 
-export const Defaults = Template.bind({});
+export const defaults = Template.bind({});
 
-HomePageCardsContainer.defaultProps = {
+defaults.args = {
   ellipsis: '...',
   placement: 'right',
-  lines: 2,
+  lines: 1,
   delay: 500,
+  children: 'welcome',
+  variant: 'success',
 };
+
+export const suiteScript = Template.bind({});
+
+suiteScript.args = {
+  lines: 2,
+  variant: 'error',
+  test: 'testing',
+  type: 'zendesk',
+  tag: {
+    variant: 'just test',
+  },
+
+};
+
+defaults.parameters = designParameters;
+suiteScript.parameters = designParameters;

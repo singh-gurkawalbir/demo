@@ -4,16 +4,16 @@ import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import TextButton from '../../../components/CeligoButtons/TextButton/index';
-import AddIcon from '../../../components/icons/AddIcon';
+import PillButton from '../../../components/Buttons/PillButton/index';
+import RefreshIcon from '../../../components/icons/RefreshIcon';
 import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'CeligoButtons / TextButton',
-  component: TextButton,
+  title: 'Buttons / PillButton',
+  component: PillButton,
   decorators: [withDesign, jsxDecorator],
 };
-const Template = args => <TextButton {...args} />;
+const Template = args => <PillButton {...args} />;
 
 export const defaultButton = Template.bind({});
 
@@ -30,11 +30,17 @@ const designParameters = {
 
 defaultButton.parameters = designParameters;
 
+export const primary = Template.bind({});
+
+primary.args = {
+  color: 'primary',
+  children: 'Primary',
+};
 export const startIcon = Template.bind();
 
 startIcon.args = {
-  startIcon: <AddIcon />,
-  children: 'Start icon',
+  startIcon: <RefreshIcon />,
+  children: 'Refresh',
 };
 
 startIcon.parameters = designParameters;
@@ -42,7 +48,7 @@ export const endIcon = Template.bind({});
 
 endIcon.args = {
   endIcon: <DeleteIcon />,
-  children: 'End Icon',
+  children: 'Refresh',
 };
 endIcon.parameters = designParameters;
 
@@ -67,15 +73,16 @@ large.args = {
   children: 'Large',
 };
 large.parameters = designParameters;
-export const disabled = Template.bind({});
 
-export const bold = Template.bind({});
+export const fill = Template.bind({});
 
-bold.args = {
-  children: 'Resume',
-  bold,
-  color: 'primary',
+fill.args = {
+  size: 'small',
+  fill,
+  children: 'Fill',
 };
+large.parameters = designParameters;
+export const disabled = Template.bind({});
 
 disabled.args = {
   disabled: true,
