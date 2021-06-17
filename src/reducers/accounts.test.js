@@ -1365,11 +1365,278 @@ describe('Accounts region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isFormAMonitorLevelAccess()).toEqual(false);
     });
+
+    test('should return true if user has monitor level access across all forms', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'aShare2' },
+            org: {
+              users: [],
+              accounts: [
+                {
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+              ],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.isFormAMonitorLevelAccess(state)).toEqual(true);
+    });
+    test('should return false if user does not have monitor level access across all forms', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'aShare1' },
+            org: {
+              users: [],
+              accounts: [
+                {
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+              ],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.isFormAMonitorLevelAccess(state)).toEqual(false);
+    });
+    test('should return correct validation based on the user level access for each integration', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'aShare3' },
+            org: {
+              users: [],
+              accounts: [
+                {
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+              ],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.isFormAMonitorLevelAccess(state, 'i1')).toEqual(false);
+      expect(selectors.isFormAMonitorLevelAccess(state, 'i2')).toEqual(true);
+    });
   });
 
   describe('selectors.formAccessLevel test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.formAccessLevel()).toEqual({disableAllFields: false});
+    });
+    test('should disabled access to all fields if the user has monitor level access across all forms', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare1' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.formAccessLevel(state)).toEqual({disableAllFields: true});
+    });
+    test('should selectively disable fields if the user has owner or manage level access for an integration app', () => {
+      const disabled = true;
+      const integrationApp = {
+        _id: 'i1',
+        _connectorId: 'c1',
+      };
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare1' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _id: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.formAccessLevel(state, 'i1', integrationApp, disabled)).toEqual({ disableAllFieldsExceptClocked: true });
+    });
+    test('should disable all fields if the user has monitor level access for the integration', () => {
+      const integration = {
+        _id: 'i1',
+      };
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare1' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _id: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.formAccessLevel(state, 'i1', integration, true)).toEqual({ disableAllFields: true });
+      expect(selectors.formAccessLevel(state, 'i1', integration, false)).toEqual({ disableAllFields: false });
+    });
+    test('should not disable all fields if the user does not have monitor level access for the integration', () => {
+      const integration = {
+        _id: 'i1',
+      };
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare1' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _id: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.formAccessLevel(state, 'i1', integration, false)).toEqual({ disableAllFields: false });
     });
   });
 
