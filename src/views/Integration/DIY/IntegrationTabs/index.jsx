@@ -6,6 +6,8 @@ import { useAvailableTabs } from '../useAvailableTabs';
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(3),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
     '& > [role = tabpanel]': {
       background: 'none',
       padding: 0,

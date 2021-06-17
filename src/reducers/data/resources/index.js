@@ -1,90 +1,38 @@
 import produce from 'immer';
-import { get, isEqual } from 'lodash';
+import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
+import reduceReducers from 'reduce-reducers';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
+import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import connectionUpdateReducer from './connectionUpdate';
+import resourceUpdateReducer from './resourceUpdate';
 
 const emptyObject = {};
 const emptyList = [];
 
-export const initializationResources = ['profile', 'preferences'];
-const accountResources = ['ashares', 'shared/ashares', 'licenses'];
-const resourceTypesToIgnore = [
-  ...initializationResources,
-  ...accountResources,
-  'audit',
-];
-
-function replaceOrInsertResource(state, resourceType, resourceValue) {
-  // handle case of no collection
-  let type = resourceType;
-  // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
-  let resource = resourceValue || {};
-
-  if (type.indexOf('/licenses') >= 0) {
-    const id = type.substring('connectors/'.length, type.indexOf('/licenses'));
-
-    resource._connectorId = id;
-    type = 'connectorLicenses';
-  }
-
-  // For accesstokens and connections within an integration
-  if (type.indexOf('integrations/') >= 0) {
-    type = type.split('/').pop();
-  }
-
-  if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
-
-  if (!state[type]) {
-    return { ...state, [type]: [resource] };
-  }
-
-  // if we have a collection, look for a match
-  const collection = state[type];
-  const index = collection.findIndex(r => r._id === resource._id);
-
-  // insert if not found, replace if found...
-  if (index === -1) {
-    return { ...state, [type]: [...collection, resource] };
-  }
-
-  // no need to make an update when it is the same resource...this helps in saving some render cycles
-  if (isEqual(resource, collection[index])) {
-    return state;
-  }
-  const newCollection = [
-    ...collection.slice(0, index),
-    resource,
-    ...collection.slice(index + 1),
-  ];
-
-  return { ...state, [type]: newCollection };
-}
-
-function getIntegrationAppsNextState(state, action) {
+function setIntegrationAppsNextState(draft, action) {
   const { stepsToUpdate, id } = action;
 
-  return produce(state, draft => {
-    const integration = draft.integrations.find(i => i._id === id);
+  const integration = draft.integrations.find(i => i._id === id);
 
-    if (
-      !integration ||
+  if (
+    !integration ||
       !(
         (integration.install && integration.install.length) ||
         (integration.installSteps && integration.installSteps.length)
       )
-    ) {
-      return;
-    }
+  ) {
+    return;
+  }
 
-    if (integration.installSteps && integration.installSteps.length) {
-      stepsToUpdate &&
+  if (integration.installSteps && integration.installSteps.length) {
+    stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.installSteps.findIndex(
             s => s.name === step.name
@@ -97,8 +45,8 @@ function getIntegrationAppsNextState(state, action) {
             };
           }
         });
-    } else {
-      stepsToUpdate &&
+  } else {
+    stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
             s =>
@@ -114,249 +62,58 @@ function getIntegrationAppsNextState(state, action) {
             };
           }
         });
-    }
-  });
+  }
 }
 
-export default (state = {}, action) => {
+const rootDataReducer = (state = {}, action) => {
   const {
     id,
     type,
-    resource,
-    collection,
-    resourceType,
-    connectionIds,
-    integrationId,
-    deregisteredId,
-    connectionId,
   } = action;
 
-  // Some resources are managed by custom reducers.
-  // Lets skip those for this generic implementation
-  if (resourceTypesToIgnore.find(t => t === resourceType)) {
-    return state;
-  }
+  return produce(state, draft => {
+    let resourceIndex;
 
-  // skip integrations/:_integrationId/ashares
-  // skip integrations/:_integrationId/audit
-  if (
-    resourceType &&
-    resourceType.startsWith('integrations/') &&
-    (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
-  ) {
-    return state;
-  }
+    switch (type) {
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
+        return setIntegrationAppsNextState(draft, action);
+      case actionTypes.STACK.USER_SHARING_TOGGLED:
+        resourceIndex = draft.sshares?.findIndex(user => user._id === id);
 
-  // skip all SuiteScript unification resources
-  if (resourceType && resourceType.startsWith('suitescript/connections/')) {
-    return state;
-  }
-
-  let resourceIndex;
-  const newState = { ...state };
-
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-      if (resourceType.indexOf('/installBase') >= 0) {
-        const id = resourceType.substring(
-          'connectors/'.length,
-          resourceType.indexOf('/installBase')
-        );
-
-        // IO-16602, We shouldn't show child integrations in the install base for IAF 2.0 as
-        // we can not push update to child integrations. Can identify them by _parentId prop
-        const filteredCollection = collection?.filter(c => !c._parentId);
-
-        const newCollection =
-          filteredCollection?.map(c => ({ ...c, _connectorId: id }));
-
-        return produce(state, draft => {
-          draft.connectorInstallBase = newCollection || [];
-        });
-      }
-
-      if (resourceType.indexOf('/licenses') >= 0) {
-        const id = resourceType.substring(
-          'connectors/'.length,
-          resourceType.indexOf('/licenses')
-        );
-        const newCollection =
-          collection &&
-          collection.map(c => ({
-            ...c,
-            _connectorId: id,
-          }));
-
-        return produce(state, draft => {
-          draft.connectorLicenses = newCollection || [];
-        });
-      }
-
-      if (resourceType === 'recycleBinTTL' && collection && collection.length) {
-        return produce(state, draft => {
-          draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
-        });
-      }
-
-      // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
-      // about it when you have time to refactor.
-      if (resourceType === 'flows') {
-        return produce(state, draft => {
-          const newCollection =
-            collection &&
-            collection.map &&
-            collection.map(convertOldFlowSchemaToNewOne);
-
-          draft.flows = newCollection || [];
-        });
-      }
-
-      return { ...state, [resourceType]: collection || [] };
-    }
-
-    case actionTypes.RESOURCE.RECEIVED:
-      return replaceOrInsertResource(state, resourceType, resource);
-    case actionTypes.RESOURCE.DELETED:
-      if (resourceType.indexOf('/licenses') >= 0) {
-        const connectorId = resourceType.substring(
-          'connectors/'.length,
-          resourceType.indexOf('/licenses')
-        );
-
-        return produce(state, draft => {
-          draft.connectorLicenses = draft.connectorLicenses.filter(
-            l => l._id !== id || l._connectorId !== connectorId
-          );
-        });
-      }
-
-      return {
-        ...state,
-        [resourceType]: state[resourceType].filter(r => r._id !== id),
-      };
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
-      return getIntegrationAppsNextState(state, action);
-    case actionTypes.STACK.USER_SHARING_TOGGLED:
-      resourceIndex = state.sshares?.findIndex(user => user._id === id);
-
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
+        if (resourceIndex > -1) {
           draft.sshares[resourceIndex].disabled = !draft.sshares[resourceIndex]
             .disabled;
-        });
-      }
 
-      return state;
+          return;
+        }
 
-    case actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE: {
-      // cant implement immer here with current implementation. Need to revisit again.
-      if (connectionIds?.length) {
-        connectionIds.forEach(({ _id: cId}) => {
-          resourceIndex = newState.connections.findIndex(r => r._id === cId);
-          if (resourceIndex !== -1) {
-            newState.connections[resourceIndex].ftp.tradingPartner = !(state.connections[resourceIndex].ftp.tradingPartner);
-          }
-        });
+        return;
 
-        return newState;
-      }
+      case actionTypes.TRANSFER.CANCELLED:
+        resourceIndex = draft.transfers.findIndex(r => r._id === id);
+        if (resourceIndex > -1) {
+          draft.transfers[resourceIndex].status = 'canceled';
 
-      return state;
-    }
-    case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
-      resourceIndex = state.integrations?.findIndex(
-        r => r._id === integrationId
-      );
+          return;
+        }
 
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
-          draft.integrations[
-            resourceIndex
-          ]._registeredConnectionIds = draft.integrations[
-            resourceIndex
-          ]._registeredConnectionIds.filter(ele => ele !== deregisteredId);
-        });
-      }
+        return;
+      case actionTypes.ACCESSTOKEN_DELETE_PURGED:
 
-      return state;
-
-    case actionTypes.CONNECTION.REGISTER_COMPLETE:
-      resourceIndex = state.integrations?.findIndex(
-        r => r._id === integrationId
-      );
-
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
-          connectionIds.forEach(cId =>
-            draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
-          );
-        });
-      }
-
-      return state;
-
-    case actionTypes.RESOURCE.CLEAR_COLLECTION:
-      return produce(state, draft => {
-        draft[resourceType] = [];
-      });
-    case actionTypes.TRANSFER.CANCELLED:
-      resourceIndex = state.transfers.findIndex(r => r._id === id);
-
-      // Need to verify why below code is not working
-      // if (resourceIndex > -1) {
-      //   return produce(state, draft => {
-      //     draft.transfers[resourceIndex].status = 'canceled';
-      //   });
-      // }
-      if (resourceIndex > -1) {
-        newState.transfers[resourceIndex].status = 'canceled';
-
-        return newState;
-      }
-
-      return state;
-    case actionTypes.ACCESSTOKEN_DELETE_PURGED:
-      return produce(state, draft => {
         draft.accesstokens = draft.accesstokens.filter(
           token =>
             !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date()
         );
-      });
-    case actionTypes.CONNECTION.UPDATE_STATUS: {
-      return produce(state, draft => {
-        if (collection?.length) {
-          collection.forEach(({ _id: cId, offline, queues }) => {
-            resourceIndex = draft?.connections?.findIndex(r => r._id === cId);
-            if (resourceIndex >= 0) {
-              draft.connections[resourceIndex].offline = !!offline;
-              draft.connections[resourceIndex].queueSize = queues[0].size;
-            }
-          });
-        }
-      });
+
+        return;
+
+      default:
+        return draft;
     }
-    case actionTypes.CONNECTION.MADE_ONLINE:
-      if (!state.tiles) {
-        return state;
-      }
-
-      return produce(state, draft => {
-        draft.tiles = draft.tiles.map(tile => {
-          if (tile.offlineConnections) {
-            // eslint-disable-next-line no-param-reassign
-            tile.offlineConnections = tile.offlineConnections.filter(
-              c => c !== connectionId
-            );
-          }
-
-          return tile;
-        });
-      });
-
-    default:
-      return state;
-  }
+  });
 };
+
+export default reduceReducers(rootDataReducer, connectionUpdateReducer, resourceUpdateReducer);
 
 export const selectors = {};
 
@@ -704,7 +461,7 @@ selectors.mkIntegrationAppSettings = subState => {
           draft.settings.hasGeneralSettings = true;
         }
         if (draft.settings.supportsMultiStore) {
-          draft.stores = draft.settings.sections.map(s => ({
+          draft.children = draft.settings.sections.map(s => ({
             label: s.title,
             hidden: !!s.hidden,
             mode: s.mode || 'settings',
@@ -718,25 +475,6 @@ selectors.mkIntegrationAppSettings = subState => {
 
 export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
-selectors.defaultStoreId = (state, id, store) => {
-  const settings = integrationAppSettings(state, id);
-
-  if (settings && settings.stores && settings.stores.length) {
-    if (settings.stores.find(s => s.value === store)) {
-      return store;
-    }
-
-    // If the first store in the integration is in incomplete state or uninstall mode, on clicking the tile from dashboard
-    // user will be redirected directly to uninstall steps or install steps, which may confuse user.
-    // As done in ampersand, will select first "valid" store available as defaullt store.
-    return (
-      (settings.stores.find(s => s.mode === 'settings') || {}).value ||
-      settings.stores[0].value
-    );
-  }
-
-  return undefined;
-};
 const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
 

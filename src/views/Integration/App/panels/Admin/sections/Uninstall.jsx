@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function UninstallSection({ storeId, integrationId }) {
+export default function UninstallSection({ childId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = isParentViewSelected(integration, storeId);
+  const isParentView = isParentViewSelected(integration, childId);
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
@@ -52,7 +52,7 @@ export default function UninstallSection({ storeId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(

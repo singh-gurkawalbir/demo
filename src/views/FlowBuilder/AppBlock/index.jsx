@@ -148,12 +148,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function AppBlock({
+export default function AppBlock({
   className,
   onDelete,
   onErrors,
   children,
-  forwardedRef,
   onBlockClick,
   blockType,
   connectorType,
@@ -161,7 +160,6 @@ function AppBlock({
   name,
   actions: flowActions,
   resourceIndex,
-  opacity = 1,
   flowId,
   resourceType,
   resource,
@@ -308,9 +306,8 @@ function AppBlock({
         onMouseLeave={handleMouseOver(false)}
         onBlur={handleMouseOver(false)}
         {...rest}
-        ref={forwardedRef}
         className={clsx(classes.box, { [classes.draggable]: !isNew })}
-        style={{ opacity }}>
+        >
         <div className={classes.bubbleContainer}>
           {onDelete && !isViewMode && !resource._connectorId && (
             <IconButton
@@ -378,9 +375,3 @@ function AppBlock({
     </div>
   );
 }
-
-// TODO: whats the best pattern to address below violation?
-// eslint-disable-next-line react/display-name
-export default React.forwardRef((props, ref) => (
-  <AppBlock {...props} forwardedRef={ref} />
-));

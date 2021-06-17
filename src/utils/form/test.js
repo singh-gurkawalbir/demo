@@ -21,10 +21,10 @@ import {
   determineChangedValues,
 } from '.';
 import {
-  fieldDefIsValid,
   shouldOptionsBeRefreshed,
   getFirstDefinedValue,
   splitDelimitedValue,
+  fieldDefIsValidUpdated,
 } from './field';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -165,13 +165,13 @@ describe('registerFields', () => {
   });
 });
 
-describe('fieldDefIsValid', () => {
+describe('fieldDefIsValidUpdated', () => {
   test('field is valid when the form does not contain a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [])).toEqual(true);
+    expect(fieldDefIsValidUpdated(field1, {})).toEqual(true);
   });
 
   test('field is not valid when form already contains a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [field1])).toEqual(false);
+    expect(fieldDefIsValidUpdated(field1, {[field1.id]: field1})).toEqual(false);
   });
 });
 
@@ -280,6 +280,22 @@ describe('rule evaluation', () => {
   const fieldC = createField({ id: 'C', name: 'c', value: 'fail' });
 
   describe('evaluateAllRules', () => {
+    test('should default result(true) when there are rules of invalid signature', () => {
+      const rules = [{someUnknownProp: 'd'}];
+      const fieldsById = {};
+
+      expect(
+        evaluateAllRules({ rules, fieldsById })
+      ).toEqual(true);
+    });
+    test('should return default result when there are no rules provided', () => {
+      const rules = [];
+      const fieldsById = {};
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(false);
+    });
     test('passes when there are no rules provided', () => {
       const rules = [];
       const fieldsById = {};
@@ -317,6 +333,22 @@ describe('rule evaluation', () => {
   });
 
   describe('evaluateSomeRules', () => {
+    test('should default result(true) when there are rules of invalid signature', () => {
+      const rules = [{someUnknownProp: 'd'}];
+      const fieldsById = {};
+
+      expect(
+        evaluateSomeRules({ rules, fieldsById })
+      ).toEqual(true);
+    });
+    test('should return defaultResult when there are no rules provided', () => {
+      const rules = [];
+      const fieldsById = {};
+
+      expect(
+        evaluateSomeRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(false);
+    });
     test('passes when there are no rules provided', () => {
       const rules = [];
       const fieldsById = {};
@@ -325,7 +357,6 @@ describe('rule evaluation', () => {
         evaluateSomeRules({ rules, fieldsById, defaultResult: true })
       ).toEqual(true);
     });
-
     test('fails when all rules fail', () => {
       const rules = [cIs3];
       const fieldsById = {

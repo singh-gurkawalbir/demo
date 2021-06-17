@@ -32,6 +32,10 @@ export default {
       newValues['/pathToMany'] = undefined;
     }
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...newValues,
       '/netsuite_da/subrecords': undefined,

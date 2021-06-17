@@ -25,17 +25,18 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
-    padding: theme.spacing(0, 0, 1.5, 2),
+    paddingBottom: theme.spacing(1.5),
     backgroundColor: theme.palette.common.white,
+    overflowX: 'auto',
   },
   filterContainer: {
-    padding: theme.spacing(2, 0),
+    padding: theme.spacing(2, 0, 2, 2),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderWidth: [[1, 0]],
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-
+    minWidth: '1200px',
     '& > *': {
       marginRight: 10,
       '&:first-child': {
@@ -113,7 +114,7 @@ export default function Filters({
     selectors.flowJobsPagingDetails(state)
   );
   const {
-    storeId,
+    childId,
     flowId: filterFlowId,
     status = 'all',
     hideEmpty = false,
@@ -135,7 +136,7 @@ export default function Filters({
         filter.currentPage = 0;
       }
 
-      if (key === 'storeId') {
+      if (key === 'childId') {
         filter.flowId = '';
       }
 
@@ -208,7 +209,7 @@ export default function Filters({
         <FlowSelector
           integrationId={integrationId}
           data-test="selectAFlow"
-          storeId={storeId}
+          childId={childId}
           value={filterFlowId}
           onChange={flowId => patchFilter('flowId', flowId)}
         />

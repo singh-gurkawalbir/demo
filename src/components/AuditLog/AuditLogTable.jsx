@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   messageContainer: {
     padding: theme.spacing(3),
+    backgroundColor: theme.palette.common.white,
   },
 }));
 
@@ -27,7 +28,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
       resourceType,
       resourceId,
       filters,
-      {storeId: childId, take}
+      {childId, take}
     ));
 
   const actionProps = useMemo(() => ({ childId }), [childId]);

@@ -11,7 +11,7 @@ import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
 import CloneCrumb from './crumbs/Clone';
-import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
+import { IntegrationAppCrumb, ChildCrumb } from './crumbs/IntegrationApp';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
@@ -134,8 +134,8 @@ const routes = [
     childRoutes: [
       ...integrationAppRoutes,
       {
-        path: '/child/:storeId',
-        breadcrumb: StoreCrumb,
+        path: '/child/:childId',
+        breadcrumb: ChildCrumb,
         childRoutes: integrationAppRoutes,
       },
     ],
@@ -171,8 +171,8 @@ const routes = [
       { path: '/notifications', breadcrumb: 'Notifications' },
       { path: '/addons', breadcrumb: 'Add-ons' },
       {
-        path: '/:storeId',
-        breadcrumb: StoreCrumb,
+        path: '/:childId',
+        breadcrumb: ChildCrumb,
         childRoutes: [
           { path: '/users', breadcrumb: 'Users' },
           { path: '/uninstall', breadcrumb: 'Uninstall' },

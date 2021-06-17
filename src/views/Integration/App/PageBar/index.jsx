@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   // TODO: (Azhar) make all pagebar dropdown same without border.
-  storeSelect: {
+  childSelect: {
     fontFamily: 'Roboto500',
     fontSize: 13,
     transition: theme.transitions.create('background-color'),
@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
       paddingTop: theme.spacing(1),
     },
   },
-  storeErrorStatus: {
+  childErrorStatus: {
     display: 'grid',
     minWidth: 250,
     width: '100%',
@@ -52,31 +52,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AllStoreItem = ({integrationId, storeLabel}) => {
+const AllChildren = ({integrationId, childLabel}) => {
   const classes = useStyles();
-  const integrationErrorsPerStore = useSelector(state =>
-    selectors.integrationErrorsPerStore(state, integrationId),
+  const integrationErrorsPerChild = useSelector(state =>
+    selectors.integrationErrorsPerChild(state, integrationId),
   shallowEqual
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const totalCount = Object.values(integrationErrorsPerStore).reduce(
+  const totalCount = Object.values(integrationErrorsPerChild).reduce(
     (total, count) => total + count,
     0);
 
   if (!isUserInErrMgtTwoDotZero) {
     return (
       <MenuItem value="">
-        All {storeLabel}s
+        All {childLabel}s
       </MenuItem>
     );
   }
 
   if (totalCount === 0) {
     return (
-      <MenuItem value="" className={classes.storeErrorStatus}>
-        <div> All {storeLabel}s</div>
+      <MenuItem value="" className={classes.childErrorStatus}>
+        <div> All {childLabel}s</div>
         <div>
           <StatusCircle size="mini" variant="success" />
         </div>
@@ -85,8 +85,8 @@ const AllStoreItem = ({integrationId, storeLabel}) => {
   }
 
   return (
-    <MenuItem value="" className={classes.storeErrorStatus}>
-      <div> All {storeLabel}s</div>
+    <MenuItem value="" className={classes.childErrorStatus}>
+      <div> All {childLabel}s</div>
       <div>
         <StatusCircle size="mini" variant="error" />
         <span>{totalCount > 9999 ? '9999+' : totalCount}</span>
@@ -94,31 +94,31 @@ const AllStoreItem = ({integrationId, storeLabel}) => {
     </MenuItem>
   );
 };
-// TODO Surya : StoreMenuItems to go into the ArrowPopper.
-const StoreMenuItems = ({ integration, integrationId }) => {
+// TODO Surya : ChildMenuItems to go into the ArrowPopper.
+const ChildMenuItems = ({ integration, integrationId }) => {
   const classes = useStyles();
-  const integrationErrorsPerStore = useSelector(state =>
-    selectors.integrationErrorsPerStore(state, integrationId),
+  const integrationErrorsPerChild = useSelector(state =>
+    selectors.integrationErrorsPerChild(state, integrationId),
   shallowEqual
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
-  return integration?.stores?.map(store => {
+  return integration?.children?.map(child => {
     if (!isUserInErrMgtTwoDotZero) {
       return (
-        <MenuItem key={store.value} value={store.value}>
-          {store.label}
+        <MenuItem key={child.value} value={child.value}>
+          {child.label}
         </MenuItem>
       );
     }
-    const storeErrorCount = integrationErrorsPerStore[store.value];
+    const childErrorCount = integrationErrorsPerChild[child.value];
 
-    if (storeErrorCount === 0) {
+    if (childErrorCount === 0) {
       return (
-        <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
-          <div> {store.label}</div>
+        <MenuItem key={child.value} value={child.value} className={classes.childErrorStatus}>
+          <div> {child.label}</div>
           <div>
             <StatusCircle size="mini" variant="success" />
           </div>
@@ -127,11 +127,11 @@ const StoreMenuItems = ({ integration, integrationId }) => {
     }
 
     return (
-      <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
-        <div> {store.label}</div>
+      <MenuItem key={child.value} value={child.value} className={classes.childErrorStatus}>
+        <div> {child.label}</div>
         <div>
           <StatusCircle size="mini" variant="error" />
-          <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+          <span>{childErrorCount > 9999 ? '9999+' : childErrorCount}</span>
         </div>
       </MenuItem>
     );
@@ -142,7 +142,7 @@ export default function PageBar() {
   const classes = useStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { integrationId, storeId, tab } = match.params;
+  const { integrationId, childId, tab } = match.params;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
@@ -169,15 +169,15 @@ export default function PageBar() {
     },
     [dispatch, integrationId]
   );
-  const handleStoreChange = useCallback(
+  const handleChildChange = useCallback(
     e => {
-      const newStoreId = e.target.value;
+      const newChildId = e.target.value;
 
-      if (newStoreId) {
-        // Redirect to current tab of new store
+      if (newChildId) {
+        // Redirect to current tab of new child
         history.push(
           getRoutePath(
-            `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+            `integrationapps/${integrationAppName}/${integrationId}/child/${newChildId}/${tab}`
           )
         );
       } else {
@@ -190,23 +190,23 @@ export default function PageBar() {
     },
     [history, integrationAppName, integrationId, tab]
   );
-  const handleAddNewStoreClick = useCallback(() => {
+  const handleAddNewChildClick = useCallback(() => {
     history.push(
       getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`)
     );
   }, [history, integrationAppName, integrationId]);
 
-  const renderStoreLabel = useCallback(selectedStoreId => {
-    if (selectedStoreId === '') {
+  const renderChildLabel = useCallback(selectedChildId => {
+    if (selectedChildId === '') {
       return `All ${storeLabel}s`;
     }
 
-    return integration.stores?.find(store => store.value === selectedStoreId)?.label || selectedStoreId;
+    return integration.children?.find(child => child.value === selectedChildId)?.label || selectedChildId;
   },
-  [integration.stores, storeLabel]);
+  [integration.children, storeLabel]);
 
-  const storeItems = StoreMenuItems({ integration, integrationId });
-  const allStoreItem = AllStoreItem({integrationId, storeLabel});
+  const childItems = ChildMenuItems({ integration, integrationId });
+  const allChildren = AllChildren({integrationId, childLabel: storeLabel});
 
   return (
     <CeligoPageBar
@@ -237,7 +237,7 @@ export default function PageBar() {
           variant="text"
           color="primary"
           data-test={`add${storeLabel}`}
-          onClick={handleAddNewStoreClick}>
+          onClick={handleAddNewChildClick}>
           <AddIcon /> Add {storeLabel}
         </IconTextButton>
         )}
@@ -245,13 +245,13 @@ export default function PageBar() {
           data-public
           displayEmpty
           data-test={`select${storeLabel}`}
-          className={classes.storeSelect}
-          onChange={handleStoreChange}
-          renderValue={renderStoreLabel}
+          className={classes.childSelect}
+          onChange={handleChildChange}
+          renderValue={renderChildLabel}
           IconComponent={ArrowDownIcon}
-          value={storeId || ''}>
-          {allStoreItem}
-          {storeItems}
+          value={childId || ''}>
+          {allChildren}
+          {childItems}
         </Select>
       </div>
       )}

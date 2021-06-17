@@ -237,6 +237,7 @@ const flowMetrics = {
     action(actionTypes.FLOW_METRICS.RECEIVED, { resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
+  updateLastRunRange: (resourceId, startDate, endDate) => action(actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE, { resourceId, startDate, endDate}),
 };
 const resource = {
   replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
@@ -327,21 +328,6 @@ const resource = {
   clearConflict: (id, scope) =>
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
-  initCustomForm: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, {
-      resourceType,
-      resourceId,
-    }),
-
-  patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
-    action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
-      resourceType,
-      resourceId,
-      fieldId,
-      value,
-      op,
-      offset,
-    }),
   integrations: {
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, {integrationId}),
@@ -683,7 +669,6 @@ const integrationApp = {
             .PATCH_SETTINGS,
           { integrationId, flowId, id, key, value }
         ),
-      updateLastFieldTouched: key => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD, { key }),
       delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,
@@ -873,11 +858,11 @@ const integrationApp = {
         integrationId,
         license,
       }),
-    update: (integrationId, flowId, storeId, sectionId, values, options) =>
+    update: (integrationId, flowId, childId, sectionId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
-        storeId,
+        childId,
         sectionId,
         values,
         options,
@@ -904,11 +889,11 @@ const integrationApp = {
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
     }),
-    installStep: (integrationId, installerFunction, storeId, addOnId) =>
+    installStep: (integrationId, installerFunction, childId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       }),
     scriptInstallStep: (
@@ -945,9 +930,9 @@ const integrationApp = {
       }),
   },
   uninstaller: {
-    preUninstall: (storeId, integrationId) =>
+    preUninstall: (childId, integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL, {
-        storeId,
+        childId,
         id: integrationId,
       }),
     clearSteps: integrationId =>
@@ -960,9 +945,9 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
+    stepUninstall: (childId, integrationId, uninstallerFunction, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
-        storeId,
+        childId,
         id: integrationId,
         uninstallerFunction,
         addOnId,
@@ -972,11 +957,11 @@ const integrationApp = {
         uninstallSteps,
         id,
       }),
-    failedUninstallSteps: (id, error, storeId) =>
+    failedUninstallSteps: (id, error, childId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
         id,
         error,
-        storeId,
+        childId,
       }),
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
@@ -1021,35 +1006,35 @@ const integrationApp = {
         id: integrationId,
       }),
   },
-  store: {
+  child: {
     addNew: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
+      action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
     updateStep: (integrationId, installerFunction, update) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.UPDATE, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
       }),
     clearSteps: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.CLEAR, { id: integrationId }),
+      action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),
     completedStepInstall: (integrationId, installerFunction, steps) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.COMPLETE, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.COMPLETE, {
         id: integrationId,
         installerFunction,
         steps,
       }),
     installStep: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.INSTALL, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
       }),
-    failedNewStoreSteps: (integrationId, message) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.FAILURE, {
+    failedNewChildSteps: (integrationId, message) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {
         id: integrationId,
         message,
       }),
-    receivedNewStoreSteps: (integrationId, steps) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
+    receivedNewChildSteps: (integrationId, steps) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.RECEIVED, {
         id: integrationId,
         steps,
       }),
@@ -1637,8 +1622,8 @@ const job = {
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolveSelected: ({ jobs, match }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),
-  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly, match }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly, match }),
+  resolveAll: ({ flowId, childId, integrationId, filteredJobsOnly, match }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, childId, integrationId, filteredJobsOnly, match }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1658,8 +1643,8 @@ const job = {
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, storeId, integrationId, match }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId, match }),
+  retryAll: ({ flowId, childId, integrationId, match }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, childId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>

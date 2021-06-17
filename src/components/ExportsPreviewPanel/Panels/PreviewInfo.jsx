@@ -93,15 +93,16 @@ export default function PreviewInfo(props) {
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
-    if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
+    if (status === 'requested') return <Typography data-public variant="body2"> Testing </Typography>;
 
-    if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
+    if (status === 'received') return <Typography data-public variant="body2"> Success! </Typography>;
 
     if (status === 'error') {
       const errorCount = error?.length || 0;
 
       return (
         <FieldMessage
+          dataPublic
           errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
         />
       );

@@ -10,21 +10,21 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 
 const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
-function* isDataLoaderFlow(flow) {
+export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
 
   // assume old DL interface
   let exportId = flow._exportId;
 
   // override if new interface present.
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+  if (flow.pageGenerators?.length > 0) {
     exportId = flow.pageGenerators[0]._exportId;
   }
 
@@ -34,11 +34,13 @@ function* isDataLoaderFlow(flow) {
   const data = yield select(selectors.resourceData, 'exports', exportId);
   const exp = data.merged;
 
-  if (exp && exp.type === 'simple') {
+  if (exp?.type === 'simple') {
     // console.log('we have a data loader flow!');
 
     return true;
   }
+
+  return false;
 }
 
 export function* resourceConflictDetermination({
@@ -77,9 +79,7 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
     return;
   }
   const userPreferences = yield select(selectors.userPreferences);
-  const isLinked = userPreferences &&
-    userPreferences.ssConnectionIds &&
-    userPreferences.ssConnectionIds.includes(connectionId);
+  const isLinked = userPreferences?.ssConnectionIds?.includes(connectionId);
   const isAccountOwnerOrAdmin = yield select(selectors.isAccountOwnerOrAdmin);
 
   if (isAccountOwnerOrAdmin) {
@@ -122,7 +122,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
       message: 'Revoking Connection',
     });
 
-    if (response && response.errors) {
+    if (response?.errors) {
       yield put(
         actions.api.failure(path, 'GET', JSON.stringify(response.errors), hideNetWorkSnackbar)
       );
@@ -263,6 +263,10 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     }
 
     return { error };
+  }
+  if (options?.action === 'UpdatedIA2.0Settings') {
+    yield put(actions.resource.requestCollection('exports', null, true));
+    yield put(actions.resource.requestCollection('imports', null, true));
   }
 
   // HACK! when updating scripts, since content is stored in s3, it
@@ -433,7 +437,7 @@ export function* getResource({ resourceType, id, message, hidden }) {
   }
 }
 export function* updateIntegrationSettings({
-  storeId,
+  childId,
   integrationId,
   values,
   flowId,
@@ -446,14 +450,14 @@ export function* updateIntegrationSettings({
 
   const integration = yield select(selectors.resource, 'integrations', integrationId);
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
-  let childId = storeId;
+  let finalChildId = childId;
 
-  if (supportsMultiStore && !storeId && flowId) {
-    childId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
+  if (supportsMultiStore && !childId && flowId) {
+    finalChildId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
   }
 
-  if (childId) {
-    payload = { [childId]: payload };
+  if (finalChildId) {
+    payload = { [finalChildId]: payload };
   }
 
   payload = {
@@ -480,7 +484,7 @@ export function* updateIntegrationSettings({
 
     return yield put(
       actions.integrationApp.settings.submitFailed({
-        storeId: childId,
+        childId: finalChildId,
         integrationId,
         response,
         flowId,
@@ -545,7 +549,7 @@ export function* updateIntegrationSettings({
 
     yield put(
       actions.integrationApp.settings.submitComplete({
-        storeId: childId,
+        childId,
         integrationId,
         response,
         flowId,
@@ -644,7 +648,7 @@ export function* deleteResource({ resourceType, id }) {
 export function* deleteIntegration({integrationId}) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
 
-  if (integration._connectorId) return undefined;
+  if (integration._connectorId) return;
 
   yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
 
@@ -707,30 +711,36 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
+    if (collection !== undefined && !Array.isArray(collection) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', collection);
+      collection = undefined;
+    }
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-    return undefined;
+
   }
 }
 
 export function* validateResource({ resourceType, resourceId }) {
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
-  if (!isEmpty(resource) || !resourceType || !resourceId) return undefined;
+  if (!isEmpty(resource) || !resourceType || !resourceId) return;
 
   return yield call(getResource, {resourceType, id: resourceId, hidden: true});
 }
 
-export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail }) {
   const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
   const {
     flows: availableFlows = [],
     connections: availableConnections = [],
-  } = yield select(selectors.integrationNotificationResources, integrationId, { storeId, userEmail });
+  } = yield select(selectors.integrationNotificationResources, integrationId, { childId, userEmail });
   const notifications = [];
 
   notifications.push({
@@ -768,7 +778,7 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
       message: 'Updating notifications',
     });
   } catch (e) {
-    return undefined;
+    return;
   }
 
   if (response) {
@@ -778,7 +788,7 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
 
 export function* updateFlowNotification({ flowId, isSubscribed }) {
   const flow = yield select(selectors.resource, 'flows', flowId);
-  const integrationId = flow._integrationId || 'none';
+  const integrationId = flow?._integrationId || 'none';
   const { flowValues: subscribedFlows = [] } = yield select(selectors.integrationNotificationResources, integrationId);
   const isAllFlowsSelectedPreviously = subscribedFlows.find(id => id === integrationId);
   const notifications = [];
@@ -821,7 +831,7 @@ export function* updateFlowNotification({ flowId, isSubscribed }) {
       message: 'Updating notifications',
     });
   } catch (e) {
-    return undefined;
+    return;
   }
 
   if (response) {
@@ -938,7 +948,7 @@ export function* requestQueuedJobs({ connectionId }) {
   try {
     response = yield call(apiCallWithRetry, { path });
   } catch (error) {
-    return undefined;
+    return;
   }
 
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
@@ -970,9 +980,7 @@ export function* cancelQueuedJob({ jobId }) {
       },
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
-
-    return undefined;
+    yield put(actions.api.failure(path, 'PUT', error?.message, false));
   }
 }
 export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId }) {
@@ -987,9 +995,9 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
       },
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(actions.api.failure(path, 'PUT', error?.message, false));
 
-    return undefined;
+    return;
   }
   yield put(actions.resource.requestCollection('flows', null, true));
   yield put(actions.resource.requestCollection('exports', null, true));
@@ -1019,7 +1027,6 @@ export function* downloadReport({reportId}) {
   try {
     const response = yield call(apiCallWithRetry, {
       path,
-
     });
 
     window.open(response.signedURL, 'target=_blank', 'noopener,noreferrer');

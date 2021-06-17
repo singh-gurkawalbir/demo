@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* global describe, test, expect, jest */
+import shortid from 'shortid';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
 
@@ -891,7 +892,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.update(
             'integrationId',
             'flowId',
-            'storeId',
+            'childId',
             null,
             'INCORRECT_FUNCTION_NAME'
           )
@@ -911,7 +912,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.update(
             'integrationId',
             'flowId',
-            'storeId',
+            'childId',
             null,
             'INCORRECT_FUNCTION_NAME'
           )
@@ -1130,7 +1131,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.submitFailed({
             integrationId: 'integrationId',
             flowId: 'flowId',
-            storeId: 'storeId',
+            childId: 'childId',
           })
         );
         const expectedValue = {
@@ -1148,7 +1149,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.submitFailed({
             integrationId: 'integrationId',
             flowId: 'flowId',
-            storeId: 'storeId',
+            childId: 'childId',
           })
         );
         const expectedValue = {
@@ -1787,18 +1788,18 @@ describe('integrationApps reducer test cases', () => {
         state = reducer(state, actions.integrationApp.settings.categoryMappings.init({
           depth: '1',
           flowId: 'flowId',
-          id: 'flowId-autoaccessorymisc-itempackagequantity',
+          id: 'flowId-autoaccessorymisc-1-itempackagequantity',
           integrationId: 'integrationId',
           isVariationAttributes: false,
           isVariationMapping: true,
           sectionId: 'autoaccessorymisc',
           variation: 'itempackagequantity',
         }));
-        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-itempackagequantity'].mappings = [{
+        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].mappings = [{
           extract: 'yes',
           generate: 'no',
         }];
-        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-itempackagequantity'].lookups = [{
+        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].lookups = [{
           lookupName: 'yes',
           map: {yes: 'no'},
         }];
@@ -1810,6 +1811,7 @@ describe('integrationApps reducer test cases', () => {
             categoryId: 'autoaccessory',
             isVariationAttributes: false,
             subCategoryId: 'autoaccessorymisc',
+            depth: 1,
           }
         ));
         expect(state).toEqual({
@@ -2007,7 +2009,7 @@ describe('integrationApps reducer test cases', () => {
               operation: 'mappingData',
             },
             mappings: {
-              'flowId-autoaccessorymisc-itempackagequantity': {
+              'flowId-autoaccessorymisc-1-itempackagequantity': {
                 lookups: [
                   {
                     lookupName: 'yes',
@@ -2538,12 +2540,14 @@ describe('integrationApps reducer test cases', () => {
                 initChangeIdentifier: 0,
                 lookups: [{
                   id: 'oldLookup',
+                  lookupName: 'lookupName',
                 }],
                 mappings: [
                   {
                     extract: 'a',
                     generate: 'b',
                     key: 'key0',
+                    lookupName: 'lookupName',
                   },
                   {
                     extract: 'c',
@@ -2568,9 +2572,7 @@ describe('integrationApps reducer test cases', () => {
               mappingId: {
                 initChangeIdentifier: 0,
                 lookups: [
-                  {
-                    id: 'oldLookup',
-                  },
+
                 ],
                 mappings: [
                   {
@@ -2933,6 +2935,135 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
+    describe('integrationApps settings categoryMappings init complete action', () => {
+      test('should correctly set the mappings initComplete object', () => {
+        let state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integrationId', 'flowId', amazonCategoryMappings));
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init({integrationId: 'integrationId', flowId: 'flowId', id: 'mappingId'}));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.initComplete(
+          'integrationId',
+          'flowId',
+          'mappingId',
+          {
+            mappings: [{
+              extract: 'extract',
+              generate: 'generate',
+            },
+            {
+              extract: 'extract1',
+              generate: 'generate1',
+            }],
+            depth: '1',
+            sectionId: 'autoaccessorymisc',
+          }));
+
+        expect(state['flowId-integrationId'].mappings).toEqual({
+          mappingId: {
+            depth: '1',
+            mappings: [{
+              extract: 'extract',
+              generate: 'generate',
+            }, {
+              extract: 'extract1',
+              generate: 'generate1',
+            }],
+            sectionId: 'autoaccessorymisc',
+            status: 'received',
+          },
+        });
+      });
+
+      test('should correctly set the mappings init complete object for variation mappings', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init({
+          depth: '1',
+          flowId: 'flowId',
+          id: 'flowId-autoaccessorymisc-itempackagequantity',
+          integrationId: 'integrationId',
+          isVariationAttributes: false,
+          isVariationMapping: true,
+          sectionId: 'autoaccessorymisc',
+          variation: 'itempackagequantity',
+        }));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.initComplete(
+          'integrationId',
+          'flowId',
+          'flowId-autoaccessorymisc-itempackagequantity',
+          {
+            depth: '1',
+            flowId: 'flowId',
+            id: 'flowId-autoaccessorymisc-itempackagequantity',
+            integrationId: 'integrationId',
+            isVariationAttributes: false,
+            isVariationMapping: true,
+            sectionId: 'autoaccessorymisc',
+            variation: 'itempackagequantity',
+          }));
+
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              'flowId-autoaccessorymisc-itempackagequantity': {
+                depth: '1',
+                flowId: 'flowId',
+                id: 'flowId-autoaccessorymisc-itempackagequantity',
+                integrationId: 'integrationId',
+                isVariationAttributes: false,
+                isVariationMapping: true,
+                sectionId: 'autoaccessorymisc',
+                status: 'received',
+                variation: 'itempackagequantity',
+              },
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+
     describe('integrationApps settings categoryMappings updateGenerates action', () => {
       test('should update the specific mapping in the category mappings with updated generateFields', () => {
         let state = {
@@ -2973,12 +3104,14 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                mappings: [{key: 'key1'}],
+                mappings: [],
               },
             },
           },
         };
+        const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
+        mock.mockReturnValue('mock_key');
         state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 'key1', 'value'));
         expect(state).toEqual({
           'flow1-integration1': {
@@ -2987,9 +3120,9 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRowKey: 'key1',
+                lastModifiedRowKey: 'mock_key',
                 mappings: [{
-                  key: 'key1',
+                  key: 'mock_key',
                   generate: 'value',
                 }],
                 validationErrMsg: 'Extract Fields missing for field(s): value',
@@ -2997,6 +3130,7 @@ describe('integrationApps reducer test cases', () => {
             },
           },
         });
+        mock.mockRestore();
       });
 
       test('should update the specific mapping in the category mappings with field patch for generate', () => {
@@ -3137,6 +3271,61 @@ describe('integrationApps reducer test cases', () => {
             },
           },
         });
+      });
+
+      test('should update the specific mapping in the category mappings with field patch hardcoded value for extract for new extract', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                  key: 'key0',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                  key: 'key1',
+                }],
+              },
+            },
+          },
+        };
+
+        const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+        mock.mockReturnValue('mock_key');
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 'key11', '"value"'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRowKey: 'mock_key',
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                  key: 'key0',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                  key: 'key1',
+                }, {
+                  hardCodedValue: 'value',
+                  generate: undefined,
+                  key: 'mock_key',
+                }],
+                validationErrMsg: 'One or more generate fields missing',
+              },
+            },
+          },
+        });
+        mock.mockRestore();
       });
 
       test('should update the specific mapping in the category mappings with field patch for generate and throw validation messages', () => {
@@ -6651,6 +6840,55 @@ describe('integrationApps selectors test cases', () => {
         uiAssistant: 'amazon',
       });
       expect(selectors.categoryMapping(state, 'integration2', 'flow2')).toEqual({});
+    });
+  });
+
+  describe('integrationApps settings categoryMapping test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(() => selectors.categoryMapping()).not.toThrow();
+      expect(() => selectors.categoryMapping({})).not.toThrow();
+      expect(() => selectors.categoryMapping(null)).not.toThrow();
+      expect(() => selectors.categoryMapping(null, null, null, null)).not.toThrow();
+    });
+
+    test('should return correct form state for params passed', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          mappings: {
+            mappingId: {
+              mappings: [{
+                extract: 'extract',
+                generate: 'generate',
+              }],
+            },
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(selectors.categoryMappingById(state, 'integration1', 'flow1', 'mappingId')).toEqual({
+        mappings: [{
+          extract: 'extract',
+          generate: 'generate',
+        }],
+      });
+      expect(selectors.categoryMappingById(state, 'integration2', 'flow2', 'id')).toEqual();
     });
   });
 

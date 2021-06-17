@@ -14,7 +14,7 @@ function updateStatus(draft, flowId, status) {
 }
 
 export default (state = {}, action) => {
-  const { type, resourceId, response } = action;
+  const { type, resourceId, response, startDate, endDate } = action;
 
   if (!resourceId) { return state; }
 
@@ -30,7 +30,15 @@ export default (state = {}, action) => {
       case actionTypes.FLOW_METRICS.FAILED:
         updateStatus(draft, resourceId, COMM_STATES.ERROR);
         break;
-
+      case actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+        }
+        draft[resourceId].lastRun = {
+          startDate,
+          endDate,
+        };
+        break;
       case actionTypes.FLOW_METRICS.CLEAR:
         delete draft[resourceId];
         break;

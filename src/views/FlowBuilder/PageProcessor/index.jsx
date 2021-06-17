@@ -1,10 +1,8 @@
-import React, { useRef, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -21,7 +19,7 @@ import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   ppContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -35,19 +33,17 @@ const useStyles = makeStyles(theme => ({
   dottedLine: {
     alignSelf: 'start',
     marginTop: 85,
-    borderBottom: `3px dotted ${theme.palette.divider}`,
   },
   pending: {
     minWidth: 50,
   },
-}));
+});
 const PageProcessor = ({
   match,
   location,
   history,
   flowId,
   index,
-  onMove,
   isLast,
   integrationId,
   isViewMode,
@@ -59,7 +55,6 @@ const PageProcessor = ({
   const pending = !!pp._connectionId;
   const resourceId = pp._connectionId || pp._exportId || pp._importId;
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
-  const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
   const resource =
@@ -109,67 +104,6 @@ const PageProcessor = ({
         ),
       shallowEqual
     ) || {};
-  // #region Drag and Drop handlers
-  const [, drop] = useDrop({
-    accept: itemTypes.PAGE_PROCESSOR,
-
-    hover(item, monitor) {
-      if (!ref.current) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
-      // Get vertical middle
-      const hoverMiddleX =
-        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-      // Get pixels to the right
-      const hoverClientX = clientOffset.x - hoverBoundingRect.left;
-
-      // Only perform the move when the mouse has crossed half of the items width
-      // When dragging right, only move when the cursor is below 50%
-      // When dragging left, only move when the cursor is above 50%
-      // Dragging right
-      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
-        return;
-      }
-
-      // Dragging left
-      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
-        return;
-      }
-
-      // Time to actually perform the action
-      onMove(dragIndex, hoverIndex);
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-  const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_PROCESSOR, index },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: !isViewMode,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-
-  drag(drop(ref));
-  // #endregion
 
   const handleBlockClick = useCallback(() => {
     let newId = generateNewId();
@@ -331,8 +265,6 @@ const PageProcessor = ({
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
-          ref={ref}
-          opacity={opacity} /* used for drag n drop */
           blockType={blockType}
           flowId={flowId}
           index={index}

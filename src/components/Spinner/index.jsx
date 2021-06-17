@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   loadingWithChildren: {
+    display: 'flex',
     justifyContent: 'center',
   },
 }));

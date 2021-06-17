@@ -216,62 +216,7 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral7,
         padding: [[6, 8, 4, 8]],
-      },
-      tooltipPlacementBottom: {
-        margin: '0 !important',
-        '&:before': {
-          top: -7,
-          left: 0,
-          width: 8,
-          right: 0,
-          margin: 'auto',
-          content: '""',
-          zIndex: 1,
-          position: 'absolute',
-          borderLeft: '7px solid transparent',
-          borderRight: '7px solid transparent',
-          borderBottom: `7px solid ${colors.celigoNeutral7}`,
-        },
-        '&:after': {
-          top: -5,
-          left: 0,
-          right: 0,
-          width: 6,
-          margin: 'auto',
-          content: '""',
-          zIndex: 2,
-          position: 'absolute',
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent',
-          borderBottom: `6px solid ${colors.celigoNeutral7}`,
-        },
-      },
-      tooltipPlacementRight: {
         margin: '0px !important',
-        '&:before': {
-          top: 'calc(50% - 7px)',
-          left: -7,
-          right: 0,
-          width: 4,
-          content: '""',
-          zIndex: 1,
-          position: 'absolute',
-          borderTop: '7px solid transparent',
-          borderBottom: '7px solid transparent',
-          borderRight: `7px solid ${colors.celigoNeutral7}`,
-        },
-        '&:after': {
-          top: 'calc(50% - 6px)',
-          left: 0,
-          right: 0,
-          width: 4,
-          content: '""',
-          zIndex: 2,
-          position: 'absolute',
-          borderBottom: '6px solid transparent',
-          borderTop: '6px solid transparent',
-          borderRight: `6px solid ${colors.celigoNeutral7}`,
-        },
       },
     },
     MuiPickersDay: {
@@ -492,10 +437,15 @@ export default {
     },
     MuiOutlinedInput: {
       root: {
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
         backgroundColor: colors.celigoWhite,
-        '&$focused': {
+        '&:hover': {
           borderColor: colors.celigoAccent2,
         },
+      },
+      notchedOutline: {
+        border: `${colors.celigoNeutral3} !important`,
       },
     },
     MuiFormLabel: {
@@ -605,7 +555,7 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
-        marginTop: -4,
+        height: 20,
         '& svg': {
           fontSize: 18,
         },
@@ -857,7 +807,11 @@ export default {
       inputRoot: {
         alignItems: 'flex-start',
       },
+      listbox: {
+        padding: '2px 0px',
+      },
     },
+
   },
   props: {
     MuiCheckbox: {
@@ -875,6 +829,7 @@ export default {
     },
     MuiTooltip: {
       'data-public': true,
+      arrow: true,
     },
     MuiTabs: {
       'data-public': true,

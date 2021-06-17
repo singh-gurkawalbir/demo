@@ -75,7 +75,7 @@ describe('jobErrorsPreview reducer', () => {
 
       expect(newState).toEqual(expectedState);
     });
-    test.only('should not alter state for invalid job.', () => {
+    test('should not alter state for invalid job.', () => {
       const jobId = 'j3';
       const error = 'some error';
       const originalState = {j1: {status: 'error', error}, j2: {status: 'requested', previewData: samplePreviewData, errorFileId: 'ef1'}};

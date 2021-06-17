@@ -104,6 +104,10 @@ export default {
       newValues['/pathToMany'] = undefined;
     }
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...newValues,
     };

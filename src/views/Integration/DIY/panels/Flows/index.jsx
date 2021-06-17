@@ -90,6 +90,11 @@ const useStyles = makeStyles(theme => ({
   flowsGroupContainer: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  flowPanelTitle: {
+    '&>h4': {
+      minWidth: '300px',
+    },
+  },
 }));
 
 const getBasePath = match => {
@@ -327,7 +332,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const actionProps = useMemo(() => (
     {
       parentId: integrationId,
-      storeId: childId,
+      childId,
       isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,
@@ -362,7 +367,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
-      <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow}>
+      <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={filterKey}

@@ -3488,44 +3488,6 @@ describe('resource region selector testcases', () => {
       expect(resourceDataSel1(state, 'exports', 1)).toBe(r1);
       expect(resourceDataSel2(state, 'exports', 1)).toBe(r2);
     });
-    test('should void the cache and regenerate the same result when we received the same collection again', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const anotherExportsInst = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged(1, patch));
-      const result = resourceData(state, 'exports', 1);
-
-      expect(result).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-
-      // provoke cache to regenerate with another instance of exports
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('exports', anotherExportsInst)
-      );
-
-      const cachedResult = resourceData(state, 'exports', 1);
-
-      // cachedResult is the same as result but different reference
-      expect(cachedResult).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-
-      expect(result).not.toBe(cachedResult);
-    });
     test('should return correct data when staged data exists but no master.', () => {
       const exports = [{ _id: 1, name: 'test X' }];
       const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
@@ -3543,12 +3505,6 @@ describe('resource region selector testcases', () => {
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         master: null,
       });
-    });
-  });
-
-  describe('selectors.resourceFormField test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceFormField()).toEqual();
     });
   });
 
@@ -3657,7 +3613,7 @@ describe('resource region selector testcases', () => {
       );
     });
 
-    test('should return logs for IA if storeId is passed as argument', () => {
+    test('should return logs for IA if childId is passed as argument', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -3788,7 +3744,7 @@ describe('resource region selector testcases', () => {
       );
 
       expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
-        storeId: 's1',
+        childId: 's1',
       })).toEqual({
         count: 4,
         logs: [
@@ -5081,6 +5037,45 @@ describe('resource region selector testcases', () => {
           title: 'Miscellaneous',
         },
       ]);
+    });
+  });
+
+  describe('selectors.getResourceType saga', () => {
+    const state = {
+      session: {
+        resource: {
+          'res-id1': 'temp-id1',
+          'res-id2': 'temp-id2',
+        },
+      },
+      data: {
+        resources: {
+          imports: [{
+            name: 'import name 1',
+            _id: 'import1',
+          }, {
+            name: 'import name 2',
+            _id: 'temp-id1',
+          }],
+          exports: [{
+            name: 'export name 1',
+            _id: 'temp-id2',
+          }],
+        },
+      },
+    };
+
+    test('should return exports if passed resource type is pageGenerator', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageGenerator', resourceId: 'res-123' })).toEqual('exports');
+    });
+    test('should return imports if passed resource type is pageProcessor and an import resource exists with that id', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id1' })).toEqual('imports');
+    });
+    test('should return exports if passed resource type is pageProcessor and no import resource exists with that id', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id2' })).toEqual('exports');
+    });
+    test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toEqual('imports');
     });
   });
 });

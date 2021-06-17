@@ -24,10 +24,10 @@ module.exports = {
   setupFiles: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
     global: {
-      statements: 75,
-      branches: 65,
-      functions: 65,
-      lines: 75, // revert it back to 80 once we reach there. Lowering to enable a pre commit hook.
+      statements: 84,
+      branches: 75,
+      functions: 82,
+      lines: 84,
     },
   },
   // these variables are injected through webpack definePlugin and

@@ -132,7 +132,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       actions.integrationApp.settings.categoryMappings.cancelVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${
+        `${flowId}-${subCategoryId}-${depth}-${
           isVariationAttributes ? 'variationAttributes' : variation
         }`
       )
@@ -141,6 +141,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   }, [
     dispatch,
     flowId,
+    depth,
     handleClose,
     integrationId,
     isVariationAttributes,
@@ -152,11 +153,10 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       actions.integrationApp.settings.categoryMappings.saveVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${
+        `${flowId}-${subCategoryId}-${depth}-${
           isVariationAttributes ? 'variationAttributes' : variation
         }`,
-        { categoryId, subCategoryId, isVariationAttributes },
-        isVariationAttributes
+        { categoryId, subCategoryId, isVariationAttributes, depth }
       )
     );
     handleClose();
@@ -164,6 +164,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     categoryId,
     dispatch,
     flowId,
+    depth,
     handleClose,
     integrationId,
     isVariationAttributes,

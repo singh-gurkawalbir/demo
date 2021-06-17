@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function FlowSettingsPanel({availableSections, integrationId, storeId, sectionProps}) {
+function FlowSettingsPanel({availableSections, integrationId, childId, sectionProps}) {
   const match = useRouteMatch();
 
   const {sectionId} = match.params;
@@ -73,7 +73,7 @@ function FlowSettingsPanel({availableSections, integrationId, storeId, sectionPr
         <PanelHeader title={`Configure all ${label} flows`} />
         <ConfigureSettings
           integrationId={integrationId}
-          storeId={storeId}
+          childId={childId}
           sectionId={path}
               />
       </>
@@ -83,8 +83,9 @@ function FlowSettingsPanel({availableSections, integrationId, storeId, sectionPr
   return (
 
     <Section
+      dataPublic
       integrationId={integrationId}
-      storeId={storeId}
+      childId={childId}
       {...sectionProps}
           />
 
@@ -93,19 +94,19 @@ function FlowSettingsPanel({availableSections, integrationId, storeId, sectionPr
 
 export default function SettingsPanel({
   integrationId,
-  storeId,
+  childId,
   ...sectionProps
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = isParentViewSelected(integration, storeId);
+  const isParentView = isParentViewSelected(integration, childId);
   const hideGeneralTab = useSelector(
-    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+    state => !selectors.hasGeneralSettings(state, integrationId, childId)
   );
 
-  const sections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const sections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
 
   const filterTabs = useMemo(() => hideGeneralTab ? ['common'] : [], [hideGeneralTab]);
   const availableSections = useMemo(() => {
@@ -184,7 +185,8 @@ export default function SettingsPanel({
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
                   to={path}
-                  data-test={id}>
+                  data-test={id}
+                  data-public>
                   {label}
                 </NavLink>
               </ListItem>
@@ -195,7 +197,7 @@ export default function SettingsPanel({
           <FlowSettingsPanel
             availableSections={availableSections}
             integrationId={integrationId}
-            storeId={storeId}
+            childId={childId}
             sectionProps={sectionProps}
           />
           <EditorDrawer />

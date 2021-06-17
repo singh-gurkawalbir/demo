@@ -41,7 +41,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
     <>
       {!resourceReferences && (
         <Loader open>
-          <Typography variant="h4">
+          <Typography data-public variant="h4">
             {`Retrieving ${resourceTypeLabel} references`}
           </Typography>
           <Spinner />
@@ -49,7 +49,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
       )}
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
-          <Typography variant="h4">
+          <Typography data-public variant="h4">
             This resource is not being used anywhere
           </Typography>
           <Button onClick={onClose} variant="outlined" color="primary">

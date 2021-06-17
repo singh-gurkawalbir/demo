@@ -68,6 +68,9 @@ export default {
     }
 
     delete newValues['/inputMode'];
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;

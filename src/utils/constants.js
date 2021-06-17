@@ -156,6 +156,7 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
+export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
 export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
@@ -641,7 +642,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
-export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
+export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive'];
 export const CONNECTORS_TO_IGNORE = ['yammer',
@@ -683,3 +684,4 @@ export const LINE_GRAPH_TYPE_LONG = Object.freeze(
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
+export const SENSITIVE_DATA = ['token', 'password'];

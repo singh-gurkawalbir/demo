@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -132,6 +133,22 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '95%',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
+  },
+  dynaSelectWrapper: {
+    width: '100%',
+  },
+  dynaSelectWithStatusWrapper: {
+    maxWidth: '95%',
+    position: 'relative',
+    overflow: 'hidden',
+    '& > div:last-child': {
+      position: 'absolute',
+      right: '50px',
+      top: theme.spacing(4),
+    },
+    '& >* .MuiSelect-selectMenu': {
+      paddingRight: 140,
+    },
   },
 }));
 
@@ -359,12 +376,18 @@ export default function DynaSelectResource(props) {
             options={[{ items: resourceItems || [] }]}
           />
         ) : (
-          <DynaSelect
-            {...props}
-            disabled={disableSelect}
-            removeHelperText={isAddingANewResource}
-            options={[{ items: truncatedItems(resourceItems || []) }]}
+          <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
+            <DynaSelect
+              {...props}
+              disabled={disableSelect}
+              removeHelperText={isAddingANewResource}
+              options={[{ items: truncatedItems(resourceItems || []) }]}
           />
+            {resourceType === 'connections' && !!value && !skipPingConnection && (
+            <ConnectionLoadingChip connectionId={value} />
+            )}
+          </div>
+
         )}
       </LoadResources>
       <div className={classes.dynaSelectMultiSelectActions}>
@@ -385,9 +408,7 @@ export default function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' && !!value && !skipPingConnection && (
-          <ConnectionLoadingChip connectionId={value} />
-        )}
+
       </div>
     </div>
   );

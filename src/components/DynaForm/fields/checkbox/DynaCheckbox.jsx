@@ -15,9 +15,6 @@ const useStyles = makeStyles({
     margin: 0,
     marginRight: 4,
     fontSize: 14,
-    '& > *.MuiFormControlLabel-label': {
-      paddingTop: 3,
-    },
   },
   dynaCheckbox: props => {
     props.hideLabelSpacing ? 0 : 12;
@@ -37,6 +34,7 @@ export default function DynaCheckbox(props) {
     required,
     isValid,
     className,
+    dataPublic,
   } = props;
 
   return (
@@ -62,6 +60,7 @@ export default function DynaCheckbox(props) {
               )}
           />
         )}
+        data-public={!!dataPublic}
         className={classes.dynaCheckControlLabel}
         label={label}
 

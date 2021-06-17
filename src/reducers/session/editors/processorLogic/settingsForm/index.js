@@ -129,7 +129,7 @@ export default {
       settings,
       insertStubKey: 'formInit',
       activeProcessor: mode,
-      originalData: initForm,
+      originalData: options.data || data,
       flowGrouping,
       resourceDocs,
       settingsFormPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/settingsForm'),
@@ -158,15 +158,14 @@ export default {
 
   dirty: editor => {
     let parsedData = safeParse(editor.data);
-    const parsedOriginalData = safeParse(editor.originalData);
+    let parsedOriginalData = safeParse(editor.originalData);
 
     if (parsedData === undefined) {
       return false;
     }
 
-    if (editor.activeProcessor === 'script') {
-      parsedData = parsedData?.resource?.settingsForm?.form;
-    }
+    parsedData = parsedData?.resource?.settingsForm ? parsedData.resource.settingsForm.form : parsedData;
+    parsedOriginalData = parsedOriginalData?.resource?.settingsForm ? parsedOriginalData.resource.settingsForm.form : parsedOriginalData;
 
     // added JSON.stringify check to consider the object keys' order as well
     if (!isEqual(parsedData, parsedOriginalData) || (JSON.stringify(parsedData) !== JSON.stringify(parsedOriginalData))) {
