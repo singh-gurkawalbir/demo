@@ -13,7 +13,7 @@ export function hiddenFieldsMeta({ values }) {
   }));
 }
 
-export function basicFieldsMeta({ assistantConfig, assistantData }) {
+export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -31,7 +31,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
     },
   };
-  const { labels = {}, versions = [] } = assistantData;
+  const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
   return Object.keys(fieldDefinitions).map(fieldId => {
     if (fieldId === 'version') {
@@ -44,6 +44,12 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
 
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
+    }
+
+    fieldDefinitions[fieldId].helpKey = `${assistant}.export.${fieldId}`;
+
+    if (helpTexts[fieldId]) {
+      fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
     }
 
     return fieldDefinitions[fieldId];
@@ -204,6 +210,7 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
+      assistant,
       assistantConfig,
       assistantData: assistantData.export,
     });
