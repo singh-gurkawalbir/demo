@@ -234,7 +234,7 @@ export default function MarketplaceList() {
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-        <Typography component="div" variant="body2" className={classes.noDataTitle}> Prebuilt templates and integration apps are not yet available for this application. {applicationName} is already supported with a built-in integrator․io connector. Anyone with account manager permission and above can navigate to Tools → Flow Builder to create custom flows to this application.</Typography>
+        <Typography component="div" variant="body2" className={classes.noDataTitle}> Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create brand new custom flows using the prebuilt connector available for this application.</Typography>
       )}
       <div className={classes.root}>
         {connectors.map(connector => (
