@@ -104,6 +104,10 @@ function CustomSettings({ integrationId, sectionId }) {
       ) {
         return 'Settings must be valid JSON';
       }
+      // TODO: refactor validation handlers to use forceField state
+      if (field.value?.__invalid) {
+        return 'Sub-form invalid.';
+      }
     }
   }, []);
 

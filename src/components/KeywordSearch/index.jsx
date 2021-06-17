@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 import actions from '../../actions';
 import SearchInput from '../SearchInput';
@@ -13,6 +13,13 @@ export default function KeywordSearch({ filterKey }) {
 
   const [text, setText] = useState(filter?.keyword || '');
 
+  // when using the same filterkey patch to filter states and setText to text field will follow faithfully
+  // but if you change the filterkey we should pull in the new filterState value into the text field
+  useEffect(() => {
+    setText(filter?.keyword || '');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterKey]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncePatchTextInput = useCallback(
     debounce(value => {
@@ -21,7 +28,7 @@ export default function KeywordSearch({ filterKey }) {
           keyword: value,
         })
       );
-    }, DEBOUNCE_DURATION), []);
+    }, DEBOUNCE_DURATION), [filterKey]);
 
   const handleKeywordChange = useCallback(e => {
     setText(e.target.value);
