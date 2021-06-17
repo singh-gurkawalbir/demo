@@ -9,7 +9,6 @@ import FontStager from '../src/components/FontStager';
 import { ConfirmDialogProvider } from '../src/components/ConfirmDialog';
 import rootReducer from '../src/reducers';
 import rootSaga from '../src/sagas';
-
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   options: {
@@ -17,7 +16,6 @@ export const parameters = {
       a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
   },
 }
-
 export const globalTypes = {
   theme: {
     name: 'Theme',
@@ -42,14 +40,12 @@ const withConfirmDialogProvider = (Story, context) => {
 
 const withThemeProvider = (Story, context) => {
   const theme = themeProvider(context.globals.theme);
-
   return (
     <ThemeProvider theme={theme}>
       <Story {...context} />
     </ThemeProvider>
   )
 }
-
 const withRedux = (Story, context) => {
   const middleware = [];
   const sagaMiddleware = createSagaMiddleware({
@@ -58,9 +54,7 @@ const withRedux = (Story, context) => {
       console.warn('saga middleware crashed on error ', error);
     },
   });
-  
   middleware.push(sagaMiddleware);
-    
   // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
   const logOptions = {
     predicate: (getState, action) => !['API_WATCHER_SUCCESS', 'API_COMPLETE'].includes(action.type),
@@ -68,23 +62,18 @@ const withRedux = (Story, context) => {
     duration: true,
     collapsed: (getState, action, logEntry) => !logEntry.error,
   };
-
   middleware.push(createLogger(logOptions));
-
   const composeEnhancers =
     (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
       window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
         trace: true,
         traceLimit: 25,
       })) || compose;
-  
   const store = createStore(
     rootReducer,
     composeEnhancers(applyMiddleware(...middleware))
   );
-
   sagaMiddleware.run(rootSaga);
-
   return (
     <Provider store={store}>
       <Story {...context} />
@@ -110,11 +99,10 @@ export const decorators = [
   withConfirmDialogProvider,
 
   // this decorator forces stories to re-render any time the
-  // global storybook context changes. This happens when a 
+  // global storybook context changes. This happens when a
   // user changes the global theme value in the Storybook toolbar.
   withThemeProvider,
-
-  // Inject the font stager to lazy-load custom fonts 
+  // Inject the font stager to lazy-load custom fonts
   // for each story just like our UI does.
   (Story) => (
     <>
