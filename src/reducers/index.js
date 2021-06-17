@@ -90,6 +90,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
@@ -2146,7 +2147,7 @@ selectors.integrationAppEdition = (state, integrationId) => {
             (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
 
   const plan = `${
-    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
+    edition ? capitalizeFirstLetter(edition) : 'Standard'
   } plan`;
 
   return plan;
