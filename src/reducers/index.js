@@ -498,7 +498,7 @@ selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.de
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
-selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
+selectors.authenticationErrored = state => state?.auth?.failure;
 
 selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);
 
@@ -617,7 +617,6 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'templates',
       'published',
       'transfers',
-      'apis',
       'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
