@@ -2,18 +2,29 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import moment from 'moment';
-// import { addMinutes } from 'date-fns';
+import { throwError } from 'redux-saga-test-plan/providers';
+import { APIException } from '../../api';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { requestReferences } from '../../resources';
 import {
-  // fetchScriptLogs,
+  putReceivedAction,
   getScriptDependencies,
   retryToFetchLogs,
   requestScriptLogs,
   startDebug,
 } from '.';
 import { apiCallWithRetry } from '../..';
+
+function get1000Logs() {
+  const logs = [{key: 'key1', others: {}}];
+
+  for (let i = 0; i < 1001; i += 1) {
+    logs.push({key: 'key1', others: {}});
+  }
+
+  return logs;
+}
 
 describe('Scripts logs sagas', () => {
   describe('getScriptDependencies saga', () => {
@@ -121,82 +132,85 @@ describe('Scripts logs sagas', () => {
   });
 
   describe('retryToFetchLogs saga', () => {
-    test('should retry fetching logs maximum of 4 times if there is a response', () => expectSaga(retryToFetchLogs, { fetchLogsPath: '/somePath' })
+    const scriptId = 's1';
+    const flowId = 'f1';
+
+    test('should return error message in case of error', () => expectSaga(retryToFetchLogs, { fetchLogsPath: '/somepath' })
       .provide([
         [call(apiCallWithRetry, {
-          path: '/somePath',
-          opts: {
-            method: 'GET',
-          },
-        }), {
-          logs: [],
-          nextPageURL: '/nextURL2',
-        }],
-        [call(apiCallWithRetry, {
-          path: '/nextURL2',
-          opts: {
-            method: 'GET',
-          },
-        }), {
-          logs: [],
-          nextPageURL: '/nextURL3',
-        }],
-        [call(apiCallWithRetry, {
-          path: '/nextURL3',
-          opts: {
-            method: 'GET',
-          },
-        }), {
-          logs: [],
-          nextPageURL: '/nextURL4',
-        }],
-        [call(apiCallWithRetry, {
-          path: '/nextURL4',
-          opts: {
-            method: 'GET',
-          },
-        }), {
-          logs: [],
-          nextPageURL: '/nextURL5',
-        }],
+          path: '/somepath',
+        }), throwError(new APIException({
+          status: 422,
+          message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
+        }))],
       ])
-      .call(retryToFetchLogs, {retryCount: 1, fetchLogsPath: '/nextURL2'})
-      .call(retryToFetchLogs, {retryCount: 2, fetchLogsPath: '/nextURL3'})
-      .call(retryToFetchLogs, {retryCount: 3, fetchLogsPath: '/nextURL4'})
-      .call(retryToFetchLogs, {retryCount: 4, fetchLogsPath: '/nextURL5'})
+      .returns({
+        errorMsg: 'Request failed',
+      })
       .run());
-
-    test('should stop retying fetching logs if logs are found', () => expectSaga(retryToFetchLogs, { fetchLogsPath: '/somePath' })
+    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if there is no nextPageURL', () => expectSaga(retryToFetchLogs, {fetchLogsPath: '/somepath', scriptId, flowId})
       .provide([
         [call(apiCallWithRetry, {
-          path: '/somePath',
-          opts: {
-            method: 'GET',
-          },
+          path: '/somepath',
+        }), {
+          logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}],
+        }],
+      ])
+      .put(
+        actions.logs.scripts.setFetchStatus(
+          {scriptId, flowId, fetchStatus: 'completed'}
+        )
+      )
+      .call(putReceivedAction, {scriptId, flowId, logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}]})
+      .not.call.fn(retryToFetchLogs)
+      .run());
+    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if total logs count is more than 1000', () => expectSaga(retryToFetchLogs, {fetchLogsPath: '/somepath', scriptId, flowId})
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/somepath',
+        }), {
+          logs: get1000Logs(),
+          nextPageURL: '/nexturl1',
+        }],
+      ])
+      .put(
+        actions.logs.scripts.setFetchStatus(
+          {scriptId, flowId, fetchStatus: 'paused'}
+        )
+      )
+      .call(putReceivedAction, {scriptId, flowId, logs: get1000Logs(), nextPageURL: '/nexturl1'})
+      .not.call.fn(retryToFetchLogs)
+      .run());
+    test('should dispatch setFetchStatus action and call putReceivedAction and continue to retryToFetchLogs if total logs count is less than 1000', () => expectSaga(retryToFetchLogs, {fetchLogsPath: '/somepath', scriptId, flowId})
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/somepath',
         }), {
           logs: [],
-          nextPageURL: '/nextURL2',
+          nextPageURL: '/nexturl1',
         }],
         [call(apiCallWithRetry, {
-          path: '/nextURL2',
-          opts: {
-            method: 'GET',
-          },
+          path: '/nexturl1',
         }), {
-          logs: [{message: 'xyz', others: {}}],
-          nextPageURL: '/nextURL3',
+          logs: [],
         }],
-
       ])
-      .call(retryToFetchLogs, {retryCount: 1, fetchLogsPath: '/nextURL2'})
+      .put(
+        actions.logs.scripts.setFetchStatus(
+          {scriptId, flowId, fetchStatus: 'inProgress'}
+        )
+      )
+      .call(putReceivedAction, {scriptId, flowId, nextPageURL: '/nexturl1', logs: []})
+      .call(retryToFetchLogs, {count: 0, fetchLogsPath: '/nexturl1', scriptId, flowId })
       .run());
   });
+
   describe('requestScriptLogs saga', () => {
     test('should not fetch logs if case logLevel field is changed', () => expectSaga(requestScriptLogs, { field: 'logLevel'})
       .not.call(retryToFetchLogs, {fetchLogsPath: 'something'})
       .run());
 
-    test('should fetch logs and trigger SCRIPT_LOGS_RECEIVED action on success', () => {
+    test('should fetch logs and call putReceivedAction on success', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
@@ -217,17 +231,11 @@ describe('Scripts logs sagas', () => {
             logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}],
             nextPageURL: '/nextPage2',
           }],
-        ]).put(actions.logs.scripts.received({
-          scriptId,
-          flowId,
-          logs: [
-            {message: 'text', time: '2020-10-10T10:10:10.100Z', other: 'something'},
-          ],
-          nextPageURL: '/nextPage2',
-        }))
+        ])
+        .call(putReceivedAction, {scriptId, flowId, logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}], nextPageURL: '/nextPage2'})
         .run();
     });
-    test('should call getDepedency incase of init', () => {
+    test('should call getDependency incase of init', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
