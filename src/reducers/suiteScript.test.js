@@ -2,6 +2,7 @@
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../actions';
+import suitescriptActions from '../actions/suiteScript';
 import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
@@ -426,6 +427,63 @@ describe('makeSuiteScriptIAFlowSections selector', () => {
 
     expect(selector(undefined, {})).toEqual([]);
   });
+  test('should return empty object if there are no sections availabele', () => {
+    const selector = selectors.makeSuiteScriptIAFlowSections();
+
+    expect(selector({}, {})).toEqual([]);
+  });
+  test('should return correct object if sections are available', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int1';
+    const settings = {
+      general: {
+        description: 'general settings',
+        id: 'gensettings',
+      },
+      sections: [
+        {
+          id: 'accountsync',
+          title: 'Account Sync',
+          fields: ['something'],
+        },
+        {
+          id: 'opportunitysync',
+          title: 'Opportunity Sync',
+          sections: [{
+            id: 'lineitemSync',
+          }],
+        },
+      ],
+    };
+    const state = reducer({
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            settings: {},
+          },
+        },
+      },
+    }, suitescriptActions.resource.received(ssLinkedConnectionId, integrationId, 'settings', settings));
+    const selector = selectors.makeSuiteScriptIAFlowSections();
+
+    expect(selector(state, integrationId, ssLinkedConnectionId)).toEqual([
+      {
+        id: 'accountsync',
+        title: 'Account Sync',
+        fields: ['something'],
+        titleId: 'AccountSync',
+      },
+      {
+        id: 'opportunitysync',
+        title: 'Opportunity Sync',
+        titleId: 'OpportunitySync',
+        sections: [{
+          id: 'lineitemSync',
+          title: 'Common',
+        }],
+      },
+    ]);
+  });
 });
 
 describe('makeSuiteScriptIASections selector', () => {
@@ -433,6 +491,118 @@ describe('makeSuiteScriptIASections selector', () => {
     const selector = selectors.makeSuiteScriptIASections();
 
     expect(selector(undefined, {})).toEqual([]);
+  });
+  test('should return empty array when there are no sections defined', () => {
+    const selector = selectors.makeSuiteScriptIASections();
+
+    expect(selector({}, {})).toEqual([]);
+  });
+  test('should return correct object when sections are avialable and general settings is not available', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int1';
+    const settings = {
+      sections: [
+        {
+          id: 'accountsync',
+          title: 'Account Sync',
+          fields: ['something'],
+        },
+        {
+          id: 'opportunitysync',
+          title: 'Opportunity Sync',
+          sections: [{
+            id: 'lineitemSync',
+          }],
+        },
+      ],
+    };
+    const state = reducer({
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            settings: {},
+          },
+        },
+      },
+    }, suitescriptActions.resource.received(ssLinkedConnectionId, integrationId, 'settings', settings));
+    const selector = selectors.makeSuiteScriptIASections();
+
+    expect(selector(state, integrationId, ssLinkedConnectionId)).toEqual([
+      {
+        id: 'accountsync',
+        title: 'Account Sync',
+        fields: ['something'],
+        titleId: 'AccountSync',
+      },
+      {
+        id: 'opportunitysync',
+        title: 'Opportunity Sync',
+        titleId: 'OpportunitySync',
+        sections: [{
+          id: 'lineitemSync',
+          title: 'Common',
+        }],
+      },
+    ]);
+  });
+  test('should return correct object when both sections and general settings are avialable', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int1';
+    const settings = {
+      general: {
+        description: 'general settings',
+        id: 'gensettings',
+        title: 'General',
+      },
+      sections: [
+        {
+          id: 'accountsync',
+          title: 'Account Sync',
+          fields: ['something'],
+        },
+        {
+          id: 'opportunitysync',
+          title: 'Opportunity Sync',
+          sections: [{
+            id: 'lineitemSync',
+          }],
+        },
+      ],
+    };
+    const state = reducer({
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            settings: {},
+          },
+        },
+      },
+    }, suitescriptActions.resource.received(ssLinkedConnectionId, integrationId, 'settings', settings));
+    const selector = selectors.makeSuiteScriptIASections();
+
+    expect(selector(state, integrationId, ssLinkedConnectionId)).toEqual([
+      {
+        description: 'general settings',
+        id: 'genSettings',
+        title: 'General',
+        titleId: 'General',
+      },
+      {
+        id: 'accountsync',
+        title: 'Account Sync',
+        fields: ['something'],
+        titleId: 'AccountSync',
+      },
+      {
+        id: 'opportunitysync',
+        title: 'Opportunity Sync',
+        titleId: 'OpportunitySync',
+        sections: [{
+          id: 'lineitemSync',
+          title: 'Common',
+        }],
+      },
+    ]);
   });
 });
 
@@ -698,11 +868,140 @@ describe('suiteScriptIASettings selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptIASettings(undefined, {})).toEqual(null);
   });
+  test('should return correct object', () => {
+    const settings = {
+      general: {
+        description: 'general settings',
+        id: 'gensettings',
+      },
+      sections: [
+        {
+          id: 'accountsync',
+          title: 'Account Sync',
+        },
+        {
+          id: 'opportunitysync',
+          title: 'Opportunity Sync',
+          sections: [{
+            id: 'lineitemSync',
+          }],
+        },
+      ],
+    };
+    const state = reducer({
+      data: {
+        suiteScript: {
+          connId: {
+            settings: {
+
+            },
+          },
+        },
+      },
+    }, suitescriptActions.resource.received('connId', 'int1', 'settings', settings));
+
+    expect(selectors.suiteScriptIASettings(state, 'int1', 'connId')).toEqual({
+      general: {
+        description: 'general settings',
+        id: 'gensettings',
+      },
+      sections: [
+        {
+          id: 'accountsync',
+          title: 'Account Sync',
+        },
+        {
+          id: 'opportunitysync',
+          title: 'Opportunity Sync',
+          sections: [
+            {
+              id: 'lineitemSync',
+              title: 'Common',
+            },
+          ],
+        },
+      ],
+      settings: {
+
+      },
+    });
+  });
 });
 
 describe('suiteScriptFlowSettings selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptFlowSettings(undefined, {})).toEqual({});
+  });
+  const ssLinkedConnectionId = 'linked-ns-id';
+  const integrationId = 'int1';
+  const state = reducer(
+    {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: integrationId}],
+            flows: [
+              {_id: 'flow-768', flowGUID: 'flow-768', type: 'REALTIME_IMPORT', ssLinkedConnectionId, _integrationId: integrationId},
+              {_id: 'flow-123', flowGUID: 'flow-123', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}, ssLinkedConnectionId, _integrationId: integrationId},
+            ],
+            connections: [
+              {id: 'ACTIVITY_STREAM', name: 'Activity Stream', type: 'ftp'},
+              {id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION', name: 'NetSuite Connection', type: 'netsuite'},
+              {id: 'abc', name: 'Export conn id'},
+            ],
+            settings: {},
+          },
+        },
+      },
+    },
+    'some-action'
+  );
+  const settings = {
+    general: {
+      description: 'general settings',
+      id: 'gensettings',
+    },
+    sections: [
+      {
+        id: 'accountsync',
+        title: 'Account Sync',
+        fields: ['something'],
+        flows: [{_id: 'flow-123', flowGUID: 'flow-123', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}, ssLinkedConnectionId, _integrationId: integrationId}],
+      },
+      {
+        id: 'opportunitysync',
+        title: 'Opportunity Sync',
+        flows: [
+          {_id: 'flow-768', type: 'REALTIME_IMPORT', ssLinkedConnectionId, _integrationId: integrationId},
+        ],
+        sections: [{
+          id: 'lineitemSync',
+        }],
+      },
+    ],
+  };
+  const state1 = reducer(state, suitescriptActions.resource.received(ssLinkedConnectionId, integrationId, 'settings', settings));
+
+  test('should return correct object for given section which contains subsections', () => {
+    expect(selectors.suiteScriptFlowSettings(state1, integrationId, ssLinkedConnectionId, 'OpportunitySync')).toEqual(
+      {
+        fields: undefined,
+        flows: [{_id: 'flow-768', flowGUID: 'flow-768', type: 'REALTIME_IMPORT', ssLinkedConnectionId, _integrationId: integrationId}],
+        sections: [{
+          id: 'lineitemSync',
+          title: 'Common',
+        }],
+      }
+    );
+  });
+  test('should return correct object for given section which does not contains subsections', () => {
+    expect(selectors.suiteScriptFlowSettings(state1, integrationId, ssLinkedConnectionId, 'AccountSync')).toEqual(
+      {
+        fields: ['something'],
+        flows: [{_id: 'flow-123', flowGUID: 'flow-123', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}, ssLinkedConnectionId, _integrationId: integrationId}],
+        sections: undefined,
+      }
+    );
   });
 });
 
