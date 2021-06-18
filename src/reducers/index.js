@@ -821,7 +821,7 @@ selectors.mkGetSortedScriptsTiedToFlow = () => {
     scriptsTiedToFlowSelector,
     (state, _1, filterKey) => state?.session?.filters?.[filterKey],
     (scripts, scriptsFilter) => {
-      const comparer = ({ order, orderBy }) => order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+      const comparer = ({ order, orderBy }) => stringCompare(orderBy, order === 'desc');
 
       if (scriptsFilter?.sort) {
         return [...scripts].sort(comparer(scriptsFilter.sort));
