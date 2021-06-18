@@ -47,7 +47,7 @@ export const generateRow = value => ({
   key: generateRowKey(value),
   value,
 });
-const initializeTableState = optionsMap => value => {
+const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
   const emptyRowValue = generateEmptyRow(optionsMap);
   const emptyRow = generateRow(emptyRowValue);
 
@@ -62,7 +62,7 @@ const initializeTableState = optionsMap => value => {
 
   return {
     touched: false,
-    tableStateValue: [...value.map(val => generateRow(val)), emptyRow],
+    tableStateValue: ignoreEmptyRow ? value.map(val => generateRow(val)) : [...value.map(val => generateRow(val)), emptyRow],
   };
 };
 
@@ -73,16 +73,17 @@ const BaseTable = ({
   optionsMapFinal,
   optionsMapInit,
   id,
+  ignoreEmptyRow,
   value,
 }) => {
-  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit));
+  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
 
   const {touched, tableStateValue: tableValue} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
 
   useEffect(() => {
     if (touched) {
-      onFieldChange(id, preSubmit(tableValue, optionsMapFinal));
+      onFieldChange(id, preSubmit(tableValue, optionsMapFinal, ignoreEmptyRow));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
@@ -100,6 +101,7 @@ const BaseTable = ({
         touched={touched}
         setTableState={setTableState}
         onRowChange={onRowChange}
+        ignoreEmptyRow={ignoreEmptyRow}
         disableDeleteRows={disableDeleteRows}
       />
     );
@@ -119,6 +121,7 @@ export const DynaTable = props => {
     isLoading = false,
     metadata = {},
     id,
+    ignoreEmptyRow,
     onFieldChange,
     onRowChange,
     disableDeleteRows,
@@ -154,6 +157,7 @@ export const DynaTable = props => {
             optionsMapFinal={optionsMapFinal}
             optionsMapInit={optionsMapInit}
             id={id}
+            ignoreEmptyRow={ignoreEmptyRow}
             value={value}
 
           />

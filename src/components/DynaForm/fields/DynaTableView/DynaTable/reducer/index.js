@@ -25,6 +25,7 @@ export default function reducer(state, action) {
     field,
     optionsMap,
     onRowChange,
+    ignoreEmptyRow,
   } = action;
 
   return produce(state, draft => {
@@ -58,7 +59,9 @@ export default function reducer(state, action) {
             return acc;
           }, {});
 
-          tableStateValue.push(generateRow(emptyRow));
+          if (!ignoreEmptyRow) {
+            tableStateValue.push(generateRow(emptyRow));
+          }
         }
 
         break;
@@ -66,8 +69,11 @@ export default function reducer(state, action) {
   });
 }
 
-export const preSubmit = (stateValue = [], optionsMap) =>
+export const preSubmit = (stateValue = [], optionsMap, ignoreEmptyRow) =>
   stateValue.map(val => val.value).filter((val, index) => {
+    if (ignoreEmptyRow) {
+      return true;
+    }
     // we always remove the last row because we pre add one in the initial state
     if (index === stateValue.length - 1) return false;
     let allRequiredFieldsPresent = true;

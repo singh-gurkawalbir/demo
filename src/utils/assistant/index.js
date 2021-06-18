@@ -733,7 +733,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToExport({ assistantConfig, assistantData }) {
+export function convertToExport({ assistantConfig, assistantData, headers }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -919,8 +919,12 @@ export function convertToExport({ assistantConfig, assistantData }) {
     }
   }
 
+  const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
+
   Object.keys(operationDetails.headers).forEach(headerName => {
-    if (operationDetails.headers[headerName] !== null) {
+    if (userHeaders.includes(headerName)) {
+      exportDoc.headers.push(headers.find(header => header.name === headerName));
+    } else if (operationDetails.headers[headerName] !== null) {
       exportDoc.headers.push({
         name: headerName,
         value: operationDetails.headers[headerName],
@@ -1724,7 +1728,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToImport({ assistantConfig, assistantData }) {
+export function convertToImport({ assistantConfig, assistantData, headers }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -2002,8 +2006,12 @@ export function convertToImport({ assistantConfig, assistantData }) {
   }
 
   if (operationDetails.headers) {
+    const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
+
     Object.keys(operationDetails.headers).forEach(h => {
-      if (operationDetails.headers[h] !== null) {
+      if (userHeaders.includes(h)) {
+        importDoc.headers.push(headers.find(header => header.name === h));
+      } else if (operationDetails.headers[h] !== null) {
         const hv = operationDetails.headers[h].replace(
           /RECORD_IDENTIFIER/gi,
           (!isEmpty(identifiers) && pathParams[identifiers[0]?.id]) || ''
