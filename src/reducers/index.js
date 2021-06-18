@@ -51,7 +51,6 @@ import {
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
-import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -525,10 +524,10 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
+selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
 // #endregion AUTHENTICATION SELECTORS
 
-// #region resouce selectors
+// #region resource selectors
 
 selectors.mkTileApplications = () => createSelector(
   (_, tile) => tile,
@@ -815,8 +814,42 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
   );
 };
 
+selectors.mkGetSortedScriptsTiedToFlow = () => {
+  const scriptsTiedToFlowSelector = selectors.mkGetScriptsTiedToFlow();
+
+  return createSelector(
+    scriptsTiedToFlowSelector,
+    (state, _1, filterKey) => state?.session?.filters?.[filterKey],
+    (scripts, scriptsFilter) => {
+      const comparer = ({ order, orderBy }) => stringCompare(orderBy, order === 'desc');
+
+      if (scriptsFilter?.sort) {
+        return [...scripts].sort(comparer(scriptsFilter.sort));
+      }
+
+      return scripts;
+    }
+  );
+};
+
 const reportsFilter = {
   type: 'eventreports',
+};
+
+selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+  const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId;
+};
+
+selectors.getEventReportIntegrationName = (state, r) => {
+  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  // if there is no integration associated to a flow then its a standalone flow
+
+  return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
@@ -825,7 +858,11 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId;
+    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+    // integration has been deleted
+    if (!integrationId) return null;
+
     const integration = selectors.resource(state, 'integrations', integrationId);
 
     if (!integration) {
@@ -883,7 +920,12 @@ selectors.mkEventReportsFiltered = () => {
       // checking filtering by integration
 
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
-        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.[0] === _id);
+        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
+
+        // flow is deleted do not list the report
+        if (!flow) {
+          return false;
+        }
 
         return integrationIdFilter.includes(flow._integrationId);
       });
@@ -1402,11 +1444,6 @@ selectors.mkTiles = () => createSelector(
     });
   });
 
-selectors.isDataReady = (state, resource) => (
-  fromData.hasData(state?.data, resource) &&
-      !fromComms.isLoading(state?.comms, resource)
-);
-
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
 selectors.isResourceCollectionLoading = (state, resourceName) => {
@@ -1587,23 +1624,6 @@ selectors.makeResourceDataSelector = () => {
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
-
-selectors.resourceFormField = (state, resourceType, resourceId, id) => {
-  const data = selectors.resourceData(state, resourceType, resourceId);
-
-  if (!data || !data.merged) return;
-
-  const { merged } = data;
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return;
-
-  const field = getFieldById({ meta, id });
-
-  if (!field) return;
-
-  return field;
-};
 
 selectors.auditLogs = (
   state,
@@ -1914,6 +1934,28 @@ selectors.mkIntegrationFlowsByGroup = () => {
       });
     }
   );
+};
+
+selectors.getResourceType = (state, { resourceType, resourceId }) => {
+  let updatedResourceType;
+
+  if (resourceType === 'pageGenerator') {
+    updatedResourceType = 'exports';
+  } else if (resourceType === 'pageProcessor') {
+    const createdId = selectors.createdResourceId(state, resourceId);
+    const importResource = selectors.resource(state, 'imports', createdId);
+
+    // it should be either an export or an import
+    if (importResource) {
+      updatedResourceType = 'imports';
+    } else {
+      updatedResourceType = 'exports';
+    }
+  } else {
+    updatedResourceType = resourceType;
+  }
+
+  return updatedResourceType;
 };
 
 // #endregion resource selectors
@@ -2501,23 +2543,6 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
 };
 
 // #endregion integrationApps selectors
-
-selectors.resourceFormField = (state, resourceType, resourceId, id) => {
-  const data = selectors.resourceData(state, resourceType, resourceId);
-
-  if (!data || !data.merged) return;
-
-  const { merged } = data;
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return;
-
-  const field = getFieldById({ meta, id });
-
-  if (!field) return;
-
-  return field;
-};
 
 // #region PUBLIC ACCOUNTS SELECTORS
 
@@ -3446,6 +3471,18 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (state, { flowId }) => {
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+      const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
+
+      if (integration._parentId) {
+        return (
+          selectors.resource(state, 'integrations', integration._parentId) || emptyObject
+        );
+      }
+
+      return null;
+    },
   ],
   (
     sampleData,
@@ -3457,6 +3494,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -3465,7 +3503,8 @@ selectors.sampleDataWrapper = createSelector(
     resource,
     connection,
     stage,
-    fieldType})
+    fieldType,
+    parentIntegration})
 );
 
 /**
@@ -4679,7 +4718,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+    name: resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name,
   };
 };
 

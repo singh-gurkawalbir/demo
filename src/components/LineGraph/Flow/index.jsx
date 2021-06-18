@@ -92,12 +92,28 @@ const Chart = ({ attribute, flowId, range, selectedResources: selected }) => {
   const [opacity, setOpacity] = useState({});
   const isResolvedGraph = attribute === LINE_GRAPH_TYPES.RESOLVED;
   let mouseHoverTimer;
+
+  const {startDate, endDate} = useSelector(state => {
+    const data = selectors.flowMetricsData(state, flowId);
+
+    if (range.preset === 'lastrun') {
+      return {
+        startDate: data?.lastRun?.startDate || range.endDate,
+        endDate: data?.lastRun?.endDate || range.endDate,
+      };
+    }
+
+    return {
+      startDate: range.startDate,
+      endDate: range.endDate,
+    };
+  }, shallowEqual);
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
   const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
-  const { startDate, endDate } = range;
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
+
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const lineData = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
   const flowData = useSelectorMemo(selectors.mkLineGraphData, 'flows', flowId, attribute, selectedResources);

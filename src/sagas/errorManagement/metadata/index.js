@@ -21,7 +21,7 @@ export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
     return undefined;
   }
   if (response?.signedURL) {
-    openExternalUrl({url: response?.signedURL});
+    yield call(openExternalUrl, { url: response.signedURL });
   }
 }
 
@@ -130,7 +130,7 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
   }
 }
 
-function* pollForRetryStatus({ flowId, resourceId }) {
+export function* _pollForRetryStatus({ flowId, resourceId }) {
   yield put(actions.errorManager.retryStatus.request({ flowId, resourceId }));
   while (true) {
     yield call(_requestRetryStatus, { flowId, resourceId });
@@ -138,8 +138,8 @@ function* pollForRetryStatus({ flowId, resourceId }) {
   }
 }
 
-function* startPollingForRetryStatus({ flowId, resourceId }) {
-  const watcher = yield fork(pollForRetryStatus, { flowId, resourceId });
+export function* startPollingForRetryStatus({ flowId, resourceId }) {
+  const watcher = yield fork(_pollForRetryStatus, { flowId, resourceId });
 
   yield take(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL);
   yield cancel(watcher);

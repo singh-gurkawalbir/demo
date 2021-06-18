@@ -1,15 +1,14 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import ActionButton from '../../../components/ActionButton';
-import GripperIcon from '../../../components/icons/GripperIcon';
 import { selectors } from '../../../reducers';
 import DynaTypeableSelect from '../../../components/DynaForm/fields/DynaTypeableSelect';
 import actions from '../../../actions';
 import MappingSettingsButton from './Settings/SettingsButton';
+import SortableHandle from '../../../components/Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -23,20 +22,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(1),
     alignItems: 'center',
-  },
-  dragRow: {
-    '& > div[class*="dragIcon"]': {
-      visibility: 'hidden',
-    },
-    '&:hover': {
-      '& > div[class*="dragIcon"]': {
-        visibility: 'visible',
-      },
-    },
-  },
-  dragIcon: {
-    cursor: 'move',
-    background: 'none',
   },
   mapField: {
     display: 'flex',
@@ -86,18 +71,18 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptySet = [];
 const emptyObject = {};
+
 export default function MappingRow(props) {
   const {
     index,
     mappingKey,
-    onMove,
-    isDraggable = false,
     disabled,
+    isDragInProgress = false,
+    isRowDragged = false,
   } = props;
   const classes = useStyles();
-  const ref = useRef(null);
   const dispatch = useDispatch();
-  const [isActive, setIsActive] = useState(false);
+  const [showGripper, setShowGripper] = useState(false);
   const {
     mapping = emptyObject,
     ssLinkedConnectionId,
@@ -131,37 +116,6 @@ export default function MappingRow(props) {
 
   const generateFields = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}).data);
   const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
-  // isOver is set to true when hover happens over component
-  const [, drop] = useDrop({
-    accept: 'MAPPING',
-    hover(item) {
-      if (!ref.current || !isDraggable) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: 'MAPPING', index, key: mappingKey },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: isDraggable,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-
-  drop(preview(ref));
 
   const handleBlur = useCallback((field, value) => {
     dispatch(actions.suiteScript.mapping.patchFieldRequest(field, mappingKey, value));
@@ -188,26 +142,30 @@ export default function MappingRow(props) {
   }, [dispatch, mappingKey]);
 
   const handleOnMouseEnter = useCallback(() => {
-    setIsActive(true);
-  }, []);
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  }, [isDragInProgress]);
   const handleOnMouseLeave = useCallback(() => {
-    setIsActive(false);
+    setShowGripper(false);
   }, []);
+
+  useEffect(() => {
+    if (isRowDragged) {
+      setShowGripper(true);
+    }
+  }, [isRowDragged]);
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const disableDelete = !mappingKey || disabled;
 
   // generateFields and extractFields are passed as an array of field names
   return (
     <div
-      ref={ref}
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
-      style={{ opacity }}
       className={classes.rowContainer}>
-      <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-        <div className={classes.dragIcon} ref={drag}>
-          <GripperIcon />
-        </div>
+      <div className={classes.innerRow}>
+        <SortableHandle isVisible={showGripper} />
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]: disabled,
@@ -258,7 +216,7 @@ export default function MappingRow(props) {
               disabled={disableDelete}
               onClick={handleDeleteClick}
               className={clsx(classes.deleteBtn, {
-                [classes.hide]: !isActive,
+                [classes.hide]: !showGripper,
               })}>
               <TrashIcon />
             </ActionButton>

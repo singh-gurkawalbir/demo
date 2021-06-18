@@ -159,7 +159,16 @@ export default function FilterPanel({editorId}) {
 
         valueField
           .off('input')
-          .on('input', () => handleFilterRulesChange());
+          .on('input', () => {
+            if (
+              rule.operator &&
+                (rule.operator.type === 'is_empty' ||
+                  rule.operator.type === 'is_not_empty')
+            ) {
+              rule.filter.valueGetter(rule);
+            }
+            handleFilterRulesChange();
+          });
       }
     }
 
@@ -756,6 +765,13 @@ export default function FilterPanel({editorId}) {
           handleFilterRulesChange();
         });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const ruleId in rulesState) {
+        if (Object.hasOwnProperty.call(rulesState, ruleId) && rulesState[ruleId]?.rule) {
+          updateUIForLHSRule({rule: rulesState[ruleId].rule, name: `${rulesState[ruleId].rule.id}_value_0`});
+        }
+      }
 
       if (disabled) {
         setTimeout(() => {

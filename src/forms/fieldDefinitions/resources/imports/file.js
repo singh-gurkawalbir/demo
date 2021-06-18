@@ -240,6 +240,7 @@ export default {
 
       return 'import.file.backupPath';
     },
+    showLookup: false,
   },
   'file.skipAggregation': {
     type: 'checkbox',
