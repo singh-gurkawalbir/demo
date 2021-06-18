@@ -4,7 +4,7 @@ import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Tooltip, IconButton } from '@material-ui/core';
 import HomePageCardsContainer from '../../components/HomePageCard/HomePageCardContainer/index';
 import Header from '../../components/HomePageCard/Header/index';
 import HeaderAction from '../../components/HomePageCard/Header/HeaderAction/index';
@@ -21,6 +21,8 @@ import CeligoTruncate from '../../components/CeligoTruncate';
 import StatusButton from '../../components/Buttons/StatusButton/index';
 import AddIcon from '../../components/icons/AddIcon';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
+import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
+import StatusCircle from '../../components/StatusCircle/index';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,6 +46,25 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     maxWidth: 310,
   },
+  status: {
+    position: 'relative',
+    '& span': {
+      fontSize: '14px',
+      color: theme.palette.primary.main,
+    },
+    '&:hover': {
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
+    },
+  },
+  connectionDownRedDot: {
+    width: theme.spacing(1),
+    height: theme.spacing(1),
+    position: 'absolute',
+    right: theme.spacing(-0.5),
+    top: 0,
+  },
 }));
 
 const options = ['view errors', 'settings', 'dashboard', 'generate zip', 'add flow', 'clone', 'delete'];
@@ -61,11 +82,11 @@ const designParameters = {
   },
 };
 
-const Template = args => {
+export const Defaults = args => {
   const classes = useStyles();
 
   return (
-    <>
+    <div className={classes.wrapper}>
       <HomePageCardsContainer {...args}>
         <div className={classes.wrapper}>
           <Header>
@@ -93,39 +114,54 @@ const Template = args => {
               <Manage>
                 <PermissionsManageIcon />
               </Manage>
-              <Tag {...args}>{args.test}</Tag>
             </FooterActions>
             <Info variant="Integration app" label="celigo" />
           </Footer>
         </div>
       </HomePageCardsContainer>
-    </>
+    </div>
+  );
+};
+export const SuiteScript = args => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.wrapper}>
+      <HomePageCardsContainer {...args}>
+        <div className={classes.wrapper}>
+          <Header>
+            <StatusButton variant="error" {...args}>
+              12 error
+            </StatusButton>
+            <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
+              <IconButton size="small" color="inherit" className={classes.status}>
+                <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
+              </IconButton>
+            </Tooltip>
+          </Header>
+          <Content>
+            <CardTitle>
+              <Typography variant="h3" >
+                <CeligoTruncate lines={2} {...args}>
+                  Clone - Grouped flows for IO-20408
+                </CeligoTruncate>
+              </Typography>
+            </CardTitle>
+          </Content>
+          <Footer>
+            <FooterActions>
+              <Manage>
+                <PermissionsManageIcon />
+              </Manage>
+              <Tag variant="clone" />
+            </FooterActions>
+            <Info variant="Integration app" label="celigo" />
+          </Footer>
+        </div>
+      </HomePageCardsContainer>
+    </div>
   );
 };
 
-export const defaults = Template.bind({});
-
-defaults.args = {
-  ellipsis: '...',
-  placement: 'right',
-  lines: 1,
-  delay: 500,
-  children: 'welcome',
-  variant: 'success',
-};
-
-export const suiteScript = Template.bind({});
-
-suiteScript.args = {
-  lines: 2,
-  variant: 'error',
-  test: 'testing',
-  type: 'zendesk',
-  tag: {
-    variant: 'just test',
-  },
-
-};
-
-defaults.parameters = designParameters;
-suiteScript.parameters = designParameters;
+Defaults.parameters = designParameters;
+SuiteScript.parameters = designParameters;

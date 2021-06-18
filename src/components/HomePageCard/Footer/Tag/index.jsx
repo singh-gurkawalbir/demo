@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -68,3 +69,7 @@ export default function Tag({ variant, className }) {
     </div>
   );
 }
+
+Tag.propTypes = {
+  variant: PropTypes.string.isRequired,
+};
