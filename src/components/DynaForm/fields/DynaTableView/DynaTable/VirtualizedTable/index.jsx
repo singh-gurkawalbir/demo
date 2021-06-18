@@ -36,11 +36,11 @@ const VirtualizedListRow = ({index, style, data}) => {
   );
 };
 
-const isRowInvalid = (optionsMap, rowValue, rowIndex, items, touched) => optionsMap.some(op => {
+const isRowValid = (optionsMap, rowValue, rowIndex, items, touched) => optionsMap.every(op => {
   const {required, id} = op;
   const fieldValue = rowValue.value[id];
 
-  return !isCellValid({fieldValue, required, rowIndex, tableSize: items.length, touched});
+  return isCellValid({fieldValue, required, rowIndex, tableSize: items.length, touched});
 });
 
 const useResetErroredRowHeights = (listRef, items, optionsMap, touched) => {
@@ -50,9 +50,9 @@ const useResetErroredRowHeights = (listRef, items, optionsMap, touched) => {
     }
     const {resetAfterIndex} = listRef.current;
     const invalidRows = items.reduce((acc, curr, ind) => {
-      const rowInvalid = isRowInvalid(optionsMap, curr, ind, items, touched);
+      const rowValid = isRowValid(optionsMap, curr, ind, items, touched);
 
-      if (rowInvalid) {
+      if (!rowValid) {
         acc.push(ind);
       }
 
@@ -91,9 +91,9 @@ const VirtualizedTable = ({
   useResetErroredRowHeights(listRef, items, optionsMapFinal, touched);
   const getItemSize = useCallback(rowIndex => {
     const rowValue = items[rowIndex];
-    const rowInvalid = isRowInvalid(optionsMapFinal, rowValue, rowIndex, items, touched);
+    const rowValid = isRowValid(optionsMapFinal, rowValue, rowIndex, items, touched);
 
-    if (rowInvalid) return INVALID_ITEM_SIZE;
+    if (!rowValid) return INVALID_ITEM_SIZE;
 
     return ITEM_SIZE;
   }, [items, optionsMapFinal, touched]);
@@ -106,6 +106,8 @@ const VirtualizedTable = ({
     disableDeleteRows,
   }), [disableDeleteRows, items, onRowChange, optionsMapFinal, setTableState, touched]);
 
+  // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
+  // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onScroll = useCallback(
     debounce(props => {
@@ -127,24 +129,28 @@ const VirtualizedTable = ({
 
   // The autocomplete component needs the options during an initial load
   // this is helpful for that component to resolve the corresponding label in the input text field
-  if (isAnyColumnFetching) { return (<div style={{height: `${maxHeightOfSelect}px`}}><Spinner centerAll /></div>); }
+  if (isAnyColumnFetching) {
+    return (
+      <div style={{height: `${maxHeightOfSelect}px`}}>
+        <Spinner centerAll />
+      </div>
+    );
+  }
 
   return (
 
     <VariableSizeList
       ref={listRef}
       itemSize={getItemSize}
-      height={
-      maxHeightOfSelect
-    }
+      height={maxHeightOfSelect}
       initialScrollOffset={scrollIndex}
       itemCount={items.length}
       itemData={rowProps}
       onScroll={onScroll}
 
      >
-      {/*  // when options are loading we have to return the spinner this is to block the user from accessing the table till
-  // the DynaAutocomplete initial value state settles */}
+      {/* when options are loading we have to return the spinner, this is to block the user
+         from accessing the table till the DynaAutocomplete initial value state settles */}
       { VirtualizedListRow}
     </VariableSizeList>
   );

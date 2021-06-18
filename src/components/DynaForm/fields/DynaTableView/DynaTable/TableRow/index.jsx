@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../../DynaSelect';
 import DeleteIcon from '../../../../../icons/TrashIcon';
-// import DynaTypeableSelect from '../../../DynaTypeableSelect';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
 import DynaAutocomplete from '../../../DynaAutocomplete';

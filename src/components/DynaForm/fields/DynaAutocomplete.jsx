@@ -25,15 +25,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Row = props => {
-  const { data, index, style } = props;
-
-  return React.cloneElement(data[index], {
-    style: {
-      ...style,
-    },
-  });
-};
+const Row = ({ data, index, style }) => React.cloneElement(data[index], {
+  style: {
+    ...style,
+  },
+});
 
 const OuterElementContext = React.createContext({});
 
@@ -50,7 +46,7 @@ const ITEM_SIZE = 40;
 const OPTIONS_VIEW_PORT_HEIGHT = 250;
 
 const ListboxComponent = React.forwardRef(props => {
-  const {children, ...other} = props;
+  const {children, ...rest} = props;
   const listRef = React.useRef();
 
   const itemData = React.Children.toArray(children);
@@ -69,7 +65,7 @@ const ListboxComponent = React.forwardRef(props => {
     : ITEM_SIZE * itemData.length;
 
   return (
-    <OuterElementContext.Provider value={other}>
+    <OuterElementContext.Provider value={rest}>
       <FixedSizeList
         ref={listRef}
         itemData={itemData}
@@ -106,10 +102,12 @@ export default function DynaAutocomplete(props) {
   const classes = useStyles();
   const options = useMemo(() => actualOptions.map(opt => opt.value), [actualOptions]);
   const [value, setValue] = useState(actualValueInString);
-  const [inputValue, setInputValue] = useState(actualOptions.find(opt => opt.value === actualValueInString)?.label || actualValueInString);
+  const [inputValue, setInputValue] = useState(actualOptions.find(
+    opt => opt.value === actualValueInString)?.label || actualValueInString);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const selectedItemIndex = actualOptions.findIndex(opt => opt.value === actualValueInString);
+  const selectedItemIndex = actualOptions.findIndex(
+    opt => opt.value === actualValueInString);
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -131,12 +129,8 @@ export default function DynaAutocomplete(props) {
             disableClearable
             freeSolo
             options={options}
-            onOpen={() => {
-              setModalOpen(true);
-            }}
-            onClose={() => {
-              setModalOpen(false);
-            }}
+            onOpen={() => { setModalOpen(true); }}
+            onClose={() => { setModalOpen(false); }}
             getOptionLabel={option => (
               actualOptions.find(opt => opt.value === `${option}`)?.label || `${option}`
             )}

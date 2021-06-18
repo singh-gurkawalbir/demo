@@ -93,7 +93,8 @@ const BaseTable = ({
   const isAnyColumnFetching = isLoading ? Object.values(isLoading).some(val => val) : false;
 
   if (isVirtualizedTable) {
-    // not all tables have to be virtualized
+    // not all tables have to be virtualized just the mapping based applications,
+    // isVirtualizedTable flag comes from there
 
     return (
       <VirtualizedTable
