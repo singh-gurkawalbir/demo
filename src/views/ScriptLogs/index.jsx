@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, MenuItem } from '@material-ui/core';
+import { makeStyles, MenuItem, Typography } from '@material-ui/core';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0, 1.5, 0),
     backgroundColor: theme.palette.common.white,
     height: '100%',
+  },
+  textWrapper: {
+    padding: theme.spacing(2),
   },
   filterContainer: {
     display: 'flex',
@@ -293,6 +296,11 @@ export default function ScriptLogs({ flowId, scriptId }) {
             actionProps={actionProps}
         />
         ) : null}
+        {!logs.length && !nextPageURL && status !== 'requested' && (
+          <Typography className={classes.textWrapper}>
+            You don’t have any execution logs in the selected time frame.
+          </Typography>
+        )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
         <div >
           <Spinner loading />
