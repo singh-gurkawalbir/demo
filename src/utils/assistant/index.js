@@ -733,7 +733,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToExport({ assistantConfig, assistantData, headers }) {
+export function convertToExport({ assistantConfig, assistantData, headers = [] }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -922,8 +922,10 @@ export function convertToExport({ assistantConfig, assistantData, headers }) {
   const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
 
   Object.keys(operationDetails.headers).forEach(headerName => {
-    if (userHeaders.includes(headerName)) {
-      exportDoc.headers.push(headers.find(header => header.name === headerName));
+    if (userHeaders.includes(headerName) && Array.isArray(headers)) {
+      const header = headers.find(header => header.name === headerName);
+
+      if (header) { exportDoc.headers.push(header); }
     } else if (operationDetails.headers[headerName] !== null) {
       exportDoc.headers.push({
         name: headerName,
