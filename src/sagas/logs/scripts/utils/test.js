@@ -25,6 +25,17 @@ describe('Script logs saga Utils', () => {
           },
           result: `/scripts/s1/logs?time_gt=${mockTime.getTime()}&time_lte=${mockTime.getTime()}&_flowId=f1&_resourceId=i1&functionType=preMap`,
         },
+        {
+          input: {
+            selectedResources: [{type: 'flows', id: 'f1'}, {type: 'imports', id: 'i1'}],
+            functionType: 'preMap',
+            scriptId: 's1',
+            dateRange: {
+              startDate: mockTime,
+            },
+          },
+          result: `/scripts/s1/logs?time_gt=${mockTime.getTime()}&_flowId=f1&_resourceId=i1&functionType=preMap`,
+        },
       ];
 
       testCases.forEach(({input, result}) => {

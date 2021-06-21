@@ -2,7 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
-import { MISCELLANEOUS_SECTION_ID } from '../utils/constants';
+import { JOB_STATUS, JOB_TYPES, MISCELLANEOUS_SECTION_ID } from '../utils/constants';
 
 const flowId = 'flowId-1234';
 const resourceId = 'export-1234';
@@ -12,11 +12,373 @@ describe('Error Management region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowJobs()).toEqual([]);
     });
+    test('should return correct object', () => {
+      const jobs = [
+        {
+          _id: 'j1',
+          _flowId: 'f1',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.QUEUED,
+          _integrationId: 'i1',
+        },
+        {
+          _id: 'j2',
+          _flowId: 'f2',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.RUNNING,
+          startedAt: '2019-08-11T10:50:00.000Z',
+          numError: 1,
+          numIgnore: 2,
+          numPagesGenerated: 10,
+          numResolved: 0,
+          numSuccess: 20,
+          _integrationId: 'i1',
+        },
+        {
+          _id: 'j3',
+          _flowId: 'f3',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.COMPLETED,
+          startedAt: '2019-08-11T09:34:00.000Z',
+          endedAt: '2019-08-11T09:51:00.000Z',
+          numPagesGenerated: 10,
+          numError: 5,
+          _integrationId: 'i1',
+        },
+      ];
+      const jobsReceivedAction = actions.job.receivedCollection({
+        collection: jobs,
+      });
+      const state = reducer(undefined, jobsReceivedAction);
+      const jobFamilyJ2 = {
+        _id: 'j2',
+        _flowId: 'f2',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.RUNNING,
+        startedAt: '2019-08-11T10:50:00.000Z',
+        numError: 1,
+        numIgnore: 2,
+        numPagesGenerated: 10,
+        numResolved: 0,
+        numSuccess: 20,
+        _integrationId: 'i1',
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      };
+      const jobFamilyJ2ReceivedAction = actions.job.receivedFamily({
+        job: jobFamilyJ2,
+      });
+      const state1 = reducer(state, jobFamilyJ2ReceivedAction);
+
+      const integrations = [{ _id: 'i1', name: 'int_One', something: 'something' }];
+
+      const state2 = reducer(state1, actions.resource.receivedCollection('integrations', integrations));
+      const flows = [
+        { _id: 'f1', name: 'flow_One', something: 'something' },
+        {
+          _id: 'f2',
+          name: 'flow_Two',
+          _integrationId: 'i1',
+          something: 'something',
+        },
+        {
+          _id: 'f3',
+          name: 'flow_Three',
+          _integrationId: 'i1',
+          _connectorId: 'connector3',
+          something: 'something',
+          flowDisabled: true,
+        },
+      ];
+      const state3 = reducer(state2, actions.resource.receivedCollection('flows', flows));
+      const tiles = [
+        { _integrationId: 'i1', name: 'int 1' },
+      ];
+      const state4 = reducer(state3, actions.resource.receivedCollection('tiles', tiles));
+
+      expect(selectors.flowJobs(state4)).toEqual(
+        [
+          {
+            _id: 'j1',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.QUEUED,
+            duration: undefined,
+            doneExporting: false,
+            numError: 0,
+            numIgnore: 0,
+            numPagesGenerated: 0,
+            numPagesProcessed: 0,
+            numResolved: 0,
+            numSuccess: 0,
+            uiStatus: JOB_STATUS.QUEUED,
+            percentComplete: 0,
+            _integrationId: 'i1',
+            flowDisabled: undefined,
+            _flowId: 'f1',
+            name: 'flow_One',
+          },
+          {
+            _id: 'j2',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+            startedAt: '2019-08-11T10:50:00.000Z',
+            duration: undefined,
+            doneExporting: false,
+            numError: 1,
+            numIgnore: 2,
+            numPagesGenerated: 10,
+            numResolved: 0,
+            numSuccess: 20,
+            numPagesProcessed: 0,
+            uiStatus: JOB_STATUS.RUNNING,
+            _integrationId: 'i1',
+            flowDisabled: undefined,
+            name: 'flow_Two',
+            _flowId: 'f2',
+            percentComplete: 0,
+            children: [
+              {
+                type: JOB_TYPES.EXPORT,
+                status: JOB_STATUS.COMPLETED,
+
+                duration: undefined,
+                numError: 0,
+                numIgnore: 0,
+                numPagesGenerated: 0,
+                numResolved: 0,
+                numSuccess: 0,
+                numPagesProcessed: 0,
+                uiStatus: JOB_STATUS.COMPLETED,
+                _integrationId: 'i1',
+                flowDisabled: undefined,
+                name: undefined,
+                _flowId: 'f2',
+              },
+              {
+                type: JOB_TYPES.IMPORT,
+                status: JOB_STATUS.COMPLETED,
+                duration: undefined,
+                numError: 0,
+                numIgnore: 0,
+                numPagesGenerated: 0,
+                numResolved: 0,
+                numSuccess: 0,
+                numPagesProcessed: 0,
+                uiStatus: JOB_STATUS.COMPLETED,
+                percentComplete: 0,
+                _integrationId: 'i1',
+                flowDisabled: undefined,
+                name: undefined,
+                _flowId: 'f2',
+              },
+              {
+                type: JOB_TYPES.IMPORT,
+                status: JOB_STATUS.RUNNING,
+                duration: undefined,
+                numError: 0,
+                numIgnore: 0,
+                numPagesGenerated: 0,
+                numResolved: 0,
+                numSuccess: 0,
+                numPagesProcessed: 0,
+                uiStatus: JOB_STATUS.RUNNING,
+                percentComplete: 0,
+                _integrationId: 'i1',
+                flowDisabled: undefined,
+                name: undefined,
+                _flowId: 'f2',
+              },
+            ],
+          },
+          {
+            _id: 'j3',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+            startedAt: '2019-08-11T09:34:00.000Z',
+            endedAt: '2019-08-11T09:51:00.000Z',
+            duration: '00:17:00',
+            doneExporting: true,
+            numError: 5,
+            numIgnore: 0,
+            numResolved: 0,
+            numSuccess: 0,
+            uiStatus: JOB_STATUS.COMPLETED,
+            numPagesGenerated: 10,
+            numPagesProcessed: 0,
+            percentComplete: 0,
+            _integrationId: 'i1',
+            flowDisabled: undefined,
+            _flowId: 'f3',
+            name: 'flow_Three',
+          },
+        ]
+      );
+    });
   });
 
   describe('selectors.flowDashboardJobs test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowDashboardJobs()).toEqual({data: [], status: undefined});
+    });
+    const integrations = [{ _id: 'i1', name: 'int_One', something: 'something' }];
+
+    const state = reducer({}, actions.resource.receivedCollection('integrations', integrations));
+    const flows = [
+      { _id: 'f1', name: 'flow_One', something: 'something' },
+      {
+        _id: 'f2',
+        name: 'flow_Two',
+        _integrationId: 'i1',
+        something: 'something',
+      },
+      {
+        _id: 'f3',
+        name: 'flow_Three',
+        _integrationId: 'i1',
+        _connectorId: 'connector3',
+        something: 'something',
+        flowDisabled: true,
+      },
+    ];
+    const state1 = reducer(state, actions.resource.receivedCollection('flows', flows));
+    const tiles = [
+      { _integrationId: 'i1', name: 'int 1' },
+    ];
+    const state2 = reducer(state1, actions.resource.receivedCollection('tiles', tiles));
+
+    test('should return correct object when state has no latestFlowJobs', () => {
+      expect(selectors.flowDashboardJobs(state2, 'f1')).toEqual({data: [], status: undefined});
+    });
+    const state3 = reducer(
+      state2,
+      actions.errorManager.latestFlowJobs.received({
+        flowId: 'f1',
+        latestJobs: [
+          {
+            _id: '5fbcc774186317194404c4e0',
+            _userId: '5677d8839799c292124350c5',
+            type: 'flow',
+            _flowId: 'f1',
+            _exportId: 'e1',
+            _integrationId: 'i1',
+            status: 'queued',
+            __lastPageGeneratorJob: true,
+            children: [
+              {
+                _id: 'c1',
+                type: JOB_TYPES.EXPORT,
+                status: JOB_STATUS.COMPLETED,
+              },
+              {
+                _id: 'c2',
+                type: JOB_TYPES.IMPORT,
+                status: JOB_STATUS.COMPLETED,
+              },
+              {
+                _id: 'c3',
+                type: JOB_TYPES.IMPORT,
+                status: JOB_STATUS.RUNNING,
+              },
+            ],
+          },
+          {
+            _id: '5fbcc774186317194404a21c2',
+            _userId: '5677d8839799c2921243592c',
+            type: 'flow',
+            _flowId: 'f1',
+            _importId: 'im1',
+            _integrationId: 'i1',
+            status: 'queued',
+            __lastPageGeneratorJob: true,
+          },
+        ]})
+    );
+
+    test('should return correct object when state has latestJobs', () => {
+      expect(selectors.flowDashboardJobs(state3, 'f1')).toEqual(
+        {
+          data: [
+            {
+              _id: '5fbcc774186317194404c4e0',
+              _userId: '5677d8839799c292124350c5',
+              type: 'flow',
+              _flowId: 'f1',
+              _exportId: 'e1',
+              _integrationId: 'i1',
+              status: 'queued',
+              __lastPageGeneratorJob: true,
+              uiStatus: JOB_STATUS.QUEUED,
+              children: [
+                {
+                  _id: 'c1',
+                  type: JOB_TYPES.EXPORT,
+                  status: JOB_STATUS.COMPLETED,
+                },
+                {
+                  _id: 'c2',
+                  type: JOB_TYPES.IMPORT,
+                  status: JOB_STATUS.COMPLETED,
+                },
+                {
+                  _id: 'c3',
+                  type: JOB_TYPES.IMPORT,
+                  status: JOB_STATUS.RUNNING,
+                },
+              ],
+            },
+            {
+              _id: 'c1',
+              name: undefined,
+              type: JOB_TYPES.EXPORT,
+              status: JOB_STATUS.COMPLETED,
+              uiStatus: JOB_STATUS.COMPLETED,
+              duration: undefined,
+            },
+            {
+              _id: 'c2',
+              name: undefined,
+              type: JOB_TYPES.IMPORT,
+              percentComplete: 0,
+              status: JOB_STATUS.COMPLETED,
+              uiStatus: JOB_STATUS.COMPLETED,
+              duration: undefined,
+            },
+            {
+              _id: 'c3',
+              name: undefined,
+              type: JOB_TYPES.IMPORT,
+              status: JOB_STATUS.RUNNING,
+              uiStatus: JOB_STATUS.RUNNING,
+              duration: undefined,
+              percentComplete: 0,
+            },
+            {
+              _id: '5fbcc774186317194404a21c2',
+              _userId: '5677d8839799c2921243592c',
+              type: 'flow',
+              _flowId: 'f1',
+              _importId: 'im1',
+              _integrationId: 'i1',
+              status: 'queued',
+              __lastPageGeneratorJob: true,
+              uiStatus: JOB_STATUS.QUEUED,
+            },
+          ],
+          status: 'received',
+        },
+      );
     });
   });
 
@@ -24,17 +386,400 @@ describe('Error Management region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowJob(false)).toEqual();
     });
+    test('should return undefined if there are no flowJobs or the the required flowJob is not available', () => {
+      expect(selectors.flowJob({}, {jobId: 'j1'})).toEqual();
+    });
+    test('should return correct object when state has flowJobs', () => {
+      const jobs = [
+        {
+          _id: 'j1',
+          _flowId: 'f1',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.QUEUED,
+          _integrationId: 'i1',
+        },
+        {
+          _id: 'j2',
+          _flowId: 'f2',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.RUNNING,
+          startedAt: '2019-08-11T10:50:00.000Z',
+          numError: 1,
+          numIgnore: 2,
+          numPagesGenerated: 10,
+          numResolved: 0,
+          numSuccess: 20,
+          _integrationId: 'i1',
+        },
+        {
+          _id: 'j3',
+          _flowId: 'f3',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.COMPLETED,
+          startedAt: '2019-08-11T09:34:00.000Z',
+          endedAt: '2019-08-11T09:51:00.000Z',
+          numPagesGenerated: 10,
+          numError: 5,
+          _integrationId: 'i1',
+        },
+      ];
+      const jobsReceivedAction = actions.job.receivedCollection({
+        collection: jobs,
+      });
+      const state = reducer(undefined, jobsReceivedAction);
+      const jobFamilyJ2 = {
+        _id: 'j2',
+        _flowId: 'f2',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.RUNNING,
+        startedAt: '2019-08-11T10:50:00.000Z',
+        numError: 1,
+        numIgnore: 2,
+        numPagesGenerated: 10,
+        numResolved: 0,
+        numSuccess: 20,
+        _integrationId: 'i1',
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      };
+      const jobFamilyJ2ReceivedAction = actions.job.receivedFamily({
+        job: jobFamilyJ2,
+      });
+      const state1 = reducer(state, jobFamilyJ2ReceivedAction);
+
+      expect(selectors.flowJob(state1, {jobId: 'j2'})).toEqual(
+        {
+          _id: 'j2',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.RUNNING,
+          startedAt: '2019-08-11T10:50:00.000Z',
+          duration: undefined,
+          doneExporting: false,
+          numError: 1,
+          numIgnore: 2,
+          numPagesGenerated: 10,
+          numResolved: 0,
+          numSuccess: 20,
+          numPagesProcessed: 0,
+          uiStatus: JOB_STATUS.RUNNING,
+          _integrationId: 'i1',
+          flowDisabled: undefined,
+          name: undefined,
+          _flowId: 'f2',
+          percentComplete: 0,
+          children: [
+            {
+              type: JOB_TYPES.EXPORT,
+              status: JOB_STATUS.COMPLETED,
+
+              duration: undefined,
+              numError: 0,
+              numIgnore: 0,
+              numPagesGenerated: 0,
+              numResolved: 0,
+              numSuccess: 0,
+              numPagesProcessed: 0,
+              uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
+              flowDisabled: undefined,
+              name: undefined,
+              _flowId: 'f2',
+            },
+            {
+              type: JOB_TYPES.IMPORT,
+              status: JOB_STATUS.COMPLETED,
+              duration: undefined,
+              numError: 0,
+              numIgnore: 0,
+              numPagesGenerated: 0,
+              numResolved: 0,
+              numSuccess: 0,
+              numPagesProcessed: 0,
+              uiStatus: JOB_STATUS.COMPLETED,
+              percentComplete: 0,
+              _integrationId: 'i1',
+              flowDisabled: undefined,
+              name: undefined,
+              _flowId: 'f2',
+            },
+            {
+              type: JOB_TYPES.IMPORT,
+              status: JOB_STATUS.RUNNING,
+              duration: undefined,
+              numError: 0,
+              numIgnore: 0,
+              numPagesGenerated: 0,
+              numResolved: 0,
+              numSuccess: 0,
+              numPagesProcessed: 0,
+              uiStatus: JOB_STATUS.RUNNING,
+              percentComplete: 0,
+              _integrationId: 'i1',
+              flowDisabled: undefined,
+              name: undefined,
+              _flowId: 'f2',
+            },
+          ],
+        },
+      );
+    });
   });
 
   describe('selectors.job test cases', () => {
+    const jobs = [
+      {
+        _id: 'j1',
+        _flowId: 'f1',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.QUEUED,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j2',
+        _flowId: 'f2',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.RUNNING,
+        startedAt: '2019-08-11T10:50:00.000Z',
+        numError: 1,
+        numIgnore: 2,
+        numPagesGenerated: 10,
+        numResolved: 0,
+        numSuccess: 20,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j3',
+        _flowId: 'f3',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        startedAt: '2019-08-11T09:34:00.000Z',
+        endedAt: '2019-08-11T09:51:00.000Z',
+        numPagesGenerated: 10,
+        numError: 5,
+        _integrationId: 'i1',
+      },
+    ];
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const state = reducer(undefined, jobsReceivedAction);
+    const jobFamilyJ2 = {
+      _id: 'j2',
+      _flowId: 'f2',
+      type: JOB_TYPES.FLOW,
+      status: JOB_STATUS.RUNNING,
+      startedAt: '2019-08-11T10:50:00.000Z',
+      numError: 1,
+      numIgnore: 2,
+      numPagesGenerated: 10,
+      numResolved: 0,
+      numSuccess: 20,
+      _integrationId: 'i1',
+      children: [
+        {
+          _id: 'c1',
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+        },
+        {
+          _id: 'c2',
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.COMPLETED,
+        },
+        {
+          _id: 'c3',
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.RUNNING,
+        },
+      ],
+    };
+    const jobFamilyJ2ReceivedAction = actions.job.receivedFamily({
+      job: jobFamilyJ2,
+    });
+    const state1 = reducer(state, jobFamilyJ2ReceivedAction);
+    const flows = [
+      { _id: 'f1', name: 'flow_One', something: 'something' },
+      {
+        _id: 'f2',
+        name: 'flow_Two',
+        _integrationId: 'i1',
+        something: 'something',
+      },
+      {
+        _id: 'f3',
+        name: 'flow_Three',
+        _integrationId: 'i1',
+        _connectorId: 'connector3',
+        something: 'something',
+        flowDisabled: true,
+      },
+    ];
+    const state2 = reducer(state1, actions.resource.receivedCollection('flows', flows));
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.job({}, {})).toEqual();
+    });
+    test('should return undefined if there are no jobs or the given job is not available', () => {
+      expect(selectors.job({}, { type: JOB_TYPES.FLOW, jobId: 'j1' })).toEqual();
+    });
+
+    test('should return correct object when the required job is available as a parentJob', () => {
+      expect(selectors.job(state2, { type: JOB_TYPES.FLOW, jobId: 'j1' })).toEqual(
+        {
+          _id: 'j1',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.QUEUED,
+          numError: 0,
+          numIgnore: 0,
+          numPagesGenerated: 0,
+          numPagesProcessed: 0,
+          numResolved: 0,
+          numSuccess: 0,
+          _integrationId: 'i1',
+          _flowId: 'f1',
+          name: 'flow_One',
+        }
+      );
+    });
+    test('should return correct object when the required job is available as a child', () => {
+      expect(selectors.job(state2, { type: JOB_TYPES.IMPORT, jobId: 'c3', parentJobId: 'j2' })).toEqual(
+        {
+          _id: 'c3',
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.RUNNING,
+          numError: 0,
+          numIgnore: 0,
+          numPagesGenerated: 0,
+          numPagesProcessed: 0,
+          numResolved: 0,
+          numSuccess: 0,
+          _integrationId: 'i1',
+          _flowId: 'f2',
+          name: 'flow_Two',
+        },
+      );
     });
   });
 
   describe('selectors.allJobs test cases', () => {
+    const _integrationId = 'i1';
+    const jobs = [
+      {
+        type: JOB_TYPES.FLOW,
+        _id: 'fj1',
+        _integrationId,
+        status: JOB_STATUS.RUNNING,
+        numError: 10,
+      },
+      {
+        type: JOB_TYPES.FLOW,
+        _id: 'fj2',
+        _integrationId,
+        status: JOB_STATUS.COMPLETED,
+        numError: 8,
+        numResolved: 2,
+        children: [
+          {
+            _id: 'fj2e1',
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+            numError: 2,
+          },
+          {
+            _id: 'fj2i2',
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.FAILED,
+            numError: 4,
+            retriable: true,
+            retries: [{ _id: 'something', status: JOB_STATUS.COMPLETED }],
+          },
+        ],
+      },
+      {
+        type: JOB_TYPES.BULK_RETRY,
+        _id: 'brj1',
+        _integrationId,
+        status: JOB_STATUS.COMPLETED,
+      },
+    ];
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const state = reducer(undefined, jobsReceivedAction);
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.allJobs({}, {})).toEqual();
+    });
+    test('should return undefined if the state is empty or there are no jobs present in the state', () => {
+      expect(selectors.allJobs({}, {type: JOB_TYPES.FLOW})).toEqual();
+    });
+    test('should return the required type of jobs(flows)', () => {
+      expect(selectors.allJobs(state, {type: JOB_TYPES.FLOW})).toEqual(
+        [
+          {
+            type: JOB_TYPES.FLOW,
+            _id: 'fj1',
+            _integrationId,
+            status: JOB_STATUS.RUNNING,
+            numError: 10,
+            numIgnore: 0,
+            numPagesGenerated: 0,
+            numPagesProcessed: 0,
+            numResolved: 0,
+            numSuccess: 0,
+          },
+          {
+            type: JOB_TYPES.FLOW,
+            _id: 'fj2',
+            _integrationId,
+            status: JOB_STATUS.COMPLETED,
+            numError: 8,
+            numResolved: 2,
+            numIgnore: 0,
+            numPagesGenerated: 0,
+            numPagesProcessed: 0,
+            numSuccess: 0,
+            children: [
+              {
+                _id: 'fj2e1',
+                type: JOB_TYPES.EXPORT,
+                status: JOB_STATUS.COMPLETED,
+                numError: 2,
+              },
+              {
+                _id: 'fj2i2',
+                type: JOB_TYPES.IMPORT,
+                status: JOB_STATUS.FAILED,
+                numError: 4,
+                retriable: true,
+                retries: [{ _id: 'something', status: JOB_STATUS.COMPLETED }],
+              },
+            ],
+          },
+        ]
+      );
+    });
+    test('should return the required type of jobs(flows)', () => {
+      expect(selectors.allJobs(state, {type: JOB_TYPES.BULK_RETRY})).toEqual([
+        {
+          type: JOB_TYPES.BULK_RETRY,
+          _id: 'brj1',
+          _integrationId,
+          status: JOB_STATUS.COMPLETED,
+        },
+      ]);
     });
   });
 
