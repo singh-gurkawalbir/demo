@@ -185,10 +185,11 @@ export const useHandleExitClick = () => {
     // /integrationapps/ShopifyNetSuite/{integrationId}/flowBuilder/{flowId}
     // 6 route segements
 
-    // if there is history and you are accessing other routes within the flowbuilder such as schedule
-    // go back twice..the base flowbuilder for IA route has 6 parts..for other Integrations it is 5 parts
+    const isRouteInSettingsOrSchedule = parts.some(part => ['settings', 'schedule'].includes(part));
 
-    const shouldGoBackTwice = history.length > 3 && (isIARoute ? parts.length > 6 : parts.length > 5);
+    // if there is history and you are accessing other routes within the flowbuilder such as schedule or settings
+    // you should go back twice..the base flowbuilder for IA route has 6 parts..for other Integrations it is 5 parts
+    const shouldGoBackTwice = isRouteInSettingsOrSchedule && history.length > 3 && (isIARoute ? parts.length > 6 : parts.length > 5);
 
     if (shouldGoBackTwice) {
       return history.go(-2);
