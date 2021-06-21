@@ -12,22 +12,34 @@ export default function getFetchLogsPath({
   if (fetchNextPage && nextPageURL) {
     path = nextPageURL.replace('/api', '');
   } else {
-    path = `/scripts/${scriptId}/logs?time_gt=${dateRange?.startDate?.getTime()}&time_lte=${dateRange?.endDate?.getTime()}`;
+    path = `/scripts/${scriptId}/logs`;
+    const queryParams = [];
+
+    if (dateRange?.startDate) {
+      queryParams.push(`time_gt=${dateRange.startDate.getTime()}`);
+    }
+    if (dateRange?.endDate) {
+      queryParams.push(`time_lte=${dateRange.endDate.getTime()}`);
+    }
 
     if (flowId) {
-      path += `&_flowId=${flowId}`;
+      queryParams.push(`_flowId=${flowId}`);
     }
     if (selectedResources?.length) {
       selectedResources.forEach(res => {
         if (res.type === 'flows') {
-          path += `&_flowId=${res.id}`;
+          queryParams.push(`_flowId=${res.id}`);
         } else {
-          path += `&_resourceId=${res.id}`;
+          queryParams.push(`_resourceId=${res.id}`);
         }
       });
     }
     if (functionType) {
-      path += `&functionType=${functionType}`;
+      queryParams.push(`functionType=${functionType}`);
+    }
+
+    if (queryParams.length !== 0) {
+      path += `?${queryParams.join('&')}`;
     }
   }
 

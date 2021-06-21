@@ -79,14 +79,18 @@ if (env !== 'development' && GAKey1?.length > 1) {
   // before we "attach" the React app to the DOM. This ensures we don't lose any
   // tracked events.
   (async () => {
-    await ga4react.initialize()
-      .then(ga4 => {
+    try {
+      await ga4react.initialize()
+        .then(ga4 => {
         // If we want to connect a subordinate GA tracker, we simply need to add
         // a ref by pushing a new config entry which is monitored by the GA script.
-        if (GAKey2?.length > 1) {
-          ga4.gtag('config', GAKey2);
-        }
-      });
+          if (GAKey2?.length > 1) {
+            ga4.gtag('config', GAKey2);
+          }
+        });
+    } catch (e) {
+      console.warn('GA initialization failed');
+    }
 
     render(
       <Provider store={store}>

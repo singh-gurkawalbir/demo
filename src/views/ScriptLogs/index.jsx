@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, MenuItem } from '@material-ui/core';
+import { makeStyles, MenuItem, Typography } from '@material-ui/core';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -17,7 +17,7 @@ import { getSelectedRange } from '../../utils/flowMetrics';
 import SelectDependentResource from '../../components/SelectDependentResource';
 import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } from '../../utils/script';
 import Spinner from '../../components/Spinner';
-import SearchIcon from '../../components/icons/SearchIcon';
+import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0, 1.5, 0),
     backgroundColor: theme.palette.common.white,
     height: '100%',
+  },
+  textWrapper: {
+    padding: theme.spacing(2),
   },
   filterContainer: {
     display: 'flex',
@@ -66,23 +69,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     margin: 'auto',
   },
-  searchMoreWrapper: {
-    textAlign: 'center',
-    '& > button': {
-      fontFamily: 'Roboto400',
-      minWidth: 190,
-      color: theme.palette.common.white,
-      marginBottom: theme.spacing(2),
-      marginTop: theme.spacing(2),
-      padding: theme.spacing(1, 5, 1, 5),
-    },
-  },
-  searchMoreIcon: {
-    height: 18,
-  },
-  searchMoreSpinner: {
-    marginRight: theme.spacing(1),
-  },
   divider: {
     marginLeft: 0,
   },
@@ -109,12 +95,12 @@ const defaultRange = {
   endDate: new Date(),
   preset: 'last15minutes',
 };
-
 const emptySet = [];
+const rowsPerPageOptions = [10, 25, 50];
+const DEFAULT_ROWS_PER_PAGE = 50;
+
 export default function ScriptLogs({ flowId, scriptId }) {
   const classes = useStyles();
-  const rowsPerPageOptions = [10, 25, 50];
-  const DEFAULT_ROWS_PER_PAGE = 50;
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
@@ -127,6 +113,8 @@ export default function ScriptLogs({ flowId, scriptId }) {
     logLevel,
     nextPageURL,
     status,
+    fetchStatus,
+    currQueryTime,
   } = useSelector(state => selectors.scriptLog(state, {scriptId, flowId}), shallowEqual);
 
   const patchFilter = useCallback((field, value) => {
@@ -140,7 +128,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
     []
   );
   const handleDateRangeChange = useCallback(range => {
-    patchFilter('dateRange', getSelectedRange(range));
+    patchFilter('dateRange', getSelectedRange(range, true));
   }, [patchFilter]);
   const handleSelectedResourceChange = useCallback(val => {
     patchFilter('selectedResources', val);
@@ -148,6 +136,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   const handleFunctionTypeChange = useCallback(val => {
     patchFilter('functionType', val.target.value);
   }, [patchFilter]);
+
   const loadMoreLogs = useCallback(
     () => {
       dispatch(actions.logs.scripts.loadMore({scriptId, flowId, fetchNextPage: true}));
@@ -193,6 +182,25 @@ export default function ScriptLogs({ flowId, scriptId }) {
       dispatch(actions.logs.scripts.request({scriptId, flowId, isInit: true}));
     }
   }, [dispatch, flowId, scriptId, status]);
+
+  // used to determine fetch progress percentage
+  const {startTime, endTime} = useMemo(() => {
+    const {startDate, endDate} = dateRange || {};
+
+    return {
+      startTime: startDate ? startDate.getTime() : addMinutes(new Date(), -15).getTime(),
+      endTime: endDate ? endDate.getTime() : null,
+    };
+  }, [dateRange]);
+
+  const pauseHandler = useCallback(() => {
+    dispatch(actions.logs.scripts.setFetchStatus({scriptId, flowId, fetchStatus: 'paused'}));
+    dispatch(actions.logs.scripts.pauseFetch({scriptId, flowId}));
+  }, [dispatch, flowId, scriptId]);
+
+  const resumeHandler = useCallback(() => {
+    dispatch(actions.logs.scripts.loadMore({scriptId, flowId, fetchNextPage: true}));
+  }, [dispatch, flowId, scriptId]);
 
   return (
     <div className={classes.root}>
@@ -273,6 +281,14 @@ export default function ScriptLogs({ flowId, scriptId }) {
         </div>
       </div>
       <div className={classes.tableContainer}>
+        <FetchProgressIndicator
+          fetchStatus={fetchStatus}
+          currTime={currQueryTime}
+          startTime={startTime}
+          endTime={endTime}
+          pauseHandler={pauseHandler}
+          resumeHandler={resumeHandler} />
+
         {logs?.length ? (
           <CeligoTable
             data={logsInCurrentPage}
@@ -280,23 +296,14 @@ export default function ScriptLogs({ flowId, scriptId }) {
             actionProps={actionProps}
         />
         ) : null}
-        {nextPageURL && (
-        <div className={classes.searchMoreWrapper}>
-          <IconTextButton
-            disabled={status === 'requested'}
-            variant="outlined" color="primary"
-            onClick={loadMoreLogs}>
-            {status === 'requested' ? (
-              <>
-                <Spinner className={classes.searchMoreSpinner} size={18} />
-                Searching
-              </>
-            ) : (
-              <><SearchIcon className={classes.searchMoreIcon} />
-                Search more
-              </>
-            )}
-          </IconTextButton>
+        {!logs.length && !nextPageURL && status !== 'requested' && (
+          <Typography className={classes.textWrapper}>
+            You don’t have any execution logs in the selected time frame.
+          </Typography>
+        )}
+        {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
+        <div >
+          <Spinner loading />
         </div>
         )}
       </div>
