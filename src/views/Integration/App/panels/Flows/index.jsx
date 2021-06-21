@@ -282,7 +282,7 @@ const Header = ({integrationId, childId}) => {
   const section = flowSections.find(s => s.titleId === sectionId);
 
   return (
-    <PanelHeader title={`${section?.title} flows`} >
+    <PanelHeader title={`${section?.title || ''} flows`} >
       <div className={classes.action}>
         <KeywordSearch
           filterKey={filterKey}
