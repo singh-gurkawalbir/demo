@@ -10,7 +10,7 @@ describe('Scripts logs reducer', () => {
 
     expect(state).toEqual({});
   });
-  test('SCRIPTS_LOGS_REQUEST should initialise script object if not initialized', () => {
+  test('SCRIPTS_LOGS_REQUEST should initialize script object if not initialized', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const state = reducer(undefined, actions.logs.scripts.request({
@@ -21,7 +21,7 @@ describe('Scripts logs reducer', () => {
     expect(state.scripts).toBeDefined();
   });
 
-  test('SCRIPTS_LOGS_REQUEST should set status=requested, initialise dateRange to 15 minutes by default', () => {
+  test('SCRIPTS_LOGS_REQUEST should set status=requested, initialize dateRange to 15 minutes by default', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const now = new Date();
@@ -43,7 +43,6 @@ describe('Scripts logs reducer', () => {
           flowId: 'f123',
           dateRange: {
             startDate: addMinutes(now, -15),
-            endDate: now,
             preset: 'last15minutes',
           },
           status: 'requested',
@@ -397,6 +396,143 @@ describe('Scripts logs reducer', () => {
     };
 
     expect(state).toEqual(expectedState);
+  });
+
+  test('SCRIPTS_LOGS_FETCH_STATUS action should exit and not throw error if the state does not exist', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const newState = reducer(
+      undefined,
+      actions.logs.scripts.setFetchStatus({
+        flowId,
+        scriptId,
+        fetchStatus: 'paused',
+      })
+    );
+
+    expect(newState).toEqual({});
+  });
+  test('SCRIPTS_LOGS_FETCH_STATUS action should update the state with fetch status', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const initialState = {
+      scripts: {
+        's123-f123': {
+          scriptId,
+          flowId,
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+      },
+    };
+    const newState = reducer(
+      initialState,
+      actions.logs.scripts.setFetchStatus({
+        flowId,
+        scriptId,
+        fetchStatus: 'inProgress',
+      })
+    );
+
+    expect(newState).toHaveProperty('scripts.s123-f123.fetchStatus', 'inProgress');
+  });
+  test('SCRIPTS_LOGS_FETCH_STATUS action should correctly set the currQueryTime equal to nextPageURL time_lte', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const initialState = {
+      scripts: {
+        's123-f123': {
+          scriptId,
+          flowId,
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: '/api/flows/6059c78dfddc8259d92362d5/6059c79ffddc8259d92362d9/logs?time_gt=3333&time_lte=9898',
+          status: 'success',
+        },
+      },
+    };
+
+    const newState = reducer(
+      initialState,
+      actions.logs.scripts.setFetchStatus({
+        flowId,
+        scriptId,
+        fetchStatus: 'inProgress',
+      })
+    );
+
+    expect(newState).toHaveProperty('scripts.s123-f123.currQueryTime', 9898);
+  });
+  test('SCRIPTS_LOGS_FETCH_STATUS action should correctly set the currQueryTime as last log time if nextPageURL does not have time_lte', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const initialState = {
+      scripts: {
+        's123-f123': {
+          scriptId,
+          flowId,
+          logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'},
+            {message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+      },
+    };
+    const newState = reducer(
+      initialState,
+      actions.logs.scripts.setFetchStatus({
+        flowId,
+        scriptId,
+        fetchStatus: 'inProgress',
+      })
+    );
+
+    expect(newState).toHaveProperty('scripts.s123-f123.currQueryTime', 1602324610100);
+  });
+  test('SCRIPTS_LOGS_FETCH_STATUS action should not alter any other sibling state', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const initialState = {
+      scripts: {
+        's444-f666': {
+          scriptId: 's444',
+          flowId: 'f666',
+          logs: [],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+        's123-f123': {
+          scriptId,
+          flowId,
+          logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'},
+            {message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}],
+          nextPageURL: '/abc',
+          status: 'success',
+        },
+      },
+    };
+    const newState = reducer(
+      initialState,
+      actions.logs.scripts.setFetchStatus({
+        flowId,
+        scriptId,
+        fetchStatus: 'inProgress',
+      })
+    );
+
+    expect(newState).toHaveProperty('scripts.s444-f666', {
+      scriptId: 's444',
+      flowId: 'f666',
+      logs: [],
+      nextPageURL: 'abc',
+      status: 'success',
+    });
   });
 
   test('SCRIPTS_LOGS_CLEAR action should delete state correctly in case scriptId is passed', () => {

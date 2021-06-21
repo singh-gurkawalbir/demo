@@ -564,7 +564,7 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
-        marginTop: -4,
+        height: 20,
         '& svg': {
           fontSize: 18,
         },
