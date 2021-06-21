@@ -74,8 +74,7 @@ export default {
     MuiButton: {
       root: {
         textTransform: 'unset',
-        // fontFamily: 'Roboto400',
-        fontFamily: 'source sans pro',
+        fontFamily: 'Roboto400',
         padding: '6px 24px',
         fontSize: '15px',
         lineHeight: '19px',

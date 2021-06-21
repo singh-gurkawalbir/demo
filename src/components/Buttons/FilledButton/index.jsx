@@ -26,7 +26,6 @@ export default function FilledButton(props) {
       variant="contained"
       color="primary"
       className={clsx({[classes.error]: error})}
-      disableElevation
       onClick={onClick}
       {...rest}>
       {children}
