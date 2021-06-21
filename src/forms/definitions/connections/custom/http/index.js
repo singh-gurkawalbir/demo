@@ -206,6 +206,7 @@ import walmartmexico from './walmartmexico';
 import walmartcanada from './walmartcanada';
 import paylocity from './paylocity';
 import freshservice from './freshservice';
+import omnisend from './omnisend';
 
 export default {
   channelape,
@@ -416,4 +417,5 @@ export default {
   walmartcanada,
   paylocity,
   freshservice,
+  omnisend,
 };

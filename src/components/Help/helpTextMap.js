@@ -40,6 +40,7 @@ export default {
   'connection.salesforce.info.email': 'Your Salesforce account email.',
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
+  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Omnisend account.<br>2. Navigate to <b>MyAccount > Store settings > Integrations & API > API Keys.</b><br>3. Copy your API key. (If none exists yet or you want to change the API key,  <b>Create APIKEY+</b> option and select appropriate permissions to create a new API key.). ',
   'sharepoint.connection.http.subDomain':
     "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
   'vroozi.connection.accountType':
