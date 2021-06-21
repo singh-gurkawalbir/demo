@@ -16,8 +16,6 @@ export default function DynaAssistantHeaders(props) {
     onFieldChange,
   } = props;
   const dispatch = useDispatch();
-  // TODO: (Aditya/Sravan) DynaTable to accept a single value and conversion to be made inside component.Check for validations and how error message will be displayed in case of incomplete map
-  // if map is being passed instead of value, trigger a onFieldChange with formatted value
   const optionsMap = useMemo(() => [
     {
       id: 'name',
