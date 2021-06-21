@@ -92,7 +92,7 @@ import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
-import { JOB_UI_STATUS } from '../components/JobDashboard/util';
+import { JOB_UI_STATUS } from '../utils/jobdashboard';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1893,7 +1893,8 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
       (job.status === JOB_STATUS.QUEUED ||
         (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
 
-      return {...flow,
+      return {
+        ...flow,
         lastExecutedAtSort: jobStatusPrioityMap[job.status],
         lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
         isJobInQueuedStatus,
