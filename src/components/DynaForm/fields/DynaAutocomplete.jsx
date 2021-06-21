@@ -108,6 +108,15 @@ export default function DynaAutocomplete(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const selectedItemIndex = actualOptions.findIndex(
     opt => opt.value === actualValueInString);
+  const handleInputOptionSelect = (event, newInputValue) => {
+    setInputValue(newInputValue);
+    const corrVal = actualOptions.find(
+      opt => opt.label === newInputValue
+    );
+
+    if (corrVal) onFieldChange(id, corrVal.value);
+    else onFieldChange(id, newInputValue);
+  };
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -138,15 +147,7 @@ export default function DynaAutocomplete(props) {
             value={value}
             ListboxComponent={ListboxComponent}
             inputValue={inputValue}
-            onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue);
-              const corrVal = actualOptions.find(
-                opt => opt.label === newInputValue
-              );
-
-              if (corrVal) onFieldChange(id, corrVal.value);
-              else onFieldChange(id, newInputValue);
-            }}
+            onInputChange={handleInputOptionSelect}
             onChange={(event, newValue) => {
               setValue(newValue);
               onFieldChange(id, newValue);
