@@ -118,6 +118,7 @@ export default {
     'walmartmexico',
     'walmartcanada',
     'freshservice',
+    'omnisend',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
