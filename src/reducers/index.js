@@ -93,6 +93,7 @@ import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { JOB_UI_STATUS } from '../utils/jobdashboard';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -821,7 +822,10 @@ const reportsFilter = {
 selectors.getIntegrationIdForEventReport = (state, eventReport) => {
   const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
 
-  return selectors.resource(state, 'flows', foundFlow)?._integrationId;
+  // deleted flows case
+  if (!foundFlow) { return null; }
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
 };
 
 selectors.getEventReportIntegrationName = (state, r) => {
@@ -1840,15 +1844,25 @@ selectors.mkChildIntegration = () => {
   );
 };
 
+const jobStatusPrioityMap = {
+  // large dates
+  [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
+  [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
+  [JOB_STATUS.RUNNING]: '2300-04-17T16:51:35.209Z',
+};
+
 selectors.mkDIYIntegrationFlowList = () => createSelector(
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.flows,
+  (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
   (state, integrationId) => integrationId,
   (_1, _2, childId) => childId,
-  (_1, _2, _3, options) => options,
+  (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
+  (_1, _2, _3, _4, options) => options,
   selectors.errorMap,
   selectors.currentEnvironment,
-  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
+  (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+    integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
     let integrationFlows = flows.filter(f => {
       if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
@@ -1860,6 +1874,32 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
     });
 
     integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+
+    // this transformation adds properties to make the the flow lastExecutedAt sortable
+    integrationFlows = integrationFlows.map(flow => {
+      const {_id: flowId} = flow;
+      const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+      if (!job || !isUserInErrMgtTwoDotZero) {
+        return {...flow, lastExecutedAtSort: flow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+      }
+
+      if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+        return {...flow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+      }
+
+      // queued running retrying are the other statuses
+      const isJobInQueuedStatus =
+      (job.status === JOB_STATUS.QUEUED ||
+        (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+      return {
+        ...flow,
+        lastExecutedAtSort: jobStatusPrioityMap[job.status],
+        lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+        isJobInQueuedStatus,
+        lastExecutedAtSortType: 'status'};
+    });
 
     return filterAndSortResources(integrationFlows, options);
   }

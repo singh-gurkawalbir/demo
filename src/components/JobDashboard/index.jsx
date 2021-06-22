@@ -11,7 +11,7 @@ import JobTable from './JobTable';
 import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { UNDO_TIME } from './util';
+import { UNDO_TIME } from '../../utils/jobdashboard';
 import { hashCode } from '../../utils/string';
 import { isNewId } from '../../utils/resource';
 import useCommStatus from '../../hooks/useCommStatus';

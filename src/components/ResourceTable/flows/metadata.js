@@ -77,8 +77,8 @@ export default {
       {
         key: 'lastRun',
         heading: 'Last run',
-        Value: ({rowData: r}) => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
-        orderBy: 'lastExecutedAt',
+        Value: ({rowData: r}) => <StatusCell {...r} />,
+        orderBy: 'lastExecutedAtSort',
       },
       {
         key: 'mapping',

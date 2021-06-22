@@ -282,7 +282,10 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, flowFilter);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, flowFilter);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
@@ -296,9 +299,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   shallowEqual);
   const flowErrorCountStatus = useSelector(state => selectors.errorMap(state, integrationId)?.status);
 
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
   const handleClose = useCallback(() => {
     setShowDialog();
   }, [setShowDialog]);

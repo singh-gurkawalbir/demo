@@ -17,7 +17,7 @@ import ButtonsGroup from '../ButtonGroup';
 import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
-import { UNDO_TIME } from './util';
+import { UNDO_TIME } from '../../utils/jobdashboard';
 import DownloadIcon from '../icons/DownloadIcon';
 
 const useStyles = makeStyles(theme => ({
