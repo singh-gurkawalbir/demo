@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../../DynaSelect';
 import DeleteIcon from '../../../../../icons/TrashIcon';
-import DynaTypeableSelect from '../../../DynaTypeableSelect';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
+import DynaAutocomplete from '../../../DynaAutocomplete';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -150,8 +150,9 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
-        <DynaTypeableSelect
+        <DynaAutocomplete
           {...basicProps}
+          onFieldChange={onFieldChange}
           errorMessages={errorMessages}
           value={fieldValue}
           labelName="label"
@@ -165,16 +166,15 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   return null;
 };
 
+export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}) => {
+  if (rowIndex === tableSize - 1 || !touched) { return true; }
+
+  return !required || (required && fieldValue);
+};
+
 const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
   const {required } = op;
-
-  const isCellValid = useCallback(() => {
-    if (rowIndex === tableSize - 1 || !touched) { return true; }
-
-    return !required || (required && fieldValue);
-  }, [fieldValue, required, rowIndex, tableSize, touched]);
-
-  const isValid = isCellValid();
+  const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
     <RowCell

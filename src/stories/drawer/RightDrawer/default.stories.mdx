@@ -1,22 +1,13 @@
-import { Checkbox, Button } from '@material-ui/core';
-import { MemoryRouter } from 'react-router-dom';
-import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
-import { action } from '@storybook/addon-actions';
-import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
-import DrawerContent from '../../../components/drawer/Right/DrawerContent';
-import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
+import { Meta, Story } from '@storybook/addon-docs/blocks';
 import RightDrawer from '../../../components/drawer/Right';
-import ActionGroup from '../../../components/ActionGroup';
-import MockAppBar from '../../mocks/AppBar';
-import MockPageBar from '../../mocks/PageBar';
 import Template from './Template';
 
 <Meta 
   title="Right Drawer/Drawer" 
   component={RightDrawer}
+  parameters={{ previewTabs: { 'storybook/docs/panel': { hidden: true } } }}
 />
 
 <Story name="Default">
   {Template.bind({})}
 </Story>
-

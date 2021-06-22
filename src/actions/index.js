@@ -237,6 +237,7 @@ const flowMetrics = {
     action(actionTypes.FLOW_METRICS.RECEIVED, { resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
+  updateLastRunRange: (resourceId, startDate, endDate) => action(actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE, { resourceId, startDate, endDate}),
 };
 const resource = {
   replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
@@ -668,7 +669,6 @@ const integrationApp = {
             .PATCH_SETTINGS,
           { integrationId, flowId, id, key, value }
         ),
-      updateLastFieldTouched: key => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD, { key }),
       delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,
@@ -2171,6 +2171,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, fetchNextPage }),
     startDebug: (scriptId, value) =>
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
+    setFetchStatus: ({scriptId, flowId, fetchStatus}) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, {scriptId, flowId, fetchStatus}),
+    pauseFetch: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, {scriptId, flowId}),
   },
   connections: {
     request: connectionId =>

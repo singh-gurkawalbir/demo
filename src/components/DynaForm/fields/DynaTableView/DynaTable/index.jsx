@@ -7,6 +7,7 @@ import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
+import VirtualizedTable from './VirtualizedTable';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -68,10 +69,12 @@ const initializeTableState = optionsMap => value => {
 
 const BaseTable = ({
   onFieldChange,
+  isLoading,
   onRowChange,
   disableDeleteRows,
   optionsMapFinal,
   optionsMapInit,
+  isVirtualizedTable,
   id,
   value,
 }) => {
@@ -86,6 +89,25 @@ const BaseTable = ({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
+
+  const isAnyColumnFetching = isLoading ? Object.values(isLoading).some(val => val) : false;
+
+  if (isVirtualizedTable) {
+    // not all tables have to be virtualized just the mapping based applications,
+    // isVirtualizedTable flag comes from there
+
+    return (
+      <VirtualizedTable
+        isAnyColumnFetching={isAnyColumnFetching}
+        items={tableValue}
+        optionsMapFinal={optionsMapFinal}
+        touched={touched}
+        setTableState={setTableState}
+        onRowChange={onRowChange}
+        disableDeleteRows={disableDeleteRows}
+    />
+    );
+  }
 
   return (tableValue.map((arr, rowIndex) => {
     const {value, key} = arr;
@@ -122,6 +144,7 @@ export const DynaTable = props => {
     onFieldChange,
     onRowChange,
     disableDeleteRows,
+    isVirtualizedTable,
     dataPublic,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
@@ -148,6 +171,8 @@ export const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
           <BaseTable
+            isLoading={isLoading}
+            isVirtualizedTable={isVirtualizedTable}
             onFieldChange={onFieldChange}
             onRowChange={onRowChange}
             disableDeleteRows={disableDeleteRows}

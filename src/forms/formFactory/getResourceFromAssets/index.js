@@ -195,6 +195,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 
         meta = formMeta.connections.salesforce;
+      } else if (resource && resource.assistant === 'authorize.net') {
+        meta = formMeta.connections.custom.http['authorize.net'];
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 

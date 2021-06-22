@@ -524,7 +524,7 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
+selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resource selectors
@@ -814,8 +814,42 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
   );
 };
 
+selectors.mkGetSortedScriptsTiedToFlow = () => {
+  const scriptsTiedToFlowSelector = selectors.mkGetScriptsTiedToFlow();
+
+  return createSelector(
+    scriptsTiedToFlowSelector,
+    (state, _1, filterKey) => state?.session?.filters?.[filterKey],
+    (scripts, scriptsFilter) => {
+      const comparer = ({ order, orderBy }) => stringCompare(orderBy, order === 'desc');
+
+      if (scriptsFilter?.sort) {
+        return [...scripts].sort(comparer(scriptsFilter.sort));
+      }
+
+      return scripts;
+    }
+  );
+};
+
 const reportsFilter = {
   type: 'eventreports',
+};
+
+selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+  const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId;
+};
+
+selectors.getEventReportIntegrationName = (state, r) => {
+  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  // if there is no integration associated to a flow then its a standalone flow
+
+  return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
@@ -824,7 +858,11 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId;
+    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+    // integration has been deleted
+    if (!integrationId) return null;
+
     const integration = selectors.resource(state, 'integrations', integrationId);
 
     if (!integration) {
@@ -882,7 +920,12 @@ selectors.mkEventReportsFiltered = () => {
       // checking filtering by integration
 
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
-        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.[0] === _id);
+        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
+
+        // flow is deleted do not list the report
+        if (!flow) {
+          return false;
+        }
 
         return integrationIdFilter.includes(flow._integrationId);
       });
@@ -1400,11 +1443,6 @@ selectors.mkTiles = () => createSelector(
       };
     });
   });
-
-selectors.isDataReady = (state, resource) => (
-  fromData.hasData(state?.data, resource) &&
-      !fromComms.isLoading(state?.comms, resource)
-);
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
@@ -3433,6 +3471,18 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (state, { flowId }) => {
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+      const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
+
+      if (integration._parentId) {
+        return (
+          selectors.resource(state, 'integrations', integration._parentId) || emptyObject
+        );
+      }
+
+      return null;
+    },
   ],
   (
     sampleData,
@@ -3444,6 +3494,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -3452,7 +3503,8 @@ selectors.sampleDataWrapper = createSelector(
     resource,
     connection,
     stage,
-    fieldType})
+    fieldType,
+    parentIntegration})
 );
 
 /**
@@ -4666,7 +4718,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+    name: resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name,
   };
 };
 
