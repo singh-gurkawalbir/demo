@@ -205,6 +205,7 @@ import fulfilment from './fulfilment';
 import walmartmexico from './walmartmexico';
 import walmartcanada from './walmartcanada';
 import paylocity from './paylocity';
+import freshservice from './freshservice';
 
 export default {
   channelape,
@@ -414,4 +415,5 @@ export default {
   walmartmexico,
   walmartcanada,
   paylocity,
+  freshservice,
 };
