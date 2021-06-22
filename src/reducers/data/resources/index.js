@@ -737,31 +737,12 @@ selectors.defaultStoreId = (state, id, store) => {
 
   return undefined;
 };
-const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
+const filterByEnvironmentResources = (resources, sandbox) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
 
   if (!filterByEnvironment) { return resources; }
 
-  if (resourceType !== 'eventreports') {
-    return resources.filter(r => !!r.sandbox === sandbox);
-  }
-
-  // event reports needs flows to determine the environment
-  if (!flows) { return []; }
-
-  // eventReports
-  return resources.filter(r => {
-    // the flows environment is the same for eventreport
-    const {_flowIds: flowIds} = r;
-    const flow = flows.find(({_id}) => flowIds.includes(_id));
-
-    // this happens in the case where a flow is deleted ..
-    // without the flow we cannot determine the environment in that case we will just not
-    // list the eventReport
-    if (!flow) return false;
-
-    return !!flow.sandbox === sandbox;
-  });
+  return resources.filter(r => !!r.sandbox === sandbox);
 };
 
 selectors.resources = (state, resourceType) => {
@@ -828,7 +809,7 @@ selectors.resourceList = (
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
 
-  const filteredByEnvironment = filterByEnvironmentResources(sorted, state?.flows, sandbox, type);
+  const filteredByEnvironment = filterByEnvironmentResources(sorted, sandbox);
 
   const filtered = filteredByEnvironment.filter(
     filter ? sift({ $and: [filter, matchTest] }) : matchTest

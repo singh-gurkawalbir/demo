@@ -908,7 +908,7 @@ selectors.mkEventReportsFiltered = () => {
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
         const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
 
-        // flow is deleted do not list the report
+        // flow is deleted we don't know the integration id for it
         if (!flow) {
           return false;
         }
