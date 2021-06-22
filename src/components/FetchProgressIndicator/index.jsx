@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     fontSize: 'unset',
     color: theme.palette.secondary.light,
+    paddingBottom: 2,
   },
   spinner: {
     marginRight: theme.spacing(0.5),
