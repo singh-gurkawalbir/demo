@@ -82,7 +82,7 @@ const useStyles = makeStyles(theme => ({
   scriptsFetchLog: {
     backgroundColor: theme.palette.common.white,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(1),
+    padding: '5px 12px',
   },
 }));
 
