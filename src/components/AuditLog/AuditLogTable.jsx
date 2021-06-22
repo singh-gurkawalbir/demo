@@ -6,17 +6,14 @@ import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import ResourceTable from '../ResourceTable';
 import ShowMoreDrawer from '../drawer/ShowMore';
+import MessageWrapper from '../MessageWrapper';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     width: '100%',
     overflowX: 'auto',
   },
-  messageContainer: {
-    padding: theme.spacing(3),
-    backgroundColor: theme.palette.common.white,
-  },
-}));
+});
 
 export default function AuditLogTable({ resourceType, resourceId, filters, childId, className }) {
   const classes = useStyles();
@@ -44,9 +41,11 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
             actionProps={actionProps}
           />
         ) : (
-          <Typography className={classes.messageContainer}>
-            You don&apos;t have any audit logs.
-          </Typography>
+          <MessageWrapper>
+            <Typography>
+              You don&apos;t have any audit logs.
+            </Typography>
+          </MessageWrapper>
         )}
 
       <ShowMoreDrawer
