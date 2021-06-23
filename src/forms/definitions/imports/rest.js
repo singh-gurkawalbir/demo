@@ -1,7 +1,16 @@
+import { getMediaTypeForImport } from '../../../utils/resource';
 import { isJsonString } from '../../../utils/string';
 
+function isValidArray(value) {
+  if (Array.isArray(value) && value[0]) {
+    return true;
+  }
+
+  return false;
+}
+
 export default {
-  preSave: formValues => {
+  preSave: (formValues, _, {connection}) => {
     const retValues = { ...formValues };
     const lookups = retValues['/http/lookups'];
     const lookup =
@@ -194,9 +203,21 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
+
+    if (!retValues['/http/body'] || !Array.isArray(retValues['/http/body']) || !retValues['/http/body'].length) {
+      retValues['/http/sendPostMappedData'] = true;
+    }
+    retValues['/http/lookups'] = (retValues['/http/lookups'] || []).map(lookup => ({
+      ...lookup,
+      useImportHeaders: !!lookup.useImportHeaders,
+    }));
+    if (retValues['/http/response'] && isValidArray(retValues['/http/response/successPath']) && !isValidArray(retValues['/http/response/successValues'])) {
+      retValues['/http/response/allowArrayForSuccessPath'] = true;
+    }
     retValues['/adaptorType'] = 'HTTPImport';
+    retValues['/http/strictHandlebarEvaluation'] = true;
     retValues['/http/batchSize'] = 1;
-    retValues['/http/requestMediaType'] = 'json';
+    retValues['/http/requestMediaType'] = getMediaTypeForImport(connection, retValues['/http/headers']);
     retValues['/http/successMediaType'] = 'json';
     retValues['/http/errorMediaType'] = 'json';
     retValues['/useTechAdaptorForm'] = true;
@@ -415,10 +436,10 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.response.successPath && r.http.response.successPath[1];
+            return r.http.response?.successPath && r.http.response?.successPath[1];
           }
 
-          return r.http.response.successPath && r.http.response.successPath[0];
+          return r.http.response?.successPath && r.http.response?.successPath[0];
         }
 
         return '';
@@ -449,10 +470,10 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.response.successValues && r.http.response.successValues[1];
+            return r.http.response?.successValues && r.http.response?.successValues[1];
           }
 
-          return r.http.response.successValues && r.http.response.successValues[0];
+          return r.http.response?.successValues && r.http.response?.successValues[0];
         }
 
         return '';
@@ -477,16 +498,17 @@ export default {
         },
       ],
       defaultValue: r => {
+        console.log('r', r);
         if (!r || !r.http || !r.http.method) {
           return '';
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.response.resourceIdPath && r.http.response.resourceIdPath[1];
+            return r.http.response?.resourceIdPath && r.http.response?.resourceIdPath[1];
           }
 
-          return r.http.response.resourceIdPath && r.http.response.resourceIdPath[0];
+          return r.http.response?.resourceIdPath && r.http.response?.resourceIdPath[0];
         }
 
         return '';
@@ -648,7 +670,7 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.response.successPath && r.http.response.successPath[0];
+          return r.http.response?.successPath && r.http.response?.successPath[0];
         }
 
         return '';
@@ -679,7 +701,7 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.response.successValues && r.http.response.successValues[0];
+          return r.http.response?.successValues && r.http.response?.successValues[0];
         }
 
         return '';
@@ -710,7 +732,7 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.response.resourceIdPath && r.http.response.resourceIdPath[0];
+          return r.http.response?.resourceIdPath && r.http.response?.resourceIdPath[0];
         }
 
         return '';
