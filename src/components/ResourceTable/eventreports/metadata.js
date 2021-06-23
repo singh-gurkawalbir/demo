@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { capitalize, makeStyles } from '@material-ui/core';
+import { capitalize } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import DateFilter from '../commonCells/DateFilter';
@@ -32,11 +32,6 @@ const ALL_EVENT_STATUS = [
 
 Object.freeze(ALL_EVENT_STATUS);
 const FILTER_KEY = 'eventreports';
-const useStyles = makeStyles(() => ({
-  flex: {
-    display: 'flex',
-  },
-}));
 
 const flowsConfig = {type: 'flows'};
 const metadata = {
@@ -140,10 +135,8 @@ const metadata = {
         );
       },
       Value: function EventReportStatus({rowData: r}) {
-        const classes = useStyles();
-
         if ([EVENT_REPORT_STATUS.QUEUED, EVENT_REPORT_STATUS.RUNNING].includes(r.status)) {
-          return <div className={classes.flex}><Spinner size="small"> {capitalize(r?.status)}</Spinner> </div>;
+          return <Spinner size="small"> {capitalize(r?.status)}</Spinner>;
         }
 
         return capitalize(r?.status);
