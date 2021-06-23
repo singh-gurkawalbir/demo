@@ -244,12 +244,6 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.resourceListModified test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceListModified(false)).toEqual({count: 0, filtered: 0, resources: [], total: 0, type: undefined});
-    });
-  });
-
   describe('selectors.makeResourceListSelector test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.makeResourceListSelector();
@@ -3449,84 +3443,9 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('resourceData', () => {
-    test('should return {} on bad state or args.', () => {
-      expect(selectors.resourceData()).toEqual({sandbox: false});
-      expect(selectors.resourceData({ data: {} })).toEqual({sandbox: false});
-    });
-
-    test('should return correct data when no staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test A' }];
-      const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-
-      expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: exports[0],
-        staged: undefined,
-        master: exports[0],
-      });
-    });
-
-    test('should return correct data when no staged data or resource exists. (new resource)', () => {
-      const exports = [{ _id: 1, name: 'test A' }];
-      const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-
-      expect(
-        selectors.resourceData(state, 'exports', 'new-resource-id')
-      ).toEqual({
-        merged: {sandbox: false},
-        staged: undefined,
-        master: undefined,
-      });
-    });
-
-    test('should return correct data when staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged(1, patch));
-
-      expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-    });
-
-    test('should return correct data when staged data exists but no master.', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged('new-id', patch));
-
-      expect(selectors.resourceData(state, 'exports', 'new-id')).toEqual({
-        merged: { name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: null,
-      });
-    });
-  });
-
   describe('selectors.resourceDataModified test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceDataModified()).toEqual({sandbox: false});
+      expect(selectors.resourceDataModified()).toEqual({});
     });
     test('should return correct data if only resource is present', () => {
       const resource = { _id: 1, name: 'test X' };
@@ -3581,8 +3500,8 @@ describe('resource region selector testcases', () => {
     const resourceData = selectors.makeResourceDataSelector();
 
     test('should return {} on bad state or args.', () => {
-      expect(resourceData()).toEqual({sandbox: false});
-      expect(resourceData({ data: {} })).toEqual({sandbox: false});
+      expect(resourceData()).toEqual({});
+      expect(resourceData({ data: {} })).toEqual({});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -3606,13 +3525,7 @@ describe('resource region selector testcases', () => {
         actions.resource.receivedCollection('exports', exports)
       );
 
-      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({
-        merged: {
-          sandbox: false,
-        },
-        staged: undefined,
-        master: undefined,
-      });
+      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({merged: {}});
     });
 
     test('should return correct data when staged data exists.', () => {

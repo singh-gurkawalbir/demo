@@ -767,12 +767,10 @@ describe('integrationApps installer reducer', () => {
         )
       );
 
-      const collectionAfterAction = selectors.resourceList(state, {
-        type: 'integrations',
-      });
+      const collectionAfterAction = state.integrations;
 
       expect(
-        collectionAfterAction.resources.filter(i => i._id !== integrationId)
+        collectionAfterAction.filter(i => i._id !== integrationId)
       ).toEqual(collection.filter(i => i._id !== integrationId));
     });
     test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
@@ -899,12 +897,10 @@ describe('integrationApps installer reducer', () => {
         )
       );
 
-      const collectionAfterAction = selectors.resourceList(state, {
-        type: 'integrations',
-      });
+      const collectionAfterAction = state.integrations;
 
       expect(
-        collectionAfterAction.resources.filter(i => i._id !== integrationId)
+        collectionAfterAction.filter(i => i._id !== integrationId)
       ).toEqual(collection.filter(i => i._id !== integrationId));
     });
     test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
@@ -1154,110 +1150,6 @@ describe('resources selectors', () => {
 
       expect(selectors.resource(state, 'exports', 234)).toEqual(testExports[0]);
     });
-  });
-
-  describe('resourceList', () => {
-    const emptyResult = {
-      resources: [],
-      total: 0,
-      filtered: 0,
-      count: 0,
-    };
-
-    test('should return empty result on bad state.', () => {
-      let result = selectors.resourceList(undefined, {
-        type: 'exports',
-      });
-
-      expect(result).toEqual({ ...emptyResult, type: 'exports' });
-
-      result = selectors.resourceList({}, {});
-      expect(result).toEqual(emptyResult);
-
-      result = selectors.resourceList({}, { type: 123 });
-      expect(result).toEqual({ ...emptyResult, type: 123 });
-    });
-
-    test('should return empty result on empty state.', () => {
-      const result = selectors.resourceList(
-        {},
-        {
-          type: 'exports',
-        }
-      );
-
-      expect(result).toEqual({ ...emptyResult, type: 'exports' });
-    });
-
-    // #region -> Tests within this code region use the context below:
-    const names = ['bob', 'bill', 'will', 'bing'];
-    const testExports = names.map(n => ({
-      _Id: `${n}id`,
-      _connectionId: `conn-${n}-id`,
-      name: n,
-      description: `${n} description`,
-    }));
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('exports', testExports)
-    );
-
-    test('should return all resources when name matches resource type.', () => {
-      const result = selectors.resourceList(state, {
-        type: 'exports',
-      });
-      const { resources } = result;
-      const namesFromResources = resources.map(r => r.name);
-
-      expect(namesFromResources).toEqual(names);
-    });
-
-    test('should return only resources matching keyword in name.', () => {
-      const result = selectors.resourceList(state, {
-        type: 'exports',
-        keyword: 'bi',
-      });
-      const { resources } = result;
-      const namesFromResources = resources.map(r => r.name);
-
-      expect(namesFromResources).toEqual(['bill', 'bing']);
-    });
-
-    test('should return resources limited in count by take.', () => {
-      const take = 3;
-      const result = selectors.resourceList(state, {
-        type: 'exports',
-        take,
-      });
-      const { resources } = result;
-      const namesFromResources = resources.map(r => r.name);
-
-      expect(namesFromResources).toEqual(names.slice(0, take));
-    });
-
-    test('should ignore invalid take argument.', () => {
-      let result = selectors.resourceList(state, {
-        type: 'exports',
-        take: -1,
-      });
-
-      expect(result.count).toEqual(names.length);
-
-      result = selectors.resourceList(state, {
-        type: 'exports',
-        take: 0,
-      });
-
-      expect(result.count).toEqual(names.length);
-
-      result = selectors.resourceList(state, {
-        type: 'exports',
-        take: 'not a number',
-      });
-
-      expect(result.count).toEqual(names.length);
-    });
-    // #endregion
   });
 
   describe('hasData', () => {
