@@ -207,6 +207,8 @@ import walmartcanada from './walmartcanada';
 import paylocity from './paylocity';
 import looker from './looker';
 import pandadoc from './pandadoc';
+import freshservice from './freshservice';
+import omnisend from './omnisend';
 
 export default {
   channelape,
@@ -418,4 +420,6 @@ export default {
   paylocity,
   looker,
   pandadoc,
+  freshservice,
+  omnisend,
 };

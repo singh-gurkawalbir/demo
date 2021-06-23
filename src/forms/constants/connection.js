@@ -119,6 +119,8 @@ export default {
     'walmartcanada',
     'looker',
     'pandadoc',
+    'freshservice',
+    'omnisend',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

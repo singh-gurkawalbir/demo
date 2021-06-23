@@ -40,6 +40,7 @@ export default {
   'connection.salesforce.info.email': 'Your Salesforce account email.',
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
+  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Omnisend account.<br>2. Navigate to <b>MyAccount > Store settings > Integrations & API > API Keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click to <b>Create APIKEY+</b> option and select appropriate permissions to create a new API key.). ',
   'sharepoint.connection.http.subDomain':
     "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
   'vroozi.connection.accountType':
@@ -583,6 +584,9 @@ export default {
   'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the private key, which you can find in your <a href="https://developer.walmart.com/ca/">Walmart Canada account</a>.<br>1. Sign in and click <b>My Account</b> at the top right.<br>2. Choose the account type <b>Marketplace</b>, and sign in with your email address & password.<br>3. From the <b>Settings</b> menu, select <b>Consumer IDs & Private Keys</b>.<br>4. Copy the private key. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
   'paylocity.connection.http.unencrypted.environment': 'Please select the environment of your Paylocity account.',
   'paylocity.connection.http.unencrypted.companyId': 'Enter the Company ID.<br><br><b>Steps to get the Company ID:</b><br> 1. Sign in to the Paylocity account.<br>2.On the Dashboard, select <b>Help</b> → <b>About/Copyright</b>.<br>3. Copy the Company ID.',
+  'freshservice.connection.http.unencrypted.subdomain': 'Enter the subdomain of your Freshservice account. For example, if https://mycompany.freshservice.com is the login URL, then \'mycompany\' is the subdomain.',
+  'freshservice.connection.http.auth.basic.username': 'Enter the username of your Freshservice account.',
+  'freshservice.connection.http.auth.basic.password': 'Enter the password of your Freshservice account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
