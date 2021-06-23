@@ -114,6 +114,18 @@ export default function JobDetail({
     onViewErrorsClick({ jobId: job._id, showResolved, flowId: job._flowId });
   }
 
+  // <TableCell className={classes.name}>Integration</TableCell>
+  //               <TableCell className={classes.name}>Flow</TableCell>
+  //               <TableCell className={classes.status}>Status</TableCell>
+  //               <TableCell className={classes.success}>Success</TableCell>
+  //               <TableCell className={classes.ignore}>Ignored</TableCell>
+  //               <TableCell className={classes.error}>Errors</TableCell>
+  //               <TableCell className={classes.resolved}>Resolved</TableCell>
+  //               <TableCell className={classes.pages}>Pages</TableCell>
+  //               <TableCell className={classes.duration}>Duration</TableCell>
+  //               <TableCell className={classes.completed}>Completed</TableCell>
+  //               <TableCell className={classes.actions}>Actions</TableCell>
+
   return (
     <>
       <TableRow>

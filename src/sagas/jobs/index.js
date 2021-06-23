@@ -224,14 +224,14 @@ export function* requestRunningJobCollection() {
   } catch (error) {
     return true;
   }
-  collection = collection.filter(j => ['running', 'queued', 'retrying', 'failed'].includes(j.status));
+  // collection = collection.filter(j => ['running', 'queued', 'retrying', 'failed'].includes(j.status));
 
   if (!Array.isArray(collection)) {
     collection = [];
   }
 
-  yield put(actions.job.receivedCollection({ collection }));
-  yield put(actions.job.requestInProgressJobStatus());
+  yield put(actions.job.dashboard.running.receivedCollection({ collection }));
+  // yield put(actions.job.requestInProgressJobStatus());
 }
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const watcher = yield fork(requestJobCollection, {

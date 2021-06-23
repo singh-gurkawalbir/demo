@@ -2,15 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-// import { difference } from 'lodash';
-// import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
-// import ErrorDrawer from '../../ErrorDrawer';
 import actions from '../../../../actions';
 import Spinner from '../../../Spinner';
 import { selectors } from '../../../../reducers';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import SelectFlow from '../selectFlow';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,6 +83,7 @@ export default function JobTable({
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const tableContext = useGetTableContext();
   const [openedJobErrors, setOpenedJobErrors] = useState(false);
   const [showErrorDialogFor] = useState({});
   const isFlowJobsCollectionLoading = useSelector(state => selectors.isFlowJobsCollectionLoading(state));
@@ -192,7 +192,9 @@ export default function JobTable({
             <TableHead>
               <TableRow>
                 <TableCell className={classes.name}>Integration</TableCell>
-                <TableCell className={classes.name}>Flow</TableCell>
+                <TableCell className={classes.name}>
+                  <SelectFlow {...tableContext} />
+                </TableCell>
                 <TableCell className={classes.status}>Status</TableCell>
                 <TableCell className={classes.success}>Success</TableCell>
                 <TableCell className={classes.ignore}>Ignored</TableCell>

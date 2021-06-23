@@ -1,15 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
-  IconButton,
 } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
-import ArrowRightIcon from '../../../icons/ArrowRightIcon';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import IconTextButton from '../../../IconTextButton';
+import CeligoPagination from '../../../CeligoPagination';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,6 +15,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1.5),
     backgroundColor: theme.palette.common.white,
     overflowX: 'auto',
+  },
+  tablePaginationRoot: {
+    float: 'right',
+    display: 'flex',
+    margin: 'auto',
   },
   filterContainer: {
     padding: theme.spacing(2, 0, 2, 2),
@@ -77,18 +80,17 @@ export default function Filters({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  // #region data-layer selectors
-  const { paging = {}, totalJobs = 0 } = useSelector(state =>
-    selectors.flowJobsPagingDetails(state)
+  const rowsPerPageOptions = [10, 25, 50];
+  const DEFAULT_ROWS_PER_PAGE = 50;
+  const totalJobs = useSelector(state =>
+    selectors.runningJobs(state)
   );
-  const {
-    currentPage = 0,
-  } = useSelector(state => selectors.filter(state, filterKey));
 
-  // #endregion
-  const { rowsPerPage } = paging;
-  const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
-  const firstRowIndex = rowsPerPage * currentPage;
+  const jobFilter = useSelector(state => selectors.filter(state, filterKey));
+  const {currPage = 0,
+    rowsPerPage = DEFAULT_ROWS_PER_PAGE,
+  } = jobFilter?.paging;
+
   const patchFilter = useCallback(
     (key, value) => {
       const filter = { [key]: value };
@@ -102,11 +104,41 @@ export default function Filters({
     [dispatch, filterKey]
   );
 
-  const handlePageChange = useCallback(
-    offset => () => {
-      patchFilter('currentPage', currentPage + offset);
+  const loadMoreLogs = useCallback(
+    () => {
     },
-    [currentPage, patchFilter]
+    [],
+  );
+  // const functionTypes = flowId ? SCRIPT_FUNCTION_TYPES_FOR_FLOW : SCRIPT_FUNCTION_TYPES;
+  const paginationOptions = useMemo(
+    () => ({
+      loadMoreHandler: loadMoreLogs,
+      hasMore: false, // !!nextPageURL,
+      loading: false, // status === 'requested',
+
+    }),
+    [loadMoreLogs]
+  );
+  const handleChangeRowsPerPage = useCallback(e => {
+    dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...jobFilter.paging,
+          rowsPerPage: parseInt(e.target.value, 10),
+        },
+      })
+    );
+  }, [dispatch, filterKey, jobFilter?.paging]);
+  const handleChangePage = useCallback(
+    (e, newPage) => dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...jobFilter.paging,
+          currPage: newPage,
+        },
+      })
+    ),
+    [dispatch, filterKey, jobFilter?.paging]
   );
 
   const handleRefreshClick = useCallback(() => {
@@ -122,32 +154,17 @@ export default function Filters({
     <div className={classes.root}>
       <div className={classes.filterContainer}>
         <div className={classes.rightActionContainer}>
-          {maxPage > 0 && (
-          <>
-            <IconButton
-              disabled={currentPage === 0}
-              size="small"
-              data-test="decrementPage"
-              onClick={handlePageChange(-1)}>
-              <ArrowLeftIcon />
-            </IconButton>
-            <div className={classes.pagingText}>
-              {firstRowIndex + 1}
-              {' - '}
-              {currentPage === maxPage
-                ? totalJobs
-                : firstRowIndex + rowsPerPage}{' '}
-              of {totalJobs}
-            </div>
-            <IconButton
-              data-test="incrementPage"
-              disabled={maxPage === currentPage}
-              size="small"
-              onClick={handlePageChange(1)}>
-              <ArrowRightIcon />
-            </IconButton>
-          </>
-          )}
+          <CeligoPagination
+            {...paginationOptions}
+            rowsPerPageOptions={rowsPerPageOptions}
+            className={classes.tablePaginationRoot}
+            count={totalJobs?.length}
+            page={currPage}
+            rowsPerPage={rowsPerPage}
+            resultPerPageLabel="Rows:"
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
           <IconTextButton onClick={handleRefreshClick}>
             <RefreshIcon /> Refresh
           </IconTextButton>

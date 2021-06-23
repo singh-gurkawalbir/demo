@@ -95,6 +95,12 @@ export default (state = DEFAULT_STATE, action) => {
       status: 'loading',
     };
   }
+  if (type === actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION) {
+    return {
+      ...state,
+      runningJobs: collection,
+    };
+  }
   if (type === actionTypes.JOB.RECEIVED_COLLECTION) {
     const { flowJobs, bulkRetryJobs } = parseJobs(collection || []);
 
@@ -607,6 +613,29 @@ selectors.flowJobsPagingDetails = createSelector(
     totalJobs: flowJobs ? flowJobs.length : 0,
   })
 );
+
+selectors.runningJobs = createSelector(state => state && state.runningJobs, (runningJobs = []) => runningJobs.map(job => {
+  const additionalProps = {
+    uiStatus: job.status,
+    duration: getJobDuration(job),
+    doneExporting: !!job.doneExporting,
+    numPagesProcessed: 0,
+  };
+
+  if (!additionalProps.doneExporting) {
+    if (
+      [
+        JOB_STATUS.COMPLETED,
+        JOB_STATUS.CANCELED,
+        JOB_STATUS.FAILED,
+      ].includes(job.status)
+    ) {
+      additionalProps.doneExporting = true;
+    }
+  }
+
+  return { ...job, ...additionalProps };
+}));
 
 selectors.flowJobs = createSelector(
   state => state && state.paging,

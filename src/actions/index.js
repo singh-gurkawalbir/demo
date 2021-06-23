@@ -1601,7 +1601,8 @@ const job = {
           options,
         }),
       receivedCollection: ({ collection }) =>
-        action(actionTypes.JOB.RECEIVED_COLLECTION, {
+        // action(actionTypes.JOB.RECEIVED_COLLECTION, {
+        action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
         }),
     },

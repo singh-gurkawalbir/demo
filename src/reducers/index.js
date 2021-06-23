@@ -834,6 +834,38 @@ selectors.getEventReportIntegrationName = (state, r) => {
   return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
+selectors.getAllFlows = createSelector(state => {
+  let allFlows = selectors.resourceList(state, {
+    type: 'flows',
+  }).resources;
+  const defaultFilter = [{ _id: 'all', name: 'All flows'}];
+
+  if (!allFlows) { return defaultFilter; }
+
+  allFlows = uniqBy(allFlows, '_id').sort(stringCompare('name'));
+  allFlows = [...defaultFilter, ...allFlows];
+
+  return allFlows;
+},
+flows => flows
+);
+
+selectors.getAllIntegrations = createSelector(state => {
+  let allIntegrations = selectors.resourceList(state, {
+    type: 'integrations',
+  }).resources;
+  const defaultFilter = [{ _id: 'all', name: 'All flows'}];
+
+  if (!allIntegrations) { return defaultFilter; }
+
+  allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
+  allIntegrations = [...defaultFilter, ...allIntegrations];
+
+  return allIntegrations;
+},
+integrations => integrations
+);
+
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;
 
@@ -4689,13 +4721,13 @@ selectors.flowDashboardJobs = createSelector(
     };
   });
 selectors.accountDashboardRunningJobs = createSelector(
-  (state, options) => selectors.flowJobs(state, options),
-  flowJobs => {
-    let dashboardJobs = [...flowJobs];
+  (state, options) => selectors.runningJobs(state, options),
+  state => selectors.filter(state, 'runningFlows'),
+  (flowJobs, jobFilter) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
+    const dashboardJobs = [...flowJobs];
 
-    dashboardJobs = dashboardJobs.filter(j => ['running', 'queued', 'retrying'].includes(j.status));
-
-    return dashboardJobs;
+    return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });
 
 selectors.accountDashboardCompletedJobs = createSelector(
@@ -4811,8 +4843,9 @@ selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
     selectors.errorFilter,
     (allErrors, errorFilter) => {
       const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
+      const returnErrors = allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
-      return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+      return returnErrors;
     }
   );
 };
