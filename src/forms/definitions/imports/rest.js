@@ -498,7 +498,6 @@ export default {
         },
       ],
       defaultValue: r => {
-        console.log('r', r);
         if (!r || !r.http || !r.http.method) {
           return '';
         }
