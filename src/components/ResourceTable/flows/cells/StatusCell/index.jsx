@@ -6,19 +6,12 @@ import { selectors } from '../../../../../reducers';
 import { JOB_UI_STATUS } from '../../../../JobDashboard/util';
 import CeligoTimeAgo from '../../../../CeligoTimeAgo';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     maxWidth: 300,
     wordWrap: 'break-word',
   },
-  errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    fontSize: '14px',
-  },
-}));
+});
 
 export default function StatusCell({
   flowId,

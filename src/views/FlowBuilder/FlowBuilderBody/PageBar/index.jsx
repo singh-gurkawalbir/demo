@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
+import StatusButton from '../../../../components/Buttons/StatusButton';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import EditableText from '../../../../components/EditableText';
@@ -14,7 +15,7 @@ import CalendarIcon from '../../../../components/icons/CalendarIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import RunFlowButton from '../../../../components/RunFlowButton';
-import StatusCircle from '../../../../components/StatusCircle';
+// import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../utils/constants';
@@ -243,12 +244,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
 };
 const pageBarUseStyles = makeStyles(({
   errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    display: 'flex',
-    alignItems: 'center',
     marginRight: 12,
-    fontSize: '12px',
   },
 
 }));
@@ -264,10 +260,13 @@ const TotalErrors = ({flowId}) => {
   }
 
   return (
-    <span className={classes.errorStatus}>
-      <StatusCircle variant="error" size="small" />
+    // <span className={classes.errorStatus}>
+    //   <StatusCircle variant="error" size="small" />
+    //   <span>{totalErrors} errors</span>
+    // </span>
+    <StatusButton type="text" variant="error" size="small" className={classes.errorStatus}>
       <span>{totalErrors} errors</span>
-    </span>
+    </StatusButton>
   );
 };
 

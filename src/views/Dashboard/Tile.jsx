@@ -6,7 +6,7 @@ import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
-import Status from '../../components/Status';
+// import Status from '../../components/Status';
 import StatusCircle from '../../components/StatusCircle';
 import Content from '../../components/HomePageCard/Content';
 import ApplicationImg from '../../components/icons/ApplicationImg';
@@ -31,6 +31,7 @@ import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 import CeligoTruncate from '../../components/CeligoTruncate';
 import ActionButton from '../../components/ActionButton';
+import StatusButton from '../../components/Buttons/StatusButton';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -238,12 +239,15 @@ function Tile({
     <div>
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <Status
+          {/* <Status
             label={status.label}
             onClick={handleStatusClick}
             className={classes.status}>
             <StatusCircle variant={status.variant} />
-          </Status>
+          </Status> */}
+          <StatusButton variant={status.variant} size="large" onClick={handleStatusClick}>
+            {status.label}
+          </StatusButton>
           {isConnectionDown && (
           <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>

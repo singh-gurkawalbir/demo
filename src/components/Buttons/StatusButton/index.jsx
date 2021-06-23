@@ -7,6 +7,11 @@ import PropTypes from 'prop-types';
 import StatusCircle from '../../StatusCircle';
 
 const useStyles = makeStyles(theme => ({
+  textRoot: {
+    display: 'flex',
+    alignItems: 'center',
+    color: theme.palette.secondary.main,
+  },
   root: {
     '& > * .MuiButton-startIcon': {
       marginRight: 0,
@@ -25,16 +30,25 @@ const useStyles = makeStyles(theme => ({
 
 export default function StatusButton(props) {
   const classes = useStyles();
-  const {children, error, variant, onClick, ...rest} = props;
+  const {children, className, error, size, type, variant, onClick, ...rest} = props;
+
+  if (type === 'text') {
+    return (
+      <div className={clsx(classes.textRoot, className)}>
+        <StatusCircle variant={variant} size={size} />
+        {children}
+      </div>
+    );
+  }
 
   return (
     <Button
       variant="text"
       color="primary"
-      className={clsx(classes.root, {[classes.error]: error})}
+      className={clsx(classes.root, {[classes.error]: error}, className)}
       disableElevation
       onClick={onClick}
-      startIcon={<StatusCircle variant={variant} />}
+      startIcon={<StatusCircle variant={variant} size={size} />}
       {...rest}>
       {children}
     </Button>
@@ -42,14 +56,13 @@ export default function StatusButton(props) {
 }
 
 StatusButton.propTypes = {
-  disabled: PropTypes.bool,
   children: PropTypes.node.isRequired,
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  size: PropTypes.oneOf(['mini', 'small', 'large']),
   error: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
 };
 
 StatusButton.defaultProps = {
   color: 'primary',
-  size: 'medium',
+  size: 'small',
 };
