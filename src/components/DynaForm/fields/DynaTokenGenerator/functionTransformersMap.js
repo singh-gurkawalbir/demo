@@ -297,4 +297,15 @@ export default {
         scope: 'oms'},
     }),
   },
+  looker: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: `https://${form['/http/instanceurl']}/api/3.1/login`,
+      body: { client_id: form['/http/unencrypted/clientId'],
+        client_secret: form['/http/encrypted/clientSecret'],
+      },
+    }),
+  },
 };

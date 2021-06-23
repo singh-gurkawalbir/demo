@@ -117,6 +117,8 @@ export default {
     'fulfilment.com',
     'walmartmexico',
     'walmartcanada',
+    'looker',
+    'pandadoc',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

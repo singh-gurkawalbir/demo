@@ -205,6 +205,8 @@ import fulfilment from './fulfilment';
 import walmartmexico from './walmartmexico';
 import walmartcanada from './walmartcanada';
 import paylocity from './paylocity';
+import looker from './looker';
+import pandadoc from './pandadoc';
 
 export default {
   channelape,
@@ -414,4 +416,6 @@ export default {
   walmartmexico,
   walmartcanada,
   paylocity,
+  looker,
+  pandadoc,
 };
