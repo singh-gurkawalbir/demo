@@ -117,6 +117,8 @@ export default {
     'fulfilment.com',
     'walmartmexico',
     'walmartcanada',
+    'freshservice',
+    'omnisend',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

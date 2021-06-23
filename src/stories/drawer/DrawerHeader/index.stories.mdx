@@ -7,8 +7,9 @@ import withRouterAndDrawer from '../withRouterAndDrawer';
 
 <Meta 
   title="Right Drawer/Header" 
-  component={DrawerHeader} 
-  decorators={[ withRouterAndDrawer ]} 
+  component={DrawerHeader}
+  decorators={[ withRouterAndDrawer ]}
+  parameters={{ previewTabs: { 'storybook/docs/panel': { hidden: true } } }}
 />
 
 <Story name="No Frills">

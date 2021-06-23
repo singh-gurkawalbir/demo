@@ -2200,6 +2200,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, fetchNextPage }),
     startDebug: (scriptId, value) =>
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
+    setFetchStatus: ({scriptId, flowId, fetchStatus}) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, {scriptId, flowId, fetchStatus}),
+    pauseFetch: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, {scriptId, flowId}),
   },
   connections: {
     request: connectionId =>

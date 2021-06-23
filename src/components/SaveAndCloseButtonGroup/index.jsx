@@ -69,7 +69,7 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
 SaveAndCloseButtonGroup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  status: PropTypes.oneOf([undefined, 'success', 'inProgress', 'fail']).isRequired,
+  status: PropTypes.oneOf([undefined, 'success', 'inProgress', 'fail']),
   disabled: PropTypes.bool,
   isDirty: PropTypes.bool,
 };

@@ -524,7 +524,7 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
+selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resource selectors
@@ -810,6 +810,24 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
       // filter based on selected childIntegrations
 
       return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
+
+selectors.mkGetSortedScriptsTiedToFlow = () => {
+  const scriptsTiedToFlowSelector = selectors.mkGetScriptsTiedToFlow();
+
+  return createSelector(
+    scriptsTiedToFlowSelector,
+    (state, _1, filterKey) => state?.session?.filters?.[filterKey],
+    (scripts, scriptsFilter) => {
+      const comparer = ({ order, orderBy }) => stringCompare(orderBy, order === 'desc');
+
+      if (scriptsFilter?.sort) {
+        return [...scripts].sort(comparer(scriptsFilter.sort));
+      }
+
+      return scripts;
     }
   );
 };
@@ -1457,11 +1475,6 @@ selectors.mkTiles = () => createSelector(
       };
     });
   });
-
-selectors.isDataReady = (state, resource) => (
-  fromData.hasData(state?.data, resource) &&
-      !fromComms.isLoading(state?.comms, resource)
-);
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
@@ -4756,7 +4769,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+    name: resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name,
   };
 };
 
