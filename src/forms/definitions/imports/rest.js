@@ -194,7 +194,6 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
-    retValues['/rest'] = undefined;
     retValues['/adaptorType'] = 'HTTPImport';
     retValues['/http/batchSize'] = 1;
     retValues['/http/requestMediaType'] = 'json';
