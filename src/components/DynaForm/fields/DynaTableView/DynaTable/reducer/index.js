@@ -25,11 +25,10 @@ export default function reducer(state, action) {
     field,
     optionsMap,
     onRowChange,
-    ignoreEmptyRow,
   } = action;
 
   return produce(state, draft => {
-    const {tableStateValue} = draft;
+    const { tableStateValue, ignoreEmptyRow } = draft;
 
     // eslint-disable-next-line default-case
     switch (type) {

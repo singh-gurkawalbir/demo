@@ -69,7 +69,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange, ignoreEmptyRow}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -83,7 +83,6 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
       value,
       optionsMap,
       onRowChange,
-      ignoreEmptyRow,
     });
   }, [id, onRowChange, optionsMap, rowIndex, setTableState]);
 
@@ -173,7 +172,7 @@ export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}
   return !required || (required && fieldValue);
 };
 
-const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange, ignoreEmptyRow}) => {
+const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
@@ -185,10 +184,9 @@ const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize,
       isValid={isValid}
       rowIndex={rowIndex}
       setTableState={setTableState}
-      ignoreEmptyRow={ignoreEmptyRow}
       onRowChange={onRowChange}
   />
-  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, ignoreEmptyRow]);
+  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -235,7 +233,6 @@ export default function TableRow({
               rowIndex={rowIndex}
               tableSize={tableSize}
               setTableState={setTableState}
-              ignoreEmptyRow={ignoreEmptyRow}
               onRowChange={onRowChange}
           />
           </div>
@@ -243,7 +240,7 @@ export default function TableRow({
         )}
 
       </div>
-      {isNotLastRow && (
+      {isNotLastRow && !ignoreEmptyRow && (
       <div
         key="delete_button"
         className={classes.dynaTableActions}>

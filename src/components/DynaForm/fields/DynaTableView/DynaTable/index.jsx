@@ -56,6 +56,7 @@ const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
     return {
 
       touched: false,
+      ignoreEmptyRow,
       tableStateValue: [
         emptyRow,
       ]};
@@ -63,6 +64,7 @@ const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
 
   return {
     touched: false,
+    ignoreEmptyRow,
     tableStateValue: ignoreEmptyRow ? value.map(val => generateRow(val)) : [...value.map(val => generateRow(val)), emptyRow],
   };
 };
@@ -103,6 +105,7 @@ const BaseTable = ({
         items={tableValue}
         optionsMapFinal={optionsMapFinal}
         touched={touched}
+        ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
@@ -121,9 +124,9 @@ const BaseTable = ({
         tableSize={tableValue.length}
         optionsMap={optionsMapFinal}
         touched={touched}
+        ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
-        ignoreEmptyRow={ignoreEmptyRow}
         disableDeleteRows={disableDeleteRows}
       />
     );

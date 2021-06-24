@@ -41,6 +41,10 @@ export default function DynaAssistantHeaders(props) {
     }
   }, [value]);
 
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
+
   return (
     <>
       <DynaTableView
