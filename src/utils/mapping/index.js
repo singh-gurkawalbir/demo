@@ -1164,7 +1164,7 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow)) {
+      } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow) && isNetSuiteBatchExport(exportResource)) {
         let isListMapping = false;
 
         // for multi-field mappings, there is no concept of useFirstRow
@@ -1174,22 +1174,23 @@ export default {
           }
         }
 
-        if (isNetSuiteBatchExport(exportResource)) {
-          if (
-            !mapping.useFirstRow &&
-            mapping.extract?.indexOf('[*].') === -1 &&
-            !handlebarRegex.test(mapping.extract)
-          ) {
-            mapping.extract = `*.${mapping.extract}`;
-          }
-
-          if (!handlebarRegex.test(mapping.extract) && !mapping.useFirstRow) {
-            isListMapping = true;
-          }
+        if (
+          !mapping.useFirstRow &&
+          mapping.extract?.indexOf('[*].') === -1 &&
+          !handlebarRegex.test(mapping.extract)
+        ) {
+          mapping.extract = `*.${mapping.extract}`;
         }
-        if (isListMapping) {
-          const listWithEmptyGenerate = lists.find(l => l.generate === '');
 
+        const listWithEmptyGenerate = lists.find(l => l.generate === '');
+
+        // for csv/xl imports the mapping order matters
+        // so we maintain the order after a list with empty generate is found
+        if ((!handlebarRegex.test(mapping.extract) && !mapping.useFirstRow) || listWithEmptyGenerate?.fields?.length) {
+          isListMapping = true;
+        }
+
+        if (isListMapping) {
           if (!listWithEmptyGenerate) {
             list = {
               generate: '',
