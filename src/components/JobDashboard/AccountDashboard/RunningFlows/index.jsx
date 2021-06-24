@@ -7,6 +7,7 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
+import { hashCode } from '../../../../utils/string';
 
 const useStyles = makeStyles(({
   jobTable: {
@@ -22,7 +23,17 @@ export default function RunningFlows() {
   const dispatch = useDispatch();
 
   const filters = useSelector(state => selectors.filter(state, filterKey));
+  const { paging, ...nonPagingFilters } = filters;
+  const filterHash = hashCode(nonPagingFilters);
+
   const jobs = useSelector(state => selectors.accountDashboardRunningJobs(state));
+
+  // useEffect(
+  //   () => () => {
+  //     dispatch(actions.job.clear());
+  //   },
+  //   [dispatch, filterHash]
+  // );
 
   useEffect(() => {
     dispatch(
@@ -33,7 +44,7 @@ export default function RunningFlows() {
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, filterHash]);
 
   return (
     <LoadResources required resources="integrations,flows,exports,imports">

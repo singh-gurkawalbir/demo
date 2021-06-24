@@ -74,6 +74,13 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
+const defaultFilter = {
+  sort: { order: 'desc', orderBy: 'createdAt' },
+  paging: {
+    rowsPerPage: 25,
+    currPage: 0,
+  },
+};
 
 export default function Filters({
   filterKey,
@@ -142,8 +149,8 @@ export default function Filters({
   );
 
   const handleRefreshClick = useCallback(() => {
-    dispatch(actions.job.clear());
-    patchFilter('currentPage', 0);
+    // dispatch(actions.job.clear());
+    dispatch(actions.patchFilter('runningFlows', {...defaultFilter }));
     patchFilter(
       'refreshAt',
       new Date().getTime()
