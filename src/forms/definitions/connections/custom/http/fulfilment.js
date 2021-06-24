@@ -66,6 +66,11 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
     },
+    'http.auth.token.refreshToken': {
+      id: 'http.auth.token.refreshToken',
+      type: 'text',
+      visible: false,
+    },
     application: {
       fieldId: 'application',
     },
