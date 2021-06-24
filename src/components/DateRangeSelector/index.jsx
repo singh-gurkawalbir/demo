@@ -68,6 +68,12 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
+    padding: [[0, 12]],
+    lineHeight: 2,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
+    },
   },
   parentPicker: {
     display: 'flex',

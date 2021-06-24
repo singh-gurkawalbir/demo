@@ -49,13 +49,14 @@ const useStyles = makeStyles(theme => ({
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
     minHeight: 36,
-    padding: theme.spacing(0, 1),
+    padding: [[0, 12]],
     color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
+    lineHeight: 2,
     '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
     },
   },
   selectResourceItem: {
