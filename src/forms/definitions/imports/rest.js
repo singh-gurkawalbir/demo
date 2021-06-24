@@ -33,7 +33,7 @@ export default {
     }
 
     if (retValues['/inputMode'] === 'blob') {
-      retValues['/http/method'] = retValues['/htpp/blobMethod'];
+      retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
       retValues['/http/successPath'] = undefined;
       retValues['/http/successValues'] = undefined;
