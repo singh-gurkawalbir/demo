@@ -264,7 +264,7 @@ const TotalErrors = ({flowId}) => {
     //   <StatusCircle variant="error" size="small" />
     //   <span>{totalErrors} errors</span>
     // </span>
-    <StatusButton type="text" variant="error" size="small" className={classes.errorStatus}>
+    <StatusButton variant="error" size="small" className={classes.errorStatus}>
       <span>{totalErrors} errors</span>
     </StatusButton>
   );

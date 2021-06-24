@@ -33,14 +33,14 @@ export default function RunCell({
 
   if (flowErrorCount) {
     return (
-      <StatusButton type="text" variant="error" size="mini">
+      <StatusButton variant="error" size="mini">
         <Link className={classes.errorStatusLink} to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
       </StatusButton>
     );
   }
 
   return (
-    <StatusButton type="text" variant="success" size="mini">
+    <StatusButton variant="success" size="mini">
       success
     </StatusButton>
   );

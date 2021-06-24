@@ -30,28 +30,28 @@ const useStyles = makeStyles(theme => ({
 
 export default function StatusButton(props) {
   const classes = useStyles();
-  const {children, className, error, size, type, variant, onClick, ...rest} = props;
+  const {children, className, error, size, variant, onClick, ...rest} = props;
 
-  if (type === 'text') {
+  if (onClick) {
     return (
-      <div className={clsx(classes.textRoot, className)}>
-        <StatusCircle variant={variant} size={size} />
+      <Button
+        variant="text"
+        color="primary"
+        className={clsx(classes.root, {[classes.error]: error}, className)}
+        disableElevation
+        onClick={onClick}
+        startIcon={<StatusCircle variant={variant} size={size} />}
+        {...rest}>
         {children}
-      </div>
+      </Button>
     );
   }
 
   return (
-    <Button
-      variant="text"
-      color="primary"
-      className={clsx(classes.root, {[classes.error]: error}, className)}
-      disableElevation
-      onClick={onClick}
-      startIcon={<StatusCircle variant={variant} size={size} />}
-      {...rest}>
+    <div className={clsx(classes.textRoot, className)}>
+      <StatusCircle variant={variant} size={size} />
       {children}
-    </Button>
+    </div>
   );
 }
 
