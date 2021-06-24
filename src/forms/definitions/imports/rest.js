@@ -10,7 +10,8 @@ function isValidArray(value) {
 }
 
 export default {
-  preSave: (formValues, _, {connection}) => {
+  preSave: (formValues, _, options = {}) => {
+    const { connection } = options;
     const retValues = { ...formValues };
     const lookups = retValues['/http/lookups'];
     const lookup =
