@@ -41,6 +41,9 @@ export default {
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
   'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Omnisend account.<br>2. Navigate to <b>MyAccount > Store settings > Integrations & API > API Keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click to <b>Create APIKEY+</b> option and select appropriate permissions to create a new API key.). ',
+  'pagerduty.connection.http.auth.token.token': 'Enter the API key of your Pagerduty account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → API Access Keys</b>.<br>3. Copy the API key.(If none exists yet or you want to change the API key,click to <b>Create New API Key</b> option and select appropriate permissions to create a new API key.)',
+  'pagerduty.connection.http.auth.type': 'Please select Authentication Type.',
+  'pagerduty.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><b>Steps to get the client ID and client secret:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → Developer Mode</b>.<br> 3. Click on the App(under functionality) → Manage option for OAuth 2.0.<br> 4. Copy the Client ID and Client Secret.(If none exists yet,click to <b>Create New App</b> option to create a new pair.)',
   'sharepoint.connection.http.subDomain':
     "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
   'vroozi.connection.accountType':
