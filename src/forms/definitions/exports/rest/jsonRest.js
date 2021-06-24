@@ -114,6 +114,16 @@ export default {
       retValues['/rest/lastPageValue'] = undefined;
     }
 
+    // we need 2 separate UI fields for path for url and token paging methods
+    // to have diff help texts and labels
+    if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
+      retValues['/rest/nextPagePath'] = retValues['/rest/nextPageURLPath'];
+    } else if (retValues['/rest/pagingMethod'] === 'token') {
+      retValues['/rest/nextPagePath'] = retValues['/rest/nextPageTokenPath'];
+    }
+    delete retValues['/rest/nextPageURLPath'];
+    delete retValues['/rest/nextPageTokenPath'];
+
     return {
       ...retValues,
     };
@@ -174,7 +184,7 @@ export default {
     'rest.blobFormat': { fieldId: 'rest.blobFormat' },
     type: {
       id: 'type',
-      type: 'select',
+      type: 'selectwithvalidations',
       label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -195,10 +205,16 @@ export default {
       options: [
         {
           items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
+            { label: 'All – always export all data', value: 'all' },
+            { label: 'Delta – export only modified data',
+              value: 'delta',
+              regex: /.*{{.*lastExportDateTime.*}}/,
+              description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
+              helpKey: 'export.delta',
+              fieldsToValidate: ['rest.relativeURI', 'rest.postBody'] },
+
+            { label: 'Once – export records only once', value: 'once' },
+            { label: 'Test – export only 1 record', value: 'test' },
           ],
         },
       ],
@@ -210,7 +226,10 @@ export default {
       fieldId: 'delta.lagOffset',
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      type: 'text',
+      label: 'Boolean field to mark records as exported',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'rest.once.relativeURI': {
       fieldId: 'rest.once.relativeURI',
@@ -225,7 +244,8 @@ export default {
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'rest.pagingMethod': { fieldId: 'rest.pagingMethod' },
-    'rest.nextPagePath': { fieldId: 'rest.nextPagePath' },
+    'rest.nextPageURLPath': { fieldId: 'rest.nextPageURLPath' },
+    'rest.nextPageTokenPath': { fieldId: 'rest.nextPageTokenPath' },
     'rest.linkHeaderRelation': { fieldId: 'rest.linkHeaderRelation' },
     'rest.skipArgument': { fieldId: 'rest.skipArgument' },
     'rest.nextPageRelativeURI': { fieldId: 'rest.nextPageRelativeURI' },
@@ -249,15 +269,15 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'Where would you like to transfer from?';
 
           return 'What would you like to export?';
         },
         fields: [
           'rest.method',
           'rest.blobMethod',
-          'rest.headers',
           'rest.relativeURI',
+          'rest.headers',
           'rest.postBody',
           'rest.blobFormat',
         ],
@@ -270,17 +290,18 @@ export default {
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',
-          'rest.once.relativeURI',
           'rest.once.method',
+          'rest.once.relativeURI',
           'rest.once.postBody',
         ],
       },
       {
         collapsed: true,
-        label: 'Does this API support paging?',
+        label: 'Does this API use paging?',
         fields: [
           'rest.pagingMethod',
-          'rest.nextPagePath',
+          'rest.nextPageURLPath',
+          'rest.nextPageTokenPath',
           'rest.linkHeaderRelation',
           'rest.skipArgument',
           'rest.nextPageRelativeURI',

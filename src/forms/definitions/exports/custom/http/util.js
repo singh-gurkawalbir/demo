@@ -100,14 +100,14 @@ export function exportTypeFieldsMeta({
   supportedExportTypes = [],
   exportType,
 }) {
-  const exportTypeOptions = [{ value: 'all', label: 'All' }];
+  const exportTypeOptions = [{ value: 'all', label: 'All – always export all data' }];
 
   if (supportedExportTypes.includes('delta')) {
-    exportTypeOptions.push({ value: 'delta', label: 'Delta' });
+    exportTypeOptions.push({ value: 'delta', label: 'Delta – export only modified data' });
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test' });
+    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
   }
 
   if (exportTypeOptions.length <= 1) {

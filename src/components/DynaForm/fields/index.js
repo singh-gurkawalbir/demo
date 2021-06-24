@@ -129,6 +129,7 @@ import DynaTrialLicense from './DynaTrialLicense';
 import DynaLicenseExpires from './DynaLicenseExpires';
 import DynaLicenseEditor from './DynaLicenseEditor';
 import DynaSsoOrgId from './DynaSsoOrgId';
+import DynaSelectWithValidations from './select/DynaSelectWithValidations';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -268,4 +269,5 @@ export default {
   licenseexpires: DynaLicenseExpires,
   licenseeditor: DynaLicenseEditor,
   ssoorgid: DynaSsoOrgId,
+  selectwithvalidations: DynaSelectWithValidations,
 };

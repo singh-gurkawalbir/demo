@@ -1,7 +1,8 @@
 export default {
   'http.successMediaType': {
     type: 'select',
-    label: 'Override success media type',
+    placeholder: 'Do not override',
+    label: 'Override media type for success responses',
     options: [
       {
         items: [
@@ -20,7 +21,8 @@ export default {
   },
   'http.requestMediaType': {
     type: 'select',
-    label: 'Request media type',
+    label: 'Override request media type',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
@@ -44,7 +46,8 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Override error media type',
+    label: 'Override media type for error responses',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
@@ -64,30 +67,13 @@ export default {
     type: 'relativeuri',
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
-    validWhen: {
-      someAreTrue: {
-        message:
-          'For delta exports please use lastExportDateTime in the relative URI or Request Body.',
-        conditions: [
-          {
-            field: 'type',
-            isNot: {
-              values: ['delta'],
-            },
-          },
-          {
-            field: 'http.body',
-            matchesRegEx: {
-              pattern: 'lastExportDateTime',
-            },
-          },
-          {
-            matchesRegEx: {
-              pattern: 'lastExportDateTime',
-            },
-          },
-        ],
-      },
+    validateInComponent: true,
+    deltaFieldsToValidate: ['http.relativeURI', 'http.body'],
+    pagingFieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'],
+    pagingMethodsToValidate: {
+      page: /.*{{.*export\.http\.paging\.page.*}}/,
+      skip: /.*{{.*export\.http\.paging\.skip.*}}/,
+      token: /.*{{.*export\.http\.paging\.token.*}}/,
     },
     requiredWhen: [
       {
@@ -169,18 +155,37 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.paging.method': {
-    type: 'select',
+    type: 'selectwithvalidations',
     label: 'Paging method',
     options: [
       {
         items: [
-          { label: 'Token', value: 'token' },
-          { label: 'Skip', value: 'skip' },
-          { label: 'Page', value: 'page' },
-          { label: 'Next Page URL', value: 'url' },
-          { label: 'Link Header', value: 'linkheader' },
-          { label: 'Relative URI', value: 'relativeuri' },
-          { label: 'Post Body', value: 'body' },
+          { label: 'Next page token',
+            value: 'token',
+            regex: /.*{{.*export\.http\.paging\.token.*}}/,
+            description: 'Add {{export.http.paging.token}} to either the relative URI or HTTP request body to complete the setup.',
+            helpKey: 'export.paging.token',
+            fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'] },
+
+          { label: 'Skip number parameter',
+            value: 'skip',
+            regex: /.*{{.*export\.http\.paging\.skip.*}}/,
+            description: 'Add {{export.http.paging.skip}} to either the relative URI or HTTP request body to complete the setup.',
+            helpKey: 'export.paging.skip',
+            fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body']},
+
+          { label: 'Page number parameter',
+            value: 'page',
+            regex: /.*{{.*export\.http\.paging\.page.*}}/,
+            description: 'Add {{export.http.paging.page}} to either the relative URI or HTTP request body to complete the setup.',
+            helpKey: 'export.paging.page',
+            fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'],
+          },
+
+          { label: 'Next page URL', value: 'url' },
+          { label: 'Link header', value: 'linkheader' },
+          { label: 'Custom relative URI', value: 'relativeuri' },
+          { label: 'Custom request body', value: 'body' },
         ],
       },
     ],
@@ -193,7 +198,7 @@ export default {
   },
   'http.paging.skip': {
     type: 'text',
-    label: 'Skip',
+    label: 'Override skip number start index',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -207,7 +212,7 @@ export default {
   },
   'http.paging.body': {
     type: 'httprequestbody',
-    label: 'Paging post body',
+    label: 'Override HTTP request body for subsequent page requests',
     required: true,
     visibleWhenAll: [
       {
@@ -222,7 +227,7 @@ export default {
   },
   'http.paging.page': {
     type: 'text',
-    label: 'Page',
+    label: 'Override page number start index',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -245,7 +250,7 @@ export default {
   },
   'http.paging.token': {
     type: 'text',
-    label: 'Token',
+    label: 'Override initial token value',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -257,13 +262,32 @@ export default {
       },
     ],
   },
-  'http.paging.path': {
+
+  // added 2 separate UI fields for paths for url and token methods
+  // to have diff help texts and labels
+  'http.paging.urlPath': {
     type: 'text',
-    label: 'Path',
+    label: 'Path to next page URL field in HTTP response body',
+    defaultValue: r => r?.http?.paging?.path,
     visibleWhenAll: [
       {
         field: 'http.paging.method',
-        is: ['token', 'url'],
+        is: ['url'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.paging.tokenPath': {
+    type: 'text',
+    label: 'Path to next page token field in HTTP response body',
+    defaultValue: r => r?.http?.paging?.path,
+    visibleWhenAll: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
       },
       {
         field: 'outputMode',
@@ -273,7 +297,7 @@ export default {
   },
   'http.paging.relativeURI': {
     type: 'text',
-    label: 'Relative URI',
+    label: 'Override relative URI for subsequent page requests',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -287,7 +311,7 @@ export default {
   },
   'http.paging.pathAfterFirstRequest': {
     type: 'text',
-    label: 'Token path after first request',
+    label: 'Override path to next page token field for subsequent page requests',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -301,7 +325,7 @@ export default {
   },
   'http.paging.resourcePath': {
     type: 'text',
-    label: 'Resource path',
+    label: 'Override path to records for subsequent page requests',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -315,7 +339,7 @@ export default {
   },
   'http.paging.maxPagePath': {
     type: 'text',
-    label: 'Max page path',
+    label: 'Path to total number of pages field in HTTP response body',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -329,7 +353,7 @@ export default {
   },
   'http.paging.maxCountPath': {
     type: 'text',
-    label: 'Max count path',
+    label: 'Path to total number of results field in HTTP response body',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -343,7 +367,7 @@ export default {
   },
   'http.paging.lastPageStatusCode': {
     type: 'text',
-    label: 'Last page status code',
+    label: 'Override HTTP status code for last page',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -358,7 +382,7 @@ export default {
   },
   'http.paging.lastPagePath': {
     type: 'text',
-    label: 'Last page path',
+    label: 'Path to paging complete field in HTTP response body',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -368,7 +392,7 @@ export default {
   },
   'http.paging.lastPageValues': {
     type: 'text',
-    label: 'Last page values',
+    label: 'Paging complete values',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -379,7 +403,7 @@ export default {
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
-    label: 'Link header relation',
+    label: 'Override link header relation name',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -409,7 +433,16 @@ export default {
   },
   'http.response.resourcePath': {
     type: 'text',
-    label: 'Resource path',
+    label: r => {
+      if (r?.resourceType === 'lookupFiles' || r?.type === 'blob') { return 'Path to file in HTTP response body'; }
+
+      return 'Path to records in HTTP response body';
+    },
+    helpKey: r => {
+      if (r?.resourceType === 'lookupFiles' || r?.type === 'blob') { return 'export.http.response.file.resourcePath'; }
+
+      return 'export.http.response.resourcePath';
+    },
     requiredWhen: [
       {
         field: 'http.successMediaType',
@@ -435,7 +468,7 @@ export default {
   },
   'http.response.successPath': {
     type: 'text',
-    label: 'Success path',
+    label: 'Path to success field in HTTP response body',
     requiredWhen: [
       {
         field: 'http.response.successValues',
@@ -470,7 +503,7 @@ export default {
   },
   'http.response.errorPath': {
     type: 'text',
-    label: 'Error path',
+    label: 'Path to detailed error message field in HTTP response body',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -484,7 +517,7 @@ export default {
   },
   'http.response.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to error field in HTTP response body',
     requiredWhen: [
       {
         field: 'http.response.failValues',
@@ -505,7 +538,7 @@ export default {
   'http.response.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Fail values',
+    label: 'Error values',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -536,7 +569,8 @@ export default {
   // #endregion transform
   'http.once.relativeURI': {
     type: 'relativeuri',
-    label: 'Relative URI',
+    label: 'Relative URI to update records',
+    required: true,
     connectionId: r => r && r._connectionId,
     visibleWhenAll: [
       {
@@ -549,7 +583,8 @@ export default {
   'http.once.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'HTTP request body',
+    label: 'HTTP request body to update records',
+    required: true,
     refreshOptionsOnChangesTo: ['http.requestMediaType'],
     requestMediaType: r =>
       r?.http?.requestMediaType || 'json',
@@ -563,7 +598,8 @@ export default {
   },
   'http.once.method': {
     type: 'select',
-    label: 'HTTP method',
+    label: 'HTTP method to update records',
+    required: true,
     visibleWhenAll: [
       {
         field: 'outputMode',

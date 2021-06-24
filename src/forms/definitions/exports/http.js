@@ -209,6 +209,16 @@ export default {
 
     retValues['/statusExport'] = undefined;
 
+    // we need 2 separate UI fields for path for url and token paging methods
+    // to have diff help texts and labels
+    if (retValues['/http/paging/method'] === 'url') {
+      retValues['/http/paging/path'] = retValues['/http/paging/urlPath'];
+    } else if (retValues['/http/paging/method'] === 'token') {
+      retValues['/http/paging/path'] = retValues['/http/paging/tokenPath'];
+    }
+    delete retValues['/http/paging/urlPath'];
+    delete retValues['/http/paging/tokenPath'];
+
     return {
       ...retValues,
     };
@@ -285,7 +295,7 @@ export default {
     'http.response.failValues': { fieldId: 'http.response.failValues' },
     type: {
       id: 'type',
-      type: 'select',
+      type: 'selectwithvalidations',
       label: 'Export type',
       required: true,
       defaultValue: r => {
@@ -306,10 +316,16 @@ export default {
       options: [
         {
           items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
+            { label: 'All – always export all data', value: 'all' },
+            { label: 'Delta – export only modified data',
+              value: 'delta',
+              regex: /.*{{.*lastExportDateTime.*}}/,
+              description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
+              helpKey: 'export.delta',
+              fieldsToValidate: ['http.relativeURI', 'http.body'] },
+
+            { label: 'Once – export records only once', value: 'once' },
+            { label: 'Test – export only 1 record', value: 'test' },
           ],
         },
       ],
@@ -330,13 +346,22 @@ export default {
       fieldId: 'http.once.method',
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      type: 'text',
+      label: 'Boolean field to mark records as exported',
+      visibleWhenAll: [
+        { field: 'type', is: ['once'] },
+        {field: 'http.requestMediaType',
+          isNot: ['xml', 'form-data'],
+        },
+      ],
     },
     'http.paging.method': { fieldId: 'http.paging.method' },
     'http.paging.skip': { fieldId: 'http.paging.skip' },
     'http.paging.page': { fieldId: 'http.paging.page' },
     'http.paging.token': { fieldId: 'http.paging.token' },
-    'http.paging.path': { fieldId: 'http.paging.path' },
+    'http.paging.urlPath': { fieldId: 'http.paging.urlPath' },
+    'http.paging.tokenPath': { fieldId: 'http.paging.tokenPath' },
     'http.paging.body': { fieldId: 'http.paging.body' },
     'http.paging.relativeURI': { fieldId: 'http.paging.relativeURI' },
     'http.paging.linkHeaderRelation': {
@@ -416,16 +441,16 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'Where would you like to transfer from?';
 
           return 'What would you like to export?';
         },
         fields: [
           'http.method',
           'http.blobMethod',
+          'http.relativeURI',
           'http.headers',
           'http.requestMediaType',
-          'http.relativeURI',
           'http.body',
           'http.response.blobFormat',
         ],
@@ -438,20 +463,21 @@ export default {
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',
-          'http.once.relativeURI',
           'http.once.method',
+          'http.once.relativeURI',
           'http.once.body',
         ],
       },
       {
         collapsed: true,
-        label: 'Does this API support paging?',
+        label: 'Does this API use paging?',
         fields: [
           'http.paging.method',
           'http.paging.skip',
           'http.paging.page',
+          'http.paging.urlPath',
+          'http.paging.tokenPath',
           'http.paging.token',
-          'http.paging.path',
           'http.paging.relativeURI',
           'http.paging.linkHeaderRelation',
           'http.paging.pathAfterFirstRequest',
@@ -471,11 +497,11 @@ export default {
           {
             fields: [
               'http.response.resourcePath',
-              'http.response.errorPath',
-              'http.response.successPath',
-              'http.response.successValues',
               'http.response.failPath',
               'http.response.failValues',
+              'http.response.successPath',
+              'http.response.successValues',
+              'http.response.errorPath',
               'http.successMediaType',
             ],
           },
