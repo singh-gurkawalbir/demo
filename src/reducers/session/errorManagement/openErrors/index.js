@@ -1,8 +1,7 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
-import { getErrorMapWithTotal } from '../../../../utils/errorManagement';
-
-const defaultObject = {};
+import { getOpenErrorDetailsMap } from '../../../../utils/errorManagement';
 
 export default (state = {}, action) => {
   const {
@@ -29,11 +28,9 @@ export default (state = {}, action) => {
           break;
         }
         const flowErrors = (openErrors && openErrors.flowErrors) || [];
-        const { data, total} = getErrorMapWithTotal(flowErrors, '_expOrImpId');
 
         draft[flowId].status = 'received';
-        draft[flowId].data = data;
-        draft[flowId].total = total;
+        draft[flowId].data = getOpenErrorDetailsMap(flowErrors, '_expOrImpId');
         break;
       }
 
@@ -50,11 +47,9 @@ export default (state = {}, action) => {
         if (!integrationId || !draft[integrationId]) {
           break;
         }
-        const { data, total} = getErrorMapWithTotal(integrationErrors, '_flowId');
 
         draft[integrationId].status = 'received';
-        draft[integrationId].data = data;
-        draft[integrationId].total = total;
+        draft[integrationId].data = getOpenErrorDetailsMap(integrationErrors, '_flowId');
         break;
       }
 
@@ -65,8 +60,22 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.errorMap = (state, resourceId) => {
-  if (!state || !resourceId || !state[resourceId]) return defaultObject;
+selectors.openErrorsStatus = (state, resourceId) => state?.[resourceId]?.status;
 
-  return state[resourceId];
+selectors.totalOpenErrors = (state, resourceId) => {
+  if (!state?.[resourceId]?.data) return 0;
+
+  return Object.values(state[resourceId].data)
+    .reduce((total, info) => total + (info.numError || 0), 0);
 };
+
+selectors.openErrorsDetails = (state, resourceId) => state?.[resourceId]?.data;
+
+selectors.openErrorsMap = createSelector(
+  selectors.openErrorsDetails,
+  openErrorsDetails => {
+    const resourceIds = Object.keys(openErrorsDetails || {});
+
+    return resourceIds.reduce((infoMap, resourceId) => ({...infoMap, [resourceId]: openErrorsDetails[resourceId]?.numError }), {});
+  }
+);

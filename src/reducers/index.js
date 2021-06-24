@@ -1842,7 +1842,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (state, integrationId) => integrationId,
   (_1, _2, childId) => childId,
   (_1, _2, _3, options) => options,
-  selectors.errorMap,
+  selectors.openErrorsMap,
   selectors.currentEnvironment,
   (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
@@ -1855,7 +1855,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
       return childIntegrationIds.includes(f._integrationId);
     });
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.[f._id]) || 0}));
 
     return filterAndSortResources(integrationFlows, options);
   }
@@ -2395,9 +2395,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
-    selectors.errorMap,
+    selectors.openErrorsMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, errorMap = emptyObject, options = emptyObject) => {
+    (integration, flows = [], integrationId, section, childId, errorMap, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
@@ -2451,7 +2451,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map(f => ({...f, errors: (errorMap && errorMap.data && errorMap.data[f._id]) || 0}))
+        ).map(f => ({...f, errors: errorMap?.[f._id] || 0}))
         .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
     }
   );
@@ -4819,7 +4819,7 @@ selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsI
  */
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
@@ -4869,7 +4869,7 @@ selectors.integrationErrorsPerChild = (state, integrationId) => {
  */
 selectors.integrationErrorsPerFlowGroup = createSelector(
   selectors.integrationEnabledFlowIds,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);

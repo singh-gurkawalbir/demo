@@ -255,9 +255,7 @@ const pageBarUseStyles = makeStyles(({
 
 const TotalErrors = ({flowId}) => {
   const classes = pageBarUseStyles();
-  const {
-    total: totalErrors = 0,
-  } = useSelector(state => selectors.errorMap(state, flowId));
+  const totalErrors = useSelector(state => selectors.totalOpenErrors(state, flowId));
 
   if (!totalErrors) {
     return null;

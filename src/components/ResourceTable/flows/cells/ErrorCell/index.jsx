@@ -43,13 +43,9 @@ export default function RunCell({
   const classes = useStyles();
   const match = useRouteMatch();
   const flowErrorCount = useSelector(state => {
-    const integrationErrors = selectors.errorMap(state, integrationId);
+    const integrationErrorsMap = selectors.openErrorsMap(state, integrationId);
 
-    if (integrationErrors && integrationErrors.data) {
-      return integrationErrors.data[flowId];
-    }
-
-    return '';
+    return integrationErrorsMap?.[flowId] || '';
   });
 
   if (flowErrorCount) {

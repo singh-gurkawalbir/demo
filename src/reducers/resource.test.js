@@ -4449,22 +4449,40 @@ describe('resource region selector testcases', () => {
                 integrationId1: {
                   status: 'received',
                   data: {
-                    flow2: 2,
-                    flow6: 1,
-                    flow7: 0,
+                    flow2: {
+                      flowId: 'flow2',
+                      numError: 2,
+                    },
+                    flow6: {
+                      flowId: 'flow6',
+                      numError: 1,
+                    },
+                    flow7: {
+                      flowId: 'flow7',
+                      numError: 0,
+                    },
                   },
                 },
                 integrationId2: {
                   status: 'received',
                   data: {
-                    flow3: 23,
+                    flow3: {
+                      flowId: 'flow3',
+                      numError: 23,
+                    },
                   },
                 },
                 integrationId3: {
                   status: 'received',
                   data: {
-                    flow4: 213,
-                    flow5: 32,
+                    flow4: {
+                      flowId: 'flow4',
+                      numError: 213,
+                    },
+                    flow5: {
+                      flowId: 'flow5',
+                      numError: 32,
+                    },
                   },
                 },
               },

@@ -87,6 +87,18 @@ export const getErrorMapWithTotal = (errorList = [], resourceId) => {
   return {data: errorMap, total: totalCount};
 };
 
+export const getOpenErrorDetailsMap = (errorList = [], resourceId) => {
+  const errorMap = {};
+
+  errorList.forEach(error => {
+    if (resourceId && error[resourceId]) {
+      errorMap[error[resourceId]] = error;
+    }
+  });
+
+  return errorMap;
+};
+
 export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   const resourceIdSet = new Set();
 

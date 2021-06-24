@@ -17,6 +17,8 @@ import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
+import StatusCircle from '../../../../components/StatusCircle';
+import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -111,9 +113,18 @@ const metadata = {
         }
 
         return (
-          <div className={classes.button} onClick={handleErrorClick}>{count > 9999 ? '9999+' : count} errors</div >
+          <div className={classes.button} onClick={handleErrorClick}>
+            <StatusCircle variant="error" size="mini" />
+            {count > 9999 ? '9999+' : count} errors
+          </div >
         );
       },
+    },
+    {
+      key: 'lastErrorAt',
+      heading: 'Last open error',
+      Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
+      orderBy: 'lastErrorAt',
     },
   ],
 };
@@ -132,20 +143,22 @@ const ErrorsList = ({integrationId, childId}) => {
     flowId
   )?.merged || emptyObject;
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
-  const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
+  const status = useSelector(state => selectors.openErrorsStatus(state, flowId));
+  const openErrorsDetails = useSelector(state => selectors.openErrorsDetails(state, flowId));
 
   const resources = useMemo(() => flowResources
     .filter(r => r._id !== flowId)
     .map(r => ({
       id: r._id,
       name: r.name || r._id,
-      count: errorMap && errorMap[r._id],
+      count: openErrorsDetails?.[r._id]?.numError,
+      lastErrorAt: openErrorsDetails?.[r._id]?.lastErrorAt,
       flowId,
       type: r.type,
       isLookup: r.isLookup,
       childId,
       integrationId,
-    })), [flowResources, flowId, errorMap, integrationId, childId]);
+    })), [flowResources, flowId, openErrorsDetails, integrationId, childId]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
