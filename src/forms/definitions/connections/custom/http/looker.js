@@ -5,7 +5,7 @@ export default {
     '/assistant': 'looker',
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://${formValues['/http/instanceurl']}/api/3.1`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/instanceurl']}/api/3.1`,
     '/http/ping/relativeURI': '/looks',
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
@@ -13,13 +13,13 @@ export default {
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
-    '/http/auth/token/refreshRelativeURI': `https://${formValues['/http/instanceurl']}/api/3.1/login`,
+    '/http/auth/token/refreshRelativeURI': `https://${formValues['/http/unencrypted/instanceurl']}/api/3.1/login`,
     '/http/auth/token/refreshBody': '{ "client_id": "{{{connection.http.unencrypted.clientId}}}", "client_secret": "{{{connection.http.encrypted.clientSecret}}}" }',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.instanceurl': {
-      id: 'http.instanceurl',
+    'http.unencrypted.instanceurl': {
+      id: 'http.unencrypted.instanceurl',
       type: 'text',
       label: 'Instance URL',
       startAdornment: 'https://',
@@ -31,18 +31,7 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
-      defaultValue: r => {
-        const baseUri = r?.http?.baseURI;
-        const subdomain =
-          baseUri &&
-          baseUri.substring(
-            baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('/api/3.1')
-          );
-
-        return subdomain;
-      },
-      helpKey: 'looker.connection.http.instanceurl',
+      helpKey: 'looker.connection.http.unencrypted.instanceurl',
     },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
@@ -86,7 +75,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: [
-          'http.instanceurl',
+          'http.unencrypted.instanceurl',
           'http.unencrypted.clientId',
           'http.encrypted.clientSecret',
           'http.auth.token.token',

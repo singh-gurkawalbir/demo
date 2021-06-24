@@ -303,7 +303,7 @@ export default {
       'http.auth.token.token': resp && resp.access_token,
     }),
     payloadTransformer: form => ({
-      baseURI: `https://${form['/http/instanceurl']}/api/3.1/login`,
+      baseURI: `https://${form['/http/unencrypted/instanceurl']}/api/3.1/login`,
       body: { client_id: form['/http/unencrypted/clientId'],
         client_secret: form['/http/encrypted/clientSecret'],
       },
