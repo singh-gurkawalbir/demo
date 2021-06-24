@@ -11,6 +11,8 @@ export default {
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/grantType'] = 'authorizecode';
       retValues['/http/auth/oauth/clientCredentialsLocation'] = 'body';
+      retValues['/http/auth/token/refreshMethod'] = 'POST';
+      retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
     } else {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'Authorization';
@@ -20,6 +22,8 @@ export default {
       retValues['/http/_iClientId'] = undefined;
       retValues['/http/auth/oauth/grantType'] = undefined;
       retValues['/http/auth/oauth/clientCredentialsLocation'] = undefined;
+      retValues['/http/auth/token/refreshMethod'] = undefined;
+      retValues['/http/auth/token/refreshMediaType'] = undefined;
     }
 
     return {
