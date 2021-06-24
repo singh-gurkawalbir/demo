@@ -27,13 +27,15 @@ export default function DynaTable(props) {
     },
     [onFieldChange]
   );
+
+  const propsWithVirtualization = useMemo(() => ({...props, isVirtualizedTable: true}), [props]);
   // this is done to account for the above value save behavior
 
   const updatedProps = useMemo(() => ({
-    ...props,
+    ...propsWithVirtualization,
     value: (value && value.value) || value,
     onFieldChange: updatedOnFieldChange,
-  }), [props, updatedOnFieldChange, value]);
+  }), [propsWithVirtualization, updatedOnFieldChange, value]);
 
   if (extractFieldHeader || extracts) {
     tableType = 'staticMapWidget';
@@ -53,10 +55,10 @@ export default function DynaTable(props) {
         <DynaConnectoroNColumnMap {...updatedProps} />
       )}
       {tableType === 'refreshableStaticMap' && (
-        <DynaRefreshableStaticMap {...props} />
+        <DynaRefreshableStaticMap {...propsWithVirtualization} />
       )}
-      {tableType === 'staticMap' && <DynaStaticMap {...props} />}
-      {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...props} />}
+      {tableType === 'staticMap' && <DynaStaticMap {...propsWithVirtualization} />}
+      {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...propsWithVirtualization} />}
       {tableType === 'generic' && <DynaTableView {...updatedProps} />}
     </LoadResources>
   );

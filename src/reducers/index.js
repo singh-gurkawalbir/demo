@@ -814,6 +814,24 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
   );
 };
 
+selectors.mkGetSortedScriptsTiedToFlow = () => {
+  const scriptsTiedToFlowSelector = selectors.mkGetScriptsTiedToFlow();
+
+  return createSelector(
+    scriptsTiedToFlowSelector,
+    (state, _1, filterKey) => state?.session?.filters?.[filterKey],
+    (scripts, scriptsFilter) => {
+      const comparer = ({ order, orderBy }) => stringCompare(orderBy, order === 'desc');
+
+      if (scriptsFilter?.sort) {
+        return [...scripts].sort(comparer(scriptsFilter.sort));
+      }
+
+      return scripts;
+    }
+  );
+};
+
 const reportsFilter = {
   type: 'eventreports',
 };
