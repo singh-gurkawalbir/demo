@@ -47,7 +47,7 @@ export default function SwatchSet({name, colors, whitelist}) {
       <div className={classes.swatchSet}>
         {
           colorNames.map(colorName => (
-            <Swatch key={colorName} colorName={colorName} color={colors[colorName]} />
+            <Swatch key={colorName} colorName={`${name} ${colorName}`} color={colors[colorName]} />
           ))
         }
       </div>
