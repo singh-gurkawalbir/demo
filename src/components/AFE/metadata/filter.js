@@ -34,8 +34,5 @@ export default {
   // sample metadata to support new features.
   drawer: {
     showLayoutToggle: true,
-    actions: [
-      { component: ToggleFilterMode, position: 'right' },
-    ],
   },
 };
