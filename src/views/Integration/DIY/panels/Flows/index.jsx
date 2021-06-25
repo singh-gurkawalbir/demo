@@ -46,7 +46,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   content: {
-    // padding: theme.spacing(3, 2),
     width: '100%',
   },
   flowTitle: {
@@ -87,6 +86,9 @@ const useStyles = makeStyles(theme => ({
     '&>h4': {
       minWidth: '300px',
     },
+  },
+  flowPanelStatusHeader: {
+    fontSize: 14,
   },
 }));
 
@@ -246,17 +248,17 @@ const Title = ({flows, integrationId}) => {
   const errorCount = yetToLoadOpenErrors ? currentTileErrorCount : totalCount;
 
   return (
-    <span className={classes.flowsPanelWithStatus}>
+    <div className={classes.flowsPanelWithStatus}>
       Integration flows
       {errorCount ? (
         <>
           <span className={classes.divider} />
-          <StatusButton size="mini" variant="error">
+          <StatusButton size="mini" variant="error" className={classes.flowPanelStatusHeader}>
             {errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`}
           </StatusButton>
         </>
       ) : null}
-    </span>
+    </div>
   );
 };
 export default function FlowsPanel({ integrationId, childId }) {

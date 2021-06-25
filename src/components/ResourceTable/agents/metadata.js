@@ -3,11 +3,11 @@ import Delete from '../commonActions/Delete';
 import GenerateToken from '../commonActions/GenerateToken';
 import References from '../commonActions/References';
 import Edit from '../commonActions/Edit';
-import OnlineStatus from '../commonCells/OnlineStatus';
 import AgentDownloadInstaller from '../../AgentDownloadInstaller';
 import AgentToken from '../../AgentToken';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import StatusButton from '../../Buttons/StatusButton';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -25,7 +25,7 @@ export default {
     {
       key: 'status',
       heading: 'Status',
-      Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
+      Value: ({rowData: r}) => <StatusButton variant={r.offline ? 'error' : 'success'}>{r.offline ? 'Offline' : 'online'}</StatusButton>,
     },
     {
       key: 'lastHeartBeat',

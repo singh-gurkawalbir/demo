@@ -1,9 +1,9 @@
 import React from 'react';
 import ResourceDrawerLink from '../ResourceDrawerLink';
 import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
-import OnlineStatus from '../ResourceTable/commonCells/OnlineStatus';
 import CeligoTimeAgo from '../CeligoTimeAgo';
 import { useGetTableContext } from '../CeligoTable/TableContext';
+import StatusButton from '../Buttons/StatusButton';
 
 export default {
   useColumns: () => [
@@ -26,7 +26,11 @@ export default {
     {
       key: 'status',
       heading: 'Status',
-      Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
+      Value: ({rowData: r}) => (
+        <StatusButton variant={r.offline ? 'error' : 'success'}>
+          {r.offline ? 'Offline' : 'online'}
+        </StatusButton>
+      ),
       width: '100px',
     },
     {

@@ -5,7 +5,6 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: [[0, 5]],
     background: theme.palette.background.default,
     borderRadius: '50%',
     display: 'inline-block',
