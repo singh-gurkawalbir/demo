@@ -1,6 +1,5 @@
 import React from 'react';
 import StatusButton from '../../../Buttons/StatusButton';
-// import StatusCircle from '../../../StatusCircle';
 
 export default function OnlineStatus({offline}) {
   return (

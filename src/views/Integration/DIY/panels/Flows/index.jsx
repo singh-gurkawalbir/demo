@@ -15,7 +15,6 @@ import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import Spinner from '../../../../../components/Spinner';
-// import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
 import { MISCELLANEOUS_SECTION_ID } from '../../../../../utils/constants';
@@ -262,10 +261,6 @@ const Title = ({flows, integrationId}) => {
           <StatusButton size="mini" variant="error" type="text">
             {errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`}
           </StatusButton>
-          {/* <span className={classes.errorStatus}>
-            <StatusCircle variant="error" size="mini" />
-            <span>{errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`} </span>
-          </span> */}
         </>
       ) : null}
     </span>

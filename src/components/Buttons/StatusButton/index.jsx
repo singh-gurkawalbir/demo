@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import StatusCircle from '../../StatusCircle';
 
 const useStyles = makeStyles(theme => ({
-  textRoot: {
+  statusTextContainer: {
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.secondary.main,
   },
-  root: {
+  statusButtonContainer: {
     '& > * .MuiButton-startIcon': {
       marginRight: 0,
     },
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function StatusButton(props) {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const {children, className, error, size, variant, onClick, ...rest} = props;
 
   if (onClick) {
@@ -37,7 +37,7 @@ export default function StatusButton(props) {
       <Button
         variant="text"
         color="primary"
-        className={clsx(classes.root, {[classes.error]: error}, className)}
+        className={clsx(classes.statusButtonContainer, {[classes.error]: error}, className)}
         disableElevation
         onClick={onClick}
         startIcon={<StatusCircle variant={variant} size={size} />}
@@ -48,7 +48,7 @@ export default function StatusButton(props) {
   }
 
   return (
-    <div className={clsx(classes.textRoot, className)}>
+    <div className={clsx(classes.statusTextContainer, className)}>
       <StatusCircle variant={variant} size={size} />
       {children}
     </div>

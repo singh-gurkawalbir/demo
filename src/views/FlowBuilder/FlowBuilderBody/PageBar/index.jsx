@@ -15,7 +15,6 @@ import CalendarIcon from '../../../../components/icons/CalendarIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import RunFlowButton from '../../../../components/RunFlowButton';
-// import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../utils/constants';
@@ -260,10 +259,6 @@ const TotalErrors = ({flowId}) => {
   }
 
   return (
-    // <span className={classes.errorStatus}>
-    //   <StatusCircle variant="error" size="small" />
-    //   <span>{totalErrors} errors</span>
-    // </span>
     <StatusButton variant="error" size="small" className={classes.errorStatus}>
       <span>{totalErrors} errors</span>
     </StatusButton>
