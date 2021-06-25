@@ -4,8 +4,6 @@ import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
-import Status from '../../components/Status';
-import StatusCircle from '../../components/StatusCircle';
 import Content from '../../components/HomePageCard/Content';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import AddIcon from '../../components/icons/AddIcon';
@@ -27,6 +25,7 @@ import {
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import CeligoTruncate from '../../components/CeligoTruncate';
+import StatusButton from '../../components/Buttons/StatusButton';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -119,12 +118,9 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
     <div>
       <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <Status
-            label={status.label}
-            onClick={handleStatusClick}
-            className={classes.status}>
-            <StatusCircle variant={status.variant} />
-          </Status>
+          <StatusButton variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
+            {status.label}
+          </StatusButton>
           {isConnectionDown && (
           <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>

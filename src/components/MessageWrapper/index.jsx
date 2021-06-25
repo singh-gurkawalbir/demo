@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +26,7 @@ export default function MessageWrapper(props) {
 
   return (
     <div className={clsx(classes.root, classes[variant], className)}>
-      {children}
+      <Typography>{children}</Typography>
     </div>
   );
 }

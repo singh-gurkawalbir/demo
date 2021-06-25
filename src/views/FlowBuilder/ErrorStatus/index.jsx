@@ -2,24 +2,13 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import StatusCircle from '../../../components/StatusCircle';
-import Status from '../../../components/Status';
 import { selectors } from '../../../reducers';
+import StatusButton from '../../../components/Buttons/StatusButton';
 
 const useStyles = makeStyles(theme => ({
-  status: {
-    justifyContent: 'center',
-    height: 'unset',
+  statusAppBlock: {
     marginTop: theme.spacing(1),
-    '& span': {
-      fontSize: '12px',
-      color: theme.palette.primary.main,
-    },
-    '&:hover': {
-      '& * > span.MuiTypography-root': {
-        color: theme.palette.primary.light,
-      },
-    },
+    fontSize: 14,
   },
 }));
 
@@ -49,24 +38,8 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
     return null;
   }
 
-  if (count) {
-    return (
-      <Status
-        className={classes.status}
-        onClick={handleStatus}
-        label={`${count} errors`}>
-        <StatusCircle variant="error" size="small" />
-      </Status>
-    );
-  }
-
   return (
-    <Status
-      className={classes.status}
-      onClick={handleStatus}
-      label="Success">
-      <StatusCircle variant="success" size="small" />
-    </Status>
+    <StatusButton fullWidth className={classes.statusAppBlock} onClick={handleStatus} variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}</StatusButton>
   );
 }
 

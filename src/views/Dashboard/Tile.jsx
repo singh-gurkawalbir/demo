@@ -69,6 +69,12 @@ const useStyles = makeStyles(theme => ({
   noAppImages: {
     display: 'none',
   },
+  headerTileStatus: {
+    paddingLeft: 0,
+    '& > * .MuiButton-startIcon': {
+      margin: 0,
+    },
+  },
 }));
 
 function AppLogosContainer({ tile }) {
@@ -238,7 +244,7 @@ function Tile({
     <div>
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <StatusButton variant={status.variant} size="large" onClick={handleStatusClick}>
+          <StatusButton variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
             {status.label}
           </StatusButton>
           {isConnectionDown && (
