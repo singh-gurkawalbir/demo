@@ -1,7 +1,7 @@
 import React from 'react';
 import { USER_ACCESS_LEVELS } from '../../../../../utils/constants';
 
-export default function Status({ user, integrationId }) {
+export default function UserStatus({ user, integrationId }) {
   if (user.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
     return null;
   }
