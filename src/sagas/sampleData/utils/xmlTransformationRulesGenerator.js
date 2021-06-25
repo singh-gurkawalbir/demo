@@ -82,10 +82,10 @@ export default function* saveTransformationRulesForNewXMLExport({
   ))?.merged || emptyObject;
 
   const isXmlFileAdaptor =
-    isFileAdaptor(resource) && resource.file.type === 'xml';
+    isFileAdaptor(resource) && resource.file?.type === 'xml';
   const isXmlHttpAdaptor =
     adaptorTypeMap[resource.adaptorType] === 'http' &&
-    resource.http.successMediaType === 'xml';
+    resource.http?.successMediaType === 'xml';
 
   // Other than XML File Adaptor / XML Http Adaptor , we don't need to patch
   // Also for Data loader flows no need to patch though XML file is uploaded
