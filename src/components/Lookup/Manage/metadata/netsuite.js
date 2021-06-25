@@ -85,12 +85,12 @@ export default {
           id: '_mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import field (NetSuite)',
+          valueLabel: 'Import field value',
           commMetaPath: staticLookupCommMetaPath,
           connectionId: staticLookupCommMetaPath && connectionId,
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
           defaultValue:
             lookup.map &&
