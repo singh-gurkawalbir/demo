@@ -55,7 +55,29 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     return fieldDefinitions[fieldId];
   });
 }
+export function headerFieldsMeta({operationDetails, headers = []}) {
+  const editableHeaders = Object.keys(operationDetails?.headers || {}).filter(key => !operationDetails.headers[key]);
 
+  if (editableHeaders.length) {
+    return [{
+      id: 'assistantMetadata.headers',
+      type: 'assistantHeaders',
+      keyName: 'name',
+      validate: true,
+      valueName: 'value',
+      label: 'Configure HTTP headers',
+      value: headers.length
+        ? headers.filter(header => editableHeaders.includes(header.name))
+        : editableHeaders.map(key => ({
+          name: key,
+          value: operationDetails?.headers[key],
+        })),
+      required: true,
+    }];
+  }
+
+  return [];
+}
 export function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters
     .filter(pathParam => pathParam.in === 'path' && !pathParam.isIdentifier)
@@ -245,11 +267,14 @@ export function howToFindIdentifierFieldsMeta({
 export function fieldMeta({ resource, assistantData }) {
   const { assistant, lookups } = resource;
   let { adaptorType } = resource;
+  let headers;
 
   if (adaptorType === 'RESTImport') {
     adaptorType = 'rest';
+    headers = resource.rest.headers;
   } else {
     adaptorType = 'http';
+    headers = resource.http.headers;
   }
 
   const hiddenFields = hiddenFieldsMeta({
@@ -257,6 +282,7 @@ export function fieldMeta({ resource, assistantData }) {
   });
   let basicFields = [];
   let pathParameterFields = [];
+  let headerFields = [];
   let ignoreConfigFields = [];
   let howToFindIdentifierFields = [];
 
@@ -276,6 +302,11 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      headerFields = headerFieldsMeta({
+        headers,
+        operationDetails,
+        assistantConfig,
+      });
       pathParameterFields = pathParameterFieldsMeta({
         operationParameters: operationDetails.parameters,
         values: assistantConfig.pathParams,
@@ -296,6 +327,7 @@ export function fieldMeta({ resource, assistantData }) {
   const fields = [
     ...hiddenFields,
     ...basicFields,
+    ...headerFields,
     ...pathParameterFields,
     ...ignoreConfigFields,
     ...howToFindIdentifierFields,

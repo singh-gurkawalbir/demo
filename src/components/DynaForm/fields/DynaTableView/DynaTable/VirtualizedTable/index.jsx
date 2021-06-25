@@ -9,11 +9,15 @@ const INVALID_ITEM_SIZE = 55;
 const NO_OF_ROWS = 10;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
-  const {items, optionsMapFinal,
+  const {
+    items,
+    optionsMapFinal,
     touched,
+    ignoreEmptyRow,
     setTableState,
     onRowChange,
-    disableDeleteRows } = data;
+    disableDeleteRows,
+  } = data;
 
   const { value, key } = items[index];
 
@@ -28,6 +32,7 @@ const VirtualizedListRow = ({index, style, data}) => {
         tableSize={items.length}
         optionsMap={optionsMapFinal}
         touched={touched}
+        ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
@@ -76,6 +81,7 @@ const VirtualizedTable = ({
   items,
   optionsMapFinal,
   touched,
+  ignoreEmptyRow,
   isAnyColumnFetching,
   setTableState,
   onRowChange,
@@ -101,10 +107,11 @@ const VirtualizedTable = ({
     items,
     optionsMapFinal,
     touched,
+    ignoreEmptyRow,
     setTableState,
     onRowChange,
     disableDeleteRows,
-  }), [disableDeleteRows, items, onRowChange, optionsMapFinal, setTableState, touched]);
+  }), [disableDeleteRows, items, onRowChange, optionsMapFinal, setTableState, touched, ignoreEmptyRow]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders
