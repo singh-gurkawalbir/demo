@@ -17,7 +17,7 @@ import Revoke from './actions/Revoke';
 import actions from '../../../actions';
 import ReplaceConnection from './actions/ReplaceConnection';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
-import StatusButton from '../../Buttons/StatusButton';
+import Status from '../../Buttons/Status';
 
 export default {
   useColumns: () => {
@@ -37,7 +37,7 @@ export default {
       {
         key: 'status',
         heading: 'Status',
-        Value: ({rowData: r}) => <StatusButton variant={r.offline ? 'error' : 'success'}>{r.offline ? 'Offline' : 'Online'}</StatusButton>,
+        Value: ({rowData: r}) => <Status variant={r.offline ? 'error' : 'success'}>{r.offline ? 'Offline' : 'Online'}</Status>,
       },
       {
         key: 'type',

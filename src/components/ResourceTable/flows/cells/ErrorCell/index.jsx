@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import StatusButton from '../../../../Buttons/StatusButton';
+import Status from '../../../../Buttons/Status';
 
 export default function RunCell({
   flowId,
@@ -21,15 +21,15 @@ export default function RunCell({
 
   if (flowErrorCount) {
     return (
-      <StatusButton variant="error" size="mini" >
+      <Status variant="error" size="mini" >
         <Link to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
-      </StatusButton>
+      </Status>
     );
   }
 
   return (
-    <StatusButton variant="success" size="mini" >
+    <Status variant="success" size="mini" >
       success
-    </StatusButton>
+    </Status>
   );
 }

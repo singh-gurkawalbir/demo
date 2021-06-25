@@ -25,7 +25,7 @@ import {
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import CeligoTruncate from '../../components/CeligoTruncate';
-import StatusButton from '../../components/Buttons/StatusButton';
+import Status from '../../components/Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -118,9 +118,9 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
     <div>
       <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <StatusButton variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
+          <Status variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
             {status.label}
-          </StatusButton>
+          </Status>
           {isConnectionDown && (
           <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>

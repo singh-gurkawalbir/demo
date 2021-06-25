@@ -30,7 +30,7 @@ import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 import CeligoTruncate from '../../components/CeligoTruncate';
 import ActionButton from '../../components/ActionButton';
-import StatusButton from '../../components/Buttons/StatusButton';
+import Status from '../../components/Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -244,9 +244,9 @@ function Tile({
     <div>
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <StatusButton variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
+          <Status variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
             {status.label}
-          </StatusButton>
+          </Status>
           {isConnectionDown && (
           <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>

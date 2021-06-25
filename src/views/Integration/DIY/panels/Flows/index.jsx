@@ -4,7 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
-import StatusButton from '../../../../../components/Buttons/StatusButton';
+import Status from '../../../../../components/Buttons/Status';
 import CeligoTable from '../../../../../components/CeligoTable';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
@@ -253,9 +253,9 @@ const Title = ({flows, integrationId}) => {
       {errorCount ? (
         <>
           <span className={classes.divider} />
-          <StatusButton size="mini" variant="error" className={classes.flowPanelStatusHeader}>
+          <Status size="mini" variant="error" className={classes.flowPanelStatusHeader}>
             {errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`}
-          </StatusButton>
+          </Status>
         </>
       ) : null}
     </div>

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
-import StatusButton from '../../../components/Buttons/StatusButton';
+import Status from '../../../components/Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   statusAppBlock: {
@@ -39,7 +39,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
   }
 
   return (
-    <StatusButton fullWidth className={classes.statusAppBlock} onClick={handleStatus} variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}</StatusButton>
+    <Status fullWidth className={classes.statusAppBlock} onClick={handleStatus} variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}</Status>
   );
 }
 

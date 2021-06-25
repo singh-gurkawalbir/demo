@@ -6,11 +6,11 @@ import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import StatusButton from '../../../components/Buttons/StatusButton/index';
+import Status from '../../../components/Buttons/Status/index';
 
 export default {
-  title: 'Buttons / StatusButton',
-  component: StatusButton,
+  title: 'Buttons / Status',
+  component: Status,
   decorators: [withDesign, jsxDecorator],
   argTypes: {
     size: {
@@ -23,7 +23,7 @@ export default {
     },
   },
 };
-const Template = args => <StatusButton {...args} />;
+const Template = args => <Status {...args} />;
 
 export const defaultButton = Template.bind({});
 

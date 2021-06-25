@@ -3,7 +3,7 @@ import ResourceDrawerLink from '../ResourceDrawerLink';
 import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
 import CeligoTimeAgo from '../CeligoTimeAgo';
 import { useGetTableContext } from '../CeligoTable/TableContext';
-import StatusButton from '../Buttons/StatusButton';
+import Status from '../Buttons/Status';
 
 export default {
   useColumns: () => [
@@ -27,9 +27,9 @@ export default {
       key: 'status',
       heading: 'Status',
       Value: ({rowData: r}) => (
-        <StatusButton variant={r.offline ? 'error' : 'success'}>
+        <Status variant={r.offline ? 'error' : 'success'}>
           {r.offline ? 'Offline' : 'online'}
-        </StatusButton>
+        </Status>
       ),
       width: '100px',
     },

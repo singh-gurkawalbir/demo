@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
-import StatusButton from '../../../../components/Buttons/StatusButton';
+import Status from '../../../../components/Buttons/Status';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import EditableText from '../../../../components/EditableText';
@@ -259,9 +259,9 @@ const TotalErrors = ({flowId}) => {
   }
 
   return (
-    <StatusButton variant="error" size="small" className={classes.errorStatus}>
+    <Status variant="error" size="small" className={classes.errorStatus}>
       <span>{totalErrors} errors</span>
-    </StatusButton>
+    </Status>
   );
 };
 

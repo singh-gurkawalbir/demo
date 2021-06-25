@@ -7,7 +7,7 @@ import AgentDownloadInstaller from '../../AgentDownloadInstaller';
 import AgentToken from '../../AgentToken';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
-import StatusButton from '../../Buttons/StatusButton';
+import Status from '../../Buttons/Status';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -25,7 +25,7 @@ export default {
     {
       key: 'status',
       heading: 'Status',
-      Value: ({rowData: r}) => <StatusButton variant={r.offline ? 'error' : 'success'}>{r.offline ? 'Offline' : 'online'}</StatusButton>,
+      Value: ({rowData: r}) => <Status variant={r.offline ? 'error' : 'success'}>{r.offline ? 'Offline' : 'online'}</Status>,
     },
     {
       key: 'lastHeartBeat',

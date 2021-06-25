@@ -18,7 +18,7 @@ import FooterActions from '../../components/HomePageCard/Footer/FooterActions/in
 import Info from '../../components/HomePageCard/Footer/Info/index';
 import Manage from '../../components/HomePageCard/Footer/Manage/index';
 import CeligoTruncate from '../../components/CeligoTruncate';
-import StatusButton from '../../components/Buttons/StatusButton/index';
+import Status from '../../components/Buttons/Status/index';
 import AddIcon from '../../components/icons/AddIcon';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
@@ -90,9 +90,9 @@ export const Defaults = args => {
       <HomePageCardsContainer {...args}>
         <div className={classes.wrapper}>
           <Header>
-            <StatusButton variant="success" {...args}>
+            <Status variant="success" {...args}>
               error
-            </StatusButton>
+            </Status>
             <HeaderAction variants={options} />
           </Header>
           <Content>
@@ -130,9 +130,9 @@ export const SuiteScript = args => {
       <HomePageCardsContainer {...args}>
         <div className={classes.wrapper}>
           <Header>
-            <StatusButton variant="error" {...args}>
+            <Status variant="error" {...args}>
               12 error
-            </StatusButton>
+            </Status>
             <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
               <IconButton size="small" color="inherit" className={classes.status}>
                 <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />

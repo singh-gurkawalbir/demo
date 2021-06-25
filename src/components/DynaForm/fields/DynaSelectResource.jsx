@@ -18,7 +18,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
-import StatusButton from '../../Buttons/StatusButton';
+import Status from '../../Buttons/Status';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -161,9 +161,9 @@ function ConnectionLoadingChip(props) {
   );
 
   return (
-    <StatusButton variant={isConnectionOffline ? 'error' : 'success'}>
+    <Status variant={isConnectionOffline ? 'error' : 'success'}>
       {isConnectionOffline ? 'Offline' : 'Online'}
-    </StatusButton>
+    </Status>
   );
 }
 

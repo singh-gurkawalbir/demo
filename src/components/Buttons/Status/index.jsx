@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function StatusButton(props) {
+export default function Status(props) {
   const classes = useStyles(props);
   const {children, className, error, size, variant, onClick, ...rest} = props;
 
@@ -55,14 +55,14 @@ export default function StatusButton(props) {
   );
 }
 
-StatusButton.propTypes = {
+Status.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['mini', 'small', 'large']),
   error: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
 };
 
-StatusButton.defaultProps = {
+Status.defaultProps = {
   color: 'primary',
   size: 'small',
 };
