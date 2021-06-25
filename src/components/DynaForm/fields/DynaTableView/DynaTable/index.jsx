@@ -48,7 +48,7 @@ export const generateRow = value => ({
   key: generateRowKey(value),
   value,
 });
-const initializeTableState = optionsMap => value => {
+const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
   const emptyRowValue = generateEmptyRow(optionsMap);
   const emptyRow = generateRow(emptyRowValue);
 
@@ -56,6 +56,7 @@ const initializeTableState = optionsMap => value => {
     return {
 
       touched: false,
+      ignoreEmptyRow,
       tableStateValue: [
         emptyRow,
       ]};
@@ -63,7 +64,8 @@ const initializeTableState = optionsMap => value => {
 
   return {
     touched: false,
-    tableStateValue: [...value.map(val => generateRow(val)), emptyRow],
+    ignoreEmptyRow,
+    tableStateValue: ignoreEmptyRow ? value.map(val => generateRow(val)) : [...value.map(val => generateRow(val)), emptyRow],
   };
 };
 
@@ -76,16 +78,17 @@ const BaseTable = ({
   optionsMapInit,
   isVirtualizedTable,
   id,
+  ignoreEmptyRow,
   value,
 }) => {
-  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit));
+  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
 
   const {touched, tableStateValue: tableValue} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
 
   useEffect(() => {
     if (touched) {
-      onFieldChange(id, preSubmit(tableValue, optionsMapFinal));
+      onFieldChange(id, preSubmit(tableValue, optionsMapFinal, ignoreEmptyRow));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
@@ -102,6 +105,7 @@ const BaseTable = ({
         items={tableValue}
         optionsMapFinal={optionsMapFinal}
         touched={touched}
+        ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
@@ -120,6 +124,7 @@ const BaseTable = ({
         tableSize={tableValue.length}
         optionsMap={optionsMapFinal}
         touched={touched}
+        ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
@@ -141,6 +146,7 @@ export const DynaTable = props => {
     isLoading = false,
     metadata = {},
     id,
+    ignoreEmptyRow,
     onFieldChange,
     onRowChange,
     disableDeleteRows,
@@ -179,6 +185,7 @@ export const DynaTable = props => {
             optionsMapFinal={optionsMapFinal}
             optionsMapInit={optionsMapInit}
             id={id}
+            ignoreEmptyRow={ignoreEmptyRow}
             value={value}
 
           />
