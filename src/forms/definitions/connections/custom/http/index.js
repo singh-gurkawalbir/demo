@@ -205,6 +205,8 @@ import fulfilment from './fulfilment';
 import walmartmexico from './walmartmexico';
 import walmartcanada from './walmartcanada';
 import paylocity from './paylocity';
+import looker from './looker';
+import pandadoc from './pandadoc';
 import freshservice from './freshservice';
 import omnisend from './omnisend';
 import pagerduty from './pagerduty';
@@ -417,6 +419,8 @@ export default {
   walmartmexico,
   walmartcanada,
   paylocity,
+  looker,
+  pandadoc,
   freshservice,
   omnisend,
   pagerduty,
