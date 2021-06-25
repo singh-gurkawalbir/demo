@@ -508,7 +508,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       {showOperandSettingsFor && (
       <OperandSettingsDialog
         ruleData={
-              rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
+              rulesState[getFilterRuleId(showOperandSettingsFor.rule)]?.data[
                 showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
               ]
             }
