@@ -35,13 +35,6 @@ const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
   },
-  errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '12px',
-  },
   divider: {
     width: 1,
     height: 18,
@@ -258,7 +251,7 @@ const Title = ({flows, integrationId}) => {
       {errorCount ? (
         <>
           <span className={classes.divider} />
-          <StatusButton size="mini" variant="error" type="text">
+          <StatusButton size="mini" variant="error">
             {errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`}
           </StatusButton>
         </>

@@ -83,13 +83,8 @@ export default {
         },
       },
       contained: {
-        // borderRadius: '17px',
-        // fontSize: '13px',
-        // lineHeight: '15px',
         border: '1px solid',
-        // textTransform: 'none',
         boxShadow: 'none',
-        // padding: '6px 20px',
         '&:disabled': {
           background: 'none',
         },
@@ -132,14 +127,9 @@ export default {
         backgroundColor: colors.celigoWhite,
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral3,
-        // textTransform: 'none',
-        // fontSize: '13px',
-        // lineHeight: '15px',
-        // padding: '6px 20px',
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,
-          // background: colors.celigoNeutral2,
           borderColor: colors.celigoNeutral2,
         },
       },
@@ -166,8 +156,6 @@ export default {
         },
       },
       text: {
-        // fontSize: '13px',
-        // lineHeight: '15px',
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',
@@ -705,7 +693,6 @@ export default {
         },
       },
     },
-    // Adding globally to fix the radio button and text alignment default is margin left -11,
     MuiFormControlLabel: {
       root: {
         marginLeft: 0,

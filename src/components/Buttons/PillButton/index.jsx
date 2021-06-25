@@ -7,9 +7,6 @@ import PropTypes from 'prop-types';
 const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: '17px',
-    // color: props => props.fill ? theme.palette.common.white : theme.palette.secondary.light,
-    // background: props => props.fill ? theme.palette.primary.main : theme.palette.common.white,
-    // borderColor: theme.palette.secondary.lightest,
   },
   fill: {
     borderColor: theme.palette.primary.main,

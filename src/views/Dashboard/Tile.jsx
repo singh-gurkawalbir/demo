@@ -6,7 +6,6 @@ import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
-// import Status from '../../components/Status';
 import StatusCircle from '../../components/StatusCircle';
 import Content from '../../components/HomePageCard/Content';
 import ApplicationImg from '../../components/icons/ApplicationImg';
@@ -239,12 +238,6 @@ function Tile({
     <div>
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          {/* <Status
-            label={status.label}
-            onClick={handleStatusClick}
-            className={classes.status}>
-            <StatusCircle variant={status.variant} />
-          </Status> */}
           <StatusButton variant={status.variant} size="large" onClick={handleStatusClick}>
             {status.label}
           </StatusButton>
