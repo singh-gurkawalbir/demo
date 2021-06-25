@@ -40,6 +40,7 @@ export default function assistantDefinition(
 
       const exportDoc = convertToExport({
         assistantConfig: assistantMetadata,
+        headers: formValues['/assistantMetadata/headers'],
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
