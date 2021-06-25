@@ -7,9 +7,8 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${
       formValues['/http/unencrypted/environment'] === 'sandbox' ? 'apisandbox' : 'api'
-    }.paylocity.com/api/v2/companies/${
-      formValues['/http/unencrypted/companyId']}`,
-    '/http/ping/relativeURI': '/employees',
+    }.paylocity.com/api`,
+    '/http/ping/relativeURI': `/v2/companies/${formValues['/http/unencrypted/companyId']}/employees`,
     '/http/ping/method': 'GET',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
