@@ -205,6 +205,8 @@ export default {
       retValues['/pathToMany'] = undefined;
     }
 
+    // #region begin
+    // Following modifications are done to replicate the backend resttoHttp conversion util
     if (!retValues['/http/body'] || !Array.isArray(retValues['/http/body']) || !retValues['/http/body'].length) {
       retValues['/http/sendPostMappedData'] = true;
     }
@@ -221,6 +223,9 @@ export default {
     retValues['/http/requestMediaType'] = getMediaTypeForImport(connection, retValues['/http/headers']);
     retValues['/http/successMediaType'] = 'json';
     retValues['/http/errorMediaType'] = 'json';
+    // #endregion
+
+    // set useTechAdaptorForm to true to identify that this http resource is created using REST form
     retValues['/useTechAdaptorForm'] = true;
 
     return {
