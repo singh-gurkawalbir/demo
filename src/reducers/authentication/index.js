@@ -50,7 +50,6 @@ export default function (state = defaultState, action) {
       case actionTypes.AUTH_FAILURE:
         draft.failure = action.message;
         draft.commStatus = COMM_STATES.ERROR;
-
         if (draft.authenticated) {
           draft.sessionExpired = true;
         }

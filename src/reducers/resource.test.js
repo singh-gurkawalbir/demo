@@ -4343,6 +4343,11 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.mkDIYIntegrationFlowList test cases', () => {
+    const sortProperties = {
+      lastExecutedAtSort: undefined,
+      lastExecutedAtSortType: 'date',
+    };
+
     test('should not throw any exception for bad params', () => {
       const selector = selectors.mkDIYIntegrationFlowList();
 
@@ -4445,6 +4450,7 @@ describe('resource region selector testcases', () => {
 
       test('should return correct flow list for standalone integration', () => {
         expect(selector(state, 'none')).toEqual([{
+          ...sortProperties,
           name: 'flow name 1',
           errors: 0,
           _id: 'flow1',
@@ -4452,25 +4458,33 @@ describe('resource region selector testcases', () => {
       });
       test('should return correct flow list for standalone integration for sandbox environment', () => {
         expect(selector({...state, user: {preferences: { environment: 'sandbox'}}})).toEqual([
-          {name: 'flow name 1 sandbox', _id: 'flow1sb', sandbox: true, errors: 0},
+          {
+            ...sortProperties,
+            name: 'flow name 1 sandbox',
+            _id: 'flow1sb',
+            sandbox: true,
+            errors: 0},
         ]);
       });
 
       test('should return correct flow list for a diy integration in default order', () => {
         expect(selector(state, 'integrationId1')).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
             _id: 'flow2',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
@@ -4480,20 +4494,23 @@ describe('resource region selector testcases', () => {
       });
 
       test('should return correct flow list for a diy integration in sorted order', () => {
-        expect(selector(state, 'integrationId1', null, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
+        expect(selector(state, 'integrationId1', null, false, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
             _id: 'flow7',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
@@ -4501,20 +4518,23 @@ describe('resource region selector testcases', () => {
           },
         ]);
 
-        expect(selector(state, 'integrationId1', null, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
+        expect(selector(state, 'integrationId1', null, false, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
             _id: 'flow2',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,

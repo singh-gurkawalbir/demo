@@ -77,12 +77,6 @@ const connectors = [
     webhookOnly: true,
   },
   {
-    id: 'pagerduty',
-    type: 'webhook',
-    name: 'PagerDuty',
-    webhookOnly: true,
-  },
-  {
     id: 'mailparser-io',
     type: 'webhook',
     name: 'Mailparser',
@@ -229,6 +223,13 @@ const connectors = [
     name: 'Recurly',
     type: 'http',
     assistant: 'recurly',
+    webhook: true,
+  },
+  {
+    id: 'pagerduty',
+    name: 'PagerDuty',
+    type: 'http',
+    assistant: 'pagerduty',
     webhook: true,
   },
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },

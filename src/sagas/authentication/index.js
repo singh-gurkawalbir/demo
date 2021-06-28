@@ -79,6 +79,7 @@ export function* retrievingAssistantDetails() {
     'stripe',
     'travis',
     'surveymonkey',
+    'pagerduty',
   ];
 
   if (
