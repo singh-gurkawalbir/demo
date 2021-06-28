@@ -64,6 +64,10 @@ function RouterWrappedContent({ hideSave }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!editorType) {
+    return null;
+  }
+
   const { label } = editorMetadata[editorType] || {};
 
   const handleClose = () => {
