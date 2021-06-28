@@ -443,7 +443,7 @@ describe('getResourceFromAssets load correct form', () => {
       const adaptorInputs = [
         ['ftp', {id: 'something1', adaptorType: 'FTPImport'}, 'ftp.useTempFile'],
         ['http', {id: 'something1', adaptorType: 'HTTPImport'}, 'dataMappings'],
-        ['rest', {id: 'something1', adaptorType: 'RESTImport'}, 'rest.method'],
+        ['rest', {id: 'something1', adaptorType: 'RESTImport'}, 'http.method'],
         ['mongodb', {id: 'something1', adaptorType: 'MongodbImport'}, 'mongodb.ignoreExtract'],
         ['s3', {id: 'something1', adaptorType: 'S3Import'}, 'file.backupPath'],
         ['wrapper', {id: 'something1', adaptorType: 'WrapperImport'}, 'wrapper.function'],

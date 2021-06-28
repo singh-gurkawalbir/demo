@@ -170,7 +170,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
+    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis'].includes(
       resourceType
     ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
@@ -648,7 +648,7 @@ export function* deleteResource({ resourceType, id }) {
 export function* deleteIntegration({integrationId}) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
 
-  if (integration._connectorId) return;
+  if (integration?._connectorId) return;
 
   yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
 

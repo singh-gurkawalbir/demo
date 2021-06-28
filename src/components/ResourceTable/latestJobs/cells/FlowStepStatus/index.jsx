@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { JOB_STATUS } from '../../../../../utils/constants';
 import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';
-import { JOB_UI_STATUS } from '../../../../JobDashboard/util';
+import { JOB_UI_STATUS } from '../../../../../utils/jobdashboard';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
