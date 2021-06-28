@@ -33,7 +33,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   let flowIds = [];
 
   if (resourceType === 'integrations') {
-    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
+    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId === 'none' ? undefined : resourceId);
     if (!flowIds || !flowIds.length) {
       yield put(actions.flowMetrics.received(resourceId, []));
 

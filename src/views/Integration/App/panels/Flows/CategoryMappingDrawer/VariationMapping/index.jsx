@@ -18,6 +18,7 @@ import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
+import { capitalizeFirstLetter } from '../../../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -90,7 +91,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { uiAssistant = '' } = categoryMappingMetadata;
 
-    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+    return capitalizeFirstLetter(uiAssistant);
   });
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
