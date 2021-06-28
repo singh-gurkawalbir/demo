@@ -382,6 +382,7 @@ export default {
     'Please enter API Secret of your Pitney Bowes Account. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.auth.token.token':
     'The access token of your Pitney Bowes account.',
+  'pricefx.connection.http.unencrypted.baseurl': 'Enter the Base URL for your PriceFx account. For example, if your account is located at https://test.pricefx.com/, then enter “test.pricefx.com”.<br>For more information, refer to <a href="https://pricefx.atlassian.net/wiki/spaces/KB/pages/2564915288/REST+API+Documentation#RESTAPIDocumentation-HowtoAccesstheAPI">How to Access the API</a>.',
   'pricefx.connection.http.unencrypted.partition': 'Please enter the partition of your Pricefx account.This can be found under the Administration/User Admin section of your Pricefx account.',
   'pricefx.connection.http.unencrypted.username': 'Please enter the username of your Pricefx account.',
   'pricefx.connection.http.encrypted.password': 'Please enter the password of your Pricefx account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
@@ -542,8 +543,7 @@ export default {
     'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'messagemedia.connection.http.auth.basic.password':
     'Please enter your API key here. Navigate to Merchant view on left hand side and click on API keys section to find API Key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'vend.connection.http.subdomain':
-    "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
+  'vend.connection.http.subdomain': 'Enter your Vend subdomain. For example, in https://soda.vendhq.com, \'soda\' is the subdomain.',
   'connection.http.apiEndpoint':
     'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
   'connection.http.unencrypted.Store_Code':

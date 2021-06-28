@@ -1,7 +1,6 @@
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import FilterPanel from '../Editor/panels/Filter';
-import ToggleFilterMode from '../Drawer/actions/ToggleFormMode';
 
 export default {
   type: 'filter',
@@ -34,8 +33,5 @@ export default {
   // sample metadata to support new features.
   drawer: {
     showLayoutToggle: true,
-    actions: [
-      { component: ToggleFilterMode, position: 'right' },
-    ],
   },
 };
