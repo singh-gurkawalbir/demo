@@ -590,7 +590,7 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
   // event reports needs flows to determine the environment
   if (!flows) { return []; }
 
-  // eventReports
+  // TODO : remove this filter search for eventReports
   return resources.filter(r => {
     // the flows environment is the same for eventreport
     const {_flowIds: flowIds} = r;
