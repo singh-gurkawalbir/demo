@@ -4,7 +4,7 @@ export default {
       ...formValues,
       '/type': 'http',
       '/assistant': 'adp',
-      '/http/auth/type': 'token1',
+      '/http/auth/type': 'token',
       '/http/mediaType': 'json',
       '/http/baseURI': `https://${
         formValues['/accType'] === 'uat' ? 'uat-' : ''
