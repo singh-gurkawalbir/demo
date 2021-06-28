@@ -124,6 +124,13 @@ export default {
     delete retValues['/rest/nextPageURLPath'];
     delete retValues['/rest/nextPageTokenPath'];
 
+    // we need 2 separate UI fields for page argument for page number and token paging methods
+    // to have diff help texts and labels
+    if (retValues['/rest/pagingMethod'] === 'token') {
+      retValues['/rest/pageArgument'] = retValues['/rest/tokenPageArgument'];
+    }
+    delete retValues['/rest/tokenPageArgument'];
+
     return {
       ...retValues,
     };
@@ -250,6 +257,7 @@ export default {
     'rest.skipArgument': { fieldId: 'rest.skipArgument' },
     'rest.nextPageRelativeURI': { fieldId: 'rest.nextPageRelativeURI' },
     'rest.pageArgument': { fieldId: 'rest.pageArgument' },
+    'rest.tokenPageArgument': { fieldId: 'rest.tokenPageArgument' },
     'rest.pagingPostBody': { fieldId: 'rest.pagingPostBody' },
     'rest.maxPagePath': { fieldId: 'rest.maxPagePath' },
     'rest.maxCountPath': { fieldId: 'rest.maxCountPath' },
@@ -306,6 +314,7 @@ export default {
           'rest.skipArgument',
           'rest.nextPageRelativeURI',
           'rest.pageArgument',
+          'rest.tokenPageArgument',
           'rest.pagingPostBody',
           'rest.maxPagePath',
           'rest.maxCountPath',

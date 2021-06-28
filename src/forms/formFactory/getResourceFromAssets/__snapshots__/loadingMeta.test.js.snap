@@ -6887,6 +6887,9 @@ Object {
       "rest.successValues": Object {
         "fieldId": "rest.successValues",
       },
+      "rest.tokenPageArgument": Object {
+        "fieldId": "rest.tokenPageArgument",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -6984,6 +6987,7 @@ Object {
                 "rest.skipArgument",
                 "rest.nextPageRelativeURI",
                 "rest.pageArgument",
+                "rest.tokenPageArgument",
                 "rest.pagingPostBody",
                 "rest.maxPagePath",
                 "rest.maxCountPath",

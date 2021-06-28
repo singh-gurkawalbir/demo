@@ -109,6 +109,7 @@ export default {
   'http.blobMethod': {
     type: 'select',
     label: 'HTTP method',
+    helpKey: 'export.http.method',
     required: true,
     defaultValue: r => r && r.http && r.http.method,
     options: [
@@ -213,7 +214,6 @@ export default {
   'http.paging.body': {
     type: 'httprequestbody',
     label: 'Override HTTP request body for subsequent page requests',
-    required: true,
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -268,6 +268,7 @@ export default {
   'http.paging.urlPath': {
     type: 'text',
     label: 'Path to next page URL field in HTTP response body',
+    required: true,
     defaultValue: r => r?.http?.paging?.path,
     visibleWhenAll: [
       {
@@ -283,6 +284,7 @@ export default {
   'http.paging.tokenPath': {
     type: 'text',
     label: 'Path to next page token field in HTTP response body',
+    required: true,
     defaultValue: r => r?.http?.paging?.path,
     visibleWhenAll: [
       {

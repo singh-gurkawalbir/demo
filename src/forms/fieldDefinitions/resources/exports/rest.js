@@ -2,6 +2,7 @@ export default {
   'rest.method': {
     type: 'select',
     label: 'HTTP method',
+    helpKey: 'export.http.method',
     required: true,
     options: [
       {
@@ -22,6 +23,7 @@ export default {
   'rest.blobMethod': {
     type: 'select',
     label: 'HTTP method',
+    helpKey: 'export.http.method',
     required: true,
     defaultValue: r => r && r.rest && r.rest.method,
     options: [
@@ -103,6 +105,7 @@ export default {
   'rest.nextPageURLPath': {
     type: 'text',
     label: 'Path to next page URL field in HTTP response body',
+    required: true,
     defaultValue: r => r?.rest?.nextPagePath,
     helpKey: 'export.http.paging.urlPath',
     visibleWhenAll: [
@@ -119,6 +122,7 @@ export default {
   'rest.nextPageTokenPath': {
     type: 'text',
     label: 'Path to next page token field in HTTP response body',
+    required: true,
     defaultValue: r => r?.rest?.nextPagePath,
     helpKey: 'export.http.paging.tokenPath',
     visibleWhenAll: [
@@ -162,13 +166,28 @@ export default {
       },
     ],
   },
+
+  // added 2 separate UI fields for paths for page number and token methods
+  // to have diff help texts and labels
   'rest.pageArgument': {
     type: 'text',
-    label: 'Override query parameter name',
+    label: 'Override page number query parameter name',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
-        is: ['pageargument', 'token'],
+        is: ['pageargument'],
+      },
+    ],
+  },
+  'rest.tokenPageArgument': {
+    type: 'text',
+    label: 'Next page token query parameter name',
+    defaultValue: r => r?.rest?.pageArgument,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['token'],
       },
     ],
   },
@@ -178,7 +197,6 @@ export default {
     helpKey: 'export.http.paging.body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
-    required: true,
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
