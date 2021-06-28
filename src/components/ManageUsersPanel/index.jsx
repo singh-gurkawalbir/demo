@@ -10,7 +10,7 @@ import UsersList from './UsersList';
 
 const useStyles = makeStyles(theme => ({
   userListWrapper: {
-    overflowX: 'visible',
+    overflow: 'visible',
   },
   root: {
     backgroundColor: theme.palette.common.white,
