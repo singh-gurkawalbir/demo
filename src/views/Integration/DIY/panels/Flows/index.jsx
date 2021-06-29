@@ -176,17 +176,20 @@ const FlowListingTable = ({
 const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const match = useRouteMatch();
   const history = useHistory();
+  const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
+
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
 
   const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
 
   useEffect(() => {
-    const shouldRedirect = !!redirectTo;
+    // redirect should only happen if integration is still present and not deleted
+    const shouldRedirect = !!redirectTo && !!integrationIsAvailable;
 
     if (shouldRedirect) {
       history.replace(redirectTo);
     }
-  }, [history, redirectTo]);
+  }, [history, redirectTo, integrationIsAvailable]);
 
   if (!flowGroupingsSections) {
     return (
@@ -279,7 +282,10 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, flowFilter);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, flowFilter);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
@@ -293,9 +299,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   shallowEqual);
   const flowErrorCountStatus = useSelector(state => selectors.errorMap(state, integrationId)?.status);
 
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
   const handleClose = useCallback(() => {
     setShowDialog();
   }, [setShowDialog]);

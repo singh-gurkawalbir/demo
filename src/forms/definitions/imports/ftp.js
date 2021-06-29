@@ -111,6 +111,9 @@ export default {
     if (!newValues['/file/pgp/hashAlgorithm']) {
       newValues['/file/pgp/hashAlgorithm'] = undefined;
     }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -245,6 +248,7 @@ export default {
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
+          'traceKeyTemplate',
           'fileApiIdentifier',
         ],
       },

@@ -86,7 +86,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
 
     if (retryId) {
-      if (isFlowDisabled || isResolved) {
+      if (isFlowDisabled) {
         tabs.push(ERROR_DETAILS_TABS.VIEW_RETRY_DATA);
       } else {
         tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
@@ -97,7 +97,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     }
 
     return tabs;
-  }, [isResolved, retryId, reqAndResKey, isFlowDisabled]);
+  }, [retryId, reqAndResKey, isFlowDisabled]);
 
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid url , redirects user to View Error fields tab

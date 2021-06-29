@@ -6,11 +6,12 @@ import {
   SALESFORCE_DA_PACKAGE_URL,
   INSTALL_STEP_TYPES,
 } from './constants';
+import { capitalizeFirstLetter } from './string';
 
 export const getTemplateUrlName = applications => {
   if (!applications || !Array.isArray(applications) || !applications.length) return;
   function appName(app) {
-    return app.charAt(0).toUpperCase() + app.slice(1);
+    return capitalizeFirstLetter(app);
   }
 
   if (applications.length === 1) {

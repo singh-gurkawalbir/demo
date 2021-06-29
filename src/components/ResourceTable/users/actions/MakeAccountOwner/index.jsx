@@ -11,8 +11,9 @@ const actionsToMonitor = {
   makeOwner: { action: actionTypes.USER_MAKE_OWNER },
 };
 export default {
-  label: 'Make account owner',
-  component: function MakeAccountOwner({ rowData: user }) {
+  key: 'makeAccountOwner',
+  useLabel: () => 'Make account owner',
+  Component: ({rowData: user}) => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [enquesnackbar] = useEnqueueSnackbar();

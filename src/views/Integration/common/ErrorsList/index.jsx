@@ -28,12 +28,21 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const metadata = {
-  columns: [
+  rowKey: 'id',
+  useColumns: () => [
     {
+      key: 'application',
       heading: 'Application',
-      value: function Application({ type, id }) {
+      Value: ({rowData}) => {
+        const { type, id } = rowData;
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
         const isDataLoader = useSelector(state => selectors.isDataLoaderExport(state, id));
+        const assistantType = useSelector(state => {
+          const { _connectionId} = selectors.resource(state, type, id) || {};
+          const {assistant} = selectors.resource(state, 'connections', _connectionId) || {};
+
+          return assistant || '';
+        });
 
         if (isDataLoader) {
           return 'Data loader';
@@ -41,18 +50,19 @@ const metadata = {
 
         return (
           <ApplicationImg
-            size="small"
             type={applicationType}
-            alt={applicationType || 'Application image'}
+            assistant={assistantType}
       />
         );
       },
     },
     {
+      key: 'type',
       heading: 'Type',
-      value: function Application(r) {
-        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, r.type, r.id);
-        const category = resourceCategory(doc, r.isLookup, r.type === 'imports');
+      Value: ({rowData}) => {
+        const { type, id, isLookup } = rowData;
+        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
+        const category = resourceCategory(doc, isLookup, type === 'imports');
         const handleClick = useCallback(() => {}, []);
 
         return (
@@ -64,13 +74,16 @@ const metadata = {
       },
     },
     {
+      key: 'flowStepName',
       heading: 'Flow step name',
       width: '25%',
-      value: r => <TextOverflowCell message={r.name} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.name} />,
     },
     {
+      key: 'errors',
       heading: 'Errors',
-      value: function Errors({flowId, integrationId, childId, id, count}) {
+      Value: ({rowData}) => {
+        const { flowId, integrationId, childId, id, count } = rowData;
         const classes = useStyles();
         const history = useHistory();
         const isDataLoader = useSelector(state =>

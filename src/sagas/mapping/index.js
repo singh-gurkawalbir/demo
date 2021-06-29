@@ -1,6 +1,7 @@
 import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import shortid from 'shortid';
+import { uniqBy } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
@@ -628,7 +629,9 @@ export function* getAutoMapperSuggestion() {
     reqBody.source_record_type = '';
   }
 
-  reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
+  // filtering out all duplicates elements from generate fields
+  // there could be multiple generate with same id. Example: addressbook[*].id is common id for [Address : ID] and [Address : Line ID]
+  reqBody.dest_fields = uniqBy(generateFields.map(f => ({id: f.id})), 'id');
 
   const path = '/autoMapperSuggestions';
   const opts = {
@@ -654,26 +657,35 @@ export function* getAutoMapperSuggestion() {
     const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response;
     const suggestedMapping = [];
 
-      _mappings?.fields?.forEach(({extract, generate, hardCodedValue, weight}) => {
-        if (weight >= suggestedThreshold) {
-          const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
+    _mappings?.fields?.forEach(field => {
+      const { weight, generate } = field;
 
-          if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
-            if (!mappings.find(item => item.generate === generate)) {
-              suggestedMapping.push({extract, generate, hardCodedValue, key: shortid.generate()});
+      if (weight >= suggestedThreshold) {
+        const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
+
+        if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
+          if (!mappings.find(item => item.generate === generate)) {
+            const newMappingObj = { generate, key: shortid.generate()};
+
+            if ('hardCodedValue' in field) {
+              newMappingObj.hardCodedValue = field.hardCodedValue;
+            } else if ('extract' in field) {
+              newMappingObj.extract = field.extract;
             }
+            suggestedMapping.push(newMappingObj);
           }
         }
-      });
-      if (suggestedMapping?.length) {
-        suggestedMapping.map(m => ({
-          ...m,
-          key: shortid.generate(),
-        }));
-        yield put(actions.mapping.autoMapper.received(suggestedMapping));
-      } else {
-        yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
       }
+    });
+    if (suggestedMapping?.length) {
+      suggestedMapping.map(m => ({
+        ...m,
+        key: shortid.generate(),
+      }));
+      yield put(actions.mapping.autoMapper.received(suggestedMapping));
+    } else {
+      yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
+    }
   } else {
     yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
   }

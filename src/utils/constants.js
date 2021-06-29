@@ -50,6 +50,11 @@ export const INTEGRATION_MODES = Object.freeze({
   UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
 });
+export const ACCOUNT_SSO_STATUS = Object.freeze({
+  NOT_LINKED: 'not_linked',
+  LINKED_TO_THIS_ACCOUNT: 'this_account',
+  LINKED_TO_OTHER_ACCOUNT: 'other_account',
+});
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
@@ -676,4 +681,5 @@ export const LINE_GRAPH_TYPE_LONG = Object.freeze(
   invert(LINE_GRAPH_TYPE_SHORTID)
 );
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 

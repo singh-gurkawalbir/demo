@@ -94,6 +94,8 @@ const auth = {
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
     action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  reSignInWithSSO: () =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
@@ -642,13 +644,13 @@ const integrationApp = {
             .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
           { integrationId, flowId, metadata }
         ),
-      init: (integrationId, flowId, id, options) =>
-        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
-          integrationId,
-          flowId,
-          id,
-          options,
-        }),
+      init: opts => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, opts),
+      initComplete: (integrationId, flowId, id, options) => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_COMPLETE, {
+        integrationId,
+        flowId,
+        id,
+        options,
+      }),
       clear: (integrationId, flowId) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
           integrationId,
@@ -663,7 +665,7 @@ const integrationApp = {
             flowId,
           }
         ),
-      patchField: (integrationId, flowId, id, field, index, value) =>
+      patchField: (integrationId, flowId, id, field, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
           {
@@ -671,22 +673,23 @@ const integrationApp = {
             flowId,
             id,
             field,
-            index,
+            key,
             value,
           }
         ),
-      patchSettings: (integrationId, flowId, id, index, value) =>
+      patchSettings: (integrationId, flowId, id, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .PATCH_SETTINGS,
-          { integrationId, flowId, id, index, value }
+          { integrationId, flowId, id, key, value }
         ),
-      delete: (integrationId, flowId, id, row) =>
+      updateLastFieldTouched: key => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD, { key }),
+      delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,
           flowId,
           id,
-          index: row,
+          key,
         }),
       collapseAll: (integrationId, flowId) =>
         action(
@@ -791,17 +794,19 @@ const integrationApp = {
           flowId,
           data,
         }),
-      deleteCategory: (integrationId, flowId, sectionId) =>
+      deleteCategory: (integrationId, flowId, sectionId, depth) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
           integrationId,
           flowId,
           sectionId,
+          depth,
         }),
-      restoreCategory: (integrationId, flowId, sectionId) =>
+      restoreCategory: (integrationId, flowId, sectionId, depth) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
           integrationId,
           flowId,
           sectionId,
+          depth,
         }),
       receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
         action(
@@ -1283,11 +1288,12 @@ const sampleData = {
       stage,
       options,
     }),
-  requestLookupPreview: (resourceId, flowId, formValues) =>
+  requestLookupPreview: (resourceId, flowId, formValues, options) =>
     action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
       resourceId,
       flowId,
       formValues,
+      options,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
@@ -1368,6 +1374,7 @@ const flowData = {
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
+  clearStages: flowId => action(actionTypes.FLOW_DATA.CLEAR_STAGES, {flowId}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1988,8 +1995,8 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED, { reqAndResKey, errorHttpDoc }),
     error: (reqAndResKey, error) =>
       action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR, { reqAndResKey, error }),
-    downloadBlobDoc: (flowId, resourceId, s3BlobKey) =>
-      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, s3BlobKey }),
+    downloadBlobDoc: (flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, reqAndResKey }),
   },
 };
 const flow = {
@@ -2215,6 +2222,13 @@ const logs = {
   },
 };
 
+const sso = {
+  validateOrgId: orgId => action(actionTypes.SSO.ORG_ID.VALIDATION_REQUEST, { orgId }),
+  validationSuccess: () => action(actionTypes.SSO.ORG_ID.VALIDATION_SUCCESS),
+  validationError: error => action(actionTypes.SSO.ORG_ID.VALIDATION_ERROR, { error }),
+  clearValidations: () => action(actionTypes.SSO.ORG_ID.VALIDATION_CLEAR),
+};
+
 export default {
   form,
   postFeedback,
@@ -2266,5 +2280,6 @@ export default {
   editorSampleData,
   hooks,
   logs,
+  sso,
   bottomDrawer,
 };

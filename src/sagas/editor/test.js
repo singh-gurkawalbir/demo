@@ -800,7 +800,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined })
+        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
@@ -823,7 +823,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined })
+        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });

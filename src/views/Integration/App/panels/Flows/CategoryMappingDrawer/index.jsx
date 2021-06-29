@@ -41,6 +41,7 @@ import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindo
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import SettingsDrawer from '../../../../../../components/Mapping/Settings';
+import { capitalizeFirstLetter } from '../../../../../../utils/string';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -165,7 +166,7 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
-  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
   const {
     fields: generateFields,
     name,
@@ -231,10 +232,11 @@ function CategoryMappings({
       actions.integrationApp.settings.categoryMappings.deleteCategory(
         integrationId,
         flowId,
-        sectionId
+        sectionId,
+        depth
       )
     );
-  }, [dispatch, flowId, integrationId, sectionId]);
+  }, [dispatch, flowId, integrationId, sectionId, depth]);
 
   const handleRestore = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
@@ -243,16 +245,17 @@ function CategoryMappings({
       actions.integrationApp.settings.categoryMappings.restoreCategory(
         integrationId,
         flowId,
-        sectionId
+        sectionId,
+        depth
       )
     );
-  }, [dispatch, flowId, integrationId, sectionId]);
+  }, [dispatch, flowId, integrationId, sectionId, depth]);
 
   const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/variations/${sectionId}`);
-  }, [history, match.url, sectionId]);
+    history.push(`${match.url}/depth/${depth}/variations/${sectionId}`);
+  }, [history, match.url, sectionId, depth]);
 
   if (!generateFields) {
     return (
@@ -340,7 +343,7 @@ function CategoryMappings({
         <AccordionDetails>
           <div className={classes.fullWidth}>
             <Mappings
-              id={`${flowId}-${sectionId}`}
+              id={`${flowId}-${sectionId}-${depth}`}
               flowId={flowId}
               depth={depth}
               integrationId={integrationId}
@@ -392,7 +395,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { uiAssistant = '' } = categoryMappingMetadata;
 
-    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+    return capitalizeFirstLetter(uiAssistant);
   });
 
   const importId = useSelector(state => {
@@ -457,7 +460,8 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           integrationId={integrationId}
           flowId={flowId}
           categoryId={categoryId}
-          parentUrl={parentUrl} />
+          parentUrl={parentUrl}
+        />
 
         <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
         {metadataLoaded ? (
@@ -554,7 +558,7 @@ const InitializationComp = ({integrationId, flowId, categoryId, parentUrl}) => {
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { deleted = [] } = categoryMappingMetadata;
 
-    return deleted.includes(categoryId);
+    return deleted?.[0]?.includes?.(categoryId);
   });
 
   useEffect(() => {

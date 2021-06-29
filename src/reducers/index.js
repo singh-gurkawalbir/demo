@@ -90,8 +90,10 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { JOB_UI_STATUS } from '../utils/jobdashboard';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -498,7 +500,7 @@ selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.de
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
-selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
+selectors.authenticationErrored = state => state?.auth?.failure;
 
 selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);
 
@@ -617,7 +619,6 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'templates',
       'published',
       'transfers',
-      'apis',
       'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
@@ -717,30 +718,45 @@ selectors.getChildIntegrationLabelsTiedToFlows = (state, integrationId, flowIds)
 };
 const resourceListSel = selectors.makeResourceListSelector();
 
-selectors.getAllValidIntegrations = createSelector(
-  state => resourceListSel(state, integrationsFilter)?.resources,
-  selectors.licenses,
-  (integrations, allLicenses) => {
-    if (!integrations || !integrations.length) return [];
+selectors.mkGetAllValidIntegrations = () => {
+  const integrationsListSelector = selectors.makeResourceListSelector();
+  const flowListSelector = selectors.makeResourceListSelector();
 
-    return integrations.filter(({mode, _id, _connectorId }) => {
+  return createSelector(
+    state => integrationsListSelector(state, integrationsFilter)?.resources,
+    state => flowListSelector(state, flowsFilter)?.resources,
+    selectors.licenses,
+    (integrations, flows, allLicenses) => {
+      if (!integrations || !integrations.length) return emptyArray;
+      const hasStandaloneFlows = flows.some(({_integrationId}) => !_integrationId);
+
+      const allValidIntegrations = integrations.filter(({mode, _id, _connectorId }) => {
       // DIY
-      if (!_connectorId && mode !== 'install' && mode !== 'uninstall') return true;
+        if (!_connectorId && mode !== 'install' && mode !== 'uninstall') return true;
 
-      // integrationApp
-      if (_connectorId) {
-        const expiresTimeStamp = allLicenses?.find(l => l._integrationId === _id)?.expires;
+        // integrationApp
+        if (_connectorId) {
+          const expiresTimeStamp = allLicenses?.find(l => l._integrationId === _id)?.expires;
 
-        if (!expiresTimeStamp) return false;
-        const isIntegrationNotExpired = remainingDays(expiresTimeStamp) > 0;
+          if (!expiresTimeStamp) return false;
+          const isIntegrationNotExpired = remainingDays(expiresTimeStamp) > 0;
 
-        return mode === 'settings' && isIntegrationNotExpired;
+          return mode === 'settings' && isIntegrationNotExpired;
+        }
+
+        return false;
+      });
+
+      if (hasStandaloneFlows) {
+        return [
+          {_id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name},
+          ...(allValidIntegrations || [])];
       }
 
-      return false;
-    });
-  }
-);
+      return allValidIntegrations;
+    }
+  );
+};
 const integrationSettingsSel = selectors.mkIntegrationAppSettings();
 
 selectors.isParentChildIntegration = (state, integrationId) => {
@@ -775,6 +791,10 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
     (flows, parentIntegration, isV2, isDiy, flowsFromAllStores, childIntegrationIds) => {
       if (!flows || !parentIntegration) return null;
 
+      if (parentIntegration === STANDALONE_INTEGRATION.id) {
+        return flows.filter(({_integrationId}) => !_integrationId);
+      }
+
       if (isV2 || isDiy) {
         const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
 
@@ -799,20 +819,47 @@ const reportsFilter = {
   type: 'eventreports',
 };
 
+selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+  const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
+
+  // deleted flows case
+  if (!foundFlow) { return null; }
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
+};
+
+selectors.getEventReportIntegrationName = (state, r) => {
+  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  // if there is no integration associated to a flow then its a standalone flow
+
+  return integration?.name || STANDALONE_INTEGRATION.name;
+};
+
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;
 
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId;
+    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+
+    // integration has been deleted
+    if (!integrationId) return null;
+
     const integration = selectors.resource(state, 'integrations', integrationId);
+
+    if (!integration) {
+      return STANDALONE_INTEGRATION;
+    }
 
     return integration;
   }).filter(Boolean);
 
-  // get soreted integrations
-  return uniqBy(allIntegrations, '_id').sort((e1, e2) => e1.name < e2.name);
+  // get sorted integrations
+  return uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
 },
 integrations => integrations
 );
@@ -830,7 +877,7 @@ selectors.getAllFlowsTiedToEventReports = createSelector(state => {
   if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
 
   return flows.filter(({_id: flowId}) =>
-    allFlowIdsTiedToEvenReports.includes(flowId)).sort((e1, e2) => e1.name < e2.name);
+    allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
 },
 flows => flows
 );
@@ -859,7 +906,12 @@ selectors.mkEventReportsFiltered = () => {
       // checking filtering by integration
 
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
-        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.[0] === _id);
+        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
+
+        // flow is deleted do not list the report
+        if (!flow) {
+          return false;
+        }
 
         return integrationIdFilter.includes(flow._integrationId);
       });
@@ -1048,11 +1100,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   if (!flow) return false;
 
-  const isApp = flow._connectorId;
-  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
-
-  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
-  if (!isApp || isAppVersion2) return true;
+  if (!flow._connectorId) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
@@ -1796,15 +1844,25 @@ selectors.mkChildIntegration = () => {
   );
 };
 
+const jobStatusPrioityMap = {
+  // large dates
+  [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
+  [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
+  [JOB_STATUS.RUNNING]: '2300-04-17T16:51:35.209Z',
+};
+
 selectors.mkDIYIntegrationFlowList = () => createSelector(
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.flows,
+  (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
   (state, integrationId) => integrationId,
   (_1, _2, childId) => childId,
-  (_1, _2, _3, options) => options,
+  (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
+  (_1, _2, _3, _4, options) => options,
   selectors.errorMap,
   selectors.currentEnvironment,
-  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
+  (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+    integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
     let integrationFlows = flows.filter(f => {
       if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
@@ -1816,6 +1874,32 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
     });
 
     integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+
+    // this transformation adds properties to make the the flow lastExecutedAt sortable
+    integrationFlows = integrationFlows.map(flow => {
+      const {_id: flowId} = flow;
+      const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+      if (!job || !isUserInErrMgtTwoDotZero) {
+        return {...flow, lastExecutedAtSort: flow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+      }
+
+      if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+        return {...flow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+      }
+
+      // queued running retrying are the other statuses
+      const isJobInQueuedStatus =
+      (job.status === JOB_STATUS.QUEUED ||
+        (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+      return {
+        ...flow,
+        lastExecutedAtSort: jobStatusPrioityMap[job.status],
+        lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+        isJobInQueuedStatus,
+        lastExecutedAtSortType: 'status'};
+    });
 
     return filterAndSortResources(integrationFlows, options);
   }
@@ -2086,10 +2170,32 @@ selectors.mkIntegrationChildren = () => createSelector(
 );
 selectors.integrationChildren = selectors.mkIntegrationChildren();
 
+selectors.integrationAppEdition = (state, integrationId) => {
+  if (!state) return 'Standard plan';
+  const integrationResource = selectors.integrationAppSettings(state, integrationId);
+  let { connectorEdition: edition } = integrationResource.settings || {};
+  const userLicenses = fromUser.licenses(state?.user) || [];
+  const license = userLicenses.find(l => l._integrationId === integrationId) || {};
+  const integrationAppList = selectors.publishedConnectors(state);
+
+  const connector =
+     integrationAppList?.find(ia => ia._id === license?._connectorId);
+
+  const editions = connector?.twoDotZero?.editions || emptyArray;
+
+  edition = edition ||
+            (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
+
+  const plan = `${
+    edition ? capitalizeFirstLetter(edition) : 'Standard'
+  } plan`;
+
+  return plan;
+};
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = selectors.integrationAppSettings(state, id);
-  const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
@@ -2106,13 +2212,9 @@ selectors.integrationAppLicense = (state, id) => {
     integrationResource,
     upgradeRequested
   );
-  const plan = `${
-    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } plan`;
 
   return {
     ...license,
-    plan,
     expiresText,
     upgradeText,
     upgradeRequested: !!upgradeRequested,
@@ -2487,6 +2589,11 @@ selectors.isAccountOwnerOrAdmin = state => {
   const userPermissions = selectors.userPermissions(state) || emptyObject;
 
   return [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(userPermissions.accessLevel);
+};
+selectors.isAccountOwner = state => {
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
+  return userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 };
 
 selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
@@ -5227,7 +5334,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
 
-  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath') return true;
+  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath' || fieldId === 'traceKeyTemplate') return true;
 
   return false;
 };
@@ -5270,11 +5377,12 @@ selectors.isEditorDisabled = (state, editorId) => {
 selectors.isEditorLookupSupported = (state, editorId) => {
   const editor = fromSession.editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
-  const lookupFields = [
+  const fieldsWhichNotSupportlookup = [
     '_body',
     '_postBody',
     '_relativeURI',
     '_query',
+    'file.xml.body',
   ];
   const uriFields = [
     'http.relativeURI',
@@ -5290,7 +5398,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return true;
   }
 
-  if (lookupFields.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
+  if (fieldsWhichNotSupportlookup.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
     return false;
   }
 
@@ -5342,8 +5450,6 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
         },
       };
     }
-
-    return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
   }
   if (stage === 'transform' ||
   stage === 'sampleResponse' || stage === 'importMappingExtract' || HOOK_STAGES.includes(stage)) {
@@ -5397,11 +5503,6 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
 
 selectors.tileLicenseDetails = (state, tile) => {
   const licenses = selectors.licenses(state);
-  const accessLevel =
-    tile.integration &&
-    tile.integration.permissions &&
-    tile.integration.permissions.accessLevel;
-
   const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
@@ -5410,7 +5511,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   let expired = false;
   let trialExpired = false;
   let showTrialLicenseMessage = false;
-  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
+  const resumable = license?.resumable;
 
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
@@ -5444,22 +5545,22 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
 selectors.canEnableDebug = (state, exportId, flowId) => {
   if (!exportId || !flowId) return false;
 
-  const flow = selectors.resource(state, 'flows', flowId);
+  const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+  const permissions = selectors.userPermissions(state) || emptyObject;
 
-  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
+  if ([
+    USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+    USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+  ].includes(permissions.accessLevel)) {
+    return true;
+  }
+
+  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow._integrationId)?.accessLevel;
 
   if (userPermissionsOnIntegration && userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
 
-  const resource = selectors.resource(state, 'exports', exportId) || {};
-
-  // webhook exports have no attached connection
-  if (resource.type === 'webhook') {
-    return false;
-  }
-
-  const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
-
-  return !!userPermissionsOnConnection;
+  return false;
 };
 
 selectors.mkLogsInCurrPageSelector = () => createSelector(
@@ -5473,3 +5574,55 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 );
 
 // #endregion listener request logs selectors
+
+// #region sso selectors
+selectors.oidcSSOClient = state => state?.data?.resources?.ssoclients?.find(client => client.type === 'oidc');
+
+selectors.isSSOEnabled = state => {
+  const oidcClient = selectors.oidcSSOClient(state);
+
+  if (!oidcClient) return false;
+
+  return !oidcClient.disabled;
+};
+
+selectors.userLinkedSSOClientId = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.oidcSSOClient(state)?._id;
+  }
+  const profile = selectors.userProfile(state) || emptyObject;
+
+  return profile.authTypeSSO?._ssoClientId;
+};
+
+selectors.isUserAllowedOnlySSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return false;
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) {
+    return false;
+  }
+  const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+  const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
+
+  return !!ssoLinkedAccount?.accountSSORequired;
+};
+
+selectors.isUserAllowedOptionalSSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.isSSOEnabled(state);
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) return false;
+  if (linkedSSOClientId) {
+    const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+    const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
+
+    // _ssoClientId matched owner's account ashare has accountSSORequired - false
+    return !!(ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
+  }
+};
+// #endregion sso selectors

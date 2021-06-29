@@ -4,21 +4,24 @@ import Edit from '../../../ResourceTable/commonActions/Edit';
 import Delete from '../../../ResourceTable/commonActions/Delete';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'created',
       heading: 'Created',
-      value: r => <CeligoTimeAgo date={r.created} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: r => r._integrationId ? 'Installed' : 'Pending',
+      Value: ({rowData: r}) => r._integrationId ? 'Installed' : 'Pending',
       orderBy: 'status',
     },
     {
+      key: 'integrationId',
       heading: 'Integration ID',
-      value: r => r._integrationId,
+      Value: ({rowData: r}) => r._integrationId,
     },
   ],
-  rowActions: [Edit, Delete],
+  useRowActions: () => [Edit, Delete],
 };

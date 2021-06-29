@@ -46,6 +46,8 @@ const importActions = [
   actionsMap.postResponseMap,
   actionsMap.proceedOnFailure,
 ];
+export const defaultIA2Flow = {showMapping: true, showStartDateDialog: true, showSchedule: true};
+
 export const isActionUsed = (resource, resourceType, flowNode, action) => {
   const {
     inputFilter = {},
@@ -683,7 +685,10 @@ export function getIAFlowSettings(integration, flowId, childId) {
     !integration._connectorId ||
     (integration.installSteps && integration.installSteps.length)
   ) {
-    // return empty object for DIY integrations.
+    if (integration?._connectorId) {
+      return defaultIA2Flow;
+    }
+
     return emptyObject;
   }
 

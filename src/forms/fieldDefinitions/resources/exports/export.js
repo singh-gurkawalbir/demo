@@ -1,3 +1,4 @@
+import { isIntegrationApp } from '../../../../utils/flows';
 import { isNewId } from '../../../../utils/resource';
 
 const dateTimeOptions = [
@@ -117,13 +118,27 @@ export default {
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
     type: 'uri',
-    label: 'Override trace key template',
-    visible: r => !(r?.isLookup),
+    label: r => !(r?.isLookup) ? 'Override trace key template' : 'Override child record trace key template',
+    helpKey: r => r?.isLookup && 'import.traceKeyTemplate',
+    visible: r => !isIntegrationApp(r),
+    omitWhenHidden: true,
+    visibleWhenAll: r => {
+      if (r?.isLookup) {
+        return [
+          {
+            field: 'oneToMany',
+            is: ['true'],
+          },
+        ];
+      }
+
+      return [];
+    },
+    showLookup: false,
   },
   oneToMany: {
     type: 'radiogroup',
     label: 'One to many',
-    helpKey: 'oneToMany',
     defaultValue: r => ((r?.oneToMany && r?.oneToMany !== 'false') ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [

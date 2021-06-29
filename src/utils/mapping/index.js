@@ -12,7 +12,7 @@ import getJSONPaths, {
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
-import { emptyObject } from '../constants';
+import { emptyList, emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -73,20 +73,21 @@ const setMappingData = (
   mappings,
   deleted = [],
   isParentDeleted,
-  deleteChildlessParent
+  deleteChildlessParent,
+  depth = 0
 ) => {
   recordMappings.forEach(category => {
-    const key = `${flowId}-${category.id}`;
+    const key = `${flowId}-${category.id}-${depth}`;
     let allChildrenDeleted = false;
 
     if (category.children && category.children.length) {
       allChildrenDeleted = category.children.every(child =>
-        deleted.includes(child.id)
+        deleted[depth + 1]?.includes(child.id)
       );
     }
 
     const mappingDeleted =
-      deleted.includes(category.id) ||
+      deleted[depth]?.includes(category.id) ||
       isParentDeleted ||
       (deleteChildlessParent && allChildrenDeleted);
 
@@ -97,10 +98,10 @@ const setMappingData = (
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
-      category.fieldMappings = mappings[key].mappings
+      category.fieldMappings = (mappings[key].mappings || [])
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
         .map(
-          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+          ({ index, rowIdentifier, hardCodedValueTmp, key, name, description, showListOption, filterType, visible, ...rest }) => ({
             ...rest,
           })
         );
@@ -110,10 +111,10 @@ const setMappingData = (
 
         if (category.children && category.children.length) {
           category.children.forEach(child => {
-            const validLookups = mappings[`${flowId}-${child.id}`].mappings?.map(mapping => mapping.lookupName).filter(Boolean);
+            const validLookups = mappings[`${flowId}-${child.id}-${depth + 1}`]?.mappings?.map(mapping => mapping.lookupName).filter(Boolean);
 
-            if (mappings[`${flowId}-${child.id}`]?.lookups?.length && validLookups.length) {
-              mappings[`${flowId}-${child.id}`].lookups.forEach(lookup => {
+            if (mappings[`${flowId}-${child.id}-${depth + 1}`]?.lookups?.length && validLookups.length) {
+              mappings[`${flowId}-${child.id}-${depth + 1}`].lookups.forEach(lookup => {
                 if (validLookups.includes(lookup.name)) {
                   const lookupIndex = allLookups.findIndex(l => l.name === lookup.name);
 
@@ -138,7 +139,9 @@ const setMappingData = (
         category.children,
         mappings,
         deleted,
-        mappingDeleted
+        mappingDeleted,
+        deleteChildlessParent,
+        depth + 1
       );
     }
   });
@@ -168,12 +171,16 @@ const setVariationMappingData = (
 
       if (mappings[key]) {
         // eslint-disable-next-line no-param-reassign
-        mapping.fieldMappings = mappings[key].mappings
+        mapping.fieldMappings = (mappings[key].mappings || [])
           .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
           .map(
             ({
               index,
               rowIdentifier,
+              description,
+              name,
+              filterType,
+              showListOption,
               hardCodedValueTmp,
               visible,
               ...rest
@@ -198,7 +205,7 @@ const setVariationMappingData = (
 
           if (mappings[key]) {
             const stagedMappings =
-              mappings[key].staged || mappings[key].mappings;
+              mappings[key].staged || mappings[key].mappings || emptyList;
 
             if (
               !mapping.variation_themes.find(vt => vt.variation_theme === vm)
@@ -501,6 +508,19 @@ export default {
     )
       ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
       : false;
+  },
+  removeChildLookups: sessionMappings => {
+    if (!Array.isArray(sessionMappings?.basicMappings?.recordMappings)) {
+      return;
+    }
+    sessionMappings.basicMappings.recordMappings.forEach(category => {
+      if (category?.children?.length) {
+        category.children.forEach(childCategory => {
+          // eslint-disable-next-line no-param-reassign
+          delete childCategory.lookups;
+        });
+      }
+    });
   },
   setCategoryMappingData: (
     flowId,

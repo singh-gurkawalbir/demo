@@ -67,7 +67,7 @@ export default function FlowToggle({
                 )
               );
             } else {
-              if (enable && !flow.free && !flow.isSimpleImport) {
+              if (enable && !flow.free && !flow.isSimpleImport && !istwoDotZeroFrameWork) {
                 if (!isLicenseValidToEnableFlow.enable) {
                   return enqueueSnackbar({
                     message: isLicenseValidToEnableFlow.message,

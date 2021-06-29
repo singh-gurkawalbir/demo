@@ -18,6 +18,7 @@ import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
+import { capitalizeFirstLetter } from '../../../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -76,9 +77,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const variationUrlName = (variation = '') => variation.replace(/\//g, '__');
+
 function VariationMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId, variation, categoryId } = match.params;
+  const { flowId, subCategoryId, variation: variationParamName, categoryId, depth } = match.params;
+  const variation = variationParamName?.replace(/__/g, '/');
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -87,7 +91,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { uiAssistant = '' } = categoryMappingMetadata;
 
-    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+    return capitalizeFirstLetter(uiAssistant);
   });
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
@@ -97,6 +101,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     const { variation_attributes = [] } =
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId: subCategoryId,
+        depth,
       }) || {};
 
     return !!variation_attributes.length;
@@ -108,17 +113,18 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       const { variation_themes = [] } =
         selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
           sectionId: subCategoryId,
+          depth,
         }) || {};
       const variation = variation_themes.find(
         theme => theme.id === 'variation_theme'
       );
 
       return (
-        variation &&
-        variation.variation_attributes &&
-        variation.variation_attributes[0]
+        // eslint-disable-next-line camelcase
+        variationUrlName(variation?.variation_attributes?.[0])
       );
     }) || {};
+
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
@@ -198,6 +204,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                     integrationId={integrationId}
                     flowId={flowId}
                     categoryId={subCategoryId}
+                    depth={depth}
                   />
                 </div>
               )}
@@ -230,6 +237,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                     categoryId={categoryId}
                     sectionId={subCategoryId}
                     variation={variation}
+                    depth={depth}
                     isVariationAttributes={isVariationAttributes}
                   />
                 </div>
@@ -271,7 +279,7 @@ export default function VariationMappingDrawerRoute(props) {
         <Route
           exact
           path={[
-            `${match.url}/:flowId/utilitymapping/:categoryId/variationAttributes/:subCategoryId`,
+            `${match.url}/:flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId`,
           ]}>
           <VariationMappingDrawer
             {...props}
@@ -284,12 +292,12 @@ export default function VariationMappingDrawerRoute(props) {
         <Route
           exact
           path={[
-            `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`,
-            `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId/:variation`,
+            `${match.url}/:flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId`,
+            `${match.url}/:flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId/:variation`,
           ]}>
           <VariationMappingDrawer
             {...props}
-            parentUrl={location.pathname.replace(/\/variations\/.*$/, '')}
+            parentUrl={location.pathname.replace(/\/depth\/.*$/, '')}
           />
         </Route>
       </Switch>

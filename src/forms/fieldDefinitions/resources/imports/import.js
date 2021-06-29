@@ -1,3 +1,4 @@
+import { isIntegrationApp } from '../../../../utils/flows';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
@@ -29,6 +30,20 @@ export default {
     helpKey: 'apiIdentifier',
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
+  },
+  traceKeyTemplate: {
+    id: 'traceKeyTemplate',
+    type: 'uri',
+    label: 'Override child record trace key template',
+    visible: r => !isIntegrationApp(r),
+    omitWhenHidden: true,
+    visibleWhenAll: [
+      {
+        field: 'oneToMany',
+        is: ['true'],
+      },
+    ],
+    showLookup: false,
   },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
@@ -84,7 +99,6 @@ export default {
     type: 'text',
     label: 'Path to many',
     helpKey: 'pathToMany',
-    omitWhenHidden: true,
     placeholder: 'Not needed for array/row based data',
     visibleWhenAll: [
       {

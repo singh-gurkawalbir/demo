@@ -136,6 +136,7 @@ export function* exportPreview({
   hidden = false,
   runOffline = false,
   throwOnError = false,
+  flowId,
 }) {
   if (!resourceId) return;
   const { merged: resource } = yield select(
@@ -168,6 +169,15 @@ export function* exportPreview({
   const path = '/exports/preview';
   const isRunOfflineConfigured = runOffline && hasValidRawDataKey;
 
+  // BE need flowId and integrationId in the preview call
+  // if in case integration settings were used in export
+  const flow = yield select(selectors.resource, 'flows', flowId);
+
+  if (!isNewId(flowId)) {
+    body._flowId = flowId;
+  }
+
+  body._integrationId = flow?._integrationId;
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,

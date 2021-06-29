@@ -100,6 +100,9 @@ export default {
     newValues['/http/response'] = {
       resourcePath: 'files',
     };
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -169,6 +172,7 @@ export default {
           'fileAdvancedSettings',
           'file.backupPath',
           'deleteAfterImport',
+          'traceKeyTemplate',
           'fileApiIdentifier',
         ],
       },

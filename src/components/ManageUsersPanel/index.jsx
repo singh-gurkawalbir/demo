@@ -9,14 +9,15 @@ import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
 
 const useStyles = makeStyles(theme => ({
+  userListWrapper: {
+    overflowX: 'auto',
+  },
   root: {
     backgroundColor: theme.palette.common.white,
-    overflow: 'visible',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-  },
-  userListWrapper: {
-    overflow: 'visible',
+    overflowX: 'auto',
+    minHeight: 124,
   },
 }));
 
@@ -57,3 +58,4 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
     </div>
   );
 }
+

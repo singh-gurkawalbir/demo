@@ -3,7 +3,7 @@ import produce from 'immer';
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
-import { getResourceSubType } from '../../../utils/resource';
+import { getResourceSubType, isNewId } from '../../../utils/resource';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -195,6 +195,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 
         meta = formMeta.connections.salesforce;
+      } else if (resource && resource.assistant === 'authorize.net') {
+        meta = formMeta.connections.custom.http['authorize.net'];
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
@@ -396,7 +398,7 @@ const getResourceFormAssets = ({
   const resourceTypesWithSettings = ['exports', 'imports', 'connections'];
 
   if (
-    !isNew &&
+    !isNewId(resource?._id) &&
       resourceTypesWithSettings.includes(resourceType) &&
       !ssLinkedConnectionId
   ) {

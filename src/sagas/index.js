@@ -62,11 +62,17 @@ import runHistorySagas from './errorManagement/runHistory';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
+import ssoSagas from './sso';
 import { APIException } from './api';
 import { bottomDrawerSagas } from './bottomDrawer';
+import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
 
 export function* unauthenticateAndDeleteProfile() {
-  yield put(actions.auth.failure('Authentication Failure'));
+  const authFailure = yield select(selectors.authenticationErrored);
+
+  if (!authFailure) {
+    yield put(actions.auth.failure(AUTH_FAILURE_MESSAGE));
+  }
   yield put(actions.user.profile.delete());
 }
 
@@ -179,6 +185,7 @@ export function* allSagas() {
     ...customSettingsSagas,
     ...exportDataSagas,
     ...logsSagas,
+    ...ssoSagas,
     ...bottomDrawerSagas,
   ]);
 }

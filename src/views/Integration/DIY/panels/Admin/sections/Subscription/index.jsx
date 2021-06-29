@@ -12,40 +12,38 @@ import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 
 const emptyObject = {};
 const metadata = {
-  columns: (empty, actionProps) => {
-    const { supportsChild, childId, children } = actionProps;
+  useColumns: () => {
+    const { supportsChild, childId, children } = useGetTableContext();
 
     let columns = [
       {
+        key: 'name',
         heading: 'Name',
-        value: function NameWithInfoicon(r) {
-          return (
-            <>
-              {r && r.name}
-              <InfoIconButton info={r.description} size="xs" />
-            </>
-          );
-        },
+        Value: ({rowData: r}) => (
+          <>
+            {r && r.name}
+            <InfoIconButton info={r.description} size="xs" />
+          </>
+        ),
       },
       {
+        key: 'child',
         heading: 'Child',
-        value: function Store(r) {
-          return children.find(c => c._id === r.childId)?.label || r.childId;
-        },
+        Value: ({rowData: r}) => children.find(c => c._id === r.childId)?.label || r.childId,
       },
       {
+        key: 'installedOn',
         heading: 'Installed on',
-        value: r =>
-          r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
       },
       {
+        key: 'action',
         heading: 'Action',
-        value: function Installer(r) {
-          return <AddonInstallerButton resource={r} />;
-        },
+        Value: ({rowData: r}) => <AddonInstallerButton resource={r} />,
       },
     ];
 
@@ -123,6 +121,9 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  const plan = useSelector(state =>
+    selectors.integrationAppEdition(state, integrationId)
+  );
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -166,7 +167,6 @@ export default function SubscriptionSection({ childId, integrationId }) {
     addOnState.addOns.addOnMetaData &&
     addOnState.addOns.addOnMetaData.length > 0;
   const {
-    plan,
     createdText,
     expiresText,
     upgradeText,

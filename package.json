@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/celigo/integrator-ui.git"
   },
-  "gitRevision": "release/v7.6.1.0",
+  "gitRevision": "release/v7.7.1.0",
   "scripts": {
     "start": "webpack-dev-server --mode=development",
     "start-optimized": "env NODE_ENV=production webpack-dev-server --mode=production",

@@ -33,20 +33,41 @@ describe('user reducers', () => {
       expect(state).toEqual(someTestProfile2);
     });
 
-    test('when delete profile action is dispatched wipe out user profile info except for the user email and user auth type google info', () => {
-      const action = {
+    test('when delete profile action is dispatched wipe out user profile info except for the user email , user auth type google info and user auth type sso info', () => {
+      const actionWithAuthTypes = {
         type: actionTypes.RESOURCE.RECEIVED,
         resourceType: 'profile',
         resource: {
           email: 'someemail@gmail.com',
           userName: 'abcd',
           auth_type_google: {id: '1234', email: 'someemail11@gmail.com'},
+          authTypeSSO: { _ssoClientId: '5678', name: 'sso test', sub: 'id234'},
         },
       };
-      const initialProfileState = reducer(undefined, action);
+      const initialProfileState = reducer(undefined, actionWithAuthTypes);
       const state = reducer(initialProfileState, actions.user.profile.delete());
 
-      expect(state).toEqual({ email: action.resource.email, auth_type_google: action.resource.auth_type_google });
+      expect(state).toEqual({
+        email: actionWithAuthTypes.resource.email,
+        auth_type_google: actionWithAuthTypes.resource.auth_type_google,
+        authTypeSSO: actionWithAuthTypes.resource.authTypeSSO,
+      });
+      const actionWithoutAuthTypes = {
+        type: actionTypes.RESOURCE.RECEIVED,
+        resourceType: 'profile',
+        resource: {
+          email: 'someemail@gmail.com',
+          userName: 'abcd',
+        },
+      };
+      const initialProfileState2 = reducer(undefined, actionWithoutAuthTypes);
+      const state2 = reducer(initialProfileState2, actions.user.profile.delete());
+
+      expect(state2).toEqual({
+        email: actionWithoutAuthTypes.resource.email,
+        auth_type_google: undefined,
+        authTypeSSO: undefined,
+      });
     });
     test('when unlink with google request is received, clear auth type google info', () => {
       const action = {

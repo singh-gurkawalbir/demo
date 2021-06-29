@@ -11,6 +11,8 @@ import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
 
 describe('rawDataUpdates sagas', () => {
+  const flowId = 'f1';
+
   describe('onResourceCreate saga', () => {
     test('should do nothing if the resourceType is not imports/exports', () => expectSaga(onResourceCreate, { id: 'script-123', resourceType: 'scripts'})
       .not.call.fn(saveTransformationRulesForNewXMLExport)
@@ -29,6 +31,7 @@ describe('rawDataUpdates sagas', () => {
       return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
         .provide([
           [select(selectors.resource, 'exports', resourceId), resource],
+          [select(selectors.resourceFormState, 'exports', tempId), {flowId}],
         ])
         .call(saveTransformationRulesForNewXMLExport, {
           resourceId,
@@ -38,6 +41,7 @@ describe('rawDataUpdates sagas', () => {
           type: 'exports',
           resourceId,
           tempResourceId: tempId,
+          flowId,
         })
         .run();
     }
@@ -56,6 +60,7 @@ describe('rawDataUpdates sagas', () => {
       return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
         .provide([
           [select(selectors.resource, 'exports', resourceId), resource],
+          [select(selectors.resourceFormState, 'exports', tempId), {flowId}],
         ])
         .call(saveTransformationRulesForNewXMLExport, {
           resourceId,
@@ -65,6 +70,7 @@ describe('rawDataUpdates sagas', () => {
           type: 'exports',
           resourceId,
           tempResourceId: tempId,
+          flowId,
         })
         .run();
     });
@@ -83,6 +89,7 @@ describe('rawDataUpdates sagas', () => {
       return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
         .provide([
           [select(selectors.resource, 'exports', resourceId), resource],
+          [select(selectors.resourceFormState, 'exports', tempId), {flowId}],
         ])
         .call(saveTransformationRulesForNewXMLExport, {
           resourceId,
@@ -92,6 +99,7 @@ describe('rawDataUpdates sagas', () => {
           type: 'exports',
           resourceId,
           tempResourceId: tempId,
+          flowId,
         })
         .run();
     });
@@ -226,6 +234,7 @@ describe('rawDataUpdates sagas', () => {
         .call(_fetchAndSaveRawDataForResource, {
           type: 'exports',
           resourceId,
+          flowId,
         })
         .run();
     });
@@ -266,9 +275,17 @@ describe('rawDataUpdates sagas', () => {
         adaptorType: 'RESTExport',
       };
       const test2 = expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master: master2})
+        .provide([
+          [select(
+            selectors.resourceFormState,
+            resourceType,
+            resourceId
+          ), { flowId }],
+        ])
         .call(_fetchAndSaveRawDataForResource, {
           type: 'exports',
           resourceId,
+          flowId,
         })
         .run();
       const flow = {
@@ -473,7 +490,7 @@ describe('rawDataUpdates sagas', () => {
         }],
       };
 
-      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId})
+      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId, flowId})
         .provide([
           [select(
             selectors.resource,
@@ -483,12 +500,14 @@ describe('rawDataUpdates sagas', () => {
           [call(exportPreview, {
             resourceId,
             hidden: true,
+            flowId,
           }), previewData],
         ])
         .not.call.fn(saveRawDataForFileAdaptors)
         .call(exportPreview, {
           resourceId,
           hidden: true,
+          flowId,
         })
         .call(saveRawDataOnResource, {
           resourceId,
@@ -507,7 +526,7 @@ describe('rawDataUpdates sagas', () => {
       };
       const type = 'exports';
 
-      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId})
+      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId, flowId})
         .provide([
           [select(
             selectors.resource,
@@ -517,12 +536,14 @@ describe('rawDataUpdates sagas', () => {
           [call(exportPreview, {
             resourceId,
             hidden: true,
+            flowId,
           }), undefined],
         ])
         .not.call.fn(saveRawDataForFileAdaptors)
         .call(exportPreview, {
           resourceId,
           hidden: true,
+          flowId,
         })
         .not.call.fn(saveRawDataOnResource)
         .call(removeRawDataOnResource, { resourceId })

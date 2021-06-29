@@ -69,6 +69,10 @@ export default {
 
     delete newValues['/inputMode'];
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...newValues,
     };
@@ -213,12 +217,6 @@ export default {
     },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
   },
   layout: {

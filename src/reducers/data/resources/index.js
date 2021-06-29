@@ -752,8 +752,13 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
   // eventReports
   return resources.filter(r => {
     // the flows environment is the same for eventreport
-    const flowId = r._flowIds[0];
-    const flow = flows.find(({_id}) => _id === flowId);
+    const {_flowIds: flowIds} = r;
+    const flow = flows.find(({_id}) => flowIds.includes(_id));
+
+    // this happens in the case where a flow is deleted ..
+    // without the flow we cannot determine the environment in that case we will just not
+    // list the eventReport
+    if (!flow) return false;
 
     return !!flow.sandbox === sandbox;
   });
@@ -862,7 +867,7 @@ selectors.resourceDetailsMap = createSelector(
       if (!['published', 'tiles'].includes(resourceType)) {
         allResources[resourceType] = {};
 
-        if (state[resourceType] && state[resourceType].length) {
+        if (state[resourceType] && Array.isArray(state[resourceType])) {
           state[resourceType].forEach(resource => {
             allResources[resourceType][resource._id] = {
               name: resource.name,

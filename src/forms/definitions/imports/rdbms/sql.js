@@ -63,6 +63,10 @@ export default {
     delete retValues['/rdbms/queryUpdate'];
     delete retValues['/rdbms/queryInsert'];
 
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...retValues,
     };

@@ -6,7 +6,7 @@ import { useSelectorMemo } from '../../../hooks';
 import DateFilter from '../commonCells/DateFilter';
 import cancelReport from './actions/cancelReport';
 import downloadResults from './actions/downloadResults';
-import ViewReport from './actions/ViewReport';
+import viewReport from './actions/viewReport';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import Spinner from '../../Spinner';
 import CeligoTruncate from '../../CeligoTruncate';
@@ -40,9 +40,10 @@ const useStyles = makeStyles(() => ({
 
 const flowsConfig = {type: 'flows'};
 const metadata = {
-  columns: [
+  useColumns: () => [
     {
-      headerValue: function IntegrationSearchFilter() {
+      key: 'integrationName',
+      HeaderValue: function IntegrationSearchFilter() {
         const integrationOptions = useSelector(state => selectors.getAllIntegrationsTiedToEventReports(state));
 
         return (
@@ -53,16 +54,14 @@ const metadata = {
             options={integrationOptions.map(({ _id, name}) => ({_id, name }))} />
         );
       },
-      Value: function IntegrationName({r}) {
-        const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
-        const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
-
-        return integration?.name;
+      Value: function IntegrationName({rowData: r}) {
+        return useSelector(state => selectors.getEventReportIntegrationName(state, r));
       },
     },
     {
+      key: 'flows',
       heading: 'Flows',
-      headerValue: function FlowOptionsSearchFilter() {
+      HeaderValue: function FlowOptionsSearchFilter() {
         const flowOptions = useSelector(state => selectors.getAllFlowsTiedToEventReports(state));
 
         return (
@@ -73,13 +72,13 @@ const metadata = {
             options={flowOptions.map(({ _id, name}) => ({ _id, name }))} />
         );
       },
-      Value: function FlowsPertainingToEventReport({r}) {
+      Value: function FlowsPertainingToEventReport({rowData: r}) {
         const allFlows = useSelectorMemo(
           selectors.makeResourceListSelector,
           flowsConfig
         ).resources;
 
-        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
+        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name || `Flow id: ${id}(Flow deleted)`).join(',');
 
         return (
           <CeligoTruncate dataPublic placement="top" lines={3} >
@@ -89,7 +88,8 @@ const metadata = {
       },
     },
     {
-      headerValue: function StartDateTimestamp() {
+      key: 'startDate',
+      HeaderValue: function StartDateTimestamp() {
         return (
           <DateFilter
             title="Start date"
@@ -100,12 +100,13 @@ const metadata = {
         );
       },
 
-      Value: function EventReportStartDate({r}) {
+      Value: function EventReportStartDate({rowData: r}) {
         return <DateTimeDisplay dateTime={r?.startTime} />;
       },
     },
     {
-      headerValue: function EndDateTimestamp() {
+      key: 'endDate',
+      HeaderValue: function EndDateTimestamp() {
         return (
           <DateFilter
             title="End date"
@@ -115,19 +116,21 @@ const metadata = {
             showTime />
         );
       },
-      Value: function EventReportEndDate({r}) {
+      Value: function EventReportEndDate({rowData: r}) {
         return <DateTimeDisplay dateTime={r?.endTime} />;
       },
     },
     {
+      key: 'timestamp',
       heading: 'Timestamp',
-      Value: function Timestamp({r}) {
+      Value: function Timestamp({rowData: r}) {
         return <DateTimeDisplay dateTime={r?.createdAt} />;
       },
     },
     {
+      key: 'status',
       heading: 'Status',
-      headerValue: function SelectResponseCode() {
+      HeaderValue: function SelectResponseCode() {
         return (
           <MultiSelectColumnFilter
             title="Status"
@@ -136,7 +139,7 @@ const metadata = {
             options={ALL_EVENT_STATUS.map(status => ({_id: status, name: capitalize(status) }))} />
         );
       },
-      Value: function EventReportStatus({r}) {
+      Value: function EventReportStatus({rowData: r}) {
         const classes = useStyles();
 
         if ([EVENT_REPORT_STATUS.QUEUED, EVENT_REPORT_STATUS.RUNNING].includes(r.status)) {
@@ -147,9 +150,10 @@ const metadata = {
       },
     },
     {
+      key: 'requestedBy',
       heading: 'Requested by',
       width: '130px',
-      Value: function RequestedByUser({r}) {
+      Value: function RequestedByUser({rowData: r}) {
         const {requestedByUser} = r;
 
         if (!requestedByUser) return null;
@@ -158,22 +162,19 @@ const metadata = {
       },
     },
   ],
-  rowActions: r => {
-    if (r.status === EVENT_REPORT_STATUS.QUEUED) {
-      return [cancelReport(r)];
+  useRowActions: ({status}) => {
+    if (status === EVENT_REPORT_STATUS.QUEUED) {
+      return [cancelReport];
     }
-    if (r.status === EVENT_REPORT_STATUS.RUNNING) {
-      return [ViewReport, cancelReport(r)];
+    if (status === EVENT_REPORT_STATUS.RUNNING) {
+      return [viewReport, cancelReport];
     }
-    if (r.status === EVENT_REPORT_STATUS.COMPLETED) {
-      return [ViewReport, downloadResults(r)];
+    if (status === EVENT_REPORT_STATUS.COMPLETED) {
+      return [viewReport, downloadResults];
     }
 
     return [];
   },
 };
 
-const translated = {
-  ...metadata, columns: metadata.columns.map(({Value, ...rest}) => ({...rest, value: r => <Value r={r} />})),
-};
-export default translated;
+export default metadata;

@@ -9,9 +9,10 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 const emptyArray = [];
 
 export default {
-  label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
+  key: 'tradingPartner',
+  useLabel: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
-  component: function TradingPartner({ rowData = {}}) {
+  Component: ({ rowData = {}}) => {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const [tradingPartnerConnectionsRequested, setTradingPartnerConnectionsRequested] = useState(false);

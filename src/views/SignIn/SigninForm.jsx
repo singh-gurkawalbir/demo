@@ -1,14 +1,15 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback} from 'react';
 import { Typography, Button, Link} from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+import SecurityIcon from '../../components/icons/SecurityIcon';
 import { getDomain } from '../../utils/resource';
+import { AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 
@@ -75,6 +76,19 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
   },
+  ssoBtn: {
+    borderRadius: 4,
+    width: '100%',
+    backgroundSize: theme.spacing(2),
+    height: 38,
+    fontSize: 16,
+    margin: theme.spacing(0, 0, 2, 0),
+    backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    justifyContent: 'space-around',
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(16),
+  },
   or: {
     display: 'flex',
     alignItems: 'center',
@@ -116,16 +130,30 @@ export default function SignIn({dialogOpen}) {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
 
-  const handleReSignInWithGoogleCompleted = useCallback(() => {
+  const reInitializeSession = useCallback(() => {
     dispatch(actions.auth.initSession());
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
 
-  let error = useSelector(state => selectors.authenticationErrored(state));
+  const error = useSelector(state => {
+    const errorMessage = selectors.authenticationErrored(state);
+
+    if (errorMessage === AUTH_FAILURE_MESSAGE) {
+      return 'Sign in failed. Please try again.';
+    }
+    if (window.signInError) {
+      return window.signInError;
+    }
+
+    return errorMessage;
+  });
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
+  const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
+
+  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
 
   const handleOnChangeEmail = useCallback(e => {
     setEmail(e.target.value);
@@ -149,18 +177,20 @@ export default function SignIn({dialogOpen}) {
     dispatch(actions.auth.reSignInWithGoogle(userEmail));
   }, [dispatch, userEmail]);
 
+  const handleReSignInWithSSO = e => {
+    e.preventDefault();
+    dispatch(actions.auth.reSignInWithSSO());
+  };
+
   window.signedInWithGoogle = () => {
-    handleReSignInWithGoogleCompleted();
+    reInitializeSession();
+  };
+  window.signedInWithSSO = () => {
+    reInitializeSession();
   };
 
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
-
-  if (error) {
-    error = 'Sign in failed. Please try again.';
-  } else if (window.signInError) {
-    error = window.signInError;
-  }
 
   return (
     <div className={classes.editableFields}>
@@ -235,11 +265,25 @@ export default function SignIn({dialogOpen}) {
           </Button>
         </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-        <form onSubmit={handleReSignInWithGoogle}>
+        {dialogOpen && userHasOtherLoginOptions && (
           <div className={classes.or}>
             <Typography variant="body1">or</Typography>
           </div>
+        )}
+        {dialogOpen && canUserLoginViaSSO && (
+          <form onSubmit={handleReSignInWithSSO}>
+            <Button
+              type="submit"
+              variant="contained"
+              className={classes.ssoBtn}
+              startIcon={<SecurityIcon />}
+              color="secondary">
+              Sign in with SSO
+            </Button>
+          </form>
+        )}
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+        <form onSubmit={handleReSignInWithGoogle}>
           <Button
             type="submit"
             variant="contained"

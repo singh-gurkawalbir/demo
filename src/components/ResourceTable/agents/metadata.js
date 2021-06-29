@@ -15,37 +15,41 @@ const getAgentDownloadInstaller = agent => (
 // const getAgentToken = agent => <AgentToken agentId={agent._id} />;
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: function ExportDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="agents" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="agents" resource={r} />,
       orderBy: 'name',
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: r => <OnlineStatus offline={r.offline} />,
+      Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
     },
     {
+      key: 'lastHeartBeat',
       heading: 'Last heartbeat',
-      value: r => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
       orderBy: 'lastHeartbeatAt',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
 
     {
+      key: 'install',
       heading: 'Install',
-      value: r => getAgentDownloadInstaller(r),
+      Value: ({rowData: r}) => getAgentDownloadInstaller(r),
     },
     {
+      key: 'accessToken',
       heading: 'Access token',
-      value: r => <AgentToken agentId={r._id} />,
+      Value: ({rowData: r}) => <AgentToken agentId={r._id} />,
     },
   ],
-  rowActions: () => [Edit, References, GenerateToken, Delete],
+  useRowActions: () => [Edit, References, GenerateToken, Delete],
 };

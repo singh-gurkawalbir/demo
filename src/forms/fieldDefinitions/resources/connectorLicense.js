@@ -38,11 +38,11 @@ export default {
     defaultDisabled: r => !isNewId(r._id),
   },
   email: {
-    defaultValue: r => r.user && r.user.email,
+    defaultValue: r => r.user?.email || r.email,
     type: 'text',
     label: 'Email',
     required: true,
-    disableText: r => !isNewId(r._id),
+    disableText: r => !isNewId(r._id) || r.trialLicenseTemplate,
   },
   _editionId: {
     type: 'licenseedition',
