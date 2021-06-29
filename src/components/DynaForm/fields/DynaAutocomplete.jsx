@@ -154,8 +154,11 @@ export default function DynaAutocomplete(props) {
             }}
             renderInput={params => (
               <TextField
-                {...params} name={name}
-                id={id} />
+                {...params}
+                name={name}
+                variant="filled"
+                id={id}
+              />
             )}
         />
         </SelectedIndexContext.Provider>
