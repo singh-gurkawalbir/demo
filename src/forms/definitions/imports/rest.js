@@ -269,7 +269,7 @@ export default {
     'http.headers': { fieldId: 'http.headers' },
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.relativeURI': { fieldId: 'http.relativeURI', required: true },
     'http.body': { fieldId: 'http.body' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     blobKeyPath: { fieldId: 'blobKeyPath' },

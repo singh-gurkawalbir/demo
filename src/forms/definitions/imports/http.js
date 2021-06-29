@@ -438,6 +438,7 @@ export default {
       id: 'http.compositeMethodCreate',
       helpKey: 'import.http.method',
       type: 'select',
+      required: true,
       label: 'HTTP method',
       options: [
         {
@@ -928,6 +929,7 @@ export default {
       id: 'http.compositeMethodUpdate',
       helpKey: 'import.http.method',
       type: 'select',
+      required: true,
       label: 'HTTP method',
       options: [
         {

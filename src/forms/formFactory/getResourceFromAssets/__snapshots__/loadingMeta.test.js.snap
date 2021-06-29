@@ -8514,6 +8514,7 @@ Object {
             ],
           },
         ],
+        "required": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -8560,6 +8561,7 @@ Object {
             ],
           },
         ],
+        "required": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -9689,6 +9691,7 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "required": true,
       },
       "http.relativeURICreate": Object {
         "arrayIndex": 1,
