@@ -54,22 +54,6 @@ export const getUniqueFieldId = (fieldId, resource) => {
       if (ignoreExisting || ignoreMissing) { return 'http.relativeURI'; }
 
       return 'http.relativeURI.1';
-    case 'rest.relativeURIUpdate':
-      if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
-
-      return 'rest.relativeURI.0';
-    case 'rest.relativeURICreate':
-      if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
-
-      return 'rest.relativeURI.1';
-    case 'rest.bodyUpdate':
-      if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
-
-      return 'rest.body.0';
-    case 'rest.bodyCreate':
-      if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
-
-      return 'rest.body.1';
 
     default:
       return fieldId;

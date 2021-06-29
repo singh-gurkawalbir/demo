@@ -37,7 +37,6 @@ describe('editor utils test cases', () => {
       };
 
       expect(getUniqueFieldId('http.bodyCreate', resource1)).toEqual('http.body');
-      expect(getUniqueFieldId('rest.relativeURIUpdate', resource1)).toEqual('rest.relativeURI');
       expect(getUniqueFieldId('http.bodyUpdate', resource2)).toEqual('http.body.0');
     });
     test('should return unique fieldId', () => {
@@ -47,10 +46,6 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('http.bodyUpdate')).toEqual('http.body.0');
       expect(getUniqueFieldId('http.relativeURIUpdate')).toEqual('http.relativeURI.0');
       expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
-      expect(getUniqueFieldId('rest.relativeURIUpdate')).toEqual('rest.relativeURI.0');
-      expect(getUniqueFieldId('rest.relativeURICreate')).toEqual('rest.relativeURI.1');
-      expect(getUniqueFieldId('rest.bodyUpdate')).toEqual('rest.body.0');
-      expect(getUniqueFieldId('rest.bodyCreate')).toEqual('rest.body.1');
     });
   });
 });

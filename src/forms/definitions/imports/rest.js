@@ -1,15 +1,25 @@
+import { getMediaTypeForImport } from '../../../utils/resource';
 import { isJsonString } from '../../../utils/string';
 
+function isValidArray(value) {
+  if (Array.isArray(value) && value[0]) {
+    return true;
+  }
+
+  return false;
+}
+
 export default {
-  preSave: formValues => {
+  preSave: (formValues, _, options = {}) => {
+    const { connection } = options;
     const retValues = { ...formValues };
-    const lookups = retValues['/rest/lookups'];
+    const lookups = retValues['/http/lookups'];
     const lookup =
       lookups &&
       lookups.find(
         l =>
-          `${l.name}` === retValues['/rest/existingDataId'] ||
-          `${l.name}` === retValues['/rest/update/existingDataId']
+          `${l.name}` === retValues['/http/existingDataId'] ||
+          `${l.name}` === retValues['/http/update/existingDataId']
       );
     const sampleData = retValues['/sampleData'];
 
@@ -23,160 +33,160 @@ export default {
     }
 
     if (retValues['/inputMode'] === 'blob') {
-      retValues['/rest/method'] = retValues['/rest/blobMethod'];
-    } else if (retValues['/rest/method'] === 'COMPOSITE') {
-      retValues['/rest/successPath'] = undefined;
-      retValues['/rest/successValues'] = undefined;
+      retValues['/http/method'] = retValues['/http/blobMethod'];
+    } else if (retValues['/http/method'] === 'COMPOSITE') {
+      retValues['/http/successPath'] = undefined;
+      retValues['/http/successValues'] = undefined;
 
-      if (retValues['/rest/compositeType'] === 'createandupdate') {
-        retValues['/rest/relativeURI'] = [
-          retValues['/rest/relativeURIUpdate'],
-          retValues['/rest/relativeURICreate'],
+      if (retValues['/http/compositeType'] === 'createandupdate') {
+        retValues['/http/relativeURI'] = [
+          retValues['/http/relativeURIUpdate'],
+          retValues['/http/relativeURICreate'],
         ];
-        retValues['/rest/requestType'] = [
+        retValues['/http/requestType'] = [
           'UPDATE',
           'CREATE',
         ];
-        retValues['/rest/method'] = [
-          retValues['/rest/compositeMethodUpdate'],
-          retValues['/rest/compositeMethodCreate'],
+        retValues['/http/method'] = [
+          retValues['/http/compositeMethodUpdate'],
+          retValues['/http/compositeMethodCreate'],
         ];
 
-        retValues['/rest/ignoreLookupName'] = undefined;
-        retValues['/rest/ignoreExtract'] = undefined;
+        retValues['/http/ignoreLookupName'] = undefined;
+        retValues['/http/ignoreExtract'] = undefined;
 
         if (
-          retValues['/rest/responseIdPathCreate'] ||
-          retValues['/rest/responseIdPathUpdate']
+          retValues['/http/responseIdPathCreate'] ||
+          retValues['/http/responseIdPathUpdate']
         ) {
-          retValues['/rest/responseIdPath'] = [
-            retValues['/rest/responseIdPathUpdate'],
-            retValues['/rest/responseIdPathCreate'],
+          retValues['/http/response/resourceIdPath'] = [
+            retValues['/http/responseIdPathUpdate'],
+            retValues['/http/responseIdPathCreate'],
           ];
         }
 
         if (
-          retValues['/rest/successPathCreate'] ||
-          retValues['/rest/successPathUpdate']
+          retValues['/http/successPathCreate'] ||
+          retValues['/http/successPathUpdate']
         ) {
-          retValues['/rest/successPath'] = [
-            retValues['/rest/successPathUpdate'],
-            retValues['/rest/successPathCreate'],
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathUpdate'],
+            retValues['/http/successPathCreate'],
           ];
         }
 
         if (
-          retValues['/rest/successValuesCreate'] ||
-          retValues['/rest/successValuesUpdate']
+          retValues['/http/successValuesCreate'] ||
+          retValues['/http/successValuesUpdate']
         ) {
-          retValues['/rest/successValues'] = [
-            retValues['/rest/successValuesUpdate'],
-            retValues['/rest/successValuesCreate'],
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesUpdate'],
+            retValues['/http/successValuesCreate'],
           ];
         }
 
-        retValues['/rest/body'] = [
-          retValues['/rest/bodyUpdate'],
-          retValues['/rest/bodyCreate'],
+        retValues['/http/body'] = [
+          retValues['/http/bodyUpdate'],
+          retValues['/http/bodyCreate'],
         ];
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
-      } else if (retValues['/rest/compositeType'] === 'createandignore') {
-        retValues['/rest/relativeURI'] = [retValues['/rest/relativeURICreate']];
-        retValues['/rest/method'] = [retValues['/rest/compositeMethodCreate']];
+      } else if (retValues['/http/compositeType'] === 'createandignore') {
+        retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
+        retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
 
-        retValues['/rest/ignoreLookupName'] = undefined;
-        retValues['/rest/ignoreExtract'] = undefined;
+        retValues['/http/ignoreLookupName'] = undefined;
+        retValues['/http/ignoreExtract'] = undefined;
 
-        if (retValues['/rest/responseIdPathCreate']) {
-          retValues['/rest/responseIdPath'] = [
-            retValues['/rest/responseIdPathCreate'],
+        if (retValues['/http/responseIdPathCreate']) {
+          retValues['/http/response/resourceIdPath'] = [
+            retValues['/http/responseIdPathCreate'],
           ];
         }
 
-        if (retValues['/rest/bodyCreate']) retValues['/rest/body'] = [retValues['/rest/bodyCreate']];
+        if (retValues['/http/bodyCreate']) retValues['/http/body'] = [retValues['/http/bodyCreate']];
         else {
-          delete retValues['/rest/body'];
+          delete retValues['/http/body'];
         }
 
         retValues['/ignoreExisting'] = true;
         retValues['/ignoreMissing'] = false;
 
         if (lookup) {
-          retValues['/rest/ignoreLookupName'] =
-            retValues['/rest/existingDataId'];
-          retValues['/rest/ignoreExtract'] = null;
+          retValues['/http/ignoreLookupName'] =
+            retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
-          retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
-          retValues['/rest/ignoreLookupName'] = null;
+          retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
 
-        retValues['/rest/existingDataId'] = undefined;
+        retValues['/http/existingDataId'] = undefined;
 
-        if (retValues['/rest/successPathCreate']) {
-          retValues['/rest/successPath'] = [
-            retValues['/rest/successPathCreate'],
+        if (retValues['/http/successPathCreate']) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathCreate'],
           ];
         }
 
-        if (retValues['/rest/successValuesCreate']) {
-          retValues['/rest/successValues'] = [
-            retValues['/rest/successValuesCreate'],
+        if (retValues['/http/successValuesCreate']) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesCreate'],
           ];
         }
-      } else if (retValues['/rest/compositeType'] === 'updateandignore') {
-        retValues['/rest/relativeURI'] = [retValues['/rest/relativeURIUpdate']];
-        retValues['/rest/method'] = [retValues['/rest/compositeMethodUpdate']];
+      } else if (retValues['/http/compositeType'] === 'updateandignore') {
+        retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
+        retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
 
-        retValues['/rest/ignoreLookupName'] = undefined;
-        retValues['/rest/ignoreExtract'] = undefined;
+        retValues['/http/ignoreLookupName'] = undefined;
+        retValues['/http/ignoreExtract'] = undefined;
 
-        if (retValues['/rest/responseIdPathUpdate']) {
-          retValues['/rest/responseIdPath'] = [
-            retValues['/rest/responseIdPathUpdate'],
-          ];
-        }
-
-        if (retValues['/rest/successPathUpdate']) {
-          retValues['/rest/successPath'] = [
-            retValues['/rest/successPathUpdate'],
+        if (retValues['/http/responseIdPathUpdate']) {
+          retValues['/http/response/resourceIdPath'] = [
+            retValues['/http/responseIdPathUpdate'],
           ];
         }
 
-        if (retValues['/rest/successValuesUpdate']) {
-          retValues['/rest/successValues'] = [
-            retValues['/rest/successValuesUpdate'],
+        if (retValues['/http/successPathUpdate']) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathUpdate'],
           ];
         }
 
-        retValues['/rest/body'] = [retValues['/rest/bodyUpdate']];
+        if (retValues['/http/successValuesUpdate']) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesUpdate'],
+          ];
+        }
+
+        retValues['/http/body'] = [retValues['/http/bodyUpdate']];
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = true;
 
         if (lookup) {
-          retValues['/rest/ignoreLookupName'] =
-            retValues['/rest/update/existingDataId'];
-          retValues['/rest/ignoreExtract'] = null;
+          retValues['/http/ignoreLookupName'] =
+            retValues['/http/update/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
-          retValues['/rest/ignoreExtract'] =
-            retValues['/rest/update/existingDataId'];
-          retValues['/rest/ignoreLookupName'] = null;
+          retValues['/http/ignoreExtract'] =
+            retValues['/http/update/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
 
-        retValues['/rest/update/existingDataId'] = undefined;
+        retValues['/http/update/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
-      retValues['/rest/body'] = retValues['/rest/body']
-        ? [retValues['/rest/body']]
+      retValues['/http/body'] = retValues['/http/body']
+        ? [retValues['/http/body']]
         : [];
-      retValues['/rest/ignoreLookupName'] = undefined;
-      retValues['/rest/ignoreExtract'] = undefined;
-      retValues['/rest/existingDataId'] = undefined;
-      retValues['/rest/update/existingDataId'] = undefined;
+      retValues['/http/ignoreLookupName'] = undefined;
+      retValues['/http/ignoreExtract'] = undefined;
+      retValues['/http/existingDataId'] = undefined;
+      retValues['/http/update/existingDataId'] = undefined;
     }
 
     if (retValues['/inputMode'] !== 'blob') {
@@ -194,6 +204,29 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
+
+    // #region begin
+    // Following modifications are done to replicate the backend resttoHttp conversion util
+    if (!retValues['/http/body'] || !Array.isArray(retValues['/http/body']) || !retValues['/http/body'].length) {
+      retValues['/http/sendPostMappedData'] = true;
+    }
+    retValues['/http/lookups'] = (retValues['/http/lookups'] || []).map(lookup => ({
+      ...lookup,
+      useImportHeaders: !!lookup.useImportHeaders,
+    }));
+    if (retValues['/http/response'] && isValidArray(retValues['/http/response/successPath']) && !isValidArray(retValues['/http/response/successValues'])) {
+      retValues['/http/response/allowArrayForSuccessPath'] = true;
+    }
+    retValues['/adaptorType'] = 'HTTPImport';
+    retValues['/http/strictHandlebarEvaluation'] = true;
+    retValues['/http/batchSize'] = 1;
+    retValues['/http/requestMediaType'] = getMediaTypeForImport(connection, retValues['/http/headers']);
+    retValues['/http/successMediaType'] = 'json';
+    retValues['/http/errorMediaType'] = 'json';
+    // #endregion
+
+    // set useTechAdaptorForm to true to identify that this http resource is created using REST form
+    retValues['/useTechAdaptorForm'] = true;
 
     return {
       ...retValues,
@@ -231,28 +264,28 @@ export default {
         return 'records';
       },
     },
-    'rest.method': { fieldId: 'rest.method' },
-    'rest.blobMethod': { fieldId: 'rest.blobMethod' },
-    'rest.headers': { fieldId: 'rest.headers' },
-    'rest.compositeType': { fieldId: 'rest.compositeType' },
-    'rest.lookups': { fieldId: 'rest.lookups', visible: false },
-    'rest.relativeURI': { fieldId: 'rest.relativeURI' },
-    'rest.body': { fieldId: 'rest.body' },
-    'rest.successPath': { fieldId: 'rest.successPath' },
+    'http.method': { fieldId: 'http.method' },
+    'http.blobMethod': { fieldId: 'http.blobMethod' },
+    'http.headers': { fieldId: 'http.headers' },
+    'http.compositeType': { fieldId: 'http.compositeType' },
+    'http.lookups': { fieldId: 'http.lookups', visible: false },
+    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.body': { fieldId: 'http.body' },
+    'http.response.successPath': { fieldId: 'http.response.successPath' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
-    'rest.successValues': { fieldId: 'rest.successValues' },
-    'rest.responseIdPath': { fieldId: 'rest.responseIdPath' },
+    'http.response.successValues': { fieldId: 'http.response.successValues' },
+    'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
     createNewData: {
       id: 'createNewData',
       type: 'labeltitle',
       label: 'Create new data',
       visibleWhenAll: [
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
@@ -261,8 +294,8 @@ export default {
         },
       ],
     },
-    'rest.compositeMethodCreate': {
-      id: 'rest.compositeMethodCreate',
+    'http.compositeMethodCreate': {
+      id: 'http.compositeMethodCreate',
       type: 'select',
       label: 'HTTP method',
       required: true,
@@ -276,27 +309,27 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return r.rest.method[1];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.method[1];
           }
 
-          return r.rest.method[0];
+          return r.http.method[0];
         }
 
         return '';
       },
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -305,8 +338,8 @@ export default {
         },
       ],
     },
-    'rest.relativeURICreate': {
-      id: 'rest.relativeURICreate',
+    'http.relativeURICreate': {
+      id: 'http.relativeURICreate',
       type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
@@ -314,11 +347,11 @@ export default {
       required: true,
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -327,35 +360,35 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return r.rest.relativeURI && r.rest.relativeURI[1];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.relativeURI && r.http.relativeURI[1];
           }
 
-          return r.rest.relativeURI && r.rest.relativeURI[0];
+          return r.http.relativeURI && r.http.relativeURI[0];
         }
 
         return '';
       },
     },
-    'rest.bodyCreate': {
-      id: 'rest.bodyCreate',
+    'http.bodyCreate': {
+      id: 'http.bodyCreate',
       type: 'httprequestbody',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       label: 'HTTP request body',
-      refreshOptionsOnChangesTo: ['rest.lookups'],
+      refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -364,37 +397,37 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return Array.isArray(((r || {}).rest || {}).body)
-              ? r.rest.body[1]
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return Array.isArray(r?.http?.body)
+              ? r.http.body[1]
               : undefined;
           }
 
-          return Array.isArray(((r || {}).rest || {}).body)
-            ? r.rest.body[0]
+          return Array.isArray(r?.http?.body)
+            ? r.http.body[0]
             : undefined;
         }
 
         return '';
       },
     },
-    'rest.successPathCreate': {
-      id: 'rest.successPathCreate',
+    'http.successPathCreate': {
+      id: 'http.successPathCreate',
       type: 'text',
       label: 'Success path',
 
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -403,32 +436,32 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return r.rest.successPath && r.rest.successPath[1];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.response?.successPath && r.http.response?.successPath[1];
           }
 
-          return r.rest.successPath && r.rest.successPath[0];
+          return r.http.response?.successPath && r.http.response?.successPath[0];
         }
 
         return '';
       },
     },
-    'rest.successValuesCreate': {
-      id: 'rest.successValuesCreate',
+    'http.successValuesCreate': {
+      id: 'http.successValuesCreate',
       type: 'text',
       label: 'Success values',
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -437,32 +470,32 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return r.rest.successValues && r.rest.successValues[1];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.response?.successValues && r.http.response?.successValues[1];
           }
 
-          return r.rest.successValues && r.rest.successValues[0];
+          return r.http.response?.successValues && r.http.response?.successValues[0];
         }
 
         return '';
       },
     },
-    'rest.responseIdPathCreate': {
-      id: 'rest.responseIdPathCreate',
+    'http.responseIdPathCreate': {
+      id: 'http.responseIdPathCreate',
       type: 'text',
       label: 'Response ID path',
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -471,16 +504,16 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return r.rest.responseIdPath && r.rest.responseIdPath[1];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.response?.resourceIdPath && r.http.response?.resourceIdPath[1];
           }
 
-          return r.rest.responseIdPath && r.rest.responseIdPath[0];
+          return r.http.response?.resourceIdPath && r.http.response?.resourceIdPath[0];
         }
 
         return '';
@@ -492,11 +525,11 @@ export default {
       label: 'Upate existing data',
       visibleWhenAll: [
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
@@ -509,8 +542,8 @@ export default {
         },
       ],
     },
-    'rest.compositeMethodUpdate': {
-      id: 'rest.compositeMethodUpdate',
+    'http.compositeMethodUpdate': {
+      id: 'http.compositeMethodUpdate',
       type: 'select',
       label: 'HTTP method',
       required: true,
@@ -525,11 +558,11 @@ export default {
       ],
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -538,19 +571,19 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.rest.method[0];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.method[0];
         }
 
         return '';
       },
     },
-    'rest.relativeURIUpdate': {
-      id: 'rest.relativeURIUpdate',
+    'http.relativeURIUpdate': {
+      id: 'http.relativeURIUpdate',
       type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
@@ -558,11 +591,11 @@ export default {
       required: true,
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -571,31 +604,31 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.rest.relativeURI && r.rest.relativeURI[0];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.relativeURI && r.http.relativeURI[0];
         }
 
         return '';
       },
     },
-    'rest.bodyUpdate': {
-      id: 'rest.bodyUpdate',
+    'http.bodyUpdate': {
+      id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
       label: 'HTTP request body',
       arrayIndex: 0,
-      refreshOptionsOnChangesTo: ['rest.lookups'],
+      refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -604,31 +637,31 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return Array.isArray(((r || {}).rest || {}).body)
-            ? r.rest.body[0]
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return Array.isArray(r?.http?.body)
+            ? r.http?.body[0]
             : undefined;
         }
 
         return '';
       },
     },
-    'rest.successPathUpdate': {
-      id: 'rest.successPathUpdate',
+    'http.successPathUpdate': {
+      id: 'http.successPathUpdate',
       type: 'text',
       label: 'Success path',
 
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -637,29 +670,29 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.rest.successPath && r.rest.successPath[0];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.response?.successPath && r.http.response?.successPath[0];
         }
 
         return '';
       },
     },
-    'rest.successValuesUpdate': {
-      id: 'rest.successValuesUpdate',
+    'http.successValuesUpdate': {
+      id: 'http.successValuesUpdate',
       type: 'text',
       label: 'Success values',
 
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -668,29 +701,29 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.rest.successValues && r.rest.successValues[0];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.response?.successValues && r.http.response?.successValues[0];
         }
 
         return '';
       },
     },
-    'rest.responseIdPathUpdate': {
-      id: 'rest.responseIdPathUpdate',
+    'http.responseIdPathUpdate': {
+      id: 'http.responseIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
 
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -699,12 +732,12 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
+        if (!r || !r.http || !r.http.method) {
           return '';
         }
 
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.rest.responseIdPath && r.rest.responseIdPath[0];
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.response?.resourceIdPath && r.http.response?.resourceIdPath[0];
         }
 
         return '';
@@ -716,11 +749,11 @@ export default {
       label: 'Ignore existing records',
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -735,11 +768,11 @@ export default {
       label: 'Ignore new data',
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -748,19 +781,19 @@ export default {
         },
       ],
     },
-    'rest.existingDataId': {
-      id: 'rest.existingDataId',
+    'http.existingDataId': {
+      id: 'http.existingDataId',
       type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
       label: 'Existing data id',
       required: true,
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['createandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -769,33 +802,33 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest) {
+        if (!r || !r.http) {
           return '';
         }
 
-        if (r.rest.ignoreLookupName) {
-          return r.rest.ignoreLookupName;
+        if (r.http.ignoreLookupName) {
+          return r.http.ignoreLookupName;
         }
-        if (r.rest.ignoreExtract) {
-          return r.rest.ignoreExtract;
+        if (r.http.ignoreExtract) {
+          return r.http.ignoreExtract;
         }
 
         return '';
       },
     },
-    'rest.update.existingDataId': {
-      id: 'rest.update.existingDataId',
+    'http.update.existingDataId': {
+      id: 'http.update.existingDataId',
       type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
       label: 'Existing data id',
       required: true,
       visibleWhenAll: [
         {
-          field: 'rest.compositeType',
+          field: 'http.compositeType',
           is: ['updateandignore'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           is: ['COMPOSITE'],
         },
         {
@@ -804,15 +837,15 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (!r || !r.rest) {
+        if (!r || !r.http) {
           return '';
         }
 
-        if (r.rest.ignoreLookupName) {
-          return r.rest.ignoreLookupName;
+        if (r.http.ignoreLookupName) {
+          return r.http.ignoreLookupName;
         }
-        if (r.rest.ignoreExtract) {
-          return r.rest.ignoreExtract;
+        if (r.http.ignoreExtract) {
+          return r.http.ignoreExtract;
         }
 
         return '';
@@ -828,7 +861,7 @@ export default {
           is: ['records'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           isNot: ['DELETE'],
         },
       ],
@@ -841,7 +874,7 @@ export default {
           is: ['records'],
         },
         {
-          field: 'rest.method',
+          field: 'http.method',
           isNot: ['DELETE'],
         },
       ],
@@ -879,13 +912,13 @@ export default {
           return 'How would you like the records imported?';
         },
         fields: [
-          'rest.method',
-          'rest.blobMethod',
-          'rest.headers',
-          'rest.compositeType',
-          'rest.lookups',
-          'rest.relativeURI',
-          'rest.body',
+          'http.method',
+          'http.blobMethod',
+          'http.headers',
+          'http.compositeType',
+          'http.lookups',
+          'http.relativeURI',
+          'http.body',
         ],
         type: 'collapse',
         containers: [
@@ -893,28 +926,28 @@ export default {
             collapsed: true,
             label: 'Create new data',
             fields: [
-              'rest.compositeMethodCreate',
-              'rest.relativeURICreate',
-              'rest.bodyCreate',
+              'http.compositeMethodCreate',
+              'http.relativeURICreate',
+              'http.bodyCreate',
             ],
           },
           {
             collapsed: true,
             label: 'Ignore existing records',
-            fields: ['rest.existingDataId'],
+            fields: ['http.existingDataId'],
           },
           {
             collapsed: true,
             label: 'Ignore new data',
-            fields: ['rest.update.existingDataId'],
+            fields: ['http.update.existingDataId'],
           },
           {
             collapsed: true,
             label: 'Update existing data',
             fields: [
-              'rest.compositeMethodUpdate',
-              'rest.relativeURIUpdate',
-              'rest.bodyUpdate',
+              'http.compositeMethodUpdate',
+              'http.relativeURIUpdate',
+              'http.bodyUpdate',
             ],
           },
         ],
@@ -928,9 +961,9 @@ export default {
         collapsed: true,
         label: 'Non-standard API response patterns',
         fields: [
-          'rest.successPath',
-          'rest.successValues',
-          'rest.responseIdPath',
+          'http.response.successPath',
+          'http.response.successValues',
+          'http.response.resourceIdPath',
         ],
         type: 'collapse',
         containers: [
@@ -938,18 +971,18 @@ export default {
             collapsed: true,
             label: 'Create new data',
             fields: [
-              'rest.successPathCreate',
-              'rest.successValuesCreate',
-              'rest.responseIdPathCreate',
+              'http.successPathCreate',
+              'http.successValuesCreate',
+              'http.responseIdPathCreate',
             ],
           },
           {
             collapsed: true,
             label: 'Update existing data',
             fields: [
-              'rest.successPathUpdate',
-              'rest.successValuesUpdate',
-              'rest.responseIdPathUpdate',
+              'http.successPathUpdate',
+              'http.successValuesUpdate',
+              'http.responseIdPathUpdate',
             ],
           },
         ],

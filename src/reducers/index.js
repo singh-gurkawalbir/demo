@@ -5,7 +5,8 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { map, isEmpty, uniq } from 'lodash';
+import { map, isEmpty, uniq, get} from 'lodash';
+import sift from 'sift';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -579,69 +580,150 @@ selectors.mkTileApplications = () => createSelector(
   }
 );
 
-selectors.resourceList = (state, options = {}) => {
-  if (
-    !options.ignoreEnvironmentFilter &&
-    ![
-      'accesstokens',
-      'agents',
-      'iClients',
-      'scripts',
-      'stacks',
-      'templates',
-      'published',
-      'transfers',
-      'apis',
-      'connectors',
-    ].includes(
-      /* These resources are common for both production & sandbox environments. */
-      options.type
-    )
-  ) {
-    const preferences = selectors.userPreferences(state);
+const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
+  const filterByEnvironment = typeof sandbox === 'boolean';
 
-    // eslint-disable-next-line no-param-reassign
-    options.sandbox = preferences.environment === 'sandbox';
+  if (!filterByEnvironment) { return resources; }
+
+  if (resourceType !== 'eventreports') {
+    return resources.filter(r => !!r.sandbox === sandbox);
   }
 
-  return fromData.resourceList(state && state.data, options);
-};
+  // event reports needs flows to determine the environment
+  if (!flows) { return []; }
 
-selectors.resourceListModified = (userState, resourcesState, options = {}) => {
-  if (
-    !options.ignoreEnvironmentFilter &&
-    ![
-      'accesstokens',
-      'agents',
-      'iclients',
-      'scripts',
-      'stacks',
-      'templates',
-      'published',
-      'transfers',
-      'connectors',
-    ].includes(
-      /* These resources are common for both production & sandbox environments. */
-      options.type
-    )
-  ) {
-    const preferences = fromUser.userPreferences(userState);
+  // TODO : remove this filter search for eventReports
+  return resources.filter(r => {
+    // the flows environment is the same for eventreport
+    const {_flowIds: flowIds} = r;
+    const flow = flows.find(({_id}) => flowIds.includes(_id));
 
-    // eslint-disable-next-line no-param-reassign
-    options.sandbox = preferences.environment === 'sandbox';
-  }
+    // this happens in the case where a flow is deleted ..
+    // without the flow we cannot determine the environment in that case we will just not
+    // list the eventReport
+    if (!flow) return false;
 
-  return fromResources.resourceList(resourcesState, options);
+    return !!flow.sandbox === sandbox;
+  });
 };
 
 selectors.makeResourceListSelector = () =>
   createSelector(
-    selectors.userState,
-    selectors.resourceState,
+    selectors.currentEnvironment,
+    (state, options) => {
+      const type = options?.type;
+
+      if (!state || !type || typeof type !== 'string') { return null; }
+
+      return selectors.resourceState(state)?.[type];
+    },
+    state => selectors.resourceState(state)?.flows,
     (_, options) => options,
-    (userState, resourcesState, options) =>
-      selectors.resourceListModified(userState, resourcesState, options)
+    (currentEnvironment, resources, flows, options) => {
+      const result = {
+        resources: [],
+        total: 0,
+        filtered: 0,
+        count: 0,
+      };
+
+      if (!options) return result;
+      const { type, take, keyword, sort, ignoreEnvironmentFilter, filter, searchBy } = options;
+
+      let {sandbox} = options;
+
+      if (
+        !ignoreEnvironmentFilter &&
+        ![
+          'accesstokens',
+          'agents',
+          'iClients',
+          'scripts',
+          'stacks',
+          'templates',
+          'published',
+          'transfers',
+          'apis',
+          'connectors',
+        ].includes(
+          /* These resources are common for both production & sandbox environments. */
+          type
+        )
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        sandbox = currentEnvironment === 'sandbox';
+      }
+      result.type = type;
+      // console.log('selector args', state, name, take, keyword);
+
+      if (!resources) {
+        return result;
+      }
+
+      // TODO: what is the siginificance of this
+      // if (type === 'ui/assistants') {
+      //   return state[type];
+      // }
+
+      if (!resources) return result;
+
+      result.total = resources.length;
+      result.count = resources.length;
+
+      function searchKey(resource, key) {
+        if (key === 'environment') {
+          return get(resource, 'sandbox') ? 'Sandbox' : 'Production';
+        }
+
+        const value = get(resource, key);
+
+        return typeof value === 'string' ? value : '';
+      }
+
+      const stringTest = r => {
+        if (!keyword) return true;
+        const searchableText =
+            Array.isArray(searchBy) && searchBy.length
+              ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
+              : `${r._id}|${r.name}|${r.description}`;
+
+        return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+      };
+      const matchTest = rOrig => {
+        const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
+
+        return stringTest(r);
+      };
+
+      const comparer = ({ order, orderBy }) =>
+        order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+        // console.log('sort:', sort, resources.sort(comparer, sort));
+      const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
+
+      const filteredByEnvironment = filterByEnvironmentResources(sorted, flows, sandbox, type);
+
+      const filtered = filteredByEnvironment.filter(
+        filter ? sift({ $and: [filter, matchTest] }) : matchTest
+      );
+
+      result.filtered = filtered.length;
+      result.resources = filtered;
+
+      if (typeof take !== 'number' || take < 1) {
+        return result;
+      }
+
+      const slice = filtered.slice(0, take);
+
+      return {
+        ...result,
+        resources: slice,
+        count: slice.length,
+      };
+    }
   );
+
+selectors.resourceList = selectors.makeResourceListSelector();
 
 const integrationsFilter = {
   type: 'integrations',
@@ -1296,58 +1378,37 @@ selectors.filteredResourceList = (
   ? selectors.matchingConnectionList(state, resource, environment, manageOnly)
   : selectors.matchingStackList(state);
 
-selectors.marketplaceConnectors = (
-  userState,
-  marketPlaceState,
-  resourceState,
-  application,
-  sandbox,
-  isAccountOwnerOrAdmin,
-) => {
-  const licenses = fromUser.licenses(userState);
-  const connectors = fromMarketPlace.connectors(
-    marketPlaceState,
-    application,
-    sandbox,
-    licenses,
-    isAccountOwnerOrAdmin,
-  );
+selectors.makeMarketPlaceConnectorsSelector = () => {
+  const integrationsList = selectors.makeResourceListSelector();
 
-  return connectors
-    .map(c => {
-      const installedIntegrationApps = selectors.resourceListModified(
-        userState,
-        resourceState,
-        {
-          type: 'integrations',
-          sandbox,
-          filter: { _connectorId: c._id },
-        }
-      );
-
-      return { ...c, installed: !!installedIntegrationApps.resources.length };
-    })
-    .sort(stringCompare('name'));
-};
-
-selectors.makeMarketPlaceConnectorsSelector = () =>
-  createSelector(
+  return createSelector(
+    state => integrationsList(state, integrationsFilter)?.resources,
     selectors.userState,
     selectors.marketPlaceState,
-    selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
     selectors.isAccountOwnerOrAdmin,
-    (userState, marketPlaceState, resourceState, application, sandbox, isAccountOwnerOrAdmin) =>
-      selectors.marketplaceConnectors(
-        userState,
+    (integrations, userState, marketPlaceState, application, sandbox, isAccountOwnerOrAdmin) => {
+      const licenses = fromUser.licenses(userState);
+      const connectors = fromMarketPlace.connectors(
         marketPlaceState,
-        resourceState,
         application,
         sandbox,
+        licenses,
         isAccountOwnerOrAdmin,
-      )
+      );
+
+      return connectors
+        .map(c => {
+          const installedIntegrationApps = integrations.filter(int => int._connectionId === c._id);
+
+          return { ...c, installed: !!installedIntegrationApps.length };
+        })
+        .sort(stringCompare('name'));
+    }
+
   );
+};
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,

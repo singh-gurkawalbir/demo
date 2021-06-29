@@ -648,7 +648,7 @@ export function* deleteResource({ resourceType, id }) {
 export function* deleteIntegration({integrationId}) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
 
-  if (integration._connectorId) return;
+  if (integration?._connectorId) return;
 
   yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
 

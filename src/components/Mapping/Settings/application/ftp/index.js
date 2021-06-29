@@ -9,13 +9,14 @@ export default {
     extractFields,
     lookups,
     isGroupedSampleData,
+    importResource,
   }) => {
     const {generate, lookupName } = value;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const extractfieldsOpts = [];
 
     if (extractFields) {
-      if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
+      if (isGroupedSampleData && (mappingUtil.isCsvOrXlsxResource(importResource) || generate.indexOf('[*].') !== -1)) {
         extractFields.forEach(({name, id}) => {
           extractfieldsOpts.push({name: `*.${name}`, id: `*.${id}`});
         });
@@ -90,9 +91,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field',
+          valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
