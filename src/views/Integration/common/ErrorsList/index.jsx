@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -19,7 +19,6 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import StatusCircle from '../../../../components/StatusCircle';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
-import { stringCompare } from '../../../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -130,10 +129,11 @@ const metadata = {
   ],
 };
 
+const FILTER_KEY = 'errorsList';
+
 const ErrorsList = ({integrationId, childId}) => {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const FILTER_KEY = 'errorsList';
   const { flowId } = match.params;
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -143,34 +143,8 @@ const ErrorsList = ({integrationId, childId}) => {
     'flows',
     flowId
   )?.merged || emptyObject;
-  const filter = useSelector(state => selectors.filter(state, FILTER_KEY));
-  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
+  const resources = useSelectorMemo(selectors.mkFlowStepsErrorInfo, flowId, integrationId, childId, FILTER_KEY);
   const status = useSelector(state => selectors.openErrorsStatus(state, flowId));
-  const openErrorsDetails = useSelector(state => selectors.openErrorsDetails(state, flowId));
-
-  const resources = useMemo(() => {
-    const errorsList = flowResources
-      .filter(r => r._id !== flowId)
-      .map(r => ({
-        id: r._id,
-        name: r.name || r._id,
-        count: openErrorsDetails?.[r._id]?.numError,
-        lastErrorAt: openErrorsDetails?.[r._id]?.lastErrorAt,
-        flowId,
-        type: r.type,
-        isLookup: r.isLookup,
-        childId,
-        integrationId,
-      }));
-
-    if (filter?.sort) {
-      const { order, orderBy } = filter.sort;
-
-      return [...errorsList].sort(stringCompare(orderBy, order === 'desc'));
-    }
-
-    return errorsList;
-  }, [flowResources, flowId, openErrorsDetails, integrationId, childId, filter?.sort]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;

@@ -1750,6 +1750,42 @@ selectors.mkFlowResources = () => createSelector(
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
 
+selectors.mkFlowStepsErrorInfo = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    flowResources,
+    selectors.openErrorsDetails,
+    (state, _1, _2, _3, filterKey) => selectors.filter(state, filterKey),
+    (_, flowId) => flowId,
+    (_1, _2, integrationId) => integrationId,
+    (_1, _2, _3, childId) => childId,
+    (flowResources, openErrorsDetails, errorStepsFilter, flowId, integrationId, childId) => {
+      const errorSteps = flowResources
+        .filter(r => r._id !== flowId)
+        .map(r => ({
+          id: r._id,
+          name: r.name || r._id,
+          count: openErrorsDetails?.[r._id]?.numError,
+          lastErrorAt: openErrorsDetails?.[r._id]?.lastErrorAt,
+          flowId,
+          type: r.type,
+          isLookup: r.isLookup,
+          childId,
+          integrationId,
+        }));
+
+      if (errorStepsFilter?.sort) {
+        const { order, orderBy } = errorStepsFilter.sort;
+
+        return [...errorSteps].sort(stringCompare(orderBy, order === 'desc'));
+      }
+
+      return errorSteps;
+    }
+  );
+};
+
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
 // also the new selector (that fetches metadata about a token) should be for a
