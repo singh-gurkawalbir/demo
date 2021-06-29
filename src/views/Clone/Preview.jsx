@@ -142,7 +142,7 @@ export default function ClonePreview(props) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
             title: 'Confirm switch',
-            message: `Your integration app has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
             buttons: [
               {
                 label: 'Yes, switch',
