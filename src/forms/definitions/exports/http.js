@@ -347,13 +347,10 @@ export default {
     },
     'once.booleanField': {
       id: 'once.booleanField',
-      type: 'text',
+      type: 'textwithconnectioncontext',
       label: 'Boolean field to mark records as exported',
       visibleWhenAll: [
         { field: 'type', is: ['once'] },
-        {field: 'http.requestMediaType',
-          isNot: ['xml', 'form-data'],
-        },
       ],
     },
     'http.paging.method': { fieldId: 'http.paging.method' },

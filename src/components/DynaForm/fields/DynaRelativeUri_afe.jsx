@@ -9,7 +9,15 @@ const emptyObj = {};
 
 export default function DynaRelativeUri_afe(props) {
   const {value, arrayIndex, ...rest} = props;
-  const {connectionId, formKey, id, pagingMethodsToValidate, pagingFieldsToValidate, deltaFieldsToValidate, validateInComponent} = rest;
+  const {
+    connectionId,
+    formKey,
+    id,
+    pagingMethodsToValidate,
+    pagingFieldsToValidate,
+    deltaFieldsToValidate,
+    validateInComponent,
+  } = rest;
 
   const dispatch = useDispatch();
   const connection = useSelector(state => selectors.resource(state, 'connections', connectionId));

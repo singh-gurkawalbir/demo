@@ -3946,19 +3946,12 @@ Object {
       "once.booleanField": Object {
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
-        "type": "text",
+        "type": "textwithconnectioncontext",
         "visibleWhenAll": Array [
           Object {
             "field": "type",
             "is": Array [
               "once",
-            ],
-          },
-          Object {
-            "field": "http.requestMediaType",
-            "isNot": Array [
-              "xml",
-              "form-data",
             ],
           },
         ],
@@ -6747,7 +6740,7 @@ Object {
       "once.booleanField": Object {
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
-        "type": "text",
+        "type": "textwithconnectioncontext",
         "visibleWhen": Array [
           Object {
             "field": "type",

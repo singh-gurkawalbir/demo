@@ -234,7 +234,7 @@ export default {
     },
     'once.booleanField': {
       id: 'once.booleanField',
-      type: 'text',
+      type: 'textwithconnectioncontext',
       label: 'Boolean field to mark records as exported',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
