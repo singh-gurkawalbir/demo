@@ -7030,7 +7030,6 @@ Object {
               "errorception",
               "helpscout",
               "mailparser-io",
-              "pagerduty",
               "sapariba",
               "segment",
               "travis",
@@ -7117,6 +7116,7 @@ Object {
               "intercom",
               "jira",
               "mailchimp",
+              "pagerduty",
               "parseur",
               "postmark",
               "recurly",
@@ -9421,13 +9421,13 @@ Object {
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
           },
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "createandupdate",
               "createandignore",
@@ -9458,19 +9458,484 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.blobMethod": Object {
+        "fieldId": "http.blobMethod",
+      },
+      "http.body": Object {
+        "fieldId": "http.body",
+      },
+      "http.bodyCreate": Object {
+        "arrayIndex": 1,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "id": "http.bodyCreate",
+        "label": "HTTP request body",
+        "refreshOptionsOnChangesTo": Array [
+          "http.lookups",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.bodyUpdate": Object {
+        "arrayIndex": 0,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "id": "http.bodyUpdate",
+        "label": "HTTP request body",
+        "refreshOptionsOnChangesTo": Array [
+          "http.lookups",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.compositeMethodCreate": Object {
+        "defaultValue": [Function],
+        "id": "http.compositeMethodCreate",
+        "label": "HTTP method",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "POST",
+                "value": "POST",
+              },
+              Object {
+                "label": "PUT",
+                "value": "PUT",
+              },
+              Object {
+                "label": "PATCH",
+                "value": "PATCH",
+              },
+            ],
+          },
+        ],
+        "required": true,
+        "type": "select",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.compositeMethodUpdate": Object {
+        "defaultValue": [Function],
+        "id": "http.compositeMethodUpdate",
+        "label": "HTTP method",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "POST",
+                "value": "POST",
+              },
+              Object {
+                "label": "PUT",
+                "value": "PUT",
+              },
+              Object {
+                "label": "PATCH",
+                "value": "PATCH",
+              },
+            ],
+          },
+        ],
+        "required": true,
+        "type": "select",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.compositeType": Object {
+        "fieldId": "http.compositeType",
+      },
+      "http.existingDataId": Object {
+        "defaultValue": [Function],
+        "id": "http.existingDataId",
+        "label": "Existing data id",
+        "required": true,
+        "showSuggestionsWithoutHandlebar": true,
+        "type": "textwithflowsuggestion",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.headers": Object {
+        "fieldId": "http.headers",
+      },
+      "http.lookups": Object {
+        "fieldId": "http.lookups",
+        "visible": false,
+      },
+      "http.method": Object {
+        "fieldId": "http.method",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+      },
+      "http.relativeURICreate": Object {
+        "arrayIndex": 1,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "id": "http.relativeURICreate",
+        "label": "Relative URI",
+        "required": true,
+        "type": "relativeuri",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.relativeURIUpdate": Object {
+        "arrayIndex": 0,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "id": "http.relativeURIUpdate",
+        "label": "Relative URI",
+        "required": true,
+        "type": "relativeuri",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.response.resourceIdPath": Object {
+        "fieldId": "http.response.resourceIdPath",
+      },
+      "http.response.successPath": Object {
+        "fieldId": "http.response.successPath",
+      },
+      "http.response.successValues": Object {
+        "fieldId": "http.response.successValues",
+      },
+      "http.responseIdPathCreate": Object {
+        "defaultValue": [Function],
+        "id": "http.responseIdPathCreate",
+        "label": "Response ID path",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.responseIdPathUpdate": Object {
+        "defaultValue": [Function],
+        "id": "http.responseIdPathUpdate",
+        "label": "Response ID path",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successPathCreate": Object {
+        "defaultValue": [Function],
+        "id": "http.successPathCreate",
+        "label": "Success path",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successPathUpdate": Object {
+        "defaultValue": [Function],
+        "id": "http.successPathUpdate",
+        "label": "Success path",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successValuesCreate": Object {
+        "defaultValue": [Function],
+        "id": "http.successValuesCreate",
+        "label": "Success values",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successValuesUpdate": Object {
+        "defaultValue": [Function],
+        "id": "http.successValuesUpdate",
+        "label": "Success values",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.update.existingDataId": Object {
+        "defaultValue": [Function],
+        "id": "http.update.existingDataId",
+        "label": "Existing data id",
+        "required": true,
+        "showSuggestionsWithoutHandlebar": true,
+        "type": "textwithflowsuggestion",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "ignoreExistingData": Object {
         "id": "ignoreExistingData",
         "label": "Ignore existing records",
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "createandignore",
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
@@ -9489,13 +9954,13 @@ Object {
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "updateandignore",
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
@@ -9529,471 +9994,6 @@ Object {
         "type": "mode",
         "visible": false,
       },
-      "rest.blobMethod": Object {
-        "fieldId": "rest.blobMethod",
-      },
-      "rest.body": Object {
-        "fieldId": "rest.body",
-      },
-      "rest.bodyCreate": Object {
-        "arrayIndex": 1,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.bodyCreate",
-        "label": "HTTP request body",
-        "refreshOptionsOnChangesTo": Array [
-          "rest.lookups",
-        ],
-        "type": "httprequestbody",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.bodyUpdate": Object {
-        "arrayIndex": 0,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.bodyUpdate",
-        "label": "HTTP request body",
-        "refreshOptionsOnChangesTo": Array [
-          "rest.lookups",
-        ],
-        "type": "httprequestbody",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.compositeMethodCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.compositeMethodCreate",
-        "label": "HTTP method",
-        "options": Array [
-          Object {
-            "items": Array [
-              Object {
-                "label": "POST",
-                "value": "POST",
-              },
-              Object {
-                "label": "PUT",
-                "value": "PUT",
-              },
-              Object {
-                "label": "PATCH",
-                "value": "PATCH",
-              },
-            ],
-          },
-        ],
-        "required": true,
-        "type": "select",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.compositeMethodUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.compositeMethodUpdate",
-        "label": "HTTP method",
-        "options": Array [
-          Object {
-            "items": Array [
-              Object {
-                "label": "POST",
-                "value": "POST",
-              },
-              Object {
-                "label": "PUT",
-                "value": "PUT",
-              },
-              Object {
-                "label": "PATCH",
-                "value": "PATCH",
-              },
-            ],
-          },
-        ],
-        "required": true,
-        "type": "select",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.compositeType": Object {
-        "fieldId": "rest.compositeType",
-      },
-      "rest.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "rest.existingDataId",
-        "label": "Existing data id",
-        "required": true,
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.headers": Object {
-        "fieldId": "rest.headers",
-      },
-      "rest.lookups": Object {
-        "fieldId": "rest.lookups",
-        "visible": false,
-      },
-      "rest.method": Object {
-        "fieldId": "rest.method",
-      },
-      "rest.relativeURI": Object {
-        "fieldId": "rest.relativeURI",
-      },
-      "rest.relativeURICreate": Object {
-        "arrayIndex": 1,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.relativeURICreate",
-        "label": "Relative URI",
-        "required": true,
-        "type": "relativeuri",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.relativeURIUpdate": Object {
-        "arrayIndex": 0,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.relativeURIUpdate",
-        "label": "Relative URI",
-        "required": true,
-        "type": "relativeuri",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.responseIdPath": Object {
-        "fieldId": "rest.responseIdPath",
-      },
-      "rest.responseIdPathCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.responseIdPathCreate",
-        "label": "Response ID path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.responseIdPathUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.responseIdPathUpdate",
-        "label": "Response ID path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successPath": Object {
-        "fieldId": "rest.successPath",
-      },
-      "rest.successPathCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successPathCreate",
-        "label": "Success path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successPathUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successPathUpdate",
-        "label": "Success path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successValues": Object {
-        "fieldId": "rest.successValues",
-      },
-      "rest.successValuesCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successValuesCreate",
-        "label": "Success values",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successValuesUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successValuesUpdate",
-        "label": "Success values",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.update.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "rest.update.existingDataId",
-        "label": "Existing data id",
-        "required": true,
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "sampleData": Object {
         "fieldId": "sampleData",
         "visibleWhenAll": Array [
@@ -10004,7 +10004,7 @@ Object {
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "isNot": Array [
               "DELETE",
             ],
@@ -10023,7 +10023,7 @@ Object {
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "isNot": Array [
               "DELETE",
             ],
@@ -10039,13 +10039,13 @@ Object {
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
           },
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "createandupdate",
               "updateandignore",
@@ -10086,44 +10086,44 @@ Object {
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.compositeMethodCreate",
-                    "rest.relativeURICreate",
-                    "rest.bodyCreate",
+                    "http.compositeMethodCreate",
+                    "http.relativeURICreate",
+                    "http.bodyCreate",
                   ],
                   "label": "Create new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.existingDataId",
+                    "http.existingDataId",
                   ],
                   "label": "Ignore existing records",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.update.existingDataId",
+                    "http.update.existingDataId",
                   ],
                   "label": "Ignore new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.compositeMethodUpdate",
-                    "rest.relativeURIUpdate",
-                    "rest.bodyUpdate",
+                    "http.compositeMethodUpdate",
+                    "http.relativeURIUpdate",
+                    "http.bodyUpdate",
                   ],
                   "label": "Update existing data",
                 },
               ],
               "fields": Array [
-                "rest.method",
-                "rest.blobMethod",
-                "rest.headers",
-                "rest.compositeType",
-                "rest.lookups",
-                "rest.relativeURI",
-                "rest.body",
+                "http.method",
+                "http.blobMethod",
+                "http.headers",
+                "http.compositeType",
+                "http.lookups",
+                "http.relativeURI",
+                "http.body",
               ],
               "label": [Function],
               "type": "collapse",
@@ -10141,26 +10141,26 @@ Object {
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.successPathCreate",
-                    "rest.successValuesCreate",
-                    "rest.responseIdPathCreate",
+                    "http.successPathCreate",
+                    "http.successValuesCreate",
+                    "http.responseIdPathCreate",
                   ],
                   "label": "Create new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.successPathUpdate",
-                    "rest.successValuesUpdate",
-                    "rest.responseIdPathUpdate",
+                    "http.successPathUpdate",
+                    "http.successValuesUpdate",
+                    "http.responseIdPathUpdate",
                   ],
                   "label": "Update existing data",
                 },
               ],
               "fields": Array [
-                "rest.successPath",
-                "rest.successValues",
-                "rest.responseIdPath",
+                "http.response.successPath",
+                "http.response.successValues",
+                "http.response.resourceIdPath",
               ],
               "label": "Non-standard API response patterns",
               "type": "collapse",
@@ -12595,7 +12595,6 @@ Object {
               "errorception",
               "helpscout",
               "mailparser-io",
-              "pagerduty",
               "sapariba",
               "segment",
               "travis",

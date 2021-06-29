@@ -5,7 +5,8 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { map, isEmpty, uniq } from 'lodash';
+import { map, isEmpty, uniq, get} from 'lodash';
+import sift from 'sift';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -89,9 +90,11 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
+import { JOB_UI_STATUS } from '../utils/jobdashboard';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -498,7 +501,7 @@ selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.de
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
-selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
+selectors.authenticationErrored = state => state?.auth?.failure;
 
 selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);
 
@@ -577,70 +580,150 @@ selectors.mkTileApplications = () => createSelector(
   }
 );
 
-selectors.resourceList = (state, options = {}) => {
-  if (
-    !options.ignoreEnvironmentFilter &&
-    ![
-      'accesstokens',
-      'agents',
-      'iClients',
-      'scripts',
-      'stacks',
-      'templates',
-      'published',
-      'transfers',
-      'apis',
-      'connectors',
-    ].includes(
-      /* These resources are common for both production & sandbox environments. */
-      options.type
-    )
-  ) {
-    const preferences = selectors.userPreferences(state);
+const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
+  const filterByEnvironment = typeof sandbox === 'boolean';
 
-    // eslint-disable-next-line no-param-reassign
-    options.sandbox = preferences.environment === 'sandbox';
+  if (!filterByEnvironment) { return resources; }
+
+  if (resourceType !== 'eventreports') {
+    return resources.filter(r => !!r.sandbox === sandbox);
   }
 
-  return fromData.resourceList(state && state.data, options);
-};
+  // event reports needs flows to determine the environment
+  if (!flows) { return []; }
 
-selectors.resourceListModified = (userState, resourcesState, options = {}) => {
-  if (
-    !options.ignoreEnvironmentFilter &&
-    ![
-      'accesstokens',
-      'agents',
-      'iclients',
-      'scripts',
-      'stacks',
-      'templates',
-      'published',
-      'transfers',
-      'apis',
-      'connectors',
-    ].includes(
-      /* These resources are common for both production & sandbox environments. */
-      options.type
-    )
-  ) {
-    const preferences = fromUser.userPreferences(userState);
+  // TODO : remove this filter search for eventReports
+  return resources.filter(r => {
+    // the flows environment is the same for eventreport
+    const {_flowIds: flowIds} = r;
+    const flow = flows.find(({_id}) => flowIds.includes(_id));
 
-    // eslint-disable-next-line no-param-reassign
-    options.sandbox = preferences.environment === 'sandbox';
-  }
+    // this happens in the case where a flow is deleted ..
+    // without the flow we cannot determine the environment in that case we will just not
+    // list the eventReport
+    if (!flow) return false;
 
-  return fromResources.resourceList(resourcesState, options);
+    return !!flow.sandbox === sandbox;
+  });
 };
 
 selectors.makeResourceListSelector = () =>
   createSelector(
-    selectors.userState,
-    selectors.resourceState,
+    selectors.currentEnvironment,
+    (state, options) => {
+      const type = options?.type;
+
+      if (!state || !type || typeof type !== 'string') { return null; }
+
+      return selectors.resourceState(state)?.[type];
+    },
+    state => selectors.resourceState(state)?.flows,
     (_, options) => options,
-    (userState, resourcesState, options) =>
-      selectors.resourceListModified(userState, resourcesState, options)
+    (currentEnvironment, resources, flows, options) => {
+      const result = {
+        resources: [],
+        total: 0,
+        filtered: 0,
+        count: 0,
+      };
+
+      if (!options) return result;
+      const { type, take, keyword, sort, ignoreEnvironmentFilter, filter, searchBy } = options;
+
+      let {sandbox} = options;
+
+      if (
+        !ignoreEnvironmentFilter &&
+        ![
+          'accesstokens',
+          'agents',
+          'iClients',
+          'scripts',
+          'stacks',
+          'templates',
+          'published',
+          'transfers',
+          'apis',
+          'connectors',
+        ].includes(
+          /* These resources are common for both production & sandbox environments. */
+          type
+        )
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        sandbox = currentEnvironment === 'sandbox';
+      }
+      result.type = type;
+      // console.log('selector args', state, name, take, keyword);
+
+      if (!resources) {
+        return result;
+      }
+
+      // TODO: what is the siginificance of this
+      // if (type === 'ui/assistants') {
+      //   return state[type];
+      // }
+
+      if (!resources) return result;
+
+      result.total = resources.length;
+      result.count = resources.length;
+
+      function searchKey(resource, key) {
+        if (key === 'environment') {
+          return get(resource, 'sandbox') ? 'Sandbox' : 'Production';
+        }
+
+        const value = get(resource, key);
+
+        return typeof value === 'string' ? value : '';
+      }
+
+      const stringTest = r => {
+        if (!keyword) return true;
+        const searchableText =
+            Array.isArray(searchBy) && searchBy.length
+              ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
+              : `${r._id}|${r.name}|${r.description}`;
+
+        return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+      };
+      const matchTest = rOrig => {
+        const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
+
+        return stringTest(r);
+      };
+
+      const comparer = ({ order, orderBy }) =>
+        order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+        // console.log('sort:', sort, resources.sort(comparer, sort));
+      const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
+
+      const filteredByEnvironment = filterByEnvironmentResources(sorted, flows, sandbox, type);
+
+      const filtered = filteredByEnvironment.filter(
+        filter ? sift({ $and: [filter, matchTest] }) : matchTest
+      );
+
+      result.filtered = filtered.length;
+      result.resources = filtered;
+
+      if (typeof take !== 'number' || take < 1) {
+        return result;
+      }
+
+      const slice = filtered.slice(0, take);
+
+      return {
+        ...result,
+        resources: slice,
+        count: slice.length,
+      };
+    }
   );
+
+selectors.resourceList = selectors.makeResourceListSelector();
 
 const integrationsFilter = {
   type: 'integrations',
@@ -839,7 +922,10 @@ const reportsFilter = {
 selectors.getIntegrationIdForEventReport = (state, eventReport) => {
   const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
 
-  return selectors.resource(state, 'flows', foundFlow)?._integrationId;
+  // deleted flows case
+  if (!foundFlow) { return null; }
+
+  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
 };
 
 selectors.getEventReportIntegrationName = (state, r) => {
@@ -1292,58 +1378,37 @@ selectors.filteredResourceList = (
   ? selectors.matchingConnectionList(state, resource, environment, manageOnly)
   : selectors.matchingStackList(state);
 
-selectors.marketplaceConnectors = (
-  userState,
-  marketPlaceState,
-  resourceState,
-  application,
-  sandbox,
-  isAccountOwnerOrAdmin,
-) => {
-  const licenses = fromUser.licenses(userState);
-  const connectors = fromMarketPlace.connectors(
-    marketPlaceState,
-    application,
-    sandbox,
-    licenses,
-    isAccountOwnerOrAdmin,
-  );
+selectors.makeMarketPlaceConnectorsSelector = () => {
+  const integrationsList = selectors.makeResourceListSelector();
 
-  return connectors
-    .map(c => {
-      const installedIntegrationApps = selectors.resourceListModified(
-        userState,
-        resourceState,
-        {
-          type: 'integrations',
-          sandbox,
-          filter: { _connectorId: c._id },
-        }
-      );
-
-      return { ...c, installed: !!installedIntegrationApps.resources.length };
-    })
-    .sort(stringCompare('name'));
-};
-
-selectors.makeMarketPlaceConnectorsSelector = () =>
-  createSelector(
+  return createSelector(
+    state => integrationsList(state, integrationsFilter)?.resources,
     selectors.userState,
     selectors.marketPlaceState,
-    selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
     selectors.isAccountOwnerOrAdmin,
-    (userState, marketPlaceState, resourceState, application, sandbox, isAccountOwnerOrAdmin) =>
-      selectors.marketplaceConnectors(
-        userState,
+    (integrations, userState, marketPlaceState, application, sandbox, isAccountOwnerOrAdmin) => {
+      const licenses = fromUser.licenses(userState);
+      const connectors = fromMarketPlace.connectors(
         marketPlaceState,
-        resourceState,
         application,
         sandbox,
+        licenses,
         isAccountOwnerOrAdmin,
-      )
+      );
+
+      return connectors
+        .map(c => {
+          const installedIntegrationApps = integrations.filter(int => int._connectionId === c._id);
+
+          return { ...c, installed: !!installedIntegrationApps.length };
+        })
+        .sort(stringCompare('name'));
+    }
+
   );
+};
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
@@ -1836,15 +1901,25 @@ selectors.mkChildIntegration = () => {
   );
 };
 
+const jobStatusPrioityMap = {
+  // large dates
+  [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
+  [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
+  [JOB_STATUS.RUNNING]: '2300-04-17T16:51:35.209Z',
+};
+
 selectors.mkDIYIntegrationFlowList = () => createSelector(
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.flows,
+  (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
   (state, integrationId) => integrationId,
   (_1, _2, childId) => childId,
-  (_1, _2, _3, options) => options,
+  (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
+  (_1, _2, _3, _4, options) => options,
   selectors.openErrorsMap,
   selectors.currentEnvironment,
-  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
+  (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+    integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
     let integrationFlows = flows.filter(f => {
       if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
@@ -1856,6 +1931,32 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
     });
 
     integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.[f._id]) || 0}));
+
+    // this transformation adds properties to make the the flow lastExecutedAt sortable
+    integrationFlows = integrationFlows.map(flow => {
+      const {_id: flowId} = flow;
+      const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+      if (!job || !isUserInErrMgtTwoDotZero) {
+        return {...flow, lastExecutedAtSort: flow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+      }
+
+      if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+        return {...flow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+      }
+
+      // queued running retrying are the other statuses
+      const isJobInQueuedStatus =
+      (job.status === JOB_STATUS.QUEUED ||
+        (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+      return {
+        ...flow,
+        lastExecutedAtSort: jobStatusPrioityMap[job.status],
+        lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+        isJobInQueuedStatus,
+        lastExecutedAtSortType: 'status'};
+    });
 
     return filterAndSortResources(integrationFlows, options);
   }
@@ -2165,7 +2266,7 @@ selectors.integrationAppEdition = (state, integrationId) => {
             (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
 
   const plan = `${
-    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
+    edition ? capitalizeFirstLetter(edition) : 'Standard'
   } plan`;
 
   return plan;
@@ -5520,22 +5621,22 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
 selectors.canEnableDebug = (state, exportId, flowId) => {
   if (!exportId || !flowId) return false;
 
-  const flow = selectors.resource(state, 'flows', flowId);
+  const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
+  const permissions = selectors.userPermissions(state) || emptyObject;
 
-  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
+  if ([
+    USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+    USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+  ].includes(permissions.accessLevel)) {
+    return true;
+  }
+
+  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow._integrationId)?.accessLevel;
 
   if (userPermissionsOnIntegration && userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
 
-  const resource = selectors.resource(state, 'exports', exportId) || {};
-
-  // webhook exports have no attached connection
-  if (resource.type === 'webhook') {
-    return false;
-  }
-
-  const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
-
-  return !!userPermissionsOnConnection;
+  return false;
 };
 
 selectors.mkLogsInCurrPageSelector = () => createSelector(

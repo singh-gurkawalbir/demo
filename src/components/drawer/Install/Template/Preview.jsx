@@ -36,6 +36,12 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     background: theme.palette.background.paper,
+    '& .MuiAccordionDetails-root': {
+      padding: 0,
+      '& .MuiTableCell-root': {
+        wordBreak: 'break-word',
+      },
+    },
   },
   appLogosContainer: {
     display: 'flex',

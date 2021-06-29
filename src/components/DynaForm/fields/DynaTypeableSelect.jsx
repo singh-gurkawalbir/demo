@@ -207,7 +207,7 @@ export default function DynaTypeableSelect(props) {
     filterType: option.filterType,
   })).filter(opt => opt.label && opt.value), [labelName, options, valueName]);
 
-  const [value, setValue] = useState(propValue?.toString());
+  const [value, setValue] = useState(propValue?.toString() || '');
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 

@@ -41,6 +41,7 @@ import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindo
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import SettingsDrawer from '../../../../../../components/Mapping/Settings';
+import { capitalizeFirstLetter } from '../../../../../../utils/string';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -394,7 +395,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { uiAssistant = '' } = categoryMappingMetadata;
 
-    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+    return capitalizeFirstLetter(uiAssistant);
   });
 
   const importId = useSelector(state => {
