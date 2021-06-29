@@ -158,7 +158,7 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import field (NetSuite)',
+          valueLabel: 'Import field value',
           commMetaPath:
             fieldId &&
             getNetsuiteSelectFieldValueUrl({
@@ -172,7 +172,7 @@ export default {
           keyOptions:
             fieldOptions && fieldOptions.length ? fieldOptions : undefined,
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
           defaultValue:
             lookup.map &&

@@ -64,9 +64,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field',
+          valueLabel: 'Import field value',
           map: lookup && lookup.map,
           visibleWhen: [
             {
