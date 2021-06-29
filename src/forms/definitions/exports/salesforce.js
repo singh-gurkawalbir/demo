@@ -177,10 +177,10 @@ export default {
       options: [
         {
           items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
+            { label: 'All – always export all data', value: 'all' },
+            { label: 'Delta – export only modified data', value: 'delta' },
+            { label: 'Once – export records only once', value: 'once' },
+            { label: 'Test – export only 1 record', value: 'test' },
           ],
         },
       ],
@@ -192,7 +192,7 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
-      label: 'Date field(s)',
+      label: 'Date fields to use in delta search',
       multiselect: true,
       placeholder: 'Please select a date field',
       fieldName: 'deltaExportDateFields',
@@ -209,8 +209,9 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       type: 'salesforcerefreshableselect',
-      label: 'Boolean field',
+      label: 'Boolean field to mark records as exported',
       placeholder: 'Please select a boolean field',
+      helpKey: 'export.once.booleanField',
       fieldName: 'onceExportBooleanFields',
       filterKey: 'salesforce-recordType',
       connectionId: r => r && r._connectionId,

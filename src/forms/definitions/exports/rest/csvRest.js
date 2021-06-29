@@ -107,7 +107,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'Where would you like to transfer from?';
 
           return 'What would you like to export?';
         },

@@ -91,9 +91,9 @@ export default {
         items: [
           { label: 'Webhook', value: 'webhook' },
           { label: 'Distributed', value: 'distributed' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
+          { label: 'Test – export only 1 record', value: 'test' },
+          { label: 'Delta – export only modified data', value: 'delta' },
+          { label: 'Once – export records only once', value: 'once' },
           { label: 'Tranlinedelta', value: 'tranlinedelta' },
           { label: 'Simple', value: 'simple' }, // dataloader
           { label: 'Blob', value: 'blob' }, // attachments
@@ -232,7 +232,7 @@ export default {
   // #region delta
   'delta.dateField': {
     type: 'text',
-    label: 'Date field(s)',
+    label: 'Date fields to use in delta search',
     required: true,
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
@@ -240,7 +240,7 @@ export default {
     type: 'toggleSelectToText',
     selectHrefLabel: 'Use custom format',
     textHrefLabel: 'Use presets',
-    label: 'Delta date format',
+    label: 'Override delta date format',
     options: [
       {
         items: dateTimeOptions,
@@ -265,7 +265,7 @@ export default {
   },
   'delta.lagOffset': {
     type: 'textwithflowcontext',
-    label: 'Offset',
+    label: 'Delta date lag offset',
     visibleWhenAll: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
@@ -277,7 +277,7 @@ export default {
   // #region once
   'once.booleanField': {
     type: 'text',
-    label: 'Boolean field',
+    label: 'Boolean field to mark records as exported',
     required: true,
     visibleWhen: [{ field: 'type', is: ['once'] }],
   },
