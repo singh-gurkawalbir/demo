@@ -211,6 +211,7 @@ export default function TableRow({
   touched,
   setTableState,
   onRowChange,
+  ignoreEmptyRow,
   disableDeleteRows,
 }) {
   const classes = useStyles();
@@ -239,7 +240,7 @@ export default function TableRow({
         )}
 
       </div>
-      {isNotLastRow && (
+      {isNotLastRow && !ignoreEmptyRow && (
       <div
         key="delete_button"
         className={classes.dynaTableActions}>

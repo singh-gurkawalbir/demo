@@ -244,12 +244,6 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.resourceListModified test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceListModified(false)).toEqual({count: 0, filtered: 0, resources: [], total: 0, type: undefined});
-    });
-  });
-
   describe('selectors.makeResourceListSelector test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.makeResourceListSelector();
@@ -3449,84 +3443,9 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('resourceData', () => {
-    test('should return {} on bad state or args.', () => {
-      expect(selectors.resourceData()).toEqual({sandbox: false});
-      expect(selectors.resourceData({ data: {} })).toEqual({sandbox: false});
-    });
-
-    test('should return correct data when no staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test A' }];
-      const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-
-      expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: exports[0],
-        staged: undefined,
-        master: exports[0],
-      });
-    });
-
-    test('should return correct data when no staged data or resource exists. (new resource)', () => {
-      const exports = [{ _id: 1, name: 'test A' }];
-      const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-
-      expect(
-        selectors.resourceData(state, 'exports', 'new-resource-id')
-      ).toEqual({
-        merged: {sandbox: false},
-        staged: undefined,
-        master: undefined,
-      });
-    });
-
-    test('should return correct data when staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged(1, patch));
-
-      expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-    });
-
-    test('should return correct data when staged data exists but no master.', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged('new-id', patch));
-
-      expect(selectors.resourceData(state, 'exports', 'new-id')).toEqual({
-        merged: { name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: null,
-      });
-    });
-  });
-
   describe('selectors.resourceDataModified test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceDataModified()).toEqual({sandbox: false});
+      expect(selectors.resourceDataModified()).toEqual({});
     });
     test('should return correct data if only resource is present', () => {
       const resource = { _id: 1, name: 'test X' };
@@ -3581,8 +3500,8 @@ describe('resource region selector testcases', () => {
     const resourceData = selectors.makeResourceDataSelector();
 
     test('should return {} on bad state or args.', () => {
-      expect(resourceData()).toEqual({sandbox: false});
-      expect(resourceData({ data: {} })).toEqual({sandbox: false});
+      expect(resourceData()).toEqual({});
+      expect(resourceData({ data: {} })).toEqual({});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -3606,13 +3525,7 @@ describe('resource region selector testcases', () => {
         actions.resource.receivedCollection('exports', exports)
       );
 
-      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({
-        merged: {
-          sandbox: false,
-        },
-        staged: undefined,
-        master: undefined,
-      });
+      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({merged: {}});
     });
 
     test('should return correct data when staged data exists.', () => {
@@ -4430,6 +4343,11 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.mkDIYIntegrationFlowList test cases', () => {
+    const sortProperties = {
+      lastExecutedAtSort: undefined,
+      lastExecutedAtSortType: 'date',
+    };
+
     test('should not throw any exception for bad params', () => {
       const selector = selectors.mkDIYIntegrationFlowList();
 
@@ -4532,6 +4450,7 @@ describe('resource region selector testcases', () => {
 
       test('should return correct flow list for standalone integration', () => {
         expect(selector(state, 'none')).toEqual([{
+          ...sortProperties,
           name: 'flow name 1',
           errors: 0,
           _id: 'flow1',
@@ -4539,25 +4458,33 @@ describe('resource region selector testcases', () => {
       });
       test('should return correct flow list for standalone integration for sandbox environment', () => {
         expect(selector({...state, user: {preferences: { environment: 'sandbox'}}})).toEqual([
-          {name: 'flow name 1 sandbox', _id: 'flow1sb', sandbox: true, errors: 0},
+          {
+            ...sortProperties,
+            name: 'flow name 1 sandbox',
+            _id: 'flow1sb',
+            sandbox: true,
+            errors: 0},
         ]);
       });
 
       test('should return correct flow list for a diy integration in default order', () => {
         expect(selector(state, 'integrationId1')).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
             _id: 'flow2',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
@@ -4567,20 +4494,23 @@ describe('resource region selector testcases', () => {
       });
 
       test('should return correct flow list for a diy integration in sorted order', () => {
-        expect(selector(state, 'integrationId1', null, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
+        expect(selector(state, 'integrationId1', null, false, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
             _id: 'flow7',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
@@ -4588,20 +4518,23 @@ describe('resource region selector testcases', () => {
           },
         ]);
 
-        expect(selector(state, 'integrationId1', null, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
+        expect(selector(state, 'integrationId1', null, false, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
             _id: 'flow2',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,

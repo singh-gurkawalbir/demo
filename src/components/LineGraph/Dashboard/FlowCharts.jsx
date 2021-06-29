@@ -105,7 +105,7 @@ const Chart = ({ attribute, integrationId, range, selectedResources }) => {
     () => {
       const flows = resourceList.resources &&
       resourceList.resources.filter(flow =>
-        (flow._integrationId === integrationId))
+        (integrationId === 'none' ? !flow._integrationId : flow._integrationId === integrationId))
         .map(f => ({_id: f._id, name: f.name}));
 
       return [{_id: integrationId, name: 'Integration-level'}, ...flows];

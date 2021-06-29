@@ -141,17 +141,22 @@ describe('Listener request logs region selectors test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.canEnableDebug()).toEqual(false);
     });
-    test('should return true if user has non-monitor access on the integration', () => {
+    test('should return true if user has non-monitor user access', () => {
+      state.user.org.accounts = [
+        {_id: 'own', accessLevel: 'owner'},
+        {
+          _id: 'shareId',
+          accepted: true,
+          accessLevel: 'manage',
+          integrationAccessLevel: [],
+        }];
       expect(selectors.canEnableDebug(state, exportId, flowId)).toEqual(true);
     });
-    test('should return false if export is a webhook type and user has monitor access on the integration', () => {
-      expect(selectors.canEnableDebug(state, exportId, 'flow-456')).toEqual(false);
+    test('should return true if user has tile level permissions but has manage access on integration', () => {
+      expect(selectors.canEnableDebug(state, exportId, flowId)).toEqual(true);
     });
-    test('should return false if export is non webhook and user does not have edit permission on the connection', () => {
+    test('should return false for monitor access', () => {
       expect(selectors.canEnableDebug(state, 'exp-456', 'flow-456')).toEqual(false);
-    });
-    test('should return true if export is non webhook and user has edit permission on the connection', () => {
-      expect(selectors.canEnableDebug(state, 'exp-999', 'flow-456')).toEqual(true);
     });
   });
   describe('selectors.mkLogsInCurrPageSelector test cases', () => {

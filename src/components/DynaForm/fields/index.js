@@ -129,6 +129,7 @@ import DynaTrialLicense from './DynaTrialLicense';
 import DynaLicenseExpires from './DynaLicenseExpires';
 import DynaLicenseEditor from './DynaLicenseEditor';
 import DynaSsoOrgId from './DynaSsoOrgId';
+import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -154,6 +155,7 @@ export default {
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
+  assistantHeaders: DynaAssistantHeaders,
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,

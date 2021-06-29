@@ -79,7 +79,6 @@ export default {
       delete newValues['/http/auth/token/refreshTokenPath'];
       delete newValues['/http/auth/token/refreshTokenHeaders'];
       delete newValues['/http/auth/token/refreshToken'];
-      delete newValues['/http/auth/token/refreshBody'];
       delete newValues['/http/auth/token/refreshRelativeURI'];
       delete newValues['/http/auth/token/refreshMediaType'];
     }
@@ -484,8 +483,8 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
       ],
     },
-    'http.auth.oauth.refreshBody': {
-      id: 'http.auth.oauth.refreshBody',
+    'http.auth.token.refreshBody': {
+      id: 'http.auth.token.refreshBody',
       type: 'httprequestbody',
       contentType: 'json',
       label: 'Refresh token body',
@@ -494,8 +493,8 @@ export default {
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
     },
-    'http.auth.oauth.refreshHeaders': {
-      id: 'http.auth.oauth.refreshHeaders',
+    'http.auth.token.refreshHeaders': {
+      id: 'http.auth.token.refreshHeaders',
       type: 'keyvalue',
       keyName: 'name',
       valueName: 'value',
@@ -575,8 +574,8 @@ export default {
           'http.auth.oauth.clientCredentialsLocation',
           'http.auth.oauth.accessTokenHeaders',
           'http.auth.oauth.accessTokenBody',
-          'http.auth.oauth.refreshHeaders',
-          'http.auth.oauth.refreshBody',
+          'http.auth.token.refreshHeaders',
+          'http.auth.token.refreshBody',
           'http.auth.token.revoke.uri',
           'http.auth.token.revoke.headers',
           'http.auth.token.revoke.body',

@@ -19,6 +19,7 @@ import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
+import { capitalizeFirstLetter } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -126,7 +127,7 @@ export default function MarketplaceList() {
   );
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
-  const applicationName = connector ? connector.name : application;
+  const applicationName = connector?.name || capitalizeFirstLetter(application);
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -219,20 +220,12 @@ export default function MarketplaceList() {
     <LoadResources required resources="integrations">
       <InstallTemplateDrawer />
 
-      <CeligoPageBar
-        title={`${
-          applicationName
-            ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
-            : ''
-        } Integrations`}
-        >
-        {(templates.length || connectors.length) ? (
-          <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
-        ) : ''}
+      <CeligoPageBar title={`${applicationName} Integrations`}>
+        <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-        <Typography component="div" variant="body2" className={classes.noDataTitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
+        <Typography component="div" variant="body2" className={classes.noDataTitle}> Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create brand new custom flows using the prebuilt connector available for this application.</Typography>
       )}
       <div className={classes.root}>
         {connectors.map(connector => (
