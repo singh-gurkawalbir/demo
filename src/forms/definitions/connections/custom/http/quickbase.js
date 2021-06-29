@@ -37,7 +37,6 @@ export default {
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      id: 'http.auth.token.token',
       label: 'QB-USER-TOKEN',
       required: true,
       helpKey: 'quickbase.connection.http.auth.token.token',
