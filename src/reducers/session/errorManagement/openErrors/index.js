@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import { getOpenErrorDetailsMap } from '../../../../utils/errorManagement';
@@ -28,9 +29,12 @@ export default (state = {}, action) => {
           break;
         }
         const flowErrors = (openErrors && openErrors.flowErrors) || [];
+        const errorDetailsMap = getOpenErrorDetailsMap(flowErrors, '_expOrImpId');
 
         draft[flowId].status = 'received';
-        draft[flowId].data = getOpenErrorDetailsMap(flowErrors, '_expOrImpId');
+        if (!draft[flowId].data || !isEqual(draft[flowId].data, errorDetailsMap)) {
+          draft[flowId].data = errorDetailsMap;
+        }
         break;
       }
 
@@ -49,7 +53,11 @@ export default (state = {}, action) => {
         }
 
         draft[integrationId].status = 'received';
-        draft[integrationId].data = getOpenErrorDetailsMap(integrationErrors, '_flowId');
+        const errorDetailsMap = getOpenErrorDetailsMap(integrationErrors, '_flowId');
+
+        if (!draft[integrationId].data || !isEqual(draft[integrationId].data, errorDetailsMap)) {
+          draft[integrationId].data = errorDetailsMap;
+        }
         break;
       }
 

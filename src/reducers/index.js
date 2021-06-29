@@ -1966,7 +1966,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
       return childIntegrationIds.includes(f._integrationId);
     });
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.[f._id]) || 0}));
+    integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0}));
 
     // this transformation adds properties to make the the flow lastExecutedAt sortable
     integrationFlows = integrationFlows.map(flow => {

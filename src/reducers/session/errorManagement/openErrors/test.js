@@ -50,15 +50,15 @@ const filledState = {
     status: 'received',
     data: {
       f1: {
-        flowId: 'f1',
+        _flowId: 'f1',
         numError: 100,
       },
       f2: {
-        flowId: 'f2',
+        _flowId: 'f2',
         numError: 10,
       },
       f3: {
-        flowId: 'f3',
+        _flowId: 'f3',
         numError: 20,
       },
     },
@@ -134,15 +134,15 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
           status: 'received',
           data: {
             f1: {
-              flowId: 'f1',
+              _flowId: 'f1',
               numError: 100,
             },
             f2: {
-              flowId: 'f2',
+              _flowId: 'f2',
               numError: 10,
             },
             f3: {
-              flowId: 'f3',
+              _flowId: 'f3',
               numError: 20,
             },
           },
@@ -261,6 +261,27 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
       };
 
       expect(currState).toEqual(expectedState);
+    });
+    test('should retain the reference of previous error data if the new error data is same as the previous one', () => {
+      const reqState = reducer(filledState, actions.errorManager.integrationErrors.request({ integrationId }));
+      const currState = reducer(reqState, actions.errorManager.integrationErrors.received({ integrationId,
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 100,
+          },
+          {
+            _flowId: 'f2',
+            numError: 10,
+          },
+          {
+            _flowId: 'f3',
+            numError: 20,
+          },
+        ],
+      }));
+
+      expect(currState).toEqual(filledState);
     });
   });
 });
