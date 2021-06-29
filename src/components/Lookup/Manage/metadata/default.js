@@ -120,9 +120,9 @@ const getLookupMetadata = ({
         label: '',
         required: true,
         keyName: 'export',
-        keyLabel: 'Export field',
+        keyLabel: 'Export field value',
         valueName: 'import',
-        valueLabel: 'Import field (HTTP)',
+        valueLabel: 'Import field value',
         map: lookup && lookup.map,
         visibleWhen: [
           {
