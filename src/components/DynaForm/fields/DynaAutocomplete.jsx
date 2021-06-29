@@ -156,7 +156,6 @@ export default function DynaAutocomplete(props) {
               <TextField
                 {...params}
                 name={name}
-                variant="filled"
                 id={id}
               />
             )}
