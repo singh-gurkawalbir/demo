@@ -123,6 +123,7 @@ export default {
     'omnisend',
     'pagerduty',
     'quickbase',
+    'pagerdutyevents',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

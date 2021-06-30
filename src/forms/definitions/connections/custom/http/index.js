@@ -211,6 +211,7 @@ import freshservice from './freshservice';
 import omnisend from './omnisend';
 import pagerduty from './pagerduty';
 import quickbase from './quickbase';
+import pagerdutyevents from './pagerdutyevents';
 
 export default {
   channelape,
@@ -426,4 +427,5 @@ export default {
   omnisend,
   pagerduty,
   quickbase,
+  pagerdutyevents,
 };
