@@ -18,7 +18,7 @@ export default function TextButton(props) {
   return (
     <Button
       variant="text"
-      color="primary"
+      color="secondary"
       className={classes.root}
       bold
       disableElevation
@@ -33,9 +33,10 @@ TextButton.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   bold: PropTypes.bool,
+  color: PropTypes.oneOf(['primary', 'secondary']),
 };
 
 TextButton.defaultProps = {
-  color: 'primary',
+  color: 'secondary',
   size: 'medium',
 };

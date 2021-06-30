@@ -18,7 +18,8 @@ const Template = args => <TextButton {...args} />;
 export const defaultButton = Template.bind({});
 
 defaultButton.args = {
-  children: 'Default',
+  children: 'Defaults',
+  color: 'secondary',
 };
 const designParameters = {
   design: {
@@ -74,6 +75,13 @@ export const bold = Template.bind({});
 bold.args = {
   children: 'Resume',
   bold,
+  color: 'primary',
+};
+
+export const primary = Template.bind({});
+
+primary.args = {
+  children: 'Primary',
   color: 'primary',
 };
 
