@@ -8,6 +8,7 @@ import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
 import SelectSource from '../cells/SelectSource';
+import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
@@ -35,7 +36,7 @@ export default {
     {
       key: 'message',
       heading: 'Message',
-      width: '40%',
+      width: '35%',
       Value: ({rowData: r}) => {
         const {flowId, resourceId} = useGetTableContext();
 
@@ -68,13 +69,23 @@ export default {
       width: '15%',
     },
     {
+      key: 'selectClassification',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectClassification {...tableContext} />;
+      },
+      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
+      width: '10%',
+    },
+    {
       key: 'selectDate',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
         return <SelectDate {...tableContext} />;
       },
-      width: '15%',
+      width: '10%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],

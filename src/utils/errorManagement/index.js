@@ -11,10 +11,10 @@ export const FILTER_KEYS = {
 
 export const DEFAULT_FILTERS = {
   OPEN: {
-    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId'],
+    searchBy: ['message', 'source', 'classification', 'code', 'occurredAt', 'traceKey', 'errorId'],
   },
   RESOLVED: {
-    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
+    searchBy: ['message', 'source', 'classification', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
   },
 };
 
@@ -53,7 +53,7 @@ export const getFilteredErrors = (errors = [], options = {}) => {
 };
 
 export const formatErrorDetails = (error = {}) => {
-  const { occurredAt, code, message, errorId, traceKey, source } = error;
+  const { occurredAt, code, message, errorId, traceKey, source, classification } = error;
 
   const content = `
   Message: 
@@ -66,7 +66,7 @@ export const formatErrorDetails = (error = {}) => {
   Timestamp: ${occurredAt}
 
   Error ID: ${errorId}
-
+  ${classification ? `\n  Classification : ${classification}\n` : ''}
   ${traceKey ? `Trace key : ${traceKey} ` : ''}
   `;
 
@@ -153,6 +153,24 @@ export const getSourceOptions = (sourceList = [], applicationName) => {
 
   return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
+
+export function getClassificationOptions(classificationList = []) {
+  const classificationLabelsMap = {
+    connection: 'Connection',
+    duplicate: 'Duplicate',
+    governance: 'Governance',
+    missing: 'Missing',
+    parse: 'Parse',
+    value: 'Value',
+    intermittent: 'Intermittent',
+  };
+  const options = classificationList
+    .filter(classificationId => classificationId !== 'none')
+    .map(classificationId => ({_id: classificationId, name: classificationLabelsMap[classificationId] || classificationId}));
+  const sortedOptions = sortBy(options, s => s.name);
+
+  return [{ _id: 'all', name: 'All classifications'}, ...sortedOptions];
+}
 
 export function getJobDuration(job) {
   if (job?.startedAt && job?.endedAt) {
