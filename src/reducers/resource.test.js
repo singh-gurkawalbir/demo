@@ -4028,6 +4028,187 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.mkFlowResources test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector()).toEqual([]);
+    });
+
+    const flows = [
+      {
+        _id: 'f1',
+        _exportId: 'e1',
+        _importId: 'i1',
+        p1: 1,
+        p2: 2,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f4',
+        pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f5',
+        pageProcessors: [
+          { _exportId: 'e1', type: 'export' },
+          { _importId: 'i1', type: 'import' },
+          { _exportId: 'e2', type: 'export' },
+        ],
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f6',
+        pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+        pageProcessors: [
+          { _exportId: 'e3', type: 'export' },
+          { _importId: 'i1', type: 'import' },
+          { _exportId: 'e4', type: 'export' },
+          { _importId: 'i2', type: 'import' },
+        ],
+        _integrationId: 'i1',
+      },
+    ];
+    const exports = [{
+      _id: 'e1',
+      name: 'e1',
+      _connectionId: 'c1',
+    },
+    {
+      _id: 'e2',
+      name: 'e2',
+      _connectionId: 'c2',
+    }, {
+      _id: 'e3',
+      name: 'e3',
+      _connectionId: 'c3',
+    }];
+    const imports = [{
+      _id: 'i1',
+      name: 'i1',
+      _connectionId: 'c1',
+    }, {
+      _id: 'i2',
+      name: 'i2',
+      _connectionId: 'c4',
+    }];
+
+    test('should return empty list if there are no steps for the passed flow', () => {
+      const flowId = 'f1';
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              exports,
+              imports,
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector(state, flowId)).toEqual([]);
+    });
+    test('should return expected error steps for the passed flow with corresponding open error info ', () => {
+      const flowId = 'f6';
+      const integrationId = 'i1';
+      const lastErrorAt = new Date().toISOString();
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              flows,
+              exports,
+              imports,
+            },
+          },
+
+          session: {
+            errorManagement: {
+              openErrors: {
+                [flowId]: {
+                  status: 'received',
+                  data: {
+                    e1: { _expOrImpId: 'e1', numError: 10, lastErrorAt },
+                    e2: { _expOrImpId: 'e2', numError: 20 },
+                    e3: { _expOrImpId: 'e3', numError: 30, lastErrorAt },
+                    i1: { _expOrImpId: 'i1', numError: 10 },
+                    i2: { _expOrImpId: 'i2', numError: 20 },
+                  },
+                },
+              },
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector(state, flowId, integrationId)).toEqual(
+        [
+          {id: 'e1', name: 'e1', integrationId, flowId, type: 'exports', count: 10, lastErrorAt },
+          {id: 'e2', name: 'e2', integrationId, flowId, type: 'exports', count: 20 },
+          {id: 'e3', name: 'e3', isLookup: true, integrationId, flowId, type: 'exports', count: 30, lastErrorAt },
+          {id: 'i1', name: 'i1', integrationId, flowId, type: 'imports', count: 10 },
+          {id: 'i2', name: 'i2', integrationId, flowId, type: 'imports', count: 20 },
+        ]);
+    });
+    test('should return expected error steps for the passed flow with corresponding open error info sorted by lastErrorAt', () => {
+      const flowId = 'f6';
+      const integrationId = 'i1';
+      const lastErrorAt = new Date().toISOString();
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              flows,
+              exports,
+              imports,
+            },
+          },
+
+          session: {
+            errorManagement: {
+              openErrors: {
+                [flowId]: {
+                  status: 'received',
+                  data: {
+                    e1: { _expOrImpId: 'e1', numError: 10, lastErrorAt },
+                    e2: { _expOrImpId: 'e2', numError: 20 },
+                    e3: { _expOrImpId: 'e3', numError: 30, lastErrorAt },
+                    i1: { _expOrImpId: 'i1', numError: 10 },
+                    i2: { _expOrImpId: 'i2', numError: 20 },
+                  },
+                },
+              },
+            },
+            filters: {
+              errorsList: {
+                sort: {
+                  order: 'desc',
+                  orderBy: 'lastErrorAt',
+                },
+              },
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector(state, flowId, integrationId, undefined, 'errorsList')).toEqual(
+        [
+          {id: 'e1', name: 'e1', integrationId, flowId, type: 'exports', count: 10, lastErrorAt },
+          {id: 'e3', name: 'e3', isLookup: true, integrationId, flowId, type: 'exports', count: 30, lastErrorAt },
+          {id: 'e2', name: 'e2', integrationId, flowId, type: 'exports', count: 20 },
+          {id: 'i1', name: 'i1', integrationId, flowId, type: 'imports', count: 10 },
+          {id: 'i2', name: 'i2', integrationId, flowId, type: 'imports', count: 20 },
+        ]);
+    });
+  });
+
   describe('selectors.accessTokenList test cases', () => {
     const state = {
       data: {
