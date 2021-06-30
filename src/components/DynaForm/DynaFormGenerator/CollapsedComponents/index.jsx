@@ -9,6 +9,7 @@ import FormGenerator from '..';
 import { selectors } from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,7 +31,7 @@ export default function CollapsedComponents(props) {
   const classes = useStyles();
   const { containers, fieldMap, formKey, resourceType, resourceId, dataPublic} = props;
 
-  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged || emptyObject;
   const transformedContainers =
     containers &&
     containers.map((container, index) => {

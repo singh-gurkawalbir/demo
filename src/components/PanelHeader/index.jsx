@@ -8,7 +8,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     display: 'flex',
     justifyContent: 'space-between',
-    overflowX: 'auto',
   },
   infoIcon: {
     color: theme.palette.text.hint,
