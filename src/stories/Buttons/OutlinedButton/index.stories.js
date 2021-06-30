@@ -9,7 +9,7 @@ import AddIcon from '../../../components/icons/AddIcon';
 import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'Buttons / OutlinedButton',
+  title: 'Components / Buttons / OutlinedButton',
   component: OutlinedButton,
   decorators: [withDesign, jsxDecorator],
 };

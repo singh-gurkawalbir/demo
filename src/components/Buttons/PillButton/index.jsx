@@ -19,18 +19,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PillButton(props) {
-  const classes = useStyles(props);
-  const {children, fill, ...rest} = props;
+export default function PillButton({fill, ...rest}) {
+  const classes = useStyles();
 
   return (
     <Button
       variant="outlined"
-      color="secondary"
       className={clsx(classes.root, {[classes.fill]: fill})}
-      {...rest}>
-      {children}
-    </Button>
+      {...rest} />
   );
 }
 

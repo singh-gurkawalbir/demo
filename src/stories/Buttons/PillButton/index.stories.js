@@ -9,7 +9,7 @@ import RefreshIcon from '../../../components/icons/RefreshIcon';
 import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'Buttons / PillButton',
+  title: 'Components / Buttons / PillButton',
   component: PillButton,
   decorators: [withDesign, jsxDecorator],
 };

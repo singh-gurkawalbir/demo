@@ -244,7 +244,10 @@ function Tile({
     <div>
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <Status variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
+          <Status
+            variant={status.variant}
+            size="large" onClick={handleStatusClick}
+            className={classes.headerTileStatus}>
             {status.label}
           </Status>
           {isConnectionDown && (

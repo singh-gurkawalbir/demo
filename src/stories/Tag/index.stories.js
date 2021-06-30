@@ -13,12 +13,12 @@ const Template = args => (
 export const Defaults = Template.bind({});
 
 Defaults.args = {
-  variant: 'Digital Pro',
+  children: 'Digital Pro',
 };
 
 export const homePageCardTag = Template.bind({});
 
 homePageCardTag.args = {
-  variant: 'Clone gainsight px which is the best integration',
+  children: 'Clone gainsight px which is the best integration',
 };
 

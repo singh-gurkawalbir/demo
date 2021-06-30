@@ -17,7 +17,7 @@ import Revoke from './actions/Revoke';
 import actions from '../../../actions';
 import ReplaceConnection from './actions/ReplaceConnection';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
-import Status from '../../Buttons/Status';
+import OnlineStatus from '../commonCells/OnlineStatus';
 
 export default {
   useColumns: () => {
@@ -37,7 +37,7 @@ export default {
       {
         key: 'status',
         heading: 'Status',
-        Value: ({rowData: r}) => <Status variant={r.offline ? 'error' : 'success'}>{r.offline ? 'Offline' : 'Online'}</Status>,
+        Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
       },
       {
         key: 'type',

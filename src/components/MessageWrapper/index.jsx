@@ -21,19 +21,19 @@ const useStyles = makeStyles(theme => ({
 
 export default function MessageWrapper(props) {
   const classes = useStyles();
-  const {children, variant = 'medium', className} = props;
+  const {children, size = 'medium', className} = props;
 
   return (
-    <div className={clsx(classes.root, classes[variant], className)}>
+    <div className={clsx(classes.root, classes[size], className)}>
       <Typography>{children}</Typography>
     </div>
   );
 }
 
-MessageWrapper.defaultProps = {
-  variant: 'medium',
-};
 MessageWrapper.propTypes = {
   children: PropTypes.node.isRequired,
-  variant: PropTypes.oneOf(['small', 'medium', 'large']),
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+};
+MessageWrapper.defaultProps = {
+  size: 'medium',
 };

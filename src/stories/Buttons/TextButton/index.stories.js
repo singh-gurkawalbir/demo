@@ -9,7 +9,7 @@ import AddIcon from '../../../components/icons/AddIcon';
 import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'Buttons / TextButton',
+  title: 'Components / Buttons / TextButton',
   component: TextButton,
   decorators: [withDesign, jsxDecorator],
 };

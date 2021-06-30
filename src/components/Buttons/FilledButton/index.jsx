@@ -17,19 +17,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FilledButton(props) {
+export default function FilledButton({error, ...rest}) {
   const classes = useStyles();
-  const {children, error, onClick, ...rest} = props;
 
   return (
     <Button
       variant="contained"
-      color="primary"
       className={clsx({[classes.error]: error})}
-      onClick={onClick}
-      {...rest}>
-      {children}
-    </Button>
+      {...rest} />
   );
 }
 

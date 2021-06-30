@@ -9,7 +9,7 @@ import { jsxDecorator } from 'storybook-addon-jsx';
 import Status from '../../../components/Buttons/Status/index';
 
 export default {
-  title: 'Buttons / Status',
+  title: 'Components / Buttons / Status',
   component: Status,
   decorators: [withDesign, jsxDecorator],
   argTypes: {
@@ -22,6 +22,7 @@ export default {
       },
     },
   },
+  onClick: null,
 };
 const Template = args => <Status {...args} />;
 
@@ -47,6 +48,10 @@ export const errorButton = Template.bind({});
 errorButton.args = {
   variant: 'error',
   children: '118 errors',
+  onClick: () => {
+    // eslint-disable-next-line no-console
+    console.log('welcome');
+  },
 };
 errorButton.parameters = designParameters;
 

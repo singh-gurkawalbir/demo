@@ -118,7 +118,10 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
     <div>
       <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
-          <Status variant={status.variant} size="large" onClick={handleStatusClick} className={classes.headerTileStatus}>
+          <Status
+            variant={status.variant}
+            size="large" onClick={handleStatusClick}
+            className={classes.headerTileStatus}>
             {status.label}
           </Status>
           {isConnectionDown && (

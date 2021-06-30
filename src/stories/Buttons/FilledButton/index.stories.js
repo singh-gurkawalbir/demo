@@ -11,7 +11,7 @@ import RefreshIcon from '../../../components/icons/RefreshIcon';
 import DeleteIcon from '../../../components/icons/TrashIcon';
 
 export default {
-  title: 'Buttons / FilledButton',
+  title: 'Components / Buttons / FilledButton',
   component: FilledButton,
   decorators: [withDesign, jsxDecorator],
   argTypes: {

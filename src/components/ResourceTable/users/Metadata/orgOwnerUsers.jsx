@@ -3,7 +3,7 @@ import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
 import RequireAccountSSO from '../cells/RequireAccountSSO';
 import ReinviteUser from '../cells/ReinviteUser';
-import userStatus from '../cells/UserStatus';
+import UserStatus from '../cells/UserStatus';
 import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
@@ -36,7 +36,7 @@ export default {
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
-          return <userStatus user={r} integrationId={integrationId} />;
+          return <UserStatus user={r} integrationId={integrationId} />;
         },
       },
       {

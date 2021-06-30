@@ -28,17 +28,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Status(props) {
-  const classes = useStyles(props);
-  const {children, className, error, size, variant, onClick, ...rest} = props;
+export default function Status({children, className, error, size, variant, onClick, ...rest}) {
+  const classes = useStyles();
 
   if (onClick) {
     return (
       <Button
         variant="text"
-        color="primary"
         className={clsx(classes.statusButtonContainer, {[classes.error]: error}, className)}
-        disableElevation
         onClick={onClick}
         startIcon={<StatusCircle variant={variant} size={size} />}
         {...rest}>
@@ -60,6 +57,7 @@ Status.propTypes = {
   size: PropTypes.oneOf(['mini', 'small', 'large']),
   error: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
+  onClick: PropTypes.func,
 };
 
 Status.defaultProps = {
