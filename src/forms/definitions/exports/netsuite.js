@@ -353,9 +353,9 @@ export default {
     },
     'once.booleanField': {
       id: 'once.booleanField',
-      label: 'Boolean field',
+      label: 'Boolean field to mark records as exported',
       type: 'refreshableselect',
-      placeholder: 'Please select a Boolean field',
+      placeholder: 'Please select a boolean field',
       required: true,
       connectionId: r => r && r._connectionId,
       filterKey: 'webservices-booleanField',
@@ -385,10 +385,10 @@ export default {
       options: [
         {
           items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
+            { label: 'All – always export all data', value: 'all' },
+            { label: 'Delta – export only modified data', value: 'delta' },
+            { label: 'Once – export records only once', value: 'once' },
+            { label: 'Test – export only 1 record', value: 'test' },
           ],
         },
       ],
@@ -426,10 +426,10 @@ export default {
         return output || 'all';
       },
       selectOptions: [
-        { label: 'All', value: 'all' },
-        { label: 'Test', value: 'test' },
-        { label: 'Delta', value: 'delta' },
-        { label: 'Once', value: 'once' },
+        { label: 'All – always export all data', value: 'all' },
+        { label: 'Delta – export only modified data', value: 'delta' },
+        { label: 'Once – export records only once', value: 'once' },
+        { label: 'Test – export only 1 record', value: 'test' },
       ],
       visibleWhenAll: [
         { field: 'outputMode', is: ['records'] },
@@ -439,7 +439,7 @@ export default {
     },
     'restlet.delta.dateField': {
       id: 'restlet.delta.dateField',
-      label: 'Date field(s)',
+      label: 'Date fields to use in delta search',
       type: 'refreshableselect',
       multiselect: true,
       helpKey: 'export.delta.dateField',
@@ -460,7 +460,7 @@ export default {
     'restlet.delta.lagOffset': {
       id: 'restlet.delta.lagOffset',
       type: 'text',
-      label: 'Offset',
+      label: 'Delta date lag offset',
       helpKey: 'export.delta.lagOffset',
       defaultValue: r => r && r.delta && r.delta.lagOffset,
       visibleWhenAll: [
@@ -473,10 +473,10 @@ export default {
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
-      label: 'Boolean field',
+      label: 'Boolean field to mark records as exported',
       type: 'refreshableselect',
-      helpKey: 'export.delta.booleanField',
-      placeholder: 'Please select a Boolean field',
+      helpKey: 'export.once.booleanField',
+      placeholder: 'Please select a boolean field',
       filterKey: 'suitescript-booleanField',
       required: true,
       defaultValue: r => r && r.once && r.once.booleanField,
