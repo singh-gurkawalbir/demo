@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Status({children, className, error, size, variant, onClick, ...rest}) {
+export default function Status({ children, className, error, size, variant, onClick, dataTest}) {
   const classes = useStyles();
 
   if (onClick) {
@@ -37,8 +37,9 @@ export default function Status({children, className, error, size, variant, onCli
         variant="text"
         className={clsx(classes.statusButtonContainer, {[classes.error]: error}, className)}
         onClick={onClick}
+        data-test={dataTest}
         startIcon={<StatusCircle variant={variant} size={size} />}
-        {...rest}>
+        >
         {children}
       </Button>
     );
