@@ -122,6 +122,7 @@ export default {
     'freshservice',
     'omnisend',
     'pagerduty',
+    'quickbase',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
