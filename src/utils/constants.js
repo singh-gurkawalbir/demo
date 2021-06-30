@@ -1,7 +1,7 @@
 import {invert} from 'lodash';
 
-export const emptyList = [];
-export const emptyObject = {};
+export const emptyList = Object.freeze([]);
+export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
