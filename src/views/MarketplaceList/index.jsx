@@ -110,7 +110,7 @@ const useStyles = makeStyles(theme => ({
   },
   noDataTitle: {
     padding: theme.spacing(3),
-    width: '700px',
+    maxWidth: '700px',
   },
 }));
 
