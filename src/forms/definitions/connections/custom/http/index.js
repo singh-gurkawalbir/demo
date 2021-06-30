@@ -210,6 +210,7 @@ import pandadoc from './pandadoc';
 import freshservice from './freshservice';
 import omnisend from './omnisend';
 import pagerduty from './pagerduty';
+import quickbase from './quickbase';
 
 export default {
   channelape,
@@ -424,4 +425,5 @@ export default {
   freshservice,
   omnisend,
   pagerduty,
+  quickbase,
 };

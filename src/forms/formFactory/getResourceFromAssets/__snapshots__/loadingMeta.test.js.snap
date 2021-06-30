@@ -8542,6 +8542,7 @@ Object {
       },
       "http.compositeMethodCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.method",
         "id": "http.compositeMethodCreate",
         "label": "HTTP method",
         "options": Array [
@@ -8562,6 +8563,7 @@ Object {
             ],
           },
         ],
+        "required": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -8587,6 +8589,7 @@ Object {
       },
       "http.compositeMethodUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.method",
         "id": "http.compositeMethodUpdate",
         "label": "HTTP method",
         "options": Array [
@@ -8607,6 +8610,7 @@ Object {
             ],
           },
         ],
+        "required": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -8676,8 +8680,9 @@ Object {
       },
       "http.failPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.failPath",
         "id": "http.failPathCreate",
-        "label": "Fail path",
+        "label": "Path to error field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8703,8 +8708,9 @@ Object {
       },
       "http.failPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.failPath",
         "id": "http.failPathUpdate",
-        "label": "Fail path",
+        "label": "Path to error field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8731,8 +8737,9 @@ Object {
       "http.failValuesCreate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.failValues",
         "id": "http.failValuesCreate",
-        "label": "Fail values",
+        "label": "Error values",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8759,8 +8766,9 @@ Object {
       "http.failValuesUpdate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.failValues",
         "id": "http.failValuesUpdate",
-        "label": "Fail values",
+        "label": "Error values",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8804,6 +8812,7 @@ Object {
         "arrayIndex": 1,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
         "id": "http.relativeURICreate",
         "label": "Relative URI",
         "type": "relativeuri",
@@ -8833,6 +8842,7 @@ Object {
         "arrayIndex": 0,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
         "id": "http.relativeURIUpdate",
         "label": "Relative URI",
         "type": "relativeuri",
@@ -8863,8 +8873,9 @@ Object {
       },
       "http.resourceIdPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
         "id": "http.resourceIdPathCreate",
-        "label": "Response ID path",
+        "label": "Path to id field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8890,8 +8901,9 @@ Object {
       },
       "http.resourceIdPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
         "id": "http.resourceIdPathUpdate",
-        "label": "Response ID path",
+        "label": "Path to id field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8917,8 +8929,9 @@ Object {
       },
       "http.resourcePathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourcePath",
         "id": "http.resourcePathCreate",
-        "label": "Response path",
+        "label": "Path to records in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8944,8 +8957,9 @@ Object {
       },
       "http.resourcePathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourcePath",
         "id": "http.resourcePathUpdate",
-        "label": "Response path",
+        "label": "Path to records in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8999,8 +9013,9 @@ Object {
       },
       "http.successPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
         "id": "http.successPathCreate",
-        "label": "Success path",
+        "label": "Path to success field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9026,8 +9041,9 @@ Object {
       },
       "http.successPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
         "id": "http.successPathUpdate",
-        "label": "Success path",
+        "label": "Path to success field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9054,6 +9070,7 @@ Object {
       "http.successValuesCreate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.successValues",
         "id": "http.successValuesCreate",
         "label": "Success values",
         "type": "text",
@@ -9082,6 +9099,7 @@ Object {
       "http.successValuesUpdate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.successValues",
         "id": "http.successValuesUpdate",
         "label": "Success values",
         "type": "text",
@@ -9258,11 +9276,11 @@ Object {
               "fields": Array [
                 "http.method",
                 "http.blobMethod",
+                "http.compositeType",
+                "http.relativeURI",
                 "http.headers",
                 "http.requestMediaType",
-                "http.compositeType",
                 "http.lookups",
-                "http.relativeURI",
                 "http.batchSize",
                 "http.body",
                 "uploadFile",
@@ -9273,43 +9291,49 @@ Object {
               "collapsed": true,
               "containers": Array [
                 Object {
-                  "collapsed": true,
-                  "fields": Array [
-                    "http.resourcePathCreate",
-                    "http.resourceIdPathCreate",
-                    "http.successPathCreate",
-                    "http.successValuesCreate",
-                    "http.failPathCreate",
-                    "http.failValuesCreate",
+                  "containers": Array [
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
+                        "http.resourcePathCreate",
+                        "http.resourceIdPathCreate",
+                        "http.failPathCreate",
+                        "http.failValuesCreate",
+                        "http.successPathCreate",
+                        "http.successValuesCreate",
+                      ],
+                      "label": "Create new data",
+                    },
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
+                        "http.resourcePathUpdate",
+                        "http.resourceIdPathUpdate",
+                        "http.failPathUpdate",
+                        "http.failValuesUpdate",
+                        "http.successPathUpdate",
+                        "http.successValuesUpdate",
+                      ],
+                      "label": "Update existing data",
+                    },
                   ],
-                  "label": "Create new data",
+                  "type": "collapse",
                 },
                 Object {
-                  "collapsed": true,
                   "fields": Array [
-                    "http.resourcePathUpdate",
-                    "http.resourceIdPathUpdate",
-                    "http.successPathUpdate",
-                    "http.successValuesUpdate",
-                    "http.failPathUpdate",
-                    "http.failValuesUpdate",
+                    "http.response.resourcePath",
+                    "http.response.resourceIdPath",
+                    "http.response.failPath",
+                    "http.response.failValues",
+                    "http.response.successPath",
+                    "http.response.successValues",
+                    "http.response.errorPath",
+                    "http.successMediaType",
+                    "http.errorMediaType",
                   ],
-                  "label": "Update existing data",
                 },
               ],
-              "fields": Array [
-                "http.response.resourcePath",
-                "http.response.resourceIdPath",
-                "http.response.errorPath",
-                "http.response.successPath",
-                "http.response.successValues",
-                "http.response.failPath",
-                "http.response.failValues",
-                "http.successMediaType",
-                "http.errorMediaType",
-              ],
               "label": "Non-standard API response patterns",
-              "type": "collapse",
             },
             Object {
               "collapsed": true,
@@ -9517,6 +9541,7 @@ Object {
         "arrayIndex": 1,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.body",
         "id": "http.bodyCreate",
         "label": "HTTP request body",
         "refreshOptionsOnChangesTo": Array [
@@ -9549,6 +9574,7 @@ Object {
         "arrayIndex": 0,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.body",
         "id": "http.bodyUpdate",
         "label": "HTTP request body",
         "refreshOptionsOnChangesTo": Array [
@@ -9579,6 +9605,7 @@ Object {
       },
       "http.compositeMethodCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.method",
         "id": "http.compositeMethodCreate",
         "label": "HTTP method",
         "options": Array [
@@ -9625,6 +9652,7 @@ Object {
       },
       "http.compositeMethodUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.method",
         "id": "http.compositeMethodUpdate",
         "label": "HTTP method",
         "options": Array [
@@ -9712,11 +9740,13 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "required": true,
       },
       "http.relativeURICreate": Object {
         "arrayIndex": 1,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
         "id": "http.relativeURICreate",
         "label": "Relative URI",
         "required": true,
@@ -9747,6 +9777,7 @@ Object {
         "arrayIndex": 0,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
         "id": "http.relativeURIUpdate",
         "label": "Relative URI",
         "required": true,
@@ -9784,8 +9815,9 @@ Object {
       },
       "http.responseIdPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
         "id": "http.responseIdPathCreate",
-        "label": "Response ID path",
+        "label": "Path to id field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9811,8 +9843,9 @@ Object {
       },
       "http.responseIdPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
         "id": "http.responseIdPathUpdate",
-        "label": "Response ID path",
+        "label": "Path to id field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9838,8 +9871,9 @@ Object {
       },
       "http.successPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
         "id": "http.successPathCreate",
-        "label": "Success path",
+        "label": "Path to success field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9865,8 +9899,9 @@ Object {
       },
       "http.successPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
         "id": "http.successPathUpdate",
-        "label": "Success path",
+        "label": "Path to success field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9892,6 +9927,7 @@ Object {
       },
       "http.successValuesCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successValues",
         "id": "http.successValuesCreate",
         "label": "Success values",
         "type": "text",
@@ -9919,6 +9955,7 @@ Object {
       },
       "http.successValuesUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successValues",
         "id": "http.successValuesUpdate",
         "label": "Success values",
         "type": "text",
@@ -10168,10 +10205,10 @@ Object {
               "fields": Array [
                 "http.method",
                 "http.blobMethod",
-                "http.headers",
                 "http.compositeType",
-                "http.lookups",
                 "http.relativeURI",
+                "http.headers",
+                "http.lookups",
                 "http.body",
               ],
               "label": [Function],
@@ -10190,26 +10227,26 @@ Object {
                 Object {
                   "collapsed": true,
                   "fields": Array [
+                    "http.responseIdPathCreate",
                     "http.successPathCreate",
                     "http.successValuesCreate",
-                    "http.responseIdPathCreate",
                   ],
                   "label": "Create new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
+                    "http.responseIdPathUpdate",
                     "http.successPathUpdate",
                     "http.successValuesUpdate",
-                    "http.responseIdPathUpdate",
                   ],
                   "label": "Update existing data",
                 },
               ],
               "fields": Array [
+                "http.response.resourceIdPath",
                 "http.response.successPath",
                 "http.response.successValues",
-                "http.response.resourceIdPath",
               ],
               "label": "Non-standard API response patterns",
               "type": "collapse",
