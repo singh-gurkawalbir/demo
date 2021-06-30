@@ -269,7 +269,7 @@ export default {
     'http.headers': { fieldId: 'http.headers' },
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.relativeURI': { fieldId: 'http.relativeURI', required: true },
     'http.body': { fieldId: 'http.body' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
@@ -296,6 +296,7 @@ export default {
     },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
+      helpKey: 'import.http.method',
       type: 'select',
       label: 'HTTP method',
       required: true,
@@ -340,6 +341,7 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
+      helpKey: 'import.http.relativeURI',
       type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
@@ -378,6 +380,7 @@ export default {
     'http.bodyCreate': {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
+      helpKey: 'import.http.body',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       label: 'HTTP request body',
@@ -418,9 +421,9 @@ export default {
     },
     'http.successPathCreate': {
       id: 'http.successPathCreate',
+      helpKey: 'import.http.response.successPath',
       type: 'text',
-      label: 'Success path',
-
+      label: 'Path to success field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -453,6 +456,7 @@ export default {
     },
     'http.successValuesCreate': {
       id: 'http.successValuesCreate',
+      helpKey: 'import.http.response.successValues',
       type: 'text',
       label: 'Success values',
       visibleWhenAll: [
@@ -487,8 +491,9 @@ export default {
     },
     'http.responseIdPathCreate': {
       id: 'http.responseIdPathCreate',
+      helpKey: 'import.http.response.resourceIdPath',
       type: 'text',
-      label: 'Response ID path',
+      label: 'Path to id field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -544,6 +549,7 @@ export default {
     },
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
+      helpKey: 'import.http.method',
       type: 'select',
       label: 'HTTP method',
       required: true,
@@ -584,6 +590,7 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
+      helpKey: 'import.http.relativeURI',
       type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
@@ -618,6 +625,7 @@ export default {
     'http.bodyUpdate': {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
+      helpKey: 'import.http.body',
       connectionId: r => r && r._connectionId,
       label: 'HTTP request body',
       arrayIndex: 0,
@@ -652,9 +660,9 @@ export default {
     },
     'http.successPathUpdate': {
       id: 'http.successPathUpdate',
+      helpKey: 'import.http.response.successPath',
       type: 'text',
-      label: 'Success path',
-
+      label: 'Path to success field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -683,9 +691,9 @@ export default {
     },
     'http.successValuesUpdate': {
       id: 'http.successValuesUpdate',
+      helpKey: 'import.http.response.successValues',
       type: 'text',
       label: 'Success values',
-
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -714,9 +722,9 @@ export default {
     },
     'http.responseIdPathUpdate': {
       id: 'http.responseIdPathUpdate',
+      helpKey: 'import.http.response.resourceIdPath',
       type: 'text',
-      label: 'Response ID path',
-
+      label: 'Path to id field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -906,7 +914,7 @@ export default {
         collapsed: true,
         label: r => {
           if (r?.resourceType === 'transferFiles' || r?.blob) {
-            return 'How would you like the files transferred?';
+            return 'Where would you like the files transferred?';
           }
 
           return 'How would you like the records imported?';
@@ -914,10 +922,10 @@ export default {
         fields: [
           'http.method',
           'http.blobMethod',
-          'http.headers',
           'http.compositeType',
-          'http.lookups',
           'http.relativeURI',
+          'http.headers',
+          'http.lookups',
           'http.body',
         ],
         type: 'collapse',
@@ -961,9 +969,9 @@ export default {
         collapsed: true,
         label: 'Non-standard API response patterns',
         fields: [
+          'http.response.resourceIdPath',
           'http.response.successPath',
           'http.response.successValues',
-          'http.response.resourceIdPath',
         ],
         type: 'collapse',
         containers: [
@@ -971,18 +979,18 @@ export default {
             collapsed: true,
             label: 'Create new data',
             fields: [
+              'http.responseIdPathCreate',
               'http.successPathCreate',
               'http.successValuesCreate',
-              'http.responseIdPathCreate',
             ],
           },
           {
             collapsed: true,
             label: 'Update existing data',
             fields: [
+              'http.responseIdPathUpdate',
               'http.successPathUpdate',
               'http.successValuesUpdate',
-              'http.responseIdPathUpdate',
             ],
           },
         ],
