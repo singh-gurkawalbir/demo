@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
   bannerOffset: {
     height: theme.pageBarHeight + 58,
   },
+  alignMiddle: {
+    alignItems: 'center',
+  },
 }));
 
 export default function CeligoPageBar(props) {
@@ -77,7 +80,7 @@ export default function CeligoPageBar(props) {
         elevation={0}
         square>
 
-        <Grid item container wrap="nowrap">
+        <Grid item container wrap="nowrap" className={classes.alignMiddle}>
           {parentUrl && (
           // eslint-disable-next-line react/jsx-handler-names
           <IconButton size="small" onClick={handleOnClick}>
