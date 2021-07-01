@@ -89,6 +89,7 @@ export default {
           commMetaPath: staticLookupCommMetaPath,
           connectionId: staticLookupCommMetaPath && connectionId,
           label: '',
+          required: true,
           keyName: 'export',
           keyLabel: 'Export field value',
           valueName: 'import',
