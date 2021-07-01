@@ -281,7 +281,7 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
         ],
       }));
 
-      expect(currState).toEqual(filledState);
+      expect(currState[integrationId].data).toBe(filledState[integrationId].data);
     });
   });
 });
