@@ -46,7 +46,7 @@ export function* switchTab({index, tabType}) {
 
     const { debugDate } = connection || {};
 
-    if ((debugDate && moment().isBefore(moment(debugDate)))) {
+    if (moment().isBefore(moment(debugDate))) {
       yield put(actions.logs.connections.stop(connectionId));
     }
   } else if (requestedTab.tabType === 'connectionLogs') {
