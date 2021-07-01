@@ -10,7 +10,7 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -705,6 +705,12 @@ export function* getResourceCollection({ resourceType, refresh}) {
 
       if (!collection) collection = invitedTransfers;
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
+    }
+
+    if (collection !== undefined && !Array.isArray(collection) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', collection);
+      collection = undefined;
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
