@@ -3,11 +3,11 @@ export default {
     const retValues = { ...formValues };
 
     retValues['/file/type'] = 'csv';
-    retValues['/rest/method'] = 'GET';
+    retValues['/http/method'] = 'GET';
 
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
-      retValues['/rest/method'] = retValues['/rest/blobMethod'];
+      retValues['/http/method'] = retValues['/http/blobMethod'];
     }
 
     delete retValues['/outputMode'];
@@ -17,7 +17,7 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'dataURITemplate' || fieldId === 'rest.relativeURI') {
+    if (fieldId === 'dataURITemplate' || fieldId === 'http.relativeURI') {
       const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
@@ -47,13 +47,13 @@ export default {
         return 'records';
       },
     },
-    'rest.blobMethod': {
-      fieldId: 'rest.blobMethod',
+    'http.blobMethod': {
+      fieldId: 'http.blobMethod',
     },
-    'rest.headers': { fieldId: 'rest.headers' },
-    'rest.relativeURI': { fieldId: 'rest.relativeURI' },
-    'rest.resourcePath': {
-      fieldId: 'rest.resourcePath',
+    'http.headers': { fieldId: 'http.headers' },
+    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.response.resourcePath': {
+      fieldId: 'http.response.resourcePath',
       visibleWhen: [
         {
           field: 'outputMode',
@@ -93,7 +93,7 @@ export default {
         },
       ],
     },
-    'rest.blobFormat': { fieldId: 'rest.blobFormat' },
+    'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
@@ -114,9 +114,9 @@ export default {
         containers: [
           {
             fields: [
-              'rest.blobMethod',
-              'rest.relativeURI',
-              'rest.headers',
+              'http.blobMethod',
+              'http.relativeURI',
+              'http.headers',
               'uploadFile',
             ],
           },
@@ -130,7 +130,7 @@ export default {
           },
           {
             fields: [
-              'rest.blobFormat',
+              'http.response.blobFormat',
             ],
           },
         ],
@@ -138,7 +138,7 @@ export default {
       {
         collapsed: true,
         label: 'Non-standard API response patterns',
-        fields: ['rest.resourcePath'],
+        fields: ['http.resourcePath'],
       },
       { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],

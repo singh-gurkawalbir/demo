@@ -6262,6 +6262,29 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.blobMethod": Object {
+        "fieldId": "http.blobMethod",
+      },
+      "http.headers": Object {
+        "fieldId": "http.headers",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+      },
+      "http.response.blobFormat": Object {
+        "fieldId": "http.response.blobFormat",
+      },
+      "http.response.resourcePath": Object {
+        "fieldId": "http.response.resourcePath",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "blob",
+            ],
+          },
+        ],
+      },
       "outputMode": Object {
         "defaultValue": [Function],
         "id": "outputMode",
@@ -6283,29 +6306,6 @@ Object {
         "required": true,
         "type": "radiogroup",
         "visible": false,
-      },
-      "rest.blobFormat": Object {
-        "fieldId": "rest.blobFormat",
-      },
-      "rest.blobMethod": Object {
-        "fieldId": "rest.blobMethod",
-      },
-      "rest.headers": Object {
-        "fieldId": "rest.headers",
-      },
-      "rest.relativeURI": Object {
-        "fieldId": "rest.relativeURI",
-      },
-      "rest.resourcePath": Object {
-        "fieldId": "rest.resourcePath",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "blob",
-            ],
-          },
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -6344,9 +6344,9 @@ Object {
               "containers": Array [
                 Object {
                   "fields": Array [
-                    "rest.blobMethod",
-                    "rest.relativeURI",
-                    "rest.headers",
+                    "http.blobMethod",
+                    "http.relativeURI",
+                    "http.headers",
                     "uploadFile",
                   ],
                 },
@@ -6362,7 +6362,7 @@ Object {
                 },
                 Object {
                   "fields": Array [
-                    "rest.blobFormat",
+                    "http.response.blobFormat",
                   ],
                 },
               ],
@@ -6371,7 +6371,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.resourcePath",
+                "http.resourcePath",
               ],
               "label": "Non-standard API response patterns",
             },
@@ -6737,6 +6737,9 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.method": Object {
+        "fieldId": "rest.method",
+      },
       "once.booleanField": Object {
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
@@ -6798,9 +6801,6 @@ Object {
       },
       "rest.maxPagePath": Object {
         "fieldId": "rest.maxPagePath",
-      },
-      "rest.method": Object {
-        "fieldId": "rest.method",
       },
       "rest.nextPageRelativeURI": Object {
         "fieldId": "rest.nextPageRelativeURI",

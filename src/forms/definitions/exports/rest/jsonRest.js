@@ -9,34 +9,34 @@ export default {
       retValues['/test'] = undefined;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      retValues['/rest/once'] = undefined;
+      retValues['/http/once'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
-      delete retValues['/rest/once/relativeURI'];
-      delete retValues['/rest/once/postBody'];
-      delete retValues['/rest/once/method'];
+      delete retValues['/http/once/relativeURI'];
+      delete retValues['/http/once/body'];
+      delete retValues['/http/once/method'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      retValues['/rest/once'] = undefined;
+      retValues['/http/once'] = undefined;
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
-      delete retValues['/rest/once/relativeURI'];
-      delete retValues['/rest/once/postBody'];
-      delete retValues['/rest/once/method'];
+      delete retValues['/http/once/relativeURI'];
+      delete retValues['/http/once/body'];
+      delete retValues['/http/once/method'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
-      retValues['/rest/once'] = undefined;
+      retValues['/http/once'] = undefined;
       retValues['/test'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/once/booleanField'];
-      delete retValues['/rest/once/relativeURI'];
-      delete retValues['/rest/once/postBody'];
-      delete retValues['/rest/once/method'];
+      delete retValues['/http/once/relativeURI'];
+      delete retValues['/http/once/body'];
+      delete retValues['/http/once/method'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
@@ -46,90 +46,90 @@ export default {
     }
 
     if (
-      retValues['/rest/successValues'] &&
-      !retValues['/rest/successValues'].length
+      retValues['/http/response/successValues'] &&
+      !retValues['/http/response/successValues'].length
     ) {
-      retValues['/rest/successValues'] = undefined;
+      retValues['/http/response/successValues'] = undefined;
     }
 
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
-      retValues['/rest/method'] = retValues['/rest/blobMethod'];
+      retValues['/http/method'] = retValues['/http/blobMethod'];
     }
 
     delete retValues['/outputMode'];
 
-    if (retValues['/rest/pagingMethod'] === 'pageargument') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/pagingPostBody'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
-    } else if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/pagingPostBody'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
-    } else if (retValues['/rest/pagingMethod'] === 'relativeuri') {
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/pagingPostBody'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
-    } else if (retValues['/rest/pagingMethod'] === 'linkheader') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/pagingPostBody'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
-    } else if (retValues['/rest/pagingMethod'] === 'skipargument') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/pagingPostBody'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-    } else if (retValues['/rest/pagingMethod'] === 'token') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/pagingPostBody'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
-    } else if (retValues['/rest/pagingMethod'] === 'postbody') {
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
+    if (retValues['/http/paging/method'] === 'page') {
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'url') {
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+      retValues['/rest/paging/page'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'relativeuri') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'linkheader') {
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'skip') {
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'token') {
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'body') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
     } else {
-      retValues['/rest/pagingMethod'] = undefined;
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-      retValues['/rest/skipArgument'] = undefined;
-      retValues['/rest/maxPagePath'] = undefined;
-      retValues['/rest/maxCountPath'] = undefined;
-      retValues['/rest/lastPageStatusCode'] = undefined;
-      retValues['/rest/lastPagePath'] = undefined;
-      retValues['/rest/lastPageValue'] = undefined;
+      retValues['/http/paging/method'] = undefined;
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/lastPageStatusCode'] = undefined;
+      retValues['/http/paging/lastPagePath'] = undefined;
+      retValues['/http/paging/lastPageValues'] = undefined;
     }
 
     // we need 2 separate UI fields for path for url and token paging methods
     // to have diff help texts and labels
-    if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
-      retValues['/rest/nextPagePath'] = retValues['/rest/nextPageURLPath'];
-    } else if (retValues['/rest/pagingMethod'] === 'token') {
-      retValues['/rest/nextPagePath'] = retValues['/rest/nextPageTokenPath'];
+    if (retValues['/http/paging/method'] === 'url') {
+      retValues['/http/paging/path'] = retValues['/http/paging/urlPath'];
+    } else if (retValues['/http/paging/method'] === 'token') {
+      retValues['/http/paging/path'] = retValues['/http/paging/tokenPath'];
     }
-    delete retValues['/rest/nextPageURLPath'];
-    delete retValues['/rest/nextPageTokenPath'];
+    delete retValues['/http/paging/urlPath'];
+    delete retValues['/http/paging/tokenPath'];
 
     // we need 2 separate UI fields for page argument for page number and token paging methods
     // to have diff help texts and labels
-    if (retValues['/rest/pagingMethod'] === 'token') {
-      retValues['/rest/pageArgument'] = retValues['/rest/tokenPageArgument'];
+    if (retValues['/http/paging/method'] === 'token') {
+      retValues['/http/paging/page'] = retValues['/http/paging/tokenPage'];
     }
-    delete retValues['/rest/tokenPageArgument'];
+    delete retValues['/http/paging/tokenPage'];
 
     return {
       ...retValues,
@@ -137,12 +137,12 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     if (
-      fieldId === 'rest.once.relativeURI' ||
+      fieldId === 'http.once.relativeURI' ||
       fieldId === 'dataURITemplate' ||
-      fieldId === 'rest.relativeURI' ||
-      fieldId === 'rest.once.postBody' ||
-      fieldId === 'rest.postBody' ||
-      fieldId === 'rest.pagingPostBody'
+      fieldId === 'http.relativeURI' ||
+      fieldId === 'http.once.body' ||
+      fieldId === 'http.body' ||
+      fieldId === 'http.paging.body'
     ) {
       const nameField = fields.find(field => field.fieldId === 'name');
 
@@ -173,7 +173,7 @@ export default {
         return 'records';
       },
     },
-    'rest.method': {
+    'http.method': {
       fieldId: 'rest.method',
     },
     'rest.blobMethod': {
