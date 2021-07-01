@@ -64,7 +64,7 @@ export default function JobActionsMenu({
   }
 
   if (!isJobInProgress) {
-    if (flowDetails && !flowDetails.type.includes('REALTIME')) {
+    if (flowDetails?.type && !flowDetails.type.includes('REALTIME')) {
       menuOptions.push({ label: 'Run flow', action: 'runFlow' });
     }
 
