@@ -29,6 +29,11 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.LOGS.CONNECTIONS.STOP:
+        if (draft.connections?.[connectionId]) {
+          draft.connections[connectionId].status = COMM_STATES.STOPPED;
+        }
+        break;
       // LOGS.CONNECTIONS.CLEAR action will clear connection state from UI
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
 

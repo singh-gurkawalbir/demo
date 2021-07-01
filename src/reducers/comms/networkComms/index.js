@@ -14,6 +14,7 @@ export const COMM_STATES = {
   LOADING: 'loading',
   ERROR: 'error',
   SUCCESS: 'success',
+  STOPPED: 'stopped',
 };
 
 Object.freeze(COMM_STATES);

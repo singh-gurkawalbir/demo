@@ -46,7 +46,21 @@ export function* getConnectionDebugLogs({ connectionId }) {
 }
 
 export function* pollForConnectionLogs({ connectionId }) {
+  const connectionLogState = yield select(selectors.allConnectionsLogs);
+  const { status: connectionLogStatus } = connectionLogState?.[connectionId] || {};
+  let hasPollingStarted = !!(connectionLogStatus && connectionLogStatus !== 'requested');
+
   while (true) {
+    const connection = yield select(selectors.resource, 'connections', connectionId);
+    const { debugDate } = connection || {};
+
+    // check if debug time expired. Check only after polling starts.
+    if (hasPollingStarted && (!debugDate || moment().isAfter(moment(debugDate)))) {
+      yield put(actions.logs.connections.stop(connectionId));
+
+      return;
+    }
+    hasPollingStarted = true;
     yield call(getConnectionDebugLogs, { connectionId });
     yield delay(5 * 1000);
   }
@@ -61,7 +75,7 @@ export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
 
   yield take(action => {
-    if (action.type === actionTypes.LOGS.CONNECTIONS.REQUEST && action.connectionId === connectionId) {
+    if ([actionTypes.LOGS.CONNECTIONS.REQUEST, actionTypes.LOGS.CONNECTIONS.STOP].includes(action.type) && action.connectionId === connectionId) {
       return true;
     }
     if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
