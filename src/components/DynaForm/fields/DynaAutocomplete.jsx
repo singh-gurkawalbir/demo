@@ -97,7 +97,7 @@ export default function DynaAutocomplete(props) {
     options: actualOptions,
   } = props;
 
-  const actualValueInString = `${actualValue}`;
+  const actualValueInString = `${actualValue || ''}`;
 
   const classes = useStyles();
   const options = useMemo(() => actualOptions.map(opt => opt.value), [actualOptions]);
