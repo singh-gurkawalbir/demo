@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     padding: 0,
+    alignItems: 'center',
   },
   menuItems: {
     paddingRight: theme.spacing(1),
