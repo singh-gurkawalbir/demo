@@ -1,7 +1,7 @@
 import {invert} from 'lodash';
 
-export const emptyList = [];
-export const emptyObject = {};
+export const emptyList = Object.freeze([]);
+export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
@@ -653,7 +653,7 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
   'concurv4',
   'constantcontact'];
 
-export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
+export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];

@@ -11,7 +11,7 @@ import actionTypes from '../../actions/types';
 import useConfirmDialog from '../ConfirmDialog';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { UNDO_TIME } from './util';
+import { UNDO_TIME } from '../../utils/jobdashboard';
 import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';

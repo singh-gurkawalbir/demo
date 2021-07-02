@@ -6,7 +6,6 @@ import {isMappingEqual} from '../../../utils/mapping';
 
 const { deepClone } = require('fast-json-patch');
 
-const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
@@ -312,7 +311,7 @@ export const selectors = {};
 // #region PUBLIC SELECTORS
 selectors.mapping = state => {
   if (!state || !state.mapping) {
-    return emptySet;
+    return emptyObj;
   }
 
   return state.mapping;

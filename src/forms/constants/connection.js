@@ -117,6 +117,12 @@ export default {
     'fulfilment.com',
     'walmartmexico',
     'walmartcanada',
+    'looker',
+    'pandadoc',
+    'freshservice',
+    'omnisend',
+    'pagerduty',
+    'quickbase',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -195,6 +201,7 @@ export default {
     'adobesign',
     'mavenlink',
     'googleads',
+    'pagerduty',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

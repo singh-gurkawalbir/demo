@@ -11,7 +11,7 @@ import actions from '../../actions';
 import ChildJobDetail from './ChildJobDetail';
 import { JOB_STATUS } from '../../utils/constants';
 import JobStatus from './JobStatus';
-import { getPages, getSuccess } from './util';
+import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobActionsMenu from './JobActionsMenu';
 import Spinner from '../Spinner';
 import ArrowDownIcon from '../icons/ArrowDownIcon';

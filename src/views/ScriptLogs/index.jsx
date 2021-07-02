@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, MenuItem } from '@material-ui/core';
+
+import { makeStyles, MenuItem, Typography } from '@material-ui/core';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -19,12 +20,12 @@ import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } fro
 import Spinner from '../../components/Spinner';
 import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
+import MessageWrapper from '../../components/MessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
     padding: theme.spacing(0, 0, 1.5, 0),
-    backgroundColor: theme.palette.common.white,
     height: '100%',
   },
   filterContainer: {
@@ -74,6 +75,14 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     marginRight: theme.spacing(2),
     display: 'flex',
+  },
+  spinnerScriptLogs: {
+    marginTop: theme.spacing(1),
+  },
+  scriptsFetchLog: {
+    backgroundColor: theme.palette.common.white,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: '5px 12px',
   },
 }));
 
@@ -278,7 +287,9 @@ export default function ScriptLogs({ flowId, scriptId }) {
         </div>
       </div>
       <div className={classes.tableContainer}>
+
         <FetchProgressIndicator
+          className={classes.scriptsFetchLog}
           fetchStatus={fetchStatus}
           currTime={currQueryTime}
           startTime={startTime}
@@ -293,10 +304,15 @@ export default function ScriptLogs({ flowId, scriptId }) {
             actionProps={actionProps}
         />
         ) : null}
+        {!logs.length && !nextPageURL && status !== 'requested' && (
+          <MessageWrapper>
+            <Typography>
+              You don’t have any execution logs in the selected time frame.
+            </Typography>
+          </MessageWrapper>
+        )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
-        <div >
-          <Spinner loading />
-        </div>
+        <Spinner loading size="large" className={classes.spinnerScriptLogs} />
         )}
       </div>
       <ViewLogDetailDrawer />

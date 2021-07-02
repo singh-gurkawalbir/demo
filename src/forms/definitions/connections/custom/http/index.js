@@ -205,6 +205,13 @@ import fulfilment from './fulfilment';
 import walmartmexico from './walmartmexico';
 import walmartcanada from './walmartcanada';
 import paylocity from './paylocity';
+import looker from './looker';
+import pandadoc from './pandadoc';
+import freshservice from './freshservice';
+import omnisend from './omnisend';
+import pagerduty from './pagerduty';
+import quickbase from './quickbase';
+import orangehrm from './orangehrm';
 
 export default {
   channelape,
@@ -414,4 +421,11 @@ export default {
   walmartmexico,
   walmartcanada,
   paylocity,
+  looker,
+  pandadoc,
+  freshservice,
+  omnisend,
+  pagerduty,
+  quickbase,
+  orangehrm,
 };

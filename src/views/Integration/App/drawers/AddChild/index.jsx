@@ -294,7 +294,7 @@ export default function IntegrationAppAddNewChild(props) {
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
 
-          <Typography>
+          <Typography className={classes.message}>
             {`Complete the below steps to add new ${integration?.settings?.storeLabel || 'child'}.`}
           </Typography>
 

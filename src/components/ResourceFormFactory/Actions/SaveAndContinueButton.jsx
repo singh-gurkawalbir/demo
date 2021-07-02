@@ -22,11 +22,17 @@ export default function SaveAndContinueButton(props) {
   );
   const onSave = useCallback(
     values => {
+      const newValues = {...values};
+
+      if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+        newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
+
       dispatch(
         actions.resourceForm.saveAndContinue(
           resourceType,
           resourceId,
-          values,
+          newValues,
           match
         )
       );

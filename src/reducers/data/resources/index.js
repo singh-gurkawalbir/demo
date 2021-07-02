@@ -1,15 +1,12 @@
 import produce from 'immer';
-import { get } from 'lodash';
-import { createSelector } from 'reselect';
-import sift from 'sift';
 import reduceReducers from 'reduce-reducers';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
-import { stringCompare } from '../../../utils/sort';
-import mappingUtil from '../../../utils/mapping';
-import getRoutePath from '../../../utils/routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
+import mappingUtil from '../../../utils/mapping';
+import getRoutePath from '../../../utils/routePaths';
 import connectionUpdateReducer from './connectionUpdate';
 import resourceUpdateReducer from './resourceUpdate';
 
@@ -475,117 +472,10 @@ selectors.mkIntegrationAppSettings = subState => {
 
 export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
-const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
-  const filterByEnvironment = typeof sandbox === 'boolean';
-
-  if (!filterByEnvironment) { return resources; }
-
-  if (resourceType !== 'eventreports') {
-    return resources.filter(r => !!r.sandbox === sandbox);
-  }
-
-  // event reports needs flows to determine the environment
-  if (!flows) { return []; }
-
-  // eventReports
-  return resources.filter(r => {
-    // the flows environment is the same for eventreport
-    const {_flowIds: flowIds} = r;
-    const flow = flows.find(({_id}) => flowIds.includes(_id));
-
-    // this happens in the case where a flow is deleted ..
-    // without the flow we cannot determine the environment in that case we will just not
-    // list the eventReport
-    if (!flow) return false;
-
-    return !!flow.sandbox === sandbox;
-  });
-};
-
 selectors.resources = (state, resourceType) => {
   if (!state || !resourceType) return emptyList;
 
   return state[resourceType] || emptyList;
-};
-
-selectors.resourceList = (
-  state,
-  { type, take, keyword, sort, sandbox, filter, searchBy }
-) => {
-  const result = {
-    resources: [],
-    type,
-    total: 0,
-    filtered: 0,
-    count: 0,
-  };
-  // console.log('selector args', state, name, take, keyword);
-
-  if (!state || !type || typeof type !== 'string') {
-    return result;
-  }
-
-  if (type === 'ui/assistants') {
-    return state[type];
-  }
-
-  const resources = state[type];
-
-  if (!resources) return result;
-
-  result.total = resources.length;
-  result.count = resources.length;
-
-  function searchKey(resource, key) {
-    if (key === 'environment') {
-      return get(resource, 'sandbox') ? 'Sandbox' : 'Production';
-    }
-
-    const value = get(resource, key);
-
-    return typeof value === 'string' ? value : '';
-  }
-
-  const stringTest = r => {
-    if (!keyword) return true;
-    const searchableText =
-      Array.isArray(searchBy) && searchBy.length
-        ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
-        : `${r._id}|${r.name}|${r.description}`;
-
-    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
-  };
-  const matchTest = rOrig => {
-    const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
-
-    return stringTest(r);
-  };
-
-  const comparer = ({ order, orderBy }) =>
-    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
-  // console.log('sort:', sort, resources.sort(comparer, sort));
-  const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
-
-  const filteredByEnvironment = filterByEnvironmentResources(sorted, state?.flows, sandbox, type);
-
-  const filtered = filteredByEnvironment.filter(
-    filter ? sift({ $and: [filter, matchTest] }) : matchTest
-  );
-
-  result.filtered = filtered.length;
-  result.resources = filtered;
-
-  if (typeof take !== 'number' || take < 1) {
-    return result;
-  }
-
-  const slice = filtered.slice(0, take);
-
-  return {
-    ...result,
-    resources: slice,
-    count: slice.length,
-  };
 };
 
 selectors.resourceState = state => state;

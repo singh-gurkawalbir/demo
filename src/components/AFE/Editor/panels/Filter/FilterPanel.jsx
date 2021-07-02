@@ -824,7 +824,7 @@ export default function FilterPanel({editorId}) {
       {showOperandSettingsFor && (
       <OperandSettingsDialog
         ruleData={
-              rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
+              rulesState[getFilterRuleId(showOperandSettingsFor.rule)]?.data[
                 showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
               ]
             }

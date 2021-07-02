@@ -26,6 +26,7 @@ import {
 import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
+import { stringCompare } from '../../../../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -54,7 +55,9 @@ export default function SalesforceLookupFilterPanel({
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors.editorRule(state, editorId));
-  const filters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
+  const unsortedFilters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
+
+  const filters = useMemo(() => unsortedFilters.sort(stringCompare('label')), [unsortedFilters]);
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
@@ -435,7 +438,7 @@ export default function SalesforceLookupFilterPanel({
       {showOperandSettingsFor && (
       <OperandSettingsDialog
         ruleData={
-              rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
+              rulesState[getFilterRuleId(showOperandSettingsFor.rule)]?.data[
                 showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
               ]
             }
