@@ -40,15 +40,13 @@ export function* getConnectionDebugLogs({ connectionId }) {
   yield put(
     actions.logs.connections.received(
       connectionId,
-      updatedTimeZonelogs,
+      updatedTimeZonelogs || '',
     )
   );
 }
 
 export function* pollForConnectionLogs({ connectionId }) {
-  const connectionLogState = yield select(selectors.allConnectionsLogs);
-  const { status: connectionLogStatus } = connectionLogState?.[connectionId] || {};
-  let hasPollingStarted = !!(connectionLogStatus && connectionLogStatus !== 'requested');
+  let hasPollingStarted = false;
 
   while (true) {
     const connection = yield select(selectors.resource, 'connections', connectionId);
@@ -56,8 +54,6 @@ export function* pollForConnectionLogs({ connectionId }) {
 
     // check if debug time expired. Check only after polling starts.
     if (hasPollingStarted && (!debugDate || moment().isAfter(moment(debugDate)))) {
-      yield put(actions.logs.connections.stop(connectionId));
-
       return;
     }
     hasPollingStarted = true;
@@ -75,7 +71,7 @@ export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
 
   yield take(action => {
-    if ([actionTypes.LOGS.CONNECTIONS.REQUEST, actionTypes.LOGS.CONNECTIONS.STOP].includes(action.type) && action.connectionId === connectionId) {
+    if ([actionTypes.LOGS.CONNECTIONS.REQUEST, actionTypes.LOGS.CONNECTIONS.PAUSE].includes(action.type) && action.connectionId === connectionId) {
       return true;
     }
     if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
@@ -90,6 +86,13 @@ export function* startPollingForConnectionDebugLogs({ connectionId }) {
   });
 
   yield cancel(watcher);
+}
+export function* refreshConnectionDebugLogs({ connectionId }) {
+  const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);
+
+  if (!isConnectionLogsNotSupported) {
+    yield call(getConnectionDebugLogs, { connectionId });
+  }
 }
 export function* deleteConnectionDebugLogs({ connectionId}) {
   const path = `/connections/${connectionId}/debug`;
@@ -129,10 +132,18 @@ export function* startDebug({connectionId, value}) {
   ];
 
   yield put(actions.resource.patch('connections', connectionId, patchSet));
+  if (value !== '0') {
+    // start connection log polling
+    yield put(actions.logs.connections.request(connectionId));
+  } else {
+    // stop connection log polling
+    yield put(actions.logs.connections.pause(connectionId));
+  }
 }
 export const connectionsLogSagas = [
   takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, startPollingForConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.START_DEBUG, startDebug),
+  takeLatest(actionTypes.LOGS.CONNECTIONS.REFRESH, refreshConnectionDebugLogs),
 ];

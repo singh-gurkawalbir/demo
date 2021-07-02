@@ -23,6 +23,16 @@ export function* bottomDrawerInit({flowId}) {
   return yield put(actions.bottomDrawer.initComplete(tabs));
 }
 
+export function* addTab({tabType, resourceId}) {
+  if (tabType === 'connectionLogs') {
+    const {debugDate} = (yield select(selectors.resource, 'connections', resourceId)) || {};
+
+    if (!debugDate || moment().isAfter(moment(debugDate))) {
+      yield put(actions.logs.connections.startDebug(resourceId, 15));
+    }
+    yield put(actions.logs.connections.request(resourceId));
+  }
+}
 export function* switchTab({index, tabType}) {
   const {tabs, activeTabIndex} = yield select(selectors.bottomDrawerTabs);
   const lastActiveTab = tabs?.[activeTabIndex];
@@ -38,30 +48,25 @@ export function* switchTab({index, tabType}) {
     return;
   }
 
-  if (lastActiveTab.tabType === 'connectionLogs') {
-    // when user is switching away from connection log tab
-    const { resourceId: connectionId } = lastActiveTab;
-
-    const connection = yield select(selectors.resource, 'connections', connectionId);
-
-    const { debugDate } = connection || {};
-
-    if (moment().isBefore(moment(debugDate))) {
-      yield put(actions.logs.connections.stop(connectionId));
-    }
-  } else if (requestedTab.tabType === 'connectionLogs') {
+  // console.log('requestedTab', requestedTab);
+  if (requestedTab.tabType === 'connectionLogs') {
     // when user switches to connection log tab
     const {resourceId: connectionId} = requestedTab;
     const connectionLogState = yield select(selectors.allConnectionsLogs);
 
-    const connectionLogStatus = connectionLogState?.[connectionId]?.status;
+    const isPollingPaused = connectionLogState?.[connectionId]?.isPaused;
     const connection = yield select(selectors.resource, 'connections', connectionId);
     const { debugDate } = connection || {};
 
-    // check if connection log is in paused state
-    if (connectionLogStatus === 'stopped' && moment().isBefore(moment(debugDate))) {
+    if (isPollingPaused && moment().isBefore(moment(debugDate))) {
+      // check if connection log is in paused state
       yield put(actions.logs.connections.request(connectionId));
     }
+  } else if (lastActiveTab.tabType === 'connectionLogs') {
+    // when user is switching away from connection log tab
+    const { resourceId: connectionId } = lastActiveTab;
+
+    yield put(actions.logs.connections.pause(connectionId));
   }
 
   yield put(actions.bottomDrawer.setActiveTab({index, tabType}));
@@ -70,4 +75,5 @@ export function* switchTab({index, tabType}) {
 export const bottomDrawerSagas = [
   takeLatest(actionTypes.BOTTOM_DRAWER.INIT, bottomDrawerInit),
   takeLatest(actionTypes.BOTTOM_DRAWER.SWITCH_TAB, switchTab),
+  takeLatest(actionTypes.BOTTOM_DRAWER.ADD_TAB, addTab),
 ];

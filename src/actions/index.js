@@ -2195,8 +2195,10 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
     received: (connectionId, logs) =>
       action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
-    stop: connectionId =>
-      action(actionTypes.LOGS.CONNECTIONS.STOP, { connectionId }),
+    pause: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.PAUSE, { connectionId }),
+    refresh: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
     clear: ({connectionId, clearAllLogs}) =>
       action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId, clearAllLogs }),
     delete: connectionId =>
