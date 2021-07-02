@@ -23,6 +23,11 @@ const useStyles = makeStyles(theme => ({
   dynaSelectMenuItem: {
     wordBreak: 'break-word',
   },
+  inputTextField: {
+    '& div': {
+      padding: '0px !important',
+    },
+  },
 }));
 
 const Row = ({ data, index, style }) => React.cloneElement(data[index], {
@@ -97,7 +102,7 @@ export default function DynaAutocomplete(props) {
     options: actualOptions,
   } = props;
 
-  const actualValueInString = `${actualValue}`;
+  const actualValueInString = `${actualValue || ''}`;
 
   const classes = useStyles();
   const options = useMemo(() => actualOptions.map(opt => opt.value), [actualOptions]);
@@ -137,6 +142,7 @@ export default function DynaAutocomplete(props) {
           <Autocomplete
             disableClearable
             freeSolo
+            className={classes.inputTextField}
             options={options}
             onOpen={() => { setModalOpen(true); }}
             onClose={() => { setModalOpen(false); }}
@@ -157,6 +163,7 @@ export default function DynaAutocomplete(props) {
                 {...params}
                 name={name}
                 id={id}
+                variant="filled"
               />
             )}
         />

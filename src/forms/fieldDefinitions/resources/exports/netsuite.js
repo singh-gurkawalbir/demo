@@ -175,10 +175,10 @@ export default {
     options: [
       {
         items: [
-          { label: 'All', value: 'all' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
-          { label: 'Test', value: 'test' },
+          { label: 'All – always export all data', value: 'all' },
+          { label: 'Delta – export only modified data', value: 'delta' },
+          { label: 'Once – export records only once', value: 'once' },
+          { label: 'Test – export only 1 record', value: 'test' },
         ],
       },
     ],

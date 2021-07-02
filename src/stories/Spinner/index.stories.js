@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Spinner from '../../components/Spinner';
 
 export default {
-  title: 'Components /Spinner',
+  title: 'Components/Spinner',
   component: Spinner,
   argTypes: {
     size: {

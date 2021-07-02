@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@material-ui/core';
 
 export default {
-  title: 'Typography',
+  title: 'Branding/Typography',
   component: Typography,
   parameters: { previewTabs: { 'storybook/docs/panel': { hidden: true } } },
 
