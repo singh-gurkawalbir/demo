@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 });
 const emptyArr = [];
 
-export default function MultiSelectColumnFilter({
+export default function MultiSelectParentChildColumnFilter({
   title = 'Source',
   filterKey,
   filterBy = 'sources',
@@ -32,14 +32,35 @@ export default function MultiSelectColumnFilter({
 
       return [id];
     }
+    const resource = options.find(o => o._id === id);
+    const childIds = [];
+
+    if (resource?.children) {
+      resource.children.forEach(c => {
+        childIds.push(c._id);
+      });
+    }
     if (selectedIds.includes(id)) {
+      if (childIds?.length) {
+        return selectedIds.filter(i => i !== id && !childIds.includes(i));
+      }
+
       return selectedIds.filter(i => i !== id);
     }
 
-    if (selectedIds.includes('all')) return [id];
+    if (selectedIds.includes('all')) {
+      if (childIds?.length) {
+        return [id, ...childIds];
+      }
+
+      return [id];
+    }
+    if (childIds?.length) {
+      return [...selectedIds, id, ...childIds];
+    }
 
     return [...selectedIds, id];
-  }, []);
+  }, [options]);
   const onSaveHandler = useCallback(
     values => {
       dispatch(actions.patchFilter(filterKey, {
@@ -58,7 +79,6 @@ export default function MultiSelectColumnFilter({
   const FilterIcon = () => <FilterIconWrapper selected={!selected.includes('all')} />;
 
   return (
-    // TODO:(Azhar) try to use the container wrapper component where same CSS needed
     <div className={classes.wrapperSelectFilter}> {title}
       <MultiSelectFilter
         Icon={FilterIcon}

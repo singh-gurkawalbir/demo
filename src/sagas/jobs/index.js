@@ -216,21 +216,41 @@ export function* requestCompletedJobCollection() {
 
 export function* requestRunningJobCollection() {
   let collection;
+  const jobFilter = yield select(selectors.filter, 'runningFlows');
+  const userPreferences = yield select(selectors.userPreferences);
+  const sandbox = userPreferences.environment === 'sandbox';
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
+  const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
+  const body = {sandbox};
+
+  if (selectedStatus.length) {
+    body.status = selectedStatus;
+  }
+  if (selectedFlows.length) {
+    body._flowIds = selectedFlows;
+  } else if (selectedIntegrations.length) {
+    body._integrationIds = selectedIntegrations;
+  }
 
   try {
     collection = yield call(apiCallWithRetry, {
-      path: '/jobs',
+      path: '/jobs/current',
+      opts: {
+        method: 'POST',
+        body,
+      },
     });
   } catch (error) {
     return true;
   }
   // collection = collection.filter(j => ['running', 'queued', 'retrying', 'failed'].includes(j.status));
 
-  if (!Array.isArray(collection)) {
+  if (!Array.isArray(collection?.jobs)) {
     collection = [];
   }
 
-  yield put(actions.job.dashboard.running.receivedCollection({ collection }));
+  yield put(actions.job.dashboard.running.receivedCollection({ collection: collection?.jobs }));
   // yield put(actions.job.requestInProgressJobStatus());
 }
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {

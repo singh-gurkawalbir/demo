@@ -942,6 +942,13 @@ selectors.getAllFlows = createSelector(state => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources;
+  const jobFilter = selectors.filter(state, 'runningFlows');
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
+
+  if (selectedIntegrations.length) {
+    allFlows = allFlows.filter(f => selectedIntegrations.includes(f._integrationId));
+  }
+
   const defaultFilter = [{ _id: 'all', name: 'All flows'}];
 
   if (!allFlows) { return defaultFilter; }
@@ -953,12 +960,11 @@ selectors.getAllFlows = createSelector(state => {
 },
 flows => flows
 );
-
 selectors.getAllIntegrations = createSelector(state => {
   let allIntegrations = selectors.resourceList(state, {
     type: 'integrations',
   }).resources;
-  const defaultFilter = [{ _id: 'all', name: 'All flows'}];
+  const defaultFilter = [{ _id: 'all', name: 'All integrations'}];
 
   if (!allIntegrations) { return defaultFilter; }
 
@@ -969,6 +975,22 @@ selectors.getAllIntegrations = createSelector(state => {
 },
 integrations => integrations
 );
+
+// selectors.getAllIntegrations = createSelector(state => {
+//   let allIntegrations = selectors.resourceList(state, {
+//     type: 'integrations',
+//   }).resources;
+//   const defaultFilter = [{ _id: 'all', name: 'All flows'}];
+
+//   if (!allIntegrations) { return defaultFilter; }
+
+//   allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
+//   allIntegrations = [...defaultFilter, ...allIntegrations];
+
+//   return allIntegrations;
+// },
+// integrations => integrations
+// );
 
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;

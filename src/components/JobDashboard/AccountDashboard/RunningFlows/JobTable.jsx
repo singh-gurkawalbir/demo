@@ -2,10 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-// import { difference } from 'lodash';
-// import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
-// import ErrorDrawer from '../../ErrorDrawer';
 import actions from '../../../../actions';
 import Spinner from '../../../Spinner';
 import { selectors } from '../../../../reducers';
@@ -86,89 +83,23 @@ export default function JobTable({
   const match = useRouteMatch();
   const [openedJobErrors, setOpenedJobErrors] = useState(false);
   const [showErrorDialogFor] = useState({});
-  const isFlowJobsCollectionLoading = useSelector(state => selectors.isFlowJobsCollectionLoading(state));
-  // const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
-  //   j =>
-  //     [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
-  //       j.uiStatus
-  //     ) &&
-  //     (j.retriable || j.numError > 0)
-  // );
-  // const selectableJobIdsInCurrentPage = selectableJobsInCurrentPage.map(
-  //   j => j._id
-  // );
+  const isRunningJobsCollectionLoading = useSelector(state => selectors.isRunningJobsCollectionLoading(state));
+
   const dispatch = useDispatch();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const _JobId = queryParams.get('_jobId');
   const flowJobId = queryParams.get('_flowJobId');
-  // const selectedJobIds = Object.keys(selectedJobs).filter(
-  //   jobId => selectedJobs[jobId] && selectedJobs[jobId].selected
-  // );
-  // const isSelectAllChecked =
-  //   selectableJobIdsInCurrentPage.length > 0 &&
-  //   difference(selectableJobIdsInCurrentPage, selectedJobIds).length === 0;
-
-  // function handleSelectAllChange(event) {
-  //   const { checked } = event.target;
-  //   const jobIds = { ...selectedJobs };
-
-  //   selectableJobIdsInCurrentPage.forEach(jobId => {
-  //     const job = jobIds[jobId] || {};
-
-  //     job.selected = checked;
-  //     job.flowDisabled = selectableJobsInCurrentPage.find(j => j._id === jobId)?.flowDisabled;
-
-  //     if (!checked) {
-  //       job.selectedChildJobIds = [];
-  //     }
-
-  //     jobIds[jobId] = job;
-  //   });
-  //   onSelectChange(jobIds);
-  // }
 
   const handleViewErrorsClick = useCallback(({
-    // jobId,
-    // parentJobId,
-    // showResolved = false,
-    // numError,
-    // includeAll,
-    // numResolved,
     flowId,
   }) => {
-    // setShowErrorDialogFor({
-    //   jobId,
-    //   parentJobId,
-    //   showResolved,
-    //   numError,
-    //   includeAll,
-    //   numResolved,
-    // });
-    // { /* <Link className={classes.errorStatusLink} to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link> */ }
-
     history.push(`${match.url}/${flowId}/errorsList`);
   }, [history, match.url]);
 
   const handleRunHistoryClick = useCallback(({
-    // jobId,
-    // parentJobId,
-    // showResolved = false,
-    // numError,
-    // includeAll,
-    // numResolved,
     flowId,
   }) => {
-    // setShowErrorDialogFor({
-    //   jobId,
-    //   parentJobId,
-    //   showResolved,
-    //   numError,
-    //   includeAll,
-    //   numResolved,
-    // });
-    // { /* <Link className={classes.errorStatusLink} to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link> */ }
-
     history.push(`${match.url}/${flowId}/runHistory`);
   }, [history, match.url]);
 
@@ -182,7 +113,7 @@ export default function JobTable({
 
   return (
     <>
-      {isFlowJobsCollectionLoading ? (
+      {isRunningJobsCollectionLoading ? (
 
         <Spinner centerAll />
 

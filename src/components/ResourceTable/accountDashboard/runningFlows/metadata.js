@@ -4,8 +4,9 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import NameCell from '../../auditLog/cells/Name';
 import JobStatus from '../../../JobDashboard/JobStatus';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import { getPages, getSuccess } from '../../../JobDashboard/util';
+import { getPages, getSuccess } from '../../../../utils/jobdashboard';
 import Cancel from './actions/Cancel';
+import MultiSelectParentChildColumnFilter from '../../commonCells/MultiSelectParentChildColumnFilter';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -20,19 +21,19 @@ export default {
         const handleSave = useCallback(
           () => {
             dispatch(actions.patchFilter('runningFlows', {
-              flowIds: [{ _id: 'all', name: 'All flows'}],
+              flowIds: ['all'],
             }));
           },
           [dispatch],
         );
 
         return (
-          <MultiSelectColumnFilter
+          <MultiSelectParentChildColumnFilter
             title="Integration"
             filterBy="integrationIds"
             filterKey="runningFlows"
             handleSave={handleSave}
-            options={integrationOptions.map(({ _id, name}) => ({_id, name }))} />
+            options={integrationOptions.map(({ _id, name, children}) => ({_id, name, children }))} />
         );
       },
       Value: ({rowData: al}) => {
@@ -67,7 +68,7 @@ export default {
       HeaderValue: function FlowSearchFilter() {
         const statusOptions = [{_id: 'all', name: 'All status'},
           {_id: 'running', name: 'In progress'},
-          {_id: 'retrying', name: 'Retrying'},
+          {_id: 'canceling', name: 'Canceling'},
           {_id: 'queued', name: 'Queued'}];
 
         return (
@@ -91,31 +92,31 @@ export default {
     {
       key: 'success',
       heading: 'Success',
-      Value: ({rowData: r}) => getSuccess(r),
+      Value: ({rowData: r}) => getSuccess(r) || 0,
       width: '10%',
     },
     {
       key: 'ignore',
       heading: 'Ignore',
-      Value: ({rowData: r}) => r.numIgnore,
+      Value: ({rowData: r}) => r.numIgnore || 0,
       width: '10%',
     },
     {
       key: 'errors',
       heading: 'Errors',
-      Value: ({rowData: r}) => r.numError,
+      Value: ({rowData: r}) => r.numError || 0,
       width: '10%',
     },
     {
       key: 'resolved',
       heading: 'Resolved',
-      Value: ({rowData: r}) => r.numResolved,
+      Value: ({rowData: r}) => r.numResolved || 0,
       width: '10%',
     },
     {
       key: 'pages',
       heading: 'Pages',
-      Value: ({rowData: r}) => getPages(r),
+      Value: ({rowData: r}) => getPages(r) || 0,
       width: '10%',
     },
   ],

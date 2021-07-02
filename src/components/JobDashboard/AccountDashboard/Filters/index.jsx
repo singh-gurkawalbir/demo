@@ -82,9 +82,8 @@ const defaultFilter = {
   },
 };
 
-export default function Filters({
-  filterKey,
-}) {
+export default function Filters(props) {
+  const {filterKey} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const rowsPerPageOptions = [10, 25, 50];

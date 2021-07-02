@@ -10,6 +10,7 @@ import suiteScript, { selectors as fromSuiteScript } from './suiteScript';
 import marketplace, { selectors as fromMarketplace } from './marketPlace';
 import fileDefinitions, { selectors as fromFileDefinitions } from './fileDefinitions';
 import { genSelectors } from '../util';
+import runningJobs, { selectors as fromRunningJobs } from './jobs/runningJobs';
 
 export default combineReducers({
   resources,
@@ -20,6 +21,7 @@ export default combineReducers({
   suiteScript,
   marketplace,
   fileDefinitions,
+  runningJobs,
 });
 
 export const selectors = {};
@@ -31,6 +33,7 @@ const subSelectors = {
   integrationAShares: fromIntegrationAShares,
   audit: fromAudit,
   jobs: fromJobs,
+  runningJobs: fromRunningJobs,
   fileDefinitions: fromFileDefinitions,
 };
 

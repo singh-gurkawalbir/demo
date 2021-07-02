@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { JOB_STATUS } from '../../../../utils/constants';
 import JobStatus from '../../JobStatus';
-import { getPages, getSuccess } from '../../util';
+import { getPages, getSuccess } from '../../../../utils/jobdashboard';
 // import Spinner from '../Spinner';
 // import ArrowDownIcon from '../icons/ArrowDownIcon';
 // import ArrowUpIcon from '../icons/ArrowUpIcon';
