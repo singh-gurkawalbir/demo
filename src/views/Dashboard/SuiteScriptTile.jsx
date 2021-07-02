@@ -126,8 +126,16 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
             {status.label}
           </Status>
           {isConnectionDown && (
-          <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
-            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
+          <Tooltip
+            data-public
+            title="Connection down"
+            placement="bottom"
+            className={classes.tooltip}>
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={handleConnectionDownStatusClick}
+              className={classes.status}>
               <ConnectionDownIcon />
             </IconButton>
           </Tooltip>
@@ -135,8 +143,15 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
-              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+            <Typography
+              variant="h3"
+              className={classes.tileName}
+              onClick={handleTileClick}>
+              <CeligoTruncate
+                dataPublic
+                delay={100}
+                lines={2}
+                placement="bottom">
                 {tile.displayName}
               </CeligoTruncate>
             </Typography>

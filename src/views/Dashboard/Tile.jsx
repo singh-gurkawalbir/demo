@@ -253,16 +253,33 @@ function Tile({
           </Status>
           {isConnectionDown && (
           <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
-            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
-              <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={handleConnectionDownStatusClick}
+              className={classes.status}>
+              <span>
+                <StatusCircle
+                  size="small"
+                  className={classes.connectionDownRedDot}
+                  variant="error" />
+              </span>
+              <ConnectionDownIcon />
             </IconButton>
           </Tooltip>
           )}
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
-              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+            <Typography
+              variant="h3"
+              className={classes.tileName}
+              onClick={handleTileClick}>
+              <CeligoTruncate
+                dataPublic
+                delay={100}
+                lines={2}
+                placement="bottom">
                 {tile.name}
               </CeligoTruncate>
             </Typography>
