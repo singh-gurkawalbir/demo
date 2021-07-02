@@ -7,7 +7,7 @@ import AgentDownloadInstaller from '../../AgentDownloadInstaller';
 import AgentToken from '../../AgentToken';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
-import OnlineStatus from '../commonCells/OnlineStatus';
+import OnlineStatus from '../../OnlineStatus';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />

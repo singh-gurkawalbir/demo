@@ -17,7 +17,7 @@ import Revoke from './actions/Revoke';
 import actions from '../../../actions';
 import ReplaceConnection from './actions/ReplaceConnection';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
-import OnlineStatus from '../commonCells/OnlineStatus';
+import OnlineStatus from '../../OnlineStatus';
 
 export default {
   useColumns: () => {

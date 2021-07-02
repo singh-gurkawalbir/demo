@@ -12,17 +12,6 @@ export default {
   title: 'Components / Buttons / Status',
   component: Status,
   decorators: [withDesign, jsxDecorator],
-  argTypes: {
-    size: {
-      control: { type: 'select' },
-    },
-    disabled: {
-      control: {
-        type: 'boolean',
-      },
-    },
-  },
-  onClick: null,
 };
 const Template = args => <Status {...args} />;
 

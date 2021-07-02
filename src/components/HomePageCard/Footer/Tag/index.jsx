@@ -60,16 +60,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Tag({ children, className }) {
+export default function Tag({ label, className }) {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.wrapper, className)}>
-      <span className={classes.label}>{children}</span>
+      <span className={classes.label}>{label}</span>
     </div>
   );
 }
 
 Tag.propTypes = {
-  children: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
 };

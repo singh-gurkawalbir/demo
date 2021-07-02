@@ -246,7 +246,8 @@ function Tile({
         <Header>
           <Status
             variant={status.variant}
-            size="large" onClick={handleStatusClick}
+            size="large"
+            onClick={handleStatusClick}
             className={classes.headerTileStatus}>
             {status.label}
           </Status>
@@ -293,8 +294,8 @@ function Tile({
               )}
             </Manage>
             )}
-            {expired && tile.tag && (<Tag variant={tile.tag} className={classes.tagExpire} />)}
-            {!expired && tile.tag && (<Tag variant={tile.tag} />)}
+            {expired && tile.tag && (<Tag label={tile.tag} className={classes.tagExpire} />)}
+            {!expired && tile.tag && (<Tag label={tile.tag} />)}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : numFlowsText}

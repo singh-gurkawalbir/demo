@@ -18,7 +18,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
-import OnlineStatus from '../../ResourceTable/commonCells/OnlineStatus';
+import OnlineStatus from '../../OnlineStatus';
 
 const emptyArray = [];
 const handleAddNewResource = args => {

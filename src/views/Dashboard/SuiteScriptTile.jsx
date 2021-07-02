@@ -120,7 +120,8 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         <Header>
           <Status
             variant={status.variant}
-            size="large" onClick={handleStatusClick}
+            size="large"
+            onClick={handleStatusClick}
             className={classes.headerTileStatus}>
             {status.label}
           </Status>
@@ -185,7 +186,7 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
               )}
             </Manage>
             )}
-            {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
+            {ssLinkedConnection?.netsuite?.account && <Tag label={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : 'Legacy'}

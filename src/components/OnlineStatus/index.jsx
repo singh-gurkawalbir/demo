@@ -1,5 +1,6 @@
 import React from 'react';
-import Status from '../../../Buttons/Status';
+import PropTypes from 'prop-types';
+import Status from '../Buttons/Status';
 
 export default function OnlineStatus({offline}) {
   return (
@@ -8,3 +9,7 @@ export default function OnlineStatus({offline}) {
     </Status>
   );
 }
+
+OnlineStatus.propTypes = {
+  offline: PropTypes.string.isRequired,
+};

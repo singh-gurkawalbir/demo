@@ -153,7 +153,7 @@ export const SuiteScript = args => {
               <Manage>
                 <PermissionsManageIcon />
               </Manage>
-              <Tag variant="clone" />
+              <Tag label="clone" />
             </FooterActions>
             <Info variant="Integration app" label="celigo" />
           </Footer>
