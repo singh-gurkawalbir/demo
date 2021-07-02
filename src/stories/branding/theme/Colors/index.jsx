@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import SwatchSet from '../SwatchSet';
-import colors from '../../../theme/colors';
+import colors from '../../../../theme/colors';
 
 export default function CeligoColor() {
   return (
