@@ -763,6 +763,12 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  azurestorageaccount: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
   as2: [
     {
       label: 'Transfer files out of source application',

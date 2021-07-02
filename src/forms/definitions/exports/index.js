@@ -18,6 +18,7 @@ import custom from './custom';
 import simple from './simple';
 import dynamodb from './dynamodb';
 import googledrive from './googledrive';
+import azurestorageaccount from './azurestorageaccount';
 
 export default {
   new: newExport,
@@ -40,4 +41,5 @@ export default {
   simple,
   dynamodb,
   googledrive,
+  azurestorageaccount,
 };

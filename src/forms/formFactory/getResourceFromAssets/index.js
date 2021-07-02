@@ -298,6 +298,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           meta = meta.salesforce;
         } else if (resource.assistant === 'googledrive') {
           meta = meta.googledrive;
+        } else if (resource.assistant === 'azurestorageaccount') {
+          meta = meta.azurestorageaccount;
         } else if (
           resource && resource.assistant !== 'openair' &&
             (resource.useParentForm !== undefined
