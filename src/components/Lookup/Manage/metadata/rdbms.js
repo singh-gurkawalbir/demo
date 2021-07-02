@@ -68,6 +68,7 @@ export default {
           valueName: 'import',
           valueLabel: 'Import field value',
           map: lookup && lookup.map,
+          required: true,
           visibleWhen: [
             {
               field: '_mode',

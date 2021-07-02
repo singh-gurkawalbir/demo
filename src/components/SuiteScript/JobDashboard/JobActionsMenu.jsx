@@ -64,9 +64,9 @@ export default function JobActionsMenu({
   }
 
   if (!isJobInProgress) {
-    // if (flowDetails && flowDetails.isRunnable) {
-    menuOptions.push({ label: 'Run flow', action: 'runFlow' });
-    // }
+    if (flowDetails?.type && !flowDetails.type.includes('REALTIME')) {
+      menuOptions.push({ label: 'Run flow', action: 'runFlow' });
+    }
 
     if (job.exportedFileId) {
       menuOptions.push({
