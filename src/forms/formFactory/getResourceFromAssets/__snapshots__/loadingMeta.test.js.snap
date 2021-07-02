@@ -6737,8 +6737,116 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.blobMethod": Object {
+        "fieldId": "http.blobMethod",
+      },
+      "http.headers": Object {
+        "fieldId": "http.headers",
+      },
       "http.method": Object {
-        "fieldId": "rest.method",
+        "fieldId": "http.method",
+      },
+      "http.once.method": Object {
+        "fieldId": "http.once.method",
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
+      },
+      "http.once.postBody": Object {
+        "fieldId": "http.once.postBody",
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
+      },
+      "http.once.relativeURI": Object {
+        "fieldId": "http.once.relativeURI",
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
+      },
+      "http.paging.body": Object {
+        "fieldId": "http.paging.body",
+      },
+      "http.paging.lastPagePath": Object {
+        "fieldId": "http.paging.lastPagePath",
+      },
+      "http.paging.lastPageStatusCode": Object {
+        "fieldId": "http.paging.lastPageStatusCode",
+      },
+      "http.paging.lastPageValues": Object {
+        "fieldId": "http.paging.lastPageValues",
+      },
+      "http.paging.linkHeaderRelation": Object {
+        "fieldId": "http.paging.linkHeaderRelation",
+      },
+      "http.paging.maxCountPath": Object {
+        "fieldId": "http.paging.maxCountPath",
+      },
+      "http.paging.maxPagePath": Object {
+        "fieldId": "http.paging.maxPagePath",
+      },
+      "http.paging.method": Object {
+        "fieldId": "http.paging.method",
+      },
+      "http.paging.page": Object {
+        "fieldId": "http.paging.page",
+      },
+      "http.paging.relativeURI": Object {
+        "fieldId": "http.paging.relativeURI",
+      },
+      "http.paging.skip": Object {
+        "fieldId": "http.paging.skip",
+      },
+      "http.paging.token": Object {
+        "fieldId": "http.paging.token",
+      },
+      "http.paging.tokenPath": Object {
+        "fieldId": "http.paging.tokenPath",
+      },
+      "http.paging.urlPath": Object {
+        "fieldId": "http.paging.urlPath",
+      },
+      "http.postBody": Object {
+        "fieldId": "http.postBody",
+        "visibleWhen": Array [
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "POST",
+              "PUT",
+            ],
+          },
+        ],
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+      },
+      "http.response.blobFormat": Object {
+        "fieldId": "http.response.blobFormat",
+      },
+      "http.response.resourcePath": Object {
+        "fieldId": "http.response.resourcePath",
+      },
+      "http.response.successPath": Object {
+        "fieldId": "http.response.successPath",
+      },
+      "http.response.successValues": Object {
+        "fieldId": "http.response.successValues",
       },
       "once.booleanField": Object {
         "id": "once.booleanField",
@@ -6775,114 +6883,6 @@ Object {
         "type": "radiogroup",
         "visible": false,
       },
-      "rest.blobFormat": Object {
-        "fieldId": "rest.blobFormat",
-      },
-      "rest.blobMethod": Object {
-        "fieldId": "rest.blobMethod",
-      },
-      "rest.headers": Object {
-        "fieldId": "rest.headers",
-      },
-      "rest.lastPagePath": Object {
-        "fieldId": "rest.lastPagePath",
-      },
-      "rest.lastPageStatusCode": Object {
-        "fieldId": "rest.lastPageStatusCode",
-      },
-      "rest.lastPageValue": Object {
-        "fieldId": "rest.lastPageValue",
-      },
-      "rest.linkHeaderRelation": Object {
-        "fieldId": "rest.linkHeaderRelation",
-      },
-      "rest.maxCountPath": Object {
-        "fieldId": "rest.maxCountPath",
-      },
-      "rest.maxPagePath": Object {
-        "fieldId": "rest.maxPagePath",
-      },
-      "rest.nextPageRelativeURI": Object {
-        "fieldId": "rest.nextPageRelativeURI",
-      },
-      "rest.nextPageTokenPath": Object {
-        "fieldId": "rest.nextPageTokenPath",
-      },
-      "rest.nextPageURLPath": Object {
-        "fieldId": "rest.nextPageURLPath",
-      },
-      "rest.once.method": Object {
-        "fieldId": "rest.once.method",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
-      },
-      "rest.once.postBody": Object {
-        "fieldId": "rest.once.postBody",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
-      },
-      "rest.once.relativeURI": Object {
-        "fieldId": "rest.once.relativeURI",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
-      },
-      "rest.pageArgument": Object {
-        "fieldId": "rest.pageArgument",
-      },
-      "rest.pagingMethod": Object {
-        "fieldId": "rest.pagingMethod",
-      },
-      "rest.pagingPostBody": Object {
-        "fieldId": "rest.pagingPostBody",
-      },
-      "rest.postBody": Object {
-        "fieldId": "rest.postBody",
-        "visibleWhen": Array [
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "POST",
-              "PUT",
-            ],
-          },
-        ],
-      },
-      "rest.relativeURI": Object {
-        "fieldId": "rest.relativeURI",
-      },
-      "rest.resourcePath": Object {
-        "fieldId": "rest.resourcePath",
-      },
-      "rest.skipArgument": Object {
-        "fieldId": "rest.skipArgument",
-      },
-      "rest.successPath": Object {
-        "fieldId": "rest.successPath",
-      },
-      "rest.successValues": Object {
-        "fieldId": "rest.successValues",
-      },
-      "rest.tokenPageArgument": Object {
-        "fieldId": "rest.tokenPageArgument",
-      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -6900,8 +6900,8 @@ Object {
               Object {
                 "description": "Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.",
                 "fieldsToValidate": Array [
-                  "rest.relativeURI",
-                  "rest.postBody",
+                  "http.relativeURI",
+                  "http.postBody",
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
@@ -6948,12 +6948,12 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.method",
-                "rest.blobMethod",
-                "rest.relativeURI",
-                "rest.headers",
-                "rest.postBody",
-                "rest.blobFormat",
+                "http.method",
+                "http.blobMethod",
+                "http.relativeURI",
+                "http.headers",
+                "http.body",
+                "http.blobFormat",
               ],
               "label": [Function],
             },
@@ -6964,38 +6964,38 @@ Object {
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
-                "rest.once.method",
-                "rest.once.relativeURI",
-                "rest.once.postBody",
+                "http.once.method",
+                "http.once.relativeURI",
+                "http.once.body",
               ],
               "label": "Configure export type",
             },
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.pagingMethod",
-                "rest.nextPageURLPath",
-                "rest.nextPageTokenPath",
-                "rest.linkHeaderRelation",
-                "rest.skipArgument",
-                "rest.nextPageRelativeURI",
-                "rest.pageArgument",
-                "rest.tokenPageArgument",
-                "rest.pagingPostBody",
-                "rest.maxPagePath",
-                "rest.maxCountPath",
-                "rest.lastPageStatusCode",
-                "rest.lastPagePath",
-                "rest.lastPageValue",
+                "http.paging.method",
+                "http.paging.urlPath",
+                "http.paging.tokenPath",
+                "http.paging.linkHeaderRelation",
+                "http.paging.skip",
+                "http.paging.relativeURI",
+                "http.paging.page",
+                "http.paging.token",
+                "http.paging.body",
+                "http.paging.maxPagePath",
+                "http.paging.maxCountPath",
+                "http.paging.lastPageStatusCode",
+                "http.paging.lastPagePath",
+                "http.paging.lastPageValues",
               ],
               "label": "Does this API use paging?",
             },
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.resourcePath",
-                "rest.successPath",
-                "rest.successValues",
+                "http.response.resourcePath",
+                "http.response.successPath",
+                "http.response.successValues",
               ],
               "label": "Non-standard API response patterns",
             },
