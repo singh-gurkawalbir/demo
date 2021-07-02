@@ -2,7 +2,7 @@ import StepperProto from './Prototype';
 import Template from './Template';
 
 export default {
-  title: 'Components/Stepper',
+  title: 'Lab/Stepper',
   component: StepperProto,
 };
 
