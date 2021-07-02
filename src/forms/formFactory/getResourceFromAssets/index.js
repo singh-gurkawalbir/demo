@@ -254,6 +254,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           }
         } else if (resource.assistant === 'googledrive') {
           meta = meta.googledrive;
+        } else if (resource.assistant === 'azurestorageaccount') {
+          meta = meta.azurestorageaccount;
         } else if (
           resource &&
             (resource.useParentForm !== undefined

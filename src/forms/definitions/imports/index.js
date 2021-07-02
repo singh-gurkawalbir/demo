@@ -15,6 +15,7 @@ import salesforce from './salesforce';
 import newImport from './new';
 import dynamodb from './dynamodb';
 import googledrive from './googledrive';
+import azurestorageaccount from './azurestorageaccount';
 
 export default {
   common,
@@ -34,4 +35,5 @@ export default {
   salesforce,
   dynamodb,
   googledrive,
+  azurestorageaccount,
 };
