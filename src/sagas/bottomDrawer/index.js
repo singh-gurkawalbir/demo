@@ -48,7 +48,6 @@ export function* switchTab({index, tabType}) {
     return;
   }
 
-  // console.log('requestedTab', requestedTab);
   if (requestedTab.tabType === 'connectionLogs') {
     // when user switches to connection log tab
     const {resourceId: connectionId} = requestedTab;

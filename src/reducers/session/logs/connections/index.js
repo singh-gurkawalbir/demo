@@ -38,9 +38,7 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.LOGS.CONNECTIONS.PAUSE:
-        console.log('A');
         if (draft.connections?.[connectionId]) {
-          console.log('hey');
           draft.connections[connectionId].isPaused = true;
         }
         break;
