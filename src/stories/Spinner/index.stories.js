@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import Spinner from '.';
+import Spinner from '../../components/Spinner';
 
 export default {
   title: 'Components/Spinner',

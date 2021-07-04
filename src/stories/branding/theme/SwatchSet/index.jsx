@@ -3,7 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(1),
+    marginTop: theme.spacing(3),
   },
   swatchSet: {
     display: 'flex',
@@ -12,27 +12,39 @@ const useStyles = makeStyles(theme => ({
   swatchContainer: {
     display: 'flex',
     flexDirection: 'column',
-    textAlign: 'center',
     height: 150,
-    width: 150,
+    width: 225,
     marginRight: theme.spacing(2),
     marginBottom: theme.spacing(2),
     border: `solid 1px ${theme.palette.divider}`,
+    borderRadius: theme.spacing(0.5),
+    padding: 4,
   },
   swatch: {
     flexGrow: 1,
-    marginBottom: theme.spacing(0.5),
+    borderRadius: theme.spacing(0.5),
+    background: props => props.color || '',
+    marginBottom: theme.spacing(1),
+  },
+  heading: {
+    marginBottom: theme.spacing(1),
+  },
+  colorHex: {
+    fontFamily: 'source sans pro semibold',
   },
 }));
 
-function Swatch({colorName, color}) {
-  const classes = useStyles();
+function Swatch(props) {
+  const {colorName, color} = props;
+  const classes = useStyles(props);
 
   return (
     <div className={classes.swatchContainer}>
-      <div className={classes.swatch} style={{ backgroundColor: color}} />
-      <Typography>{colorName}</Typography>
-      <Typography>{color}</Typography>
+      <div className={classes.swatch} />
+      <div className={classes.swatchDetails}>
+        <Typography>{colorName}</Typography>
+        <Typography className={classes.colorHex}>{color}</Typography>
+      </div>
     </div>
   );
 }
@@ -43,7 +55,7 @@ export default function SwatchSet({name, colors, whitelist}) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h4">{name}</Typography>
+      <Typography variant="h4" className={classes.heading}>{name}</Typography>
       <div className={classes.swatchSet}>
         {
           colorNames.map(colorName => (

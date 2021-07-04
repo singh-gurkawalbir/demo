@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
-import { makeStyles, MenuItem, Typography } from '@material-ui/core';
+import { makeStyles, MenuItem } from '@material-ui/core';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -306,9 +306,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
         ) : null}
         {!logs.length && !nextPageURL && status !== 'requested' && (
           <MessageWrapper>
-            <Typography>
-              You don’t have any execution logs in the selected time frame.
-            </Typography>
+            You don’t have any execution logs in the selected time frame.
           </MessageWrapper>
         )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
