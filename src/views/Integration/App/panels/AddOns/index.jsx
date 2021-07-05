@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -83,13 +83,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
   // details.
   const [showMessage, setShowMessage] = useState(false);
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const supportsMultiStore = useMemo(() => {
-    if (integration) {
-      return !!integration.settings?.supportsMultiStore;
-    }
-
-    return false;
-  }, [integration]);
+  const supportsMultiStore = integration?.settings?.supportsMultiStore;
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -100,7 +94,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
 
     return true;
   });
-  const addOnMetadata = addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
+  const addOnMetadata = addOnState?.addOns?.addOnMetaData;
   const licenseId = useSelector(state => {
     const license = selectors.integrationAppLicense(state, integrationId);
 
