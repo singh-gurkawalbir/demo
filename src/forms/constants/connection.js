@@ -124,6 +124,7 @@ export default {
     'pagerduty',
     'quickbase',
     'pagerdutyevents',
+    'sapsuccessfactors',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

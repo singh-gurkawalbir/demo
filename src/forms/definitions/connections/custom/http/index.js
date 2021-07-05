@@ -213,6 +213,7 @@ import pagerduty from './pagerduty';
 import quickbase from './quickbase';
 import pagerdutyevents from './pagerdutyevents';
 import orangehrm from './orangehrm';
+import sapsuccessfactors from './sapsuccessfactors';
 
 export default {
   channelape,
@@ -430,4 +431,5 @@ export default {
   quickbase,
   pagerdutyevents,
   orangehrm,
+  sapsuccessfactors,
 };
