@@ -970,6 +970,13 @@ selectors.getAllIntegrations = createSelector(state => {
 
   allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
   allIntegrations = [...defaultFilter, ...allIntegrations];
+  allIntegrations.forEach(i => {
+    const { supportsMultiStore, sections: children = [] } = i.settings || {};
+
+    if (supportsMultiStore) {
+      i.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
+    }
+  });
 
   return allIntegrations;
 },

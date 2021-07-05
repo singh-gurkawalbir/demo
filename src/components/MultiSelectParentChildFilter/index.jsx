@@ -161,10 +161,10 @@ export default function MultiSelectFilter(props) {
       });
 
       if (allChildsSelected && parent?.children) {
-        return [...checked, id, parentId];
+        return [...checked, id, parentId].filter(c => c !== 'all');
       }
 
-      return [...checked, id];
+      return [...checked, id].filter(c => c !== 'all');
     });
   };
 
