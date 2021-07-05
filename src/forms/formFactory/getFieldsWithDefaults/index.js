@@ -161,10 +161,6 @@ const flattenedFieldMap = (
           );
         }
 
-        console.log('masterFieldHash', masterFieldHash);
-        console.log('resourceType', resourceType);
-        console.log('f', f);
-
         const masterFields = masterFieldHash[resourceType]
           ? masterFieldHash[resourceType][f.fieldId]
           : {};
