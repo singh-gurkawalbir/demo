@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+/* global describe, test, jest */
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select, delay } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
