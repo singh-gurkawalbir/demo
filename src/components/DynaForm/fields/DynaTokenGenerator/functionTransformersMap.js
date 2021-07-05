@@ -318,4 +318,18 @@ export default {
       email: form['/http/unencrypted/email'],
     }),
   },
+  sapsuccessfactors: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: `https://${form['/http/unencrypted/baseurl']}/oauth/token`,
+      body: { client_id: form['/http/unencrypted/clientId'],
+        assertion: form['/http/encrypted/assertion'],
+        company_id: form['/http/unencrypted/companyId'],
+        grant_type: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
+        user_id: form['/http/unencrypted/userId'],
+      },
+    }),
+  },
 };
