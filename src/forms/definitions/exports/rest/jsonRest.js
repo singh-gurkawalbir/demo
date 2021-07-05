@@ -1,5 +1,13 @@
 import { isNewId } from '../../../../utils/resource';
 
+function isValidArray(value) {
+  if (Array.isArray(value) && value[0]) {
+    return true;
+  }
+
+  return false;
+}
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -69,7 +77,7 @@ export default {
       retValues['/http/paging/linkHeaderRelation'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
       retValues['/http/paging/body'] = undefined;
-      retValues['/rest/paging/page'] = undefined;
+      retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/skip'] = undefined;
     } else if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/path'] = undefined;
@@ -131,6 +139,23 @@ export default {
     }
     delete retValues['/http/paging/tokenPage'];
 
+    try {
+      // there are two cases when postBody of REST is configured as a string
+      // 1) '{{details.company}}' - this would definitely require rest way of postBody handlebar evaluation, it will reach catch block and set the flag
+      // 2) '{"companyName": "{{details.company.name}}"} - this may not require rest way of postBody handlebar evaluation. Hence the flag wont get set with below logic
+      // the above case is not possible in REST as the body should always be in json format
+
+      if (retValues['/http/body'] && typeof retValues['/http/body'] === 'string') {
+        JSON.parse(retValues['/http/body']); // I dont think this passes for any doc. Hence all the docs with body of type string will have 'customeTemplateEval' enabled
+      }
+    } catch (ex) {
+      retValues['/http/customeTemplateEval'] = true;
+    }
+    if (retValues['/http/response/successPath'] && !isValidArray(retValues['/http/response/successPath'])) {
+      retValues['/http/response/allowArrayforSuccessPath'] = true;
+    }
+    retValues['/useTechAdaptorForm'] = true;
+
     return {
       ...retValues,
     };
@@ -181,8 +206,8 @@ export default {
     },
     'http.headers': { fieldId: 'http.headers' },
     'http.relativeURI': { fieldId: 'http.relativeURI' },
-    'http.postBody': {
-      fieldId: 'http.postBody',
+    'http.body': {
+      fieldId: 'http.body',
       visibleWhen: [{ field: 'http.method', is: ['POST', 'PUT'] }],
     },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
@@ -218,7 +243,7 @@ export default {
               regex: /.*{{.*lastExportDateTime.*}}/,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
-              fieldsToValidate: ['http.relativeURI', 'http.postBody'] },
+              fieldsToValidate: ['http.relativeURI', 'http.body'] },
 
             { label: 'Once – export records only once', value: 'once' },
             { label: 'Test – export only 1 record', value: 'test' },
@@ -246,8 +271,8 @@ export default {
       fieldId: 'http.once.method',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'http.once.postBody': {
-      fieldId: 'http.once.postBody',
+    'http.once.body': {
+      fieldId: 'http.once.body',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'http.paging.method': { fieldId: 'http.paging.method' },
@@ -287,7 +312,7 @@ export default {
           'http.relativeURI',
           'http.headers',
           'http.body',
-          'http.blobFormat',
+          'http.response.blobFormat',
         ],
       },
       {

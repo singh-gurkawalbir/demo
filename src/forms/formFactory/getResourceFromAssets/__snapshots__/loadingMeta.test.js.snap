@@ -6740,14 +6740,26 @@ Object {
       "http.blobMethod": Object {
         "fieldId": "http.blobMethod",
       },
+      "http.body": Object {
+        "fieldId": "http.body",
+        "visibleWhen": Array [
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "POST",
+              "PUT",
+            ],
+          },
+        ],
+      },
       "http.headers": Object {
         "fieldId": "http.headers",
       },
       "http.method": Object {
         "fieldId": "http.method",
       },
-      "http.once.method": Object {
-        "fieldId": "http.once.method",
+      "http.once.body": Object {
+        "fieldId": "http.once.body",
         "visibleWhen": Array [
           Object {
             "field": "type",
@@ -6757,8 +6769,8 @@ Object {
           },
         ],
       },
-      "http.once.postBody": Object {
-        "fieldId": "http.once.postBody",
+      "http.once.method": Object {
+        "fieldId": "http.once.method",
         "visibleWhen": Array [
           Object {
             "field": "type",
@@ -6820,18 +6832,6 @@ Object {
       },
       "http.paging.urlPath": Object {
         "fieldId": "http.paging.urlPath",
-      },
-      "http.postBody": Object {
-        "fieldId": "http.postBody",
-        "visibleWhen": Array [
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "POST",
-              "PUT",
-            ],
-          },
-        ],
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
@@ -6901,7 +6901,7 @@ Object {
                 "description": "Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.",
                 "fieldsToValidate": Array [
                   "http.relativeURI",
-                  "http.postBody",
+                  "http.body",
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
@@ -6953,7 +6953,7 @@ Object {
                 "http.relativeURI",
                 "http.headers",
                 "http.body",
-                "http.blobFormat",
+                "http.response.blobFormat",
               ],
               "label": [Function],
             },
