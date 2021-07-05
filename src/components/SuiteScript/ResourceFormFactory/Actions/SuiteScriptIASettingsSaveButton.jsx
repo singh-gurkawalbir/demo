@@ -1,12 +1,20 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {makeStyles} from '@material-ui/core';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import DynaAction from '../../../DynaForm/DynaAction';
 
+const useStyles = makeStyles(theme => ({
+  linkWrapper: {
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 const URL = '/app/site/hosting/scriptlet.nl?script=customscript_celigo_svb_dashboard&deploy=customdeploy_celigo_svb_dashboard';
 
 function SiliconValleyDashboardLink({ssLinkedConnectionId, isSVBNSGeneralSection}) {
+  const classes = useStyles();
   const connection = useSelector(state => selectors.resource(state, 'connections', ssLinkedConnectionId)
   );
 
@@ -15,7 +23,7 @@ function SiliconValleyDashboardLink({ssLinkedConnectionId, isSVBNSGeneralSection
   if (!systemDomainUrl || !isSVBNSGeneralSection) { return null; }
 
   return (
-    <div>
+    <div className={classes.linkWrapper}>
       <a href={`${systemDomainUrl}${URL}`} rel="noreferrer" target="_blank">
         Go to Silicon Valley Bank Dashboard
       </a>
