@@ -22,7 +22,6 @@ export default {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const openDebugger = useCallback(() => {
-      dispatch(actions.logs.connections.request(connectionId));
       dispatch(actions.bottomDrawer.addTab({tabType: 'connectionLogs', resourceId: connectionId}));
     }, [connectionId, dispatch]);
 
