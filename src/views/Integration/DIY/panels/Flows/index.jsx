@@ -4,6 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import Status from '../../../../../components/Buttons/Status';
 import CeligoTable from '../../../../../components/CeligoTable';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
@@ -14,7 +15,6 @@ import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import Spinner from '../../../../../components/Spinner';
-import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
 import { MISCELLANEOUS_SECTION_ID } from '../../../../../utils/constants';
@@ -35,13 +35,6 @@ const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
   },
-  errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '12px',
-  },
   divider: {
     width: 1,
     height: 18,
@@ -53,7 +46,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   content: {
-    // padding: theme.spacing(3, 2),
     width: '100%',
   },
   flowTitle: {
@@ -91,9 +83,13 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   flowPanelTitle: {
+    overflowX: 'auto',
     '&>h4': {
       minWidth: '300px',
     },
+  },
+  flowPanelStatusHeader: {
+    fontSize: 14,
   },
 }));
 
@@ -254,18 +250,17 @@ const Title = ({flows, integrationId}) => {
   const errorCount = yetToLoadOpenErrors ? currentTileErrorCount : totalCount;
 
   return (
-    <span className={classes.flowsPanelWithStatus}>
+    <div className={classes.flowsPanelWithStatus}>
       Integration flows
       {errorCount ? (
         <>
           <span className={classes.divider} />
-          <span className={classes.errorStatus}>
-            <StatusCircle variant="error" size="mini" />
-            <span>{errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`} </span>
-          </span>
+          <Status size="mini" variant="error" className={classes.flowPanelStatusHeader}>
+            {errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`}
+          </Status>
         </>
       ) : null}
-    </span>
+    </div>
   );
 };
 export default function FlowsPanel({ integrationId, childId }) {

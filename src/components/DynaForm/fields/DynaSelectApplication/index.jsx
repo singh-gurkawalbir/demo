@@ -263,7 +263,7 @@ export default function SelectApplication(props) {
       ? ''
       : {
         value,
-        label: applications.find(a => a.id === value).name,
+        label: applications.find(a => a.id === value)?.name,
       };
 
   const dispatch = useDispatch();

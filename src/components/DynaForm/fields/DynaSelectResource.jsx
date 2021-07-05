@@ -16,9 +16,9 @@ import { generateNewId } from '../../../utils/resource';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
-import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
+import OnlineStatus from '../../OnlineStatus';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -119,10 +119,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  connectionStatusWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -153,7 +149,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ConnectionLoadingChip(props) {
-  const classes = useStyles();
   const { connectionId } = props;
   const dispatch = useDispatch();
 
@@ -165,16 +160,8 @@ function ConnectionLoadingChip(props) {
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  return isConnectionOffline ? (
-    <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="error" />
-      offline
-    </div>
-  ) : (
-    <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="success" />
-      online
-    </div>
+  return (
+    <OnlineStatus offline={isConnectionOffline} />
   );
 }
 

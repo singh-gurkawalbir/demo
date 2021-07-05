@@ -5777,3 +5777,36 @@ selectors.isUserAllowedOptionalSSOSignIn = state => {
   }
 };
 // #endregion sso selectors
+
+selectors.httpPagingValidationError = (state, formKey, pagingMethodsToValidate, pagingFieldsToValidate) => {
+  const formFields = selectors.formState(state, formKey)?.fields || {};
+  const pagingMethod = formFields['http.paging.method']?.value;
+
+  // if a particular paging method is selected
+  // do validations against pagingFieldsToValidate to verify if any field contains the setup
+  if (pagingMethodsToValidate && pagingMethod && Object.keys(pagingMethodsToValidate).includes(pagingMethod)) {
+    const regex = pagingMethodsToValidate[pagingMethod];
+
+    const validated = pagingFieldsToValidate?.some(f => regex.test(formFields[f]?.value));
+
+    if (!validated) {
+      return `The paging method selected must use {{export.http.paging.${pagingMethod}}} in either the relative URI or HTTP request body.`;
+    }
+  }
+};
+
+selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => {
+  const formFields = selectors.formState(state, formKey)?.fields || {};
+  const exportType = formFields.type?.value;
+  const regex = /.*{{.*lastExportDateTime.*}}/;
+
+  // if delta export type
+  // do validations against deltaFieldsToValidate to verify if any field contains the setup
+  if (exportType === 'delta' && deltaFieldsToValidate) {
+    const validated = deltaFieldsToValidate.some(f => regex.test(formFields[f]?.value));
+
+    if (!validated) {
+      return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
+    }
+  }
+};
