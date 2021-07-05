@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -42,9 +41,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
           />
         ) : (
           <MessageWrapper>
-            <Typography>
-              You don&apos;t have any audit logs.
-            </Typography>
+            You don&apos;t have any audit logs.
           </MessageWrapper>
         )}
 

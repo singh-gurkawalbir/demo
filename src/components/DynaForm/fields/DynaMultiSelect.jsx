@@ -65,7 +65,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      <Tag className={classes.tagWrapper} variant={tag} />
+      <Tag className={classes.tagWrapper} label={tag} />
     </>
   );
 };
@@ -140,7 +140,7 @@ export default function DynaMultiSelect(props) {
                 />
               )}
               <ListItemText primary={item.label || item.value} />
-              {item.tag && <Tag className={classes.tagWrapper} variant={item.tag} />}
+              {item.tag && <Tag className={classes.tagWrapper} label={item.tag} />}
             </MenuItem>
           );
         })

@@ -5,15 +5,14 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: [[0, 5]],
     background: theme.palette.background.default,
     borderRadius: '50%',
     display: 'inline-block',
     marginRight: '5px',
   },
   large: {
-    width: 24,
-    height: 24,
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   small: {
     width: 12,
