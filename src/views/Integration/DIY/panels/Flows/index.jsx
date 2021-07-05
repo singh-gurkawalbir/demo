@@ -91,6 +91,7 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   flowPanelTitle: {
+    overflowX: 'auto',
     '&>h4': {
       minWidth: '300px',
     },

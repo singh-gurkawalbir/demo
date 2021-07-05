@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 import {
   convertFromExport,
   PARAMETER_LOCATION,
@@ -57,6 +58,7 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
 }
 export function headerFieldsMeta({operationDetails, headers = []}) {
   const editableHeaders = Object.keys(operationDetails?.headers || {}).filter(key => !operationDetails.headers[key]);
+  const headersValue = uniqBy([...headers, ...editableHeaders.map(key => ({name: key, value: operationDetails.headers[key]}))], 'name');
 
   if (editableHeaders.length) {
     return [{
@@ -66,7 +68,7 @@ export function headerFieldsMeta({operationDetails, headers = []}) {
       validate: true,
       valueName: 'value',
       label: 'Configure HTTP headers',
-      value: headers.length ? headers.filter(header => editableHeaders.includes(header.name)) : editableHeaders.map(key => ({name: key, value: operationDetails.headers[key]})),
+      value: headersValue,
       required: true,
     }];
   }
@@ -117,14 +119,14 @@ export function exportTypeFieldsMeta({
   supportedExportTypes = [],
   exportType,
 }) {
-  const exportTypeOptions = [{ value: 'all', label: 'All' }];
+  const exportTypeOptions = [{ value: 'all', label: 'All – always export all data' }];
 
   if (supportedExportTypes.includes('delta')) {
-    exportTypeOptions.push({ value: 'delta', label: 'Delta' });
+    exportTypeOptions.push({ value: 'delta', label: 'Delta – export only modified data' });
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test' });
+    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
   }
 
   if (exportTypeOptions.length <= 1) {
@@ -208,10 +210,10 @@ export function fieldMeta({ resource, assistantData }) {
 
   if (adaptorType === 'RESTExport') {
     adaptorType = 'rest';
-    headers = resource.rest.headers;
+    headers = resource.rest?.headers || [];
   } else {
     adaptorType = 'http';
-    headers = resource.http.headers;
+    headers = resource.http?.headers || [];
   }
 
   const hiddenFields = hiddenFieldsMeta({

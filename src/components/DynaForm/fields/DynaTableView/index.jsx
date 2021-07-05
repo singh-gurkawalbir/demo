@@ -5,6 +5,7 @@ import DynaTableView from './DynaTable';
 import DynaStaticMapWidget from './DynaStaticMapWidget';
 import LoadResources from '../../../LoadResources';
 import DynaRefreshableStaticMap from './DynaRefreshableStaticMap';
+import FieldMessage from '../FieldMessage';
 
 export default function DynaTable(props) {
   const {
@@ -60,6 +61,7 @@ export default function DynaTable(props) {
       {tableType === 'staticMap' && <DynaStaticMap {...propsWithVirtualization} />}
       {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...propsWithVirtualization} />}
       {tableType === 'generic' && <DynaTableView {...updatedProps} />}
+      <FieldMessage {...props} />
     </LoadResources>
   );
 }

@@ -5,7 +5,6 @@ const useStyles = makeStyles(theme => ({
   container: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 2,
-    marginBottom: theme.spacing(1),
     width: 160,
   },
 }));

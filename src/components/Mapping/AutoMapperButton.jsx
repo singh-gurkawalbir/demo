@@ -32,9 +32,8 @@ export default function AutoMapperButton({disabled}) {
 
   const flowHasExport = useSelector(state => {
     const {flowId} = selectors.mapping(state);
-    const {adaptorType} = selectors.firstFlowPageGenerator(state, flowId);
 
-    return !!adaptorType;
+    return !!selectors.firstFlowPageGenerator(state, flowId)?.adaptorType;
   });
 
   const {failMsg, failSeverity, isFetchingAutoSuggestions} = useSelector(state => {

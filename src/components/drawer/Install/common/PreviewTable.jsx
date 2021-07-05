@@ -9,6 +9,7 @@ const useColumns = () => [
     key: 'name',
     heading: 'Name',
     Value: ({rowData: r}) => r?.doc?.name || r?.doc?._id,
+    width: '50%',
   },
   {
     key: 'description',
