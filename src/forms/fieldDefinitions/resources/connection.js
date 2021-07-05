@@ -325,6 +325,8 @@ export default {
   },
   'rest.cookieAuth.uri': {
     type: 'uri',
+    showLookup: false,
+    showExtract: false,
     label: 'Absolute URL',
     helpKey: 'connection.http.auth.cookie.uri',
   },
@@ -422,6 +424,8 @@ export default {
   },
   'rest.refreshTokenURI': {
     type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
     label: 'Relative URI',
     helpKey: 'connection.http.auth.token.refreshRelativeURI',
   },
@@ -454,6 +458,8 @@ export default {
   },
   'rest.pingRelativeURI': {
     type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
     label: 'Relative URI',
     helpKey: 'connection.http.ping.relativeURI',
   },
@@ -668,6 +674,8 @@ export default {
   },
   'http.ping.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
     label: 'Relative URI',
   },
   'http.ping.method': {
@@ -958,6 +966,8 @@ export default {
   },
   'http.auth.token.refreshRelativeURI': {
     type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
     label: 'Relative URI',
   },
   'http.auth.token.refreshBody': {
@@ -999,6 +1009,8 @@ export default {
   },
   'http.auth.cookie.uri': {
     type: 'uri',
+    showLookup: false,
+    showExtract: false,
     label: 'Absolute URL',
   },
   'http.auth.cookie.body': {
