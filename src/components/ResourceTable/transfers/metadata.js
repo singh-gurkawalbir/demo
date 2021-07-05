@@ -3,6 +3,7 @@ import Delete from './actions/Delete';
 import Cancel from './actions/Cancel';
 import TableHeadWithRefreshIcon from '../commonCells/RefreshableHeading';
 import DateTimeDisplay from '../../DateTimeDisplay';
+import { capitalizeFirstLetter } from '../../../utils/string';
 
 export default {
   useColumns: () => [
@@ -41,7 +42,7 @@ export default {
 
         return r.status === 'unapproved'
           ? 'Pending acceptance'
-          : r.status.charAt(0).toUpperCase() + r.status.slice(1);
+          : capitalizeFirstLetter(r.status);
       },
     },
     {

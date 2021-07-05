@@ -4,8 +4,6 @@ import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
-import Status from '../../components/Status';
-import StatusCircle from '../../components/StatusCircle';
 import Content from '../../components/HomePageCard/Content';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import AddIcon from '../../components/icons/AddIcon';
@@ -27,6 +25,7 @@ import {
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import CeligoTruncate from '../../components/CeligoTruncate';
+import Status from '../../components/Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -120,14 +119,23 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
       <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
           <Status
-            label={status.label}
+            variant={status.variant}
+            size="large"
             onClick={handleStatusClick}
-            className={classes.status}>
-            <StatusCircle variant={status.variant} />
+            className={classes.headerTileStatus}>
+            {status.label}
           </Status>
           {isConnectionDown && (
-          <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
-            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
+          <Tooltip
+            data-public
+            title="Connection down"
+            placement="bottom"
+            className={classes.tooltip}>
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={handleConnectionDownStatusClick}
+              className={classes.status}>
               <ConnectionDownIcon />
             </IconButton>
           </Tooltip>
@@ -135,9 +143,16 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
-              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
-                {tile.name}
+            <Typography
+              variant="h3"
+              className={classes.tileName}
+              onClick={handleTileClick}>
+              <CeligoTruncate
+                dataPublic
+                delay={100}
+                lines={2}
+                placement="bottom">
+                {tile.displayName}
               </CeligoTruncate>
             </Typography>
           </CardTitle>
@@ -186,7 +201,7 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
               )}
             </Manage>
             )}
-            {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
+            {ssLinkedConnection?.netsuite?.account && <Tag label={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : 'Legacy'}

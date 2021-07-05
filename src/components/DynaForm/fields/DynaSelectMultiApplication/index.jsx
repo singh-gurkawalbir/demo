@@ -102,7 +102,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      {tag && <Tag className={classes.tagWrapper} variant={tag} />}
+      {tag && <Tag className={classes.tagWrapper} label={tag} />}
     </>
   );
 };

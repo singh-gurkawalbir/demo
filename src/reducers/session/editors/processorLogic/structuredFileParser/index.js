@@ -8,7 +8,7 @@ export default {
 
     return {
       ...options,
-      rule,
+      rule: fieldState?.value || rule,
       data,
       originalData: data,
     };

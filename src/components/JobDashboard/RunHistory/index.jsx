@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -13,6 +13,7 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
+import MessageWrapper from '../../MessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -34,11 +35,6 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     justifyContent: 'space-between',
     background: theme.palette.background.default,
-  },
-
-  messageContainer: {
-    padding: theme.spacing(3),
-    backgroundColor: theme.palette.common.white,
   },
   rangeFilter: {
     padding: 5,
@@ -158,9 +154,9 @@ export default function RunHistory({ flowId }) {
       { isLoadingHistory && <Spinner centerAll />}
       { !hasFlowRunHistory &&
         (
-        <Typography className={classes.messageContainer}>
+        <MessageWrapper>
           You don&apos;t have any run history.
-        </Typography>
+        </MessageWrapper>
         )}
       {
           hasFlowRunHistory &&

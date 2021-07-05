@@ -42,6 +42,7 @@ export default function assistantDefinition(
       });
       const importDoc = convertToImport({
         assistantConfig: assistantMetadata,
+        headers: formValues['/assistantMetadata/headers'],
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 

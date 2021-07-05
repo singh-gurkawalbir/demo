@@ -2202,6 +2202,10 @@ describe('updateFormValues', () => {
 
 const assistantData = {
   export: {
+    headers: {
+      hardcoded: 'header',
+      manual: '',
+    },
     versions: [
       {
         version: 'v1',
@@ -2240,6 +2244,9 @@ const assistantData = {
                     id: 'action',
                   },
                 ],
+                response: {
+                  successPath: 'successPath',
+                },
                 paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
               },
             ],
@@ -2252,7 +2259,7 @@ const assistantData = {
 
 describe('convertToExport', () => {
   const testCases = [
-    [undefined, {}, undefined],
+    [undefined, {}, undefined, []],
     [
       {
         '/assistant': 'someAssistant',
@@ -2263,7 +2270,10 @@ describe('convertToExport', () => {
         '/rest': {
           ...DEFAULT_PROPS.EXPORT.REST,
           method: 'GET',
-          headers: [],
+          headers: [{
+            name: 'hardcoded',
+            value: 'header',
+          }],
           relativeURI: 'some/thing',
           allowUndefinedResource: false,
         },
@@ -2275,6 +2285,7 @@ describe('convertToExport', () => {
         operation: 'ep1',
       },
       assistantData,
+      [],
     ],
     [
       {
@@ -2286,7 +2297,13 @@ describe('convertToExport', () => {
         '/rest': {
           ...DEFAULT_PROPS.EXPORT.REST,
           method: 'GET',
-          headers: [],
+          headers: [{
+            name: 'hardcoded',
+            value: 'header',
+          }, {
+            name: 'manual',
+            value: '',
+          }],
           relativeURI: 'some/unique/url',
           allowUndefinedResource: false,
         },
@@ -2299,6 +2316,7 @@ describe('convertToExport', () => {
         assistantData,
       },
       assistantData,
+      null,
     ],
     [
       {
@@ -2310,7 +2328,10 @@ describe('convertToExport', () => {
         '/rest': {
           ...DEFAULT_PROPS.EXPORT.REST,
           method: 'GET',
-          headers: [],
+          headers: [{
+            name: 'hardcoded',
+            value: 'header',
+          }],
           relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
           allowUndefinedResource: false,
           pagingMethod: 'nextpageurl',
@@ -2325,18 +2346,58 @@ describe('convertToExport', () => {
         pathParams: { id: 'ABC', action: 'XYZ' },
       },
       assistantData,
+      [],
+    ],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r2',
+          operation: 'ep2',
+        },
+        '/http': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [{
+            name: 'hardcoded',
+            value: 'header',
+          }, {
+            name: 'manual',
+            value: 'value',
+          }],
+          paging: {
+            nextPagePath: 'npp',
+            pagingMethod: 'nextpageurl',
+          },
+          relativeURI: 'some/lists:_id/thing/:_action/some/other/:_action',
+          response: {
+            successValues: [],
+            successPath: 'successPath',
+          },
+        },
+      },
+      {
+        adaptorType: 'http',
+        assistant: 'someAssistant',
+        resource: 'r2',
+        operation: 'some/lists:_id/thing/:_action/some/other/:_action',
+        assistantData,
+      },
+      assistantData,
+      [{name: 'manual', value: 'value'}],
     ],
   ];
 
   each(testCases).test(
     'should return %o when assistantConfig =  %o and assistantData = %o',
-    (expected, assistantConfig, assistantData) => {
-      expect(convertToExport({ assistantConfig, assistantData })).toEqual(
+    (expected, assistantConfig, assistantData, headers) => {
+      expect(convertToExport({ assistantConfig, assistantData, headers })).toEqual(
         expected
       );
     }
   );
 });
+
 describe('routeToRegExp', () => {
   const testCases = [
 
@@ -2391,7 +2452,10 @@ describe('convertFromExport', () => {
           pathParameters: [],
           queryParameters: [],
           url: 'some/thing',
-          headers: {},
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
           id: 'ep1',
         },
         pathParams: {},
@@ -2450,7 +2514,10 @@ describe('convertFromExport', () => {
         exportType: undefined,
         operation: 'some/unique/url',
         operationDetails: {
-          headers: {},
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
           pathParameters: [],
           queryParameters: [],
           url: 'some/unique/url',
@@ -2485,7 +2552,10 @@ describe('convertFromExport', () => {
         exportType: undefined,
         operation: 'ep2',
         operationDetails: {
-          headers: {},
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
           id: 'ep2',
           paging: {
             nextPagePath: 'npp',
@@ -2504,6 +2574,9 @@ describe('convertFromExport', () => {
             },
           ],
           queryParameters: [],
+          response: {
+            successPath: 'successPath',
+          },
           url: 'some/lists:_id/thing/:_action/some/other/:_action',
         },
         pathParams: {

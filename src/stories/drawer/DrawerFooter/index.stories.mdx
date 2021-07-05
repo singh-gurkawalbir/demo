@@ -15,7 +15,12 @@ here and in the UI. For now, just using this div to not cut off the
 footer, as it gets partially hidden otherwise.
 -->
 
-<Meta title="Right Drawer/Footer" component={DrawerFooter} decorators={[withRouterAndDrawer]} />
+<Meta 
+  title="Surfaces/Right Drawer/Footer" 
+  component={DrawerFooter} 
+  decorators={[withRouterAndDrawer]} 
+  parameters={{ previewTabs: { 'storybook/docs/panel': { hidden: true } } }}
+/>
 
 <Story name="Empty footer">
   <DrawerHeader title="Empty Footer" />

@@ -13,7 +13,7 @@ export function hiddenFieldsMeta({ values }) {
   }));
 }
 
-export function basicFieldsMeta({ assistantConfig, assistantData }) {
+export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -31,7 +31,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
     },
   };
-  const { labels = {}, versions = [] } = assistantData;
+  const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
   return Object.keys(fieldDefinitions).map(fieldId => {
     if (fieldId === 'version') {
@@ -46,10 +46,38 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
 
+    fieldDefinitions[fieldId].helpKey = `${assistant}.import.${fieldId}`;
+
+    if (helpTexts[fieldId]) {
+      fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
+    }
+
     return fieldDefinitions[fieldId];
   });
 }
+export function headerFieldsMeta({operationDetails, headers = []}) {
+  const editableHeaders = Object.keys(operationDetails?.headers || {}).filter(key => !operationDetails.headers[key]);
 
+  if (editableHeaders.length) {
+    return [{
+      id: 'assistantMetadata.headers',
+      type: 'assistantHeaders',
+      keyName: 'name',
+      validate: true,
+      valueName: 'value',
+      label: 'Configure HTTP headers',
+      value: headers.length
+        ? headers.filter(header => editableHeaders.includes(header.name))
+        : editableHeaders.map(key => ({
+          name: key,
+          value: operationDetails?.headers[key],
+        })),
+      required: true,
+    }];
+  }
+
+  return [];
+}
 export function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters
     .filter(pathParam => pathParam.in === 'path' && !pathParam.isIdentifier)
@@ -180,6 +208,8 @@ export function howToFindIdentifierFieldsMeta({
         showSuggestionsWithoutHandlebar: true,
         showLookup: false,
         required: true,
+        helpText: `Specify the field – or field path for nested fields – in your exported data that contains the information necessary to identify which records in the destination application will be ignored when importing data. integrator.io will check each exported record to see whether the field is populated. If so, the record will be ignored; otherwise, it will be imported. For example, if you specify the field customerID, then integrator.io will check the destination app for the value of the customerID field of each exported record before importing (field does not have a value) or ignoring (field has a value). <br/>
+        If a field contains special characters, enclose it in square brackets: [field-name]. Brackets can also indicate an array item, such as items[*].id.`,
         value: pathParameterValues[identifierPathParam.id],
         visibleWhenAll: [
           {
@@ -237,11 +267,14 @@ export function howToFindIdentifierFieldsMeta({
 export function fieldMeta({ resource, assistantData }) {
   const { assistant, lookups } = resource;
   let { adaptorType } = resource;
+  let headers;
 
   if (adaptorType === 'RESTImport') {
     adaptorType = 'rest';
+    headers = resource.rest?.headers || [];
   } else {
     adaptorType = 'http';
+    headers = resource.http?.headers || [];
   }
 
   const hiddenFields = hiddenFieldsMeta({
@@ -249,6 +282,7 @@ export function fieldMeta({ resource, assistantData }) {
   });
   let basicFields = [];
   let pathParameterFields = [];
+  let headerFields = [];
   let ignoreConfigFields = [];
   let howToFindIdentifierFields = [];
 
@@ -260,6 +294,7 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
+      assistant,
       assistantConfig,
       assistantData: assistantData.import,
     });
@@ -267,6 +302,11 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      headerFields = headerFieldsMeta({
+        headers,
+        operationDetails,
+        assistantConfig,
+      });
       pathParameterFields = pathParameterFieldsMeta({
         operationParameters: operationDetails.parameters,
         values: assistantConfig.pathParams,
@@ -287,6 +327,7 @@ export function fieldMeta({ resource, assistantData }) {
   const fields = [
     ...hiddenFields,
     ...basicFields,
+    ...headerFields,
     ...pathParameterFields,
     ...ignoreConfigFields,
     ...howToFindIdentifierFields,

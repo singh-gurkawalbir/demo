@@ -73,7 +73,7 @@ export function* createFormValuesPatchSet({
     });
 
     // stock preSave handler present...
-    finalValues = preSave(values, resource, {iClients});
+    finalValues = preSave(values, resource, {iClients, connection});
   }
 
   const patchSet = sanitizePatchSet({

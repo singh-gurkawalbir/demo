@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import StatusTag from '../StatusTag';
 import Spinner from '../Spinner';
-import { getJobStatusDetails } from './util';
+import { getJobStatusDetails } from '../../utils/jobdashboard';
 
 const useStyles = makeStyles(theme => ({
   state: {

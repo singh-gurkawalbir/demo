@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography} from '@material-ui/core';
 import Spinner from '../Spinner';
-import TertiaryButton from '../CeligoButtons/TertiaryButton';
+import TextButton from '../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   fetchLogTextWrapper: {
@@ -11,9 +12,12 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     fontSize: 'unset',
     color: theme.palette.secondary.light,
+    paddingBottom: 2,
   },
   spinner: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(0.5),
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -27,6 +31,7 @@ export default function FetchProgressIndicator({
   startTime,
   endTime,
   currTime,
+  className,
 }) {
   const end = endTime || Date.now();
   const classes = useStyles();
@@ -45,28 +50,28 @@ export default function FetchProgressIndicator({
   }
 
   return (
-    <div className={classes.fetchLogTextWrapper}>
-      <Typography variant="body2" component="span" className={classes.fetchLogTextWrapper} >
+    <div className={clsx(classes.fetchLogTextWrapper, className)}>
+      <Typography variant="body2" component="div" className={classes.fetchLogTextWrapper} >
         {fetchInProgress
           ? (<> <Spinner size="small" className={classes.spinner} /> Fetching logs... {percentDone}% completed </>)
           : <>Fetching paused... {percentDone}% completed</>}
       </Typography>
       {fetchInProgress ? (
-        <TertiaryButton
+        <TextButton
           data-test="pauseFetch"
           bold
           onClick={pauseHandler}
           >
           Pause
-        </TertiaryButton>
+        </TextButton>
       ) : (
-        <TertiaryButton
+        <TextButton
           data-test="resumeFetch"
           bold
           onClick={resumeHandler}
          >
           Resume
-        </TertiaryButton>
+        </TextButton>
       )}
     </div>
   );
