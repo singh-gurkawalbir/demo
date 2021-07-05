@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -10,6 +10,8 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import ModalDialog from '../../../../../components/ModalDialog';
 import {isHTML} from '../../../../../utils/string';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import AddonInstallerButton from '../Admin/sections/Subscription/AddonInstallerButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,7 +73,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddOnsPanel({ integrationId }) {
+export default function AddOnsPanel({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   // TODO: This integrationAppAddOnState selector doesn't actually return
@@ -80,11 +82,25 @@ export default function AddOnsPanel({ integrationId }) {
   // contain a status indicating the progress of API request to retrieve addon
   // details.
   const [showMessage, setShowMessage] = useState(false);
-  const addOnMetadata = useSelector(state => {
-    const addOnState = selectors.integrationAppAddOnState(state, integrationId);
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+  const supportsMultiStore = useMemo(() => {
+    if (integration) {
+      return !!integration.settings?.supportsMultiStore;
+    }
 
-    return addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
+    return false;
+  }, [integration]);
+  const addOnState = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
+  );
+  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
+    if (supportsMultiStore) {
+      return childId ? model.storeId === childId : true;
+    }
+
+    return true;
   });
+  const addOnMetadata = addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
   const licenseId = useSelector(state => {
     const license = selectors.integrationAppLicense(state, integrationId);
 
@@ -126,13 +142,17 @@ export default function AddOnsPanel({ integrationId }) {
               </div>
               <Typography variant="body2" className={classes.description}>{isHTML(data.description) ? <RawHtml html={data.description} /> : data.description}</Typography>
               <CardActions className={classes.cardAction}>
-                <Button
-                  data-test="contactSales"
-                  onClick={() => handleContactSales(data.name)}
-                  variant="outlined"
-                  color="primary">
-                  Contact sales
-                </Button>
+                { subscribedAddOns?.some(sa => sa.id === data.id)
+                  ? <AddonInstallerButton size="medium" resource={subscribedAddOns?.find(sa => sa.id === data.id)} />
+                  : (
+                    <Button
+                      data-test="contactSales"
+                      onClick={() => handleContactSales(data.name)}
+                      variant="outlined"
+                      color="primary">
+                      Contact sales
+                    </Button>
+                  )}
               </CardActions>
             </Card>
           ))}
