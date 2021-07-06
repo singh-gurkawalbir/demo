@@ -1778,7 +1778,7 @@ selectors.mkFlowStepsErrorInfo = () => {
       if (errorStepsFilter?.sort) {
         const { order, orderBy } = errorStepsFilter.sort;
 
-        return [...errorSteps].sort(stringCompare(orderBy, order === 'desc'));
+        return errorSteps.sort(stringCompare(orderBy, order === 'desc'));
       }
 
       return errorSteps;
