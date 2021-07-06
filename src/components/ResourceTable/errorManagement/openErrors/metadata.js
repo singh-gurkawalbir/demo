@@ -21,6 +21,7 @@ export default {
   useColumns: () => [
     {
       key: 'selectAll',
+      width: 24,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -66,7 +67,7 @@ export default {
         return <SelectSource {...tableContext} />;
       },
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
-      width: '15%',
+      width: 200,
     },
     {
       key: 'selectClassification',
@@ -76,7 +77,7 @@ export default {
         return <SelectClassification {...tableContext} />;
       },
       Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
-      width: '10%',
+      width: 200,
     },
     {
       key: 'selectDate',
@@ -85,7 +86,7 @@ export default {
 
         return <SelectDate {...tableContext} />;
       },
-      width: '10%',
+      width: 150,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
