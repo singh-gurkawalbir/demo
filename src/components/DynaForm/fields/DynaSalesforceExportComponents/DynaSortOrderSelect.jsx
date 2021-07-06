@@ -42,15 +42,18 @@ export default function DynaSortOrderSelect(props) {
   const classes = useStyles();
 
   const onOrderChange = useCallback((_, newOrder) => {
+    // add the sort order only if any field is selected
     if (fieldValue) {
       onFieldChange(id, `${fieldValue} ${newOrder}`);
     }
   }, [id, fieldValue, onFieldChange]);
 
   const onFieldChangeFn = useCallback((id, newValue) => {
+    // don't add sort order if no field is selected
     if (!newValue) {
       return onFieldChange(id, newValue);
     }
+
     if (fieldOrder) {
       onFieldChange(id, `${newValue} ${fieldOrder}`);
     } else {
