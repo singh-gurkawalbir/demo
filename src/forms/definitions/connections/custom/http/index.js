@@ -211,7 +211,9 @@ import freshservice from './freshservice';
 import omnisend from './omnisend';
 import pagerduty from './pagerduty';
 import quickbase from './quickbase';
+import pagerdutyevents from './pagerdutyevents';
 import orangehrm from './orangehrm';
+import sapsuccessfactors from './sapsuccessfactors';
 
 export default {
   channelape,
@@ -427,5 +429,7 @@ export default {
   omnisend,
   pagerduty,
   quickbase,
+  pagerdutyevents,
   orangehrm,
+  sapsuccessfactors,
 };
