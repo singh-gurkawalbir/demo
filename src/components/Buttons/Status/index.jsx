@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   statusButtonContainer: {
+    color: theme.palette.primary.main,
     '& > * .MuiButton-startIcon': {
       marginRight: 0,
     },
