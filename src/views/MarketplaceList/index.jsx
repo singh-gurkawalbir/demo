@@ -120,10 +120,6 @@ const useStyles = makeStyles(theme => ({
   rightSubtitle: {
     paddingTop: theme.spacing(1),
   },
-  noDataTitle: {
-    padding: theme.spacing(3),
-    maxWidth: '700px',
-  },
 }));
 
 export default function MarketplaceList() {
