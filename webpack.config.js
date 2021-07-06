@@ -81,7 +81,7 @@ const config = {
     new UnusedFilesWebpackPlugin({
       patterns: ['src/**/*.js', 'src/**/*.jsx'],
       globOptions: {
-        ignore: ['**/*test.js', '**/components/icons/**'],
+        ignore: ['**/*test.js', '**/components/icons/**', '**/stories/**'],
       },
     }),
     new CleanWebpackPlugin(),
