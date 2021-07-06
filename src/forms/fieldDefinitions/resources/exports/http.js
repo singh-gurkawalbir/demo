@@ -65,6 +65,7 @@ export default {
   },
   'http.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     validateInComponent: true,
@@ -571,6 +572,7 @@ export default {
   // #endregion transform
   'http.once.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     label: 'Relative URI to update records',
     required: true,
     connectionId: r => r && r._connectionId,
