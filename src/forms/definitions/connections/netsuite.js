@@ -11,11 +11,9 @@ export default {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
 
-      newValues['/netsuite/wsdlVersion'] = 'next';
       newValues['/netsuite/email'] = undefined;
       newValues['/netsuite/password'] = undefined;
     } else if (newValues['/netsuite/authType'] === 'basic') {
-      newValues['/netsuite/wsdlVersion'] = 'current';
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/_iClientId'] = undefined;
@@ -41,33 +39,61 @@ export default {
       fields.find(field => field.id === 'netsuite.environment') || {};
     const { value: acc } =
       fields.find(field => field.id === 'netsuite.account') || {};
+    const { value: wsdlVersion } = fields.find(field => field.id === 'netsuite.wsdlVersion') || {};
+    const authTypeField = fields.find(field => field.id === 'netsuite.authType') || {};
 
-    if (fieldId === 'netsuite.account' && env !== '') {
-      return { env };
+    if (['netsuite.account', 'netsuite.roleId'].includes(fieldId)) {
+      const fieldObj = fields.find(field => field.id === fieldId) || {};
+
+      fieldObj.visible = authTypeField.value === 'basic';
+      if (fieldId === 'netsuite.account' && env !== '') {
+        return { env };
+      }
+
+      if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
     }
+    if (fieldId === 'netsuite.authType') {
+      const items = [
+        { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
+        { label: 'Token Based Auth (Manual)', value: 'token' },
+        ...(wsdlVersion !== '2020.2' ? [{ label: 'Basic (To be deprecated - Do not use)', value: 'basic' }] : []),
+      ];
 
-    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
+      if (wsdlVersion === '2020.2' && authTypeField.value === 'basic') {
+        authTypeField.value = '';
+      }
+
+      return [{ items }];
+    }
+    if (['netsuite.email', 'netsuite.password', 'netsuite.environment'].includes(fieldId)) {
+      const fieldObj = fields.find(field => field.id === fieldId) || {};
+
+      fieldObj.visible = authTypeField.value === 'basic';
+      if (['netsuite.email', 'netsuite.password'].includes(fieldId)) {
+        fieldObj.required = authTypeField.value === 'basic';
+      }
+    }
   },
   fieldMap: {
     name: { fieldId: 'name' },
     'netsuite.authType': {
       fieldId: 'netsuite.authType',
       required: true,
+      refreshOptionsOnChangesTo: ['netsuite.wsdlVersion'],
+      skipSort: true,
     },
     'netsuite.email': {
       fieldId: 'netsuite.email',
-      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
-      requiredWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      refreshOptionsOnChangesTo: ['netsuite.authType', 'netsuite.wsdlVersion'],
     },
     'netsuite.password': {
       fieldId: 'netsuite.password',
-      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
-      requiredWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      refreshOptionsOnChangesTo: ['netsuite.authType', 'netsuite.wsdlVersion'],
     },
     'netsuite.environment': {
       fieldId: 'netsuite.environment',
       netsuiteResourceType: 'environment',
-      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      refreshOptionsOnChangesTo: ['netsuite.authType', 'netsuite.wsdlVersion'],
     },
     'netsuite.tokenEnvironment': {
       fieldId: 'netsuite.tokenEnvironment',
@@ -106,12 +132,13 @@ export default {
       fieldId: 'netsuite.account',
       netsuiteResourceType: 'account',
       refreshOptionsOnChangesTo: [
+        'netsuite.wsdlVersion',
+        'netsuite.authType',
         'validate',
         'netsuite.account',
         'netsuite.environment',
         'netsuite.roleId',
       ],
-      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
     'netsuite.tokenAccount': {
       id: 'netsuite.tokenAccount',
@@ -134,12 +161,13 @@ export default {
       fieldId: 'netsuite.roleId',
       netsuiteResourceType: 'role',
       refreshOptionsOnChangesTo: [
+        'netsuite.wsdlVersion',
+        'netsuite.authType',
         'validate',
         'netsuite.account',
         'netsuite.environment',
         'netsuite.roleId',
       ],
-      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
     'netsuite.token.auto.roleId': {
       fieldId: 'netsuite.token.auto.roleId',
@@ -179,6 +207,22 @@ export default {
     application: {
       fieldId: 'application',
     },
+    'netsuite.wsdlVersion': {
+      id: 'netsuite.wsdlVersion',
+      name: 'netsuite.wsdlVersion',
+      type: 'select',
+      label: 'WSDL Version',
+      defaultValue: r => r?.netsuite?.wsdlVersion || '2020.2',
+      options: [
+        {
+          items: [
+            { label: '2020.2', value: '2020.2' },
+            { label: '2018.1', value: 'next' },
+            { label: '2016.2', value: 'current' },
+          ],
+        },
+      ],
+    },
   },
   layout: {
     type: 'collapse',
@@ -217,6 +261,7 @@ export default {
           'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
+          'netsuite.wsdlVersion',
         ],
       },
     ],

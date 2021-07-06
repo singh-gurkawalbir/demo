@@ -2018,9 +2018,9 @@ export default {
     options: [
       {
         items: [
-          { label: 'Basic (To be deprecated - Do not use)', value: 'basic' },
-          { label: 'Token Based Auth (Manual)', value: 'token' },
           { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
+          { label: 'Token Based Auth (Manual)', value: 'token' },
+          { label: 'Basic (To be deprecated - Do not use)', value: 'basic' },
         ],
       },
     ],
