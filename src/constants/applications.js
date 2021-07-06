@@ -285,7 +285,10 @@ const connectors = [
   {id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba'},
 ];
 // These can be removed once metadata gets updated.
-const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
+const newConnections = [
+  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'azurestorageaccount', name: 'Azure Storage', type: 'http', assistant: 'azurestorageaccount'},
+];
 
 connectors.sort(stringCompare('name'));
 const getAssistants = () => {

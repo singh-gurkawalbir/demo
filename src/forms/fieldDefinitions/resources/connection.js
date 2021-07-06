@@ -210,11 +210,12 @@ export default {
   'rest.mediaType': {
     type: 'select',
     label: 'Media type',
+    helpKey: 'connection.http.mediaType',
     options: [
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'CSV', value: 'csv' },
         ],
       },
@@ -226,41 +227,38 @@ export default {
     type: 'text',
     label: 'Base URI',
     required: true,
+    helpKey: 'connection.http.baseURI',
   },
   'rest.bearerToken': {
     type: 'text',
     label: 'Token',
     inputType: 'password',
+    helpKey: 'connection.http.auth.token.token',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'rest.tokenLocation': {
     type: 'select',
-    label: 'Location',
+    label: 'Send token via',
+    helpKey: 'connection.http.auth.token.location',
     options: [
       {
         items: [
-          { label: 'Header', value: 'header' },
-          { label: 'URL Parameter', value: 'url' },
+          { label: 'HTTP header', value: 'header' },
+          { label: 'URL parameter', value: 'url' },
         ],
       },
     ],
   },
   'rest.tokenParam': {
     type: 'text',
-    label: 'REST token param',
+    label: 'Parameter name',
+    helpKey: 'connection.http.auth.token.paramName',
   },
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
-  },
-  'rest.scopeDelimiter': {
-    type: 'text',
-    label: 'REST scope delimiter',
-  },
-  'rest.refreshToken': {
-    type: 'text',
-    label: 'REST refresh token',
+    helpKey: 'connection.http.auth.oauth.scope',
   },
   'rest.oauthTokenURI': {
     type: 'text',
@@ -272,7 +270,8 @@ export default {
   },
   'rest.authType': {
     type: 'select',
-    label: 'Authentication type',
+    label: 'Auth type',
+    helpKey: 'connection.http.auth.type',
     options: [
       {
         items: [
@@ -284,24 +283,18 @@ export default {
       },
     ],
   },
-  'rest.authURI': {
-    type: 'text',
-    label: 'REST auth URI',
-  },
   'rest.authHeader': {
     type: 'text',
     label: 'Header name',
+    helpKey: 'connection.http.auth.token.headerName',
     defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
-  },
-  'rest.retryHeader': {
-    type: 'text',
-    label: 'REST retry header',
   },
   'rest.authScheme': {
     type: 'select',
-    label: 'Scheme',
-    defaultValue: r =>
-      r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
+    label: 'Header scheme',
+    helpKey: 'connection.http.auth.token.scheme',
+    skipDefault: true,
+    defaultValue: r => r?.rest?.authScheme || ' ',
     options: [
       {
         items: [
@@ -318,27 +311,33 @@ export default {
     type: 'text',
     label: 'Username',
     required: true,
+    helpKey: 'connection.http.auth.basic.username',
   },
   'rest.basicAuth.password': {
     type: 'text',
     label: 'Password',
     inputType: 'password',
+    helpKey: 'connection.http.auth.basic.password',
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
     defaultValue: '',
   },
   'rest.cookieAuth.uri': {
-    type: 'text',
-    label: 'Cookie URI',
+    type: 'uri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Absolute URL',
+    helpKey: 'connection.http.auth.cookie.uri',
   },
   'rest.cookieAuth.body': {
-    type: 'text',
-    label: 'Cookie body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'rest.cookieAuth.method': {
     type: 'select',
-    label: 'Cookie method',
+    label: 'HTTP method',
+    helpKey: 'connection.http.auth.cookie.method',
     options: [
       {
         items: [
@@ -350,7 +349,8 @@ export default {
   },
   'rest.cookieAuth.successStatusCode': {
     type: 'text',
-    label: 'Cookie success status code',
+    label: 'Override HTTP status code for success',
+    helpKey: 'connection.http.auth.cookie.successStatusCode',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -363,11 +363,13 @@ export default {
     valueName: 'value',
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
+    helpKey: 'connection.http.headers',
   },
   'rest.encrypted': {
     type: 'editor',
     label: 'Encrypted',
     mode: 'json',
+    description: 'Note: for security reasons this field must always be re-entered.',
   },
   'rest.unencrypted': {
     type: 'editor',
@@ -403,7 +405,8 @@ export default {
   },
   'rest.refreshTokenMethod': {
     type: 'select',
-    label: 'Refresh token method',
+    label: 'HTTP method',
+    helpKey: 'connection.http.auth.token.refreshMethod',
     options: [
       {
         items: [
@@ -415,26 +418,33 @@ export default {
     ],
   },
   'rest.refreshTokenBody': {
-    type: 'text',
-    label: 'Refresh body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
+    helpKey: 'connection.http.auth.token.refreshBody',
   },
   'rest.refreshTokenURI': {
-    type: 'text',
-    label: 'REST refresh token URI',
+    type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Relative URI',
+    helpKey: 'connection.http.auth.token.refreshRelativeURI',
   },
   'rest.refreshTokenPath': {
     type: 'text',
-    label: 'Refresh token path',
+    label: 'Path to token field in HTTP response body',
+    helpKey: 'connection.http.auth.token.refreshTokenPath',
   },
   'rest.refreshTokenMediaType': {
     type: 'select',
-    label: 'Refresh token media type',
+    label: 'Override media type',
+    placeholder: 'Do not override',
+    helpKey: 'connection.http.auth.token.refreshMediaType',
     defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
         ],
       },
     ],
@@ -444,25 +454,26 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Refresh token headers',
-  },
-  'rest.info': {
-    type: 'text',
-    label: 'REST info',
+    label: 'Configure HTTP headers',
+    helpKey: 'connection.http.auth.token.refreshHeaders',
   },
   'rest.pingRelativeURI': {
-    type: 'text',
-    label: 'Ping URI',
-    required: true,
+    type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Relative URI',
+    helpKey: 'connection.http.ping.relativeURI',
   },
   'rest.pingSuccessPath': {
     type: 'text',
-    label: 'Ping success path',
+    label: 'Path to success field in HTTP response body',
+    helpKey: 'connection.http.ping.successPath',
   },
   'rest.pingSuccessValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Ping success values',
+    label: 'Success values',
+    helpKey: 'connection.http.ping.successValues',
   },
   'rest.pingFailurePath': {
     type: 'text',
@@ -478,6 +489,7 @@ export default {
   'rest.concurrencyLevel': {
     type: 'select',
     label: 'Concurrency level',
+    helpKey: 'connection.http.concurrencyLevel',
     options: [
       {
         items: [
@@ -518,7 +530,8 @@ export default {
   },
   'rest.pingMethod': {
     type: 'select',
-    label: 'Ping method',
+    label: 'HTTP method',
+    helpKey: 'connection.http.ping.method',
     options: [
       {
         items: [
@@ -529,14 +542,15 @@ export default {
     ],
   },
   'rest.pingBody': {
-    type: 'text',
-    label: 'Ping body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
+    helpKey: 'connection.http.ping.body',
   },
   // #endregion rest
   // #region http
   'http.auth.type': {
     type: 'select',
-    label: 'Authentication type',
+    label: 'Auth type',
     required: true,
     options: [
       {
@@ -562,16 +576,16 @@ export default {
         items: [
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
-          { label: 'Multipart/form-data', value: 'form-data' },
+          { label: 'URL encoded', value: 'urlencoded' },
+          { label: 'Multipart / form-data', value: 'form-data' },
         ],
       },
     ],
   },
   'http.successMediaType': {
     type: 'select',
-    label: 'Success media type',
-    helpKey: 'connection.http.successMediaType',
+    label: 'Override media type for success responses',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
@@ -584,8 +598,8 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error media type',
-    helpKey: 'connection.http.errorMediaType',
+    label: 'Override media type for error responses',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
@@ -657,15 +671,17 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Retry-after HTTP response header name',
+    label: 'Override retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
-    type: 'text',
-    label: 'Ping relative URI',
+    type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Relative URI',
   },
   'http.ping.method': {
     type: 'select',
-    label: 'Ping method',
+    label: 'HTTP method',
     options: [
       {
         items: [
@@ -677,21 +693,21 @@ export default {
     ],
   },
   'http.ping.body': {
-    type: 'text',
-    label: 'Ping body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'http.ping.successPath': {
     type: 'text',
-    label: 'Ping success path',
+    label: 'Path to success field in HTTP response body',
   },
   'http.ping.successValues': {
     type: 'text',
-    label: 'Ping success values',
+    label: 'Success values',
     delimiter: ',',
   },
   'http.ping.failPath': {
     type: 'text',
-    label: 'Ping fail path',
+    label: 'Path to error field in HTTP response body',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -702,7 +718,7 @@ export default {
   'http.ping.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Ping fail values',
+    label: 'Error values',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -712,11 +728,11 @@ export default {
   },
   'http.ping.errorPath': {
     type: 'text',
-    label: 'Ping error path',
+    label: 'Path to detailed error message field in HTTP response body',
   },
   'http.auth.failStatusCode': {
     type: 'text',
-    label: 'Authentication fail status code',
+    label: 'Override HTTP status code for auth errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -725,12 +741,12 @@ export default {
   },
   'http.auth.failPath': {
     type: 'text',
-    label: 'Authentication fail path',
+    label: 'Path to auth error field in HTTP response body',
   },
   'http.auth.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Authentication fail values',
+    label: 'Auth error values',
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -756,8 +772,7 @@ export default {
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom scope delimiter',
-    subSectionField: true,
+    label: 'Override default scope delimiter',
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -765,11 +780,11 @@ export default {
   },
   'http.auth.oauth.authURI': {
     type: 'text',
-    label: 'Authentication URL',
+    label: 'Authorization URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client authentication',
+    label: 'Send client credentials via',
     defaultValue: r =>
       (r &&
         r.http &&
@@ -780,8 +795,8 @@ export default {
     options: [
       {
         items: [
-          { label: 'Send as basic auth header', value: 'basicauthheader' },
-          { label: 'Send client credentials in body', value: 'body' },
+          { label: 'Basic auth header', value: 'basicauthheader' },
+          { label: 'HTTP body', value: 'body' },
         ],
       },
     ],
@@ -791,12 +806,12 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access token headers',
+    label: 'Override access token HTTP headers',
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Access token body',
+    label: 'Override access token HTTP request body',
   },
   'http._iClientId': {
     label: 'IClient',
@@ -811,9 +826,9 @@ export default {
     options: [
       {
         items: [
-          { label: 'Authorization Code', value: 'authorizecode' },
+          { label: 'Authorization code', value: 'authorizecode' },
           // { label: 'Password', value: 'password' },
-          { label: 'Client Credentials', value: 'clientcredentials' },
+          { label: 'Client credentials', value: 'clientcredentials' },
         ],
       },
     ],
@@ -845,7 +860,7 @@ export default {
   },
   'http.auth.oauth.callbackURL': {
     type: 'text',
-    label: 'Callback URL',
+    label: 'Redirect URL',
     defaultDisabled: true,
     defaultValue: () => `${getDomainUrl()}/connection/oauth2callback`,
   },
@@ -859,14 +874,14 @@ export default {
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Revoke token body',
+    label: 'Override revoke token HTTP request body',
   },
   'http.auth.token.revoke.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Revoke token headers',
+    label: 'Override revoke token HTTP headers',
   },
   'http.auth.oauth.password': {
     type: 'text',
@@ -887,20 +902,14 @@ export default {
   },
   'http.auth.token.location': {
     type: 'select',
-    label: 'Location',
+    label: 'Send token via',
     required: true,
-    defaultValue: r =>
-      r &&
-      r.http &&
-      r.http.auth &&
-      r.http.auth.token &&
-      r.http.auth.token.location,
     options: [
       {
         items: [
-          { label: 'URL Parameter', value: 'url' },
-          { label: 'Header', value: 'header' },
-          { label: 'Body', value: 'body' },
+          { label: 'URL parameter', value: 'url' },
+          { label: 'HTTP header', value: 'header' },
+          { label: 'HTTP body', value: 'body' },
         ],
       },
     ],
@@ -918,15 +927,9 @@ export default {
   },
   'http.auth.token.scheme': {
     type: 'select',
-    label: 'Scheme',
-    required: true,
-    defaultValue: r =>
-      (r &&
-        r.http &&
-        r.http.auth &&
-        r.http.auth.token &&
-        r.http.auth.token.scheme) ||
-      'Bearer',
+    label: 'Header scheme',
+    skipDefault: true,
+    defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
     options: [
       {
         items: [
@@ -945,7 +948,7 @@ export default {
   },
   'http.auth.token.refreshMethod': {
     type: 'select',
-    label: 'Refresh method',
+    label: 'HTTP method',
     defaultValue: r =>
       r &&
       r.http &&
@@ -963,27 +966,28 @@ export default {
     ],
   },
   'http.auth.token.refreshRelativeURI': {
-    type: 'text',
-    label: 'Refresh relative URI',
-    required: true,
+    type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Relative URI',
   },
   'http.auth.token.refreshBody': {
-    type: 'text',
-    label: 'Refresh body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'http.auth.token.refreshTokenPath': {
     type: 'text',
-    label: 'Refresh token path',
+    label: 'Path to token field in HTTP response body',
   },
   'http.auth.token.refreshMediaType': {
     type: 'select',
-    label: 'Refresh media type',
-    required: true,
+    label: 'Override media type',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'XML', value: 'xml' },
         ],
       },
@@ -994,7 +998,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Refresh token headers',
+    label: 'Configure HTTP headers',
   },
   'http.auth.token.refreshToken': {
     type: 'text',
@@ -1006,16 +1010,18 @@ export default {
     label: 'Refresh token',
   },
   'http.auth.cookie.uri': {
-    type: 'text',
-    label: 'Cookie URI',
+    type: 'uri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Absolute URL',
   },
   'http.auth.cookie.body': {
-    type: 'text',
-    label: 'Cookie body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'http.auth.cookie.method': {
     type: 'select',
-    label: 'Cookie method',
+    label: 'HTTP method',
     options: [
       {
         items: [
@@ -1027,20 +1033,16 @@ export default {
   },
   'http.auth.cookie.successStatusCode': {
     type: 'text',
-    label: 'Cookie success status code',
+    label: 'Override HTTP status code for success',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  'http.rateLimits': {
-    type: 'labeltitle',
-    label: 'Nonstandard API rate limiter',
-  },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate-limit errors',
+    label: 'Override HTTP status code for rate-limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1049,7 +1051,7 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate-limit errors in HTTP response body',
+    label: 'Path to rate-limit error field in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
@@ -1649,7 +1651,7 @@ export default {
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'XML', value: 'xml' },
         ],
       },

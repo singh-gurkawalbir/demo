@@ -12,6 +12,8 @@ export default function DynaRelativeUri_afe(props) {
   const {
     connectionId,
     formKey,
+    resourceType,
+    resourceId,
     id,
     pagingMethodsToValidate,
     pagingFieldsToValidate,
@@ -20,7 +22,7 @@ export default function DynaRelativeUri_afe(props) {
   } = rest;
 
   const dispatch = useDispatch();
-  const connection = useSelector(state => selectors.resource(state, 'connections', connectionId));
+  const connection = useSelector(state => selectors.resource(state, 'connections', resourceType === 'connections' ? resourceId : connectionId));
 
   const { type } = connection || emptyObj;
   const description = type === 'http' || type === 'rest' ? `Relative to: ${connection[type].baseURI}` : '';
