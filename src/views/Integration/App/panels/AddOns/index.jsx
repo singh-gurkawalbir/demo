@@ -87,13 +87,8 @@ export default function AddOnsPanel({ integrationId, childId }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
-    if (supportsMultiStore) {
-      return childId ? model.storeId === childId : true;
-    }
-
-    return true;
-  });
+  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => supportsMultiStore && childId ? model.storeId === childId : true);
+  const subscribedAddOn = metadata => subscribedAddOns?.find(sa => sa.id === metadata.id);
   const addOnMetadata = addOnState?.addOns?.addOnMetaData;
   const licenseId = useSelector(state => {
     const license = selectors.integrationAppLicense(state, integrationId);
@@ -136,8 +131,8 @@ export default function AddOnsPanel({ integrationId, childId }) {
               </div>
               <Typography variant="body2" className={classes.description}>{isHTML(data.description) ? <RawHtml html={data.description} /> : data.description}</Typography>
               <CardActions className={classes.cardAction}>
-                { subscribedAddOns?.some(sa => sa.id === data.id)
-                  ? <AddonInstallerButton size="medium" resource={subscribedAddOns?.find(sa => sa.id === data.id)} />
+                { subscribedAddOn(data)
+                  ? <AddonInstallerButton size="medium" resource={subscribedAddOn(data)} />
                   : (
                     <Button
                       data-test="contactSales"
