@@ -27,6 +27,7 @@ export default function SelectClassification({ flowId, resourceId, isResolved })
     useMemo(() => (
       <MultiSelectColumnFilter
         filterKey={filterKey}
+        helpKey="classification"
         title="Classification"
         filterBy="classifications"
         handleSave={handleSave}
