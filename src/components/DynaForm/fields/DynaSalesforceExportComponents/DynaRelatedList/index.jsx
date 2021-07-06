@@ -149,7 +149,7 @@ function EditListItemModal(props) {
         helpKey: 'orderBy',
         id: 'orderBy',
         name: 'orderBy',
-        type: 'sortorderselect',
+        type: 'salesforcesortorderselect',
         filterKey: 'salesforce-sObjects-nonReferenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,

@@ -274,5 +274,5 @@ export default {
   licenseeditor: DynaLicenseEditor,
   ssoorgid: DynaSsoOrgId,
   selectwithvalidations: DynaSelectWithValidations,
-  sortorderselect: Salesforce.DynaSortOrderSelect,
+  salesforcesortorderselect: Salesforce.DynaSortOrderSelect,
 };
