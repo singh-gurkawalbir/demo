@@ -437,6 +437,7 @@ export default {
   'rest.refreshTokenMediaType': {
     type: 'select',
     label: 'Override media type',
+    placeholder: 'Do not override',
     helpKey: 'connection.http.auth.token.refreshMediaType',
     defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
@@ -981,6 +982,7 @@ export default {
   'http.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Override media type',
+    placeholder: 'Do not override',
     options: [
       {
         items: [

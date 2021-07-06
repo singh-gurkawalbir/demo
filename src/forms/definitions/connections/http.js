@@ -437,7 +437,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Nonstandard API rate limiter',
+        label: 'Non-standard API rate limiter',
         fields: [
           'http.rateLimit.limit',
           'http.rateLimit.failStatusCode',
@@ -453,10 +453,10 @@ export default {
           'http.ping.method',
           'http.ping.relativeURI',
           'http.ping.body',
-          'http.ping.successPath',
-          'http.ping.successValues',
           'http.ping.failPath',
           'http.ping.failValues',
+          'http.ping.successPath',
+          'http.ping.successValues',
           'http.ping.errorPath',
         ],
       },
