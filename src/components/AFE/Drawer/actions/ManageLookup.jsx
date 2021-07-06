@@ -94,7 +94,7 @@ export default function ManageLookup({ editorId }) {
 
     return null;
   }
-  completers.handleBarsCompleters.setLookupCompleter(_lookups, fieldId === 'http.relativeURI' || fieldId === 'rest.relativeURI');
+  completers.handleBarsCompleters.setLookupCompleter(_lookups, fieldId === 'http.relativeURI');
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
 
   return (
