@@ -1,7 +1,6 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import moment from 'moment';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -66,13 +65,7 @@ const CONNECTION_LOG_NOT_SUPPORTED_MESSAGE = 'Debug logs not supported for this 
 export default function ConnectionLogs({ connectionId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [isInitTriggered, setIsInitTriggered] = useState(false);
-  const {logs, status} = useSelector(state => selectors.allConnectionsLogs(state)?.[connectionId] || emptyObj, shallowEqual);
-  const isDebugActive = useSelector(state => {
-    const {debugDate} = selectors.resource(state, 'connections', connectionId);
-
-    return !!(debugDate && moment().isBefore(moment(debugDate)));
-  });
+  const { logs, status } = useSelector(state => selectors.allConnectionsLogs(state)?.[connectionId] || emptyObj, shallowEqual);
   const isConnectionLogsNotSupported = useSelector(state => selectors.isConnectionLogsNotSupported(state, connectionId));
   const handleDeleteLogsClick = useCallback(
     () => {
@@ -83,31 +76,16 @@ export default function ConnectionLogs({ connectionId, flowId }) {
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.logs.connections.request(connectionId));
+      dispatch(actions.logs.connections.refresh(connectionId));
     },
     [dispatch, connectionId],
   );
 
-  const startAutoDebug = useCallback(() => {
-    dispatch(actions.logs.connections.startDebug(connectionId, 15));
-  }, [connectionId, dispatch]);
-
-  useEffect(() => {
-    if (!isInitTriggered) {
-      // check if debug is already set on connection. If not start debug for 15 mins.
-      if (!isDebugActive) {
-        // trigger start debug
-        startAutoDebug();
-      }
-      setIsInitTriggered(true);
-    }
-  }, [isDebugActive, isInitTriggered, startAutoDebug]);
-
-  let logsText;
+  let logsText = '';
 
   if (isConnectionLogsNotSupported) {
     logsText = CONNECTION_LOG_NOT_SUPPORTED_MESSAGE;
-  } else if ([COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status)) {
+  } else if (logsText !== undefined) {
     logsText = logs || EMPTY_LOG_MESSAGE;
   }
 
