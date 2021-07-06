@@ -5,11 +5,9 @@ export default {
       label: 'Token',
       defaultValue: '',
       required: true,
-    },
-    tokenHeader: {
-      id: 'tokenHeader',
-      label: 'How to send token?',
-      type: 'labeltitle',
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['token'] },
+      ],
     },
     'http.auth.token.location': {
       fieldId: 'http.auth.token.location',
@@ -18,6 +16,7 @@ export default {
     'http.auth.token.headerName': {
       fieldId: 'http.auth.token.headerName',
       visibleWhenAll: [{ field: 'http.auth.token.location', is: ['header'] }],
+      required: true,
     },
     'http.auth.token.scheme': {
       fieldId: 'http.auth.token.scheme',
@@ -31,15 +30,17 @@ export default {
         { field: 'http.auth.token.location', is: ['header'] },
         { field: 'http.auth.token.scheme', is: ['Custom'] },
       ],
+      required: true,
     },
     'http.auth.token.paramName': {
       fieldId: 'http.auth.token.paramName',
       visibleWhenAll: [{ field: 'http.auth.token.location', is: ['url'] }],
+      defaultValue: r => r?.http?.auth?.token?.paramName || 'access_token',
     },
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure token refresh',
+      label: 'Configure refresh token',
       defaultValue: r =>
         !!(
           r &&
@@ -48,85 +49,21 @@ export default {
           r.http.auth.token &&
           r.http.auth.token.refreshRelativeURI
         ),
-    },
-    refreshTokenHeader: {
-      id: 'refreshTokenHeader',
-      label: 'How to refresh token?',
-      type: 'labeltitle',
       visibleWhenAll: [
         { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'http.auth.token.refreshToken': {
-      fieldId: 'http.auth.token.refreshToken',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'http.auth.token.refreshRelativeURI': {
-      fieldId: 'http.auth.token.refreshRelativeURI',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'http.auth.token.refreshMediaType': {
-      fieldId: 'http.auth.token.refreshMediaType',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'http.auth.token.refreshMethod': {
-      fieldId: 'http.auth.token.refreshMethod',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'http.auth.token.refreshBody': {
-      fieldId: 'http.auth.token.refreshBody',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-        { field: 'http.auth.token.refreshMethod', is: ['POST', 'PUT'] },
-      ],
-    },
-    'http.auth.token.refreshTokenPath': {
-      fieldId: 'http.auth.token.refreshTokenPath',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'http.auth.token.refreshHeaders': {
-      fieldId: 'http.auth.token.refreshHeaders',
-      visibleWhenAll: [
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
+        { field: 'http.auth.type', is: ['token'] },
       ],
     },
   },
   layout: {
     fields: [
       'http.auth.token.token',
-      'tokenHeader',
       'http.auth.token.location',
       'http.auth.token.headerName',
       'http.auth.token.scheme',
       'http.customAuthScheme',
       'http.auth.token.paramName',
       'configureTokenRefresh',
-      'refreshTokenHeader',
-      'http.auth.token.refreshToken',
-      'http.auth.token.refreshRelativeURI',
-      'http.auth.token.refreshMediaType',
-      'http.auth.token.refreshMethod',
-      'http.auth.token.refreshBody',
-      'http.auth.token.refreshTokenPath',
-      'http.auth.token.refreshHeaders',
     ],
   },
 };

@@ -27,9 +27,9 @@ export default {
       {
         items: [
           { label: 'XML', value: 'xml' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'JSON', value: 'json' },
-          { label: 'Multipart/form-data', value: 'form-data' },
+          { label: 'Multipart / form-data', value: 'form-data' },
         ],
       },
     ],
@@ -65,6 +65,7 @@ export default {
   },
   'http.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     validateInComponent: true,
@@ -571,6 +572,7 @@ export default {
   // #endregion transform
   'http.once.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     label: 'Relative URI to update records',
     required: true,
     connectionId: r => r && r._connectionId,

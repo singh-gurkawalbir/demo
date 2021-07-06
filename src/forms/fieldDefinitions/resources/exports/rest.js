@@ -1,4 +1,4 @@
-// TODO: delete this file after IO-13313 moves to production and no issues
+// // TODO: delete this file after IO-13313 moves to production and no issues
 // export default {
 //   'rest.method': {
 //     type: 'select',
@@ -253,6 +253,7 @@
 //   },
 //   'rest.relativeURI': {
 //     type: 'relativeuri',
+//     showLookup: false,
 //     required: true,
 //     label: 'Relative URI',
 //     validateInComponent: true,
@@ -339,6 +340,7 @@
 //   // #endregion transform
 //   'rest.once.relativeURI': {
 //     type: 'relativeuri',
+//     showLookup: false,
 //     label: 'Relative URI to update records',
 //     required: true,
 //     connectionId: r => r && r._connectionId,
