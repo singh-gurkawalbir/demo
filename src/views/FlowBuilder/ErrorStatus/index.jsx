@@ -8,10 +8,11 @@ import Status from '../../../components/Buttons/Status';
 const useStyles = makeStyles(theme => ({
   statusAppBlock: {
     marginTop: theme.spacing(1),
-    fontSize: 14,
-    width: '100%',
     display: 'flex',
     justifyContent: 'center',
+    '& > button': {
+      fontSize: 14,
+    },
   },
 }));
 
