@@ -203,6 +203,13 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
   }
+
+  // For exports,imports delete rest subdoc when useTechAdaptorForm is set to true and it is not assistant.
+  // With new REST forms supporting http backend, we are not updating rest subdoc any more when user makes changes
+  if (['exports', 'imports'].includes(resourceType) && !merged.assistant && merged.useTechAdaptorForm && merged.rest && merged.http?.method) {
+    delete merged.rest;
+  }
+
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
   // and connection will be auto registered to the integration.
   // This is required for tile level monitor access users

@@ -9,8 +9,9 @@ function isValidArray(value) {
 }
 
 export default {
-  preSave: formValues => {
+  preSave: (formValues, __, options = {}) => {
     const retValues = { ...formValues };
+    const { connection } = options;
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
@@ -154,7 +155,26 @@ export default {
     if (retValues['/http/response/successPath'] && !isValidArray(retValues['/http/response/successPath'])) {
       retValues['/http/response/allowArrayforSuccessPath'] = true;
     }
+    // set the successMediaType on Export according to the connection
+    // the request media-type is always json/urlencoded for REST, others are not supported in REST
+    // CSV/XML media type could be successMediaTypes for REST Export
+    retValues['/http/errorMediaType'] = 'json';
+    retValues['/http/successMediaType'] = connection?.rest?.mediaType || 'json';
+    if (retValues['/http/successMediaType'] === 'urlencoded') {
+      retValues['/http/successMediaType'] = 'json';
+    }
+    // we can also validate if method is other than GET or DELETE and throw an error in case of mediatype being XML/CSV
+    // there shouldn't be successPath or failPath in REST docs when the mediatype is XML/CSV
+    if (!retValues['/http/requestMediaType']) {
+    // export.http.requestMediaType is a new property and a mandatory field when http method is POST or PUT.
+    // If user tries to update and save an old export without requestMediaType field
+    // then we need to set connection.http.mediaType as requestMediaType.
+      if (typeof retValues['/http/method'] === 'string' && (retValues['/http/method'].toLowerCase() === 'post' || retValues['/http/method'].toLowerCase() === 'put')) {
+        retValues['/http/requestMediaType'] = connection?.rest?.mediaType;
+      }
+    }
     retValues['/useTechAdaptorForm'] = true;
+    retValues['/rest'] = undefined;
 
     return {
       ...retValues,

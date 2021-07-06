@@ -219,7 +219,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         meta = formMeta.connections.rdbms[rdbmsSubType];
       } else if (RDBMS_TYPES.includes(type)) {
         meta = formMeta.connections.rdbms[type];
-      } else if (resource?.useTechAdaptorForm && type === 'http') {
+      } else if (resource?.useRestForm && type === 'http') {
         meta = formMeta.connections.rest;
       } else {
         meta = formMeta.connections[type];
@@ -309,10 +309,10 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             resource,
             assistantData
           );
-        } else if (type === 'rest') {
+        } else if (type === 'rest' || (type === 'http' && resource?.useTechAdaptorForm)) {
           const { mediaType } = (connection && connection[type]) || {};
 
-          meta = meta[type];
+          meta = meta.rest;
 
           if (mediaType === 'csv') {
             meta = meta.csv;

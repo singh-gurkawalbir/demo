@@ -823,6 +823,10 @@ export default {
       case adaptorTypeMap.SalesforceImport:
         return 'Salesforce';
       case adaptorTypeMap.HTTPImport:
+        if (resource?.useTechAdaptorForm) {
+          return 'REST API';
+        }
+
         return 'HTTP';
       case adaptorTypeMap.WrapperImport:
         return 'Wrapper';
