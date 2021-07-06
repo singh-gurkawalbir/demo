@@ -4,9 +4,13 @@ import DynaSelectOptionsGenerator from '../DynaRefreshableSelect';
 import DynaSelect from '../DynaSelect';
 import FieldHelp from '../../FieldHelp';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   order: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr auto',
+    '& >div': {
+      marginRight: theme.spacing(1),
+    },
   },
   dynaKeyValueLabelWrapper: {
     flexDirection: 'row',
