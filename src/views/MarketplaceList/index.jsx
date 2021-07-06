@@ -99,17 +99,8 @@ const useStyles = makeStyles(theme => ({
   rightSubtitle: {
     paddingTop: theme.spacing(1),
   },
-  pageCenter: {
-    padding: theme.spacing(3, 0),
-    width: '500px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    margin: '0 auto',
-    '& p': {
-      margin: theme.spacing(2, 0),
-    },
+  noDataTitle: {
+    padding: theme.spacing(3),
   },
 }));
 
@@ -234,11 +225,7 @@ export default function MarketplaceList() {
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-        <div className={classes.pageCenter}>
-          <Typography variant="h4">Connect this app to anything</Typography>
-          <Typography variant="body2">Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create new custom flows using the prebuilt connector available for this application.<br /><br />Need help? Check out our documentation or join our community.</Typography>
-          <img src="https://integrator-staging-ui-resources.s3.amazonaws.com/images/react/marketplace-connect-app.pnggit" alt="Marketplace Connect App" />
-        </div>
+        <Typography component="div" variant="body2" className={classes.noDataTitle}> Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create brand new custom flows using the prebuilt connector available for this application.</Typography>
       )}
       <div className={classes.root}>
         {connectors.map(connector => (
