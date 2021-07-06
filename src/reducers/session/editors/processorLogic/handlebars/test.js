@@ -23,6 +23,9 @@ describe('handlebars processor logic', () => {
     test('should prefix Build and convert first char to lowercase and return new label', () => {
       expect(_constructEditorTitle('File name')).toEqual('Build file name');
     });
+    test('should prefix Build and drop Override from label', () => {
+      expect(_constructEditorTitle('Override HTTP request body')).toEqual('Build HTTP request body');
+    });
   });
   describe('_editorSupportsV1V2data util', () => {
     test('should not throw error for invalid arguments', () => {
