@@ -9,6 +9,7 @@ import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
+import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import EditRetryData from '../actions/EditRetry';
@@ -34,7 +35,7 @@ export default {
     {
       key: 'message',
       heading: 'Message',
-      width: '25%',
+      width: '18%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.message} rawHtmlOptions={options} containsHtml />,
     },
     {
@@ -54,19 +55,29 @@ export default {
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
     },
     {
+      key: 'selectResolvedClassification',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectClassification {...tableContext} />;
+      },
+      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
+      width: '10%',
+    },
+    {
       key: 'selectDate',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
         return <SelectDate {...tableContext} />;
       },
-      width: '12%',
+      width: '10%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
       key: 'resolvedBy',
       heading: 'Resolved by',
-      width: '12%',
+      width: '10%',
       Value: ({rowData: r}) => {
         const {flowId} = useGetTableContext();
 
@@ -85,7 +96,7 @@ export default {
             filterBy="resolvedAt" />
         );
       },
-      width: '12%',
+      width: '10%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],

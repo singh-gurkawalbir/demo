@@ -1,5 +1,7 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
+import { getClassificationOptions } from '../../../../utils/errorManagement';
 
 export default (state = {}, action) => {
   const {
@@ -41,3 +43,7 @@ selectors.getClassificationMetadata = state => {
   return state.data?.classification;
 };
 
+selectors.classificationOptions = createSelector(
+  selectors.getClassificationMetadata,
+  metadata => getClassificationOptions(metadata)
+);
