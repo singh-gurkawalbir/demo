@@ -3620,8 +3620,9 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
-      "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
         "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
@@ -5295,8 +5296,9 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
-      "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
         "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
