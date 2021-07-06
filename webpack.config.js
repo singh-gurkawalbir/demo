@@ -6,8 +6,8 @@ const webpack = require('webpack');
 const DotenvPlugin = require('dotenv-webpack');
 const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') }).parsed;
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const UnusedWebpackPlugin = require('unused-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const { UnusedFilesWebpackPlugin } = require('unused-files-webpack-plugin');
 
 const config = {
   target: 'web',
@@ -78,13 +78,11 @@ const config = {
     new webpack.ProvidePlugin({
       React: 'react',
     }),
-    new UnusedWebpackPlugin({
-      // Source directories
-      directories: [path.join(__dirname, 'src')],
-      // Exclude patterns
-      exclude: ['*test.js', '*.md'],
-      // Root directory (optional)
-      root: __dirname,
+    new UnusedFilesWebpackPlugin({
+      patterns: ['src/**/*.js', 'src/**/*.jsx'],
+      globOptions: {
+        ignore: ['**/*test.js', '**/components/icons/**'],
+      },
     }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
