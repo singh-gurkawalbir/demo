@@ -144,6 +144,7 @@ export default function MarketplaceList() {
     application,
     sandbox
   );
+  const marketPlaceConnectAppUrl = `${process.env.CDN_BASE_URI}images/react/marketplace-connect-app.png`;
   const templates = useSelector(state =>
     selectors.marketplaceTemplatesByApp(state, application)
   );
@@ -250,7 +251,7 @@ export default function MarketplaceList() {
         <div className={classes.pageCenter}>
           <Typography variant="h4">Connect this app to anything</Typography>
           <Typography variant="body2">Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create new custom flows using the prebuilt connector available for this application.<br /><br />Need help? Check out our <a target="blank" href="https://docs.celigo.com/hc/en-us/categories/360002670492-Connectors">documentation</a> or <a target="blank" href="https://docs.celigo.com/hc/en-us/community/topics" >join our community</a>.</Typography>
-          <img src="https://integrator-staging-ui-resources.s3.amazonaws.com/images/react/marketplace-connect-app.png" alt="Marketplace Connect App" />
+          <img src={marketPlaceConnectAppUrl} alt="Marketplace Connect App" />
         </div>
       )}
       <div className={classes.root}>
