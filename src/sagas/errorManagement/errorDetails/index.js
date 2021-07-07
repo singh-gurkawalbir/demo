@@ -165,6 +165,11 @@ export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved = f
       })
     );
 
+    // start polling for retry status
+    if (retryDataKeys.length) {
+      yield put(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId }));
+    }
+
     if (isResolved) {
       return yield put(
         actions.errorManager.flowErrorDetails.selectErrors({

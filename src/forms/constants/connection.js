@@ -123,9 +123,12 @@ export default {
     'omnisend',
     'pagerduty',
     'quickbase',
+    'pagerdutyevents',
+    'sapsuccessfactors',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
+    'azurestorageaccount',
     'squareup',
     'shipbob',
     'ebay',

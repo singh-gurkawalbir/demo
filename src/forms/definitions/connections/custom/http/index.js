@@ -21,6 +21,7 @@ import okta from './okta';
 import myobaccountright from './myobaccountright';
 import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
+import azurestorageaccount from './azurestorageaccount';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
 import jira from './jira';
@@ -211,7 +212,9 @@ import freshservice from './freshservice';
 import omnisend from './omnisend';
 import pagerduty from './pagerduty';
 import quickbase from './quickbase';
+import pagerdutyevents from './pagerdutyevents';
 import orangehrm from './orangehrm';
+import sapsuccessfactors from './sapsuccessfactors';
 
 export default {
   channelape,
@@ -241,6 +244,7 @@ export default {
   propack,
   solidcommerce,
   azureactivedirectory,
+  azurestorageaccount,
   parseur,
   paypal,
   returnly,
@@ -427,5 +431,7 @@ export default {
   omnisend,
   pagerduty,
   quickbase,
+  pagerdutyevents,
   orangehrm,
+  sapsuccessfactors,
 };
