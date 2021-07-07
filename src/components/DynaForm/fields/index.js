@@ -132,6 +132,7 @@ import DynaLicenseEditor from './DynaLicenseEditor';
 import DynaSsoOrgId from './DynaSsoOrgId';
 import DynaSelectWithValidations from './select/DynaSelectWithValidations';
 import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
+import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -275,4 +276,5 @@ export default {
   ssoorgid: DynaSsoOrgId,
   selectwithvalidations: DynaSelectWithValidations,
   salesforcesortorderselect: Salesforce.DynaSortOrderSelect,
+  nsauthtype: DynaNetsuiteAuthType,
 };

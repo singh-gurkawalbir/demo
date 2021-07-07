@@ -36,7 +36,6 @@ export default {
   'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
   // definitions
-  'http.connection.customScopeDelimiter': 'If your provider doesn\'t use spaces to delimit scopes, check this box and enter your provider’s custom scope delimiter.',
   'connection.salesforce.info.email': 'Your Salesforce account email.',
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
@@ -734,71 +733,28 @@ export default {
     'Set this field to limit (or increase) the number of concurrent requests allowed by this connection.  Please contact NetSuite if you are unsure how many concurrent requests are allowed in your NetSuite account.  You can also contact NetSuite to purchase additional concurrent requests if you need more throughput.  If you need more throughput than 25 concurrent requests for a single connection resource then please consider creating a second connection resource and partitioning your flows across different connections.',
   'connection.netsuite.concurrencyLevel':
     'Set this field to limit (or increase) the number of concurrent requests allowed by this connection.  Please contact NetSuite if you are unsure how many concurrent requests are allowed in your NetSuite account.  You can also contact NetSuite to purchase additional concurrent requests if you need more throughput.  If you need more throughput than 25 concurrent requests for a single connection resource then please consider creating a second connection resource and partitioning your flows across different connections.',
-  'connection.rest.mediaType':
-    'The data format that should be used for all HTTP requests sent to the REST API.  Typically a REST API will only support one media type and will publish this info right at the top of their API guides.',
-  'connection.rest.baseURI':
-    'Enter the common part of the path to the app’s API, as documented in the API guide, to be used for all endpoints that you invoke. Providing a base URI for this connection makes it easier to configure your exports and imports, where you can specify simply a relative URI. Using a base URI also makes it easier to manage upgrading API versions, because then you can update the version value in one place. Assuming that the new version of the REST API is backward compatible, your exports and imports should continue to work.<br>Typically, base URIs have the format https://api.domain.com/version, such as https://api.stripe.com/v1 for the Stripe v1 API. Or for the Google calendar v3 API, enter https://www.googleapis.com/calendar/v3.',
-  'connection.rest.bearerToken':
-    'Please enter your API token here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.rest.tokenLocation':
-    "Use this field to specify where in the HTTP request the API token should be located.  If both 'URL Parameter' and 'Header' are supported by the REST API then 'Header' is the preferred option because HTTP header data is slightly less likely to end up in an access log file (i.e. in the REST API's server logs).",
   'connection.configureTokenRefresh':
     'Check this box if your token expires after a period of time. A series of new fields will appear in the form.',
   'connection.http.auth.token.refreshMediaType':
-    'Choose the media type for the refresh token request body.',
+    'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
   'connection.http.auth.cookie.method':
     'Select GET or POST for the session cookie request.',
   'connection.http.auth.cookie.uri':
-    'Provide the URI where the session cookie is obtained.',
+    'Provide the absolute URL where the session cookie is obtained.',
   'connection.http.auth.cookie.successStatusCode':
-    'Specify the server’s status code if it is not a standard 2xx code for successful requests.',
-  'connection.rest.tokenParam':
-    "Use this field to specify the name of the URL parameter that will hold the API token value.  For example, if you specify 'myAPITokenURLParam' then all HTTP requests will include the following: '?myAPITokenURLParam=bearerToken'.",
-  'connection.rest.refreshTokenURI':
-    'The URL that intrgrator.io will need to call to refresh the token.',
-  'connection.rest.refreshTokenMediaType':
-    'Choose the media type for refresh token request body.',
-  'connection.rest.refreshTokenMethod':
-    'Choose the HTTP method for the refresh token request.',
-  'connection.rest.refreshTokenPath':
-    'If the token will be returned in the response body, you can provide a path to the token here.',
-  'connection.rest.refreshTokenHeaders':
-    'You can configure the headers for the refresh token request with custom key value pairs that are specific to your needs.',
-  'connection.rest.scope':
-    "Use this field to list out all the scope values that should be sent when a connection is authorized.  The list of supported scopes for any given REST API should be documented clearly in that API's user guide.  If you cannot find this info then please contact the company, or author that owns the API.",
-  'connection.rest.scopeDelimiter':
-    "Use this field to override the default delimiter (' ') used to separate scope values sent to the REST API during the authorization process.",
-  'connection.rest.refreshToken':
-    'This field is set automatically during the OAuth 2.0 authorization process, and can never be retrieved in the browser or the integrator.io API (this field is only used by the back-end servers to generate access tokens as needed).<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your refresh token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.rest.authURI':
-    'Use this field to specify the authorization endpoint that should be invoked when the initial OAuth 2.0 workflow kicks off.',
-  'connection.rest.authHeader':
+    'This field only needs to be set if the HTTP status code for success is not 200.',
+  'connection.http.auth.token.headerName':
     "By default, integrator.io will send all authentication type info in the 'Authorization: ' HTTP header field.  If the REST API you are connecting to requires a different HTTP header, use this field to provide an override.",
-  'connection.rest.authScheme':
-    'By default, integrator.io will follow the HTTP specs with regards to auth scheme names (i.e. Bearer, OAuth, MAC, etc...), but if the REST API you are connecting to does not follow the specs exactly, this field can be used to provide an override.',
   'connection.rest.disableStrictSSL':
     'An optional flag that (if set) skips verifying the SSL certificate, allowing self-signed or expired certs.  It is highly recommended (for hopefully obvious reasons) that you never set this flag for any production data connections.  In general, use at your own risk.',
-  'connection.rest.retryHeader':
-    "It is common for a REST API to return status code 429 if too many requests are made in a short period of time. These 429 responses are typically paired with a 'retry-after' response HTTP header with information used to determine when the next request will be successfully served. It is also possible that an API may use a custom header, and this field can be used to provide an override.",
-  'connection.rest.basicAuth.username':
-    'The basic authentication username. Sometimes services providers use other terms like clientId or API Key',
-  'connection.rest.basicAuth.password':
-    "The password associated with your service account. Sometimes service providers have other names for this field, such as 'secret key', or 'API key', and so on.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.rest._iClientId':
     'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own Integration App product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
-  'connection.rest.info':
-    'This read only field is used to store ad hoc profile type data returned by the OAuth 2.0 provider during the OAuth 2.0 authorization flow.',
-  'connection.rest.pingRelativeURI':
-    "Any relative URI for an authenticated HTTP GET request that can be used to test if a connection is working properly.  For example: '/me', '/tokenInfo', '/currentTime', etc...  Whenever a connection is saved, integrator.io will invoke the Ping URI (if one is set), and only if the ping request is successful will the connection resource be saved.  There is also an automated batch process that runs multiple times per hour to continually ping all offline connections (i.e. connections that failed at one point) to bring those connection back online (and to resume any data flows that were paused as a result of the connections being offline).  It is definitely a best practice to set Ping URI on all your REST API connections so that integrator.io can do more to identify offline connections (before they are saved) and also bring them back online automatically wherever possible.",
-  'connection.rest.pingSuccessPath':
-    "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if the ping HTTP request failed, and instead use a field in the response body to identify success vs fail. For these use cases, the 'Ping Success Path' field can be used to specify the JSON path of a field in the response body that should instead be used to determine if a ping request was a success.  For example, if you are building a connection for Slack's API you would set this field to: 'ok' (see Slack API docs for more info).",
-  'connection.rest.pingSuccessValues':
-    'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against this list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
-  'connection.rest.concurrencyLevel':
-    "Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode.  With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency.  APIs like Google's are really great with burst mode, and can typically handle any types of volume.  Other APIs, like Zendesk or Shopify, are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.",
-  'connection.http.mediaType': 'Specify the data format for all sent HTTP requests or received HTTP responses for the connected API. A single API usually supports only one format and publishes this info at the top of their API docs. If the media type for a request or response is different, you can use your export’s success and error media type fields to override the media type for specific endpoints.',
-  'connection.http.successMediaType': 'Specify the content-type of a successful response received from this endpoint. For HTTP exports and connections, we support content-types of XML, CSV, and JSON. For HTTP imports, we support XML and JSON.',
-  'connection.http.errorMediaType': 'Specify the content-type of an error (unsuccessful) response received from this endpoint. We support XML and JSON content-types.',
+  'connection.http.mediaType':
+    'Specify the data format to use in the HTTP request body and HTTP response body.',
+  'connection.http.successMediaType':
+    'Use this field to handle the use case where a successful HTTP response returns a different media type than the original HTTP request body sent.',
+  'connection.http.errorMediaType':
+    'Use this field to handle the use case where an unsuccessful HTTP response returns a different media type than the original HTTP request body sent.',
   'connection.http.baseURI': 'This common part of an API’s URL is used across all of the HTTP endpoints you invoke. A base URI makes it easier to configure exports and imports.',
   'connection.http.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> automatically adds the appropriate content-type header based on the mediaType value described in the connection associated with this request (typically application/json). Note that the request header value automatically includes the authentication method described in the associated connection if required. Use this header field in the rare case when an API requires additional headers other than application or JSON.',
   'connection.http.disableStrictSSL':
@@ -814,20 +770,23 @@ export default {
   'connection.http.ping.relativeURI':
     "Any relative URI (for an HTTP GET request) to an authenticated endpoint that can indicate if a connection is working properly.  For example: '/me', '/tokenInfo', '/currentTime', etc...  Whenever a connection is saved, integrator.io will invoke the Ping URI (if one is set), and only if the ping request is successful will the connection resource be saved.  There is also an automated batch process that runs multiple times per hour to continually ping all offline connections (i.e. connections that failed at one point) to bring those connection back online (and to resume any data flows that were paused as a result of the connections being offline).  It is definitely a best practice to set Ping URI on all your REST API connections so that integrator.io can do more to identify offline connections (before they are saved) and also bring them back online automatically wherever possible.",
   'connection.http.ping.successPath':
-    "There are many non-REST based APIs that will return a 200 HTTP status code even if the ping HTTP request failed, and instead use a field in the response body to identify success vs fail. For these use cases, the 'Ping Success Path' field can be used to specify the path of a field in the response body that should instead be used to determine if a ping request was a success.",
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a successful request. For example, if the API always returns a 200 success HTTP status code, but then indicates success via a 'success' boolean field in the HTTP response body.",
   'connection.http.ping.failPath':
-    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a failed request. For example, if the API always returns a 200 success HTTP status code, but then indicates errors via an 'error.message' field in the HTTP response body.",
   'connection.http.ping.failValues':
-    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request failed. To provide multiple values, use a comma-separated list.',
   'connection.http.ping.successValues':
-    'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against this list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request succeeded. To provide multiple values, use a comma-separated list.',
   'connection.http.ping.errorPath':
-    'This optional field can be used if the response from failed ping request is large and only part of the response should be returned as the reason for a failed ping response. If no value is given, then the full HTTP response is used as a description of the failure. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses to ping requests have no body then a text version of the HTTP status code is used as the reason for failure.',
+    'This optional field is used to specify which field in the HTTP response body contains the detailed error message for the purpose of displaying the error on the error management dashboard.  If this field is not set, then the full HTTP response body will be used as the error message in the error management dashboard.',
   'connection.http.auth.type':
     'Select your connection’s authentication type: <br><b>Basic:</b> This authentication method sends Base64-encoded username and password values in the \'authentication\' HTTP request header. <br><b>Cookie:</b> This session-based method typically includes a unique cookie in the HTTP request header. integrator.io automatically creates and inserts this cookie into every HTTP request sent to your application. <br><b>Custom:</b> For a custom type, integrator.io will not perform any special authentication. You must configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any required values. You can store these values in the encrypted and unencrypted fields in this connection. <br><b>OAuth 2.0:</b> This <a href="https://oauth.net/2/" target="_blank">authorization framework</a> enables integrator.io to obtain limited access to an HTTP service on behalf of an account. Scope is a mechanism in OAuth 2.0 to limit an application’s access to an account. <br><b>Token:</b> The token required for this auth type may be sent in the header, URL, or body of the HTTP request. You can also choose to refresh tokens, if needed. <br><b>Digest:</b> With the <a href="https://en.wikipedia.org/wiki/Digest_access_authentication" target="_blank">digest method</a>, integrator.io  sends the first request to the API, and the server responds with details that include a number that can be used only once (nonce), a realm value, and a 401 unauthorized response. An encrypted array of data including the username and password combined with the data received from the server in the first request is then sent back. The server uses the passed data to generate an encrypted string and compares it against what is sent in the previous step to authenticate requests.',
-  'connection.http.auth.failStatusCode': 'Use this field if the service you are connecting to returns a status code other than 401 or returns 200 with authentication errors in the HTTP body.',
-  'connection.http.auth.failPath': 'Use this field if the service you are connecting to embeds authentication errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a failed authentication response.',
-  'connection.http.auth.failValues': 'Use this field only if the authentication fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to recognize a failed authentication response.',
+  'connection.http.auth.failStatusCode':
+     'This field only needs to be set if the HTTP status code for auth errors is not 401. For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate auth errors.',
+  'connection.http.auth.failPath':
+    "This field only needs to be set if the API returns a field in the HTTP response body to indicate auth errors. For example, if an API returns the field 'errorMessage' with the value 'Auth failed', then you would set this field to 'errorMessage'.",
+  'connection.http.auth.failValues':
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine auth errors. To provide multiple values, use a comma-separated list.',
   'connection.http.auth.basic.username':
     'The basic authentication username. Sometimes services providers use other terms like clientId or API Key',
   'connection.http.auth.basic.password':
@@ -837,7 +796,8 @@ export default {
   'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
   'connection.http.auth.oauth.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
   'connection.http.auth.wsse.headerName': 'Provide “header name”, where the hash token generated needs to be added in the request headers. By default, the name is going to be <b>X-WSSE</b>.',
-  'connection.http.auth.token.scheme': 'By default, integrator.io follows the HTTP specs for authentication scheme names (for example: Bearer, OAuth, MAC). If the API you are connecting to doesn\'t follow the specs exactly, use this field to provide an override.',
+  'connection.http.auth.token.scheme':
+    "Use this field to set the HTTP authorization header scheme value. For example, 'Bearer' would be the scheme value for 'Authorization: Bearer my_secret_api_token'",
   'connection.http.auth.token.paramName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
   'connection.http.auth.token.refreshMethod':
     'If the service being connected to supports request/refresh token, use this field to set the HTTP method to use in the token call.',
@@ -851,9 +811,12 @@ export default {
     "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
   'connection.http.auth.token.refreshToken':
     'This field is used if you have a refresh token that can be used in refresh expired auth tokens. You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.auth.token.refreshToken}}}. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.http.rateLimit.failStatusCode': 'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
-  'connection.http.rateLimit.failPath': 'Use this field if the service you are connecting to embeds rate limit errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses this path to identify a rate-limited (throttled) response.',
-  'connection.http.rateLimit.failValues': 'Use this field only if the rate limit fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a rate-limited response.',
+  'connection.http.rateLimit.failStatusCode':
+    'This field only needs to be set if the HTTP status code for rate-limit errors is not 429.  For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate rate-limit errors.',
+  'connection.http.rateLimit.failPath':
+    "This field only needs to be set if the API returns a field in the HTTP response body to indicate rate-limit errors. For example, if an API returns the field 'errorMessage' with the value 'Too many requests', then you would set this field to 'errorMessage'.",
+  'connection.http.rateLimit.failValues':
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine rate-limit errors. To provide multiple values, use a comma-separated list.',
   'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.http.encrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. These values are stored with AES-256 encryption and other layers of protection to keep your data safe.',
   'connection.http.unencrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
@@ -1909,8 +1872,6 @@ export default {
     'The file transfer protocol using which you want to establish the FTP connection.\nThe following protocols are available:\n<bold>FTP:</bold> Select FTP if the server that you are connecting to requires an FTP protocol.\nSFTP: Select SFTP if the server that you are connecting to requires an SFTP protocol.\nFTPS: Select FTPS if the sever that you are connecting to requires an FTPS protocol.',
   'connection.connMode':
     'Select Cloud if you are connecting to an application on the cloud and is publicly accessible. For example, Salesforce, NetSuite. Select On-premise if you are connecting to a server that is publicly inaccessible and has integrator.io Agent installed on it. For example, Production AWS VPC, MySQL server.',
-  'connection.rest.authType':
-    "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
   'connection.http.auth.revoke.uri':
@@ -1939,19 +1900,7 @@ export default {
   'connection.http.auth.token.revoke.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded, and the authorization header value is basic.',
   'connection.http.auth.token.revoke.uri':
     'integrator.io makes an HTTP post request to the token revocation endpoint URL to revoke a particular token.',
-  'connection.rest.pingMethod':
-    'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
-  'connection.rest.pingBody':
-    'This field is typically used in for HTTP requests not using the GET method. The value of this field becomes the HTTP body that is sent to the API endpoint. The format of the body is dependent on the API being used. It could be URL-encoded, JSON, or XML data. In either case, the metadata contained in this body will provide the API with the information needed to fulfill your ping request. Note that this field can contain {{{placeholders}}} that are populated from a model comprising of a connection and an export object. For example, if the export request body requires an authentication token to be embedded, you can use the placeholder {{connection.http.auth.token.token}}.',
   'connection.rest.threedcartSecureUrl': "3dcart merchant's Secure URL.",
-  'connection.rest.encrypted':
-    "Use this JSON field to store all the security sensitive fields needed by your imports and exportsto access the application being integrated. For example: {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}.Multiple layers of protection, including AES 256 encryption, are in place to keep your data safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
-  'connection.rest.unencrypted':
-    "Use this JSON field to store all the security insensitive fields needed by your imports and exports to access the application being integrated. For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
-  'connection.rest.storeName':
-    "Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is 'https://demo-store.myshopify.com/', then provide 'demo-store' as the store name.",
-  'connection.rest.applicationType':
-    "These are the OAuth 2.0 providers currently supported by integrator.io. Please contact support if you need an application that is not currently listed here, and it is also worth checking with the application provider to see if they have any other forms of API authentication available. For example, Shopify supports both OAuth 2.0 and Basic Auth (i.e. username and password). Keep in mind too that once a new OAuth 2.0 provider is supported by integrator.io you will likely be able to choose that application directly in the 'Connection Type' field (vs connecting at the technology level via HTTP or REST).",
   'connection.salesforce.sandbox':
     'Select Production or Sandbox from this field. You can then click on Save & Authorize that opens a Salesforce window where you can enter your Salesforce account credentials to connect to Salesforce.',
   'connection.salesforce.oauth2FlowType':
@@ -1966,8 +1915,6 @@ export default {
     "3dcart merchant's Secure URL.",
   'connection.threedcart.rest.encrypted.PrivateKey':
     "Your application's private key.",
-  'connection.shopify.rest.storeName':
-    "Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is 'https://demo-store.myshopify.com/', then provide 'demo-store' as the store name.",
   'connection.shopify.rest.basicAuth.username':
     "Login to your Shopify store and navigate to 'Apps' section. Click on the respective private app and the API key can be found next to the 'Authentication' section.",
   'connection.shopify.rest.basicAuth.password':
@@ -1983,6 +1930,10 @@ export default {
   'concurall.connection.http.unencrypted.credtype': 'For connections from the App Center, use authtoken. if omitted, oauth2 will assume the type is password.',
   'connection.netsuite.authType':
     `Token Based Auth is NetSuite’s recommended way of authentication a connection. Tokens generate while setting up the connection will never expire until revoked in NetSuite. There are two ways to configure Token Based Auth: </br><b>1.Token Based Auth(Manual) : </b>A user would have to manually create the Tokens in NetSuite and enter them in IO.Please read <a href=${HELP_CENTER_BASE_URL}/hc/en-us/articles/115000694991-NetSuite-2018-2-two-factor-authentication-2FA-requirement>here</a> on generating tokens manually. Once you generate the tokens, please keep them secure as they can be re-used for multiple connections.</br> <b>2.Token Based Auth(Automatic) :</b> [Recommended] Integrator will generate tokens on behalf of the user. Once you select this option, IO will redirect you to NetSuite login page and you can select the role for which you need to generate the tokens. Please note that authorising a connection generates a new set of tokens in NetSuite everytime, so anytime a connection is created/edited with this option will generate a new set of tokens. <br>Note 1: At a time there can be 25 active tokens for a user/role combination. <br>Note 2:  ‘Basic’ Auth can be used with your NetSuite email and password and it planned for deprecation by NetSuite. This is only supported for legacy integrations which should also move to TBA.`,
+  'connection.netsuite.wsdlVersion':
+    `The NetSuite WSDL version that this connection uses. It's always recommended to use the latest WSDL version. You can switch between different versions by editing the connection.
+  <br/>Note that Switching versions for an existing connection might have an impact on running flows, and it is recommended to review NetSuite’s release notes prior to making a change. 
+  <br/>Note that NetSuite WSDL 2020.2 and later versions only support token-based auth.`,
   'connection.netsuite.linkSuiteScriptIntegrator':
     'Prior to integrator.io, NetSuite integrations built by Celigo ran directly inside your NetSuite account via a managed bundle. If you are still running any of these older integrations, check this box to link integrator.io to your NetSuite account. The older Celigo interface that ran directly inside NetSuite has been deprecated, and you must now use integrator.io to manage and monitor all integrations.',
   'connection.configureApiRateLimits':
@@ -2281,4 +2232,5 @@ export default {
   'sso.orgId': 'Enter a unique organization ID that integrator.io will use to generate a unique SSO URL for your account. This field only accepts alphanumeric characters and must be 3-20 characters in length.',
   'sso.loginURL': 'Use this unique URL to sign in to your account with SSO. Use this URL  when configuring the integrator.io app in your SSO provider.',
   'sso.redirectURL': 'Your SSO provider will send the authorization code tokens to this unique URL. Use this URL when configuring the integrator.io app in your SSO provider.',
+  classification: 'Errors are automatically categorized according to their properties, such as the code, message, and source fields. For more information, see <a href="https://docs.celigo.com/hc/en-us/articles/4403697564429" target="_blank">Error classifications</a>',
 };
