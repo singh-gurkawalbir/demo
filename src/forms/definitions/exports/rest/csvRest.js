@@ -138,7 +138,7 @@ export default {
       {
         collapsed: true,
         label: 'Non-standard API response patterns',
-        fields: ['http.resourcePath'],
+        fields: ['http.response.resourcePath'],
       },
       { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],

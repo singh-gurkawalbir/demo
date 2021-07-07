@@ -6371,7 +6371,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "http.resourcePath",
+                "http.response.resourcePath",
               ],
               "label": "Non-standard API response patterns",
             },
