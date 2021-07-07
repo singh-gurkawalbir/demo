@@ -11,11 +11,9 @@ export default {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
 
-      newValues['/netsuite/wsdlVersion'] = 'next';
       newValues['/netsuite/email'] = undefined;
       newValues['/netsuite/password'] = undefined;
     } else if (newValues['/netsuite/authType'] === 'basic') {
-      newValues['/netsuite/wsdlVersion'] = 'current';
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/_iClientId'] = undefined;
@@ -51,8 +49,12 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'netsuite.authType': {
-      fieldId: 'netsuite.authType',
+      id: 'netsuite.authType',
+      name: 'netsuite.authType',
+      label: 'Authentication type',
+      type: 'nsauthtype',
       required: true,
+      skipSort: true,
     },
     'netsuite.email': {
       fieldId: 'netsuite.email',
@@ -179,6 +181,22 @@ export default {
     application: {
       fieldId: 'application',
     },
+    'netsuite.wsdlVersion': {
+      id: 'netsuite.wsdlVersion',
+      name: 'netsuite.wsdlVersion',
+      type: 'select',
+      label: 'WSDL Version',
+      defaultValue: r => r?.netsuite?.wsdlVersion || '2020.2',
+      options: [
+        {
+          items: [
+            { label: '2020.2', value: '2020.2' },
+            { label: '2018.1', value: 'next' },
+            { label: '2016.2', value: 'current' },
+          ],
+        },
+      ],
+    },
   },
   layout: {
     type: 'collapse',
@@ -217,6 +235,7 @@ export default {
           'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
+          'netsuite.wsdlVersion',
         ],
       },
     ],

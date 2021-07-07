@@ -2014,19 +2014,6 @@ export default {
   },
   // #endregion as2
   // #region netsuite
-  'netsuite.authType': {
-    type: 'select',
-    label: 'Authentication type',
-    options: [
-      {
-        items: [
-          { label: 'Basic (To be deprecated - Do not use)', value: 'basic' },
-          { label: 'Token Based Auth (Manual)', value: 'token' },
-          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
-        ],
-      },
-    ],
-  },
   'netsuite.account': {
     type: 'netsuiteuserroles',
     label: 'Account ID',

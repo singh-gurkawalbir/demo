@@ -1187,8 +1187,12 @@ Object {
         ],
       },
       "netsuite.authType": Object {
-        "fieldId": "netsuite.authType",
+        "id": "netsuite.authType",
+        "label": "Authentication type",
+        "name": "netsuite.authType",
         "required": true,
+        "skipSort": true,
+        "type": "nsauthtype",
       },
       "netsuite.concurrencyLevel": Object {
         "fieldId": "netsuite.concurrencyLevel",
@@ -1337,6 +1341,31 @@ Object {
           },
         ],
       },
+      "netsuite.wsdlVersion": Object {
+        "defaultValue": [Function],
+        "id": "netsuite.wsdlVersion",
+        "label": "WSDL Version",
+        "name": "netsuite.wsdlVersion",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "2020.2",
+                "value": "2020.2",
+              },
+              Object {
+                "label": "2018.1",
+                "value": "next",
+              },
+              Object {
+                "label": "2016.2",
+                "value": "current",
+              },
+            ],
+          },
+        ],
+        "type": "select",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -1378,6 +1407,7 @@ Object {
                 "netsuite.linkSuiteScriptIntegrator",
                 "_borrowConcurrencyFromConnectionId",
                 "netsuite.concurrencyLevel",
+                "netsuite.wsdlVersion",
               ],
               "label": "Advanced",
             },
