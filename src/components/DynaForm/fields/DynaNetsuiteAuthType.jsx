@@ -6,7 +6,7 @@ export default function DynaNetsuiteAuthType(props) {
   const { formKey, onFieldChange, value, id } = props;
   const formValues = useFormContext(formKey)?.value;
 
-  const wsdlVersion = formValues?.netsuite?.wsdlVersion;
+  const wsdlVersion = formValues['/netsuite/wsdlVersion'];
 
   useEffect(() => {
     if (value === 'basic' && wsdlVersion === '2020.2') {

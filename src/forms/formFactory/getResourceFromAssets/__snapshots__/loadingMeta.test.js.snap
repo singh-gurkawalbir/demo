@@ -1189,7 +1189,7 @@ Object {
       "netsuite.authType": Object {
         "id": "netsuite.authType",
         "label": "Authentication type",
-        "name": "netsuite.authType",
+        "name": "/netsuite/authType",
         "required": true,
         "skipSort": true,
         "type": "nsauthtype",
@@ -1345,7 +1345,7 @@ Object {
         "defaultValue": [Function],
         "id": "netsuite.wsdlVersion",
         "label": "WSDL Version",
-        "name": "netsuite.wsdlVersion",
+        "name": "/netsuite/wsdlVersion",
         "options": Array [
           Object {
             "items": Array [
