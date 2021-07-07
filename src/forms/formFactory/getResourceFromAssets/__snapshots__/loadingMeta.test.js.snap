@@ -1347,18 +1347,9 @@ Object {
         "options": Array [
           Object {
             "items": Array [
-              Object {
-                "label": "2020.2",
-                "value": "2020.2",
-              },
-              Object {
-                "label": "2018.1",
-                "value": "2018.1",
-              },
-              Object {
-                "label": "2016.2",
-                "value": "2016.2",
-              },
+              "2020.2",
+              "2018.1",
+              "2016.2",
             ],
           },
         ],

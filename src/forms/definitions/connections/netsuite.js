@@ -193,15 +193,7 @@ export default {
 
         return version || '2020.2';
       },
-      options: [
-        {
-          items: [
-            { label: '2020.2', value: '2020.2' },
-            { label: '2018.1', value: '2018.1' },
-            { label: '2016.2', value: '2016.2' },
-          ],
-        },
-      ],
+      options: [{ items: ['2020.2', '2018.1', '2016.2'] }],
     },
   },
   layout: {
