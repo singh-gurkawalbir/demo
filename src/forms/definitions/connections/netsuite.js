@@ -50,7 +50,6 @@ export default {
     name: { fieldId: 'name' },
     'netsuite.authType': {
       id: 'netsuite.authType',
-      name: '/netsuite/authType',
       label: 'Authentication type',
       type: 'nsauthtype',
       required: true,
@@ -183,16 +182,23 @@ export default {
     },
     'netsuite.wsdlVersion': {
       id: 'netsuite.wsdlVersion',
-      name: '/netsuite/wsdlVersion',
       type: 'select',
       label: 'WSDL version',
-      defaultValue: r => r?.netsuite?.wsdlVersion || '2020.2',
+      skipSort: true,
+      defaultValue: r => {
+        const version = r?.netsuite?.wsdlVersion;
+
+        if (version === 'next') return '2018.1';
+        if (version === 'current') return '2016.2';
+
+        return version || '2020.2';
+      },
       options: [
         {
           items: [
             { label: '2020.2', value: '2020.2' },
-            { label: '2018.1', value: 'next' },
-            { label: '2016.2', value: 'current' },
+            { label: '2018.1', value: '2018.1' },
+            { label: '2016.2', value: '2016.2' },
           ],
         },
       ],

@@ -1189,7 +1189,6 @@ Object {
       "netsuite.authType": Object {
         "id": "netsuite.authType",
         "label": "Authentication type",
-        "name": "/netsuite/authType",
         "required": true,
         "skipSort": true,
         "type": "nsauthtype",
@@ -1344,8 +1343,7 @@ Object {
       "netsuite.wsdlVersion": Object {
         "defaultValue": [Function],
         "id": "netsuite.wsdlVersion",
-        "label": "WSDL Version",
-        "name": "/netsuite/wsdlVersion",
+        "label": "WSDL version",
         "options": Array [
           Object {
             "items": Array [
@@ -1355,15 +1353,16 @@ Object {
               },
               Object {
                 "label": "2018.1",
-                "value": "next",
+                "value": "2018.1",
               },
               Object {
                 "label": "2016.2",
-                "value": "current",
+                "value": "2016.2",
               },
             ],
           },
         ],
+        "skipSort": true,
         "type": "select",
       },
       "settings": Object {
