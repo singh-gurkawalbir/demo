@@ -125,6 +125,7 @@ export default {
     'quickbase',
     'pagerdutyevents',
     'sapsuccessfactors',
+    'zenefits',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
