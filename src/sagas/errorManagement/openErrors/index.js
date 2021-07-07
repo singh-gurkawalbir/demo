@@ -6,10 +6,11 @@ import { selectors } from '../../../reducers';
 import {getErrorMapWithTotal, getErrorCountDiffMap} from '../../../utils/errorManagement';
 
 export function* _notifyErrorListOnUpdate({ flowId, newFlowErrors }) {
-  const {data: prevFlowOpenErrorsMap} = yield select(selectors.errorMap, flowId);
+  const prevOpenErrorsDetails = yield select(selectors.openErrorsDetails, flowId);
 
-  if (!prevFlowOpenErrorsMap) return;
+  if (!prevOpenErrorsDetails) return;
 
+  const prevFlowOpenErrorsMap = yield select(selectors.openErrorsMap, flowId);
   const currFlowOpenErrorsMap = getErrorMapWithTotal(newFlowErrors?.flowErrors, '_expOrImpId').data;
   const resourceIdsErrorCountMap = getErrorCountDiffMap(prevFlowOpenErrorsMap, currFlowOpenErrorsMap);
   const resourceIds = Object.keys(resourceIdsErrorCountMap);

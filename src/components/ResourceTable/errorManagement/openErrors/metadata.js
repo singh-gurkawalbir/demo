@@ -8,6 +8,7 @@ import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
 import SelectSource from '../cells/SelectSource';
+import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
@@ -66,6 +67,16 @@ export default {
       },
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
       width: '15%',
+    },
+    {
+      key: 'selectClassification',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectClassification {...tableContext} />;
+      },
+      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
+      width: '10%',
     },
     {
       key: 'selectDate',
