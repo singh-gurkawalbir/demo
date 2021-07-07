@@ -1,6 +1,6 @@
 /* global expect, describe, test */
 import moment from 'moment';
-import { getFilteredErrors, getErrorMapWithTotal, getErrorCountDiffMap, getSourceOptions, getJobStatus, getJobDuration } from '.';
+import { getFilteredErrors, getErrorMapWithTotal, getOpenErrorDetailsMap, getErrorCountDiffMap, getSourceOptions, getJobStatus, getJobDuration } from '.';
 
 describe('getFilteredErrors util', () => {
   test('should return empty list when no errors or empty errors are passed', () => {
@@ -75,6 +75,37 @@ describe('getErrorMapWithTotal util', () => {
     };
 
     expect(getErrorMapWithTotal(flowErrors, '_flowId')).toEqual(expectedMap);
+  });
+});
+
+describe('getOpenErrorDetailsMap util', () => {
+  const lastErrorAt = new Date().toISOString();
+  const flowErrors = [
+    { _flowId: '5e44efa28015c94642722579', numError: 10, lastErrorAt },
+    { _flowId: '5f2c1b137cfd96633f3b327a', numError: 20 },
+    { _flowId: '5f2cfcecfd0b8e14fef26ede', numError: 30, lastErrorAt },
+    { _flowId: '5f36bf0d8792a02cbf848dac', numError: 40 },
+    { _flowId: '5f3cd5f49e86ec0ad770bdac', numError: 50 },
+  ];
+
+  test('should return empty map  when there is empty list or no resourceId', () => {
+    const expectedEmptyMap = {};
+
+    expect(getOpenErrorDetailsMap()).toEqual(expectedEmptyMap);
+    expect(getOpenErrorDetailsMap([], '_flowId')).toEqual(expectedEmptyMap);
+    expect(getOpenErrorDetailsMap(flowErrors)).toEqual(expectedEmptyMap);
+    expect(getOpenErrorDetailsMap(flowErrors, '_exportId')).toEqual(expectedEmptyMap);
+  });
+  test('should return map of resourceIds and respective error counts for data and total of all errors ', () => {
+    const expectedMap = {
+      '5e44efa28015c94642722579': { _flowId: '5e44efa28015c94642722579', numError: 10, lastErrorAt },
+      '5f2c1b137cfd96633f3b327a': { _flowId: '5f2c1b137cfd96633f3b327a', numError: 20 },
+      '5f2cfcecfd0b8e14fef26ede': { _flowId: '5f2cfcecfd0b8e14fef26ede', numError: 30, lastErrorAt },
+      '5f36bf0d8792a02cbf848dac': { _flowId: '5f36bf0d8792a02cbf848dac', numError: 40 },
+      '5f3cd5f49e86ec0ad770bdac': { _flowId: '5f3cd5f49e86ec0ad770bdac', numError: 50 },
+    };
+
+    expect(getOpenErrorDetailsMap(flowErrors, '_flowId')).toEqual(expectedMap);
   });
 });
 

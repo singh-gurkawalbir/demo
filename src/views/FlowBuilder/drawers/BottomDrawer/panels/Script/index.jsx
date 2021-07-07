@@ -15,8 +15,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function ScriptPanel({ flowId }) {
   const classes = useStyles();
+  const FILTER_KEY = 'flowScripts';
   const integrationId = useSelector(state => selectors.resource(state, 'flows', flowId)?._integrationId);
-  const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
+  const flowScripts = useSelectorMemo(selectors.mkGetSortedScriptsTiedToFlow, flowId, FILTER_KEY);
 
   const actionProps = useMemo(() => ({
     type: 'flowBuilder',
@@ -30,7 +31,7 @@ export default function ScriptPanel({ flowId }) {
       <LoadResources required resources="scripts">
         <CeligoTable
           data={flowScripts}
-          filterKey="scripts"
+          filterKey={FILTER_KEY}
           {...metadata}
           actionProps={actionProps}
         />

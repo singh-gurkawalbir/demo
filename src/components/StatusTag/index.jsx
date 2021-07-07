@@ -8,7 +8,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     fontSize: 12,
     borderRadius: 2,
-    paddingTop: 2,
     display: 'flex',
     fontFamily: 'source sans pro',
     color: theme.palette.background.paper,
@@ -16,6 +15,7 @@ const useStyles = makeStyles(theme => ({
     width: '80px !important',
     height: '20px !important',
     alignItems: 'center',
+    lineHeight: 1,
   },
   default: {
     background: theme.palette.secondary.lightest,

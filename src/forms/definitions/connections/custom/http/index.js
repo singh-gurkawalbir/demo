@@ -21,6 +21,7 @@ import okta from './okta';
 import myobaccountright from './myobaccountright';
 import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
+import azurestorageaccount from './azurestorageaccount';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
 import jira from './jira';
@@ -204,6 +205,16 @@ import googleads from './googleads';
 import fulfilment from './fulfilment';
 import walmartmexico from './walmartmexico';
 import walmartcanada from './walmartcanada';
+import paylocity from './paylocity';
+import looker from './looker';
+import pandadoc from './pandadoc';
+import freshservice from './freshservice';
+import omnisend from './omnisend';
+import pagerduty from './pagerduty';
+import quickbase from './quickbase';
+import pagerdutyevents from './pagerdutyevents';
+import orangehrm from './orangehrm';
+import sapsuccessfactors from './sapsuccessfactors';
 
 export default {
   channelape,
@@ -233,6 +244,7 @@ export default {
   propack,
   solidcommerce,
   azureactivedirectory,
+  azurestorageaccount,
   parseur,
   paypal,
   returnly,
@@ -412,4 +424,14 @@ export default {
   'fulfilment.com': fulfilment,
   walmartmexico,
   walmartcanada,
+  paylocity,
+  looker,
+  pandadoc,
+  freshservice,
+  omnisend,
+  pagerduty,
+  quickbase,
+  pagerdutyevents,
+  orangehrm,
+  sapsuccessfactors,
 };

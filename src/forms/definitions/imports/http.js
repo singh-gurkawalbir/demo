@@ -436,7 +436,9 @@ export default {
     'http.batchSize': { fieldId: 'http.batchSize' },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
+      helpKey: 'import.http.method',
       type: 'select',
+      required: true,
       label: 'HTTP method',
       options: [
         {
@@ -479,6 +481,7 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
+      helpKey: 'import.http.relativeURI',
       type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
@@ -555,8 +558,9 @@ export default {
     },
     'http.failPathCreate': {
       id: 'http.failPathCreate',
+      helpKey: 'import.http.response.failPath',
       type: 'text',
-      label: 'Fail path',
+      label: 'Path to error field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -601,8 +605,9 @@ export default {
     },
     'http.failValuesCreate': {
       id: 'http.failValuesCreate',
+      helpKey: 'import.http.response.failValues',
       type: 'text',
-      label: 'Fail values',
+      label: 'Error values',
       delimiter: ',',
       visibleWhenAll: [
         {
@@ -652,9 +657,9 @@ export default {
     },
     'http.failPathUpdate': {
       id: 'http.failPathUpdate',
+      helpKey: 'import.http.response.failPath',
       type: 'text',
-      label: 'Fail path',
-
+      label: 'Path to error field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -691,8 +696,9 @@ export default {
     },
     'http.failValuesUpdate': {
       id: 'http.failValuesUpdate',
+      helpKey: 'import.http.response.failValues',
       type: 'text',
-      label: 'Fail values',
+      label: 'Error values',
       delimiter: ',',
       visibleWhenAll: [
         {
@@ -734,9 +740,9 @@ export default {
     },
     'http.resourceIdPathCreate': {
       id: 'http.resourceIdPathCreate',
+      helpKey: 'import.http.response.resourceIdPath',
       type: 'text',
-      label: 'Response ID path',
-
+      label: 'Path to id field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -777,8 +783,9 @@ export default {
     },
     'http.resourcePathCreate': {
       id: 'http.resourcePathCreate',
+      helpKey: 'import.http.response.resourcePath',
       type: 'text',
-      label: 'Response path',
+      label: 'Path to records in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -819,9 +826,9 @@ export default {
     },
     'http.successPathCreate': {
       id: 'http.successPathCreate',
+      helpKey: 'import.http.response.successPath',
       type: 'text',
-      label: 'Success path',
-
+      label: 'Path to success field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -866,6 +873,7 @@ export default {
     },
     'http.successValuesCreate': {
       id: 'http.successValuesCreate',
+      helpKey: 'import.http.response.successValues',
       type: 'text',
       label: 'Success values',
       delimiter: ',',
@@ -919,7 +927,9 @@ export default {
     },
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
+      helpKey: 'import.http.method',
       type: 'select',
+      required: true,
       label: 'HTTP method',
       options: [
         {
@@ -958,11 +968,11 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
+      helpKey: 'import.http.relativeURI',
       type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1027,8 +1037,9 @@ export default {
     },
     'http.resourceIdPathUpdate': {
       id: 'http.resourceIdPathUpdate',
+      helpKey: 'import.http.response.resourceIdPath',
       type: 'text',
-      label: 'Response ID path',
+      label: 'Path to id field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1061,8 +1072,9 @@ export default {
     },
     'http.resourcePathUpdate': {
       id: 'http.resourcePathUpdate',
+      helpKey: 'import.http.response.resourcePath',
       type: 'text',
-      label: 'Response path',
+      label: 'Path to records in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1095,9 +1107,9 @@ export default {
     },
     'http.successPathUpdate': {
       id: 'http.successPathUpdate',
+      helpKey: 'import.http.response.successPath',
       type: 'text',
-      label: 'Success path',
-
+      label: 'Path to success field in HTTP response body',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1134,6 +1146,7 @@ export default {
     },
     'http.successValuesUpdate': {
       id: 'http.successValuesUpdate',
+      helpKey: 'import.http.response.successValues',
       type: 'text',
       label: 'Success values',
       delimiter: ',',
@@ -1317,7 +1330,7 @@ export default {
         collapsed: true,
         label: r => {
           if (r?.resourceType === 'transferFiles' || r?.blob) {
-            return 'How would you like the files transferred?';
+            return 'Where would you like the files transferred?';
           }
 
           return 'How would you like the records imported?';
@@ -1325,11 +1338,11 @@ export default {
         fields: [
           'http.method',
           'http.blobMethod',
+          'http.compositeType',
+          'http.relativeURI',
           'http.headers',
           'http.requestMediaType',
-          'http.compositeType',
           'http.lookups',
-          'http.relativeURI',
           'http.batchSize',
           'http.body',
           'uploadFile',
@@ -1382,41 +1395,47 @@ export default {
       {
         collapsed: true,
         label: 'Non-standard API response patterns',
-        fields: [
-          'http.response.resourcePath',
-          'http.response.resourceIdPath',
-          'http.response.errorPath',
-          'http.response.successPath',
-          'http.response.successValues',
-          'http.response.failPath',
-          'http.response.failValues',
-          'http.successMediaType',
-          'http.errorMediaType',
-        ],
-        type: 'collapse',
         containers: [
           {
-            collapsed: true,
-            label: 'Create new data',
-            fields: [
-              'http.resourcePathCreate',
-              'http.resourceIdPathCreate',
-              'http.successPathCreate',
-              'http.successValuesCreate',
-              'http.failPathCreate',
-              'http.failValuesCreate',
+            type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                label: 'Create new data',
+                fields: [
+                  'http.resourcePathCreate',
+                  'http.resourceIdPathCreate',
+                  'http.failPathCreate',
+                  'http.failValuesCreate',
+                  'http.successPathCreate',
+                  'http.successValuesCreate',
+                ],
+              },
+              {
+                collapsed: true,
+                label: 'Update existing data',
+                fields: [
+                  'http.resourcePathUpdate',
+                  'http.resourceIdPathUpdate',
+                  'http.failPathUpdate',
+                  'http.failValuesUpdate',
+                  'http.successPathUpdate',
+                  'http.successValuesUpdate',
+                ],
+              },
             ],
           },
           {
-            collapsed: true,
-            label: 'Update existing data',
             fields: [
-              'http.resourcePathUpdate',
-              'http.resourceIdPathUpdate',
-              'http.successPathUpdate',
-              'http.successValuesUpdate',
-              'http.failPathUpdate',
-              'http.failValuesUpdate',
+              'http.response.resourcePath',
+              'http.response.resourceIdPath',
+              'http.response.failPath',
+              'http.response.failValues',
+              'http.response.successPath',
+              'http.response.successValues',
+              'http.response.errorPath',
+              'http.successMediaType',
+              'http.errorMediaType',
             ],
           },
         ],

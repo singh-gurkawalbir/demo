@@ -15,6 +15,7 @@ export default {
     '/http/auth/token/refreshBody': '{"grant_type":"password","client_id":"{{{connection.http.unencrypted.clientId}}}","client_secret":"{{{connection.http.encrypted.clientSecret}}}","password": "{{{connection.http.encrypted.password}}}","scope": "oms","username": "{{{connection.http.unencrypted.username}}}"}',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'json',
+    '/http/auth/failStatusCode': '403',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

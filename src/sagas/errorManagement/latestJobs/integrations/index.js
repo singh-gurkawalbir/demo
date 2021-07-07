@@ -3,9 +3,9 @@ import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
 import { apiCallWithRetry } from '../../../index';
 
-function* requestLatestJobs({ integrationId }) {
+export function* requestLatestJobs({ integrationId }) {
   try {
-    const integrationLatestJobs = yield apiCallWithRetry({
+    const integrationLatestJobs = yield call(apiCallWithRetry, {
       path: `/integrations/${integrationId}/jobs/latest`,
       opts: {
         method: 'GET',
@@ -28,7 +28,7 @@ function* requestLatestJobs({ integrationId }) {
   }
 }
 
-function* pollForLatestJobs({ integrationId }) {
+export function* pollForLatestJobs({ integrationId }) {
   yield put(actions.errorManager.integrationLatestJobs.request({ integrationId }));
   while (true) {
     yield call(requestLatestJobs, { integrationId });
@@ -36,7 +36,7 @@ function* pollForLatestJobs({ integrationId }) {
   }
 }
 
-function* startPollingForLatestJobs({ integrationId }) {
+export function* startPollingForLatestJobs({ integrationId }) {
   const watcher = yield fork(pollForLatestJobs, { integrationId });
 
   yield take(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL);

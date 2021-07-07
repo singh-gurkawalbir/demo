@@ -46,6 +46,8 @@ export default function GenerateUrl(props) {
     provider: webHookProvider,
   } = props;
   const { webHookToken } = options;
+
+  const [touched, setTouched] = useState(false);
   const formContext = useFormContext(formKey);
   const { value: formValues, fields: fieldStates } = formContext;
 
@@ -81,15 +83,17 @@ export default function GenerateUrl(props) {
       );
     }
     setUrl(true);
+    setTouched(true);
   }, [dispatch, fieldStates, finalResourceId, flowId, formValues, onFieldChange]);
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
       const whURL = getWebhookUrl({ webHookProvider, webHookToken, webHookVerify }, finalResourceId);
 
-      onFieldChange(id, whURL);
+      onFieldChange(id, whURL, !touched);
       setUrl(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalResourceId, webHookProvider, webHookVerify, webHookToken, id, onFieldChange, url]);
 
   return (

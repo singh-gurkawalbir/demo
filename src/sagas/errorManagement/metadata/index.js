@@ -125,6 +125,10 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
     }
 
     yield put(actions.errorManager.retryStatus.received({ flowId, resourceId, status}));
+    // stop polling if there are no retry jobs in progress
+    if (!pendingRetryList || !pendingRetryList.length) {
+      yield put(actions.errorManager.retryStatus.stopPoll());
+    }
   } catch (e) {
     // errors
   }

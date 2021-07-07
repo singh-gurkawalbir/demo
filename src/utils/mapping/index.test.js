@@ -2558,13 +2558,7 @@ describe('UI mapping to field-list mapping utils', () => {
       },
     };
     const fieldListMapping = {
-      fields: [
-        {
-          generate: 'test test2',
-          useFirstRow: true,
-          hardCodedValue: null,
-        },
-      ],
+      fields: [],
       lists: [
         {
           generate: '',
@@ -2572,6 +2566,11 @@ describe('UI mapping to field-list mapping utils', () => {
             {
               extract: '*.[Base Price]',
               generate: 'test test',
+            },
+            {
+              generate: 'test test2',
+              useFirstRow: true,
+              hardCodedValue: null,
             },
           ],
         },
@@ -2595,6 +2594,187 @@ describe('UI mapping to field-list mapping utils', () => {
               generate: 'b1',
               extract: '*.[Display Name]',
               discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should consider handlebar mappings as list type for FTP import for grouped sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: 'Base Price',
+          generate: 'test test',
+        },
+        {
+          extract: 'Description',
+          generate: 'a[*].a1',
+        },
+        {
+          generate: 'a[*].a2',
+          extract: 'Type',
+          useFirstRow: true,
+        },
+        {
+          generate: 'b[*].b1',
+          extract: 'Display Name',
+          useFirstRow: false,
+          discardIfEmpty: true,
+        },
+        {
+          generate: 'test test2',
+          extract: '{{substring *.[some field] 0 100}}',
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: true,
+      importResource: {
+        _connectionId: '5f354102b2b91626b0e94d00',
+        distributed: false,
+        file: {
+          type: 'csv',
+          csv: {},
+        },
+        ftp: {},
+        adaptorType: 'FTPImport',
+      },
+      exportResource: {
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [],
+      lists: [
+        {
+          generate: '',
+          fields: [
+            {
+              extract: '*.[Base Price]',
+              generate: 'test test',
+            },
+            {
+              generate: 'test test2',
+              extract: '{{substring *.[some field] 0 100}}',
+            },
+          ],
+        },
+        {
+          generate: 'a',
+          fields: [
+            {
+              extract: '*.Description',
+              generate: 'a1',
+            },
+            {
+              generate: 'a2',
+              extract: 'Type',
+            },
+          ],
+        },
+        {
+          generate: 'b',
+          fields: [
+            {
+              generate: 'b1',
+              extract: '*.[Display Name]',
+              discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should maintain mappings order for FTP import for grouped sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          generate: 'header column1',
+          useFirstRow: true,
+          hardCodedValue: null,
+        },
+        {
+          extract: 'Base Price',
+          generate: 'List column1',
+        },
+        {
+          generate: 'List column2',
+          useFirstRow: true,
+          hardCodedValue: null,
+        },
+        {
+          generate: 'List column3',
+          extract: '{{substring *.[some field] 0 100}}',
+        },
+        {
+          generate: 'List column4',
+          extract: '{{substring [some field] 0 100}}',
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: true,
+      importResource: {
+        _connectionId: '5f354102b2b91626b0e94d00',
+        distributed: false,
+        file: {
+          type: 'csv',
+          csv: {},
+        },
+        ftp: {},
+        adaptorType: 'FTPImport',
+      },
+      exportResource: {
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [{
+        generate: 'header column1',
+        hardCodedValue: null,
+        useFirstRow: true,
+      }],
+      lists: [
+        {
+          generate: '',
+          fields: [
+            {
+              extract: '*.[Base Price]',
+              generate: 'List column1',
+            },
+            {
+              generate: 'List column2',
+              useFirstRow: true,
+              hardCodedValue: null,
+            },
+            {
+              generate: 'List column3',
+              extract: '{{substring *.[some field] 0 100}}',
+            },
+            {
+              generate: 'List column4',
+              extract: '{{substring [some field] 0 100}}',
             },
           ],
         },

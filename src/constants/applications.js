@@ -77,12 +77,6 @@ const connectors = [
     webhookOnly: true,
   },
   {
-    id: 'pagerduty',
-    type: 'webhook',
-    name: 'PagerDuty',
-    webhookOnly: true,
-  },
-  {
     id: 'mailparser-io',
     type: 'webhook',
     name: 'Mailparser',
@@ -231,6 +225,13 @@ const connectors = [
     assistant: 'recurly',
     webhook: true,
   },
+  {
+    id: 'pagerduty',
+    name: 'PagerDuty',
+    type: 'http',
+    assistant: 'pagerduty',
+    webhook: true,
+  },
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
 
   {
@@ -284,7 +285,10 @@ const connectors = [
   {id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba'},
 ];
 // These can be removed once metadata gets updated.
-const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
+const newConnections = [
+  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'azurestorageaccount', name: 'Azure Storage', type: 'http', assistant: 'azurestorageaccount'},
+];
 
 connectors.sort(stringCompare('name'));
 const getAssistants = () => {

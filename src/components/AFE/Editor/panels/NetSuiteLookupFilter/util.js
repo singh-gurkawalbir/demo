@@ -130,6 +130,9 @@ export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
     rule.data.rhs = {};
 
     if (expression[2]) {
+      if (typeof expression[2] !== 'string') {
+        expression[2] = expression[2].toString();
+      }
       if (expression[2].indexOf('{{') > -1) {
         field = expression[2]
           .replace('{{{', '')

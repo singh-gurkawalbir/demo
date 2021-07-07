@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { isEqual } from 'lodash';
 import actionTypes from '../../../../../actions/types';
 
 const defaultObject = {};
@@ -31,7 +32,9 @@ export default (state = {}, action) => {
           draft[integrationId] = {};
         }
         draft[integrationId].status = 'received';
-        draft[integrationId].data = latestJobs;
+        if (!isEqual(draft[integrationId].data, latestJobs)) {
+          draft[integrationId].data = latestJobs;
+        }
         break;
       }
 

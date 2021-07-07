@@ -53,9 +53,9 @@ export default function PageProcessors({integrationId, flowId}) {
   const pageProcessors = flow?.pageProcessors || [];
 
   const handleAddProcessor = useHandleAddProcessor();
-  const {
-    data: flowErrorsMap,
-  } = useSelector(state => selectors.errorMap(state, flowId));
+
+  const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
+
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );

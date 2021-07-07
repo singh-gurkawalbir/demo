@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 import {
   convertFromExport,
   PARAMETER_LOCATION,
@@ -13,7 +14,7 @@ export function hiddenFieldsMeta({ values }) {
   }));
 }
 
-export function basicFieldsMeta({ assistantConfig, assistantData }) {
+export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -31,7 +32,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
     },
   };
-  const { labels = {}, versions = [] } = assistantData;
+  const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
   return Object.keys(fieldDefinitions).map(fieldId => {
     if (fieldId === 'version') {
@@ -46,10 +47,34 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
 
+    fieldDefinitions[fieldId].helpKey = `${assistant}.export.${fieldId}`;
+
+    if (helpTexts[fieldId]) {
+      fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
+    }
+
     return fieldDefinitions[fieldId];
   });
 }
+export function headerFieldsMeta({operationDetails, headers = []}) {
+  const editableHeaders = Object.keys(operationDetails?.headers || {}).filter(key => !operationDetails.headers[key]);
+  const headersValue = uniqBy([...headers, ...editableHeaders.map(key => ({name: key, value: operationDetails.headers[key]}))], 'name');
 
+  if (editableHeaders.length) {
+    return [{
+      id: 'assistantMetadata.headers',
+      type: 'assistantHeaders',
+      keyName: 'name',
+      validate: true,
+      valueName: 'value',
+      label: 'Configure HTTP headers',
+      value: headersValue,
+      required: true,
+    }];
+  }
+
+  return [];
+}
 export function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters.map(pathParam => {
     const pathParamField = {
@@ -94,14 +119,14 @@ export function exportTypeFieldsMeta({
   supportedExportTypes = [],
   exportType,
 }) {
-  const exportTypeOptions = [{ value: 'all', label: 'All' }];
+  const exportTypeOptions = [{ value: 'all', label: 'All – always export all data' }];
 
   if (supportedExportTypes.includes('delta')) {
-    exportTypeOptions.push({ value: 'delta', label: 'Delta' });
+    exportTypeOptions.push({ value: 'delta', label: 'Delta – export only modified data' });
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test' });
+    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
   }
 
   if (exportTypeOptions.length <= 1) {
@@ -181,11 +206,14 @@ export function searchParameterFieldsMeta({
 export function fieldMeta({ resource, assistantData }) {
   const { assistant } = resource;
   let { adaptorType } = resource;
+  let headers;
 
   if (adaptorType === 'RESTExport') {
     adaptorType = 'rest';
+    headers = resource.rest?.headers || [];
   } else {
     adaptorType = 'http';
+    headers = resource.http?.headers || [];
   }
 
   const hiddenFields = hiddenFieldsMeta({
@@ -195,6 +223,7 @@ export function fieldMeta({ resource, assistantData }) {
   let pathParameterFields = [];
   let exportTypeFields = [];
   let searchParameterFields = [];
+  let headerFields = [];
 
   if (assistantData && assistantData.export) {
     const assistantConfig = convertFromExport({
@@ -204,6 +233,7 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
+      assistant,
       assistantConfig,
       assistantData: assistantData.export,
     });
@@ -211,6 +241,11 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      headerFields = headerFieldsMeta({
+        headers,
+        operationDetails,
+        assistantConfig,
+      });
       pathParameterFields = pathParameterFieldsMeta({
         operationParameters: operationDetails.pathParameters,
         values: assistantConfig.pathParams,
@@ -263,7 +298,7 @@ export function fieldMeta({ resource, assistantData }) {
     ...hiddenFields,
     ...basicFields,
     ...pathParameterFields,
-
+    ...headerFields,
     ...searchParameterFields,
   ];
   const exportTypeRelatedFields = [...exportTypeFields];

@@ -8,7 +8,7 @@ import { selectors } from '../../../reducers';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
-import { getStatus, getPages } from '../util';
+import { getStatus, getPages } from '../../../utils/jobdashboard';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
