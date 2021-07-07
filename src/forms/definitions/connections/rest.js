@@ -49,7 +49,6 @@ export default {
       newValues['/rest/refreshTokenMethod'] = undefined;
       newValues['/rest/refreshTokenBody'] = undefined;
       newValues['/rest/refreshTokenURI'] = undefined;
-      // newValues['/rest/auth/token/refreshMediaType'] = undefined;
     }
 
     if (newValues['/rest/authType'] !== 'token') {
@@ -102,6 +101,8 @@ export default {
     },
     'rest.encrypted': {
       fieldId: 'rest.encrypted',
+      label: 'Custom encrypted fields',
+      helpKey: 'connection.http.encrypted',
       visibleWhenAll: [
         { field: 'rest.authType', is: ['custom'] },
         { field: 'rest.authType', isNot: [''] },
@@ -110,6 +111,8 @@ export default {
     },
     'rest.unencrypted': {
       fieldId: 'rest.unencrypted',
+      label: 'Custom unencrypted fields',
+      helpKey: 'connection.http.unencrypted',
       visibleWhenAll: [
         { field: 'rest.authType', is: ['custom'] },
         { field: 'rest.authType', isNot: [''] },
@@ -125,6 +128,14 @@ export default {
     restToken: {
       formId: 'restToken',
       visibleWhenAll: [{ field: 'rest.authType', is: ['token'] }],
+    },
+    restRefreshToken: {
+      formId: 'restRefreshToken',
+      visibleWhenAll: [
+        { field: 'rest.authType', is: ['token'] },
+        { field: 'rest.tokenLocation', isNot: [''] },
+        { field: 'configureTokenRefresh', is: [true] },
+      ],
     },
     restCookie: {
       formId: 'restCookie',
@@ -160,21 +171,51 @@ export default {
         collapsed: true,
         label: 'Application details',
         fields: [
-          'rest.headers',
           'rest.baseURI',
+          'rest.headers',
           'rest.mediaType',
         ],
       },
       {
         collapsed: true,
-        label: 'Configure auth',
-        fields: [
-          'rest.authType',
-          'rest.encrypted',
-          'rest.unencrypted',
-          'restBasic',
-          'restToken',
-          'restCookie',
+        label: 'Configure authentication',
+        fields: ['rest.authType'],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Configure basic auth',
+            fields: [
+              'restBasic',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure cookie auth',
+            fields: [
+              'restCookie',
+            ],
+          },
+          {
+            collapsed: false,
+            label: 'Configure custom auth',
+            fields: [
+              'rest.encrypted',
+              'rest.unencrypted',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure token auth',
+            fields: [
+              'restToken',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure refresh token',
+            fields: ['restRefreshToken'],
+          },
         ],
       },
       {
@@ -182,8 +223,8 @@ export default {
         label: 'How to test this connection?',
         fields: [
           'rest.pingMethod',
-          'rest.pingBody',
           'rest.pingRelativeURI',
+          'rest.pingBody',
           'rest.pingSuccessPath',
           'rest.pingSuccessValues',
         ],

@@ -10,14 +10,14 @@ export default function DynaSelectRequestMediaType(props) {
   const inputMode = formValues['/inputMode'];
 
   const options = inputMode === 'blob' ? [
-    { label: 'Multipart/form-data', value: 'form-data' },
+    { label: 'Multipart / form-data', value: 'form-data' },
     { label: 'JSON', value: 'json' },
   ] : [
     { label: 'XML', value: 'xml' },
     { label: 'JSON', value: 'json' },
     { label: 'CSV', value: 'csv' },
-    { label: 'URL Encoded', value: 'urlencoded' },
-    { label: 'Multipart/form-data', value: 'form-data' },
+    { label: 'URL encoded', value: 'urlencoded' },
+    { label: 'Multipart / form-data', value: 'form-data' },
   ];
 
   return <DynaSelect {...props} options={[{ items: options}]} />;
