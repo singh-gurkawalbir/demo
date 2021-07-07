@@ -8,7 +8,11 @@ import Status from '../../../components/Buttons/Status';
 const useStyles = makeStyles(theme => ({
   statusAppBlock: {
     marginTop: theme.spacing(1),
-    fontSize: 14,
+    display: 'flex',
+    justifyContent: 'center',
+    '& > button': {
+      fontSize: 14,
+    },
   },
 }));
 
@@ -39,7 +43,12 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
   }
 
   return (
-    <Status fullWidth className={classes.statusAppBlock} onClick={handleStatus} variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}</Status>
+    <div className={classes.statusAppBlock}>
+      <Status
+        onClick={handleStatus}
+        variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}
+      </Status>
+    </div>
   );
 }
 
