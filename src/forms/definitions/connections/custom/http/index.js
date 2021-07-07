@@ -21,6 +21,7 @@ import okta from './okta';
 import myobaccountright from './myobaccountright';
 import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
+import azurestorageaccount from './azurestorageaccount';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
 import jira from './jira';
@@ -243,6 +244,7 @@ export default {
   propack,
   solidcommerce,
   azureactivedirectory,
+  azurestorageaccount,
   parseur,
   paypal,
   returnly,

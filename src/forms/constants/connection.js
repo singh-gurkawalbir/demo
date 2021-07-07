@@ -128,6 +128,7 @@ export default {
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
+    'azurestorageaccount',
     'squareup',
     'shipbob',
     'ebay',
