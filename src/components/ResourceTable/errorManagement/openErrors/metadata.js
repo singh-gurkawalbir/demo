@@ -36,7 +36,7 @@ export default {
     {
       key: 'message',
       heading: 'Message',
-      width: '35%',
+      width: '40%',
       Value: ({rowData: r}) => {
         const {flowId, resourceId} = useGetTableContext();
 
@@ -85,7 +85,7 @@ export default {
 
         return <SelectDate {...tableContext} />;
       },
-      width: '10%',
+      width: '15%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],

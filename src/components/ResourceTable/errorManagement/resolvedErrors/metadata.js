@@ -20,6 +20,7 @@ export default {
   useColumns: () => [
     {
       key: 'selectAll',
+      width: 24,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -35,7 +36,7 @@ export default {
     {
       key: 'message',
       heading: 'Message',
-      width: '18%',
+      width: '25%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.message} rawHtmlOptions={options} containsHtml />,
     },
     {
@@ -71,13 +72,13 @@ export default {
 
         return <SelectDate {...tableContext} />;
       },
-      width: '10%',
+      width: '12%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
       key: 'resolvedBy',
       heading: 'Resolved by',
-      width: '10%',
+      width: '12%',
       Value: ({rowData: r}) => {
         const {flowId} = useGetTableContext();
 
@@ -96,7 +97,7 @@ export default {
             filterBy="resolvedAt" />
         );
       },
-      width: '10%',
+      width: '12%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
