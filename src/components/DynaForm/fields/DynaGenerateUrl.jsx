@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { IconButton} from '@material-ui/core';
+import { IconButton, Tooltip} from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   dynaGenerateTokenbtn: {
-    marginTop: theme.spacing(3.5),
+    marginTop: 26,
     marginLeft: theme.spacing(1),
   },
 }));
@@ -111,15 +111,19 @@ export default function GenerateUrl(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <IconButton aria-label="Copy to clipboard" size="small" color="inherit">
-                <CopyIcon />
-              </IconButton>
+              <Tooltip data-public title="Copy to clipboard" placement="bottom" aria-label="Copy to clipboard">
+                <IconButton aria-label="Copy to clipboard" size="small" color="inherit">
+                  <CopyIcon />
+                </IconButton>
+              </Tooltip>
             </CopyToClipboard>
           )}
           {!value && (
-            <IconButton aria-label={buttonLabel} onClick={handleGenerateUrl} size="small" color="inherit">
-              <AddIcon />
-            </IconButton>
+            <Tooltip data-public title={buttonLabel} placement="bottom" aria-label={buttonLabel}>
+              <IconButton aria-label={buttonLabel} onClick={handleGenerateUrl} size="small" color="inherit">
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
           )}
         </div>
       </div>

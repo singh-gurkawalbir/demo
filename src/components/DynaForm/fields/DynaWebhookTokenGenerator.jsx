@@ -6,7 +6,7 @@ import { deepClone } from 'fast-json-patch';
 import {v4} from 'uuid';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   dynaWebhookTokenbtn: {
-    marginTop: theme.spacing(3.5),
+    marginTop: 26,
     marginLeft: theme.spacing(1),
   },
   tokenWarning: {
@@ -131,14 +131,18 @@ export default function DynaWebhookTokenGenerator(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <IconButton aria-label="Copy to clipboard" size="small" color="inherit">
-                <CopyIcon />
-              </IconButton>
+              <Tooltip data-public title="Copy to clipboard" placement="bottom" aria-label="Copy to clipboard">
+                <IconButton aria-label="Copy to clipboard" size="small" color="inherit">
+                  <CopyIcon />
+                </IconButton>
+              </Tooltip>
             </CopyToClipboard>
           ) : (
-            <IconButton aria-label={buttonLabel} onClick={handleGenerateClick} size="small" color="inherit">
-              <AddIcon />
-            </IconButton>
+            <Tooltip data-public title={buttonLabel} placement="bottom" aria-label={buttonLabel}>
+              <IconButton aria-label={buttonLabel} onClick={handleGenerateClick} size="small" color="inherit">
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
           )}
         </div>
       </div>
