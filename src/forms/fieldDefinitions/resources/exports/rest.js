@@ -252,6 +252,7 @@ export default {
   },
   'rest.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     required: true,
     label: 'Relative URI',
     validateInComponent: true,
@@ -338,6 +339,7 @@ export default {
   // #endregion transform
   'rest.once.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     label: 'Relative URI to update records',
     required: true,
     connectionId: r => r && r._connectionId,
