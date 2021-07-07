@@ -76,7 +76,6 @@ export default function DynaSortOrderSelect(props) {
           onFieldChange={onFieldChangeFn} />
         <DynaSelect
           label="Order"
-          skipDefault
           onFieldChange={onOrderChange}
           value={fieldOrder}
           options={orderOptions} />
