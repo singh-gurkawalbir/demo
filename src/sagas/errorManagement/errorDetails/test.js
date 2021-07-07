@@ -274,6 +274,7 @@ describe('errorDetails sagas', () => {
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
+        .not.put(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId }))
         .not.put(actions.errorManager.flowErrorDetails.retryReceived({
           flowId,
           resourceId,
@@ -350,6 +351,48 @@ describe('errorDetails sagas', () => {
           resourceId,
           errorIds,
         }))
+        .run();
+    });
+    test('should dispatch requestPoll action to start polling for retry status if there are retryIds requested for retry succesfully', () => {
+      const retryIds = ['id1', 'id2', 'id3'];
+      const response = { _jobId: 'job-123' };
+      const errors = [
+        { errorId: 'error1', message: 'application error', retryDataKey: 'id1', traceKey: 't1' },
+        { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
+        { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3', traceKey: 't2' },
+      ];
+
+      return expectSaga(retryErrors, { flowId, resourceId, retryIds })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+          [select(selectors.allResourceErrorDetails, {
+            flowId,
+            resourceId,
+            isResolved: false,
+          }), { errors }],
+        ])
+        .put(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId }))
+        .run();
+    });
+    test('should not dispatch requestPoll action if there are no retryIds requested for retry', () => {
+      const retryIds = [];
+      const response = { _jobId: 'job-123' };
+      const errors = [
+        { errorId: 'error1', message: 'application error', retryDataKey: 'id1', traceKey: 't1' },
+        { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
+        { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3', traceKey: 't2' },
+      ];
+
+      return expectSaga(retryErrors, { flowId, resourceId, retryIds })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+          [select(selectors.allResourceErrorDetails, {
+            flowId,
+            resourceId,
+            isResolved: false,
+          }), { errors }],
+        ])
+        .not.put(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId }))
         .run();
     });
     test('should retry all the filtered errors using resourceFilteredErrorDetails selector when retryAll is true ', () => {
