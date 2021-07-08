@@ -125,6 +125,7 @@ export default {
     'quickbase',
     'pagerdutyevents',
     'sapsuccessfactors',
+    'braintree',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
