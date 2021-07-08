@@ -1,7 +1,7 @@
 import {invert} from 'lodash';
 
-export const emptyList = [];
-export const emptyObject = {};
+export const emptyList = Object.freeze([]);
+export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
@@ -685,3 +685,18 @@ export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
 export const SENSITIVE_DATA = ['token', 'password'];
+
+export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
+  'accesstokens',
+  'agents',
+  'iClients',
+  'scripts',
+  'stacks',
+  'templates',
+  'published',
+  'transfers',
+  'apis',
+  'connectors',
+]);
+
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);

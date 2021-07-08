@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -17,6 +17,8 @@ import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
+import StatusCircle from '../../../../components/StatusCircle';
+import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -111,17 +113,27 @@ const metadata = {
         }
 
         return (
-          <div className={classes.button} onClick={handleErrorClick}>{count > 9999 ? '9999+' : count} errors</div >
+          <div className={classes.button} onClick={handleErrorClick}>
+            <StatusCircle variant="error" size="mini" />
+            {count > 9999 ? '9999+' : count} errors
+          </div >
         );
       },
+    },
+    {
+      key: 'lastErrorAt',
+      heading: 'Last open error',
+      Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
+      orderBy: 'lastErrorAt',
     },
   ],
 };
 
+const FILTER_KEY = 'errorsList';
+
 const ErrorsList = ({integrationId, childId}) => {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-
   const { flowId } = match.params;
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -131,21 +143,8 @@ const ErrorsList = ({integrationId, childId}) => {
     'flows',
     flowId
   )?.merged || emptyObject;
-  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
-  const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
-
-  const resources = useMemo(() => flowResources
-    .filter(r => r._id !== flowId)
-    .map(r => ({
-      id: r._id,
-      name: r.name || r._id,
-      count: errorMap && errorMap[r._id],
-      flowId,
-      type: r.type,
-      isLookup: r.isLookup,
-      childId,
-      integrationId,
-    })), [flowResources, flowId, errorMap, integrationId, childId]);
+  const resources = useSelectorMemo(selectors.mkFlowStepsErrorInfo, flowId, integrationId, childId, FILTER_KEY);
+  const status = useSelector(state => selectors.openErrorsStatus(state, flowId));
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -169,7 +168,7 @@ const ErrorsList = ({integrationId, childId}) => {
   }
 
   return (
-    <CeligoTable data={resources} {...metadata} />
+    <CeligoTable data={resources} filterKey={FILTER_KEY} {...metadata} />
   );
 };
 

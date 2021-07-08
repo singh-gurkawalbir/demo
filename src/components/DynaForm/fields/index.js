@@ -79,6 +79,7 @@ import DynaCsvGenerate_afe from './DynaCsvGenerate_afe';
 import DynaFileKeyColumn_afe from './DynaFileKeyColumn_afe';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
+import DynaTextWithConnectionContext from './text/DynaTextWithConnectionContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './DynaNSSearchCriteria';
@@ -129,7 +130,9 @@ import DynaTrialLicense from './DynaTrialLicense';
 import DynaLicenseExpires from './DynaLicenseExpires';
 import DynaLicenseEditor from './DynaLicenseEditor';
 import DynaSsoOrgId from './DynaSsoOrgId';
+import DynaSelectWithValidations from './select/DynaSelectWithValidations';
 import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
+import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -236,6 +239,7 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   queryradiogroup: DynaQueryRadioGroup,
   textwithflowcontext: DynaTextWithFlowContext,
+  textwithconnectioncontext: DynaTextWithConnectionContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   crongenerator: DynaCronGenerator,
   nssearchcriteria: DynaNSSearchCriteria,
@@ -270,4 +274,7 @@ export default {
   licenseexpires: DynaLicenseExpires,
   licenseeditor: DynaLicenseEditor,
   ssoorgid: DynaSsoOrgId,
+  selectwithvalidations: DynaSelectWithValidations,
+  salesforcesortorderselect: Salesforce.DynaSortOrderSelect,
+  nsauthtype: DynaNetsuiteAuthType,
 };

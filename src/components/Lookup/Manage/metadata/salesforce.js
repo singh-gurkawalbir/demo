@@ -91,6 +91,7 @@ export default {
           keyName: 'export',
           keyLabel: 'Export field value',
           valueName: 'import',
+          required: true,
           valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&

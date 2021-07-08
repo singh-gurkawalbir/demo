@@ -50,7 +50,9 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID} from '../utils/constants';
+  MISCELLANEOUS_SECTION_ID,
+  NO_ENVIRONMENT_RESOURCE_TYPES,
+  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -585,6 +587,17 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
 
   if (!filterByEnvironment) { return resources; }
 
+  if (resourceType === 'recycleBinTTL') {
+    // NO_ENVIRONMENT_MODELS_FOR_BIN are common for sandbox and production,
+    // so should be visible at both places
+
+    return resources.filter(r => {
+      if (NO_ENVIRONMENT_MODELS_FOR_BIN.includes(r.model)) return true;
+
+      return !!r.doc?.sandbox === sandbox;
+    });
+  }
+
   if (resourceType !== 'eventreports') {
     return resources.filter(r => !!r.sandbox === sandbox);
   }
@@ -632,23 +645,10 @@ selectors.makeResourceListSelector = () =>
 
       let {sandbox} = options;
 
+      // NO_ENVIRONMENT_RESOURCE_TYPES resources are common for both production & sandbox environments.
       if (
         !ignoreEnvironmentFilter &&
-        ![
-          'accesstokens',
-          'agents',
-          'iClients',
-          'scripts',
-          'stacks',
-          'templates',
-          'published',
-          'transfers',
-          'apis',
-          'connectors',
-        ].includes(
-          /* These resources are common for both production & sandbox environments. */
-          type
-        )
+        !NO_ENVIRONMENT_RESOURCE_TYPES.includes(type)
       ) {
         // eslint-disable-next-line no-param-reassign
         sandbox = currentEnvironment === 'sandbox';
@@ -1750,6 +1750,42 @@ selectors.mkFlowResources = () => createSelector(
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
 
+selectors.mkFlowStepsErrorInfo = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    flowResources,
+    selectors.openErrorsDetails,
+    (state, _1, _2, _3, filterKey) => selectors.filter(state, filterKey),
+    (_, flowId) => flowId,
+    (_1, _2, integrationId) => integrationId,
+    (_1, _2, _3, childId) => childId,
+    (flowResources, openErrorsDetails, errorStepsFilter, flowId, integrationId, childId) => {
+      const errorSteps = flowResources
+        .filter(r => r._id !== flowId)
+        .map(r => ({
+          id: r._id,
+          name: r.name || r._id,
+          count: openErrorsDetails?.[r._id]?.numError,
+          lastErrorAt: openErrorsDetails?.[r._id]?.lastErrorAt,
+          flowId,
+          type: r.type,
+          isLookup: r.isLookup,
+          childId,
+          integrationId,
+        }));
+
+      if (errorStepsFilter?.sort) {
+        const { order, orderBy } = errorStepsFilter.sort;
+
+        return errorSteps.sort(stringCompare(orderBy, order === 'desc'));
+      }
+
+      return errorSteps;
+    }
+  );
+};
+
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
 // also the new selector (that fetches metadata about a token) should be for a
@@ -1916,7 +1952,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (_1, _2, childId) => childId,
   (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
   (_1, _2, _3, _4, options) => options,
-  selectors.errorMap,
+  selectors.openErrorsMap,
   selectors.currentEnvironment,
   (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
     integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
@@ -1930,7 +1966,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
       return childIntegrationIds.includes(f._integrationId);
     });
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+    integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0}));
 
     // this transformation adds properties to make the the flow lastExecutedAt sortable
     integrationFlows = integrationFlows.map(flow => {
@@ -2496,9 +2532,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
-    selectors.errorMap,
+    selectors.openErrorsMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, errorMap = emptyObject, options = emptyObject) => {
+    (integration, flows = [], integrationId, section, childId, errorMap, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
@@ -2552,7 +2588,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map(f => ({...f, errors: (errorMap && errorMap.data && errorMap.data[f._id]) || 0}))
+        ).map(f => ({...f, errors: errorMap?.[f._id] || 0}))
         .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
     }
   );
@@ -4920,7 +4956,7 @@ selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsI
  */
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
@@ -4970,7 +5006,7 @@ selectors.integrationErrorsPerChild = (state, integrationId) => {
  */
 selectors.integrationErrorsPerFlowGroup = createSelector(
   selectors.integrationEnabledFlowIds,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
@@ -5741,3 +5777,36 @@ selectors.isUserAllowedOptionalSSOSignIn = state => {
   }
 };
 // #endregion sso selectors
+
+selectors.httpPagingValidationError = (state, formKey, pagingMethodsToValidate, pagingFieldsToValidate) => {
+  const formFields = selectors.formState(state, formKey)?.fields || {};
+  const pagingMethod = formFields['http.paging.method']?.value;
+
+  // if a particular paging method is selected
+  // do validations against pagingFieldsToValidate to verify if any field contains the setup
+  if (pagingMethodsToValidate && pagingMethod && Object.keys(pagingMethodsToValidate).includes(pagingMethod)) {
+    const regex = pagingMethodsToValidate[pagingMethod];
+
+    const validated = pagingFieldsToValidate?.some(f => regex.test(formFields[f]?.value));
+
+    if (!validated) {
+      return `The paging method selected must use {{export.http.paging.${pagingMethod}}} in either the relative URI or HTTP request body.`;
+    }
+  }
+};
+
+selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => {
+  const formFields = selectors.formState(state, formKey)?.fields || {};
+  const exportType = formFields.type?.value;
+  const regex = /.*{{.*lastExportDateTime.*}}/;
+
+  // if delta export type
+  // do validations against deltaFieldsToValidate to verify if any field contains the setup
+  if (exportType === 'delta' && deltaFieldsToValidate) {
+    const validated = deltaFieldsToValidate.some(f => regex.test(formFields[f]?.value));
+
+    if (!validated) {
+      return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
+    }
+  }
+};
