@@ -585,6 +585,18 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
 
   if (!filterByEnvironment) { return resources; }
 
+  if (resourceType === 'recycleBinTTL') {
+    // these resources can be returned in recycle bin and
+    // are common for sandbox and production, so should be visible at both places
+    const noEnvironmentModels = ['Agent', 'Script', 'Stack'];
+
+    return resources.filter(r => {
+      if (noEnvironmentModels.includes(r.model)) return true;
+
+      return !!r.doc?.sandbox === sandbox;
+    });
+  }
+
   if (resourceType !== 'eventreports') {
     return resources.filter(r => !!r.sandbox === sandbox);
   }
