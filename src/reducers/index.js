@@ -50,7 +50,9 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID} from '../utils/constants';
+  MISCELLANEOUS_SECTION_ID,
+  NO_ENVIRONMENT_RESOURCE_TYPES,
+  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -585,6 +587,17 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
 
   if (!filterByEnvironment) { return resources; }
 
+  if (resourceType === 'recycleBinTTL') {
+    // NO_ENVIRONMENT_MODELS_FOR_BIN are common for sandbox and production,
+    // so should be visible at both places
+
+    return resources.filter(r => {
+      if (NO_ENVIRONMENT_MODELS_FOR_BIN.includes(r.model)) return true;
+
+      return !!r.doc?.sandbox === sandbox;
+    });
+  }
+
   if (resourceType !== 'eventreports') {
     return resources.filter(r => !!r.sandbox === sandbox);
   }
@@ -632,23 +645,10 @@ selectors.makeResourceListSelector = () =>
 
       let {sandbox} = options;
 
+      // NO_ENVIRONMENT_RESOURCE_TYPES resources are common for both production & sandbox environments.
       if (
         !ignoreEnvironmentFilter &&
-        ![
-          'accesstokens',
-          'agents',
-          'iClients',
-          'scripts',
-          'stacks',
-          'templates',
-          'published',
-          'transfers',
-          'apis',
-          'connectors',
-        ].includes(
-          /* These resources are common for both production & sandbox environments. */
-          type
-        )
+        !NO_ENVIRONMENT_RESOURCE_TYPES.includes(type)
       ) {
         // eslint-disable-next-line no-param-reassign
         sandbox = currentEnvironment === 'sandbox';
