@@ -993,7 +993,6 @@ export function populateRestSchema(exportDoc = {}) {
       } else if (restSubDoc.pagingMethod === 'linkheader' && http.paging.linkHeaderRelation) {
         restSubDoc.linkHeaderRelation = http.paging.linkHeaderRelation;
       } else if (restSubDoc.pagingMethod === 'postbody') {
-        console.log('i should be here');
         restSubDoc.pagingPostBody = http.paging.body;
       }
     }
