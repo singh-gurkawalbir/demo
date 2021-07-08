@@ -685,3 +685,18 @@ export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
 export const SENSITIVE_DATA = ['token', 'password'];
+
+export const noEnvironmentResourceTypes = Object.freeze([
+  'accesstokens',
+  'agents',
+  'iClients',
+  'scripts',
+  'stacks',
+  'templates',
+  'published',
+  'transfers',
+  'apis',
+  'connectors',
+]);
+
+export const noEnvironmentModelsForRecycleBin = Object.freeze(['Agent', 'Script', 'Stack']);
