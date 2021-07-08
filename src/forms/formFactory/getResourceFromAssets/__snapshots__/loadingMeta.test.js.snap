@@ -6270,6 +6270,7 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "required": true,
       },
       "http.response.blobFormat": Object {
         "fieldId": "http.response.blobFormat",

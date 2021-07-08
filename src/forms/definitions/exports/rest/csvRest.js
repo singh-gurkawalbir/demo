@@ -10,7 +10,10 @@ export default {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
 
+    retValues['/useTechAdaptorForm'] = true;
+    retValues['/adaptorType'] = 'HTTPExport';
     delete retValues['/outputMode'];
+    delete retValues['/rest'];
 
     return {
       ...retValues,
@@ -51,7 +54,7 @@ export default {
       fieldId: 'http.blobMethod',
     },
     'http.headers': { fieldId: 'http.headers' },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.relativeURI': { fieldId: 'http.relativeURI', required: true },
     'http.response.resourcePath': {
       fieldId: 'http.response.resourcePath',
       visibleWhen: [
