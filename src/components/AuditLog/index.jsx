@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
   },
   tableContainer: {
     height: 'calc(100% - 69px)',
-    overflow: 'visible',
   },
 }));
 
