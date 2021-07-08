@@ -16,7 +16,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'App Key',
+      label: 'App key',
       required: true,
       helpKey: 'zenefits.connection.http.auth.token.token',
     },
