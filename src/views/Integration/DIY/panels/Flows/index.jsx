@@ -231,11 +231,12 @@ const Title = ({flows, integrationId}) => {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const yetToLoadOpenErrors = useSelector(state => {
-    const {status, data} = selectors.errorMap(state, integrationId) || {};
+    const status = selectors.openErrorsStatus(state, integrationId);
+    const data = selectors.openErrorsDetails(state, integrationId);
 
     return !status || (status === 'requested' && !data);
   });
-  const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data) || {};
+  const integrationErrorsMap = useSelector(state => selectors.openErrorsMap(state, integrationId));
   const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
 
   const totalCount = flows.reduce((count, flow) => {
@@ -297,7 +298,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   },
   shallowEqual);
-  const flowErrorCountStatus = useSelector(state => selectors.errorMap(state, integrationId)?.status);
+  const flowErrorCountStatus = useSelector(state => selectors.openErrorsStatus(state, integrationId));
 
   const handleClose = useCallback(() => {
     setShowDialog();

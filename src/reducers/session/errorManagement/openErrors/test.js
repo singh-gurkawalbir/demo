@@ -7,33 +7,61 @@ const defaultState = {};
 
 const flowId = 'flow-1234';
 const integrationId = 'integration-1234';
+const lastErrorAt = new Date().toISOString();
 const filledState = {
   [flowId]: {
     status: 'received',
     data: {
-      e1: 11,
-      e2: 20,
-      i1: 4,
+      e1: {
+        _expOrImpId: 'e1',
+        numError: 10,
+        lastErrorAt,
+      },
+      e2: {
+        _expOrImpId: 'e2',
+        numError: 20,
+      },
+      i1: {
+        _expOrImpId: 'i1',
+        numError: 4,
+        lastErrorAt,
+      },
     },
-    total: 35,
   },
   'flow-5678': {
     status: 'received',
     data: {
-      e3: 10,
-      e4: 30,
-      i2: 7,
+      e3: {
+        _expOrImpId: 'e3',
+        numError: 10,
+        lastErrorAt,
+      },
+      e4: {
+        _expOrImpId: 'e4',
+        numError: 30,
+      },
+      i2: {
+        _expOrImpId: 'i2',
+        numError: 7,
+      },
     },
-    total: 47,
   },
   [integrationId]: {
     status: 'received',
     data: {
-      f1: 100,
-      f2: 10,
-      f3: 20,
+      f1: {
+        _flowId: 'f1',
+        numError: 100,
+      },
+      f2: {
+        _flowId: 'f2',
+        numError: 10,
+      },
+      f3: {
+        _flowId: 'f3',
+        numError: 20,
+      },
     },
-    total: 130,
   },
   'integrationId-5678': {
     status: 'requested',
@@ -68,29 +96,56 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
         [flowId]: {
           status: 'requested',
           data: {
-            e1: 11,
-            e2: 20,
-            i1: 4,
+            e1: {
+              _expOrImpId: 'e1',
+              numError: 10,
+              lastErrorAt,
+            },
+            e2: {
+              _expOrImpId: 'e2',
+              numError: 20,
+            },
+            i1: {
+              _expOrImpId: 'i1',
+              numError: 4,
+              lastErrorAt,
+            },
           },
-          total: 35,
         },
         'flow-5678': {
           status: 'received',
           data: {
-            e3: 10,
-            e4: 30,
-            i2: 7,
+            e3: {
+              _expOrImpId: 'e3',
+              numError: 10,
+              lastErrorAt,
+            },
+            e4: {
+              _expOrImpId: 'e4',
+              numError: 30,
+            },
+            i2: {
+              _expOrImpId: 'i2',
+              numError: 7,
+            },
           },
-          total: 47,
         },
         [integrationId]: {
           status: 'received',
           data: {
-            f1: 100,
-            f2: 10,
-            f3: 20,
+            f1: {
+              _flowId: 'f1',
+              numError: 100,
+            },
+            f2: {
+              _flowId: 'f2',
+              numError: 10,
+            },
+            f3: {
+              _flowId: 'f3',
+              numError: 20,
+            },
           },
-          total: 130,
         },
         'integrationId-5678': {
           status: 'requested',
@@ -127,10 +182,15 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
         [flowId]: {
           status: 'received',
           data: {
-            e1: 10,
-            e2: 20,
+            e1: {
+              _expOrImpId: 'e1',
+              numError: 10,
+            },
+            e2: {
+              _expOrImpId: 'e2',
+              numError: 20,
+            },
           },
-          total: 30,
         },
       };
 
@@ -188,45 +248,105 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
         [integrationId]: {
           status: 'received',
           data: {
-            f1: 10,
-            f2: 20,
+            f1: {
+              _flowId: 'f1',
+              numError: 10,
+            },
+            f2: {
+              _flowId: 'f2',
+              numError: 20,
+            },
           },
-          total: 30,
         },
       };
 
       expect(currState).toEqual(expectedState);
     });
+    test('should retain the reference of previous error data if the new error data is same as the previous one', () => {
+      const reqState = reducer(filledState, actions.errorManager.integrationErrors.request({ integrationId }));
+      const currState = reducer(reqState, actions.errorManager.integrationErrors.received({ integrationId,
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 100,
+          },
+          {
+            _flowId: 'f2',
+            numError: 10,
+          },
+          {
+            _flowId: 'f3',
+            numError: 20,
+          },
+        ],
+      }));
+
+      expect(currState[integrationId].data).toBe(filledState[integrationId].data);
+    });
   });
 });
 
-describe('errorMap selector', () => {
-  test('should return default object incase of invalid state or invalid resourceId passed', () => {
-    expect(selectors.errorMap()).toEqual(defaultState);
-    expect(selectors.errorMap(defaultState)).toEqual(defaultState);
-    expect(selectors.errorMap(filledState, 'INVALID_RESOURCE_ID')).toEqual(defaultState);
+describe('openErrorsStatus selector', () => {
+  test('should return undefined incase of invalid state or invalid resourceId passed', () => {
+    expect(selectors.openErrorsStatus()).toBeUndefined();
+    expect(selectors.openErrorsStatus(defaultState)).toBeUndefined();
+    expect(selectors.openErrorsStatus(filledState, 'INVALID_RESOURCE_ID')).toBeUndefined();
   });
-  test('should return proper error info for the passed resourceId', () => {
-    const expectedFlowState = {
-      status: 'received',
-      data: {
-        e1: 11,
-        e2: 20,
-        i1: 4,
+  test('should return proper status for the passed resourceId', () => {
+    const requestedState = {
+      [flowId]: {
+        status: 'requested',
       },
-      total: 35,
-    };
-    const expectedIntegrationState = {
-      status: 'received',
-      data: {
-        f1: 100,
-        f2: 10,
-        f3: 20,
-      },
-      total: 130,
     };
 
-    expect(selectors.errorMap(filledState, flowId)).toEqual(expectedFlowState);
-    expect(selectors.errorMap(filledState, integrationId)).toEqual(expectedIntegrationState);
+    expect(selectors.openErrorsStatus(filledState, flowId)).toEqual('received');
+    expect(selectors.openErrorsStatus(requestedState, flowId)).toEqual('requested');
+  });
+});
+
+describe('totalOpenErrors selector', () => {
+  test('should return 0 incase of invalid state or invalid resourceId passed', () => {
+    expect(selectors.totalOpenErrors()).toBe(0);
+    expect(selectors.totalOpenErrors(defaultState)).toBe(0);
+    expect(selectors.totalOpenErrors(filledState, 'INVALID_RESOURCE_ID')).toBe(0);
+  });
+  test('should return proper open error total for the passed resourceId', () => {
+    expect(selectors.totalOpenErrors(filledState, flowId)).toBe(34);
+    expect(selectors.totalOpenErrors(filledState, integrationId)).toBe(130);
+  });
+});
+
+describe('openErrorsDetails selector', () => {
+  test('should return undefined incase of invalid state or invalid resourceId passed', () => {
+    expect(selectors.openErrorsDetails()).toBeUndefined();
+    expect(selectors.openErrorsDetails(defaultState)).toBeUndefined();
+    expect(selectors.openErrorsDetails(filledState, 'INVALID_RESOURCE_ID')).toBeUndefined();
+  });
+  test('should return proper error info for the passed resourceId', () => {
+    expect(selectors.openErrorsDetails(filledState, flowId)).toBe(filledState[flowId].data);
+    expect(selectors.openErrorsDetails(filledState, integrationId)).toBe(filledState[integrationId].data);
+  });
+});
+
+describe('openErrorsMap selector', () => {
+  test('should return default object incase of invalid state or invalid resourceId passed', () => {
+    expect(selectors.openErrorsMap()).toEqual(defaultState);
+    expect(selectors.openErrorsMap(defaultState)).toEqual(defaultState);
+    expect(selectors.openErrorsMap(filledState, 'INVALID_RESOURCE_ID')).toEqual(defaultState);
+  });
+  test('should return proper error info for the passed resourceId', () => {
+    const expectedFlowErrorMap = {
+      e1: 10,
+      e2: 20,
+      i1: 4,
+    };
+    const expectedIntegrationErrorMap = {
+      f1: 100,
+      f2: 10,
+      f3: 20,
+    };
+
+    expect(selectors.openErrorsMap(filledState, flowId)).toEqual(expectedFlowErrorMap);
+    expect(selectors.openErrorsMap(filledState, integrationId)).toEqual(expectedIntegrationErrorMap);
   });
 });

@@ -16,6 +16,9 @@ const useStyles = makeStyles({
   },
   errorDetailsTable: {
     wordBreak: 'break-word',
+    '& th': {
+      wordBreak: 'normal',
+    },
   },
   errorTableWrapper: {
     position: 'relative',

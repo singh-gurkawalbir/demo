@@ -65,9 +65,9 @@ export default function PageGenerators({integrationId, flowId}) {
   )?.merged || emptyObject;
 
   const pageGenerators = flow.pageGenerators || [];
-  const {
-    data: flowErrorsMap,
-  } = useSelector(state => selectors.errorMap(state, flowId));
+
+  const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
+
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
