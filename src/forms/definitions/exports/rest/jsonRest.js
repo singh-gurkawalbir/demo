@@ -1,3 +1,5 @@
+import url from 'url';
+import qs from 'querystring';
 import { isNewId } from '../../../../utils/resource';
 
 function isValidArray(value) {
@@ -54,6 +56,9 @@ export default {
       delete retValues['/delta/lagOffset'];
     }
 
+    retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
+    delete retValues['/rest/relativeURI'];
+
     if (
       retValues['/http/response/successValues'] &&
       !retValues['/http/response/successValues'].length
@@ -69,76 +74,174 @@ export default {
     delete retValues['/outputMode'];
 
     if (retValues['/http/paging/method'] === 'page') {
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
     } else if (retValues['/http/paging/method'] === 'url') {
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/http/paging/path'] = retValues['/rest/nextPageURLPath'];
     } else if (retValues['/http/paging/method'] === 'relativeuri') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
     } else if (retValues['/http/paging/method'] === 'linkheader') {
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
     } else if (retValues['/http/paging/method'] === 'skip') {
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-      retValues['/http/paging/page'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
     } else if (retValues['/http/paging/method'] === 'token') {
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/http/paging/path'] = retValues['/rest/nextPageTokenPath'];
     } else if (retValues['/http/paging/method'] === 'body') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
     } else {
       retValues['/http/paging/method'] = undefined;
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageTokenPath'] = undefined;
+      retValues['/rest/nextPageURLPath'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/tokenPageArgument'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/maxPagePath'] = undefined;
+      retValues['/rest/maxCountPath'] = undefined;
       retValues['/http/paging/lastPageStatusCode'] = undefined;
       retValues['/http/paging/lastPagePath'] = undefined;
-      retValues['/http/paging/lastPageValues'] = undefined;
+      retValues['/rest/lastPageValue'] = undefined;
+    }
+    if (retValues['/rest/lastpageValue']) {
+      retValues['/http/paging/lastPageValues'] = [retValues['/rest/lastPageValue']];
+    }
+    if (retValues['/rest/maxPagePath']) {
+      retValues['http/paging/maxPagePath'] = retValues['/rest/maxPagePath'];
+    }
+    if (retValues['/rest/maxCountPath']) {
+      retValues['http/paging/maxCountPath'] = retValues['/rest/maxCountPath'];
     }
 
     // we need 2 separate UI fields for path for url and token paging methods
     // to have diff help texts and labels
     if (retValues['/http/paging/method'] === 'url') {
-      retValues['/http/paging/path'] = retValues['/http/paging/urlPath'];
+      retValues['/http/paging/path'] = retValues['/rest/nextPageURLPath'];
     } else if (retValues['/http/paging/method'] === 'token') {
-      retValues['/http/paging/path'] = retValues['/http/paging/tokenPath'];
+      retValues['/http/paging/path'] = retValues['/rest/nextPageTokenPath'];
     }
-    delete retValues['/http/paging/urlPath'];
-    delete retValues['/http/paging/tokenPath'];
+    delete retValues['/rest/nextPageURLPath'];
+    delete retValues['/rest/nextPageTokenPath'];
 
-    // we need 2 separate UI fields for page argument for page number and token paging methods
-    // to have diff help texts and labels
-    if (retValues['/http/paging/method'] === 'token') {
-      retValues['/http/paging/page'] = retValues['/http/paging/tokenPage'];
+    if (retValues['/http/paging/method'] === 'relativeuri') {
+      retValues['/http/paging/relativeURI'] = retValues['/rest/nextPageRelativeURI'] || retValues['/http/relativeURI'];
+    } else if (retValues['/http/paging/method'] === 'token') {
+      const path = retValues['/http/relativeURI'].split('?')[0];
+      const uriObj = url.parse(retValues['/http/relativeURI'], true);
+
+      uriObj.search = null;
+      if (retValues['/rest/pageArgument']) {
+        uriObj.query[retValues['/rest/pageArgument']] = '{{{export.http.paging.token}}}';
+      }
+      const tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+
+      retValues['/http/paging/relativeURI'] = `${path}?${tp}`; // url.format(uriObj) will encode the handlebar expression if present on relativeURI
+    } else if (retValues['/http/paging/method'] === 'skip') {
+      if (retValues['/http/relativeURI']) {
+        const path = retValues['/http/relativeURI'].split('?')[0];
+        const uriObj = url.parse(retValues['/http/relativeURI'], true);
+        const skipArgument = retValues['/rest/skipArgument'] || 'skip';
+
+        let tp;
+
+        // eslint-disable-next-line eqeqeq
+        if (uriObj.query[skipArgument] || uriObj.query[skipArgument] == 0) { // if url already contains ?skip=..
+          retValues['/http/paging/skip'] = Number(uriObj.query[skipArgument]);
+          uriObj.search = null;
+          uriObj.query[skipArgument] = 'CELIGO_PAGE_SKIP_VALUE';
+          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+          retValues['/http/paging/relativeURI'] = `${path}?${tp.replace(/CELIGO_PAGE_SKIP_VALUE/, '{{{export.http.paging.skip}}}')}`;
+        } else {
+          retValues['/http/paging/skip'] = 0;
+          uriObj.search = null;
+          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+
+          uriObj.query = {}; // adding '#' to the query parameters will urlencode it while formating the URL. The below logic will fail if the URL contains hash component
+          // The REST skipArgument paging will not work if # component is present. Hence we can ignore hash scenario
+
+          tp = `${((tp === '') ? '{{#compare export.http.paging.skip "!=" "0"}}?' : `?${tp}{{#compare export.http.paging.skip "!=" "0"}}&`) + skipArgument}={{export.http.paging.skip}}{{/compare}}`;
+          retValues['/http/paging/relativeURI'] = path + tp;
+        }
+
+        retValues['/http/relativeURI'] = retValues['/http/paging/relativeURI'];
+      }
+    } else if (retValues['/http/paging/method'] === 'page') {
+      if (retValues['/http/relativeURI']) {
+        const path = retValues['/http/relativeURI'].split('?')[0];
+        const uriObj = url.parse(retValues['/http/relativeURI'], true);
+        const pageArgument = retValues['/rest/pageArgument'] || 'page';
+        let tp;
+
+        if (uriObj.query[pageArgument]) { // if url already contains ?page=...
+          retValues['/http/paging/page'] = Number(uriObj.query[pageArgument]);
+          uriObj.search = null;
+          uriObj.query[pageArgument] = 'CELIGO_PAGE_ARG_VALUE';
+
+          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+          retValues['/http/paging/relativeURI'] = `${path}?${tp.replace(/CELIGO_PAGE_ARG_VALUE/, '{{{export.http.paging.page}}}')}`;
+        } else {
+          retValues['/http/paging/page'] = 1;
+          uriObj.search = null;
+          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+
+          uriObj.query = {}; // adding '#' to the query parameters will urlencode it while formating the URL. The below logic will fail if the URL contains hash component
+          // The REST pageArgument paging will not work if # component is present. Hence we can ignore hash scenario
+
+          tp = `${((tp === '') ? '{{#compare export.http.paging.page "!=" "1"}}?' : `?${tp}{{#compare export.http.paging.page "!=" "1"}}&`) + pageArgument}={{export.http.paging.page}}{{/compare}}`;
+          retValues['/http/paging/relativeURI'] = path + tp;
+        }
+
+        retValues['/http/relativeURI'] = retValues['/http/paging/relativeURI'];
+        // console.log('httpSubDoc.paging.relativeURI', httpSubDoc.paging.relativeURI)
+      }
+    } else if (retValues['/http/paging/method'] === 'linkheader' && retValues['/rest/linkHeaderRelation']) {
+      retValues['/http/paging/linkHeaderRelation'] = retValues['/rest/linkHeaderRelation'];
+    } else if (retValues['/http/paging/method'] === 'body') {
+      retValues['/http/paging/body'] = (typeof retValues['/rest/pagingPostBody'] === 'string') ? retValues['/rest/pagingPostBody'] : JSON.stringify(retValues['/rest/pagingPostBody']);
     }
-    delete retValues['/http/paging/tokenPage'];
 
     try {
       // there are two cases when postBody of REST is configured as a string
@@ -173,8 +276,9 @@ export default {
         retValues['/http/requestMediaType'] = connection?.rest?.mediaType;
       }
     }
+    retValues['/adaptorType'] = 'HTTPExport';
     retValues['/useTechAdaptorForm'] = true;
-    retValues['/rest'] = undefined;
+    delete retValues['/rest'];
 
     return {
       ...retValues,
@@ -225,7 +329,10 @@ export default {
       fieldId: 'http.blobMethod',
     },
     'http.headers': { fieldId: 'http.headers' },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.relativeURI': {
+      fieldId: 'rest.relativeURI',
+      defaultValue: r => r?._rest?.relativeURI,
+    },
     'http.body': {
       fieldId: 'http.body',
       visibleWhen: [{ field: 'http.method', is: ['POST', 'PUT'] }],
@@ -295,20 +402,56 @@ export default {
       fieldId: 'http.once.body',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'http.paging.method': { fieldId: 'http.paging.method' },
-    'http.paging.urlPath': { fieldId: 'http.paging.urlPath' },
-    'http.paging.tokenPath': { fieldId: 'http.paging.tokenPath' },
-    'http.paging.linkHeaderRelation': { fieldId: 'http.paging.linkHeaderRelation' },
-    'http.paging.skip': { fieldId: 'http.paging.skip' },
-    'http.paging.relativeURI': { fieldId: 'http.paging.relativeURI' },
-    'http.paging.page': { fieldId: 'http.paging.page' },
-    'http.paging.token': { fieldId: 'http.paging.token' },
-    'http.paging.body': { fieldId: 'http.paging.body' },
-    'http.paging.maxPagePath': { fieldId: 'http.paging.maxPagePath' },
-    'http.paging.maxCountPath': { fieldId: 'http.paging.maxCountPath' },
+
+    'http.paging.method': {
+      fieldId: 'http.paging.method',
+    },
+    'rest.nextPageURLPath': {
+      fieldId: 'rest.nextPageURLPath',
+      defaultValue: r => r?._rest?.nextPagePath,
+    },
+    'rest.nextPageTokenPath': {
+      fieldId: 'rest.nextPageTokenPath',
+      defaultValue: r => r?._rest?.nextPagePath,
+    },
+    'rest.linkHeaderRelation': {
+      fieldId: 'rest.linkHeaderRelation',
+      defaultValue: r => r?._rest?.linkHeaderRelation,
+    },
+    'rest.skipArgument': {
+      fieldId: 'rest.skipArgument',
+      defaultValue: r => r?._rest?.skipArgument,
+    },
+    'rest.nextPageRelativeURI': {
+      fieldId: 'rest.nextPageRelativeURI',
+      defaultValue: r => r?._rest?.nextPageRelativeURI,
+    },
+    'rest.pageArgument': {
+      fieldId: 'rest.pageArgument',
+      defaultValue: r => r?._rest?.pageArgument,
+    },
+    'rest.tokenPageArgument': {
+      fieldId: 'rest.tokenPageArgument',
+      defaultValue: r => r?._rest?.pageArgument,
+    },
+    'rest.pagingPostBody': {
+      fieldId: 'rest.pagingPostBody',
+      defaultValue: r => r?._rest?.pagingPostBody,
+    },
+    'rest.maxPagePath': {
+      fieldId: 'rest.maxPagePath',
+      defaultValue: r => r?._rest?.maxPagePath,
+    },
+    'rest.maxCountPath': {
+      fieldId: 'rest.maxCountPath',
+      defaultValue: r => r?._rest?.maxCountPath,
+    },
     'http.paging.lastPageStatusCode': { fieldId: 'http.paging.lastPageStatusCode' },
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
-    'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
+    'rest.lastPageValue': {
+      fieldId: 'rest.lastPageValue',
+      defaultValue: r => r?._rest?.lastPageValue,
+    },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
@@ -353,19 +496,19 @@ export default {
         label: 'Does this API use paging?',
         fields: [
           'http.paging.method',
-          'http.paging.urlPath',
-          'http.paging.tokenPath',
-          'http.paging.linkHeaderRelation',
-          'http.paging.skip',
-          'http.paging.relativeURI',
-          'http.paging.page',
-          'http.paging.token',
-          'http.paging.body',
-          'http.paging.maxPagePath',
-          'http.paging.maxCountPath',
+          'rest.nextPageURLPath',
+          'rest.nextPageTokenPath',
+          'rest.linkHeaderRelation',
+          'rest.skipArgument',
+          'rest.nextPageRelativeURI',
+          'rest.pageArgument',
+          'rest.tokenPageArgument',
+          'rest.pagingPostBody',
+          'rest.maxPagePath',
+          'rest.maxCountPath',
           'http.paging.lastPageStatusCode',
           'http.paging.lastPagePath',
-          'http.paging.lastPageValues',
+          'rest.lastPageValue',
         ],
       },
       {

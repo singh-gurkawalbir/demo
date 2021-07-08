@@ -37,6 +37,7 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
   }
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
+  if (type === 'exports') resource = populateRestSchema(resource);
 
   if (!draft[type]) {
     draft[type] = [resource];

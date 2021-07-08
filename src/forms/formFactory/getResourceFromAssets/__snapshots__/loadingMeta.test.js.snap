@@ -6791,50 +6791,18 @@ Object {
           },
         ],
       },
-      "http.paging.body": Object {
-        "fieldId": "http.paging.body",
-      },
       "http.paging.lastPagePath": Object {
         "fieldId": "http.paging.lastPagePath",
       },
       "http.paging.lastPageStatusCode": Object {
         "fieldId": "http.paging.lastPageStatusCode",
       },
-      "http.paging.lastPageValues": Object {
-        "fieldId": "http.paging.lastPageValues",
-      },
-      "http.paging.linkHeaderRelation": Object {
-        "fieldId": "http.paging.linkHeaderRelation",
-      },
-      "http.paging.maxCountPath": Object {
-        "fieldId": "http.paging.maxCountPath",
-      },
-      "http.paging.maxPagePath": Object {
-        "fieldId": "http.paging.maxPagePath",
-      },
       "http.paging.method": Object {
         "fieldId": "http.paging.method",
       },
-      "http.paging.page": Object {
-        "fieldId": "http.paging.page",
-      },
-      "http.paging.relativeURI": Object {
-        "fieldId": "http.paging.relativeURI",
-      },
-      "http.paging.skip": Object {
-        "fieldId": "http.paging.skip",
-      },
-      "http.paging.token": Object {
-        "fieldId": "http.paging.token",
-      },
-      "http.paging.tokenPath": Object {
-        "fieldId": "http.paging.tokenPath",
-      },
-      "http.paging.urlPath": Object {
-        "fieldId": "http.paging.urlPath",
-      },
       "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+        "defaultValue": [Function],
+        "fieldId": "rest.relativeURI",
       },
       "http.response.blobFormat": Object {
         "fieldId": "http.response.blobFormat",
@@ -6882,6 +6850,50 @@ Object {
         "required": true,
         "type": "radiogroup",
         "visible": false,
+      },
+      "rest.lastPageValue": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.lastPageValue",
+      },
+      "rest.linkHeaderRelation": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.linkHeaderRelation",
+      },
+      "rest.maxCountPath": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.maxCountPath",
+      },
+      "rest.maxPagePath": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.maxPagePath",
+      },
+      "rest.nextPageRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.nextPageRelativeURI",
+      },
+      "rest.nextPageTokenPath": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.nextPageTokenPath",
+      },
+      "rest.nextPageURLPath": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.nextPageURLPath",
+      },
+      "rest.pageArgument": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.pageArgument",
+      },
+      "rest.pagingPostBody": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.pagingPostBody",
+      },
+      "rest.skipArgument": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.skipArgument",
+      },
+      "rest.tokenPageArgument": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.tokenPageArgument",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -6974,19 +6986,19 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "http.paging.method",
-                "http.paging.urlPath",
-                "http.paging.tokenPath",
-                "http.paging.linkHeaderRelation",
-                "http.paging.skip",
-                "http.paging.relativeURI",
-                "http.paging.page",
-                "http.paging.token",
-                "http.paging.body",
-                "http.paging.maxPagePath",
-                "http.paging.maxCountPath",
+                "rest.nextPageURLPath",
+                "rest.nextPageTokenPath",
+                "rest.linkHeaderRelation",
+                "rest.skipArgument",
+                "rest.nextPageRelativeURI",
+                "rest.pageArgument",
+                "rest.tokenPageArgument",
+                "rest.pagingPostBody",
+                "rest.maxPagePath",
+                "rest.maxCountPath",
                 "http.paging.lastPageStatusCode",
                 "http.paging.lastPagePath",
-                "http.paging.lastPageValues",
+                "rest.lastPageValue",
               ],
               "label": "Does this API use paging?",
             },

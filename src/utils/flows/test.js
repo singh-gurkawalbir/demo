@@ -1010,7 +1010,7 @@ describe('populateRestSchema', () => {
           maxPagePath: '/path/toatl/pages',
           pageArgument: 'pageNumberQueryParam',
           pagingMethod: 'pageargument',
-          relativeURI: 'id=123&pageNumberQueryParam=2',
+          relativeURI: '/users?id=123&pageNumberQueryParam=2',
         },
         adaptorType: 'HTTPExport',
         http: {
@@ -1068,7 +1068,7 @@ describe('populateRestSchema', () => {
           lastPageStatusCode: 204,
           lastPageValue: '202',
           pagingMethod: 'skipargument',
-          relativeURI: 'id=1234&skipParam=12',
+          relativeURI: '/users?id=1234&skipParam=12',
           skipArgument: 'skipParam',
         },
         adaptorType: 'HTTPExport',

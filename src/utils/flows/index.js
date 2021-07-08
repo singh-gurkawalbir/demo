@@ -946,6 +946,7 @@ export function populateRestSchema(exportDoc = {}) {
         }
       } else if (restSubDoc.pagingMethod === 'skipargument') {
         if (http.relativeURI) {
+          const path = http.relativeURI.split('?')[0];
           const uriObj = url.parse(http.paging.relativeURI, true);
 
           uriObj.search = null;
@@ -955,7 +956,7 @@ export function populateRestSchema(exportDoc = {}) {
           if (skipArgument) {
             restSubDoc.skipArgument = skipArgument;
             uriObj.query[restSubDoc.skipArgument] = http.paging.skip;
-            restSubDoc.relativeURI = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
           } else {
             const skipArgRegex = /\{\{#compare export.http.paging.skip.*\}\}&(.*)=\{{2,3}export.http.paging.skip\}{2,3}\{\{\/compare\}\}/;
             const path = http.relativeURI.replace(skipArgRegex, '');
@@ -969,6 +970,7 @@ export function populateRestSchema(exportDoc = {}) {
       } else if (restSubDoc.pagingMethod === 'pageargument') {
         if (http.relativeURI) {
           const uriObj = url.parse(http.paging.relativeURI, true);
+          const path = http.relativeURI.split('?')[0];
 
           uriObj.search = null;
           const paramValues = invert(uriObj.query);
@@ -977,7 +979,7 @@ export function populateRestSchema(exportDoc = {}) {
           if (pageArgument) {
             restSubDoc.pageArgument = pageArgument;
             uriObj.query[restSubDoc.pageArgument] = http.paging.page;
-            restSubDoc.relativeURI = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
           } else {
             const pagingArgRegex = /\{\{#compare export.http.paging.page.*\}\}&(.*)=\{{2,3}export.http.paging.page\}{2,3}\{\{\/compare\}\}/;
             const path = http.relativeURI.replace(pagingArgRegex, '');
