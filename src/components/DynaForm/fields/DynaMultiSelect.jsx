@@ -180,16 +180,17 @@ export default function DynaMultiSelect(props) {
     const selectedValues = evt.target.value;
 
     if (!selectAllIdentifier || !selectedValues.includes(selectAllIdentifier)) {
-      onFieldChange(id, selectedValues);
+      return onFieldChange(id, selectedValues);
     }
 
+    // When user selects selectAll option, deselect other options
     if (selectedValues[selectedValues.length - 1] === selectAllIdentifier) {
-      onFieldChange(id, [selectAllIdentifier]);
-    } else {
-      const valuesExceptSelectAllIdentifier = selectedValues.filter(val => val !== selectAllIdentifier);
-
-      onFieldChange(id, valuesExceptSelectAllIdentifier);
+      return onFieldChange(id, [selectAllIdentifier]);
     }
+    // When user selects other options, remove selectAll selection
+    const valuesExceptSelectAllIdentifier = selectedValues.filter(val => val !== selectAllIdentifier);
+
+    onFieldChange(id, valuesExceptSelectAllIdentifier);
   };
 
   return (
