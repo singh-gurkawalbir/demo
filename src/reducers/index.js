@@ -51,8 +51,8 @@ import {
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID,
-  noEnvironmentResourceTypes,
-  noEnvironmentModelsForRecycleBin} from '../utils/constants';
+  NO_ENVIRONMENT_RESOURCE_TYPES,
+  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -588,11 +588,11 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
   if (!filterByEnvironment) { return resources; }
 
   if (resourceType === 'recycleBinTTL') {
-    // noEnvironmentModelsForRecycleBin are common for sandbox and production,
+    // NO_ENVIRONMENT_MODELS_FOR_BIN are common for sandbox and production,
     // so should be visible at both places
 
     return resources.filter(r => {
-      if (noEnvironmentModelsForRecycleBin.includes(r.model)) return true;
+      if (NO_ENVIRONMENT_MODELS_FOR_BIN.includes(r.model)) return true;
 
       return !!r.doc?.sandbox === sandbox;
     });
@@ -645,10 +645,10 @@ selectors.makeResourceListSelector = () =>
 
       let {sandbox} = options;
 
-      // noEnvironmentResourceTypes resources are common for both production & sandbox environments.
+      // NO_ENVIRONMENT_RESOURCE_TYPES resources are common for both production & sandbox environments.
       if (
         !ignoreEnvironmentFilter &&
-        !noEnvironmentResourceTypes.includes(type)
+        !NO_ENVIRONMENT_RESOURCE_TYPES.includes(type)
       ) {
         // eslint-disable-next-line no-param-reassign
         sandbox = currentEnvironment === 'sandbox';

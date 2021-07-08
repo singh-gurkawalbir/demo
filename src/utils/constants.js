@@ -686,7 +686,7 @@ export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
 export const SENSITIVE_DATA = ['token', 'password'];
 
-export const noEnvironmentResourceTypes = Object.freeze([
+export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
   'iClients',
@@ -699,4 +699,4 @@ export const noEnvironmentResourceTypes = Object.freeze([
   'connectors',
 ]);
 
-export const noEnvironmentModelsForRecycleBin = Object.freeze(['Agent', 'Script', 'Stack']);
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
