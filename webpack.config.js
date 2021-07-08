@@ -81,7 +81,12 @@ const config = {
     new UnusedFilesWebpackPlugin({
       patterns: ['src/**/*.js', 'src/**/*.jsx'],
       globOptions: {
-        ignore: ['**/*test.js', '**/components/icons/**', '**/stories/**'],
+        // test are standalone files are always unreferenced so lets ignore it
+        // some icons could be used in the future lets not delete all the unused ones
+        // stories are also standalone so lets ignore it as well
+        ignore: ['**/*test.js', '**/components/icons/**', '**/stories/**',
+          // this folder has some js data files used primarily for test cases
+          'src/utils/assistant/assistantTestcases/**'],
       },
     }),
     new CleanWebpackPlugin(),

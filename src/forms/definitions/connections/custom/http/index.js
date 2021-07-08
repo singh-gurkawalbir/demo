@@ -77,7 +77,6 @@ import box from './box';
 import sageone from './sageone';
 // import yahoo from './yahoo';
 // import hybris from './hybris';
-// import steelbrick from './steelbrick';
 import squareup from './squareup';
 // import surveymonkey from './surveymonkey';
 import stripe from './stripe';
@@ -154,7 +153,6 @@ import drift from './drift';
 import vroozi from './vroozi';
 // import signnow from './signnow';
 import adp from './adp';
-// import clio from './clio';
 import constantcontactv3 from './constantcontactv3';
 import constantcontactv2 from './constantcontactv2';
 import faire from './faire';
@@ -259,7 +257,6 @@ export default {
   tophatter,
   zohocrm,
   tsheets,
-  // steelbrick,
   squareup,
   postmark,
   zendesk,
@@ -380,7 +377,6 @@ export default {
   merchantesolutions,
   dunandbradstreet,
   adp,
-  // clio,
   constantcontactv3,
   constantcontactv2,
   faire,
