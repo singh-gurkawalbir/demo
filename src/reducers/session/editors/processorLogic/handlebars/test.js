@@ -129,6 +129,24 @@ describe('handlebars processor logic', () => {
 
       expect(init({options, resource, fieldState})).toHaveProperty('resultMode', 'text');
     });
+    test('should correctly set result mode if field is file.xml.body', () => {
+      const options = {
+        fieldId: 'file.xml.body',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+      };
+      const resource = {
+        _id: 'res-123',
+        adaptorType: 'FTPImport',
+      };
+      const fieldState = {
+        type: 'httprequestbody',
+        id: 'file.xml.body',
+        value: '<></>',
+      };
+
+      expect(init({options, resource, fieldState})).toHaveProperty('resultMode', 'xml');
+    });
     test('should correctly return the formatted options with rule and other props', () => {
       const options = {
         fieldId: 'http.body',
