@@ -211,7 +211,7 @@ export function getFilterList(jsonPaths, rules) {
     });
   }
 
-  if (rules.length > 0) {
+  if (rules?.rules?.length > 0) {
     iterate(rules);
   }
 

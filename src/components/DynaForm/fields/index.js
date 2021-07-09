@@ -275,5 +275,6 @@ export default {
   licenseeditor: DynaLicenseEditor,
   ssoorgid: DynaSsoOrgId,
   selectwithvalidations: DynaSelectWithValidations,
+  salesforcesortorderselect: Salesforce.DynaSortOrderSelect,
   nsauthtype: DynaNetsuiteAuthType,
 };

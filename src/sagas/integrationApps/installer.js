@@ -10,6 +10,25 @@ import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
+export function* initInstall({ id }) {
+  const path = `/integrations/${id}/installSteps`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: { method: 'GET' },
+      message: 'Init install',
+    });
+  } catch (error) {
+    return;
+  }
+
+  // once init is complete, BE will update the hidden step (if any) with completed true
+  // so need to get updated doc
+  yield put(actions.resource.request('integrations', id));
+}
+
 export function* installStep({ id, installerFunction, childId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
@@ -353,4 +372,5 @@ export default [
   takeLatest(actionTypes.INTEGRATION_APPS.CHILD.ADD, addNewChild),
   takeLatest(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, installChildStep),
   takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild),
+  takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, initInstall),
 ];

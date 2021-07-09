@@ -336,7 +336,7 @@ export function* initCategoryMappings({ integrationId, flowId, id, sectionId, de
   }
 
   const { staged } = sessionMappings || emptyObject;
-  const formattedMappings = staged || fieldMappings;
+  const formattedMappings = staged || fieldMappings || emptyList;
 
   yield put(
     actions.integrationApp.settings.categoryMappings.initComplete(
