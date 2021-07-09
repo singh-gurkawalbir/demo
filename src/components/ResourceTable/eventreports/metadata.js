@@ -57,7 +57,8 @@ const metadata = {
       key: 'flows',
       heading: 'Flows',
       HeaderValue: function FlowOptionsSearchFilter() {
-        const flowOptions = useSelector(state => selectors.getAllFlowsTiedToEventReports(state));
+        const integrationId = useSelector(state => selectors.filter(state, FILTER_KEY)?.integrationId);
+        const flowOptions = useSelectorMemo(selectors.mkGetFlowsTiedToEventReports, integrationId);
 
         return (
           <MultiSelectColumnFilter

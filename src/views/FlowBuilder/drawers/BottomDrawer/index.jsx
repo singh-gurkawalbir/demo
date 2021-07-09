@@ -195,7 +195,7 @@ export default function BottomDrawer({
 
   const handleTabChange = useCallback(
     (event, newValue) => {
-      dispatch(actions.bottomDrawer.setActiveTab({ index: newValue }));
+      dispatch(actions.bottomDrawer.switchTab({ index: newValue }));
 
       if (drawerHeight < minDrawerHeight) setDrawerHeight(minDrawerHeight);
     },
