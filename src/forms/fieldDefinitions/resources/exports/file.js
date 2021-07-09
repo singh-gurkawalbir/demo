@@ -139,6 +139,19 @@ export default {
     ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
+  'file.sortByFields': {
+    type: 'keyvalue',
+    enableSorting: true,
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    defaultValue: r => (r && r.http && r.http.headers) || '',
+    label: 'Sort records',
+  },
+  'file.groupByFields': {
+    type: 'filekeycolumn',
+    label: 'Group records',
+  },
   pgpdecrypt: {
     type: 'fileencryptdecrypt',
     label: 'Decrypt files',
