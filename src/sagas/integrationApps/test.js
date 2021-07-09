@@ -10,6 +10,7 @@ import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { getResource } from '../resources';
 import {
+  initInstall,
   installStep,
   installScriptStep,
   getCurrentStep,
@@ -30,6 +31,45 @@ import {initUninstall, uninstallStep, requestSteps} from './uninstaller2.0';
 import {resumeIntegration} from './resume';
 
 describe('installer saga', () => {
+  describe('initInstall generator', () => {
+    const id = '123';
+
+    test('should dispatch resource.request if api call is successful', () => {
+      const path = `/integrations/${id}/installSteps`;
+      const args = {
+        path,
+        timeout: 5 * 60 * 1000,
+        opts: { method: 'GET' },
+        message: 'Init install',
+      };
+
+      return expectSaga(initInstall, { id })
+        .provide([
+          [call(apiCallWithRetry, args), []],
+        ])
+        .call(apiCallWithRetry, args)
+        .put(actions.resource.request('integrations', id))
+        .run();
+    });
+    test('should do nothing and return undefined if api call fails', () => {
+      const path = `/integrations/${id}/installSteps`;
+      const args = {
+        path,
+        timeout: 5 * 60 * 1000,
+        opts: { method: 'GET' },
+        message: 'Init install',
+      };
+
+      return expectSaga(initInstall, { id })
+        .provide([
+          [call(apiCallWithRetry, args), throwError('some error')],
+        ])
+        .call(apiCallWithRetry, args)
+        .not.put(actions.resource.request('integrations', id))
+        .returns(undefined)
+        .run();
+    });
+  });
   describe('installStep generator', () => {
     const id = 'dummyId';
     const installerFunction = () => {};

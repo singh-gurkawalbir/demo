@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     padding: 0,
-
+    alignItems: 'center',
   },
   multiSelectWrapper: {
     width: '100%',
@@ -102,7 +102,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      {tag && <Tag className={classes.tagWrapper} variant={tag} />}
+      {tag && <Tag className={classes.tagWrapper} label={tag} />}
     </>
   );
 };

@@ -6,7 +6,6 @@ import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
-import Status from '../../components/Status';
 import StatusCircle from '../../components/StatusCircle';
 import Content from '../../components/HomePageCard/Content';
 import ApplicationImg from '../../components/icons/ApplicationImg';
@@ -31,6 +30,7 @@ import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 import CeligoTruncate from '../../components/CeligoTruncate';
 import ActionButton from '../../components/ActionButton';
+import Status from '../../components/Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -68,6 +68,12 @@ const useStyles = makeStyles(theme => ({
   },
   noAppImages: {
     display: 'none',
+  },
+  headerTileStatus: {
+    paddingLeft: 0,
+    '& > * .MuiButton-startIcon': {
+      margin: 0,
+    },
   },
 }));
 
@@ -239,23 +245,41 @@ function Tile({
       <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
           <Status
-            label={status.label}
+            variant={status.variant}
+            size="large"
             onClick={handleStatusClick}
-            className={classes.status}>
-            <StatusCircle variant={status.variant} />
+            className={classes.headerTileStatus}>
+            {status.label}
           </Status>
           {isConnectionDown && (
           <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
-            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
-              <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={handleConnectionDownStatusClick}
+              className={classes.status}>
+              <span>
+                <StatusCircle
+                  size="small"
+                  className={classes.connectionDownRedDot}
+                  variant="error" />
+              </span>
+              <ConnectionDownIcon />
             </IconButton>
           </Tooltip>
           )}
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
-              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+            <Typography
+              variant="h3"
+              className={classes.tileName}
+              onClick={handleTileClick}>
+              <CeligoTruncate
+                dataPublic
+                delay={100}
+                lines={2}
+                placement="bottom">
                 {tile.name}
               </CeligoTruncate>
             </Typography>
@@ -287,8 +311,8 @@ function Tile({
               )}
             </Manage>
             )}
-            {expired && tile.tag && (<Tag variant={tile.tag} className={classes.tagExpire} />)}
-            {!expired && tile.tag && (<Tag variant={tile.tag} />)}
+            {expired && tile.tag && (<Tag label={tile.tag} className={classes.tagExpire} />)}
+            {!expired && tile.tag && (<Tag label={tile.tag} />)}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : numFlowsText}

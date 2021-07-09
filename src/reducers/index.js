@@ -50,7 +50,9 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID} from '../utils/constants';
+  MISCELLANEOUS_SECTION_ID,
+  NO_ENVIRONMENT_RESOURCE_TYPES,
+  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -580,31 +582,23 @@ selectors.mkTileApplications = () => createSelector(
   }
 );
 
-const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
+const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
 
   if (!filterByEnvironment) { return resources; }
 
-  if (resourceType !== 'eventreports') {
-    return resources.filter(r => !!r.sandbox === sandbox);
+  if (resourceType === 'recycleBinTTL') {
+    // NO_ENVIRONMENT_MODELS_FOR_BIN are common for sandbox and production,
+    // so should be visible at both places
+
+    return resources.filter(r => {
+      if (NO_ENVIRONMENT_MODELS_FOR_BIN.includes(r.model)) return true;
+
+      return !!r.doc?.sandbox === sandbox;
+    });
   }
 
-  // event reports needs flows to determine the environment
-  if (!flows) { return []; }
-
-  // TODO : remove this filter search for eventReports
-  return resources.filter(r => {
-    // the flows environment is the same for eventreport
-    const {_flowIds: flowIds} = r;
-    const flow = flows.find(({_id}) => flowIds.includes(_id));
-
-    // this happens in the case where a flow is deleted ..
-    // without the flow we cannot determine the environment in that case we will just not
-    // list the eventReport
-    if (!flow) return false;
-
-    return !!flow.sandbox === sandbox;
-  });
+  return resources.filter(r => !!r.sandbox === sandbox);
 };
 
 selectors.makeResourceListSelector = () =>
@@ -617,9 +611,8 @@ selectors.makeResourceListSelector = () =>
 
       return selectors.resourceState(state)?.[type];
     },
-    state => selectors.resourceState(state)?.flows,
     (_, options) => options,
-    (currentEnvironment, resources, flows, options) => {
+    (currentEnvironment, resources, options) => {
       const result = {
         resources: [],
         total: 0,
@@ -632,23 +625,10 @@ selectors.makeResourceListSelector = () =>
 
       let {sandbox} = options;
 
+      // NO_ENVIRONMENT_RESOURCE_TYPES resources are common for both production & sandbox environments.
       if (
         !ignoreEnvironmentFilter &&
-        ![
-          'accesstokens',
-          'agents',
-          'iClients',
-          'scripts',
-          'stacks',
-          'templates',
-          'published',
-          'transfers',
-          'apis',
-          'connectors',
-        ].includes(
-          /* These resources are common for both production & sandbox environments. */
-          type
-        )
+        !NO_ENVIRONMENT_RESOURCE_TYPES.includes(type)
       ) {
         // eslint-disable-next-line no-param-reassign
         sandbox = currentEnvironment === 'sandbox';
@@ -700,7 +680,7 @@ selectors.makeResourceListSelector = () =>
         // console.log('sort:', sort, resources.sort(comparer, sort));
       const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
 
-      const filteredByEnvironment = filterByEnvironmentResources(sorted, flows, sandbox, type);
+      const filteredByEnvironment = filterByEnvironmentResources(sorted, sandbox, type);
 
       const filtered = filteredByEnvironment.filter(
         filter ? sift({ $and: [filter, matchTest] }) : matchTest
@@ -919,17 +899,18 @@ const reportsFilter = {
   type: 'eventreports',
 };
 
-selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+selectors.getAnyValidFlowFromEventReport = (state, eventReport) => {
   const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
 
-  // deleted flows case
-  if (!foundFlow) { return null; }
-
-  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
+  return selectors.resource(state, 'flows', foundFlow);
 };
 
 selectors.getEventReportIntegrationName = (state, r) => {
-  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+  const flow = selectors.getAnyValidFlowFromEventReport(state, r);
+
+  // if flow is deleted then we cannot find the integrationId
+  if (!flow) return '';
+  const integrationId = flow?._integrationId;
 
   const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -944,10 +925,12 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+    const foundFlow = selectors.getAnyValidFlowFromEventReport(state, r);
 
-    // integration has been deleted
-    if (!integrationId) return null;
+    // if flow is deleted then we cannot find the integrationId
+    if (!foundFlow) return null;
+
+    const integrationId = foundFlow?._integrationId;
 
     const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -981,6 +964,33 @@ selectors.getAllFlowsTiedToEventReports = createSelector(state => {
 },
 flows => flows
 );
+selectors.mkGetFlowsTiedToEventReports = () => {
+  const eventReportsSel = selectors.makeResourceListSelector();
+  const flowsSel = selectors.makeResourceListSelector();
+
+  return createSelector(
+    state => eventReportsSel(state, reportsFilter)?.resources,
+    state => flowsSel(state, flowsFilter)?.resources,
+    (_1, integrationIds) => integrationIds,
+    (eventReports, flows, integrationIds) => {
+      if (!eventReports) { return emptyArray; }
+
+      const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
+        r?._flowIds || []
+      ).filter(Boolean));
+
+      if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
+
+      const allFlows = flows.filter(({_id: flowId}) =>
+        allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
+
+      if (!integrationIds || !integrationIds.length) { return allFlows; }
+
+      return allFlows.filter(flow => flow && integrationIds.includes(flow._integrationId));
+    }
+
+  );
+};
 
 selectors.mkEventReportsFiltered = () => {
   const resourceListSelector = selectors.makeResourceListSelector();
@@ -1008,7 +1018,7 @@ selectors.mkEventReportsFiltered = () => {
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
         const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
 
-        // flow is deleted do not list the report
+        // flow is deleted we don't know the integration id for it
         if (!flow) {
           return false;
         }
@@ -1750,6 +1760,42 @@ selectors.mkFlowResources = () => createSelector(
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
 
+selectors.mkFlowStepsErrorInfo = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    flowResources,
+    selectors.openErrorsDetails,
+    (state, _1, _2, _3, filterKey) => selectors.filter(state, filterKey),
+    (_, flowId) => flowId,
+    (_1, _2, integrationId) => integrationId,
+    (_1, _2, _3, childId) => childId,
+    (flowResources, openErrorsDetails, errorStepsFilter, flowId, integrationId, childId) => {
+      const errorSteps = flowResources
+        .filter(r => r._id !== flowId)
+        .map(r => ({
+          id: r._id,
+          name: r.name || r._id,
+          count: openErrorsDetails?.[r._id]?.numError,
+          lastErrorAt: openErrorsDetails?.[r._id]?.lastErrorAt,
+          flowId,
+          type: r.type,
+          isLookup: r.isLookup,
+          childId,
+          integrationId,
+        }));
+
+      if (errorStepsFilter?.sort) {
+        const { order, orderBy } = errorStepsFilter.sort;
+
+        return errorSteps.sort(stringCompare(orderBy, order === 'desc'));
+      }
+
+      return errorSteps;
+    }
+  );
+};
+
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
 // also the new selector (that fetches metadata about a token) should be for a
@@ -1916,7 +1962,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (_1, _2, childId) => childId,
   (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
   (_1, _2, _3, _4, options) => options,
-  selectors.errorMap,
+  selectors.openErrorsMap,
   selectors.currentEnvironment,
   (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
     integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
@@ -1930,7 +1976,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
       return childIntegrationIds.includes(f._integrationId);
     });
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+    integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0}));
 
     // this transformation adds properties to make the the flow lastExecutedAt sortable
     integrationFlows = integrationFlows.map(flow => {
@@ -2496,9 +2542,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
-    selectors.errorMap,
+    selectors.openErrorsMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, errorMap = emptyObject, options = emptyObject) => {
+    (integration, flows = [], integrationId, section, childId, errorMap, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
@@ -2552,7 +2598,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map(f => ({...f, errors: (errorMap && errorMap.data && errorMap.data[f._id]) || 0}))
+        ).map(f => ({...f, errors: errorMap?.[f._id] || 0}))
         .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
     }
   );
@@ -4920,7 +4966,7 @@ selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsI
  */
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
@@ -4970,7 +5016,7 @@ selectors.integrationErrorsPerChild = (state, integrationId) => {
  */
 selectors.integrationErrorsPerFlowGroup = createSelector(
   selectors.integrationEnabledFlowIds,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);

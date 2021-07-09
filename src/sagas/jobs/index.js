@@ -10,7 +10,6 @@ import {
   all,
   fork,
 } from 'redux-saga/effects';
-import qs from 'qs';
 import { map } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -223,12 +222,14 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   const requestOptions = getRequestOptions(action, {
     resourceId: jobId,
   });
-  let { path } = requestOptions;
+  const { path } = requestOptions;
   const { opts } = requestOptions;
   let response;
 
   if (!fileType && fileIds.length > 0) {
-    path += `?${qs.stringify({ fileId: fileIds }, { indices: false })}`;
+    opts.body = {
+      fileIds,
+    };
   }
 
   try {

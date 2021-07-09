@@ -3,7 +3,6 @@ import moment from 'moment';
 import ConnectionResourceDrawerLink from '../../ResourceDrawerLink/connection';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import ConnectorName from '../commonCells/ConnectorName';
-import OnlineStatus from '../commonCells/OnlineStatus';
 import AuditLogs from '../commonActions/AuditLogs';
 import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
@@ -18,6 +17,7 @@ import Revoke from './actions/Revoke';
 import actions from '../../../actions';
 import ReplaceConnection from './actions/ReplaceConnection';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
+import OnlineStatus from '../../OnlineStatus';
 
 export default {
   useColumns: () => {

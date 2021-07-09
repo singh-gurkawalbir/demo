@@ -35,7 +35,7 @@ export default {
     {
       key: 'pages',
       heading: 'Pages',
-      Value: ({rowData: r}) => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,
+      Value: ({rowData: r}) => r.type === 'export' ? r.numPagesGenerated || r.numPagesProcessed : r.numPagesProcessed,
     },
     {
       key: 'duration',

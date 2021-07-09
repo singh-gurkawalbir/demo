@@ -28,7 +28,6 @@ export default {
       return !!(debugDate && moment().isBefore(moment(debugDate)));
     });
     const openDebugger = useCallback(() => {
-      dispatch(actions.logs.connections.request(connectionId));
       dispatch(actions.bottomDrawer.addTab({tabType: 'connectionLogs', resourceId: connectionId}));
       if (!isDebugActive) {
         dispatch(actions.logs.connections.startDebug(connectionId, 15));

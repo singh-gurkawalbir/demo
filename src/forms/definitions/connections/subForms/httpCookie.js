@@ -17,8 +17,8 @@ export default {
   layout: {
     fields: [
       'http.auth.cookie.method',
-      'http.auth.cookie.body',
       'http.auth.cookie.uri',
+      'http.auth.cookie.body',
       'http.auth.cookie.successStatusCode',
     ],
   },
