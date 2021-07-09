@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   spaceBetween: { flexGrow: 100 },
@@ -20,15 +21,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionGroup({ children, position = 'left' }) {
+export default function ActionGroup({ children, className, position = 'left' }) {
   const classes = useStyles();
 
   return (
     <>
       {position === 'right' && (<div className={classes.spaceBetween} />)}
-      <div className={clsx(classes.actions, classes[position])}>
+      <div className={clsx(classes.actions, classes[position], className)}>
         {children}
       </div>
     </>
   );
 }
+
+ActionGroup.propTypes = {
+  position: PropTypes.oneOf(['left', 'right']),
+  children: PropTypes.node.isRequired,
+};
+ActionGroup.defaultProps = {
+  position: 'left',
+};
