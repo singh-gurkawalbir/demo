@@ -2318,6 +2318,12 @@ export default {
         is: [''],
       },
     ],
+    requiredWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
   },
   // #endregion salesforce
   // #region wrapper
