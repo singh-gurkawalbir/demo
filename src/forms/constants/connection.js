@@ -26,7 +26,7 @@ export default {
     'namely',
     'zuora',
     'shipwire',
-    // 'desk',
+
     'chargebee',
     'postgresql',
     'mysql',
@@ -125,6 +125,8 @@ export default {
     'quickbase',
     'pagerdutyevents',
     'sapsuccessfactors',
+    'braintree',
+    'zenefits',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -138,7 +140,6 @@ export default {
     'ebay-xml',
     'docusign',
     'yahoo',
-    'steelbrick',
     'smartsheet',
     'box',
     'dropbox',
@@ -192,7 +193,6 @@ export default {
     'skubana',
     'intercom',
     'myobaccountright',
-    'clio',
     'practicepanther',
     'bigquery',
     'financialforce',

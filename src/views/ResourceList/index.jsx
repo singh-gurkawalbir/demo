@@ -106,6 +106,8 @@ export default function ResourceList(props) {
       filter = {...filter, sort: { orderBy: 'name', order: 'asc' }};
     }
     dispatch(actions.patchFilter(resourceType, filter));
+
+    return () => dispatch(actions.clearFilter(resourceType));
   },
   [dispatch, resourceType]);
 
