@@ -65,7 +65,7 @@ const CONNECTION_LOG_NOT_SUPPORTED_MESSAGE = 'Debug logs not supported for this 
 export default function ConnectionLogs({ connectionId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const {logs, status} = useSelector(state => selectors.allConnectionsLogs(state)?.[connectionId] || emptyObj, shallowEqual);
+  const { logs, status } = useSelector(state => selectors.allConnectionsLogs(state)?.[connectionId] || emptyObj, shallowEqual);
   const isConnectionLogsNotSupported = useSelector(state => selectors.isConnectionLogsNotSupported(state, connectionId));
   const handleDeleteLogsClick = useCallback(
     () => {
@@ -76,16 +76,16 @@ export default function ConnectionLogs({ connectionId, flowId }) {
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.logs.connections.request(connectionId));
+      dispatch(actions.logs.connections.refresh(connectionId));
     },
     [dispatch, connectionId],
   );
 
-  let logsText;
+  let logsText = '';
 
   if (isConnectionLogsNotSupported) {
     logsText = CONNECTION_LOG_NOT_SUPPORTED_MESSAGE;
-  } else if ([COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status)) {
+  } else if (logsText !== undefined) {
     logsText = logs || EMPTY_LOG_MESSAGE;
   }
 

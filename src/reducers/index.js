@@ -582,7 +582,7 @@ selectors.mkTileApplications = () => createSelector(
   }
 );
 
-const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
+const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
 
   if (!filterByEnvironment) { return resources; }
@@ -598,26 +598,7 @@ const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) =
     });
   }
 
-  if (resourceType !== 'eventreports') {
-    return resources.filter(r => !!r.sandbox === sandbox);
-  }
-
-  // event reports needs flows to determine the environment
-  if (!flows) { return []; }
-
-  // TODO : remove this filter search for eventReports
-  return resources.filter(r => {
-    // the flows environment is the same for eventreport
-    const {_flowIds: flowIds} = r;
-    const flow = flows.find(({_id}) => flowIds.includes(_id));
-
-    // this happens in the case where a flow is deleted ..
-    // without the flow we cannot determine the environment in that case we will just not
-    // list the eventReport
-    if (!flow) return false;
-
-    return !!flow.sandbox === sandbox;
-  });
+  return resources.filter(r => !!r.sandbox === sandbox);
 };
 
 selectors.makeResourceListSelector = () =>
@@ -630,9 +611,8 @@ selectors.makeResourceListSelector = () =>
 
       return selectors.resourceState(state)?.[type];
     },
-    state => selectors.resourceState(state)?.flows,
     (_, options) => options,
-    (currentEnvironment, resources, flows, options) => {
+    (currentEnvironment, resources, options) => {
       const result = {
         resources: [],
         total: 0,
@@ -700,7 +680,7 @@ selectors.makeResourceListSelector = () =>
         // console.log('sort:', sort, resources.sort(comparer, sort));
       const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
 
-      const filteredByEnvironment = filterByEnvironmentResources(sorted, flows, sandbox, type);
+      const filteredByEnvironment = filterByEnvironmentResources(sorted, sandbox, type);
 
       const filtered = filteredByEnvironment.filter(
         filter ? sift({ $and: [filter, matchTest] }) : matchTest
@@ -919,17 +899,18 @@ const reportsFilter = {
   type: 'eventreports',
 };
 
-selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+selectors.getAnyValidFlowFromEventReport = (state, eventReport) => {
   const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
 
-  // deleted flows case
-  if (!foundFlow) { return null; }
-
-  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
+  return selectors.resource(state, 'flows', foundFlow);
 };
 
 selectors.getEventReportIntegrationName = (state, r) => {
-  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+  const flow = selectors.getAnyValidFlowFromEventReport(state, r);
+
+  // if flow is deleted then we cannot find the integrationId
+  if (!flow) return '';
+  const integrationId = flow?._integrationId;
 
   const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -944,10 +925,12 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+    const foundFlow = selectors.getAnyValidFlowFromEventReport(state, r);
 
-    // integration has been deleted
-    if (!integrationId) return null;
+    // if flow is deleted then we cannot find the integrationId
+    if (!foundFlow) return null;
+
+    const integrationId = foundFlow?._integrationId;
 
     const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -981,6 +964,33 @@ selectors.getAllFlowsTiedToEventReports = createSelector(state => {
 },
 flows => flows
 );
+selectors.mkGetFlowsTiedToEventReports = () => {
+  const eventReportsSel = selectors.makeResourceListSelector();
+  const flowsSel = selectors.makeResourceListSelector();
+
+  return createSelector(
+    state => eventReportsSel(state, reportsFilter)?.resources,
+    state => flowsSel(state, flowsFilter)?.resources,
+    (_1, integrationIds) => integrationIds,
+    (eventReports, flows, integrationIds) => {
+      if (!eventReports) { return emptyArray; }
+
+      const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
+        r?._flowIds || []
+      ).filter(Boolean));
+
+      if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
+
+      const allFlows = flows.filter(({_id: flowId}) =>
+        allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
+
+      if (!integrationIds || !integrationIds.length) { return allFlows; }
+
+      return allFlows.filter(flow => flow && integrationIds.includes(flow._integrationId));
+    }
+
+  );
+};
 
 selectors.mkEventReportsFiltered = () => {
   const resourceListSelector = selectors.makeResourceListSelector();
@@ -1008,7 +1018,7 @@ selectors.mkEventReportsFiltered = () => {
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
         const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
 
-        // flow is deleted do not list the report
+        // flow is deleted we don't know the integration id for it
         if (!flow) {
           return false;
         }
