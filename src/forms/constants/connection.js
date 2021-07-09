@@ -125,6 +125,7 @@ export default {
     'quickbase',
     'pagerdutyevents',
     'sapsuccessfactors',
+    'braintree',
     'zenefits',
   ],
   OAUTH_APPLICATIONS: [

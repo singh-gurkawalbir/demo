@@ -413,6 +413,9 @@ export default {
     'Please enter company name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.locale':
     'Please enter locale of your lexbizz account.',
+  'braintree.connection.http.unencrypted.environment': 'Select the environment of your Braintree account.',
+  'braintree.connection.http.auth.basic.username': 'Enter the Public key of your Braintree account.<br> <b>Steps to get the Public Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Public Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)',
+  'braintree.connection.http.auth.basic.password': 'Enter the Private key of your Braintree account.<br> <b>Steps to get the Private Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Private Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
   'myobadvanced.connection.instanceURI':
       'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be demo.myobadvanced.com.',
