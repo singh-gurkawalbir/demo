@@ -6,7 +6,6 @@ import { deepClone } from 'fast-json-patch';
 import {v4} from 'uuid';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { IconButton, Tooltip } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
@@ -16,6 +15,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import WarningIcon from '../../icons/WarningIcon';
 import CopyIcon from '../../icons/CopyIcon';
 import AddIcon from '../../icons/AddIcon';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   dynaWebhookTokenbtn: {
-    marginTop: 26,
+    marginTop: 18,
     marginLeft: theme.spacing(1),
   },
   tokenWarning: {
@@ -131,29 +131,28 @@ export default function DynaWebhookTokenGenerator(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <Tooltip data-public title="Copy to clipboard" placement="bottom" aria-label="Copy to clipboard">
-                <IconButton aria-label="Copy to clipboard" size="small" color="inherit">
-                  <CopyIcon />
-                </IconButton>
-              </Tooltip>
+              <IconButtonWithTooltip
+                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}>
+                <CopyIcon color="inherit" />
+              </IconButtonWithTooltip>
             </CopyToClipboard>
           ) : (
-            <Tooltip data-public title={buttonLabel} placement="bottom" aria-label={buttonLabel}>
-              <IconButton aria-label={buttonLabel} onClick={handleGenerateClick} size="small" color="inherit">
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
+            <IconButtonWithTooltip
+              tooltipProps={{title: buttonLabel, placement: 'bottom'}}
+              onClick={handleGenerateClick}>
+              <AddIcon color="inherit" />
+            </IconButtonWithTooltip>
           )}
         </div>
       </div>
       <div>
         {value?.match(/^[A-Za-z0-9]/) && (
-          <div style={{display: 'inline-flex'}}>
-            <WarningIcon className={classes.tokenWarning} />
-            <Typography variant="body2">
-              Please copy and secure this token externally. It will not be displayed in clear text again.
-            </Typography>
-          </div>
+        <div style={{display: 'inline-flex'}}>
+          <WarningIcon className={classes.tokenWarning} />
+          <Typography variant="body2">
+            Please copy and secure this token externally. It will not be displayed in clear text again.
+          </Typography>
+        </div>
         )}
       </div>
     </>
