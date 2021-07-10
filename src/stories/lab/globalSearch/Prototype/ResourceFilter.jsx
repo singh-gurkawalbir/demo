@@ -1,7 +1,15 @@
 // import clsx from 'clsx';
 import React, { useState } from 'react';
-import { makeStyles, IconButton, Typography, Paper, Checkbox, Divider } from '@material-ui/core';
+import { makeStyles,
+  IconButton,
+  Typography,
+  Checkbox,
+  Divider,
+  MenuItem,
+  FormControlLabel } from '@material-ui/core';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
+import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
+import FloatingPaper from './FloatingPaper';
 
 const resources = [
   'Connections',
@@ -15,6 +23,11 @@ const resources = [
 
 const useStyles = makeStyles(theme => ({
   root: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    flexDirection: 'column',
+  },
+  arrowContainer: {
     color: theme.palette.common.white,
     paddingLeft: theme.spacing(2),
     display: 'flex',
@@ -29,14 +42,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1),
   },
   menu: {
-    padding: theme.spacing(1, 2),
-    position: 'absolute',
-    zIndex: 6000,
-    top: 65,
-    // left: 50,
-  },
-  menuItem: {
-    display: 'flex',
+    marginRight: 2,
   },
   divider: {
     margin: theme.spacing(1, 0),
@@ -50,8 +56,8 @@ export default function ResourceFilter({openByDefault = false}) {
   const handleArrowClick = () => setOpen(o => !o);
 
   return (
-    <>
-      <div className={classes.root}>
+    <div className={classes.root}>
+      <div className={classes.arrowContainer}>
         <Typography variant="h6" color="inherit">All</Typography>
         <IconButton
           size="small"
@@ -59,29 +65,31 @@ export default function ResourceFilter({openByDefault = false}) {
           className={classes.iconButton}
           onClick={handleArrowClick}
         >
-          <ArrowDownIcon />
+          {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
         </IconButton>
       </div>
 
       {open && (
-        <Paper className={classes.menu} elevation={5}>
-          <div className={classes.menuItem}>
-            <Checkbox />
-            <Typography variant="body2">All item types</Typography>
-          </div>
+        <FloatingPaper className={classes.menu}>
+          <MenuItem>
+            <FormControlLabel
+              control={<Checkbox name="All" color="primary" />}
+              label="All item types" />
+          </MenuItem>
 
           <Divider orientation="horizontal" className={classes.divider} />
 
           <Typography variant="subheading2" gutterBottom component="div">Search only:</Typography>
 
           {resources.map(r => (
-            <div key={r} className={classes.menuItem}>
-              <Checkbox />
-              <Typography variant="body2">{r}</Typography>
-            </div>
+            <MenuItem key={r}>
+              <FormControlLabel
+                control={<Checkbox name={r} color="primary" />}
+                label={r} />
+            </MenuItem>
           ))}
-        </Paper>
+        </FloatingPaper>
       )}
-    </>
+    </div>
   );
 }
