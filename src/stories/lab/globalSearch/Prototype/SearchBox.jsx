@@ -39,7 +39,7 @@ export default function SearchBox() {
   const classes = useStyles();
   const [searchTerm, setSearchTerm] = useState('');
   const showResults = searchTerm.length >= 2;
-  const handleChange = e => { console.log(e.target); setSearchTerm(e.target.value); };
+  const handleChange = e => setSearchTerm(e.target.value);
 
   return (
     <div className={classes.root}>
