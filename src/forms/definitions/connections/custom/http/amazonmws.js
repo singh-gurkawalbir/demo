@@ -7,10 +7,6 @@ import { amazonSellerCentralAuthURI,
 export default {
   preSave: formValues => {
     const newValues = {...formValues};
-    const baseURI = amazonSellerCentralBaseUriForNonMWSConnection[newValues['/http/unencrypted/sellingRegion']] ||
-                  amazonSellerCentralBaseUriForMWSConnection[newValues['/http/unencrypted/marketplaceRegion']];
-
-    const authURI = amazonSellerCentralAuthURI[newValues['/http/unencrypted/marketplace']];
     let authType = '';
     let mediaType = '';
 
@@ -19,6 +15,7 @@ export default {
     const iClientId = newValues['/http/_iClientId'] || null;
 
     if (newValues['/http/type'] === 'Amazon-MWS') {
+      newValues['/http/baseURI'] = amazonSellerCentralBaseUriForMWSConnection[newValues['/http/unencrypted/marketplaceRegion']];
       newValues['/http/type'] = undefined;
       newValues['/http/_iClientId'] = iClientId;
       newValues['/http/ping/relativeURI'] = '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01';
@@ -28,11 +25,12 @@ export default {
       authType = 'custom';
       mediaType = 'xml';
     } else { // http.type is either SP-API or Hybrid
+      newValues['/http/baseURI'] = amazonSellerCentralBaseUriForNonMWSConnection[newValues['/http/unencrypted/sellingRegion']];
       newValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
       newValues['/http/auth/token/refreshTokenPath'] = 'access_token';
       newValues['/http/auth/token/location'] = 'body';
       newValues['/http/auth/failStatusCode'] = 403;
-      newValues['/http/auth/oauth/authURI'] = authURI;
+      newValues['/http/auth/oauth/authURI'] = amazonSellerCentralAuthURI[newValues['/http/unencrypted/marketplace']];
       newValues['/http/auth/oauth/tokenURI'] = 'https://api.amazon.com/auth/o2/token';
       newValues['/http/unencrypted/marketplaceId'] = newValues['/http/unencrypted/marketplace'];
       delete newValues['/http/sellingPartnerId'];
@@ -47,7 +45,6 @@ export default {
       '/assistant': 'amazonmws',
       '/http/auth/type': authType,
       '/http/mediaType': mediaType,
-      '/http/baseURI': baseURI,
     };
   },
   fieldMap: {
@@ -66,7 +63,8 @@ export default {
       type: 'select',
       required: true,
       helpKey: 'amazonmws.connection.http.type',
-      defaultValue: r => r?.http?.type || 'Amazon-MWS',
+      defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
+      skipSort: true,
       options: [
         {
           items: [
@@ -88,11 +86,12 @@ export default {
     },
     'http.unencrypted.sellingRegion': {
       id: 'http.unencrypted.sellingRegion',
-      label: 'Selling Region',
+      label: 'Selling region',
       type: 'select',
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
       defaultDisabled: r => !isNewId(r?._id) && r?.http?.type,
+      skipSort: true,
       options: [
         {
           items: [
@@ -121,7 +120,7 @@ export default {
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
       defaultDisabled: r => !isNewId(r?._id) && r?.http?.type,
-      defaultValue: '',
+      defaultValue: r => r?.http?.unencrypted?.marketplaceId,
     },
     'http.sellingPartnerId': {
       id: 'http.sellingPartnerId',
@@ -129,7 +128,8 @@ export default {
       label: 'Selling partner id (Read Only)',
       helpKey: 'amazonmws.connection.http.sellingPartnerId',
       defaultDisabled: true,
-      visible: r => !isNewId(r?._id) && !!r?.http?.type,
+      visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
+      visible: r => !isNewId(r?._id),
       defaultValue: r => r?.http?.unencrypted?.sellerId,
     },
     'http.unencrypted.mwsAuthToken': {
@@ -245,26 +245,7 @@ export default {
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
-        if (baseUri) {
-          switch (baseUri) {
-            case 'https://mws.amazonservices.com':
-              return 'north_america';
-            case 'https://mws-eu.amazonservices.com':
-              return 'europe';
-            case 'https://mws.amazonservices.in':
-              return 'india';
-            case 'https://mws.amazonservices.com.cn':
-              return 'china';
-            case 'https://mws.amazonservices.jp':
-              return 'japan';
-            case 'https://mws.amazonservices.com.au':
-              return 'australia';
-            default:
-              return 'north_america';
-          }
-        }
-
-        return '';
+        return Object.keys(amazonSellerCentralBaseUriForMWSConnection).find(key => amazonSellerCentralBaseUriForMWSConnection[key] === baseUri);
       },
       options: [
         {
