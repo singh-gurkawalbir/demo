@@ -125,7 +125,7 @@ export default {
     'http.sellingPartnerId': {
       id: 'http.sellingPartnerId',
       type: 'text',
-      label: 'Selling partner id (Read Only)',
+      label: 'Selling partner id',
       helpKey: 'amazonmws.connection.http.sellingPartnerId',
       defaultDisabled: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
