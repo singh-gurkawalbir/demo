@@ -119,6 +119,19 @@ export default {
     delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 
+    const pagingMethodMap = {
+      nextpageurl: 'url',
+      pageargument: 'page',
+      relativeuri: 'relativeuri',
+      linkheader: 'linkheader',
+      skipargument: 'skip',
+      token: 'token',
+      postbody: 'body',
+    };
+
+    retValues['/http/paging/method'] = pagingMethodMap[retValues['/rest/pagingMethod']];
+    delete retValues['/rest/pagingMethod'];
+
     if (retValues['/http/paging/method'] === 'page') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -353,7 +366,7 @@ export default {
         { field: 'type', is: ['once'] },
       ],
     },
-    'http.paging.method': { fieldId: 'http.paging.method' },
+    'rest.pagingMethod': { fieldId: 'rest.pagingMethod' },
     'http.paging.skip': { fieldId: 'http.paging.skip' },
     'http.paging.page': { fieldId: 'http.paging.page' },
     'http.paging.token': { fieldId: 'http.paging.token' },
@@ -469,7 +482,7 @@ export default {
         collapsed: true,
         label: 'Does this API use paging?',
         fields: [
-          'http.paging.method',
+          'rest.pagingMethod',
           'http.paging.skip',
           'http.paging.page',
           'http.paging.urlPath',

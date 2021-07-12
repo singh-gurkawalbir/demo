@@ -54,7 +54,10 @@ export default {
       fieldId: 'http.blobMethod',
     },
     'http.headers': { fieldId: 'http.headers' },
-    'http.relativeURI': { fieldId: 'http.relativeURI', required: true },
+    'http.relativeURI': {
+      fieldId: 'rest.relativeURI',
+      defaultValue: r => r?._rest?.relativeURI,
+    },
     'http.response.resourcePath': {
       fieldId: 'http.response.resourcePath',
       visibleWhen: [

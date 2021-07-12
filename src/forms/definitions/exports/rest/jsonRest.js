@@ -156,16 +156,6 @@ export default {
       retValues['http/paging/maxCountPath'] = retValues['/rest/maxCountPath'];
     }
 
-    // we need 2 separate UI fields for path for url and token paging methods
-    // to have diff help texts and labels
-    if (retValues['/http/paging/method'] === 'url') {
-      retValues['/http/paging/path'] = retValues['/rest/nextPageURLPath'];
-    } else if (retValues['/http/paging/method'] === 'token') {
-      retValues['/http/paging/path'] = retValues['/rest/nextPageTokenPath'];
-    }
-    delete retValues['/rest/nextPageURLPath'];
-    delete retValues['/rest/nextPageTokenPath'];
-
     if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/relativeURI'] = retValues['/rest/nextPageRelativeURI'] || retValues['/http/relativeURI'];
     } else if (retValues['/http/paging/method'] === 'token') {

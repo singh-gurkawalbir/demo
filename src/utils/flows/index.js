@@ -958,11 +958,11 @@ export function populateRestSchema(exportDoc = {}) {
             uriObj.query[restSubDoc.skipArgument] = http.paging.skip;
             restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
           } else {
-            const skipArgRegex = /\{\{#compare export.http.paging.skip.*\}\}&(.*)=\{{2,3}export.http.paging.skip\}{2,3}\{\{\/compare\}\}/;
+            const skipArgRegex = /\{\{#compare export.http.paging.skip.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.skip\}{2,3}\{\{\/compare\}\}/;
             const path = http.relativeURI.replace(skipArgRegex, '');
 
             if (skipArgRegex.test(http.relativeURI)) {
-              [, restSubDoc.skipArgument] = skipArgRegex.exec(http.relativeURI);
+              [,, restSubDoc.skipArgument] = skipArgRegex.exec(http.relativeURI);
             }
             restSubDoc.relativeURI = path;
           }
@@ -981,11 +981,11 @@ export function populateRestSchema(exportDoc = {}) {
             uriObj.query[restSubDoc.pageArgument] = http.paging.page;
             restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
           } else {
-            const pagingArgRegex = /\{\{#compare export.http.paging.page.*\}\}&(.*)=\{{2,3}export.http.paging.page\}{2,3}\{\{\/compare\}\}/;
+            const pagingArgRegex = /\{\{#compare export.http.paging.page.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.page\}{2,3}\{\{\/compare\}\}/;
             const path = http.relativeURI.replace(pagingArgRegex, '');
 
             if (pagingArgRegex.test(http.relativeURI)) {
-              [, restSubDoc.pageArgument] = pagingArgRegex.exec(http.relativeURI);
+              [,, restSubDoc.pageArgument] = pagingArgRegex.exec(http.relativeURI);
             }
             restSubDoc.relativeURI = path;
           }

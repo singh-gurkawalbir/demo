@@ -3886,9 +3886,6 @@ Object {
       "http.paging.maxPagePath": Object {
         "fieldId": "http.paging.maxPagePath",
       },
-      "http.paging.method": Object {
-        "fieldId": "http.paging.method",
-      },
       "http.paging.page": Object {
         "fieldId": "http.paging.page",
       },
@@ -3977,6 +3974,9 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
+      },
+      "rest.pagingMethod": Object {
+        "fieldId": "rest.pagingMethod",
       },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
@@ -4081,7 +4081,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "http.paging.method",
+                "rest.pagingMethod",
                 "http.paging.skip",
                 "http.paging.page",
                 "http.paging.urlPath",
@@ -6269,8 +6269,8 @@ Object {
         "fieldId": "http.headers",
       },
       "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
-        "required": true,
+        "defaultValue": [Function],
+        "fieldId": "rest.relativeURI",
       },
       "http.response.blobFormat": Object {
         "fieldId": "http.response.blobFormat",

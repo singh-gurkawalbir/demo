@@ -1,4 +1,3 @@
-// TODO: delete this file after IO-13313 moves to production and no issues
 export default {
   'rest.method': {
     type: 'select',

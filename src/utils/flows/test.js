@@ -281,6 +281,7 @@ const restWithNextPageNumberParam1 = {
     },
   },
 };
+
 const restWithNextPageNumberParam2 = {
   adaptorType: 'HTTPExport',
   useTechAdaptorForm: true,
@@ -299,6 +300,28 @@ const restWithNextPageNumberParam2 = {
         '202',
       ],
       maxPagePath: '/path/toatl/pages',
+    },
+  },
+};
+
+const restWithNextPageNumberParam3 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'page',
+      page: 1,
+      relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+      lastPageStatusCode: 201,
+      lastPagePath: '/completePath',
+      lastPageValues: [
+        '202',
+      ],
+      maxPagePath: '/path/totalNumber',
     },
   },
 };
@@ -339,6 +362,27 @@ const restWithSkipPageNumberParam2 = {
       lastPagePath: '/complete',
       lastPageValues: [
         '202',
+      ],
+    },
+  },
+};
+
+const restWithSkipPageNumberParam3 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'skip',
+      skip: 0,
+      relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+      lastPageStatusCode: 231,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '204',
       ],
     },
   },
@@ -1032,6 +1076,37 @@ describe('populateRestSchema', () => {
       });
     });
 
+    test('pagination pageNumberparameter with url containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithNextPageNumberParam3)).toEqual({
+        _rest: {
+          lastPagePath: '/completePath',
+          lastPageStatusCode: 201,
+          lastPageValue: '202',
+          maxPagePath: '/path/totalNumber',
+          pageArgument: 'pageNumberQueryParam',
+          pagingMethod: 'pageargument',
+          relativeURI: '/users/123{{{lastExportDateTime}}}',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/completePath',
+            lastPageStatusCode: 201,
+            lastPageValues: ['202'],
+            maxPagePath: '/path/totalNumber',
+            method: 'page',
+            page: 1,
+            relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+          },
+          relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
     test('pagination skipNumberParameter with url not containing the skipNumberqueryParam', () => {
       expect(populateRestSchema(restWithSkipPageNumberParam1)).toEqual({
         _rest: {
@@ -1084,6 +1159,35 @@ describe('populateRestSchema', () => {
             skip: 12,
           },
           relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination skipNumberParameter with url containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithSkipPageNumberParam3)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 231,
+          lastPageValue: '204',
+          pagingMethod: 'skipargument',
+          relativeURI: '/users',
+          skipArgument: 'skipParam',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 231,
+            lastPageValues: ['204'],
+            method: 'skip',
+            relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+            skip: 0,
+          },
+          relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
           successMediaType: 'json',
         },
         useTechAdaptorForm: true,
