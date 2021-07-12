@@ -1,6 +1,6 @@
 import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
-import Status from '../cells/Status';
+import UserStatus from '../cells/UserStatus';
 import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import StatusHeader from '../cells/StatusHeader';
@@ -33,7 +33,7 @@ export default {
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
-          return <Status user={r} integrationId={integrationId} />;
+          return <UserStatus user={r} integrationId={integrationId} />;
         },
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{

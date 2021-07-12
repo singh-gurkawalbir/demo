@@ -21,9 +21,9 @@ const eventReportDetailRows = [
   {
     heading: 'Stores',
     value: function StoreNames(r) {
-      const integrationId = useSelector(state => selectors.getIntegrationIdForEventReport(state, r));
+      const foundFlow = useSelector(state => selectors.getAnyValidFlowFromEventReport(state, r));
 
-      const childIntegrationsLabels = useSelector(state => selectors.getChildIntegrationLabelsTiedToFlows(state, integrationId, r?._flowIds), shallowEqual);
+      const childIntegrationsLabels = useSelector(state => selectors.getChildIntegrationLabelsTiedToFlows(state, foundFlow?._integrationId, r?._flowIds), shallowEqual);
 
       return childIntegrationsLabels?.map(label => (
         <Fragment key={label}>

@@ -275,7 +275,7 @@ const connectors = [
     webhookOnly: true,
     icon: 'travis',
   },
-  { id: 's3', name: 'Amazon S3', type: 's3', group: 'tech'},
+  { id: 's3', name: 'Amazon S3', type: 's3'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
   {id: 'clover', name: 'Clover', type: 'http', assistant: 'clover'},
@@ -285,7 +285,10 @@ const connectors = [
   {id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba'},
 ];
 // These can be removed once metadata gets updated.
-const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
+const newConnections = [
+  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'azurestorageaccount', name: 'Azure Storage', type: 'http', assistant: 'azurestorageaccount'},
+];
 
 connectors.sort(stringCompare('name'));
 const getAssistants = () => {

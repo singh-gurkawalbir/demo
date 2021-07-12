@@ -5,12 +5,16 @@ import FilterIconWrapper from '../FilterIconWrapper';
 import { selectors } from '../../../../reducers';
 import MultiSelectFilter from '../../../MultiSelectFilter';
 import actions from '../../../../actions';
+import Help from '../../../Help';
 
 const useStyles = makeStyles({
   wrapperSelectFilter: {
     display: 'flex',
     alignItems: 'flex-start',
     whiteSpace: 'nowrap',
+  },
+  helpIcon: {
+    padding: 0,
   },
 });
 const emptyArr = [];
@@ -21,6 +25,7 @@ export default function MultiSelectColumnFilter({
   filterBy = 'sources',
   options = emptyArr,
   handleSave,
+  helpKey,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -67,6 +72,14 @@ export default function MultiSelectColumnFilter({
         onSave={onSaveHandler}
         onSelect={handleSelect}
         />
+      {helpKey && (
+      <Help
+        title={title}
+        helpKey={helpKey}
+        caption={helpKey}
+        className={classes.helpIcon}
+        />
+      )}
     </div>
   );
 }

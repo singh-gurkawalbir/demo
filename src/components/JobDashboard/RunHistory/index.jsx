@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -155,9 +155,7 @@ export default function RunHistory({ flowId }) {
       { !hasFlowRunHistory &&
         (
         <MessageWrapper>
-          <Typography>
-            You don&apos;t have any run history.
-          </Typography>
+          You don&apos;t have any run history.
         </MessageWrapper>
         )}
       {

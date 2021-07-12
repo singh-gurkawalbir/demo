@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+/* global describe, test, jest */
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select, delay } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -50,11 +50,18 @@ describe('Connection debugger log sagas', () => {
   describe('pollForConnectionLogs saga', () => {
     test('should call getConnectionDebugLogs after 5 seconds delay continuously', () => {
       const connectionId = 'c1';
-      const saga = pollForConnectionLogs({connectionId});
+      const dateStrAfter15Mins = moment().add(15, 'm').toISOString();
 
-      expect(saga.next().value).toEqual(call(getConnectionDebugLogs, {connectionId}));
-      expect(saga.next().value).toEqual(delay(5000));
-      expect(saga.next().done).toEqual(false);
+      return expectSaga(pollForConnectionLogs, { connectionId })
+        .provide([
+          [select(selectors.resource, 'connections', connectionId), {debugDate: dateStrAfter15Mins}],
+          [call(getConnectionDebugLogs, {connectionId}), {}],
+          [delay(5000), {}],
+        ])
+        .call(getConnectionDebugLogs, {connectionId})
+        .delay(5000)
+        .call(getConnectionDebugLogs, {connectionId})
+        .run();
     });
   });
   describe('startPollingForConnectionDebugLogs saga', () => {
