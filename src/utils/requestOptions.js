@@ -173,7 +173,7 @@ export default function getRequestOptions(
     case actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL:
       return {
         path: `/jobs/${resourceId}/files/signedURL`,
-        opts: { method: 'GET' },
+        opts: { method: 'POST' },
       };
     case actionTypes.JOB.CANCEL:
       return {
@@ -336,10 +336,13 @@ export default function getRequestOptions(
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
 
-      const { sources = [], occuredAt, resolvedAt } = filters;
+      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
+      }
+      if (!classifications.includes('all')) {
+        classifications.forEach(classification => queryParams.push(`classification=${classification}`));
       }
       if (occuredAt?.startDate && occuredAt?.endDate) {
         queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);

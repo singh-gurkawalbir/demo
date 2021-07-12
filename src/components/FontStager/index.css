@@ -93,6 +93,9 @@ a{
   color: #1D76C7;
   cursor: pointer;
 }
+a:hover{
+  color: #00A1E1;
+}
 .layout > div{
   margin-bottom: 0px !Important;
 }

@@ -2,21 +2,30 @@ import util from '../../../../../utils/json';
 
 /* this util is used to read field label and generate editor title from it
 * eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
+* label = 'Override access token HTTP request body', editor title would be same i.e. 'Build access token HTTP request body'
 * label = 'HTTP body', editor title would be 'Build HTTP body'
 * label = 'Relative URI', editor title would be 'Build relative URI'
 */
 export function _constructEditorTitle(label) {
   if (!label) return label;
+  let title = label;
+
   const regexp = /^[A-Z]{2}/;
 
-  if (label.startsWith('Build')) {
-    return label;
-  } if (regexp.test(label)) {
-    // first 2 chars are uppercase so don't convert to lowercase
-    return `Build ${label}`;
+  // if label starts with 'Override', drop this word
+  // and then apply below logic
+  if (title.startsWith('Override')) {
+    title = title.slice(9);
   }
 
-  return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
+  if (title.startsWith('Build')) {
+    return title;
+  } if (regexp.test(title)) {
+    // first 2 chars are uppercase so don't convert to lowercase
+    return `Build ${title}`;
+  }
+
+  return `Build ${title[0].toLowerCase()}${title.slice(1)}`;
 }
 export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
   const {adaptorType} = resource || {};
@@ -109,6 +118,10 @@ export default {
 
     if (fieldState?.type !== 'httprequestbody') {
       resultMode = 'text';
+    } else if (fieldId === 'file.xml.body') {
+      resultMode = 'xml';
+    } else if (fieldId === 'file.json.body') {
+      resultMode = 'json';
     } else {
       resultMode = contentType;
     }

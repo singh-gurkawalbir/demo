@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography} from '@material-ui/core';
 import Spinner from '../Spinner';
-import TertiaryButton from '../CeligoButtons/TertiaryButton';
+import TextButton from '../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   fetchLogTextWrapper: {
@@ -57,21 +57,21 @@ export default function FetchProgressIndicator({
           : <>Fetching paused... {percentDone}% completed</>}
       </Typography>
       {fetchInProgress ? (
-        <TertiaryButton
+        <TextButton
           data-test="pauseFetch"
           bold
           onClick={pauseHandler}
           >
           Pause
-        </TertiaryButton>
+        </TextButton>
       ) : (
-        <TertiaryButton
+        <TextButton
           data-test="resumeFetch"
           bold
           onClick={resumeHandler}
          >
           Resume
-        </TertiaryButton>
+        </TextButton>
       )}
     </div>
   );
