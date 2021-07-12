@@ -107,6 +107,7 @@ export default function ResourceList(props) {
     }
     dispatch(actions.patchFilter(resourceType, filter));
 
+    // we clear the sort during unmounts this it to prevent the same filter state getting forwarded to the sandbox env
     return () => dispatch(actions.clearFilter(resourceType));
   },
   [dispatch, resourceType]);
