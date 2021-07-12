@@ -1,5 +1,6 @@
 import produce from 'immer';
 import { isEqual } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 import actionTypes from '../../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../../utils/flows';
 
@@ -114,12 +115,21 @@ const addResourceCollection = (draft, resourceType, collection) => {
   }
   updateStateWhenValueDiff(draft, resourceType, collection || []);
 };
+
+const mergeResourceCollection = (draft, resourceType, response) => {
+  if (draft[resourceType]) {
+    const newCollection = uniqBy([...draft[resourceType], ...response], '_id');
+
+    addResourceCollection(draft, resourceType, newCollection);
+  }
+};
 export default (state = {}, action) => {
   const {
     id,
     type,
     resource,
     collection,
+    subCollection,
     resourceType,
 
   } = action;
@@ -149,6 +159,8 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.RESOURCE.RECEIVED_COLLECTION:
         return addResourceCollection(draft, resourceType, collection);
+      case actionTypes.INTEGRATION.UPDATE_RESOURCES:
+        return mergeResourceCollection(draft, resourceType, subCollection);
       case actionTypes.RESOURCE.RECEIVED:
         return replaceOrInsertResource(draft, resourceType, resource);
       case actionTypes.RESOURCE.DELETED:
