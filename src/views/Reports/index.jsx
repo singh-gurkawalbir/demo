@@ -199,6 +199,8 @@ export default function Reports() {
 
   useEffect(() => {
     dispatch(actions.patchFilter(resourceType, {...defaultFilter, type: resourceType }));
+
+    return () => dispatch(actions.clearFilter(resourceType));
   }, [dispatch, resourceType]);
   const filter =
     useSelector(state => selectors.filter(state, resourceType));

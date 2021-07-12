@@ -219,7 +219,7 @@ export default function Security() {
     <>
       <LoadResources required resources="ssoclients">
         <div className={classes.root}>
-          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextSSO} />
+          <PanelHeader title="Single sign-on (SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoSwitch}>
             <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
             <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
