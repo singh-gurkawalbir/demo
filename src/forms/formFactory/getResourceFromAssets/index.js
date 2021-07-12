@@ -296,10 +296,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         ) {
           // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
           meta = meta.salesforce;
-        } else if (resource.assistant === 'googledrive') {
-          meta = meta.googledrive;
-        } else if (resource.assistant === 'azurestorageaccount') {
-          meta = meta.azurestorageaccount;
+        } else if (resource.assistant === 'googledrive' || resource.assistant === 'azurestorageaccount') {
+          // Common metadata for both the file providers googledrive and azurestorageaccount
+          meta = meta.commonfileprovider;
         } else if (
           resource && resource.assistant !== 'openair' &&
             (resource.useParentForm !== undefined
