@@ -252,10 +252,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.rdbms.sql;
           }
-        } else if (resource.assistant === 'googledrive') {
-          meta = meta.googledrive;
-        } else if (resource.assistant === 'azurestorageaccount') {
-          meta = meta.azurestorageaccount;
+        } else if (resource.assistant === 'googledrive' || resource.assistant === 'azurestorageaccount') {
+          // Common metadata for both the file providers googledrive and azurestorageaccount
+          meta = meta.commonfileprovider;
         } else if (
           resource &&
             (resource.useParentForm !== undefined
