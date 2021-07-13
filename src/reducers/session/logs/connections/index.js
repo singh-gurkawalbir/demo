@@ -14,9 +14,17 @@ export default (state = {}, action) => {
         if (!draft.connections[connectionId]) {
           draft.connections[connectionId] = {};
         }
+
         draft.connections[connectionId].status = COMM_STATES.LOADING;
+        delete draft.connections[connectionId].isPaused;
 
         break;
+      case actionTypes.LOGS.CONNECTIONS.REFRESH:
+        if (draft.connections[connectionId]) {
+          draft.connections[connectionId].status = COMM_STATES.LOADING;
+        }
+        break;
+
       case actionTypes.LOGS.CONNECTIONS.RECEIVED:
         if (draft.connections?.[connectionId]) {
           draft.connections[connectionId].logs = logs;
@@ -28,6 +36,11 @@ export default (state = {}, action) => {
           draft.connections[connectionId].status = COMM_STATES.ERROR;
         }
 
+        break;
+      case actionTypes.LOGS.CONNECTIONS.PAUSE:
+        if (draft.connections?.[connectionId]) {
+          draft.connections[connectionId].isPaused = true;
+        }
         break;
       // LOGS.CONNECTIONS.CLEAR action will clear connection state from UI
       case actionTypes.LOGS.CONNECTIONS.CLEAR:

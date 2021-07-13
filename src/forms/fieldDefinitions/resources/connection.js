@@ -1301,7 +1301,6 @@ export default {
         items: [
           { label: 'zip', value: 'zip' },
           { label: 'zlib', value: 'zlib' },
-          { label: 'bzip2', value: 'bzip2' },
         ],
       },
     ],
@@ -2318,6 +2317,7 @@ export default {
         is: [''],
       },
     ],
+    required: true,
   },
   // #endregion salesforce
   // #region wrapper
