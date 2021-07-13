@@ -222,6 +222,11 @@ export function* requestRunningJobCollection() {
   const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
   const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
   const body = {sandbox};
+  let selectedStores = [];
+  let parentIntegrationId;
+  let storeId;
+  let { resources: allFlows } = yield select(selectors.resourceList, { type: 'flows' });
+  let allFlowIds = [];
 
   if (selectedStatus.length) {
     body.status = selectedStatus;
@@ -229,7 +234,36 @@ export function* requestRunningJobCollection() {
   if (selectedFlows.length) {
     body._flowIds = selectedFlows;
   } else if (selectedIntegrations.length) {
-    body._integrationIds = selectedIntegrations;
+    selectedStores = selectedIntegrations.filter(i => {
+      if (!i.includes('store')) return false;
+      storeId = i.substring(5, i.indexOf('pid'));
+      parentIntegrationId = i.substring(i.indexOf('pid') + 3);
+
+      return !(selectedIntegrations.includes(parentIntegrationId));
+    });
+    body._integrationIds = selectedIntegrations.filter(i => !i.includes('store'));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const s of selectedStores) {
+      storeId = s.substring(5, s.indexOf('pid'));
+      parentIntegrationId = s.substring(s.indexOf('pid') + 3);
+      body._flowIds = [...(body._flowIds || []), ...yield select(
+        selectors.integrationAppFlowIds,
+        parentIntegrationId,
+        storeId
+      )];
+    }
+    if (body._flowIds?.length && body._integrationIds?.length) {
+      allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
+      allFlowIds = (allFlows || []).map(({_id}) => _id);
+      delete body._integrationIds;
+      body._flowIds = [...body._flowIds, ...allFlowIds];
+    }
+
+    // remove all integration which has store in it
+    // get integration id and store id in that
+    // Check parent id is part of selectedIntegrations, if yes ignore this
+    // If no, get all flows in that store and push all those to flowIds
+    // body._integrationIds = selectedIntegrations;
   }
 
   try {
