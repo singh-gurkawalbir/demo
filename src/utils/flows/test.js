@@ -575,8 +575,8 @@ describe('isRunnable', () => {
   test('should return true for data loader flow', () => {
     expect(isRunnable(dataLoaderFlow, exports)).toEqual(true);
   });
-  test('should return true for disabled data loader flow', () => {
-    expect(isRunnable({...dataLoaderFlow, disabled: true}, exports)).toEqual(true);
+  test('should return false for disabled data loader flow', () => {
+    expect(isRunnable({...dataLoaderFlow, disabled: true}, exports)).toEqual(false);
   });
   test('should return true for enabled flow', () => {
     expect(isRunnable(flowWithPGsandPPs, exports)).toEqual(true);
