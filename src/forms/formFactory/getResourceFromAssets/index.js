@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
 import { getResourceSubType, isNewId } from '../../../utils/resource';
 
 const getAllOptionsHandlerSubForms = (
@@ -252,7 +252,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.rdbms.sql;
           }
-        } else if (resource.assistant === 'googledrive' || resource.assistant === 'azurestorageaccount') {
+        } else if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
           // Common metadata for both the file providers googledrive and azurestorageaccount
           meta = meta.commonfileprovider;
         } else if (
