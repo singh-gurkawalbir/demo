@@ -71,7 +71,7 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(3),
-    minHeight: `calc(99vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px + 96px))`,
     overflowY: 'auto',
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     '& > [role = tabpanel]': {
