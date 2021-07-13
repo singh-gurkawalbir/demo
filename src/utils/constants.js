@@ -312,7 +312,6 @@ export const REST_ASSISTANTS = [
   'asana',
   'shopify',
   'slack',
-  // 'desk',
   'eventbrite',
   'smartsheet',
   'campaignmonitor',
