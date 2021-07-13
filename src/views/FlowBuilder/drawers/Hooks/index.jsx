@@ -4,7 +4,7 @@ import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import EditorDrawer from '../../../../components/AFE/Drawer';
 
-export default function HooksDrawer({ flowId }) {
+export default function HooksDrawer({ flowId, integrationId }) {
   return (
     <RightDrawer path="hooks/:resourceType/:resourceId">
       <DrawerHeader
@@ -12,7 +12,7 @@ export default function HooksDrawer({ flowId }) {
         helpKey="export.hooks"
         helpTitle="Hooks"
       />
-      <HooksForm flowId={flowId} />
+      <HooksForm flowId={flowId} integrationId={integrationId} />
       <EditorDrawer />
     </RightDrawer>
   );
