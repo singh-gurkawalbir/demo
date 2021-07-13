@@ -1,5 +1,5 @@
 import url from 'url';
-import qs from 'querystring';
+import qs from 'query-string';
 import { isNewId } from '../../../../utils/resource';
 
 function isValidArray(value) {
@@ -51,6 +51,7 @@ export default {
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
+      retValues['http/once/method'] = retValues['/rest/once/method'];
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
@@ -166,7 +167,7 @@ export default {
       if (retValues['/rest/pageArgument']) {
         uriObj.query[retValues['/rest/pageArgument']] = '{{{export.http.paging.token}}}';
       }
-      const tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+      const tp = qs.stringify(uriObj.query, {encode: false});
 
       retValues['/http/paging/relativeURI'] = `${path}?${tp}`; // url.format(uriObj) will encode the handlebar expression if present on relativeURI
     } else if (retValues['/http/paging/method'] === 'skip') {
@@ -181,13 +182,13 @@ export default {
         if (uriObj.query[skipArgument] || uriObj.query[skipArgument] == 0) { // if url already contains ?skip=..
           retValues['/http/paging/skip'] = Number(uriObj.query[skipArgument]);
           uriObj.search = null;
-          uriObj.query[skipArgument] = 'CELIGO_PAGE_SKIP_VALUE';
-          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
-          retValues['/http/paging/relativeURI'] = `${path}?${tp.replace(/CELIGO_PAGE_SKIP_VALUE/, '{{{export.http.paging.skip}}}')}`;
+          uriObj.query[skipArgument] = '{{{export.http.paging.skip}}}';
+          tp = qs.stringify(uriObj.query, {encode: false});
+          retValues['/http/paging/relativeURI'] = `${path}?${tp}`;
         } else {
           retValues['/http/paging/skip'] = 0;
           uriObj.search = null;
-          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+          tp = qs.stringify(uriObj.query, { encode: false });
 
           uriObj.query = {}; // adding '#' to the query parameters will urlencode it while formating the URL. The below logic will fail if the URL contains hash component
           // The REST skipArgument paging will not work if # component is present. Hence we can ignore hash scenario
@@ -208,14 +209,14 @@ export default {
         if (uriObj.query[pageArgument]) { // if url already contains ?page=...
           retValues['/http/paging/page'] = Number(uriObj.query[pageArgument]);
           uriObj.search = null;
-          uriObj.query[pageArgument] = 'CELIGO_PAGE_ARG_VALUE';
+          uriObj.query[pageArgument] = '{{{export.http.paging.page}}}';
 
-          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
-          retValues['/http/paging/relativeURI'] = `${path}?${tp.replace(/CELIGO_PAGE_ARG_VALUE/, '{{{export.http.paging.page}}}')}`;
+          tp = qs.stringify(uriObj.query, { encode: false });
+          retValues['/http/paging/relativeURI'] = `${path}?${tp}`;
         } else {
           retValues['/http/paging/page'] = 1;
           uriObj.search = null;
-          tp = qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a});
+          tp = qs.stringify(uriObj.query, { encode: false });
 
           uriObj.query = {}; // adding '#' to the query parameters will urlencode it while formating the URL. The below logic will fail if the URL contains hash component
           // The REST pageArgument paging will not work if # component is present. Hence we can ignore hash scenario
@@ -225,7 +226,6 @@ export default {
         }
 
         retValues['/http/relativeURI'] = retValues['/http/paging/relativeURI'];
-        // console.log('httpSubDoc.paging.relativeURI', httpSubDoc.paging.relativeURI)
       }
     } else if (retValues['/http/paging/method'] === 'linkheader' && retValues['/rest/linkHeaderRelation']) {
       retValues['/http/paging/linkHeaderRelation'] = retValues['/rest/linkHeaderRelation'];
@@ -324,7 +324,7 @@ export default {
       defaultValue: r => r?._rest?.relativeURI,
     },
     'http.body': {
-      fieldId: 'http.body',
+      fieldId: 'rest.postBody',
       visibleWhen: [{ field: 'http.method', is: ['POST', 'PUT'] }],
     },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
@@ -382,15 +382,13 @@ export default {
     },
     'http.once.relativeURI': {
       fieldId: 'http.once.relativeURI',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'http.once.method': {
-      fieldId: 'http.once.method',
+    'rest.once.method': {
+      fieldId: 'rest.once.method',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'http.once.body': {
       fieldId: 'http.once.body',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
 
     'http.paging.method': {
@@ -476,7 +474,7 @@ export default {
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',
-          'http.once.method',
+          'rest.once.method',
           'http.once.relativeURI',
           'http.once.body',
         ],

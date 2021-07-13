@@ -6742,7 +6742,7 @@ Object {
         "fieldId": "http.blobMethod",
       },
       "http.body": Object {
-        "fieldId": "http.body",
+        "fieldId": "rest.postBody",
         "visibleWhen": Array [
           Object {
             "field": "http.method",
@@ -6761,36 +6761,9 @@ Object {
       },
       "http.once.body": Object {
         "fieldId": "http.once.body",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
-      },
-      "http.once.method": Object {
-        "fieldId": "http.once.method",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
       },
       "http.once.relativeURI": Object {
         "fieldId": "http.once.relativeURI",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
       },
       "http.paging.lastPagePath": Object {
         "fieldId": "http.paging.lastPagePath",
@@ -6879,6 +6852,17 @@ Object {
       "rest.nextPageURLPath": Object {
         "defaultValue": [Function],
         "fieldId": "rest.nextPageURLPath",
+      },
+      "rest.once.method": Object {
+        "fieldId": "rest.once.method",
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
       },
       "rest.pageArgument": Object {
         "defaultValue": [Function],
@@ -6977,7 +6961,7 @@ Object {
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
-                "http.once.method",
+                "rest.once.method",
                 "http.once.relativeURI",
                 "http.once.body",
               ],

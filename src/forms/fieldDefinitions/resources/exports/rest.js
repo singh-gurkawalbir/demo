@@ -1,25 +1,4 @@
 export default {
-  'rest.method': {
-    type: 'select',
-    label: 'HTTP method',
-    helpKey: 'export.http.method',
-    required: true,
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
   'rest.blobMethod': {
     type: 'select',
     label: 'HTTP method',
