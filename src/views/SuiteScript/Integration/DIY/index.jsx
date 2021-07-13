@@ -23,9 +23,9 @@ import actions from '../../../../actions';
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(3),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    minHeight: `calc(99vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     overflowY: 'auto',
-    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     '& > [role = tabpanel]': {
       background: 'none',
       padding: 0,
