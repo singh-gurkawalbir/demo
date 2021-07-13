@@ -6771,10 +6771,6 @@ Object {
       "http.paging.method": Object {
         "fieldId": "http.paging.method",
       },
-      "http.relativeURI": Object {
-        "defaultValue": [Function],
-        "fieldId": "rest.relativeURI",
-      },
       "http.response.blobFormat": Object {
         "fieldId": "http.response.blobFormat",
       },
@@ -6865,6 +6861,14 @@ Object {
       "rest.once.postBody": Object {
         "defaultValue": [Function],
         "fieldId": "rest.once.postBody",
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
       },
       "rest.pageArgument": Object {
         "defaultValue": [Function],
@@ -6873,6 +6877,10 @@ Object {
       "rest.pagingPostBody": Object {
         "defaultValue": [Function],
         "fieldId": "rest.pagingPostBody",
+      },
+      "rest.relativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.relativeURI",
       },
       "rest.skipArgument": Object {
         "defaultValue": [Function],
@@ -6899,7 +6907,7 @@ Object {
               Object {
                 "description": "Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.",
                 "fieldsToValidate": Array [
-                  "http.relativeURI",
+                  "rest.relativeURI",
                   "http.body",
                 ],
                 "helpKey": "export.delta",
@@ -6949,7 +6957,7 @@ Object {
               "fields": Array [
                 "http.method",
                 "http.blobMethod",
-                "http.relativeURI",
+                "rest.relativeURI",
                 "http.headers",
                 "http.body",
                 "http.response.blobFormat",

@@ -320,7 +320,7 @@ export default {
       fieldId: 'http.blobMethod',
     },
     'http.headers': { fieldId: 'http.headers' },
-    'http.relativeURI': {
+    'rest.relativeURI': {
       fieldId: 'rest.relativeURI',
       defaultValue: r => r?._rest?.relativeURI,
     },
@@ -361,7 +361,7 @@ export default {
               regex: /.*{{.*lastExportDateTime.*}}/,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
-              fieldsToValidate: ['http.relativeURI', 'http.body'] },
+              fieldsToValidate: ['rest.relativeURI', 'http.body'] },
 
             { label: 'Once – export records only once', value: 'once' },
             { label: 'Test – export only 1 record', value: 'test' },
@@ -391,6 +391,7 @@ export default {
     },
     'rest.once.postBody': {
       fieldId: 'rest.once.postBody',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
       defaultValue: r => r?.http?.once?.body,
     },
     'http.paging.method': {
@@ -462,7 +463,7 @@ export default {
         fields: [
           'http.method',
           'http.blobMethod',
-          'http.relativeURI',
+          'rest.relativeURI',
           'http.headers',
           'http.body',
           'http.response.blobFormat',
