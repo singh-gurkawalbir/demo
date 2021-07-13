@@ -835,6 +835,16 @@ export const destinationOptions = {
       value: 'lookupFiles',
     },
   ],
+  azurestorageaccount: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
   s3: [
     {
       label: 'Transfer files into destination application',
