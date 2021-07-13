@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.warning.main,
     marginRight: theme.spacing(1),
   },
+  warningMessage: {
+    display: 'inline-flex',
+  },
 }));
 
 export default function DynaWebhookTokenGenerator(props) {
@@ -133,21 +136,21 @@ export default function DynaWebhookTokenGenerator(props) {
               text={value}>
               <IconButtonWithTooltip
                 tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}>
-                <CopyIcon color="inherit" />
+                <CopyIcon />
               </IconButtonWithTooltip>
             </CopyToClipboard>
           ) : (
             <IconButtonWithTooltip
               tooltipProps={{title: buttonLabel, placement: 'bottom'}}
               onClick={handleGenerateClick}>
-              <AddIcon color="inherit" />
+              <AddIcon />
             </IconButtonWithTooltip>
           )}
         </div>
       </div>
       <div>
         {value?.match(/^[A-Za-z0-9]/) && (
-        <div style={{display: 'inline-flex'}}>
+        <div className={classes.warningMessage}>
           <WarningIcon className={classes.tokenWarning} />
           <Typography variant="body2">
             Please copy and secure this token externally. It will not be displayed in clear text again.

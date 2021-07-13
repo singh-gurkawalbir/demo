@@ -113,7 +113,7 @@ export default function GenerateUrl(props) {
               text={value}>
               <IconButtonWithTooltip
                 tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}>
-                <CopyIcon color="inherit" />
+                <CopyIcon />
               </IconButtonWithTooltip>
             </CopyToClipboard>
           )}
@@ -121,7 +121,7 @@ export default function GenerateUrl(props) {
             <IconButtonWithTooltip
               tooltipProps={{title: buttonLabel, placement: 'bottom'}}
               onClick={handleGenerateUrl}>
-              <AddIcon color="inherit" />
+              <AddIcon />
             </IconButtonWithTooltip>
           )}
         </div>
