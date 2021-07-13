@@ -418,3 +418,27 @@ export const getNextStateFromFields = formState => {
 
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
+
+function getFieldIdsInOrder(layout, fields = []) {
+  if (!layout) return fields;
+  if (layout.fields?.length) {
+    // add the fields in this layout to the list
+    fields.push(...layout.fields);
+  }
+  if (layout.containers?.length) {
+    // traverse through each container and fetch the fields
+    layout.containers.forEach(container => {
+      fields.push(...getFieldIdsInOrder(container));
+    });
+  }
+
+  return fields;
+}
+
+export function getFirstInvalidFieldId(formState) {
+  const { fields, fieldMeta } = formState || {};
+
+  const orderedFieldIds = getFieldIdsInOrder(fieldMeta?.layout);
+
+  return orderedFieldIds.find(fieldId => !fields[fieldId]?.isValid);
+}
