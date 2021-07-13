@@ -49,7 +49,7 @@ export default function FlowBuilder() {
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />
-        <HooksDrawer flowId={flowId} />
+        <HooksDrawer flowId={flowId} integrationId={integrationId} />
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
         <QueuedJobsDrawer />
