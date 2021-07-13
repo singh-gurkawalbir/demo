@@ -26,7 +26,7 @@ export default {
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
-      delete retValues['/http/once/body'];
+      delete retValues['/rest/once/postBody'];
       delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
@@ -37,7 +37,7 @@ export default {
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
-      delete retValues['/http/once/body'];
+      delete retValues['/rest/once/postBody'];
       delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
@@ -46,12 +46,13 @@ export default {
       delete retValues['/test/limit'];
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
-      delete retValues['/http/once/body'];
+      delete retValues['/rest/once/postBody'];
       delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
       retValues['/http/once/method'] = retValues['/rest/once/method'];
+      retValues['/http/once/body'] = retValues['/rest/once/postBody'];
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
@@ -279,7 +280,7 @@ export default {
       fieldId === 'http.once.relativeURI' ||
       fieldId === 'dataURITemplate' ||
       fieldId === 'http.relativeURI' ||
-      fieldId === 'http.once.body' ||
+      fieldId === 'rest.once.postBody' ||
       fieldId === 'http.body' ||
       fieldId === 'http.paging.body'
     ) {
@@ -388,10 +389,10 @@ export default {
       defaultValue: r => r?.http?.once?.method,
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'http.once.body': {
-      fieldId: 'http.once.body',
+    'rest.once.postBody': {
+      fieldId: 'rest.once.postBody',
+      defaultValue: r => r?.http?.once?.body,
     },
-
     'http.paging.method': {
       fieldId: 'http.paging.method',
     },
@@ -477,7 +478,7 @@ export default {
           'once.booleanField',
           'rest.once.method',
           'http.once.relativeURI',
-          'http.once.body',
+          'rest.once.postBody',
         ],
       },
       {

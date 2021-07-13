@@ -6759,9 +6759,6 @@ Object {
       "http.method": Object {
         "fieldId": "http.method",
       },
-      "http.once.body": Object {
-        "fieldId": "http.once.body",
-      },
       "http.once.relativeURI": Object {
         "fieldId": "http.once.relativeURI",
       },
@@ -6865,6 +6862,10 @@ Object {
           },
         ],
       },
+      "rest.once.postBody": Object {
+        "defaultValue": [Function],
+        "fieldId": "rest.once.postBody",
+      },
       "rest.pageArgument": Object {
         "defaultValue": [Function],
         "fieldId": "rest.pageArgument",
@@ -6964,7 +6965,7 @@ Object {
                 "once.booleanField",
                 "rest.once.method",
                 "http.once.relativeURI",
-                "http.once.body",
+                "rest.once.postBody",
               ],
               "label": "Configure export type",
             },
