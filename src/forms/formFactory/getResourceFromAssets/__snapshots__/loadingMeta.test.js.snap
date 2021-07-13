@@ -6854,6 +6854,7 @@ Object {
         "fieldId": "rest.nextPageURLPath",
       },
       "rest.once.method": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.once.method",
         "visibleWhen": Array [
           Object {

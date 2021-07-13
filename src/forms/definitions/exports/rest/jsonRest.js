@@ -27,7 +27,7 @@ export default {
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
       delete retValues['/http/once/body'];
-      delete retValues['/http/once/method'];
+      delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
@@ -38,7 +38,7 @@ export default {
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
       delete retValues['/http/once/body'];
-      delete retValues['/http/once/method'];
+      delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
       retValues['/http/once'] = undefined;
@@ -47,11 +47,11 @@ export default {
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
       delete retValues['/http/once/body'];
-      delete retValues['/http/once/method'];
+      delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
-      retValues['http/once/method'] = retValues['/rest/once/method'];
+      retValues['/http/once/method'] = retValues['/rest/once/method'];
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
@@ -385,6 +385,7 @@ export default {
     },
     'rest.once.method': {
       fieldId: 'rest.once.method',
+      defaultValue: r => r?.http?.once?.method,
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'http.once.body': {
