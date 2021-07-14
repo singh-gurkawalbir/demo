@@ -384,11 +384,8 @@ export function isRunnable(flow, exports) {
 
   // For disabled flows
   if (flow.disabled) {
-    // All iA flows are not runnable if disabled
-    // For DIY flows, dataloader flows can be runnable
-    if (flow._connectorId || !isDataLoader) {
-      return false;
-    }
+    // All IA and DIY (including data loader) flows are not runnable if disabled
+    return false;
   }
 
   const flowHasExport =
