@@ -3,7 +3,7 @@ import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
+import { SCOPES, saveResourceWithDefinitionID, getAsyncKey } from '../resourceForm';
 import { isNewId, generateNewId } from '../../utils/resource';
 import { commitStagedChangesWrapper } from '../resources';
 import { selectors } from '../../reducers';
@@ -69,7 +69,7 @@ export function* saveUserFileDefinition({ definitionRules, formValues, flowId, s
     resourceType: 'filedefinitions',
     id: definitionId,
     scope: SCOPES.VALUE,
-    shouldLogTask: true,
+    asyncKey: getAsyncKey('connections', definitionId),
   });
 
   if (isNewId(definitionId)) {

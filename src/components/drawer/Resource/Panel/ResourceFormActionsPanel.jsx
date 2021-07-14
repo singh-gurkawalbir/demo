@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
 const ActionButtons = ({actions, formProps, consolidatedActions}) => {
   const classes = useStyles();
 
-  console.log('actions ', actions);
   // TODO:dead code
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
 
@@ -109,8 +108,6 @@ const ActionButtons = ({actions, formProps, consolidatedActions}) => {
 
     });
   }, [actions, consolidatedActions, disableSaveOnClick, formProps]);
-
-  console.log('group ', group);
 
   if (group) {
     return (

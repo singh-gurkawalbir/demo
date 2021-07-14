@@ -17,9 +17,10 @@ import {
   submitFormValues,
   SCOPES,
   newIAFrameWorkPayload,
+  getAsyncKey,
 } from '../index';
 import { selectors } from '../../../reducers/index';
-import { commitStagedChanges } from '../../resources';
+import { commitStagedChangesWrapper } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
@@ -432,11 +433,11 @@ function* saveAndAuthorizeConnectionForm(params) {
 }
 
 export function* commitAndAuthorizeConnection({ resourceId }) {
-  const resp = yield call(commitStagedChanges, {
+  const resp = yield call(commitStagedChangesWrapper, {
     resourceType: 'connections',
     id: resourceId,
     scope: SCOPES.VALUE,
-    shouldLogTask: true,
+    asyncKey: getAsyncKey('connections', resourceId),
   });
 
   // if there is conflict let conflict dialog show up

@@ -26,7 +26,7 @@ export const SCOPES = {
 };
 
 Object.freeze(SCOPES);
-
+export const getAsyncKey = (resourceType, resourceId) => `${resourceType}-${resourceId}`;
 export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
@@ -327,7 +327,7 @@ export function* submitFormValues({
       resourceType: type,
       id: resourceId,
       scope: SCOPES.VALUE,
-      shouldLogTask: true,
+      asyncKey: getAsyncKey(type, resourceId),
     });
 
     if (resp && (resp.error || resp.conflict)) {
