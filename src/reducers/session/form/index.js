@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
+import { map, isEmpty, uniq, get, isEqualWith, isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFields,
@@ -10,6 +11,7 @@ import {
 } from '../../../utils/form';
 import fields from './fields';
 import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/formFactory/utils';
+import trim from '../../../utils/trim';
 
 function form(state = {}, action) {
   // we can have the same form key but different remount keys
@@ -82,6 +84,12 @@ selectors.formState = (state, formKey) => {
   return state[formKey];
 };
 
+selectors.formValueTrimmed = (state, formKey) => {
+  const formValue = selectors.formState(state, formKey)?.value;
+
+  return trim(formValue);
+};
+
 selectors.formRemountKey = (state, formKey) => state?.[formKey]?.remountKey;
 selectors.formParentContext = (state, formKey) => {
   const form = selectors.formState(state, formKey);
@@ -99,6 +107,7 @@ selectors.fieldState = (state, formKey, fieldId) => {
   return form.fields[fieldId];
 };
 
+// TODO: we can delete this code
 selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
   const form = selectors.formState(state, formKey);
 
@@ -136,4 +145,54 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
+selectors.isFormDirty = (state, formKey) => {
+  const form = selectors.formState(state, formKey);
+
+  if (!form) {
+    return false;
+  }
+
+  return Object.values(form.fields).some(field => {
+    if (field.visible) {
+      if (typeof field.value === 'object') {
+        if (Array.isArray(field.value) && field.value?.length === 0 && field.defaultValue === undefined) {
+          return false;
+        }
+
+        return !isEqualWith(field.value, field.defaultValue, (objValue, othValue) => {
+          const isNotEqual = Object.keys(objValue).some(fieldKey => {
+            if (Array.isArray(objValue[fieldKey])) {
+              return !isEqual(objValue[fieldKey], othValue?.[fieldKey] || []);
+            }
+            if (typeof objValue[fieldKey] === 'object') {
+              return !isEqual(objValue[fieldKey], othValue?.[fieldKey] || {});
+            }
+
+            return (objValue[fieldKey] || '') !== (othValue?.[fieldKey] || '');
+          });
+
+          return !isNotEqual;
+        });
+      }
+
+      return (field.defaultValue || '') !== (field.value || '');
+    }
+
+    return false;
+  });
+};
+
+selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
+  const form = selectors.formState(state, formKey);
+
+  if (!form) return false;
+  const actionButtonMeta = form.fieldMeta.actions?.find?.(({id}) => id === actionButtonFieldId) || {};
+
+  if (!actionButtonMeta) { return true; }
+  if (isVisible(actionButtonMeta, form.fields)) {
+    console.log('check ', actionButtonMeta);
+  }
+
+  return isVisible(actionButtonMeta, form.fields);
+};
 // #endregion

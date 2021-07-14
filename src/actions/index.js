@@ -119,6 +119,13 @@ const auth = {
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
+
+const asyncTask = {
+  start: key => action(actionTypes.ASYNC_TASK.START, { key }),
+  success: key => action(actionTypes.ASYNC_TASK.SUCCESS, { key }),
+  failed: key => action(actionTypes.ASYNC_TASK.FAILED, { key }),
+  clear: key => action(actionTypes.ASYNC_TASK.CLEAR, { key }),
+};
 const api = {
   request: (path, method, message, hidden, refresh) =>
     action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
@@ -2225,6 +2232,7 @@ const sso = {
 };
 
 export default {
+  asyncTask,
   form,
   postFeedback,
   app,

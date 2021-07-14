@@ -70,7 +70,7 @@ export default function fields(state = {}, action) {
         // update the last modified field id in the form state
         draft[formKey].lastFieldUpdated = id;
 
-        updateFieldValue(fieldsRef[id], value);
+        updateFieldValue(fieldsRef[id], value, skipFieldTouched);
 
         getNextStateFromFields(draft[formKey]);
 

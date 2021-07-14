@@ -240,8 +240,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -254,21 +253,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-        {
-          field: 'netsuite.authType',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -277,7 +262,7 @@ export default {
       ],
     },
     {
-      id: 'testandsave',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -286,35 +271,11 @@ export default {
       ],
     },
     {
-      id: 'testsaveandclose',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
-    },
-    {
-      id: 'validate',
-      label: 'Validate',
-      mode: 'secondary',
+      id: 'validateandsave',
       visibleWhen: [
         {
           field: 'netsuite.authType',
           is: ['basic'],
-        },
-      ],
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token'],
         },
       ],
     },

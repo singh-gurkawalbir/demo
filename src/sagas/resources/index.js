@@ -381,6 +381,25 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   }
 }
 
+export function* commitStagedChangesWrapper({shouldLogTask, ...props}) {
+  const {resourceType, id} = props;
+  const asyncKey = `${resourceType}-${id}`;
+
+  if (shouldLogTask) {
+    yield put(actions.asyncTask.start(asyncKey));
+    const resp = yield call(commitStagedChanges, props);
+
+    if (resp?.error) {
+    // save error message
+      return yield put(actions.asyncTask.failed(asyncKey));
+    }
+    yield put(actions.asyncTask.success(asyncKey));
+
+    return resp;
+  }
+
+  return yield call(commitStagedChanges, props);
+}
 export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
     resourceId: id,
@@ -1067,7 +1086,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),

@@ -7,6 +7,7 @@ import consolidatedActions from '../../../ResourceFormFactory/Actions';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../ButtonGroup';
+import RenderActionButtonWhenVisible from '../../../DynaForm/RenderActionButtonWhenVisible';
 
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
@@ -34,11 +35,38 @@ const useStyles = makeStyles(theme => ({
 const ActionButtons = ({actions, formProps, consolidatedActions}) => {
   const classes = useStyles();
 
+  console.log('actions ', actions);
+  // TODO:dead code
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
 
   const {primaryActions,
-    secondaryActions} = useMemo(() => {
+    secondaryActions, group} = useMemo(() => {
     if (!actions?.length) return {};
+    // remove form disabled prop...
+    // they dont necessary apply to action button
+    const { disabled, ...rest } = formProps;
+
+    if (actions?.[0]?.mode === 'group') {
+      return {group: actions.map(({id, ...actionProps}) => {
+        const Action = consolidatedActions[id];
+
+        return (
+          <RenderActionButtonWhenVisible
+            key={id}
+            id={id}
+            formKey={formProps.formKey}
+          >
+            <Action
+              dataTest={id}
+              {...rest}
+              {...actionProps}
+        />
+          </RenderActionButtonWhenVisible>
+        );
+      }),
+
+      };
+    }
 
     return actions.reduce((acc, action) => {
       const Action = consolidatedActions[action.id];
@@ -57,9 +85,7 @@ const ActionButtons = ({actions, formProps, consolidatedActions}) => {
           setDisableSaveOnClick,
         };
       }
-      // remove form disabled prop...
-      // they dont necessary apply to action button
-      const { disabled, ...rest } = formProps;
+
       const actionContainer = (
         <Action
           key={action.id}
@@ -84,6 +110,15 @@ const ActionButtons = ({actions, formProps, consolidatedActions}) => {
     });
   }, [actions, consolidatedActions, disableSaveOnClick, formProps]);
 
+  console.log('group ', group);
+
+  if (group) {
+    return (
+      <div className={classes.actions}>
+        {group}
+      </div>
+    );
+  }
   if (!actions?.length) { return null; }
 
   return (
@@ -131,31 +166,33 @@ export default function ResourceFormActionsPanel(props) {
   // Any extra actions other than Save, Cancel which needs to be separated goes here
 
   const actionButtons = useMemo(() => {
-    const secondaryActions = ['test', 'validate'];
+    // /const secondaryActions = ['test', 'validate'];
 
     // if props has defined actions return it
-    if (actions) return actions;
-    let actionButtons;
+    if (actions) return actions.map(action => ({...action, mode: 'group'}));
+    // let actionButtons;
 
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && !isNew) {
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-        actionButtons = ['oauth', 'cancel'];
-      } else {
-        actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
+        // should close after saving
+        return [{id: 'oauthandcancel', mode: 'group' }];
       }
-    } else if (resourceType === 'eventreports') {
-      actionButtons = ['saveandclose', 'cancel'];
-    } else if (!isNew || (isNew && !isMultiStepSaveResource)) {
-      actionButtons = ['save', 'saveandclose', 'cancel'];
-    } else {
-      actionButtons = ['saveandclose', 'cancel'];
+
+      return [{id: 'testandsavegroup', mode: 'group' }];
+    } if (resourceType === 'eventreports') {
+      // should close after saving
+      return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Run Report', closeAfterSave: true}];
+    } if (!isNew || (isNew && !isMultiStepSaveResource)) {
+      return [{id: 'saveandclosegroup', mode: 'group'}];
     }
 
-    return actionButtons.map(id => ({
-      id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
-    }));
+    return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: false}];
+
+    // return actionButtons.map(id => ({
+    //   id,
+    //   mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
+    // }));
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
 
   if (!formState.initComplete) return null;

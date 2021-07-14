@@ -280,7 +280,7 @@ export const processOptions = ({
     }
   });
 
-export const updateFieldValue = (field, value) => {
+export const updateFieldValue = (field, value, skipFieldTouched) => {
   const updateValue = typeof value !== 'undefined' && value;
 
   if (field.omitWhenHidden && !field.visible) {
@@ -288,6 +288,9 @@ export const updateFieldValue = (field, value) => {
     console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
+    if (skipFieldTouched) {
+      field.defaultValue = updateValue;
+    }
   }
 };
 

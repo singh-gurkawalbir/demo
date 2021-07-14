@@ -268,11 +268,15 @@ export function* requestToken({ resourceId, fieldId, values }) {
 }
 
 export function* pingConnection({ resourceId, values }) {
+  const asyncKey = `connections-${resourceId}`;
+
+  yield put(actions.asyncTask.start(asyncKey));
   const connectionPayload = yield call(createPayload, {
     values,
     resourceType: 'connections',
     resourceId,
   });
+
   let resp;
 
   try {
@@ -285,6 +289,8 @@ export function* pingConnection({ resourceId, values }) {
       hidden: true,
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
@@ -294,6 +300,8 @@ export function* pingConnection({ resourceId, values }) {
   }
 
   if (resp && resp.errors) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
@@ -301,7 +309,7 @@ export function* pingConnection({ resourceId, values }) {
       )
     );
   }
-
+  yield put(actions.asyncKey.success(asyncKey));
   yield put(
     actions.resource.connections.testSuccessful(
       resourceId,
@@ -425,6 +433,7 @@ export function* commitAndAuthorizeConnection({ resourceId }) {
     resourceType: 'connections',
     id: resourceId,
     scope: SCOPES.VALUE,
+    shouldLogTask: true,
   });
 
   // if there is conflict let conflict dialog show up

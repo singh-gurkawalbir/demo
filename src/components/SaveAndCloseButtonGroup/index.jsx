@@ -2,34 +2,31 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@material-ui/core';
 import ActionGroup from '../ActionGroup';
-import useConfirmDialog from '../ConfirmDialog';
 import Spinner from '../Spinner';
+import { FORM_SAVE_STATUS } from '../../utils/constants';
+import useHandleCancel from './hooks/useHandleCancel';
 
-export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, onSave }) {
-  const { saveDiscardDialog } = useConfirmDialog();
+export const CLOSE_AFTER_SAVE = true;
+
+export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterSave, isDirty, status, onClose, onSave }) {
   const [closeTriggered, setCloseTriggered] = useState(false);
-  const isSuccess = status === 'success';
-  const inProgress = status === 'inProgress';
-
+  const isSuccess = status === FORM_SAVE_STATUS.COMPLETE;
+  const inProgress = status === FORM_SAVE_STATUS.LOADING;
+  const handleSave = useCallback(() => {
+    onSave(!CLOSE_AFTER_SAVE);
+  }, [onSave]);
   const handleSaveAndClose = useCallback(() => {
-    onSave();
+    onSave(CLOSE_AFTER_SAVE);
     setCloseTriggered(true);
   }, [onSave]);
-
-  const handleCancelClick = useCallback(() => {
-    if (!isDirty) return onClose();
-
-    // console.log('confirm dialog, isDirty:', isDirty);
-
-    saveDiscardDialog({
-      onSave: handleSaveAndClose,
-      onDiscard: onClose,
-    });
-  }, [saveDiscardDialog, handleSaveAndClose, isDirty, onClose]);
+  const handleCancelClick = useHandleCancel({isDirty, onClose, handleSave: handleSaveAndClose});
 
   useEffect(() => {
+    if (disableOnCloseAfterSave) {
+      return;
+    }
     if (closeTriggered && isSuccess) onClose();
-  }, [closeTriggered, onClose, isSuccess]);
+  }, [closeTriggered, onClose, isSuccess, disableOnCloseAfterSave]);
 
   // console.log('disabled, !isDirty, inProgress', disabled, isDirty, inProgress);
 
@@ -40,7 +37,7 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
         data-test="saveEditor"
         disabled={disabled || !isDirty || inProgress}
         color="primary"
-        onClick={onSave}>
+        onClick={handleSave}>
         {inProgress ? <Spinner size="small">Saving...</Spinner> : 'Save'}
       </Button>
 
@@ -70,6 +67,7 @@ SaveAndCloseButtonGroup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   status: PropTypes.oneOf([undefined, 'success', 'inProgress', 'fail']),
+  disableOnCloseAfterSave: PropTypes.bool,
   disabled: PropTypes.bool,
   isDirty: PropTypes.bool,
 };
@@ -77,5 +75,6 @@ SaveAndCloseButtonGroup.propTypes = {
 SaveAndCloseButtonGroup.defaultProps = {
   disabled: false,
   isDirty: false,
+  disableOnCloseAfterSave: false,
 };
 

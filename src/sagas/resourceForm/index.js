@@ -8,7 +8,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
-import { commitStagedChanges } from '../resources';
+import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
@@ -323,10 +323,11 @@ export function* submitFormValues({
     // no context = {flowId} sent on purpose for the resource forms
     // on resource submit complete updateFlowDoc will be called anyway
     // sending context = {flowId} will trigger updateFlowDoc again
-    const resp = yield call(commitStagedChanges, {
+    const resp = yield call(commitStagedChangesWrapper, {
       resourceType: type,
       id: resourceId,
       scope: SCOPES.VALUE,
+      shouldLogTask: true,
     });
 
     if (resp && (resp.error || resp.conflict)) {
