@@ -385,7 +385,7 @@ export default {
   },
   'rest.blobFormat': {
     type: 'select',
-    label: 'Blob format',
+    label: 'File encoding',
     helpKey: 'export.http.response.blobFormat',
     options: [
       {
