@@ -13,7 +13,7 @@ export default {
     },
     'http.auth.token.headerName': {
       fieldId: 'http.auth.token.headerName',
-      visibleWhenAll: [{ field: 'http.auth.token.location', is: ['header'] }],
+      visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['header'] }],
       defaultValue: r => r?.http?.auth?.headerName || 'Authorization',
       required: true,
     },
