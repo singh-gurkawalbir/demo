@@ -6,7 +6,11 @@ export default {
       defaultValue: '',
       required: true,
     },
-    'rest.tokenLocation': { fieldId: 'rest.tokenLocation', required: true },
+    'rest.tokenLocation': {
+      fieldId: 'rest.tokenLocation',
+      required: true,
+      defaultValue: r => r?.http?.auth?.token?.location,
+    },
     'http.auth.token.headerName': {
       fieldId: 'http.auth.token.headerName',
       visibleWhenAll: [{ field: 'http.auth.token.location', is: ['header'] }],

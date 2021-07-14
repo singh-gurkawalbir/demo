@@ -5,6 +5,7 @@ export default {
     },
     'rest.refreshTokenMediaType': {
       fieldId: 'rest.refreshTokenMediaType',
+      defaultValue: r => r?.http?.auth?.token?.refreshMediaType,
     },
     'http.auth.token.refreshMethod': {
       fieldId: 'http.auth.token.refreshMethod',
