@@ -9,6 +9,7 @@ import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
+import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import EditRetryData from '../actions/EditRetry';
@@ -19,6 +20,7 @@ export default {
   useColumns: () => [
     {
       key: 'selectAll',
+      width: 24,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -52,6 +54,16 @@ export default {
       },
       width: '10%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
+    },
+    {
+      key: 'selectResolvedClassification',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectClassification {...tableContext} />;
+      },
+      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
+      width: '10%',
     },
     {
       key: 'selectDate',

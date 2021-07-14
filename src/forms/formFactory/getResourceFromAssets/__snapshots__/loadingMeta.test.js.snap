@@ -1187,8 +1187,11 @@ Object {
         ],
       },
       "netsuite.authType": Object {
-        "fieldId": "netsuite.authType",
+        "id": "netsuite.authType",
+        "label": "Authentication type",
         "required": true,
+        "skipSort": true,
+        "type": "nsauthtype",
       },
       "netsuite.concurrencyLevel": Object {
         "fieldId": "netsuite.concurrencyLevel",
@@ -1337,6 +1340,22 @@ Object {
           },
         ],
       },
+      "netsuite.wsdlVersion": Object {
+        "defaultValue": [Function],
+        "id": "netsuite.wsdlVersion",
+        "label": "WSDL version",
+        "options": Array [
+          Object {
+            "items": Array [
+              "2020.2",
+              "2018.1",
+              "2016.2",
+            ],
+          },
+        ],
+        "skipSort": true,
+        "type": "select",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -1378,6 +1397,7 @@ Object {
                 "netsuite.linkSuiteScriptIntegrator",
                 "_borrowConcurrencyFromConnectionId",
                 "netsuite.concurrencyLevel",
+                "netsuite.wsdlVersion",
               ],
               "label": "Advanced",
             },
@@ -3620,8 +3640,9 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
-      "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
         "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
@@ -5316,8 +5337,9 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
-      "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
         "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,

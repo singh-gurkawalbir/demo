@@ -158,6 +158,8 @@ export default {
     if (!newValues['/file/decrypt']) {
       newValues['/file/decrypt'] = undefined;
     }
+    newValues['/http/relativeURI'] = newValues['/http/fileRelativeURI'];
+    delete newValues['/http/fileRelativeURI'];
 
     return {
       ...newValues,
@@ -249,7 +251,7 @@ export default {
         collapsed: true,
         label: 'Where would you like to transfer from?',
         fields: [
-          'http.relativeURI',
+          'http.fileRelativeURI',
           'file.fileNameStartsWith',
           'file.fileNameEndsWith',
         ],

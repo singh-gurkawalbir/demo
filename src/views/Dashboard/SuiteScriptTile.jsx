@@ -143,15 +143,8 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         </Header>
         <Content>
           <CardTitle>
-            <Typography
-              variant="h3"
-              className={classes.tileName}
-              onClick={handleTileClick}>
-              <CeligoTruncate
-                dataPublic
-                delay={100}
-                lines={2}
-                placement="bottom">
+            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
+              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
                 {tile.displayName}
               </CeligoTruncate>
             </Typography>

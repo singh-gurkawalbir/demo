@@ -170,7 +170,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis'].includes(
+    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports'].includes(
       resourceType
     ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {

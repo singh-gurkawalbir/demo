@@ -176,6 +176,14 @@ export default function ConnectorInstallation(props) {
 
   const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
 
+  // init the install for IA2.0 to get updated installSteps
+  useEffect(() => {
+    if (isFrameWork2) {
+      dispatch(actions.integrationApp.installer.init(integrationId));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (redirectTo) {
       history.push(getRoutePath(redirectTo));

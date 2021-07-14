@@ -882,6 +882,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, {
+      id: integrationId,
+    }),
     setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
         connectionId, openOauthConnection, id,
@@ -2145,6 +2148,7 @@ const bottomDrawer = {
   initComplete: value => action(actionTypes.BOTTOM_DRAWER.INIT_COMPLETE, { value }),
   addTab: ({tabType, label, resourceId}) => action(actionTypes.BOTTOM_DRAWER.ADD_TAB, { tabType, resourceId, label }),
   removeTab: ({tabType, resourceId}) => action(actionTypes.BOTTOM_DRAWER.REMOVE_TAB, { tabType, resourceId }),
+  switchTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SWITCH_TAB, { index, tabType }),
   setActiveTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB, { index, tabType }),
   clear: () => action(actionTypes.BOTTOM_DRAWER.CLEAR),
 };
@@ -2181,6 +2185,10 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
     received: (connectionId, logs) =>
       action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
+    pause: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.PAUSE, { connectionId }),
+    refresh: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
     clear: ({connectionId, clearAllLogs}) =>
       action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId, clearAllLogs }),
     delete: connectionId =>
