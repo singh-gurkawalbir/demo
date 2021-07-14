@@ -208,7 +208,8 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: [''],
+          // TODO: check this is correct or not
+          is: ['', 'basic'],
         },
       ],
     },
@@ -223,11 +224,10 @@ export default {
     },
     {
       id: 'testandsavegroup',
-      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic'],
+          is: ['token'],
         },
       ],
     },
