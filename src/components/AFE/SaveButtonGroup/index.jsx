@@ -6,8 +6,10 @@ import SaveAndCloseButtonGroup from '../../SaveAndCloseButtonGroup';
 import useCancelConfirm from '../useCancelConfirm';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
-  const { handleSave, handleCancelClick, isEditorDirty, saveStatus} = useCancelConfirm(editorId, onClose);
+  const { handleSave, handleCancelClick, saveInProgress, isEditorDirty, saveStatus} = useCancelConfirm(editorId, onClose);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const editorViolations = useSelector(state => selectors.editorViolations(state, editorId));
+  const disable = !!editorViolations || disabled || saveInProgress || !isEditorDirty;
   const getStatus = useMemo(() => {
     switch (saveStatus) {
       case AFE_SAVE_STATUS.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
@@ -22,7 +24,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
       status={getStatus}
       onClose={handleCancelClick}
       onSave={handleSave}
-      disabled={disabled}
+      disabled={disable}
     />
   );
 }
