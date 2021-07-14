@@ -647,7 +647,9 @@ export function* submitResourceForm(params) {
 
 export function* saveAndContinueResourceForm(params) {
   const { resourceId } = params;
+  const asyncKey = `connections-${resourceId}`;
 
+  yield put(actions.asyncTask.start(asyncKey));
   yield call(submitResourceForm, params);
   const formState = yield select(
     selectors.resourceFormState,
@@ -672,6 +674,8 @@ export function* saveAndContinueResourceForm(params) {
       });
 
       if (response?.errors) {
+        yield put(actions.asyncTask.failed(asyncKey));
+
         return yield put(
           actions.api.failure(
             path,
@@ -687,9 +691,12 @@ export function* saveAndContinueResourceForm(params) {
         hidden: true,
       });
     } catch (error) {
+      yield put(actions.asyncTask.failed(asyncKey));
+
       return { error };
     }
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* saveResourceWithDefinitionID({

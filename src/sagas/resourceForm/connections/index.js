@@ -331,6 +331,9 @@ export function* pingConnectionWithAbort(params) {
 
   // perform submit cleanup
   if (abortPing) {
+    const asyncKey = `connections-${resourceId}`;
+
+    yield put(actions.asyncTask.success(asyncKey));
     yield put(
       actions.resource.connections.testCancelled(
         resourceId,

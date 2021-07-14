@@ -244,10 +244,6 @@ export default {
       visibleWhen: [
         {
           field: 'netsuite.authType',
-          is: ['basic'],
-        },
-        {
-          field: 'netsuite.authType',
           is: [''],
         },
       ],

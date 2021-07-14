@@ -26,7 +26,6 @@ export default function CloseButton({onClose,
   const status = useSelector(state =>
     selectors.asyncTaskStatus(state, `${resourceType}-${resourceId}`));
 
-  console.log('check ', status);
   const disabled = status === FORM_SAVE_STATUS.LOADING;
 
   return (

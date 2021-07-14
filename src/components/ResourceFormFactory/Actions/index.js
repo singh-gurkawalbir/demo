@@ -17,6 +17,7 @@ import OAuthAndCancel from './Groups/OAuthAndCancel';
 import TestAndSave from './Groups/TestAndSave';
 import SaveFileDefinitions from './Groups/SaveFileDefinitions';
 import ValidateAndSave from './Groups/ValidateAndSave';
+import SaveAndContinueGroup from './Groups/SaveAndContinueGroup';
 
 export const useLoadingSnackbarOnSave = props => {
   const {
@@ -51,6 +52,7 @@ export default {
   testandsavegroup: TestAndSave,
   nextandcancel: NextAndCancel,
   saveandclosegroup: SaveAndCloseButtonGroup,
+  saveandcontinuegroup: SaveAndContinueGroup,
   oauthandcancel: OAuthAndCancel,
   savefiledefinitions: SaveFileDefinitions,
   cancel: CancelButton,

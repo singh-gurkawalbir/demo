@@ -189,9 +189,6 @@ selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) 
   const actionButtonMeta = form.fieldMeta.actions?.find?.(({id}) => id === actionButtonFieldId) || {};
 
   if (!actionButtonMeta) { return true; }
-  if (isVisible(actionButtonMeta, form.fields)) {
-    console.log('check ', actionButtonMeta);
-  }
 
   return isVisible(actionButtonMeta, form.fields);
 };
