@@ -3,8 +3,8 @@ export default {
     'http.auth.token.refreshRelativeURI': {
       fieldId: 'http.auth.token.refreshRelativeURI',
     },
-    'http.auth.token.refreshMediaType': {
-      fieldId: 'http.auth.token.refreshMediaType',
+    'rest.refreshTokenMediaType': {
+      fieldId: 'rest.refreshTokenMediaType',
     },
     'http.auth.token.refreshMethod': {
       fieldId: 'http.auth.token.refreshMethod',
@@ -28,7 +28,7 @@ export default {
       'http.auth.token.refreshMethod',
       'http.auth.token.refreshRelativeURI',
       'http.auth.token.refreshHeaders',
-      'http.auth.token.refreshMediaType',
+      'rest.refreshTokenMediaType',
       'http.auth.token.refreshBody',
       'http.auth.token.refreshTokenPath',
     ],

@@ -17,6 +17,8 @@ export default {
     delete newValues['/rest/authScheme'];
     newValues['/http/auth/token/location'] = newValues['/rest/tokenLocation'];
     delete newValues['/rest/tokenLocation'];
+    newValues['/http/auth/token/refreshMediaType'] = newValues['/rest/refreshTokeMediaType'];
+    delete newValues['/rest/refreshTokenMediaType'];
 
     newValues['/http/mediaType'] = newValues['/rest/mediaType'] === 'urlencoded' ? 'urlencoded' : 'json';
     delete newValues['/rest/mediaType'];
