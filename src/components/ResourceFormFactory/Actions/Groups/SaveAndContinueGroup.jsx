@@ -48,8 +48,6 @@ export default function SaveAndContinueGroup(props) {
   const onSave = useHandleClickWhenValid(formKey, handleSaveAndContinue);
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
-  console.log('check here', formSaveStatus, `${resourceType}-${resourceId}`);
-
   return (
     <>
       <NextAndCancelButtonGroup

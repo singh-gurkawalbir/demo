@@ -33,7 +33,9 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
   useEffect(() => {
     if (isSubmitComplete) {
       onSubmitComplete && onSubmitComplete('', false, formState.formValues);
-      handleInitForm();
+      // when submit is complete reinitialize the resourceForm
+      // this applies to Regular resource forms and suiteScript forms
+      handleInitForm && handleInitForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitComplete]);

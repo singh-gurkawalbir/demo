@@ -4,8 +4,6 @@ import { ActionsFactory } from '../../drawer/Resource/Panel/ResourceFormActionsP
 import { selectors } from '../../../reducers';
 import consolidatedActions from './Actions';
 
-const secondaryActions = ['test', 'validate'];
-
 export default function (props) {
   const { resourceType, resourceId, ssLinkedConnectionId} = props;
 
@@ -25,18 +23,20 @@ export default function (props) {
 
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
-    if (actions) return actions;
-    let actionButtons = ['save', 'saveandclose', 'cancel'];
+    if (actions) return actions.map(action => ({...action, mode: 'group'}));
+    // let actionButtons;
 
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && resource?.type !== 'other') {
-      actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
+      return [{id: 'testandsavegroup', mode: 'group' }];
     }
 
-    return actionButtons.map(id => ({
-      id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
-    }));
+    return [{id: 'saveandclosegroup', mode: 'group' }];
+
+    // return actionButtons.map(id => ({
+    //   id,
+    //   mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
+    // }));
   }, [actions, resource?.type, resourceType]);
 
   if (!formState.initComplete) return null;

@@ -6,6 +6,8 @@ import TestAndSaveButton from './TestAndSaveButton';
 import SuiteScriptIASettingsSaveButton from './SuiteScriptIASettingsSaveButton';
 import SaveAndCloseButton from './SaveAndCloseButton';
 import TestSaveAndCloseButton from './TestSaveAndCloseButton';
+import TestAndSave from './Groups/TestAndSave';
+import SaveAndClose from './Groups/SaveAndClose';
 
 export const useLoadingSnackbarOnSave = props => {
   const {
@@ -35,7 +37,10 @@ export const useLoadingSnackbarOnSave = props => {
 };
 
 export default {
+  testandsavegroup: TestAndSave,
+  saveandclosegroup: SaveAndClose,
   suiteScriptSave: SuiteScriptIASettingsSaveButton,
+  // TODO:deprecate these actions
   cancel: CancelButton,
   save: SaveButton,
   saveandclose: SaveAndCloseButton,
