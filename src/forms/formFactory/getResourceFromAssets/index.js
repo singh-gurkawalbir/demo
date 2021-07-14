@@ -312,11 +312,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             assistantData
           );
         } else if (type === 'rest' || (type === 'http' && resource?.useTechAdaptorForm)) {
-          const { mediaType } = (connection && connection[type]) || {};
-
           meta = meta.rest;
 
-          if (mediaType === 'csv') {
+          if (connection?.http?.successMediaType === 'csv' || connection?.rest?.mediaType === 'csv') {
             meta = meta.csv;
           } else {
             meta = meta.json;

@@ -21,6 +21,9 @@ export default {
     delete newValues['/rest/refreshTokenMediaType'];
 
     newValues['/http/mediaType'] = newValues['/rest/mediaType'] === 'urlencoded' ? 'urlencoded' : 'json';
+    if (newValues['/rest/mediaType'] === 'csv') {
+      newValues['/http/successMediaType'] = 'csv';
+    }
     delete newValues['/rest/mediaType'];
 
     newValues['/http/ping/method'] = newValues['/rest/pingMethod'];

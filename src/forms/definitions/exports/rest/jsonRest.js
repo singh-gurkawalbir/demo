@@ -61,6 +61,19 @@ export default {
     retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
     delete retValues['/rest/relativeURI'];
 
+    const pagingMethodMap = {
+      nextpageurl: 'url',
+      pageargument: 'page',
+      relativeuri: 'relativeuri',
+      linkheader: 'linkheader',
+      skipargument: 'skip',
+      token: 'token',
+      postbody: 'body',
+    };
+
+    retValues['/http/paging/method'] = pagingMethodMap[retValues['/rest/pagingMethod']];
+    delete retValues['/rest/pagingMethod'];
+
     if (
       retValues['/http/response/successValues'] &&
       !retValues['/http/response/successValues'].length
@@ -253,7 +266,7 @@ export default {
     // the request media-type is always json/urlencoded for REST, others are not supported in REST
     // CSV/XML media type could be successMediaTypes for REST Export
     retValues['/http/errorMediaType'] = 'json';
-    retValues['/http/successMediaType'] = connection?.rest?.mediaType || 'json';
+    retValues['/http/successMediaType'] = connection?.http?.successMediaType || connection?.rest?.mediaType || 'json';
     if (retValues['/http/successMediaType'] === 'urlencoded') {
       retValues['/http/successMediaType'] = 'json';
     }
@@ -264,7 +277,7 @@ export default {
     // If user tries to update and save an old export without requestMediaType field
     // then we need to set connection.http.mediaType as requestMediaType.
       if (typeof retValues['/http/method'] === 'string' && (retValues['/http/method'].toLowerCase() === 'post' || retValues['/http/method'].toLowerCase() === 'put')) {
-        retValues['/http/requestMediaType'] = connection?.rest?.mediaType;
+        retValues['/http/requestMediaType'] = connection?.http?.successMediaType || connection?.rest?.mediaType;
       }
     }
     retValues['/adaptorType'] = 'HTTPExport';
@@ -394,8 +407,8 @@ export default {
       visibleWhen: [{ field: 'type', is: ['once'] }],
       defaultValue: r => r?.http?.once?.body,
     },
-    'http.paging.method': {
-      fieldId: 'http.paging.method',
+    'rest.pagingMethod': {
+      fieldId: 'rest.pagingMethod',
     },
     'rest.nextPageURLPath': {
       fieldId: 'rest.nextPageURLPath',
@@ -486,7 +499,7 @@ export default {
         collapsed: true,
         label: 'Does this API use paging?',
         fields: [
-          'http.paging.method',
+          'rest.pagingMethod',
           'rest.nextPageURLPath',
           'rest.nextPageTokenPath',
           'rest.linkHeaderRelation',

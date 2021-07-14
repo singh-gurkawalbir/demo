@@ -1,6 +1,7 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, __, options = {}) => {
     const retValues = { ...formValues };
+    const { connection } = options;
 
     retValues['/file/type'] = 'csv';
     retValues['/http/method'] = 'GET';
@@ -9,10 +10,20 @@ export default {
       retValues['/type'] = 'blob';
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
+    retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
+
+    // set the successMediaType on Export according to the connection
+    // the request media-type is always json/urlencoded for REST, others are not supported in REST
+    // CSV/XML media type could be successMediaTypes for REST Export
+    retValues['/http/successMediaType'] = connection?.http?.successMediaType || connection?.rest?.mediaType || 'json';
+    if (retValues['/http/successMediaType'] === 'urlencoded') {
+      retValues['/http/successMediaType'] = 'json';
+    }
 
     retValues['/useTechAdaptorForm'] = true;
     retValues['/adaptorType'] = 'HTTPExport';
     delete retValues['/outputMode'];
+    delete retValues['/uploadFile'];
     delete retValues['/rest'];
 
     return {
@@ -20,7 +31,7 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'dataURITemplate' || fieldId === 'http.relativeURI') {
+    if (fieldId === 'dataURITemplate' || fieldId === 'rest.relativeURI') {
       const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
@@ -54,7 +65,7 @@ export default {
       fieldId: 'http.blobMethod',
     },
     'http.headers': { fieldId: 'http.headers' },
-    'http.relativeURI': {
+    'rest.relativeURI': {
       fieldId: 'rest.relativeURI',
       defaultValue: r => r?._rest?.relativeURI,
     },
@@ -121,7 +132,7 @@ export default {
           {
             fields: [
               'http.blobMethod',
-              'http.relativeURI',
+              'rest.relativeURI',
               'http.headers',
               'uploadFile',
             ],
