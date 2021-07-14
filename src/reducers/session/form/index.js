@@ -145,6 +145,15 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
+const calculateAllFieldsValue = (form, key) => Object.values(form.fields).reduce((acc, field) => {
+  const {name} = field;
+  const val = field[key];
+
+  acc[name] = val;
+
+  return acc;
+}, {});
+
 selectors.isFormDirty = (state, formKey) => {
   const form = selectors.formState(state, formKey);
 
@@ -152,34 +161,10 @@ selectors.isFormDirty = (state, formKey) => {
     return false;
   }
 
-  return Object.values(form.fields).some(field => {
-    if (field.visible) {
-      if (typeof field.value === 'object') {
-        if (Array.isArray(field.value) && field.value?.length === 0 && field.defaultValue === undefined) {
-          return false;
-        }
+  const defaultValueState = calculateAllFieldsValue(form, 'defaultValue');
+  const value = calculateAllFieldsValue(form, 'value');
 
-        return !isEqualWith(field.value, field.defaultValue, (objValue, othValue) => {
-          const isNotEqual = Object.keys(objValue).some(fieldKey => {
-            if (Array.isArray(objValue[fieldKey])) {
-              return !isEqual(objValue[fieldKey], othValue?.[fieldKey] || []);
-            }
-            if (typeof objValue[fieldKey] === 'object') {
-              return !isEqual(objValue[fieldKey], othValue?.[fieldKey] || {});
-            }
-
-            return (objValue[fieldKey] || '') !== (othValue?.[fieldKey] || '');
-          });
-
-          return !isNotEqual;
-        });
-      }
-
-      return (field.defaultValue || '') !== (field.value || '');
-    }
-
-    return false;
-  });
+  return !isEqual(value, defaultValueState);
 };
 
 selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
