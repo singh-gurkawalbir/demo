@@ -5,6 +5,10 @@ export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
+export const AFE_SAVE_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  REQUESTED: 'requested',
+});
 export const FORM_SAVE_STATUS = Object.freeze({
   COMPLETE: 'complete',
   FAILED: 'failed',
