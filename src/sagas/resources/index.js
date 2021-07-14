@@ -381,19 +381,20 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   }
 }
 
-export function* commitStagedChangesWrapper({shouldLogTask, ...props}) {
+// TODO: shouldLogTask should be removed and rely on asyncKey
+export function* commitStagedChangesWrapper({shouldLogTask, asyncKey, ...props}) {
   const {resourceType, id} = props;
-  const asyncKey = `${resourceType}-${id}`;
+  const finalAsyncKey = asyncKey || `${resourceType}-${id}`;
 
-  if (shouldLogTask) {
-    yield put(actions.asyncTask.start(asyncKey));
+  if (shouldLogTask || asyncKey) {
+    yield put(actions.asyncTask.start(finalAsyncKey));
     const resp = yield call(commitStagedChanges, props);
 
     if (resp?.error) {
     // save error message
-      return yield put(actions.asyncTask.failed(asyncKey));
+      return yield put(actions.asyncTask.failed(finalAsyncKey));
     }
-    yield put(actions.asyncTask.success(asyncKey));
+    yield put(actions.asyncTask.success(finalAsyncKey));
 
     return resp;
   }
