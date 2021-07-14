@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
-import { Button, makeStyles, Paper } from '@material-ui/core';
+import { makeStyles, Paper } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -15,13 +16,11 @@ import {
 } from '../../../../utils/hooks';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import getHooksMetadata from './metadata';
-import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
-import ButtonGroup from '../../../../components/ButtonGroup';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import LoadResources from '../../../../components/LoadResources';
+import SaveAndCloseButtonGroupAuto from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 
 const useStyles = makeStyles(theme => ({
   paperDefault: {
@@ -31,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
 }));
-export default function HooksForm({flowId}) {
+export default function HooksForm({flowId, formKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -56,10 +55,10 @@ export default function HooksForm({flowId}) {
       const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }));
+      dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }, formKey));
       dispatch(actions.hooks.save({ resourceType, resourceId, flowId, match }));
     },
-    [resource, dispatch, resourceId, resourceType, flowId, match]
+    [resource, dispatch, resourceId, resourceType, flowId, match, formKey]
   );
 
   const fieldMeta = useMemo(() =>
@@ -124,17 +123,22 @@ export default function HooksForm({flowId}) {
     [resourceType, resource?.netsuite_da?.useSS2Restlets] // eslint-disable-line camelcase
 
   );
+  const [count, setCount] = useState(0);
 
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: `/${resourceType}/${resourceId}`,
-      disabled,
-      onSave: handleSave,
-      onClose: handleClose,
-    }
-  );
+  const remountFn = useCallback(() => {
+    setCount(count => count + 1);
+  }, []);
 
-  const submitHookValues = closeOnSave => values => {
+  useFormInitWithPermissions({
+    fieldMeta,
+    disabled,
+    formKey,
+    remount: count,
+  });
+
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
+  const submitHookValues = () => {
     const selectedValues = {
       hooks: getSelectedHooks(values),
       suiteScriptHooks: getSelectedSuiteScriptHooks(values),
@@ -147,15 +151,11 @@ export default function HooksForm({flowId}) {
       return null;
     }
 
-    submitHandler(closeOnSave)({
+    handleSave({
       hooks: selectedValues.hooks.selectedHook,
       suiteScriptHooks: selectedValues.suiteScriptHooks.selectedHook,
     });
   };
-  const formKey = useFormInitWithPermissions({
-    fieldMeta,
-    disabled,
-  });
 
   return (
     <LoadResources resources="scripts,stacks">
@@ -166,26 +166,12 @@ export default function HooksForm({flowId}) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <DynaSubmit
-            formKey={formKey}
-            disabled={disableSave}
-            data-test={`saveHook-${resourceId}`}
-            onClick={submitHookValues()}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            disabled={disableSave}
-            color="secondary"
-            data-test={`saveAndCloseHook-${resourceId}`}
-            onClick={submitHookValues(true)}>
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button data-test={`cancelHook-${resourceId}`} onClick={handleClose}>
-            Cancel
-          </Button>
-        </ButtonGroup>
+        <SaveAndCloseButtonGroupAuto
+          remountAfterSaveFn={remountFn}
+          formKey={formKey}
+          onSave={submitHookValues}
+          onClose={handleClose}
+          />
       </DrawerFooter>
     </LoadResources>
   );

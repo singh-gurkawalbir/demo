@@ -320,13 +320,14 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options, context) =>
+  commitStaged: (resourceType, id, scope, options, context, asyncKey) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
       context,
+      asyncKey,
     }),
 
   commitConflict: (id, conflict, scope) =>
