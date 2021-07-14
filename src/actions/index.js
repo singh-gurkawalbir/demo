@@ -1604,10 +1604,14 @@ const job = {
           options,
         }),
       receivedCollection: ({ collection }) =>
-        // action(actionTypes.JOB.RECEIVED_COLLECTION, {
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
         }),
+      requestInProgressJobStatus: () =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS),
+      clear: () => action(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR),
+      noInProgressJobs: () => action(actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS),
+      receivedFamily: ({collection}) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
       requestCollection: ({ integrationId, flowId, filters, options }) =>

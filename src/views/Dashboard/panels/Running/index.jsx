@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 const defaultFilter = {
   sort: { order: 'desc', orderBy: 'createdAt' },
   paging: {
-    rowsPerPage: 25,
+    rowsPerPage: 50,
     currPage: 0,
   },
 };

@@ -63,6 +63,7 @@ export default function CeligoTable({
   filterKey,
   className,
   actionProps = emptyObj,
+  emptyMessage,
 }) {
   const classes = useStyles();
 
@@ -81,21 +82,22 @@ export default function CeligoTable({
             useColumns={useColumns}
             filterKey={filterKey}
             useRowActions={useRowActions}
+            />
 
-  />
-
-          <TableBodyContent
-            rowKey={rowKey}
-            data={data}
-            onRowOver={onRowOver}
-            onRowOut={onRowOut}
-            selectableRows={selectableRows}
-            isSelectableRow={isSelectableRow}
-            useColumns={useColumns}
-            useRowActions={useRowActions}
-            filterKey={filterKey}
-            onSelectChange={onSelectChange}
+          {emptyMessage && !data?.length ? (<span> {emptyMessage}</span>) : (
+            <TableBodyContent
+              rowKey={rowKey}
+              data={data}
+              onRowOver={onRowOver}
+              onRowOut={onRowOut}
+              selectableRows={selectableRows}
+              isSelectableRow={isSelectableRow}
+              useColumns={useColumns}
+              useRowActions={useRowActions}
+              filterKey={filterKey}
+              onSelectChange={onSelectChange}
           />
+          )}
         </Table>
       </TableContextWrapper>
     </div>

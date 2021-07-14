@@ -40,6 +40,21 @@ export function* getJobFamily({ jobId, type }) {
 
   yield put(actions.job.receivedFamily({ job }));
 }
+export function* getDashboardJobFamily({ inProgressJobIds }) {
+  const requestOptions = {path: '/jobs/family', opts: { method: 'POST' } };
+
+  requestOptions.opts.body = [...inProgressJobIds];
+
+  let jobs;
+
+  try {
+    jobs = yield call(apiCallWithRetry, requestOptions);
+  } catch (error) {
+    return true;
+  }
+
+  yield put(actions.job.dashboard.running.receivedFamily({ collection: jobs }));
+}
 
 export function* getInProgressJobsStatus() {
   const inProgressJobIds = yield select(selectors.inProgressJobIds);
@@ -67,12 +82,33 @@ export function* getInProgressJobsStatus() {
     );
   }
 }
+export function* getDasboardInProgressJobsStatus() {
+  const inProgressJobIds = yield select(selectors.dashboardInProgressJobIds);
+
+  if (
+    inProgressJobIds.length === 0
+  ) {
+    yield put(actions.job.dashboard.running.noInProgressJobs());
+  }
+
+  if (inProgressJobIds.length > 0) {
+    yield call(getDashboardJobFamily, { inProgressJobIds });
+  }
+}
 
 export function* pollForInProgressJobs() {
   while (true) {
     yield delay(5 * 1000);
 
     yield call(getInProgressJobsStatus);
+  }
+}
+
+export function* pollForDashboardInProgressJobs() {
+  while (true) {
+    yield delay(10 * 1000);
+
+    yield call(getDasboardInProgressJobsStatus);
   }
 }
 
@@ -97,6 +133,17 @@ export function* startPollingForInProgressJobs() {
     actionTypes.JOB.CLEAR,
     actionTypes.JOB.NO_IN_PROGRESS_JOBS,
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
+  ]);
+  yield cancel(watcher);
+}
+
+export function* startPollingForDashboardInProgressJobs() {
+  const watcher = yield fork(pollForDashboardInProgressJobs);
+
+  yield take([
+    actionTypes.JOB.DASHBOARD.RUNNING.CLEAR,
+    actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS,
+    actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS,
   ]);
   yield cancel(watcher);
 }
@@ -878,6 +925,7 @@ export const jobSagas = [
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
     startPollingForInProgressJobs
   ),
+  takeEvery(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS, startPollingForDashboardInProgressJobs),
   takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),

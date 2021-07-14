@@ -1,44 +1,76 @@
 import { createSelector } from 'reselect';
+import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
   JOB_STATUS,
 } from '../../../../utils/constants';
 import {
-  DEFAULT_STATE,
-
   getJobDuration,
 } from '../util';
 
-export default (state = DEFAULT_STATE, action) => {
+function getParentJobIndex(jobs, jobId) {
+  return jobs.findIndex(j => j._id === jobId);
+}
+export default (state = {}, action) => {
   const { type, collection = [] } = action;
 
   if (!type) {
     return state;
   }
 
-  if (type === actionTypes.JOB.CLEAR) {
-    return DEFAULT_STATE;
-  }
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.JOB.DASHBOARD.RUNNING.CLEAR:
+        draft.runningJobs = [];
+        draft.status = undefined;
+        break;
 
-  if (type === actionTypes.JOB.DASHBOARD.RUNNING.RE) {
-    return {
-      ...state,
-      status: 'loading',
-    };
-  }
-  if (type === actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION) {
-    return {
-      ...state,
-      runningJobs: collection,
-      status: undefined,
-    };
-  }
+      case actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION:
+        draft.status = 'loading';
+        break;
+      case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION:
+        draft.runningJobs = collection;
+        draft.status = undefined;
+        break;
+      case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY:
+        collection.forEach(job => {
+          const index = getParentJobIndex(state.runningJobs, job._id);
 
-  return state;
+          if (index > -1) {
+            draft.runningJobs[index] = {...job};
+          }
+        });
+        draft.status = undefined;
+        break;
+      default:
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
+
+selectors.dashboardInProgressJobIds = createSelector(
+  state => state && state.runningJobs,
+  runningJobs => {
+    const jobIds = [];
+
+    if (!runningJobs) {
+      return jobIds;
+    }
+
+    runningJobs.forEach(job => {
+      if (
+        job._id &&
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.CANCELING].includes(job.status)
+      ) {
+        jobIds.push(job._id);
+      }
+    });
+
+    return jobIds;
+  }
+);
 
 selectors.runningJobs = createSelector(state => state && state.runningJobs, (runningJobs = []) => runningJobs.map(job => {
   const additionalProps = {

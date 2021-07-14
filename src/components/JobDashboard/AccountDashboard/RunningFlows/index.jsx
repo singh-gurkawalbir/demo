@@ -28,12 +28,15 @@ export default function RunningFlows() {
 
   const jobs = useSelector(state => selectors.accountDashboardRunningJobs(state));
 
-  // useEffect(
-  //   () => () => {
-  //     dispatch(actions.job.clear());
-  //   },
-  //   [dispatch, filterHash]
-  // );
+  useEffect(
+    () => () => {
+      dispatch(actions.job.dashboard.running.clear());
+    },
+    [dispatch]
+  );
+  useEffect(() => {
+    dispatch(actions.job.dashboard.running.requestInProgressJobStatus());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -57,6 +60,7 @@ export default function RunningFlows() {
         resources={jobs}
         className={classes.jobTable}
         resourceType={filterKey}
+        emptyMessage="You don`t have any running flows."
           />
     </LoadResources>
   );

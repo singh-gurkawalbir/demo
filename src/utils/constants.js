@@ -269,6 +269,7 @@ export const JOB_STATUS = Object.freeze({
   QUEUED: 'queued',
   RUNNING: 'running',
   RETRYING: 'retrying',
+  CANCELING: 'canceling',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
