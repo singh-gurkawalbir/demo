@@ -4526,6 +4526,10 @@ selectors.applicationType = (state, resourceType, id) => {
     );
   }
 
+  if (adaptorType === 'http' && resourceObj?.http?.useRestForm) {
+    adaptorType = 'rest';
+  }
+
   // For Data Loader cases, there is no image.
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
     return '';

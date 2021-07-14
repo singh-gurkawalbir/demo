@@ -1,36 +1,36 @@
 export default {
   fieldMap: {
-    'rest.refreshTokenURI': {
-      fieldId: 'rest.refreshTokenURI',
+    'http.auth.token.refreshRelativeURI': {
+      fieldId: 'http.auth.token.refreshRelativeURI',
     },
-    'rest.refreshTokenMediaType': {
-      fieldId: 'rest.refreshTokenMediaType',
+    'http.auth.token.refreshMediaType': {
+      fieldId: 'http.auth.token.refreshMediaType',
     },
-    'rest.refreshTokenMethod': {
-      fieldId: 'rest.refreshTokenMethod',
+    'http.auth.token.refreshMethod': {
+      fieldId: 'http.auth.token.refreshMethod',
       required: true,
     },
-    'rest.refreshTokenBody': {
-      fieldId: 'rest.refreshTokenBody',
+    'http.auth.token.refreshBody': {
+      fieldId: 'http.auth.token.refreshBody',
       visibleWhenAll: [
-        { field: 'rest.refreshTokenMethod', is: ['POST', 'PUT'] },
+        { field: 'http.auth.token.refreshMethod', is: ['POST', 'PUT'] },
       ],
     },
-    'rest.refreshTokenPath': {
-      fieldId: 'rest.refreshTokenPath',
+    'http.auth.token.refreshTokenPath': {
+      fieldId: 'http.auth.token.refreshTokenPath',
     },
-    'rest.refreshTokenHeaders': {
-      fieldId: 'rest.refreshTokenHeaders',
+    'http.auth.token.refreshHeaders': {
+      fieldId: 'http.auth.token.refreshHeaders',
     },
   },
   layout: {
     fields: [
-      'rest.refreshTokenMethod',
-      'rest.refreshTokenURI',
-      'rest.refreshTokenHeaders',
-      'rest.refreshTokenMediaType',
-      'rest.refreshTokenBody',
-      'rest.refreshTokenPath',
+      'http.auth.token.refreshMethod',
+      'http.auth.token.refreshRelativeURI',
+      'http.auth.token.refreshHeaders',
+      'http.auth.token.refreshMediaType',
+      'http.auth.token.refreshBody',
+      'http.auth.token.refreshTokenPath',
     ],
   },
 };

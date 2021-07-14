@@ -1,27 +1,27 @@
 export default {
   fieldMap: {
-    'rest.bearerToken': {
-      fieldId: 'rest.bearerToken',
+    'http.auth.token.token': {
+      fieldId: 'http.auth.token.token',
       label: 'Token',
       defaultValue: '',
       required: true,
     },
     'rest.tokenLocation': { fieldId: 'rest.tokenLocation', required: true },
-    'rest.authHeader': {
-      fieldId: 'rest.authHeader',
-      visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['header'] }],
-      defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
+    'http.auth.token.headerName': {
+      fieldId: 'http.auth.token.headerName',
+      visibleWhenAll: [{ field: 'http.auth.token.location', is: ['header'] }],
+      defaultValue: r => r?.http?.auth?.headerName || 'Authorization',
       required: true,
     },
     'rest.authScheme': {
       fieldId: 'rest.authScheme',
       visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['header'] }],
-      defaultValue: r => (r && r.rest && r.rest.authScheme) || ' ',
+      defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
     },
-    'rest.tokenParam': {
-      fieldId: 'rest.tokenParam',
+    'http.auth.token.paramName': {
+      fieldId: 'http.auth.token.paramName',
       visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['url'] }],
-      defaultValue: r => r?.rest?.tokenParam || 'access_token',
+      defaultValue: r => r?.http?.auth?.token?.paramName || 'access_token',
     },
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
@@ -30,16 +30,16 @@ export default {
       visibleWhenAll: [
         { field: 'rest.tokenLocation', isNot: [''] },
       ],
-      defaultValue: r => !!(r && r.rest && r.rest.refreshTokenURI),
+      defaultValue: r => !!r?.http?.auth?.token?.refreshRelativeURI,
     },
   },
   layout: {
     fields: [
-      'rest.bearerToken',
+      'http.auth.token.token',
       'rest.tokenLocation',
-      'rest.authHeader',
+      'http.auth.token.headerName',
       'rest.authScheme',
-      'rest.tokenParam',
+      'http.auth.token.paramName',
       'configureTokenRefresh',
     ],
   },

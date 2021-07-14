@@ -17,7 +17,13 @@ export default {
         expression.push({ 'rdbms.type': r.type });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
-        expression.push({ type: ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type });
+        const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
+
+        if (r?.http?.useRestForm || r.type === 'rest') {
+          expression.push({ $or: [{ 'http.useRestForm': true }, { type: 'rest' }] });
+        } else {
+          expression.push({ type: destinationType });
+        }
         if (r.assistant) {
           expression.push({ assistant: r.assistant });
         }
