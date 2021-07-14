@@ -237,16 +237,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'saveandclose',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'file.type',
@@ -256,17 +247,7 @@ export default {
     },
     {
       // Button that saves file defs and then submit resource
-      id: 'savedefinition',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      // Button that saves file defs and then submit resource
-      id: 'saveandclosedefinition',
+      id: 'savefiledefinitions',
       visibleWhen: [
         {
           field: 'file.type',

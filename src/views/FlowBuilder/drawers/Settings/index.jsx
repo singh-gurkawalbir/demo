@@ -1,9 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
@@ -12,13 +11,14 @@ import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
-import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
-import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { emptyObject, FORM_SAVE_STATUS, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
 import EditorDrawer from '../../../../components/AFE/Drawer';
+import SaveAndCloseButtonGroupAuto from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+
+const formKey = 'flowbuildersettings';
 
 function Settings({
   flowId,
@@ -141,40 +141,38 @@ function Settings({
       }
 
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value', null, null, formKey));
     },
     [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification, hasFlowSettingsAccess]
   );
 
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: (isUserInErrMgtTwoDotZero && !hasFlowSettingsAccess) ? '/notifications' : `/flows/${flow._id}`,
-      onSave: handleSubmit,
-      onClose: handleClose,
-    }
-  );
-
-  const validateAndSubmit = useCallback(closeOnSave => formVal => {
-    if (Object.hasOwnProperty.call(formVal, 'settings')) {
+  const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const validateAndSubmit = useCallback(() => {
+    if (Object.hasOwnProperty.call(formValues, 'settings')) {
       // dont submit the form if there is validation error
       // REVIEW: re-visit once Surya's form PR is merged
-      if (formVal && formVal.settings && formVal.settings.__invalid) {
+      if (formValues && formValues.settings && formValues.settings.__invalid) {
         return;
       }
     }
-    submitHandler(closeOnSave)(formVal);
-  }, [submitHandler]);
+    handleSubmit(formValues);
+  }, [formValues, handleSubmit]);
 
   useEffect(() => {
     setRemountKey(remountKey => remountKey + 1);
   }, [isFlowSubscribed]);
 
-  const formKey = useFormInitWithPermissions({
+  const remountFn = useCallback(() => {
+    setRemountKey(remountKey => remountKey + 1);
+  }, []);
+
+  useFormInitWithPermissions({
     fieldMeta,
     integrationId,
     resourceType,
     resourceId,
     validationHandler,
+    formKey,
     remount: remountKey,
   });
 
@@ -184,7 +182,7 @@ function Settings({
         actions.form.forceFieldState(formKey)('notifyOnFlowError', { disabled: false })
       );
     }
-  }, [formKey, dispatch, isUserInErrMgtTwoDotZero]);
+  }, [dispatch, isUserInErrMgtTwoDotZero]);
 
   return (
     <LoadResources required resources="notifications">
@@ -193,41 +191,28 @@ function Settings({
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <DynaSubmit
-            formKey={formKey}
-            resourceType={resourceType}
-            resourceId={resourceId}
-            data-test="saveFlowSettings"
-            onClick={validateAndSubmit()}
-            disabled={disableSave}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            resourceType={resourceType}
-            resourceId={resourceId}
-            data-test="saveAndCloseFlowSettings"
-            onClick={validateAndSubmit(true)}
-            disabled={disableSave}
-            color="secondary">
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button onClick={handleClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </ButtonGroup>
+        <SaveAndCloseButtonGroupAuto
+          formKey={formKey}
+          onSave={validateAndSubmit}
+          onClose={handleClose}
+          remountAfterSaveFn={remountFn}
+          />
       </DrawerFooter>
     </LoadResources>
   );
 }
 
 export default function SettingsDrawer(props) {
+  const status = useSelector(state =>
+    selectors.asyncTaskStatus(state, formKey));
+
+  const disabled = status === FORM_SAVE_STATUS.LOADING;
+
   return (
     <RightDrawer
       path="settings"
       width="medium">
-      <DrawerHeader title="Settings" />
+      <DrawerHeader title="Settings" disableClose={disabled} />
       <Settings {...props} />
       <EditorDrawer />
     </RightDrawer>
