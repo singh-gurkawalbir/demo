@@ -17,9 +17,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'auto',
   },
   tablePaginationRoot: {
-    float: 'right',
     display: 'flex',
-    margin: 'auto',
   },
   filterContainer: {
     padding: theme.spacing(2, 0, 2, 2),
@@ -95,7 +93,7 @@ export default function Filters(props) {
   const jobFilter = useSelector(state => selectors.filter(state, filterKey));
   const {currPage = 0,
     rowsPerPage = DEFAULT_ROWS_PER_PAGE,
-  } = jobFilter?.paging;
+  } = jobFilter?.paging || {};
 
   const patchFilter = useCallback(
     (key, value) => {

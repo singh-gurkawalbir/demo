@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '1fr',
   },
+  moreIcon: {
+    marginTop: -theme.spacing(1),
+  },
   heading: {
     fontWeight: 'bold',
     color: theme.palette.secondary.light,
@@ -82,15 +85,15 @@ const useStyles = makeStyles(theme => ({
   },
   checkAction: {
     listStyle: 'none',
-    // padding: 0,
+    padding: 0,
     margin: 0,
     display: 'flex',
     // justifyContent: 'flex-start',
+    '& li:first-child': {
+      width: 30,
+    },
     '& li': {
-      float: 'left',
-      '&:empty': {
-        marginLeft: 22,
-      },
+      width: 'calc(100% - 30px)',
     },
   },
 }));
@@ -201,6 +204,7 @@ export default function MultiSelectFilter(props) {
                               <IconButton
                                 data-test="toggleJobDetail"
                                 className={classes.moreIcon}
+                                size="small"
                                 onClick={handleExpandCollapseClick}>
                                 <RowIcon expanded={expanded} childLoaded={m.children} />
                               </IconButton>
@@ -219,16 +223,16 @@ export default function MultiSelectFilter(props) {
                                   )}
                               label={m.name}
                               key={m._id} />
+                            {expanded && m.children && m.children.map(c => (
+                              <ChildDetails
+                                key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                                checked={checked} />
+                            ))}
                           </li>
                         </ul>
-                        {expanded && m.children && m.children.map(c => (
-                          <ChildDetails
-                            key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
-                            checked={checked} />
-                        ))}
+
                       </>
                     ))}
-
                   </FormGroup>
                 </FormControl>
               </div>

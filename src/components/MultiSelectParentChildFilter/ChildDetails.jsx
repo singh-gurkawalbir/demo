@@ -3,58 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormControlLabel, Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  checkAction: {
-    paddingLeft: 58,
-  },
-  name: {
-    width: '18.15%',
-  },
-  status: {
-    width: '10.15',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  error: {
-    width: '10.15%',
-    textAlign: 'right',
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'nowrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
-  },
-  checkActionBorder: {
-    paddingLeft: 55,
-    borderLeft: `5px solid ${theme.palette.primary.main}`,
-  },
-  errorCount: {
-    color: theme.palette.error.dark,
-  },
   selectResourceItem: {
     display: 'flex',
     alignItems: 'flex-start',
     marginBottom: theme.spacing(2),
+    marginLeft: theme.spacing(2),
     '& > .MuiFormControlLabel-label': {
       fontSize: theme.spacing(2),
     },

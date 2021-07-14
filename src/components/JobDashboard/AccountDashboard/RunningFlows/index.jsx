@@ -1,19 +1,25 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-
-import LoadResources from '../../../LoadResources';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles(theme => ({
   jobTable: {
     height: '100%',
     overflow: 'auto',
-    paddingBottom: 115,
+  },
+  emptyMessage: {
+    margin: theme.spacing(3, 2),
+  },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    overflow: 'auto',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 export default function RunningFlows() {
@@ -50,18 +56,21 @@ export default function RunningFlows() {
   }, [dispatch, filterHash]);
 
   return (
-    <LoadResources required resources="integrations,flows,exports,imports">
-      <span data-public>
-        <Filters
-          filterKey={filterKey}
+    <>
+      <div className={classes.root}>
+
+        <span data-public>
+          <Filters
+            filterKey={filterKey}
       />
-      </span>
-      <ResourceTable
-        resources={jobs}
-        className={classes.jobTable}
-        resourceType={filterKey}
-        emptyMessage="You don`t have any running flows."
+        </span>
+        <ResourceTable
+          resources={jobs}
+          className={classes.jobTable}
+          resourceType={filterKey}
           />
-    </LoadResources>
+      </div>
+      {!jobs?.length ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any running flows. </Typography> : ''}
+    </>
   );
 }
