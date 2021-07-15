@@ -1947,7 +1947,7 @@ selectors.mkChildIntegration = () => {
   );
 };
 
-const jobStatusPrioityMap = {
+const jobStatusPriorityMap = {
   // large dates
   [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
   [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
@@ -1998,7 +1998,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
 
       return {
         ...flow,
-        lastExecutedAtSort: jobStatusPrioityMap[job.status],
+        lastExecutedAtSort: jobStatusPriorityMap[job.status],
         lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
         isJobInQueuedStatus,
         lastExecutedAtSortType: 'status'};
@@ -2539,12 +2539,14 @@ selectors.makeIntegrationAppSectionFlows = () =>
   createSelector(
     selectors.integrationAppSettings,
     state => state?.data?.resources?.flows,
+    (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
+    (_1, _2, _3, _4, _5, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
     selectors.openErrorsMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, errorMap, options = emptyObject) => {
+    (integration, flows = [], latestFlowJobs, isUserInErrMgtTwoDotZero, integrationId, section, childId, errorMap, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
@@ -2594,12 +2596,39 @@ selectors.makeIntegrationAppSectionFlows = () =>
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
 
-      return filterAndSortResources(flows
+      flows = flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
         ).map(f => ({...f, errors: errorMap?.[f._id] || 0}))
-        .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
+        .map((flow, i) => {
+          const toReturnFlow = (supportsMultiStore && !childId) ? ({...flow, ...requiredFlows[i]}) : flow;
+
+          const {_id: flowId} = toReturnFlow;
+          const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+          if (!job || !isUserInErrMgtTwoDotZero) {
+            return {...toReturnFlow, lastExecutedAtSort: toReturnFlow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+          }
+
+          if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+            return {...toReturnFlow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+          }
+
+          // queued running retrying are the other statuses
+          const isJobInQueuedStatus =
+          (job.status === JOB_STATUS.QUEUED ||
+            (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+          return {
+            ...toReturnFlow,
+            lastExecutedAtSort: jobStatusPriorityMap[job.status],
+            lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+            isJobInQueuedStatus,
+            lastExecutedAtSortType: 'status'};
+        });
+
+      return filterAndSortResources(flows, options);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
