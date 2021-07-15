@@ -23,6 +23,8 @@ export default {
     newValues['/http/mediaType'] = newValues['/rest/mediaType'] === 'urlencoded' ? 'urlencoded' : 'json';
     if (newValues['/rest/mediaType'] === 'csv') {
       newValues['/http/successMediaType'] = 'csv';
+    } else {
+      newValues['/http/successMediaType'] = undefined;
     }
     delete newValues['/rest/mediaType'];
 
@@ -145,7 +147,7 @@ export default {
     'rest.mediaType': {
       fieldId: 'rest.mediaType',
       required: true,
-      defaultValue: r => r?.http?.mediaType || 'json',
+      defaultValue: r => r?.http?.successMediaType === 'csv' ? 'csv' : (r?.http?.mediaType || 'json'),
     },
     'http.encrypted': {
       fieldId: 'http.encrypted',
