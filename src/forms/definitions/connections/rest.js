@@ -19,7 +19,7 @@ export default {
     delete newValues['/rest/authScheme'];
     newValues['/http/auth/token/location'] = newValues['/rest/tokenLocation'];
     delete newValues['/rest/tokenLocation'];
-    newValues['/http/auth/token/refreshMediaType'] = newValues['/rest/refreshTokeMediaType'];
+    newValues['/http/auth/token/refreshMediaType'] = newValues['/rest/refreshTokenMediaType'];
     delete newValues['/rest/refreshTokenMediaType'];
 
     newValues['/http/mediaType'] = newValues['/rest/mediaType'] === 'urlencoded' ? 'urlencoded' : 'json';
@@ -102,7 +102,6 @@ export default {
     }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       newValues['/http/auth/token/refreshMethod'] = newValues['/http/auth/token/refreshMethod'] || 'POST';
-      newValues['/http/auth/token/refreshMediaType'] = newValues['/http/auth/token/refreshMediaType'] || 'urlencoded'; // doing this as the default media type is 'urlencoded' in REST
     }
     if (newValues['/http/ping/successPath'] && !newValues['/http/ping/successValues']) {
       newValues['/http/ping/allowArrayforSuccessPath'] = true;
