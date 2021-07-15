@@ -237,6 +237,7 @@ export default {
       type: 'textwithconnectioncontext',
       label: 'Boolean field to mark records as exported',
       visibleWhen: [{ field: 'type', is: ['once'] }],
+      connectionId: r => r?._connectionId,
     },
     'rest.once.relativeURI': {
       fieldId: 'rest.once.relativeURI',

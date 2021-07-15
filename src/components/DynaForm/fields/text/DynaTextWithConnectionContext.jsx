@@ -4,20 +4,19 @@ import DynaText from '../DynaText';
 import { selectors } from '../../../../reducers';
 
 export default function DynaTextWithConnectionContext(props) {
-  const { formKey, resourceId, resourceType } = props;
+  const { formKey, connectionId } = props;
 
   // boolean once field is only visible if media type is either json or urlencoded
   const isVisible = useSelector(state => {
     const requestMediaType = selectors.fieldState(state, formKey, 'http.requestMediaType')?.value;
-    const resource = selectors.resource(state, resourceType, resourceId);
-    const connection = selectors.resource(state, 'connections', resource?._connectionId);
+    const connection = selectors.resource(state, 'connections', connectionId);
     const connMediaType = connection?.http?.mediaType;
 
     // give preference to override media type field
     if (requestMediaType === 'json' || requestMediaType === 'urlencoded') {
       return true;
     }
-    if (connMediaType === 'json' || connMediaType === 'urlencoded') {
+    if (!requestMediaType && (connMediaType === 'json' || connMediaType === 'urlencoded')) {
       return true;
     }
 
