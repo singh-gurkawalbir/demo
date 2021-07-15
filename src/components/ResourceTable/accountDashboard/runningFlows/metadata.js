@@ -83,10 +83,10 @@ export default {
       width: '10%',
     },
     {
-      key: 'started',
+      key: 'startedAt',
       heading: 'Started',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
-      orderBy: 'started',
+      orderBy: 'startedAt',
       width: '10%',
     },
     {

@@ -964,22 +964,6 @@ selectors.getAllIntegrations = createSelector(state => {
 integrations => integrations
 );
 
-// selectors.getAllIntegrations = createSelector(state => {
-//   let allIntegrations = selectors.resourceList(state, {
-//     type: 'integrations',
-//   }).resources;
-//   const defaultFilter = [{ _id: 'all', name: 'All flows'}];
-
-//   if (!allIntegrations) { return defaultFilter; }
-
-//   allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
-//   allIntegrations = [...defaultFilter, ...allIntegrations];
-
-//   return allIntegrations;
-// },
-// integrations => integrations
-// );
-
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;
 
@@ -5036,9 +5020,8 @@ selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
     selectors.errorFilter,
     (allErrors, errorFilter) => {
       const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
-      const returnErrors = allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
-      return returnErrors;
+      return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
     }
   );
 };
