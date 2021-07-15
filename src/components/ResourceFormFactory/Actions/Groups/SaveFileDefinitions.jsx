@@ -3,8 +3,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../reducers';
-import SaveAndCloseButtonGroup from '../../../SaveAndCloseButtonGroup';
-import useHandleClickWhenValid from './hooks/useHandleClickWhenValid';
+import SaveAndCloseResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 export default function SaveFileDefinitions(props) {
   const {
@@ -58,17 +57,14 @@ export default function SaveFileDefinitions(props) {
     [values, dispatch, resourceId, resourceType, flowId, enquesnackbar]
   );
 
-  const onSave = useHandleClickWhenValid(formKey, handleSubmitForm);
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
-
   return (
-    <SaveAndCloseButtonGroup
+    <SaveAndCloseResourceForm
       disableOnCloseAfterSave
+      formKey={formKey}
       disabled={disabled}
-      isDirty={isDirty}
       status={formSaveStatus}
       onClose={onCancel}
-      onSave={onSave}
+      onSave={handleSubmitForm}
   />
   );
 }

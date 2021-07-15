@@ -2,9 +2,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
+import { getAsyncKey } from '../../../../sagas/resourceForm';
 import useHandleCancel from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancel';
+import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import useHandleSaveAndAuth from './hooks/useHandleSaveAndAuth';
-import { NextAndCancelButtonGroup } from './NextAndCancel';
 
 export default function OAuthAndCancel({
   resourceType,
@@ -14,22 +15,21 @@ export default function OAuthAndCancel({
 
 }) {
   const formSaveStatus = useSelector(state =>
-    selectors.asyncTaskStatus(state, `${resourceType}-${resourceId}`)
+    selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
   );
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
   const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId});
 
   const handleCancelClick = useHandleCancel({
-    isDirty, onClose: onCancel, handleSave,
+    formKey, onClose: onCancel, handleSave,
 
   });
 
   return (
-    <NextAndCancelButtonGroup
+    <SaveAndCloseMiniResourceForm
+      formKey={formKey}
       submitTransientLabel="Authorizing..."
       submitButtonLabel="Save & authorize"
-      isDirty={isDirty}
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}
       handleCancelClick={handleCancelClick}

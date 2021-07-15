@@ -4,7 +4,6 @@ import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import useHandleClickWhenValid from './useHandleClickWhenValid';
 
 export default function useHandleSubmit({
   resourceType,
@@ -18,7 +17,7 @@ export default function useHandleSubmit({
 
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
-  const handleSubmit = useCallback(
+  return useCallback(
     closeAfterSave => {
       const newValues = { ...values };
 
@@ -37,6 +36,4 @@ export default function useHandleSubmit({
         )
       );
     }, [dispatch, flowId, isGenerate, match, resourceId, resourceType, values]);
-
-  return useHandleClickWhenValid(formKey, handleSubmit);
 }

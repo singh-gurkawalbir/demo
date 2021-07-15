@@ -3,8 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import useHandleClickWhenValid from '../../../../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
-import SaveAndCloseButtonGroup from '../../../../SaveAndCloseButtonGroup';
+import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 export default function SaveAndClose(props) {
   const {
@@ -29,8 +28,6 @@ export default function SaveAndClose(props) {
 
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
-
   const onSave = useCallback(
     closeAfterSave => {
       dispatch(
@@ -47,19 +44,18 @@ export default function SaveAndClose(props) {
     },
     [dispatch, integrationId, match, resourceId, resourceType, ssLinkedConnectionId, values]
   );
-  const handleSubmitForm = useHandleClickWhenValid(formKey, onSave);
 
   // TODO: @Surya Do we need to pass all props to DynaAction?
   // Please revisit after form refactor
 
   return (
-    <SaveAndCloseButtonGroup
+    <SaveAndCloseResourceForm
       disableOnCloseAfterSave
       disabled={disabled}
-      isDirty={isDirty}
+      formKey={formKey}
       status={formSaveStatus}
       onClose={onCancel}
-      onSave={handleSubmitForm}
+      onSave={onSave}
   />
   );
 }

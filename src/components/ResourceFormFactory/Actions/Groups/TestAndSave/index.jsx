@@ -8,8 +8,8 @@ import { PING_STATES } from '../../../../../reducers/comms/ping';
 import TestButton, { PingMessage } from './TestButton';
 // import useHandleSubmit from '../hooks/useHandleSubmit';
 import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
-import SaveAndCloseButtonGroup from '../../../../SaveAndCloseButtonGroup';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 const ConfirmDialog = props => {
   const {
@@ -172,14 +172,6 @@ export default function TestSaveAndClose(props) {
     }
   }, [saveTerminated]);
 
-  //   useEffect(() => {
-  //     if (pingLoading || savingForm || disabled || erroredMessage) {
-  //       setDisableSaveOnClick(true);
-  //     } else {
-  //       setDisableSaveOnClick(false);
-  //     }
-  //   }, [pingLoading, savingForm, setDisableSaveOnClick, disabled, erroredMessage]);
-
   const handleCloseAndClearForm = useCallback(() => {
     dispatchLocalAction({
       type: 'clearFormData',
@@ -195,10 +187,8 @@ export default function TestSaveAndClose(props) {
     handleTestForm();
     dispatchLocalAction({ type: 'setFormValues', closeAfterSave, formValues: values });
   }, [handleTestForm, testClear, values]);
-  const handleTestAndSaveForm = useHandleClickWhenValid(formKey, handleTestAndSave);
 
   const formSaveStatus = (savingForm || pingLoading) ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
   return (
     <>
@@ -213,13 +203,13 @@ export default function TestSaveAndClose(props) {
       <PingMessage resourceId={resourceType} />
       {/* its a two step process we first test the connection then we save..therefore we disable testAndSave button during this period */}
 
-      <SaveAndCloseButtonGroup
+      <SaveAndCloseResourceForm
         disableOnCloseAfterSave
+        formKey={formKey}
         disabled={disabled}
-        isDirty={isDirty}
         status={formSaveStatus}
         onClose={onCancel}
-        onSave={handleTestAndSaveForm}
+        onSave={handleTestAndSave}
   />
       <TestButton
         resourceId={resourceId}

@@ -4,7 +4,7 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import useConfirmDialog from '../../../ConfirmDialog';
-import SaveAndCloseButtonGroup from '../../../SaveAndCloseButtonGroup';
+import SaveAndCloseResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import useHandleSubmit from './hooks/useHandleSubmit';
 
 export default function SaveAndClose(props) {
@@ -36,8 +36,6 @@ export default function SaveAndClose(props) {
   const formSaveStatus = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)?.formSaveStatus
   );
-
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
   const saveResource = useHandleSubmit({
     resourceType,
@@ -81,13 +79,13 @@ export default function SaveAndClose(props) {
   );
 
   return (
-    <SaveAndCloseButtonGroup
+    <SaveAndCloseResourceForm
       disableOnCloseAfterSave
-      disabled={disabled}
-      isDirty={isDirty}
+      formKey={formKey}
       status={formSaveStatus}
       onClose={onCancel}
       onSave={onSave}
+      disabled={disabled}
   />
   );
 }

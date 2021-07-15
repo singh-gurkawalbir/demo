@@ -7,8 +7,8 @@ import useConfirmDialog from '../../../../../ConfirmDialog';
 import { PING_STATES } from '../../../../../../reducers/comms/ping';
 import TestButton, { PingMessage } from './TestButton';
 import useHandleClickWhenValid from '../../../../../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
-import SaveAndCloseButtonGroup from '../../../../../SaveAndCloseButtonGroup';
 import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
+import SaveAndCloseResourceForm from '../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 const ConfirmDialog = props => {
   const {
@@ -207,10 +207,8 @@ export default function TestAndSave(props) {
     handleTestForm();
     dispatchLocalAction({ type: 'setFormValues', closeAfterSave, formValues: values });
   }, [handleTestForm, testClear, values]);
-  const handleTestAndSaveForm = useHandleClickWhenValid(formKey, handleTestAndSave);
 
   const formSaveStatus = (savingForm || pingLoading) ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
   // TODO: @Surya Do we need to pass all props to DynaAction?
   // Please revisit after form refactor
@@ -226,13 +224,13 @@ export default function TestAndSave(props) {
       {/* Test button which hides the test button and shows the ping snackbar */}
       <PingMessage resourceId={resourceType} />
       {/* its a two step process we first test the connection then we save..therefore we disable testAndSave button during this period */}
-      <SaveAndCloseButtonGroup
+      <SaveAndCloseResourceForm
+        formKey={formKey}
         disableOnCloseAfterSave
         disabled={disabled}
-        isDirty={isDirty}
         status={formSaveStatus}
         onClose={onCancel}
-        onSave={handleTestAndSaveForm}
+        onSave={handleTestAndSave}
         />
       <TestButton
         resourceId={resourceId}

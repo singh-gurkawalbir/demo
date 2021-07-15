@@ -8,7 +8,6 @@ import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { emptyObject } from '../../../../../utils/constants';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
-import useHandleClickWhenValid from './useHandleClickWhenValid';
 
 export default function useHandleSaveAndAuth({formKey, resourceType, resourceId}) {
   const resource = useSelectorMemo(
@@ -70,7 +69,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId}
 
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
-  const saveAndAuthorizeWhenScopesArePresent = useCallback(
+  return useCallback(
     () => {
       if (
         resourceConstants.OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES.includes(
@@ -124,10 +123,5 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId}
       handleSaveAndAuthorizeConnection(values);
     },
     [handleSaveAndAuthorizeConnection, resource._connectorId, resource.assistant, snackbar, values]
-  );
-
-  return useHandleClickWhenValid(
-    formKey,
-    saveAndAuthorizeWhenScopesArePresent,
   );
 }

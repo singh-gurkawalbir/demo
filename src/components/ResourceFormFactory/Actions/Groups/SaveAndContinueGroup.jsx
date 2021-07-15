@@ -3,8 +3,11 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import { getAsyncKey } from '../../../../sagas/resourceForm';
+import { CLOSE_AFTER_SAVE } from '../../../SaveAndCloseButtonGroup';
+import useHandleCancel from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancel';
+import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import useHandleClickWhenValid from './hooks/useHandleClickWhenValid';
-import { NextAndCancelButtonGroup } from './NextAndCancel';
 import TestButton from './TestAndSave/TestButton';
 
 export default function SaveAndContinueGroup(props) {
@@ -13,7 +16,6 @@ export default function SaveAndContinueGroup(props) {
     // submitButtonLabel = 'Submit',
     resourceType,
     resourceId,
-    disabled = false,
     onCancel,
     formKey,
   } = props;
@@ -22,12 +24,12 @@ export default function SaveAndContinueGroup(props) {
 
   const dispatch = useDispatch();
   const formSaveStatus = useSelector(state =>
-    selectors.asyncTaskStatus(state, `${resourceType}-${resourceId}`)
+    selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
   );
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const handleSaveAndContinue = useCallback(
-    () => {
+    closeAfterSave => {
       const newValues = {...values};
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
@@ -39,25 +41,31 @@ export default function SaveAndContinueGroup(props) {
           resourceType,
           resourceId,
           newValues,
-          match
+          match,
+          !closeAfterSave
         )
       );
     },
     [dispatch, match, resourceId, resourceType, values]
   );
   const onSave = useHandleClickWhenValid(formKey, handleSaveAndContinue);
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
+
+  const handleCloseAfterSave = useCallback(() => {
+    handleSaveAndContinue(CLOSE_AFTER_SAVE);
+  }, [handleSaveAndContinue]);
+  const handleCancelClick = useHandleCancel({
+    formKey, onClose: onCancel, handleSave: handleCloseAfterSave,
+  });
 
   return (
     <>
-      <NextAndCancelButtonGroup
-        disabled={disabled}
-        isDirty={isDirty}
+      <SaveAndCloseMiniResourceForm
+        formKey={formKey}
         submitButtonLabel="Save & continue"
         submitTransientLabel="Saving..."
         formSaveStatus={formSaveStatus}
         handleSave={onSave}
-        handleCancelClick={onCancel}
+        handleCancelClick={handleCancelClick}
   />
       <TestButton
         resourceId={resourceId}

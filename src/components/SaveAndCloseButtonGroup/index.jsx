@@ -4,7 +4,6 @@ import { Button } from '@material-ui/core';
 import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
-import useHandleCancel from './hooks/useHandleCancel';
 
 export const CLOSE_AFTER_SAVE = true;
 
@@ -19,7 +18,6 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
     onSave(CLOSE_AFTER_SAVE);
     setCloseTriggered(true);
   }, [onSave]);
-  const handleCancelClick = useHandleCancel({isDirty, onClose, handleSave: handleSaveAndClose});
 
   useEffect(() => {
     if (disableOnCloseAfterSave) {
@@ -56,7 +54,7 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
         color="primary"
         data-test="closeEditor"
         disabled={inProgress}
-        onClick={handleCancelClick}>
+        onClick={onClose}>
         Cancel
       </Button>
     </ActionGroup>
