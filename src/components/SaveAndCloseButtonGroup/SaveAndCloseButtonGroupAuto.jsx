@@ -5,12 +5,14 @@ import SaveAndCloseButtonGroup from '.';
 import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import useHandleCancel from './hooks/useHandleCancel';
+import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
 
 export default function SaveAndCloseButtonGroupAuto({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, remountAfterSaveFn}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector
   const handleClickWhenValid = useHandleClickWhenValid(formKey, onSave);
 
+  useClearAsyncStateOnUnmount(formKey);
   useEffect(() => {
     if (status === FORM_SAVE_STATUS.COMPLETE && remountAfterSaveFn) {
       remountAfterSaveFn();
