@@ -9,10 +9,10 @@ export default function useAutoScrollErrors({ formKey, formRef }) {
   useEffect(() => {
     if (formState && !formState.isValid) {
       const invalidFieldId = getFirstInvalidFieldId(formState);
-      const firstInput = formRef.current?.querySelector?.(`[id='${invalidFieldId}']`);
+      const invalidFieldEle = formRef.current?.querySelector?.(`[id='${invalidFieldId}']`);
 
-      if (firstInput && formState.validationOnSaveIdentifier) {
-        firstInput.scrollIntoView({ behavior: 'smooth' });
+      if (invalidFieldEle && formState.validationOnSaveIdentifier) {
+        invalidFieldEle.scrollIntoView({ behavior: 'smooth' });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
