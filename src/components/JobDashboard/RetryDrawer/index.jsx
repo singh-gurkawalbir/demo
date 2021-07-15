@@ -10,7 +10,8 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
-import ButtonGroup from '../../ButtonGroup';
+import SaveAndCloseButtonGroup from '../../SaveAndCloseButtonGroup';
+import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   errorText: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function RetryForm({jobId, flowJobId}) {
+function RetryForm({jobId, flowJobId, asyncKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -32,7 +33,7 @@ function RetryForm({jobId, flowJobId}) {
 
   const [error, setError] = useState();
   const [touched, setTouched] = useState(false);
-
+  const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
   const retryData = useSelector(state => {
     if (!retryId) return undefined;
 
@@ -42,6 +43,8 @@ function RetryForm({jobId, flowJobId}) {
   });
 
   const [data, setData] = useState(retryData?.data);
+  const isDirty = typeof (data) === 'string' ? JSON.stringify(JSON.parse(data)) !== JSON.stringify(retryData?.data)
+    : JSON.stringify(data) !== JSON.stringify(retryData?.data);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
@@ -51,15 +54,11 @@ function RetryForm({jobId, flowJobId}) {
       actions.job.updateRetryData({
         retryId,
         retryData: { ...retryData, data: parsedData },
+        asyncKey,
       })
     );
     setTouched(false);
-  }, [dispatch, retryData, retryId, data]);
-
-  const handleSaveAndClose = useCallback(() => {
-    handleSave();
-    history.goBack();
-  }, [handleSave, history]);
+  }, [dispatch, retryData, retryId, data, asyncKey]);
 
   const handleChange = useCallback(value => {
     try {
@@ -83,6 +82,7 @@ function RetryForm({jobId, flowJobId}) {
     );
     history.goBack(2);
   }, [dispatch, flowJobId, history, jobId, match, retryId]);
+  const handleClose = () => history.goBack;
 
   useEffect(() => {
     if (retryId && !retryData) {
@@ -100,8 +100,6 @@ function RetryForm({jobId, flowJobId}) {
     return <Spinner centerAll />;
   }
 
-  const disabled = !!error || !touched;
-
   return (
     <>
       <DrawerContent noPadding>
@@ -112,15 +110,13 @@ function RetryForm({jobId, flowJobId}) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
-          <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save & close</Button>
-          <Button
-            variant="text"
-            // eslint-disable-next-line react/jsx-handler-names
-            onClick={history.goBack}>Cancel
-          </Button>
-        </ButtonGroup>
+        <SaveAndCloseButtonGroup
+          isDirty={isDirty}
+          status={status}
+          onClose={handleClose}
+          onSave={handleSave}
+          shouldHandleCancel
+          />
         <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
       </DrawerFooter>
     </>
@@ -128,14 +124,18 @@ function RetryForm({jobId, flowJobId}) {
 }
 
 export default function RetryDrawer({height, jobId, flowJobId}) {
+  const asyncKey = `retrydata-${jobId}-${flowJobId}`;
+  const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
+  const disableClose = status === FORM_SAVE_STATUS.LOADING;
+
   return (
     <RightDrawer
       path="editRetry/:retryId"
       height={height}
       width="large"
       variant="permanent">
-      <DrawerHeader title="Edit retry data" />
-      <RetryForm jobId={jobId} flowJobId={flowJobId} />
+      <DrawerHeader disableClose={disableClose} title="Edit retry data" />
+      <RetryForm asyncKey={asyncKey} jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>
   );
 }

@@ -690,7 +690,8 @@ export function* requestRetryData({ retryId }) {
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
-export function* updateRetryData({ retryId, retryData }) {
+export function* updateRetryData({ retryId, retryData, asyncKey }) {
+  if (asyncKey) yield put(actions.asyncTask.start(asyncKey));
   const { path, opts } = getRequestOptions(
     actionTypes.JOB.ERROR.UPDATE_RETRY_DATA,
     {
@@ -706,8 +707,11 @@ export function* updateRetryData({ retryId, retryData }) {
       opts,
     });
   } catch (e) {
+    if (asyncKey) yield put(actions.asyncTask.failed(asyncKey));
+
     return true;
   }
+  if (asyncKey) yield put(actions.asyncTask.success(asyncKey));
 
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
