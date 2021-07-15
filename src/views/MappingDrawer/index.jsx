@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
@@ -38,7 +38,7 @@ export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
   const { saveStatus } = useSelector(state => selectors.mapping(state));
-  const closeDisabled = useMemo(() => saveStatus === 'requested', [saveStatus]);
+  const closeDisabled = saveStatus === 'requested';
 
   let importId;
 
