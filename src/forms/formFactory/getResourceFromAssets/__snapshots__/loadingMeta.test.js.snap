@@ -3965,6 +3965,7 @@ Object {
         "fieldId": "http.successMediaType",
       },
       "once.booleanField": Object {
+        "connectionId": [Function],
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
@@ -6760,6 +6761,7 @@ Object {
         "fieldId": "formView",
       },
       "once.booleanField": Object {
+        "connectionId": [Function],
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
