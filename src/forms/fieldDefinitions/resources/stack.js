@@ -66,7 +66,7 @@ export default {
   },
   'lambda.secretAccessKey': {
     type: 'text',
-    label: 'Secret acess key',
+    label: 'Secret access key',
     visibleWhen: [
       {
         field: 'type',
