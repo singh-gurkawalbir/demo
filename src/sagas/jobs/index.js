@@ -242,22 +242,70 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
 
 export function* requestCompletedJobCollection() {
   let collection;
+  const jobFilter = yield select(selectors.filter, 'completedFlows');
+  const userPreferences = yield select(selectors.userPreferences);
+  const sandbox = userPreferences.environment === 'sandbox';
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
+  const body = {sandbox};
+  let selectedStores = [];
+  let parentIntegrationId;
+  let storeId;
+  let { resources: allFlows } = yield select(selectors.resourceList, { type: 'flows' });
+  let allFlowIds = [];
+
+  if (selectedFlows.length) {
+    body._flowIds = selectedFlows;
+  } else if (selectedIntegrations.length) {
+    selectedStores = selectedIntegrations.filter(i => {
+      if (!i.includes('store')) return false;
+      storeId = i.substring(5, i.indexOf('pid'));
+      parentIntegrationId = i.substring(i.indexOf('pid') + 3);
+
+      return !(selectedIntegrations.includes(parentIntegrationId));
+    });
+    body._integrationIds = selectedIntegrations.filter(i => !i.includes('store'));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const s of selectedStores) {
+      storeId = s.substring(5, s.indexOf('pid'));
+      parentIntegrationId = s.substring(s.indexOf('pid') + 3);
+      body._flowIds = [...(body._flowIds || []), ...yield select(
+        selectors.integrationAppFlowIds,
+        parentIntegrationId,
+        storeId
+      )];
+    }
+    if (body._flowIds?.length && body._integrationIds?.length) {
+      allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
+      allFlowIds = (allFlows || []).map(({_id}) => _id);
+      delete body._integrationIds;
+      body._flowIds = [...body._flowIds, ...allFlowIds];
+    }
+
+    // remove all integration which has store in it
+    // get integration id and store id in that
+    // Check parent id is part of selectedIntegrations, if yes ignore this
+    // If no, get all flows in that store and push all those to flowIds
+    // body._integrationIds = selectedIntegrations;
+  }
 
   try {
     collection = yield call(apiCallWithRetry, {
-      path: '/jobs',
+      path: '/flows/runs/stats',
+      opts: {
+        method: 'POST',
+        body,
+      },
     });
   } catch (error) {
     return true;
   }
-  collection = collection.filter(j => !['running', 'queued', 'retrying'].includes(j.status));
 
-  if (!Array.isArray(collection)) {
+  if (!Array.isArray(collection?.stats)) {
     collection = [];
   }
 
-  yield put(actions.job.receivedCollection({ collection }));
-  yield put(actions.job.requestInProgressJobStatus());
+  yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats }));
 }
 
 export function* requestRunningJobCollection() {
@@ -331,7 +379,7 @@ export function* requestRunningJobCollection() {
   }
 
   yield put(actions.job.dashboard.running.receivedCollection({ collection: collection?.jobs }));
-  // yield put(actions.job.requestInProgressJobStatus());
+  yield put(actions.job.dashboard.running.requestInProgressJobStatus());
 }
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const watcher = yield fork(requestJobCollection, {
@@ -344,26 +392,16 @@ export function* getJobCollection({ integrationId, flowId, filters = {}, options
   yield take(actionTypes.JOB.CLEAR);
   yield cancel(watcher);
 }
-export function* getDashboardRunningJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
-  const watcher = yield fork(requestRunningJobCollection, {
-    integrationId,
-    flowId,
-    filters,
-    options,
-  });
+export function* getDashboardRunningJobCollection() {
+  const watcher = yield fork(requestRunningJobCollection);
 
-  yield take(actionTypes.JOB.CLEAR);
+  yield take(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR);
   yield cancel(watcher);
 }
-export function* getDashboardCompletedJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
-  const watcher = yield fork(requestCompletedJobCollection, {
-    integrationId,
-    flowId,
-    filters,
-    options,
-  });
+export function* getDashboardCompletedJobCollection() {
+  const watcher = yield fork(requestCompletedJobCollection);
 
-  yield take(actionTypes.JOB.CLEAR);
+  yield take(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR);
   yield cancel(watcher);
 }
 
@@ -426,7 +464,7 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   }
 }
 
-export function* cancelJob({ jobId }) {
+export function* cancelJob({ jobId, isDashboardJob }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
     resourceId: jobId,
   });
@@ -438,8 +476,9 @@ export function* cancelJob({ jobId }) {
   } catch (error) {
     return true;
   }
-
-  if (job._flowJobId) {
+  if (isDashboardJob) {
+    yield put(actions.job.dashboard.running.canceled({ jobId }));
+  } else if (job._flowJobId) {
     yield call(getJobFamily, { jobId: job._flowJobId });
   } else {
     yield put(actions.job.receivedFamily({ job }));
@@ -918,14 +957,14 @@ export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
 
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
-  takeEvery(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, getDashboardRunningJobCollection),
-  takeEvery(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, getDashboardCompletedJobCollection),
+  takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, getDashboardRunningJobCollection),
+  takeLatest(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, getDashboardCompletedJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
   takeEvery(
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
     startPollingForInProgressJobs
   ),
-  takeEvery(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS, startPollingForDashboardInProgressJobs),
+  takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS, startPollingForDashboardInProgressJobs),
   takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),

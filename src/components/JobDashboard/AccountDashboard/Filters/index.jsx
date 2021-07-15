@@ -165,7 +165,7 @@ export default function Filters(props) {
             count={totalJobs?.length}
             page={currPage}
             rowsPerPage={rowsPerPage}
-            resultPerPageLabel="Rows:"
+            resultPerPageLabel="Results per page:"
             onChangePage={handleChangePage}
             onChangeRowsPerPage={handleChangeRowsPerPage}
           />

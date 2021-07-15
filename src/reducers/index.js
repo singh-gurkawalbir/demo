@@ -4912,21 +4912,25 @@ selectors.flowDashboardJobs = createSelector(
 selectors.accountDashboardRunningJobs = createSelector(
   (state, options) => selectors.runningJobs(state, options),
   state => selectors.filter(state, 'runningFlows'),
-  (flowJobs, jobFilter) => {
+  (runningJobs, jobFilter) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
-    const dashboardJobs = [...flowJobs];
+    const comparer = ({ order, orderBy }) =>
+      order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+    const dashboardJobs = jobFilter.sort ? [...runningJobs].sort(comparer(jobFilter.sort)) : [...runningJobs];
 
     return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });
 
 selectors.accountDashboardCompletedJobs = createSelector(
-  (state, options) => selectors.flowJobs(state, options),
-  flowJobs => {
-    let dashboardJobs = [...flowJobs];
+  (state, options) => selectors.completedJobs(state, options),
+  state => selectors.filter(state, 'completedFlows'),
+  (completedJobs, jobFilter) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
+    const comparer = ({ order, orderBy }) =>
+      order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+    const dashboardJobs = jobFilter.sort ? [...completedJobs].sort(comparer(jobFilter.sort)) : [...completedJobs];
 
-    dashboardJobs = dashboardJobs.filter(j => !['running', 'queued', 'retrying'].includes(j.status));
-
-    return dashboardJobs;
+    return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });
 
 selectors.flowJob = (state, ops = {}) => {

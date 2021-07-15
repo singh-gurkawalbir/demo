@@ -12,7 +12,7 @@ function getParentJobIndex(jobs, jobId) {
   return jobs.findIndex(j => j._id === jobId);
 }
 export default (state = {}, action) => {
-  const { type, collection = [] } = action;
+  const { type, collection = [], jobId } = action;
 
   if (!type) {
     return state;
@@ -30,6 +30,11 @@ export default (state = {}, action) => {
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION:
         draft.runningJobs = collection;
+        draft.status = undefined;
+        break;
+      case actionTypes.JOB.DASHBOARD.RUNNING.CANCELED:
+        if (!draft.runningJobs) draft.runningJobs = [];
+        draft.runningJobs = draft.runningJobs.filter(job => job._id !== jobId);
         draft.status = undefined;
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY:
@@ -80,21 +85,9 @@ selectors.runningJobs = createSelector(state => state && state.runningJobs, (run
     numPagesProcessed: 0,
   };
 
-  if (!additionalProps.doneExporting) {
-    if (
-      [
-        JOB_STATUS.COMPLETED,
-        JOB_STATUS.CANCELED,
-        JOB_STATUS.FAILED,
-      ].includes(job.status)
-    ) {
-      additionalProps.doneExporting = true;
-    }
-  }
-
   return { ...job, ...additionalProps };
 }));
 
-selectors.isRunningJobsJobsCollectionLoading = state => state?.status === 'loading';
+selectors.isRunningJobsCollectionLoading = state => state?.status === 'loading';
 
 // #endregion

@@ -35,7 +35,7 @@ export default function RunHistoryDrawer() {
         onClose={handleClose}
         >
 
-        <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
+        <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
 
         <DrawerContent>
           <RunHistory flowId={flowId} />

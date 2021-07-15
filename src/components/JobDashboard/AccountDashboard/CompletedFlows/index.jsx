@@ -1,90 +1,86 @@
-import React, { useEffect, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useEffect, Fragment } from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-
-import LoadResources from '../../../LoadResources';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
-import JobTable from './JobTable';
+import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
+import Spinner from '../../../Spinner';
+import RunHistoryDrawer from '../../RunHistoryDrawer';
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles(theme => ({
   jobTable: {
     height: '100%',
     overflow: 'auto',
-    paddingBottom: 115,
+  },
+  emptyMessage: {
+    margin: theme.spacing(3, 2),
+  },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    overflow: 'auto',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
-export default function RunningFlows({
-  integrationId,
-  rowsPerPage = 100,
-}) {
-  const filterKey = 'runningFlows';
+export default function CompletedFlows() {
+  const filterKey = 'completedFlows';
   const classes = useStyles();
 
   const dispatch = useDispatch();
-  const userPermissionsOnIntegration = useSelector(state =>
-    selectors.resourcePermissions(state, 'integrations', integrationId)
-  );
 
   const filters = useSelector(state => selectors.filter(state, filterKey));
-  const jobs = useSelector(state => selectors.accountDashboardCompletedJobs(state));
-
-  const clearFilter = useCallback(() => {
-    dispatch(actions.clearFilter(filterKey));
-  }, [dispatch]);
-  const { currentPage = 0, ...nonPagingFilters } = filters;
+  const { paging, ...nonPagingFilters } = filters;
   const filterHash = hashCode(nonPagingFilters);
 
-  useEffect(
-    () => () => {
-      dispatch(actions.job.clear());
-    },
-    [dispatch, filterHash]
-  );
+  const jobs = useSelector(state => selectors.accountDashboardCompletedJobs(state));
+  const isCompletedJobsCollectionLoading = useSelector(state => selectors.isCompletedJobsCollectionLoading(state));
 
   useEffect(
     () => () => {
-      clearFilter();
+      dispatch(actions.job.dashboard.completed.clear());
     },
-    [clearFilter]
+    [dispatch]
   );
 
-  /** Whenever page changes, we need to update the same in state and
-   * request for in-progress jobs (in current page) status */
-  useEffect(() => {
-    dispatch(actions.job.paging.setCurrentPage(currentPage));
-    dispatch(actions.job.requestInProgressJobStatus());
-  }, [dispatch, currentPage]);
-
-  useEffect(() => {
-    dispatch(actions.job.paging.setRowsPerPage(rowsPerPage));
-  }, [dispatch, rowsPerPage]);
   useEffect(() => {
     dispatch(
       actions.job.dashboard.completed.requestCollection({
-        integrationId,
         filters,
         options: { },
       })
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, integrationId, filterHash]);
+  }, [dispatch, filterHash]);
 
   return (
-    <LoadResources required resources="integrations,flows,exports,imports">
-      <span data-public>
-        <Filters
-          filterKey={filterKey}
+    <>
+      <div className={classes.root}>
+        {isCompletedJobsCollectionLoading ? (
+
+          <Spinner centerAll />
+
+        ) : (
+          <>
+
+            <span data-public>
+              <Filters
+                filterKey={filterKey}
       />
-      </span>
-      <JobTable
-        classes={classes.jobTable}
-        jobsInCurrentPage={jobs}
-        userPermissionsOnIntegration={userPermissionsOnIntegration}
-      />
-    </LoadResources>
+            </span>
+            <ResourceTable
+              resources={jobs}
+              className={classes.jobTable}
+              resourceType={filterKey}
+          />
+          </>
+        )}
+      </div>
+      {!jobs?.length ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
+      <RunHistoryDrawer />
+
+    </>
   );
 }

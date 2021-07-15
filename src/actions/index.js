@@ -1596,17 +1596,14 @@ const accessToken = {
 const job = {
   dashboard: {
     running: {
-      requestCollection: ({ integrationId, flowId, filters, options }) =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, {
-          integrationId,
-          flowId,
-          filters,
-          options,
-        }),
+      requestCollection: () =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION),
       receivedCollection: ({ collection }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
         }),
+      canceled: ({ jobId }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.CANCELED, { jobId }),
       requestInProgressJobStatus: () =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS),
       clear: () => action(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR),
@@ -1614,17 +1611,13 @@ const job = {
       receivedFamily: ({collection}) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
-      requestCollection: ({ integrationId, flowId, filters, options }) =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, {
-          integrationId,
-          flowId,
-          filters,
-          options,
-        }),
+      requestCollection: () =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION),
       receivedCollection: ({ collection }) =>
-        action(actionTypes.JOB.RECEIVED_COLLECTION, {
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
         }),
+      clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
     },
   },
   requestCollection: ({ integrationId, flowId, filters, options }) =>
@@ -1653,8 +1646,8 @@ const job = {
     action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
 
-  cancel: ({ jobId, flowJobId }) =>
-    action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
+  cancel: ({ jobId, flowJobId, isDashboardJob }) =>
+    action(actionTypes.JOB.CANCEL, { jobId, flowJobId, isDashboardJob }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolveSelected: ({ jobs, match }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),

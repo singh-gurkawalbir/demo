@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -29,10 +30,11 @@ export default function RunningFlows() {
   const dispatch = useDispatch();
 
   const filters = useSelector(state => selectors.filter(state, filterKey));
-  const { paging, ...nonPagingFilters } = filters;
+  const { paging, sort, ...nonPagingFilters } = filters;
   const filterHash = hashCode(nonPagingFilters);
 
   const jobs = useSelector(state => selectors.accountDashboardRunningJobs(state));
+  const isRunningJobsCollectionLoading = useSelector(state => selectors.isRunningJobsCollectionLoading(state));
 
   useEffect(
     () => () => {
@@ -58,17 +60,25 @@ export default function RunningFlows() {
   return (
     <>
       <div className={classes.root}>
+        {isRunningJobsCollectionLoading ? (
 
-        <span data-public>
-          <Filters
-            filterKey={filterKey}
+          <Spinner centerAll />
+
+        ) : (
+          <>
+
+            <span data-public>
+              <Filters
+                filterKey={filterKey}
       />
-        </span>
-        <ResourceTable
-          resources={jobs}
-          className={classes.jobTable}
-          resourceType={filterKey}
+            </span>
+            <ResourceTable
+              resources={jobs}
+              className={classes.jobTable}
+              resourceType={filterKey}
           />
+          </>
+        )}
       </div>
       {!jobs?.length ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any running flows. </Typography> : ''}
     </>
