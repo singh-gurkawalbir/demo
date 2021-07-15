@@ -42,9 +42,6 @@ const useStyles = makeStyles(theme => ({
   actionColHead: {
     width: 125,
   },
-  tableContainer: {
-    overflowX: 'auto',
-  },
 }));
 
 const emptyObj = {};
