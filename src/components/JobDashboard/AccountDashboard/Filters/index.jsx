@@ -1,13 +1,17 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
 } from '@material-ui/core';
+import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import IconTextButton from '../../../IconTextButton';
 import CeligoPagination from '../../../CeligoPagination';
+import DateRangeSelector from '../../../DateRangeSelector';
+import { FILTER_KEYS, ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS } from '../../../../utils/accountDashboard';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,6 +22,9 @@ const useStyles = makeStyles(theme => ({
   },
   tablePaginationRoot: {
     display: 'flex',
+  },
+  rangeFilter: {
+    padding: 5,
   },
   filterContainer: {
     padding: theme.spacing(2, 0, 2, 2),
@@ -65,6 +72,9 @@ const useStyles = makeStyles(theme => ({
   hideLabel: {
     marginLeft: '10px',
   },
+  dateLabel: {
+    marginRight: '10px',
+  },
   divider: {
     width: 1,
     height: 20,
@@ -75,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 const defaultFilter = {
   sort: { order: 'desc', orderBy: 'createdAt' },
   paging: {
-    rowsPerPage: 25,
+    rowsPerPage: 50,
     currPage: 0,
   },
 };
@@ -86,9 +96,13 @@ export default function Filters(props) {
   const dispatch = useDispatch();
   const rowsPerPageOptions = [10, 25, 50];
   const DEFAULT_ROWS_PER_PAGE = 50;
-  const totalJobs = useSelector(state =>
+  const totalRunningJobs = useSelector(state =>
     selectors.runningJobs(state)
   );
+  const totalCompletedJobs = useSelector(state =>
+    selectors.completedJobs(state)
+  );
+  const totalJobs = filterKey === FILTER_KEYS.RUNNING ? totalRunningJobs : totalCompletedJobs;
 
   const jobFilter = useSelector(state => selectors.filter(state, filterKey));
   const {currPage = 0,
@@ -107,21 +121,25 @@ export default function Filters(props) {
     },
     [dispatch, filterKey]
   );
+  const defaultRange = {
+    startDate: startOfDay(addDays(new Date(), -29)),
+    endDate: endOfDay(new Date()),
+    preset: null,
+  };
 
-  const loadMoreLogs = useCallback(
+  const loadMoreJobs = useCallback(
     () => {
     },
     [],
   );
-  // const functionTypes = flowId ? SCRIPT_FUNCTION_TYPES_FOR_FLOW : SCRIPT_FUNCTION_TYPES;
   const paginationOptions = useMemo(
     () => ({
-      loadMoreHandler: loadMoreLogs,
+      loadMoreHandler: loadMoreJobs,
       hasMore: false, // !!nextPageURL,
-      loading: false, // status === 'requested',
+      loading: false,
 
     }),
-    [loadMoreLogs]
+    [loadMoreJobs]
   );
   const handleChangeRowsPerPage = useCallback(e => {
     dispatch(
@@ -144,19 +162,56 @@ export default function Filters(props) {
     ),
     [dispatch, filterKey, jobFilter?.paging]
   );
+  const isDateFilterSelected = !!(jobFilter.range && jobFilter.range.preset !== defaultRange.preset);
+
+  const selectedDate = useMemo(() => isDateFilterSelected ? {
+    startDate: new Date(jobFilter.range?.startDate),
+    endDate: new Date(jobFilter.range?.endDate),
+    preset: jobFilter.range?.preset,
+  } : defaultRange, [defaultRange, isDateFilterSelected, jobFilter.range?.endDate, jobFilter.range?.preset, jobFilter.range?.startDate]);
+
+  const handleDateFilter = useCallback(
+    dateFilter => {
+      const selectedRange = getSelectedRange(dateFilter);
+
+      dispatch(
+        actions.patchFilter(filterKey, {
+          ...jobFilter,
+          range: selectedRange,
+        })
+      );
+    },
+    [dispatch, filterKey, jobFilter],
+  );
 
   const handleRefreshClick = useCallback(() => {
-    // dispatch(actions.job.clear());
-    dispatch(actions.patchFilter('runningFlows', {...defaultFilter }));
+    dispatch(actions.patchFilter(filterKey, {...defaultFilter }));
     patchFilter(
       'refreshAt',
       new Date().getTime()
     ); /** We are setting the refreshAt (not sending to api) to make sure the filter changes when user clicks refresh.  */
-  }, [dispatch, patchFilter]);
+  }, [dispatch, filterKey, patchFilter]);
 
   return (
     <div className={classes.root}>
       <div className={classes.filterContainer}>
+        {filterKey === FILTER_KEYS.COMPLETED ? (
+          <>
+            <div className={classes.rangeFilter}>
+              <> Completed date range: </>
+              <DateRangeSelector
+                clearable
+                placement="right"
+                clearValue={defaultRange}
+                onSave={handleDateFilter}
+                value={selectedDate}
+                customPresets={ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS}
+                fromDate={startOfDay(addDays(new Date(), -29))}
+                showTime={false} />
+            </div>
+          </>
+
+        ) : ''}
         <div className={classes.rightActionContainer}>
           <CeligoPagination
             {...paginationOptions}

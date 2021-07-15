@@ -8,6 +8,7 @@ import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
+import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -80,6 +81,7 @@ export default function CompletedFlows() {
       </div>
       {!jobs?.length ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
       <RunHistoryDrawer />
+      <ErrorsListDrawer />
 
     </>
   );

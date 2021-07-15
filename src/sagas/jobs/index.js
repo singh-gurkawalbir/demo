@@ -253,6 +253,12 @@ export function* requestCompletedJobCollection() {
   let storeId;
   let { resources: allFlows } = yield select(selectors.resourceList, { type: 'flows' });
   let allFlowIds = [];
+  const {startDate, endDate} = jobFilter?.range || {};
+
+  if (startDate && endDate) {
+    body.time_gt = startDate.valueOf();
+    body.time_lte = endDate.valueOf();
+  }
 
   if (selectedFlows.length) {
     body._flowIds = selectedFlows;

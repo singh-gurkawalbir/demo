@@ -10,7 +10,6 @@ import MultiSelectParentChildColumnFilter from '../../commonCells/MultiSelectPar
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-// import ErrorCountCell from '../../../JobDashboard/ErrorCountCell';
 
 const useStyles = makeStyles(theme => ({
 
@@ -78,7 +77,20 @@ export default {
     {
       key: 'numOpenError',
       heading: 'Open errors',
-      Value: ({rowData: r}) => r?.numOpenError,
+      Value: ({rowData: r}) => {
+        const history = useHistory();
+        const match = useRouteMatch();
+        const handleOpenErrorsClick = useCallback(() => {
+          history.push(`${match.url}/${r._flowId}/errorsList`);
+        }, [history, match.url, r._flowId]);
+
+        return (r.numOpenError && (
+          <Button
+            onClick={handleOpenErrorsClick}
+            >{r.numOpenError}
+          </Button>
+        ));
+      },
       width: '10%',
     },
     {
