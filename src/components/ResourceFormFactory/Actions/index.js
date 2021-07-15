@@ -1,16 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import CancelButton from './CancelButton';
-import SaveButton from './SaveButton';
-import SaveAndCloseButton from './SaveAndCloseButton';
-import TestButton from './TestButton';
-import TestAndSaveButton from './TestAndSaveButton';
-import TestSaveAndCloseButton from './TestSaveAndCloseButton';
-import OAuthButton from './OAuthButton';
-import NetsuiteValidateButton from './NetsuiteValidateButton';
-import SaveAndCloseFileDefinitionButton from './SaveAndCloseFileDefinitionButton';
-import SaveFileDefinitionButton from './SaveFileDefinitionButton';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
-import SaveAndContinueButton from './SaveAndContinueButton';
 import SaveAndCloseButtonGroup from './Groups/SaveAndClose';
 import NextAndCancel from './Groups/NextAndCancel';
 import OAuthAndCancel from './Groups/OAuthAndCancel';
@@ -48,6 +37,7 @@ export const useLoadingSnackbarOnSave = props => {
 };
 
 export default {
+  // action groups
   validateandsave: ValidateAndSave,
   testandsavegroup: TestAndSave,
   nextandcancel: NextAndCancel,
@@ -55,16 +45,7 @@ export default {
   saveandcontinuegroup: SaveAndContinueGroup,
   oauthandcancel: OAuthAndCancel,
   savefiledefinitions: SaveFileDefinitions,
-  cancel: CancelButton,
-  save: SaveButton,
-  saveandclose: SaveAndCloseButton,
-  test: TestButton,
-  testandsave: TestAndSaveButton,
-  testsaveandclose: TestSaveAndCloseButton,
-  oauth: OAuthButton,
-  validate: NetsuiteValidateButton,
-  savedefinition: SaveFileDefinitionButton,
-  saveandclosedefinition: SaveAndCloseFileDefinitionButton,
+
+  // Single action
   saveintegrationsettings: IntegrationSettingsSaveButton,
-  saveandcontinue: SaveAndContinueButton,
 };

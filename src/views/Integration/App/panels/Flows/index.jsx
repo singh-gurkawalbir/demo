@@ -19,7 +19,6 @@ import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 import { generateNewId } from '../../../../../utils/resource';
-import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
@@ -29,6 +28,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
+import ButtonGroup from '../../../../../components/ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -91,6 +91,12 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  actions: {
+    padding: theme.spacing(2, 3),
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 
 }));
 export const useActiveTab = () => {
@@ -105,20 +111,28 @@ export const useActiveTab = () => {
   return {externalTabState, setExternalTabState, index: 0 };
 };
 
-export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
-  const actionButtons = useMemo(() => actions.map(action => ({
-    ...actionProps,
-    id: action?.id,
-    mode: 'primary',
-  })), [actions, actionProps]);
+export const ActionsPanel = ({actions, actionProps}) => {
+  const classes = useStyles();
+
+  if (!actions || !actions.length) { return null; }
 
   return (
-    <GenerateButtons
-      fieldMap={fieldMap}
-      actions={actionButtons}
-      consolidatedActions={consolidatedActions}
+    <div className={classes.actions}>
+      <ButtonGroup>
+        {actions.map(({id}) => {
+          const Action = consolidatedActions[id];
 
-/>
+          return (
+            <Action
+              key={id}
+              dataTest={id}
+              {...actionProps}
+            />
+          );
+        })}
+
+      </ButtonGroup>
+    </div>
   );
 };
 export const IAFormStateManager = props => {
