@@ -31,7 +31,8 @@ export default function menuItems(
   accessLevel,
   integrations,
   canUserPublish,
-  marketplaceConnectors
+  marketplaceConnectors,
+  isUserInErrMgtTwoDotZero,
 ) {
   const isDeveloper = userProfile && userProfile.developer;
   let items = [
@@ -151,6 +152,10 @@ export default function menuItems(
       path: '/marketplace',
     },
   ];
+
+  if (!isUserInErrMgtTwoDotZero) {
+    items = items.filter(i => !['Dashboard'].includes(i.label));
+  }
 
   if (['monitor', 'tile'].includes(accessLevel)) {
     items = items.filter(i => !['Resources'].includes(i.label));
