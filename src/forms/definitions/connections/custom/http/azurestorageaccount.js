@@ -38,12 +38,14 @@ export default {
       id: 'http.unencrypted.storageAccount',
       type: 'text',
       label: 'Storage Account Name',
+      helpKey: 'azurestorageaccount.connecton.http.unencrypted.storageAccount',
       required: true,
     },
     'http.unencrypted.tenantId': {
       id: 'http.unencrypted.tenantId',
       type: 'text',
       label: 'Tenant ID',
+      helpKey: 'azurestorageaccount.connecton.http.unencrypted.tenantId',
       required: true,
     },
     'http._iClientId': {
