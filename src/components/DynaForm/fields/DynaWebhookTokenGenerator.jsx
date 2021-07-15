@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Typography from '@material-ui/core/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
@@ -12,10 +11,10 @@ import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import WarningIcon from '../../icons/WarningIcon';
 import CopyIcon from '../../icons/CopyIcon';
 import AddIcon from '../../icons/AddIcon';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import FieldMessage from './FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
@@ -29,12 +28,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: 18,
     marginLeft: theme.spacing(1),
   },
-  tokenWarning: {
-    color: theme.palette.warning.main,
-    marginRight: theme.spacing(1),
-  },
-  warningMessage: {
-    display: 'inline-flex',
+  warningText: {
+    marginTop: -12,
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -50,6 +46,7 @@ export default function DynaWebhookTokenGenerator(props) {
     formKey,
     provider: webHookProvider,
   } = props;
+  const warningTextMessage = 'Please copy and secure this token externally. It will not be displayed in clear text again.';
   const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
   const classes = useStyles();
@@ -122,13 +119,19 @@ export default function DynaWebhookTokenGenerator(props) {
   return (
     <>
       <div className={classes.dynaWebhookTokenWrapper}>
-        <DynaTextForSetFields
-          {...props}
-          required
-          className={classes.dynaWebhookTokenField}
-          value={value}
-          setFieldIds={setFieldIds}
+        <div className={classes.dynaWebhookTokenField}>
+          <DynaTextForSetFields
+            {...props}
+            required
+            value={value}
+            setFieldIds={setFieldIds}
         />
+          {value?.match(/^[A-Za-z0-9]/) && (
+          <FieldMessage
+            className={classes.warningText}
+            warningMessages={warningTextMessage} />
+        )}
+        </div>
         <div className={classes.dynaWebhookTokenbtn}>
           {value?.match(/^[A-Za-z0-9]/) ? (
             <CopyToClipboard
@@ -147,16 +150,6 @@ export default function DynaWebhookTokenGenerator(props) {
             </IconButtonWithTooltip>
           )}
         </div>
-      </div>
-      <div>
-        {value?.match(/^[A-Za-z0-9]/) && (
-        <div className={classes.warningMessage}>
-          <WarningIcon className={classes.tokenWarning} />
-          <Typography variant="body2">
-            Please copy and secure this token externally. It will not be displayed in clear text again.
-          </Typography>
-        </div>
-        )}
       </div>
     </>
   );

@@ -3,20 +3,27 @@ import { FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ErrorIcon from '../../icons/ErrorIcon';
+import WarningIcon from '../../icons/WarningIcon';
 
 const useStyles = makeStyles(theme => ({
-  error: {
+  message: {
     marginTop: theme.spacing(0.5),
     display: 'flex',
     alignItems: 'center',
-    color: theme.palette.error.main,
     '&:empty': {
       display: 'none',
     },
   },
+  error: {
+    color: theme.palette.error.main,
+  },
+  warning: {
+    color: theme.palette.warning.main,
+  },
   icon: {
     marginRight: 3,
     fontSize: theme.spacing(2),
+    verticalAlign: 'text-bottom',
   },
   description: {
     lineHeight: '20px',
@@ -29,15 +36,25 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FieldMessage({ description, errorMessages, isValid }) {
+export default function FieldMessage({ description, errorMessages, warningMessages, isValid, className }) {
   const classes = useStyles();
 
-  return description || errorMessages ? (
+  return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(classes.error, { [classes.description]: description })}>
-      {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
-      {isValid ? description : errorMessages}
+      className={clsx(classes.message, { [classes.description]: description }, className)}>
+      {errorMessages && (
+        <span className={classes.error}>
+          {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
+          {isValid ? description : errorMessages}
+        </span>
+      )}
+      {warningMessages && (
+        <span className={classes.warning}>
+          {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
+          {isValid ? description : warningMessages}
+        </span>
+      )}
     </FormHelperText>
   ) : null;
 }
