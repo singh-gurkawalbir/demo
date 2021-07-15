@@ -13,8 +13,7 @@ export default {
     if (!newValues['/http/ping/successPath']) {
       newValues['/http/ping/successValues'] = undefined;
     }
-    newValues['/http/ping/method'] = newValues['/rest/pingMethod'];
-    delete newValues['/rest/authType'];
+
     newValues['/http/auth/type'] = newValues['/rest/authType'];
     delete newValues['/rest/authType'];
     newValues['/http/auth/token/scheme'] = newValues['/rest/authScheme'];
@@ -188,7 +187,7 @@ export default {
       formId: 'restRefreshToken',
       visibleWhenAll: [
         { field: 'rest.authType', is: ['token'] },
-        { field: 'http.auth.token.location', isNot: [''] },
+        { field: 'rest.tokenLocation', isNot: [''] },
         { field: 'configureTokenRefresh', is: [true] },
       ],
     },
