@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues};
@@ -157,7 +159,7 @@ export default {
         { field: 'rest.authType', is: ['custom'] },
         { field: 'rest.authType', isNot: [''] },
       ],
-      defaultValue: '{"field": "value"}',
+      defaultValue: r => isNewId(r._id) ? '{"field": "value"}' : '',
     },
     'http.unencrypted': {
       fieldId: 'http.unencrypted',
@@ -168,7 +170,7 @@ export default {
         { field: 'rest.authType', isNot: [''] },
       ],
       defaultValue: r =>
-        r?.http?.unencrypted && JSON.stringify(r.http.unencrypted),
+        (r?.http?.unencrypted && JSON.stringify(r.http.unencrypted)) || '{"field": "value"}',
     },
     restBasic: {
       formId: 'restBasic',
