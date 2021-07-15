@@ -16,7 +16,7 @@ describe('flow builder bottom drawer sagas', () => {
     test('should trigger initComplete action correctly ', () => expectSaga(bottomDrawerInit, { flowId })
       .provide([
         [select(selectors.isOwnerUserInErrMgtTwoDotZero), false],
-        [select(selectors.mkGetScriptsTiedToFlow, flowId), []],
+        [select(selectors.getScriptsTiedToFlow, flowId), []],
       ])
       .put(actions.bottomDrawer.initComplete(
         [
@@ -31,7 +31,7 @@ describe('flow builder bottom drawer sagas', () => {
       bottomDrawerInit, { flowId })
       .provide([
         [select(selectors.isOwnerUserInErrMgtTwoDotZero), true],
-        [select(selectors.mkGetScriptsTiedToFlow(), flowId), []],
+        [select(selectors.getScriptsTiedToFlow, flowId), []],
       ]).put(actions.bottomDrawer.initComplete(
         [
           {label: 'Run console', tabType: 'dashboard'},
@@ -46,7 +46,7 @@ describe('flow builder bottom drawer sagas', () => {
       bottomDrawerInit, { flowId })
       .provide([
         [select(selectors.isOwnerUserInErrMgtTwoDotZero), true],
-        [select(selectors.mkGetScriptsTiedToFlow(), flowId), [{id: 'i1'}]],
+        [select(selectors.getScriptsTiedToFlow, flowId), [{id: 'i1'}]],
       ]).put(actions.bottomDrawer.initComplete(
         [
           {label: 'Run console', tabType: 'dashboard'},

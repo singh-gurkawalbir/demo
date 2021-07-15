@@ -8,7 +8,7 @@ import { apiCallWithRetry } from '..';
 
 export function* bottomDrawerInit({flowId}) {
   const isUserInErrMgtTwoDotZero = yield select(selectors.isOwnerUserInErrMgtTwoDotZero);
-  const flowScripts = yield select(selectors.mkGetScriptsTiedToFlow(), flowId);
+  const flowScripts = yield select(selectors.getScriptsTiedToFlow, flowId);
   const tabs = [
     {label: isUserInErrMgtTwoDotZero ? 'Run console' : 'Dashboard', tabType: 'dashboard'},
   ];
