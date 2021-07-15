@@ -50,8 +50,8 @@ export default {
     helpKey: 'export.http.paging.urlPath',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
-        is: ['url'],
+        field: 'rest.pagingMethod',
+        is: ['nextpageurl'],
       },
       {
         field: 'outputMode',
@@ -67,7 +67,7 @@ export default {
     helpKey: 'export.http.paging.tokenPath',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
+        field: 'rest.pagingMethod',
         is: ['token'],
       },
       {
@@ -82,7 +82,7 @@ export default {
     helpKey: 'export.http.paging.linkHeaderRelation',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
+        field: 'rest.pagingMethod',
         is: ['linkheader'],
       },
       {
@@ -97,7 +97,7 @@ export default {
     helpKey: 'export.http.paging.relativeURI',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
+        field: 'rest.pagingMethod',
         is: ['relativeuri'],
       },
       {
@@ -114,8 +114,8 @@ export default {
     label: 'Override page number query parameter name',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
-        is: ['page'],
+        field: 'rest.pagingMethod',
+        is: ['pageargument'],
       },
     ],
   },
@@ -126,7 +126,7 @@ export default {
     required: true,
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
+        field: 'rest.pagingMethod',
         is: ['token'],
       },
     ],
@@ -139,8 +139,8 @@ export default {
     contentType: 'json',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
-        is: ['body'],
+        field: 'rest.pagingMethod',
+        is: ['postbody'],
       },
       {
         field: 'outputMode',
@@ -153,8 +153,8 @@ export default {
     label: 'Path to total number of pages field in HTTP response body',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
-        is: ['page'],
+        field: 'rest.pagingMethod',
+        is: ['pageargument'],
       },
       {
         field: 'outputMode',
@@ -167,8 +167,8 @@ export default {
     label: 'Path to total number of results field in HTTP response body',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
-        is: ['page'],
+        field: 'rest.pagingMethod',
+        is: ['pageargument'],
       },
       {
         field: 'outputMode',
@@ -181,8 +181,8 @@ export default {
     label: 'Override query parameter name',
     visibleWhenAll: [
       {
-        field: 'http.paging.method',
-        is: ['skip'],
+        field: 'rest.pagingMethod',
+        is: ['skipargument'],
       },
       {
         field: 'outputMode',

@@ -6763,18 +6763,6 @@ Object {
       "http.blobMethod": Object {
         "fieldId": "http.blobMethod",
       },
-      "http.body": Object {
-        "fieldId": "rest.postBody",
-        "visibleWhen": Array [
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "POST",
-              "PUT",
-            ],
-          },
-        ],
-      },
       "http.headers": Object {
         "fieldId": "http.headers",
       },
@@ -6900,6 +6888,18 @@ Object {
         "defaultValue": [Function],
         "fieldId": "rest.pagingPostBody",
       },
+      "rest.postBody": Object {
+        "fieldId": "rest.postBody",
+        "visibleWhen": Array [
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "POST",
+              "PUT",
+            ],
+          },
+        ],
+      },
       "rest.relativeURI": Object {
         "defaultValue": [Function],
         "fieldId": "rest.relativeURI",
@@ -6930,7 +6930,7 @@ Object {
                 "description": "Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.",
                 "fieldsToValidate": Array [
                   "rest.relativeURI",
-                  "http.body",
+                  "rest.postBody",
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
@@ -6981,7 +6981,7 @@ Object {
                 "http.blobMethod",
                 "rest.relativeURI",
                 "http.headers",
-                "http.body",
+                "rest.postBody",
                 "http.response.blobFormat",
               ],
               "label": [Function],

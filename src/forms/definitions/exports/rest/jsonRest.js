@@ -294,7 +294,7 @@ export default {
       fieldId === 'dataURITemplate' ||
       fieldId === 'http.relativeURI' ||
       fieldId === 'rest.once.postBody' ||
-      fieldId === 'http.body' ||
+      fieldId === 'rest.postBody' ||
       fieldId === 'http.paging.body'
     ) {
       const nameField = fields.find(field => field.fieldId === 'name');
@@ -337,7 +337,7 @@ export default {
       fieldId: 'rest.relativeURI',
       defaultValue: r => r?._rest?.relativeURI,
     },
-    'http.body': {
+    'rest.postBody': {
       fieldId: 'rest.postBody',
       visibleWhen: [{ field: 'http.method', is: ['POST', 'PUT'] }],
     },
@@ -374,7 +374,7 @@ export default {
               regex: /.*{{.*lastExportDateTime.*}}/,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
-              fieldsToValidate: ['rest.relativeURI', 'http.body'] },
+              fieldsToValidate: ['rest.relativeURI', 'rest.postBody'] },
 
             { label: 'Once – export records only once', value: 'once' },
             { label: 'Test – export only 1 record', value: 'test' },
@@ -478,7 +478,7 @@ export default {
           'http.blobMethod',
           'rest.relativeURI',
           'http.headers',
-          'http.body',
+          'rest.postBody',
           'http.response.blobFormat',
         ],
       },
