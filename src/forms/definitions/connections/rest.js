@@ -13,6 +13,8 @@ export default {
     if (!newValues['/http/ping/successPath']) {
       newValues['/http/ping/successValues'] = undefined;
     }
+    newValues['/http/ping/method'] = newValues['/rest/pingMethod'];
+    delete newValues['/rest/authType'];
     newValues['/http/auth/type'] = newValues['/rest/authType'];
     delete newValues['/rest/authType'];
     newValues['/http/auth/token/scheme'] = newValues['/rest/authScheme'];
@@ -197,7 +199,7 @@ export default {
         { field: 'rest.authType', isNot: [''] },
       ],
     },
-    'http.ping.method': {
+    'rest.pingMethod': {
       fieldId: 'rest.pingMethod',
       defaultValue: r => r?.http?.ping?.method,
     },
@@ -281,7 +283,7 @@ export default {
         collapsed: true,
         label: 'How to test this connection?',
         fields: [
-          'http.ping.method',
+          'rest.pingMethod',
           'http.ping.relativeURI',
           'http.ping.body',
           'http.ping.successPath',
