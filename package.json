@@ -92,6 +92,7 @@
     "reselect": "4.0.0",
     "shortid": "2.2.14",
     "sift": "^8.5.0",
+    "smoothscroll-polyfill": "^0.4.4",
     "sql-parser-mistic": "^1.2.3",
     "typeface-roboto": "0.0.75",
     "url-search-params-polyfill": "^8.1.0",
