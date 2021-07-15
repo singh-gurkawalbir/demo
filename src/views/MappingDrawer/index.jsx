@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
@@ -37,6 +37,8 @@ const MappingWrapper = ({integrationId}) => {
 export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
+  const { saveStatus } = useSelector(state => selectors.mapping(state));
+  const closeDisabled = useMemo(() => saveStatus === 'requested', [saveStatus]);
 
   let importId;
 
@@ -67,7 +69,7 @@ export default function MappingDrawerRoute(props) {
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         variant="persistent"
       >
-        <DrawerHeader title={title} />
+        <DrawerHeader title={title} disableClose={closeDisabled} />
         <Switch>
           <Route
             path={[
