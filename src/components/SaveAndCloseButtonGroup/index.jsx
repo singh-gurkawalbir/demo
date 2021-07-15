@@ -39,15 +39,15 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
         {inProgress ? <Spinner size="small">Saving...</Spinner> : 'Save'}
       </Button>
 
-      {(!disabled && isDirty && !inProgress) && (
-      <Button
-        variant="outlined"
-        data-test="saveAndCloseEditor"
-        color="secondary"
-        onClick={handleSaveAndClose}>
-        Save & close
-      </Button>
-      )}
+      {(!disabled && isDirty && !inProgress) ? (
+        <Button
+          variant="outlined"
+          data-test="saveAndCloseEditor"
+          color="secondary"
+          onClick={handleSaveAndClose}>
+          Save & close
+        </Button>
+      ) : null}
 
       <Button
         variant="text"
