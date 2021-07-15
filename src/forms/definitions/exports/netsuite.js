@@ -7,14 +7,15 @@ export default {
       executionType === 'scheduled' ? apiType : executionType;
 
     newValues['/netsuite/type'] = netsuiteType;
-
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
+      newValues['/netsuite/distributed/useSS2Framework'] = newValues['/netsuite/distributed/useSS2Framework'] === 'true';
       // removing other netsuiteType's Sub Doc @BugFix IO-12678
       newValues['/netsuite/restlet'] = undefined;
       newValues['/netsuite/searches'] = undefined;
       newValues['/netsuite/webservices'] = undefined;
       delete newValues['/netsuite/restlet/criteria'];
+      delete newValues['/netsuite/restlet/useSS2Restlets'];
       delete newValues['/netsuite/webservices/criteria'];
       delete newValues['/netsuite/searches/criteria'];
     }
@@ -71,6 +72,7 @@ export default {
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'] && Array.isArray(newValues['/restlet/delta/dateField']) ? newValues['/restlet/delta/dateField'].join(',') : newValues['/restlet/delta/dateField'];
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
+      newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
       delete newValues['/restlet/delta/dateField'];
@@ -114,8 +116,6 @@ export default {
       newValues['/type'] = 'blob';
       delete newValues['/netsuite/type'];
     }
-
-    newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
 
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
@@ -276,6 +276,35 @@ export default {
         { field: 'netsuite.execution.type', is: ['distributed'] },
         { field: 'outputMode', is: ['records'] },
       ],
+    },
+    'netsuite.distributed.useSS2Framework': {
+      fieldId: 'netsuite.distributed.useSS2Framework',
+      type: 'netsuiteapiversion',
+      label: 'NetSuite API version',
+      defaultValue: r => r?.netsuite?.distributed?.useSS2Framework ? 'true' : 'false',
+      // defaultDisabled: r => {
+      //   if (!isNewId(r._id)) {
+      //     return true;
+      //   }
+
+      //   return false;
+      // },
+      options: [
+        {
+          items: [
+            { label: 'SuiteScript 1.0', value: 'false' },
+            { label: 'SuiteScript 2.0 (beta)', value: 'true' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        { field: 'netsuite.execution.type', is: ['distributed'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+      isNew: r => isNewId(r._id),
+      connectionId: r => r?._connectionId,
+      resourceType: 'exports',
+      resourceId: r => r?._id,
     },
     'netsuite.restlet.batchSize': {
       fieldId: 'netsuite.restlet.batchSize',
@@ -569,6 +598,7 @@ export default {
           {
             fields: [
               'netsuite.blob.purgeFileAfterExport',
+              'netsuite.distributed.useSS2Framework',
               'netsuite.distributed.skipExportFieldId',
               'netsuite.distributed.forceReload',
               'netsuite.restlet.batchSize',

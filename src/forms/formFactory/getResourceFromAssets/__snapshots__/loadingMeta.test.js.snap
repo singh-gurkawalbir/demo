@@ -4499,6 +4499,44 @@ Object {
           },
         ],
       },
+      "netsuite.distributed.useSS2Framework": Object {
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "fieldId": "netsuite.distributed.useSS2Framework",
+        "isNew": [Function],
+        "label": "NetSuite API version",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "SuiteScript 1.0",
+                "value": "false",
+              },
+              Object {
+                "label": "SuiteScript 2.0 (beta)",
+                "value": "true",
+              },
+            ],
+          },
+        ],
+        "resourceId": [Function],
+        "resourceType": "exports",
+        "type": "netsuiteapiversion",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "netsuite.execution.type",
+            "is": Array [
+              "distributed",
+            ],
+          },
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "netsuite.execution.type": Object {
         "defaultValue": [Function],
         "id": "netsuite.execution.type",
@@ -5077,6 +5115,7 @@ Object {
                 Object {
                   "fields": Array [
                     "netsuite.blob.purgeFileAfterExport",
+                    "netsuite.distributed.useSS2Framework",
                     "netsuite.distributed.skipExportFieldId",
                     "netsuite.distributed.forceReload",
                     "netsuite.restlet.batchSize",
