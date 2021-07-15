@@ -342,7 +342,6 @@ export default {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],
@@ -795,7 +794,6 @@ export default {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],

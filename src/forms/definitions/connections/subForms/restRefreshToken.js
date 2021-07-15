@@ -14,7 +14,7 @@ export default {
     'http.auth.token.refreshBody': {
       fieldId: 'http.auth.token.refreshBody',
       visibleWhenAll: [
-        { field: 'http.auth.token.refreshMethod', is: ['POST', 'PUT'] },
+        { field: 'http.auth.token.refreshMethod', is: ['POST'] },
       ],
     },
     'http.auth.token.refreshTokenPath': {
