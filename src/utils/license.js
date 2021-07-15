@@ -120,14 +120,14 @@ export function platformLicenseActionDetails(license) {
     if (!license.trialEndDate) {
       licenseActionDetails = {
         action: 'startTrial',
-        label: 'GO UNLIMITED FOR 30 DAYS',
+        label: 'Get unlimited flows',
       };
     }
   } else if (license.tier === 'free') {
     if (!license.trialEndDate) {
       licenseActionDetails = {
         action: 'startTrial',
-        label: 'GO UNLIMITED FOR 30 DAYS',
+        label: 'Get unlimited flows',
       };
     } else if (license.status === 'TRIAL_EXPIRED') {
       licenseActionDetails = {
@@ -143,7 +143,7 @@ export function platformLicenseActionDetails(license) {
       } else {
         licenseActionDetails = {
           action: 'upgrade',
-          label: `${license.expiresInDays} DAYS LEFT UPGRADE NOW`,
+          label: `Upgrade now - ${license.expiresInDays} days left`,
         };
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;
       }
