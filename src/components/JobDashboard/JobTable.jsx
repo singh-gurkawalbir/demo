@@ -72,6 +72,7 @@ const useStyles = makeStyles(theme => ({
   },
   tableContainer: {
     overflowX: 'auto',
+    overflowY: 'hidden',
   },
 }));
 
