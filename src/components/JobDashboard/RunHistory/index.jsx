@@ -14,6 +14,7 @@ import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
 import MessageWrapper from '../../MessageWrapper';
+import { hashCode } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -66,6 +67,8 @@ export default function RunHistory({ flowId }) {
     selectors.filter(state, FILTER_KEYS.RUN_HISTORY),
   shallowEqual
   );
+  const filterHash = hashCode(filter.status);
+
   const isDateFilterSelected = !!(filter.range && filter.range.preset !== defaultRange.preset);
   const selectedDate = useMemo(() => isDateFilterSelected ? {
     startDate: new Date(filter.range.startDate),
@@ -85,14 +88,16 @@ export default function RunHistory({ flowId }) {
 
   useEffect(() => {
     fetchFlowRunHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterHash]);
 
-    return () => {
+  useEffect(() =>
+    () => {
       dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
       dispatch(actions.errorManager.runHistory.clear({ flowId }));
-    };
-
+    },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  []);
 
   const hasFlowRunHistory = !isLoadingHistory && !!runHistory?.length;
 
@@ -152,16 +157,15 @@ export default function RunHistory({ flowId }) {
         </>
       </div>
       { isLoadingHistory && <Spinner centerAll />}
+
+      <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
+
       { !hasFlowRunHistory &&
         (
         <MessageWrapper>
           You don&apos;t have any run history.
         </MessageWrapper>
         )}
-      {
-          hasFlowRunHistory &&
-          <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
-      }
     </>
   );
 }

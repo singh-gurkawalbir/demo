@@ -1,15 +1,31 @@
 import React from 'react';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
-import { getJobDuration, getJobStatus } from '../../../utils/errorManagement';
+import { getJobDuration, getJobStatus, FILTER_KEYS } from '../../../utils/errorManagement';
 import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
+import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 
 export default {
   useColumns: () => [
     {
       key: 'status',
       heading: 'Status',
+      HeaderValue: function FlowSearchFilter() {
+        const statusOptions = [{_id: 'all', name: 'All status'},
+          {_id: 'canceled', name: 'Canceled'},
+          {_id: 'completed', name: 'Completed'},
+          {_id: 'failed', name: 'failed'}];
+
+        return (
+          <MultiSelectColumnFilter
+            title="Status"
+            filterBy="status"
+            filterKey={FILTER_KEYS.RUN_HISTORY}
+            options={statusOptions.map(({ _id, name}) => ({_id, name }))} />
+        );
+      },
       Value: ({rowData: r}) => getJobStatus(r),
+      width: '10%',
     },
     {
       key: 'duration',
