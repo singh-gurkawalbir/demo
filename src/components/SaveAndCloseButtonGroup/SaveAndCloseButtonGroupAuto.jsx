@@ -18,7 +18,7 @@ export default function SaveAndCloseButtonGroupAuto({formKey, onClose, onSave, d
       remountAfterSaveFn();
     }
   }, [remountAfterSaveFn, status]);
-  const handleCancelClick = useHandleCancel({isDirty, onClose, handleSave: onSave});
+  const handleCancelClick = useHandleCancel({formKey, isDirty, onClose, handleSave: onSave});
 
   return (
     <SaveAndCloseButtonGroup
