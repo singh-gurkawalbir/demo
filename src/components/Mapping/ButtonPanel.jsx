@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
@@ -49,13 +49,9 @@ export default function ButtonPanel({importId, disabled, onClose}) {
     ? isNSAssistantFormLoaded
     : mappingPreviewType);
 
-  const formStatus = useMemo(() => {
-    if (saveStatus === 'requested') {
-      return FORM_SAVE_STATUS.LOADING;
-    }
-
-    return undefined;
-  }, [saveStatus]);
+  const formStatus = saveStatus === 'requested'
+    ? FORM_SAVE_STATUS.LOADING
+    : FORM_SAVE_STATUS.COMPLETE;
 
   const handleClose = useHandleCancelBasic({isDirty: mappingsChanged, onClose, handleSave: handleSaveClick});
 
