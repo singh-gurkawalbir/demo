@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
+import * as _ from 'lodash';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -43,8 +44,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   });
 
   const [data, setData] = useState(retryData?.data);
-  const isDirty = typeof (data) === 'string' ? JSON.stringify(JSON.parse(data)) !== JSON.stringify(retryData?.data)
-    : JSON.stringify(data) !== JSON.stringify(retryData?.data);
+  const isDirty = typeof (data) === 'string' ? !_.isEqual(JSON.parse(data), retryData?.data) : !_.isEqual(data, retryData?.data);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
