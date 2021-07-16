@@ -3,16 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { isNewId } from '../../../../../utils/resource';
-import SaveAndCloseButtonGroup from '../../../../SaveAndCloseButtonGroup';
+import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
-import useHandleCancelBasic from '../../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
 
 const useStyles = makeStyles(theme => ({
   editorContainer: {
@@ -56,15 +54,12 @@ export default function EditorDrawer(props) {
   // Local state variables
   const [content, setContent] = useState(value);
   const [closeOnSave, setCloseOnSave] = useState(false);
-  const [disableSave, setDisableSave] = useState(false);
   const isContentChanged = content !== value;
-  const doneDisabled = isNewResource ? !isContentChanged : !isContentChanged || disableSave;
   // Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const resourceCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/${resourceType}/${resourceId}`, 'put'));
   // Methods
   const handleSave = useCallback(() => {
-    setDisableSave(true);
     const patchSet = [
       {
         op: 'replace',
@@ -80,8 +75,9 @@ export default function EditorDrawer(props) {
   }, [content, handleUpdateOnDrawerSave]);
   const handleDone = useCallback(() => {
     handleUpdate(content);
-    handleClose();
-  }, [handleUpdate, handleClose, content]);
+  }, [handleUpdate, content]);
+
+  const handleSaveClick = isNewResource ? handleDone : handleSave;
 
   const getStatus = () => {
     switch (resourceCommStatus) {
@@ -104,14 +100,9 @@ export default function EditorDrawer(props) {
         handleClose();
         setCloseOnSave(false);
       }
-      setDisableSave(false);
-    }
-    if (resourceCommStatus === 'error') {
-      setDisableSave(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceCommStatus]);
-  const handleCancel = useHandleCancelBasic({isDirty: isContentChanged, onClose: handleClose, handleSave});
 
   return (
     <Drawer
@@ -134,35 +125,13 @@ export default function EditorDrawer(props) {
         />
       </div>
       <div className={classes.footer}>
-        {isNewResource ? (
-          <>
-            <Button
-              data-test="saveContent"
-              disabled={doneDisabled}
-              className={classes.action}
-              onClick={handleDone}
-              variant="outlined"
-              color="primary">
-              Done
-            </Button>
-            <Button
-              data-test="closeContent"
-              className={classes.action}
-              onClick={handleCancel}
-              variant="text"
-              color="primary">
-              Cancel
-            </Button>
-          </>
-        )
-          : (
-            <SaveAndCloseButtonGroup
-              isDirty={isContentChanged}
-              status={getStatus()}
-              onSave={handleSave}
-              onClose={handleCancel}
+        <SaveAndCloseButtonGroupAuto
+          isDirty={isContentChanged}
+          status={getStatus()}
+          onSave={handleSaveClick}
+          onClose={handleClose}
+          shouldHandleCancel
           />
-          )}
       </div>
     </Drawer>
   );

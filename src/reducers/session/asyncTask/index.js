@@ -5,7 +5,7 @@ import { FORM_SAVE_STATUS } from '../../../utils/constants';
 export default (state = {}, action) => {
   const { type, key } = action;
 
-  if (!type) {
+  if (!type || !key) {
     return state;
   }
 
