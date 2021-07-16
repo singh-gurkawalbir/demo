@@ -22,7 +22,7 @@ export default function SaveAndCloseMiniResourceForm({
     <ActionGroup>
       <Button
         variant="outlined"
-        data-test="next"
+        data-test="save"
         disabled={!isDirty || inProgress}
         color="primary"
         onClick={handleSave}>

@@ -30,7 +30,7 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
     <ActionGroup>
       <Button
         variant="outlined"
-        data-test="saveEditor"
+        data-test="save"
         disabled={disabled || !isDirty || inProgress}
         color="primary"
         onClick={handleSave}>
@@ -40,7 +40,7 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
       {(!disabled && isDirty && !inProgress) ? (
         <Button
           variant="outlined"
-          data-test="saveAndCloseEditor"
+          data-test="saveAndClose"
           color="secondary"
           onClick={handleSaveAndClose}>
           Save & close
@@ -50,7 +50,7 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
       <Button
         variant="text"
         color="primary"
-        data-test="closeEditor"
+        data-test="cancel"
         disabled={inProgress}
         onClick={onClose}>
         Cancel
