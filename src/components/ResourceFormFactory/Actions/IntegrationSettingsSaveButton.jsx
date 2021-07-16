@@ -3,7 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
-import { useLoadingSnackbarOnSave } from '.';
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/formFactory/utils';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
@@ -81,7 +80,7 @@ export default function IntegrationSettingsSaveButton(props) {
     },
     [dispatch, flowId, flowSettingsMemo?.fieldMap, integrationId, postProcessValuesFn, sectionId, childId]
   );
-  const submitCompleted = useSelector(state => {
+  const isSaving = useSelector(state => {
     const formState = selectors.integrationAppSettingsFormState(
       state,
       integrationId,
@@ -89,19 +88,14 @@ export default function IntegrationSettingsSaveButton(props) {
       sectionId
     );
 
-    return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED].includes(formState.formSaveStatus);
-  });
-  const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
-    resourceType: 'Integration Settings',
-    saveTerminated: submitCompleted,
-    onSave,
+    return FORM_SAVE_STATUS.LOADING === formState?.formSaveStatus;
   });
 
   return (
     <DynaAction
       {...props}
       disabled={disabled || isSaving}
-      onClick={handleSubmitForm}>
+      onClick={onSave}>
       {isSaving ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );

@@ -6,26 +6,6 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import Spinner from '../../../components/Spinner';
 
-export const useLoadingSnackbarOnSave = props => {
-  const { saveTerminated, onSave } = props;
-  const [disableSave, setDisableSave] = useState(false);
-  const handleSubmitForm = useCallback(
-    values => {
-      onSave(values);
-      setDisableSave(true);
-    },
-    [onSave]
-  );
-
-  useEffect(() => {
-    if (saveTerminated) {
-      setDisableSave(false);
-    }
-  }, [saveTerminated]);
-
-  return { handleSubmitForm, disableSave };
-};
-
 export default function MappingSaveButton(props) {
   const {
     submitButtonLabel = 'Save',
@@ -45,7 +25,7 @@ export default function MappingSaveButton(props) {
     selectors.suiteScriptMappingChanged(state)
   );
   const dispatch = useDispatch();
-  const { saveTerminated, saveCompleted } = useSelector(state =>
+  const { saveInProgress, saveCompleted, saveTerminated } = useSelector(state =>
     selectors.suiteScriptMappingSaveStatus(state), shallowEqual
   );
 
@@ -53,10 +33,7 @@ export default function MappingSaveButton(props) {
     setSaveTriggered(true);
     dispatch(actions.suiteScript.mapping.save());
   }, [dispatch]);
-  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
-    saveTerminated,
-    onSave,
-  });
+
   const handleButtonClick = () => {
     if (validationErrMsg) {
       enquesnackbar({
@@ -67,13 +44,15 @@ export default function MappingSaveButton(props) {
       return;
     }
 
-    handleSubmitForm();
+    onSave();
   };
 
   useEffect(() => {
-    if (saveTrigerred && saveCompleted && onClose) {
-      onClose();
+    if (saveTerminated) {
       setSaveTriggered(false);
+    }
+    if (saveCompleted && onClose) {
+      onClose();
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
 
@@ -86,9 +65,9 @@ export default function MappingSaveButton(props) {
       data-test={dataTest}
       variant={variant}
       color={color}
-      disabled={disabled || disableSave || !mappingsChanged}
+      disabled={disabled || saveInProgress || !mappingsChanged}
       onClick={handleButtonClick}>
-      {disableSave ? (
+      {saveInProgress ? (
         <>
           <Spinner size="small" />
           Saving

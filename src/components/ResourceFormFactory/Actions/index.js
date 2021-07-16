@@ -1,4 +1,3 @@
-import { useEffect, useState, useCallback } from 'react';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
 import SaveAndCloseButtonGroup from './Groups/SaveAndClose';
 import NextAndCancel from './Groups/NextAndCancel';
@@ -7,34 +6,6 @@ import TestAndSave from './Groups/TestAndSave';
 import SaveFileDefinitions from './Groups/SaveFileDefinitions';
 import ValidateAndSave from './Groups/ValidateAndSave';
 import SaveAndContinueGroup from './Groups/SaveAndContinueGroup';
-
-export const useLoadingSnackbarOnSave = props => {
-  const {
-    saveTerminated,
-    onSave,
-    // TODO: ghost code disableSaveOnClick...we are not doing anything with this argument
-    disableSaveOnClick,
-    setDisableSaveOnClick,
-  } = props;
-  const [isSaving, setIsSaving] = useState(false);
-  const handleSubmitForm = useCallback(
-    values => {
-      onSave(values);
-      if (setDisableSaveOnClick) setDisableSaveOnClick(true);
-      setIsSaving(true);
-    },
-    [onSave, setDisableSaveOnClick]
-  );
-
-  useEffect(() => {
-    if (saveTerminated) {
-      if (setDisableSaveOnClick) setDisableSaveOnClick(false);
-      setIsSaving(false);
-    }
-  }, [saveTerminated, setDisableSaveOnClick]);
-
-  return { handleSubmitForm, disableSave: disableSaveOnClick, isSaving };
-};
 
 export default {
   // action groups
