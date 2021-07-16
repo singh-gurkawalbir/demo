@@ -625,7 +625,7 @@ export default {
   },
   'http.response.blobFormat': {
     type: 'select',
-    label: 'Blob format',
+    label: 'File encoding',
     options: [
       {
         items: [

@@ -238,7 +238,7 @@ export default {
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Override query parameter name',
+    label: 'Override skip number query parameter name',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -385,7 +385,7 @@ export default {
   },
   'rest.blobFormat': {
     type: 'select',
-    label: 'Blob format',
+    label: 'File encoding',
     helpKey: 'export.http.response.blobFormat',
     options: [
       {

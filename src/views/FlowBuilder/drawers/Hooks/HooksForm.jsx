@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
 }));
-export default function HooksForm({flowId, formKey}) {
+export default function HooksForm({flowId, integrationId, formKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -38,7 +38,7 @@ export default function HooksForm({flowId, formKey}) {
   const handleClose = history.goBack;
   const { resourceType, resourceId } = useParams();
 
-  const disabled = useSelector(state => selectors.isFlowViewMode(state, flowId));
+  const disabled = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
   const { merged: resource } = useSelectorMemo(
     selectors.makeResourceDataSelector,

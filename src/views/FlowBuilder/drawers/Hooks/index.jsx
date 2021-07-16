@@ -8,7 +8,7 @@ import { selectors } from '../../../../reducers';
 import { FORM_SAVE_STATUS } from '../../../../utils/constants';
 
 const formKey = 'hooksave';
-export default function HooksDrawer({ flowId }) {
+export default function HooksDrawer({ flowId, integrationId }) {
   const status = useSelector(state =>
     selectors.asyncTaskStatus(state, formKey));
 
@@ -22,7 +22,7 @@ export default function HooksDrawer({ flowId }) {
         helpTitle="Hooks"
         disableClose={disabled}
       />
-      <HooksForm flowId={flowId} formKey={formKey} />
+      <HooksForm flowId={flowId} integrationId={integrationId} formKey={formKey} />
       <EditorDrawer />
     </RightDrawer>
   );

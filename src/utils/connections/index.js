@@ -55,3 +55,65 @@ export const KBDocumentation = {
   salesforce: 'https://docs.celigo.com/hc/en-us/sections/360007478991-Salesforce-',
 };
 
+export const amazonSellerCentralAuthURI = {
+  A2EUQ1WTGCTBG2: 'https://sellercentral.amazon.ca/apps/authorize/consent',
+  ATVPDKIKX0DER: 'https://sellercentral.amazon.com/apps/authorize/consent',
+  A1AM78C64UM0Y8: 'https://sellercentral.amazon.com.mx/apps/authorize/consent',
+  A2Q3Y263D00KWC: 'https://sellercentral.amazon.com.br/apps/authorize/consent',
+  A1RKKUPIHCS9HS: 'https://sellercentral-europe.amazon.com/apps/authorize/consent',
+  A1F83G8C2ARO7P: 'https://sellercentral-europe.amazon.com/apps/authorize/consent',
+  A13V1IB3VIYZZH: 'https://sellercentral-europe.amazon.com/apps/authorize/consent',
+  A1805IZSGTT6HS: 'https://sellercentral.amazon.nl/apps/authorize/consent',
+  A1PA6795UKMFR9: 'https://sellercentral-europe.amazon.com/apps/authorize/consent',
+  APJ6JRA9NG5V4: 'https://sellercentral-europe.amazon.com/apps/authorize/consent',
+  A2NODRKZP88ZB9: 'https://sellercentral.amazon.se/apps/authorize/consent',
+  A1C3SOZRARQ6R3: 'https://sellercentral.amazon.pl/apps/authorize/consent',
+  A33AVAJ2PDY3EV: 'https://sellercentral.amazon.com.tr/apps/authorize/consent',
+  A2VIGQ35RCS4UG: 'https://sellercentral.amazon.ae/apps/authorize/consent',
+  A21TJRUUN4KGV: 'https://sellercentral.amazon.in/apps/authorize/consent',
+  A19VAU5U5O7RUS: 'https://sellercentral.amazon.sg/apps/authorize/consent',
+  A39IBJ37TRP1C6: 'https://sellercentral.amazon.com.au/apps/authorize/consent',
+  A1VC38T7YXB528: 'https://sellercentral.amazon.co.jp/apps/authorize/consent',
+};
+
+export const amazonSellerCentralMarketPlaceOptions = {
+  northAmerica: [
+    {label: 'Canada', value: 'A2EUQ1WTGCTBG2' },
+    {label: 'United States of America', value: 'ATVPDKIKX0DER' },
+    {label: 'Mexico', value: 'A1AM78C64UM0Y8' },
+    {label: 'Brazil', value: 'A2Q3Y263D00KWC' },
+  ],
+  europe: [
+    {label: 'Spain', value: 'A1RKKUPIHCS9HS'},
+    {label: 'United Kingdom', value: 'A1F83G8C2ARO7P'},
+    {label: 'France', value: 'A13V1IB3VIYZZH'},
+    {label: 'Netherlands', value: 'A1805IZSGTT6HS'},
+    {label: 'Germany', value: 'A1PA6795UKMFR9'},
+    {label: 'Italy', value: 'APJ6JRA9NG5V4'},
+    {label: 'Sweden', value: 'A2NODRKZP88ZB9'},
+    {label: 'Poland', value: 'A1C3SOZRARQ6R3'},
+    {label: 'Turkey', value: 'A33AVAJ2PDY3EV'},
+    {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
+    {label: 'India', value: 'A21TJRUUN4KGV'},
+  ],
+  farEast: [
+    {label: 'Singapore', value: 'A19VAU5U5O7RUS'},
+    {label: 'Australia', value: 'A39IBJ37TRP1C6'},
+    {label: 'Japan', value: 'A1VC38T7YXB528'},
+  ],
+};
+
+export const amazonSellerCentralBaseUriForNonMWSConnection = {
+  northAmerica: 'https://sellingpartnerapi-na.amazon.com/',
+  europe: 'https://sellingpartnerapi-eu.amazon.com/',
+  farEast: 'https://sellingpartnerapi-fe.amazon.com',
+};
+
+export const amazonSellerCentralBaseUriForMWSConnection = {
+  north_america: 'https://mws.amazonservices.com',
+  europe: 'https://mws-eu.amazonservices.com',
+  india: 'https://mws.amazonservices.in',
+  china: 'https://mws.amazonservices.com.cn',
+  japan: 'https://mws.amazonservices.jp',
+  australia: 'https://mws.amazonservices.com.au',
+};
