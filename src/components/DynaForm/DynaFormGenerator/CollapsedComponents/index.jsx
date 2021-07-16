@@ -59,6 +59,7 @@ export default function CollapsedComponents(props) {
 
 const ExpansionPannelExpandOnInValidState = props => {
   const { collapsed, layout, classes, header, fieldMap, formKey, dataPublic } = props;
+  const revalidationIdentifier = useSelector(state => selectors.formState(state, formKey)?.validationOnSaveIdentifier);
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [expandOnce, setExpandOnce] = useState(false);
   const isPanelErrored = useSelector(state =>
@@ -87,6 +88,13 @@ const ExpansionPannelExpandOnInValidState = props => {
       setExpandOnce(true);
     }
   }, [expandOnce, isPanelErrored, isPanelRequired]);
+
+  useEffect(() => {
+    if (!shouldExpand && isPanelErrored) {
+      setShouldExpand(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revalidationIdentifier]);
 
   const toggleExpansionPanel = useCallback(() => {
     setShouldExpand(expand => !expand);
