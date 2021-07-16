@@ -1,33 +1,21 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { selectors } from '../../reducers';
+import React from 'react';
 import SaveAndCloseButtonGroup from '.';
-import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
-import useHandleCancel from './hooks/useHandleCancel';
 import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
+import useHandleCancelBasic from './hooks/useHandleCancelBasic';
 
-export default function SaveAndCloseButtonGroupAuto({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, remountAfterSaveFn}) {
-  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
-  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector
-  const handleClickWhenValid = useHandleClickWhenValid(formKey, onSave);
+export default function SaveAndCloseButtonGroupAuto({onClose, onSave, status, isDirty, shouldHandleCancel, asyncKey, disabled}) {
+  useClearAsyncStateOnUnmount(asyncKey);
 
-  useClearAsyncStateOnUnmount(formKey);
-  useEffect(() => {
-    if (status === FORM_SAVE_STATUS.COMPLETE && remountAfterSaveFn) {
-      remountAfterSaveFn();
-    }
-  }, [remountAfterSaveFn, status]);
-  const handleCancelClick = useHandleCancel({formKey, isDirty, onClose, handleSave: onSave});
+  const handleCancel = useHandleCancelBasic({isDirty, onClose, handleSave: onSave});
+  const handleCancelClick = shouldHandleCancel ? handleCancel : onClose;
 
   return (
     <SaveAndCloseButtonGroup
       isDirty={isDirty}
       status={status}
       onClose={handleCancelClick}
-      onSave={handleClickWhenValid}
+      onSave={onSave}
       disabled={disabled}
-      disableOnCloseAfterSave={disableOnCloseAfterSave}
     />
   );
 }

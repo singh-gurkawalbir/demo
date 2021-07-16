@@ -20,7 +20,7 @@ import getHooksMetadata from './metadata';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import LoadResources from '../../../../components/LoadResources';
-import SaveAndCloseButtonGroupAuto from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 
 const useStyles = makeStyles(theme => ({
   paperDefault: {
@@ -166,7 +166,7 @@ export default function HooksForm({flowId, formKey}) {
       </DrawerContent>
 
       <DrawerFooter>
-        <SaveAndCloseButtonGroupAuto
+        <SaveAndCloseButtonGroupForm
           remountAfterSaveFn={remountFn}
           formKey={formKey}
           onSave={submitHookValues}

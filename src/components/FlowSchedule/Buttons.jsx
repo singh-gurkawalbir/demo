@@ -11,7 +11,7 @@ import {
   getScheduleVal,
   setValues,
 } from './util';
-import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import SaveAndCloseButtonGroupForm from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 
 export default function FlowScheduleButtons({
   formKey,
@@ -110,7 +110,7 @@ export default function FlowScheduleButtons({
   }
 
   return (
-    <SaveAndCloseButtonGroupAuto
+    <SaveAndCloseButtonGroupForm
       formKey={formKey}
       onSave={handleValidateAndSubmit}
       onClose={onClose}

@@ -1695,8 +1695,8 @@ const job = {
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
   receivedRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
-  updateRetryData: ({ retryData, retryId }) =>
-    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  updateRetryData: ({ retryData, retryId, asyncKey }) =>
+    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId, asyncKey}),
   downloadRetryData: ({retryId}) => action(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, {retryId}),
   retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
     action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {

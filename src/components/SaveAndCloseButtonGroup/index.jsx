@@ -26,8 +26,6 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
     if (closeTriggered && isSuccess) onClose();
   }, [closeTriggered, onClose, isSuccess, disableOnCloseAfterSave]);
 
-  // console.log('disabled, !isDirty, inProgress', disabled, isDirty, inProgress);
-
   return (
     <ActionGroup>
       <Button
