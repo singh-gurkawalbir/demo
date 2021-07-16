@@ -57,17 +57,12 @@ export default function CompletedFlows() {
   return (
     <>
       <div className={classes.root}>
-        {isCompletedJobsCollectionLoading ? (
-
-          <Spinner centerAll />
-
-        ) : (
+        {isCompletedJobsCollectionLoading ? (<Spinner centerAll />) : (
           <>
-
             <span data-public>
               <Filters
                 filterKey={filterKey}
-      />
+              />
             </span>
             <ResourceTable
               resources={jobs}

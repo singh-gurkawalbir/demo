@@ -6,7 +6,6 @@ import JobStatus from '../../../JobDashboard/JobStatus';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import { getPages, getSuccess } from '../../../../utils/jobdashboard';
 import Cancel from './actions/Cancel';
-import MultiSelectParentChildColumnFilter from '../../commonCells/MultiSelectParentChildColumnFilter';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -29,7 +28,7 @@ export default {
         );
 
         return (
-          <MultiSelectParentChildColumnFilter
+          <MultiSelectColumnFilter
             title="Integration"
             filterBy="integrationIds"
             filterKey="runningFlows"

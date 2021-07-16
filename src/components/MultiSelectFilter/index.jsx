@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
   formGroup: {
     maxHeight: 380,
     overflowY: 'auto',
+    display: 'unset',
     '& > label': {
       width: '100%',
     },
@@ -90,21 +91,22 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     // justifyContent: 'flex-start',
     '& li:first-child': {
-      width: 30,
+      minWidth: 30,
     },
     '& li': {
-      width: 'calc(100% - 30px)',
+      maxWidth: 'calc(100% - 30px)',
     },
   },
 }));
 
 export default function MultiSelectFilter(props) {
-  const { items = [], selected = [], onSave, Icon, onSelect } = props;
+  const { items = [], selected = [], onSave, Icon, onSelect} = props;
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
+  const isChildExists = items?.find(i => i.children);
 
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
@@ -199,17 +201,19 @@ export default function MultiSelectFilter(props) {
                     {items.map(m => (
                       <>
                         <ul key={m._id} className={classes.checkAction}>
+                          {isChildExists && (
                           <li>
                             { m?.children?.length && (
-                              <IconButton
-                                data-test="toggleJobDetail"
-                                className={classes.moreIcon}
-                                size="small"
-                                onClick={handleExpandCollapseClick}>
-                                <RowIcon expanded={expanded} childLoaded={m.children} />
-                              </IconButton>
+                            <IconButton
+                              data-test="toggleJobDetail"
+                              className={classes.moreIcon}
+                              size="small"
+                              onClick={handleExpandCollapseClick}>
+                              <RowIcon expanded={expanded} childLoaded={m.children} />
+                            </IconButton>
                           )}
                           </li>
+                          )}
                           <li>
                             <FormControlLabel
                               className={classes.selectResourceItem}

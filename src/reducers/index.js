@@ -1563,7 +1563,7 @@ selectors.mkTiles = () => createSelector(
 
     const hasStandaloneTile = tiles.find(
       t => t._integrationId === STANDALONE_INTEGRATION.id
-    ); // this one i need to use
+    );
 
     if (hasStandaloneTile) {
       integrations = [

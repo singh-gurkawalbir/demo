@@ -1,29 +1,20 @@
 import React, {useEffect} from 'react';
 import { useDispatch } from 'react-redux';
-import JobDashboard from '../../../../components/JobDashboard/AccountDashboard/RunningFlows';
+import RunningFlows from '../../../../components/JobDashboard/AccountDashboard/RunningFlows';
 import LoadResources from '../../../../components/LoadResources';
 import actions from '../../../../actions';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, DEFAULTS_RUNNING_JOBS_FILTER} from '../../../../utils/accountDashboard';
 
-const defaultFilter = {
-  sort: { order: 'asc', orderBy: 'startedAt' },
-  paging: {
-    rowsPerPage: 50,
-    currPage: 0,
-  },
-};
-
-export default function DashboardPanel() {
+export default function RunningFlowsPanel() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.patchFilter(FILTER_KEYS_AD.RUNNING, {...defaultFilter }));
+    dispatch(actions.patchFilter(FILTER_KEYS_AD.RUNNING, {...DEFAULTS_RUNNING_JOBS_FILTER }));
   }, [dispatch]);
 
   return (
     <LoadResources required resources="flows,integrations">
-
-      <JobDashboard />
+      <RunningFlows />
     </LoadResources>
   );
 }

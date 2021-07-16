@@ -1,28 +1,15 @@
 import React, { useCallback } from 'react';
-import clsx from 'clsx';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, Button} from '@material-ui/core';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import NameCell from '../../auditLog/cells/Name';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import MultiSelectParentChildColumnFilter from '../../commonCells/MultiSelectParentChildColumnFilter';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
-
-const useStyles = makeStyles(theme => ({
-
-  error: {
-    width: '10.15%',
-    textAlign: 'right',
-  },
-  errorCount: {
-    color: theme.palette.error.dark,
-  },
-
-}));
+import Status from '../../../Buttons/Status';
 
 export default {
   useColumns: () => [
@@ -41,7 +28,7 @@ export default {
         );
 
         return (
-          <MultiSelectParentChildColumnFilter
+          <MultiSelectColumnFilter
             title="Integration"
             filterBy="integrationIds"
             filterKey="completedFlows"
@@ -80,18 +67,14 @@ export default {
       orderBy: 'numOpenError',
       heading: 'Open errors',
       Value: ({rowData: r}) => {
-        const history = useHistory();
         const match = useRouteMatch();
-        const handleOpenErrorsClick = useCallback(() => {
-          history.push(`${match.url}/${r._flowId}/errorsList`);
-        }, [history, match.url, r._flowId]);
 
         return (r.numOpenError && (
-          <Button
-            onClick={handleOpenErrorsClick}
-            >{r.numOpenError}
-          </Button>
-        ));
+          <Status variant="error" size="mini" >
+            <Link to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
+          </Status>
+        )
+        );
       },
       width: '10%',
     },
@@ -115,22 +98,10 @@ export default {
       orderBy: 'numRuns',
       Value: props => {
         const {rowData: r} = props;
-        const classes = useStyles();
 
-        const history = useHistory();
         const match = useRouteMatch();
-        const handleRunHistoryClick = useCallback(() => {
-          history.push(`${match.url}/${r._flowId}/runHistory`);
-        }, [history, match.url, r._flowId]);
 
-        return (
-          <Button
-            onClick={handleRunHistoryClick}
-            className={clsx(classes.error, {
-              [classes.errorCount]: r.numError > 0,
-            })}>{r.numRuns}
-          </Button>
-
+        return (r.numRuns && (<Link to={`${match.url}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
         );
       },
       width: '10%',

@@ -5,6 +5,20 @@ export const FILTER_KEYS_AD = {
 };
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
+export const DEFAULTS_RUNNING_JOBS_FILTER = {
+  sort: { order: 'asc', orderBy: 'startedAt' },
+  paging: {
+    rowsPerPage: 50,
+    currPage: 0,
+  },
+};
+export const DEFAULTS_COMPLETED_JOBS_FILTER = {
+  sort: { order: 'desc', orderBy: 'lastExecutedAt' },
+  paging: {
+    rowsPerPage: 50,
+    currPage: 0,
+  },
+};
 
 export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
   {id: 'today', label: 'Today'},

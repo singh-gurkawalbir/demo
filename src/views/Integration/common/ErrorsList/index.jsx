@@ -105,7 +105,7 @@ const metadata = {
         });
 
         const handleErrorClick = useCallback(() => {
-          history.push(`${flowBuilderTo}/errors/${id}`); /// This one i need to change
+          history.push(`${flowBuilderTo}/errors/${id}`);
         }, [flowBuilderTo, history, id]);
 
         if (count === 0) {
