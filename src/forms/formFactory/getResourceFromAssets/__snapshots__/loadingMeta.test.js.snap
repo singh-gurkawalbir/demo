@@ -6884,6 +6884,7 @@ Object {
         "fieldId": "rest.pageArgument",
       },
       "rest.pagingMethod": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.pagingMethod",
       },
       "rest.pagingPostBody": Object {
@@ -6891,6 +6892,7 @@ Object {
         "fieldId": "rest.pagingPostBody",
       },
       "rest.postBody": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.postBody",
         "visibleWhen": Array [
           Object {

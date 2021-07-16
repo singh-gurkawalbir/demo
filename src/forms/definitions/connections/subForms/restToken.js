@@ -14,7 +14,7 @@ export default {
     'http.auth.token.headerName': {
       fieldId: 'http.auth.token.headerName',
       visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['header'] }],
-      defaultValue: r => r?.http?.auth?.headerName || 'Authorization',
+      defaultValue: r => r?.http?.auth?.token?.headerName || 'Authorization',
       required: true,
     },
     'rest.authScheme': {

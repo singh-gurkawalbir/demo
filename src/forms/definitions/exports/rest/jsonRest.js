@@ -61,6 +61,9 @@ export default {
     retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
     delete retValues['/rest/relativeURI'];
 
+    retValues['/http/body'] = retValues['/rest/postBody'];
+    delete retValues['/rest/postBody'];
+
     const pagingMethodMap = {
       nextpageurl: 'url',
       pageargument: 'page',
@@ -339,6 +342,7 @@ export default {
     },
     'rest.postBody': {
       fieldId: 'rest.postBody',
+      defaultValue: r => r?.http?.body,
       visibleWhen: [{ field: 'http.method', is: ['POST', 'PUT'] }],
     },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
@@ -410,6 +414,7 @@ export default {
     },
     'rest.pagingMethod': {
       fieldId: 'rest.pagingMethod',
+      defaultValue: r => r?._rest?.pagingMethod,
     },
     'rest.nextPageURLPath': {
       fieldId: 'rest.nextPageURLPath',
