@@ -184,14 +184,6 @@ export default function TestAndSave(props) {
     }
   }, [saveTerminated]);
 
-  //   useEffect(() => {
-  //     if (pingLoading || savingForm || disabled || isSaving || erroredMessage) {
-  //       setDisableSaveOnClick(true);
-  //     } else {
-  //       setDisableSaveOnClick(false);
-  //     }
-  //   }, [pingLoading, savingForm, setDisableSaveOnClick, disabled, isSaving, erroredMessage]);
-
   const handleCloseAndClearForm = useCallback(() => {
     dispatchLocalAction({
       type: 'clearFormData',

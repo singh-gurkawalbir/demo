@@ -105,11 +105,8 @@ export default function ResourceFormActionsPanel(props) {
   // Any extra actions other than Save, Cancel which needs to be separated goes here
 
   const actionButtons = useMemo(() => {
-    // /const secondaryActions = ['test', 'validate'];
-
     // if props has defined actions return it
     if (actions) return actions.map(action => ({...action, mode: 'group'}));
-    // let actionButtons;
 
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && !isNew) {
@@ -127,11 +124,6 @@ export default function ResourceFormActionsPanel(props) {
     }
 
     return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: false}];
-
-    // return actionButtons.map(id => ({
-    //   id,
-    //   mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
-    // }));
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
 
   if (!formState.initComplete) return null;
