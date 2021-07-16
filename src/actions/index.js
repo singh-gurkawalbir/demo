@@ -286,8 +286,8 @@ const resource = {
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
-  patch: (resourceType, id, patchSet) =>
-    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
+  patch: (resourceType, id, patchSet, asyncKey) =>
+    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
 
