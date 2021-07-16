@@ -419,7 +419,7 @@ export const getNextStateFromFields = formState => {
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
 
-function getFieldIdsInOrder(layout, fields = []) {
+export function getFieldIdsInLayoutOrder(layout, fields = []) {
   if (!layout) return fields;
   if (layout.fields?.length) {
     // add the fields in this layout to the list
@@ -428,17 +428,17 @@ function getFieldIdsInOrder(layout, fields = []) {
   if (layout.containers?.length) {
     // traverse through each container and fetch the fields
     layout.containers.forEach(container => {
-      fields.push(...getFieldIdsInOrder(container));
+      fields.push(...getFieldIdsInLayoutOrder(container));
     });
   }
 
   return fields;
 }
 
-export function getFirstInvalidFieldId(formState) {
+export function getFirstErroredFieldId(formState) {
   const { fields, fieldMeta } = formState || {};
 
-  const orderedFieldIds = getFieldIdsInOrder(fieldMeta?.layout);
+  const orderedFieldIds = getFieldIdsInLayoutOrder(fieldMeta?.layout);
 
-  return orderedFieldIds.find(fieldId => !fields[fieldId]?.isValid);
+  return orderedFieldIds.find(fieldId => fields[fieldId] && !fields[fieldId].isValid);
 }

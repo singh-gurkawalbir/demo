@@ -104,9 +104,7 @@ const ExpansionPanelExpandOnInValidState = props => {
 
   return (
     <div className={classes.child}>
-      <Accordion
-        // eslint-disable-next-line react/no-array-index-key
-        expanded={shouldExpand} elevation={0}>
+      <Accordion expanded={shouldExpand} elevation={0}>
         <AccordionSummary
           data-test={header}
           onClick={toggleExpansionPanel}
