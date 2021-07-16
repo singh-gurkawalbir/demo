@@ -1596,11 +1596,12 @@ const accessToken = {
 const job = {
   dashboard: {
     running: {
-      requestCollection: () =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION),
-      receivedCollection: ({ collection }) =>
+      requestCollection: nextPageURL =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, {nextPageURL}),
+      receivedCollection: ({ collection, nextPageURL }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
+          nextPageURL,
         }),
       canceled: ({ jobId }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.CANCELED, { jobId }),
@@ -1611,11 +1612,12 @@ const job = {
       receivedFamily: ({collection}) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
-      requestCollection: () =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION),
-      receivedCollection: ({ collection }) =>
+      requestCollection: nextPageURL =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, {nextPageURL}),
+      receivedCollection: ({ collection, nextPageURL }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
+          nextPageURL,
         }),
       clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
     },

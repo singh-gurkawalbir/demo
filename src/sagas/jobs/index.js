@@ -383,8 +383,7 @@ export function* requestRunningJobCollection() {
   if (!Array.isArray(collection?.jobs)) {
     collection = [];
   }
-
-  yield put(actions.job.dashboard.running.receivedCollection({ collection: collection?.jobs }));
+  yield put(actions.job.dashboard.running.receivedCollection({ collection: collection.jobs, nextPageURL: collection.nextPageURL}));
   yield put(actions.job.dashboard.running.requestInProgressJobStatus());
 }
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
@@ -398,14 +397,14 @@ export function* getJobCollection({ integrationId, flowId, filters = {}, options
   yield take(actionTypes.JOB.CLEAR);
   yield cancel(watcher);
 }
-export function* getDashboardRunningJobCollection() {
-  const watcher = yield fork(requestRunningJobCollection);
+export function* getDashboardRunningJobCollection({nextPageURL}) {
+  const watcher = yield fork(requestRunningJobCollection, {nextPageURL});
 
   yield take(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR);
   yield cancel(watcher);
 }
-export function* getDashboardCompletedJobCollection() {
-  const watcher = yield fork(requestCompletedJobCollection);
+export function* getDashboardCompletedJobCollection({nextPageURL}) {
+  const watcher = yield fork(requestCompletedJobCollection, {nextPageURL});
 
   yield take(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR);
   yield cancel(watcher);

@@ -12,7 +12,7 @@ function getParentJobIndex(jobs, jobId) {
   return jobs.findIndex(j => j._id === jobId);
 }
 export default (state = {}, action) => {
-  const { type, collection = [], jobId } = action;
+  const { type, collection = [], jobId, nextPageURL } = action;
 
   if (!type) {
     return state;
@@ -31,6 +31,7 @@ export default (state = {}, action) => {
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION:
         draft.runningJobs = collection;
         draft.status = undefined;
+        draft.nextPageURL = nextPageURL;
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.CANCELED:
         if (!draft.runningJobs) draft.runningJobs = [];
@@ -77,16 +78,20 @@ selectors.dashboardInProgressJobIds = createSelector(
   }
 );
 
-selectors.runningJobs = createSelector(state => state && state.runningJobs, (runningJobs = []) => runningJobs.map(job => {
-  const additionalProps = {
-    uiStatus: job.status,
-    duration: getJobDuration(job),
-    doneExporting: !!job.doneExporting,
-    numPagesProcessed: 0,
-  };
+selectors.runningJobs = createSelector(state => state?.runningJobs, state => state?.status, state => state?.nextPageURL, (runningJobs = [], status, nextPageURL) => {
+  const jobs = runningJobs.map(job => {
+    const additionalProps = {
+      uiStatus: job.status,
+      duration: getJobDuration(job),
+      doneExporting: !!job.doneExporting,
+      numPagesProcessed: 0,
+    };
 
-  return { ...job, ...additionalProps };
-}));
+    return { ...job, ...additionalProps };
+  });
+
+  return {jobs, status, nextPageURL};
+});
 
 selectors.isRunningJobsCollectionLoading = state => state?.status === 'loading';
 

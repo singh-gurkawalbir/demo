@@ -96,7 +96,7 @@ export default function Filters(props) {
   const dispatch = useDispatch();
   const rowsPerPageOptions = [10, 25, 50];
   const DEFAULT_ROWS_PER_PAGE = 50;
-  const totalRunningJobs = useSelector(state =>
+  const {jobs: totalRunningJobs, nextPageURL, status} = useSelector(state =>
     selectors.runningJobs(state)
   );
   const totalCompletedJobs = useSelector(state =>
@@ -129,17 +129,20 @@ export default function Filters(props) {
 
   const loadMoreJobs = useCallback(
     () => {
+      if (filterKey === FILTER_KEYS.RUNNING) { return dispatch(actions.job.dashboard.running.requestCollection(nextPageURL)); }
+
+      return dispatch(actions.job.dashboard.completed.requestCollection({nextPageURL}));
     },
-    [],
+    [dispatch, filterKey, nextPageURL],
   );
   const paginationOptions = useMemo(
     () => ({
       loadMoreHandler: loadMoreJobs,
-      hasMore: false, // !!nextPageURL,
-      loading: false,
+      hasMore: !!nextPageURL,
+      loading: status === 'requested',
 
     }),
-    [loadMoreJobs]
+    [loadMoreJobs, nextPageURL, status]
   );
   const handleChangeRowsPerPage = useCallback(e => {
     dispatch(

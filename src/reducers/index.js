@@ -4900,7 +4900,7 @@ selectors.accountDashboardRunningJobs = createSelector(
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
     const comparer = ({ order, orderBy }) =>
       order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
-    const dashboardJobs = jobFilter.sort ? [...runningJobs].sort(comparer(jobFilter.sort)) : [...runningJobs];
+    const dashboardJobs = jobFilter.sort ? [...runningJobs?.jobs].sort(comparer(jobFilter.sort)) : [...runningJobs?.jobs];
 
     return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });

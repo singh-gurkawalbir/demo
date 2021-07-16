@@ -48,10 +48,7 @@ export default function RunningFlows() {
 
   useEffect(() => {
     dispatch(
-      actions.job.dashboard.running.requestCollection({
-        filters,
-        options: { },
-      })
+      actions.job.dashboard.running.requestCollection()
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
