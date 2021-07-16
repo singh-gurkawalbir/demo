@@ -6,6 +6,7 @@ import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import useHandleCancel from './hooks/useHandleCancel';
 import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
+import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
 
 export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, remountAfterSaveFn}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
@@ -19,6 +20,8 @@ export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, d
     }
   }, [remountAfterSaveFn, status]);
   const handleCancelClick = useHandleCancel({formKey, isDirty, onClose, handleSave: onSave});
+
+  useTriggerCancelFromContext(formKey, handleCancelClick);
 
   return (
     <SaveAndCloseButtonGroup

@@ -25,6 +25,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
 
   return (
     <SaveAndCloseButtonGroupAuto
+      asyncKey={editorId}
       isDirty={isEditorDirty}
       status={getStatus()}
       onClose={onClose}
