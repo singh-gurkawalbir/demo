@@ -419,7 +419,9 @@ export const getNextStateFromFields = formState => {
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
 
-export function getFieldIdsInLayoutOrder(layout, fields = []) {
+export function getFieldIdsInLayoutOrder(layout) {
+  const fields = [];
+
   if (!layout) return fields;
   if (layout.fields?.length) {
     // add the fields in this layout to the list
