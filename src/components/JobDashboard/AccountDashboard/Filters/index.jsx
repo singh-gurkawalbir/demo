@@ -96,13 +96,16 @@ export default function Filters(props) {
   const dispatch = useDispatch();
   const rowsPerPageOptions = [10, 25, 50];
   const DEFAULT_ROWS_PER_PAGE = 50;
-  const {jobs: totalRunningJobs, nextPageURL, status} = useSelector(state =>
+  const {jobs: totalRunningJobs, nextPageURL: runningNextPageURL, status: runnningStatus} = useSelector(state =>
     selectors.runningJobs(state)
   );
-  const {jobs: totalCompletedJobs} = useSelector(state =>
+  const {jobs: totalCompletedJobs, nextPageURL: completedNextPageURL, status: completedStatus} = useSelector(state =>
     selectors.completedJobs(state)
   );
   const totalJobs = filterKey === FILTER_KEYS_AD.RUNNING ? totalRunningJobs : totalCompletedJobs;
+  const nextPageURL = filterKey === FILTER_KEYS_AD.RUNNING ? runningNextPageURL : completedNextPageURL;
+
+  const status = filterKey === FILTER_KEYS_AD.RUNNING ? runnningStatus : completedStatus;
 
   const jobFilter = useSelector(state => selectors.filter(state, filterKey));
   const {currPage = 0,

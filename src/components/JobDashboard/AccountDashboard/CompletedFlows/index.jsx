@@ -33,7 +33,7 @@ export default function CompletedFlows() {
   const dispatch = useDispatch();
 
   const filters = useSelector(state => selectors.filter(state, filterKey));
-  const { paging, ...nonPagingFilters } = filters;
+  const { paging, sort, ...nonPagingFilters } = filters;
   const filterHash = hashCode(nonPagingFilters);
 
   const jobs = useSelector(state => selectors.accountDashboardCompletedJobs(state));

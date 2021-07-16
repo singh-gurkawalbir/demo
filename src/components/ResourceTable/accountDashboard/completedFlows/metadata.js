@@ -77,6 +77,7 @@ export default {
     },
     {
       key: 'numOpenError',
+      orderBy: 'numOpenError',
       heading: 'Open errors',
       Value: ({rowData: r}) => {
         const history = useHistory();
@@ -96,6 +97,7 @@ export default {
     },
     {
       key: 'lastErrorAt',
+      orderBy: 'lastErrorAt',
       heading: 'Last open error',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
       width: '10%',
@@ -105,10 +107,12 @@ export default {
       heading: 'Last run completed',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastExecutedAt} />,
       width: '10%',
+      orderBy: 'lastExecutedAt',
     },
     {
       key: 'numRuns',
       heading: 'Runs',
+      orderBy: 'numRuns',
       Value: props => {
         const {rowData: r} = props;
         const classes = useStyles();
@@ -136,42 +140,49 @@ export default {
       heading: 'Average run time',
       Value: ({rowData: r}) => new Date(r.avgRuntime * 1000).toISOString().substr(11, 8),
       width: '10%',
+      orderBy: 'avgRuntime',
     },
     {
       key: 'success',
       heading: 'Success',
-      Value: ({rowData: r}) => r.numSuccess || 0,
+      Value: ({rowData: r}) => r.numSuccess,
       width: '10%',
+      orderBy: 'success',
     },
     {
       key: 'numIgnore',
       heading: 'Ignored',
-      Value: ({rowData: r}) => r.numIgnore || 0,
+      Value: ({rowData: r}) => r.numIgnore,
       width: '10%',
+      orderBy: 'numIgnore',
     },
     {
       key: 'numError',
       heading: 'Errors',
-      Value: ({rowData: r}) => r.numError || 0,
+      Value: ({rowData: r}) => r.numError,
       width: '10%',
+      orderBy: 'numError',
     },
     {
       key: 'numResolvedByAuto',
       heading: 'Auto-resolved',
-      Value: ({rowData: r}) => r.numResolvedByAuto || 0,
+      Value: ({rowData: r}) => r.numResolvedByAuto,
       width: '10%',
+      orderBy: 'numResolvedByAuto',
     },
     {
       key: 'numResolvedByUser',
       heading: 'User-resolved',
-      Value: ({rowData: r}) => r.numResolvedByUser || 0,
+      Value: ({rowData: r}) => r.numResolvedByUser,
       width: '10%',
+      orderBy: 'numResolvedByUser',
     },
     {
       key: 'numPages',
       heading: 'Pages',
-      Value: ({rowData: r}) => r.numPages || 0,
+      Value: ({rowData: r}) => r.numPages,
       width: '10%',
+      orderBy: 'numPages',
     },
   ],
 };

@@ -78,7 +78,7 @@ import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
-import { stringCompare } from '../utils/sort';
+import { stringCompare, comparer} from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -4985,8 +4985,6 @@ selectors.accountDashboardRunningJobs = createSelector(
   state => selectors.filter(state, FILTER_KEYS_AD.RUNNING),
   (runningJobs = [], jobFilter) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
-    const comparer = ({ order, orderBy }) =>
-      order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
     const dashboardJobs = jobFilter.sort ? [...runningJobs].sort(comparer(jobFilter.sort)) : [...runningJobs];
 
     return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
@@ -4997,8 +4995,6 @@ selectors.accountDashboardCompletedJobs = createSelector(
   state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED),
   (completedJobs = [], jobFilter) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
-    const comparer = ({ order, orderBy }) =>
-      order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
     const dashboardJobs = jobFilter.sort ? [...completedJobs].sort(comparer(jobFilter.sort)) : [...completedJobs];
 
     return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);

@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 
 const defaultFilter = {
-  sort: { order: 'desc', orderBy: 'createdAt' },
+  sort: { order: 'desc', orderBy: 'lastExecutedAt' },
   paging: {
     rowsPerPage: 50,
     currPage: 0,
