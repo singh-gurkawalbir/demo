@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import FilterIconWrapper from '../FilterIconWrapper';
 import { selectors } from '../../../../reducers';
-import MultiSelectFilter from '../../../MultiSelectParentChildFilter';
+import MultiSelectFilter from '../../../MultiSelectFilter';
 import actions from '../../../../actions';
 import Help from '../../../Help';
 
