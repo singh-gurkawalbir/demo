@@ -3,12 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { isNewId } from '../../../../../utils/resource';
+import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 
 const useStyles = makeStyles(theme => ({
   editorContainer: {
@@ -34,67 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ActionsFooter(props) {
-  const {
-    showDone,
-    handleDone,
-    handleSave,
-    handleSaveAndClose,
-    handleClose,
-    disabled,
-    isLoading,
-    closeOnSave,
-  } = props;
-  const classes = useStyles();
-
-  return (
-    <>
-      {
-        showDone ? (
-          <Button
-            data-test="saveContent"
-            disabled={disabled}
-            className={classes.action}
-            onClick={handleDone}
-            variant="outlined"
-            color="primary">
-            Done
-          </Button>
-        ) : (
-          <>
-            <Button
-              data-test="saveContent"
-              disabled={disabled}
-              className={classes.action}
-              onClick={handleSave}
-              variant="outlined"
-              color="primary">
-              {(isLoading && !closeOnSave) ? 'Saving' : 'Save'}
-            </Button>
-            <Button
-              data-test="saveAndCloseContent"
-              className={classes.action}
-              disabled={disabled}
-              onClick={handleSaveAndClose}
-              variant="outlined"
-              color="secondary">
-              {(isLoading && closeOnSave) ? 'Saving' : 'Save & close'}
-            </Button>
-          </>
-        )
-      }
-      <Button
-        data-test="closeContent"
-        className={classes.action}
-        onClick={handleClose}
-        variant="text"
-        color="primary">
-        Cancel
-      </Button>
-    </>
-  );
-}
-
 /**
  * Drawer opens for the editor based on passed editorProps
  * saveProps - Props needed to enable saving the resource with the patchKey passed
@@ -111,16 +52,14 @@ export default function EditorDrawer(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   // Local state variables
-  const [content, setContent] = useState();
+  const [content, setContent] = useState(value);
   const [closeOnSave, setCloseOnSave] = useState(false);
-  const [disableSave, setDisableSave] = useState(false);
-  const isContentChanged = content !== undefined;
+  const isContentChanged = content !== value;
   // Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const resourceCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/${resourceType}/${resourceId}`, 'put'));
   // Methods
   const handleSave = useCallback(() => {
-    setDisableSave(true);
     const patchSet = [
       {
         op: 'replace',
@@ -134,26 +73,33 @@ export default function EditorDrawer(props) {
     handleUpdateOnDrawerSave(content);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, handleUpdateOnDrawerSave]);
-  const handleSaveAndClose = useCallback(() => {
-    handleSave();
-    setCloseOnSave(true);
-  }, [handleSave]);
   const handleDone = useCallback(() => {
     handleUpdate(content);
-    handleClose();
-  }, [handleUpdate, handleClose, content]);
+  }, [handleUpdate, content]);
+
+  const handleSaveClick = isNewResource ? handleDone : handleSave;
+
+  const getStatus = () => {
+    switch (resourceCommStatus) {
+      case COMM_STATES.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
+      case COMM_STATES.LOADING: return FORM_SAVE_STATUS.LOADING;
+      case COMM_STATES.ERROR: return FORM_SAVE_STATUS.ERROR;
+      default:
+    }
+  };
+  const disableClose = resourceCommStatus === COMM_STATES.LOADING;
 
   // useEffect
+  useEffect(() => {
+    setContent(value);
+  }, [value]);
+
   useEffect(() => {
     if (resourceCommStatus === 'success') {
       if (closeOnSave) {
         handleClose();
         setCloseOnSave(false);
       }
-      setDisableSave(false);
-    }
-    if (resourceCommStatus === 'error') {
-      setDisableSave(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceCommStatus]);
@@ -168,7 +114,7 @@ export default function EditorDrawer(props) {
           [classes.fullWidthDrawerOpen]: drawerOpened,
         }),
       }}>
-      <DrawerTitleBar backToParent onClose={handleClose} title={label} />
+      <DrawerTitleBar disableClose={disableClose} backToParent onClose={handleClose} title={label} />
       <div className={classes.editorContainer}>
         <CodeEditor
           name={id}
@@ -179,18 +125,12 @@ export default function EditorDrawer(props) {
         />
       </div>
       <div className={classes.footer}>
-        {/* ActionsFooter takes care of the actions to show to save/close */}
-        <ActionsFooter
-          showDone={isNewResource}
-          handleDone={handleDone}
-          handleSave={handleSave}
-          handleSaveAndClose={handleSaveAndClose}
-          handleClose={handleClose}
-          isLoading={resourceCommStatus === 'loading'}
-          closeOnSave={closeOnSave}
-          disabled={isNewResource
-            ? !isContentChanged
-            : !isContentChanged || disableSave}
+        <SaveAndCloseButtonGroupAuto
+          isDirty={isContentChanged}
+          status={getStatus()}
+          onSave={handleSaveClick}
+          onClose={handleClose}
+          shouldHandleCancel
           />
       </div>
     </Drawer>

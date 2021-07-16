@@ -16,7 +16,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
 import EditorDrawer from '../../../../components/AFE/Drawer';
-import SaveAndCloseButtonGroupAuto from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 
 const formKey = 'flowbuildersettings';
 
@@ -191,7 +191,7 @@ function Settings({
       </DrawerContent>
 
       <DrawerFooter>
-        <SaveAndCloseButtonGroupAuto
+        <SaveAndCloseButtonGroupForm
           formKey={formKey}
           onSave={validateAndSubmit}
           onClose={handleClose}

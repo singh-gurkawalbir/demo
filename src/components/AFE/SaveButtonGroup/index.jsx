@@ -1,30 +1,36 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../reducers';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../../../utils/constants';
-import SaveAndCloseButtonGroup from '../../SaveAndCloseButtonGroup';
-import useCancelConfirm from '../useCancelConfirm';
+import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import actions from '../../../actions';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
-  const { handleSave, handleCancelClick, saveInProgress, isEditorDirty, saveStatus} = useCancelConfirm(editorId, onClose);
+  const dispatch = useDispatch();
+  const handleSave = useCallback(() => dispatch(actions.editor.saveRequest(editorId)), [dispatch, editorId]);
+  const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
+  const saveStatus = useSelector(state => selectors.editor(state, editorId).saveStatus);
+
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const editorViolations = useSelector(state => selectors.editorViolations(state, editorId));
-  const disable = !!editorViolations || disabled || saveInProgress || !isEditorDirty;
-  const getStatus = useMemo(() => {
+  const disable = !!editorViolations || disabled;
+
+  const getStatus = () => {
     switch (saveStatus) {
       case AFE_SAVE_STATUS.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
       case AFE_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
       default: return undefined;
     }
-  }, [saveStatus]);
+  };
 
   return (
-    <SaveAndCloseButtonGroup
+    <SaveAndCloseButtonGroupAuto
       isDirty={isEditorDirty}
-      status={getStatus}
-      onClose={handleCancelClick}
+      status={getStatus()}
+      onClose={onClose}
       onSave={handleSave}
       disabled={disable}
+      shouldHandleCancel
     />
   );
 }
