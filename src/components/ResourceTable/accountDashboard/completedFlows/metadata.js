@@ -10,6 +10,7 @@ import MultiSelectParentChildColumnFilter from '../../commonCells/MultiSelectPar
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
+import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
 
@@ -32,7 +33,7 @@ export default {
         const integrationOptions = useSelector(state => selectors.getAllIntegrations(state));
         const handleSave = useCallback(
           () => {
-            dispatch(actions.patchFilter('completedFlows', {
+            dispatch(actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
               flowIds: ['all'],
             }));
           },

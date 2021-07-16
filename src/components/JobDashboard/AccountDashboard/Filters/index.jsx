@@ -10,7 +10,7 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 import IconTextButton from '../../../IconTextButton';
 import CeligoPagination from '../../../CeligoPagination';
 import DateRangeSelector from '../../../DateRangeSelector';
-import { FILTER_KEYS, ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS } from '../../../../utils/accountDashboard';
+import { FILTER_KEYS_AD, ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS } from '../../../../utils/accountDashboard';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
@@ -99,10 +99,10 @@ export default function Filters(props) {
   const {jobs: totalRunningJobs, nextPageURL, status} = useSelector(state =>
     selectors.runningJobs(state)
   );
-  const totalCompletedJobs = useSelector(state =>
+  const {jobs: totalCompletedJobs} = useSelector(state =>
     selectors.completedJobs(state)
   );
-  const totalJobs = filterKey === FILTER_KEYS.RUNNING ? totalRunningJobs : totalCompletedJobs;
+  const totalJobs = filterKey === FILTER_KEYS_AD.RUNNING ? totalRunningJobs : totalCompletedJobs;
 
   const jobFilter = useSelector(state => selectors.filter(state, filterKey));
   const {currPage = 0,
@@ -129,9 +129,9 @@ export default function Filters(props) {
 
   const loadMoreJobs = useCallback(
     () => {
-      if (filterKey === FILTER_KEYS.RUNNING) { return dispatch(actions.job.dashboard.running.requestCollection(nextPageURL)); }
+      if (filterKey === FILTER_KEYS_AD.RUNNING) { return dispatch(actions.job.dashboard.running.requestCollection(nextPageURL)); }
 
-      return dispatch(actions.job.dashboard.completed.requestCollection({nextPageURL}));
+      return dispatch(actions.job.dashboard.completed.requestCollection(nextPageURL));
     },
     [dispatch, filterKey, nextPageURL],
   );
@@ -198,7 +198,7 @@ export default function Filters(props) {
   return (
     <div className={classes.root}>
       <div className={classes.filterContainer}>
-        {filterKey === FILTER_KEYS.COMPLETED ? (
+        {filterKey === FILTER_KEYS_AD.COMPLETED ? (
           <>
             <div className={classes.rangeFilter}>
               <> Completed date range: </>

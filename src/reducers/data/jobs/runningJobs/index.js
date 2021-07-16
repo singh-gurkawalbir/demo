@@ -23,6 +23,7 @@ export default (state = {}, action) => {
       case actionTypes.JOB.DASHBOARD.RUNNING.CLEAR:
         draft.runningJobs = [];
         draft.status = undefined;
+        draft.nextPageURL = undefined;
         break;
 
       case actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION:

@@ -18,6 +18,7 @@ import { selectors } from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
 
 export function* getJobFamily({ jobId, type }) {
   const requestOptions = getRequestOptions(
@@ -240,68 +241,19 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* requestCompletedJobCollection() {
+export function* requestCompletedJobCollection({nextPageURL}) {
   let collection;
-  const jobFilter = yield select(selectors.filter, 'completedFlows');
-  const userPreferences = yield select(selectors.userPreferences);
-  const sandbox = userPreferences.environment === 'sandbox';
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
-  const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
-  const body = {sandbox};
-  let selectedStores = [];
-  let parentIntegrationId;
-  let storeId;
-  let { resources: allFlows } = yield select(selectors.resourceList, { type: 'flows' });
-  let allFlowIds = [];
-  const {startDate, endDate} = jobFilter?.range || {};
 
-  if (startDate && endDate) {
-    body.time_gt = startDate.valueOf();
-    body.time_lte = endDate.valueOf();
-  }
-
-  if (selectedFlows.length) {
-    body._flowIds = selectedFlows;
-  } else if (selectedIntegrations.length) {
-    selectedStores = selectedIntegrations.filter(i => {
-      if (!i.includes('store')) return false;
-      storeId = i.substring(5, i.indexOf('pid'));
-      parentIntegrationId = i.substring(i.indexOf('pid') + 3);
-
-      return !(selectedIntegrations.includes(parentIntegrationId));
-    });
-    body._integrationIds = selectedIntegrations.filter(i => !i.includes('store'));
-    // eslint-disable-next-line no-restricted-syntax
-    for (const s of selectedStores) {
-      storeId = s.substring(5, s.indexOf('pid'));
-      parentIntegrationId = s.substring(s.indexOf('pid') + 3);
-      body._flowIds = [...(body._flowIds || []), ...yield select(
-        selectors.integrationAppFlowIds,
-        parentIntegrationId,
-        storeId
-      )];
-    }
-    if (body._flowIds?.length && body._integrationIds?.length) {
-      allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
-      allFlowIds = (allFlows || []).map(({_id}) => _id);
-      delete body._integrationIds;
-      body._flowIds = [...body._flowIds, ...allFlowIds];
-    }
-
-    // remove all integration which has store in it
-    // get integration id and store id in that
-    // Check parent id is part of selectedIntegrations, if yes ignore this
-    // If no, get all flows in that store and push all those to flowIds
-    // body._integrationIds = selectedIntegrations;
-  }
+  const reqOptions = yield select(
+    selectors.requestOptionsOfDashboardJobs,
+    {filterKey: FILTER_KEYS_AD.COMPLETED, nextPageURL}
+  );
+  const {path, opts} = reqOptions || {};
 
   try {
     collection = yield call(apiCallWithRetry, {
-      path: '/flows/runs/stats',
-      opts: {
-        method: 'POST',
-        body,
-      },
+      path,
+      opts,
     });
   } catch (error) {
     return true;
@@ -311,75 +263,26 @@ export function* requestCompletedJobCollection() {
     collection = [];
   }
 
-  yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats }));
+  yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats, nextPageURL: collection.nextPageURL }));
 }
 
-export function* requestRunningJobCollection() {
+export function* requestRunningJobCollection({nextPageURL}) {
   let collection;
-  const jobFilter = yield select(selectors.filter, 'runningFlows');
-  const userPreferences = yield select(selectors.userPreferences);
-  const sandbox = userPreferences.environment === 'sandbox';
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
-  const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
-  const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
-  const body = {sandbox};
-  let selectedStores = [];
-  let parentIntegrationId;
-  let storeId;
-  let { resources: allFlows } = yield select(selectors.resourceList, { type: 'flows' });
-  let allFlowIds = [];
 
-  if (selectedStatus.length) {
-    body.status = selectedStatus;
-  }
-  if (selectedFlows.length) {
-    body._flowIds = selectedFlows;
-  } else if (selectedIntegrations.length) {
-    selectedStores = selectedIntegrations.filter(i => {
-      if (!i.includes('store')) return false;
-      storeId = i.substring(5, i.indexOf('pid'));
-      parentIntegrationId = i.substring(i.indexOf('pid') + 3);
-
-      return !(selectedIntegrations.includes(parentIntegrationId));
-    });
-    body._integrationIds = selectedIntegrations.filter(i => !i.includes('store'));
-    // eslint-disable-next-line no-restricted-syntax
-    for (const s of selectedStores) {
-      storeId = s.substring(5, s.indexOf('pid'));
-      parentIntegrationId = s.substring(s.indexOf('pid') + 3);
-      body._flowIds = [...(body._flowIds || []), ...yield select(
-        selectors.integrationAppFlowIds,
-        parentIntegrationId,
-        storeId
-      )];
-    }
-    if (body._flowIds?.length && body._integrationIds?.length) {
-      allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
-      allFlowIds = (allFlows || []).map(({_id}) => _id);
-      delete body._integrationIds;
-      body._flowIds = [...body._flowIds, ...allFlowIds];
-    }
-
-    // remove all integration which has store in it
-    // get integration id and store id in that
-    // Check parent id is part of selectedIntegrations, if yes ignore this
-    // If no, get all flows in that store and push all those to flowIds
-    // body._integrationIds = selectedIntegrations;
-  }
+  const reqOptions = yield select(
+    selectors.requestOptionsOfDashboardJobs,
+    {filterKey: FILTER_KEYS_AD.RUNNING, nextPageURL}
+  );
+  const {path, opts} = reqOptions || {};
 
   try {
     collection = yield call(apiCallWithRetry, {
-      path: '/jobs/current',
-      opts: {
-        method: 'POST',
-        body,
-      },
+      path,
+      opts,
     });
   } catch (error) {
     return true;
   }
-  // collection = collection.filter(j => ['running', 'queued', 'retrying', 'failed'].includes(j.status));
-
   if (!Array.isArray(collection?.jobs)) {
     collection = [];
   }

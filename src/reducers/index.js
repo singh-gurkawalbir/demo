@@ -97,6 +97,7 @@ import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import { JOB_UI_STATUS } from '../utils/jobdashboard';
+import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -923,7 +924,7 @@ selectors.getAllFlows = createSelector(state => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources;
-  const jobFilter = selectors.filter(state, 'runningFlows');
+  const jobFilter = selectors.filter(state, FILTER_KEYS_AD.RUNNING);
   const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
 
   if (selectedIntegrations.length) {
@@ -947,6 +948,72 @@ selectors.getAllFlows = createSelector(state => {
 },
 flows => flows
 );
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+  let path;
+
+  if (nextPageURL) {
+    path = nextPageURL.replace('/api', '');
+  } else {
+    path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
+  }
+  const jobFilter = selectors.filter(state, filterKey);
+  const userPreferences = selectors.userPreferences(state);
+  const sandbox = userPreferences.environment === 'sandbox';
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
+  const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
+  const body = {sandbox};
+  let selectedStores = [];
+  let parentIntegrationId;
+  let storeId;
+  let { resources: allFlows } = selectors.resourceList(state, { type: 'flows' });
+  let allFlowIds = [];
+  const {startDate, endDate} = jobFilter?.range || {};
+
+  if (startDate && endDate && filterKey === FILTER_KEYS_AD.COMPLETED) {
+    body.time_gt = startDate.valueOf();
+    body.time_lte = endDate.valueOf();
+  }
+
+  if (selectedStatus.length) {
+    body.status = selectedStatus;
+  }
+  if (selectedFlows.length) {
+    body._flowIds = selectedFlows;
+  } else if (selectedIntegrations.length) {
+    selectedStores = selectedIntegrations.filter(i => {
+      if (!i.includes('store')) return false;
+      storeId = i.substring(5, i.indexOf('pid'));
+      parentIntegrationId = i.substring(i.indexOf('pid') + 3);
+
+      return !(selectedIntegrations.includes(parentIntegrationId));
+    });
+    body._integrationIds = selectedIntegrations.filter(i => !i.includes('store'));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const s of selectedStores) {
+      storeId = s.substring(5, s.indexOf('pid'));
+      parentIntegrationId = s.substring(s.indexOf('pid') + 3);
+      body._flowIds = [...(body._flowIds || []), ...selectors.integrationAppFlowIds(state,
+        parentIntegrationId,
+        storeId
+      )];
+    }
+    if (body._flowIds?.length && body._integrationIds?.length) {
+      allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
+      allFlowIds = (allFlows || []).map(({_id}) => _id);
+      delete body._integrationIds;
+      body._flowIds = [...body._flowIds, ...allFlowIds];
+    }
+
+    // remove all integration which has store in it
+    // get integration id and store id in that
+    // Check parent id is part of selectedIntegrations, if yes ignore this
+    // If no, get all flows in that store and push all those to flowIds
+    // body._integrationIds = selectedIntegrations;
+  }
+
+  return {path, opts: {method: 'POST', body}};
+};
 selectors.getAllIntegrations = createSelector(state => {
   let allIntegrations = selectors.resourceList(state, {
     type: 'integrations',
@@ -4914,21 +4981,21 @@ selectors.flowDashboardJobs = createSelector(
     };
   });
 selectors.accountDashboardRunningJobs = createSelector(
-  (state, options) => selectors.runningJobs(state, options),
-  state => selectors.filter(state, 'runningFlows'),
-  (runningJobs, jobFilter) => {
+  (state, options) => selectors.runningJobs(state, options)?.jobs,
+  state => selectors.filter(state, FILTER_KEYS_AD.RUNNING),
+  (runningJobs = [], jobFilter) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
     const comparer = ({ order, orderBy }) =>
       order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
-    const dashboardJobs = jobFilter.sort ? [...runningJobs?.jobs].sort(comparer(jobFilter.sort)) : [...runningJobs?.jobs];
+    const dashboardJobs = jobFilter.sort ? [...runningJobs].sort(comparer(jobFilter.sort)) : [...runningJobs];
 
     return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });
 
 selectors.accountDashboardCompletedJobs = createSelector(
-  (state, options) => selectors.completedJobs(state, options),
-  state => selectors.filter(state, 'completedFlows'),
-  (completedJobs, jobFilter) => {
+  (state, options) => selectors.completedJobs(state, options)?.jobs,
+  state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED),
+  (completedJobs = [], jobFilter) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
     const comparer = ({ order, orderBy }) =>
       order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);

@@ -9,6 +9,7 @@ import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
+import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function CompletedFlows() {
-  const filterKey = 'completedFlows';
+  const filterKey = FILTER_KEYS_AD.COMPLETED;
   const classes = useStyles();
 
   const dispatch = useDispatch();
@@ -47,10 +48,7 @@ export default function CompletedFlows() {
 
   useEffect(() => {
     dispatch(
-      actions.job.dashboard.completed.requestCollection({
-        filters,
-        options: { },
-      })
+      actions.job.dashboard.completed.requestCollection()
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

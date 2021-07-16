@@ -7,6 +7,7 @@ import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
+import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function RunningFlows() {
-  const filterKey = 'runningFlows';
+  const filterKey = FILTER_KEYS_AD.RUNNING;
   const classes = useStyles();
 
   const dispatch = useDispatch();

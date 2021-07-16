@@ -1,5 +1,5 @@
 
-export const FILTER_KEYS = {
+export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
   COMPLETED: 'completedFlows',
 };
