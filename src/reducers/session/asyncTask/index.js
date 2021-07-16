@@ -39,4 +39,6 @@ export const selectors = {};
 
 selectors.asyncTaskStatus = (state, key) => state?.[key]?.status;
 
+selectors.isAsyncTaskLoading = (state, key) => state?.[key]?.status === FORM_SAVE_STATUS.LOADING;
+
 // #endregion
