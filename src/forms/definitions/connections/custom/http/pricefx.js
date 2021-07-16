@@ -5,7 +5,7 @@ export default {
     '/assistant': 'pricefx',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://www.pricefx.eu/pricefx/${formValues['/http/unencrypted/partition']}`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/baseurl']}/pricefx/${formValues['/http/unencrypted/partition']}`,
     '/http/ping/relativeURI': '/ping',
     '/http/ping/method': 'GET',
     '/http/headers': [
@@ -18,6 +18,32 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.unencrypted.baseurl': {
+      id: 'http.unencrypted.baseurl',
+      type: 'text',
+      startAdornment: 'https://',
+      endAdornment: '/pricefx',
+      label: 'Base URL',
+      required: true,
+      helpKey: 'pricefx.connection.http.unencrypted.baseurl',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[\\S]+$',
+          message: 'Subdomain should not contain spaces.',
+        },
+      },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const baseurl =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('/pricefx')
+          );
+
+        return baseurl;
+      },
+    },
     'http.unencrypted.partition': {
       fieldId: 'http.unencrypted.partition',
       type: 'text',
@@ -53,6 +79,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: [
+          'http.unencrypted.baseurl',
           'http.unencrypted.username',
           'http.encrypted.password',
           'http.unencrypted.partition'] },

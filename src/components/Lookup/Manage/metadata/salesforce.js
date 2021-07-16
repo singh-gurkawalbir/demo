@@ -89,9 +89,10 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field (Salesforce)',
+          required: true,
+          valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({

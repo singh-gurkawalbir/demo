@@ -123,11 +123,26 @@ describe('openErrors info related sagas', () => {
     ];
 
     test('should not dispatch notify action incase of no difference in previous and current error map', () => {
-      const previousFlowErrors = { id1: 10, id2: 20, id3: 30 };
+      const previousFlowErrorsMap = { id1: 10, id2: 20, id3: 30 };
+      const prevFlowOpenErrorDetails = {
+        id1: {
+          _expOrImpId: 'id1',
+          numError: 10,
+        },
+        id2: {
+          _expOrImpId: 'id2',
+          numError: 20,
+        },
+        id3: {
+          _expOrImpId: 'id3',
+          numError: 30,
+        },
+      };
 
       return expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
         .provide([
-          [select(selectors.errorMap, flowId), {data: previousFlowErrors}],
+          [select(selectors.openErrorsDetails, flowId), prevFlowOpenErrorDetails],
+          [select(selectors.openErrorsMap, flowId), previousFlowErrorsMap],
         ])
         .not.put(actions.errorManager.flowErrorDetails.notifyUpdate({
           flowId,
@@ -136,27 +151,38 @@ describe('openErrors info related sagas', () => {
         }))
         .run();
     });
-    test('should not dispatch notify action if errors are loaded for the first time', () => {
-      const initialErrorMapState = { data: undefined };
-
-      return expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
-        .provide([
-          [select(selectors.errorMap, flowId), initialErrorMapState],
-        ])
-        .not.put(actions.errorManager.flowErrorDetails.notifyUpdate({
-          flowId,
-          resourceId: undefined,
-          diff: undefined,
-        }))
-        .returns(undefined)
-        .run();
-    });
+    test('should not dispatch notify action if errors are loaded for the first time', () => expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
+      .provide([
+        [select(selectors.openErrorsDetails, flowId), undefined],
+      ])
+      .not.put(actions.errorManager.flowErrorDetails.notifyUpdate({
+        flowId,
+        resourceId: undefined,
+        diff: undefined,
+      }))
+      .returns(undefined)
+      .run());
     test('should dispatch notify action for all the resourceIds that differ in their respective error counts', () => {
-      const previousFlowErrors = { id1: 0, id2: 30, id3: 30 };
+      const previousFlowErrorsMap = { id1: 0, id2: 30, id3: 30 };
+      const prevFlowOpenErrorDetails = {
+        id1: {
+          _expOrImpId: 'id1',
+          numError: 0,
+        },
+        id2: {
+          _expOrImpId: 'id2',
+          numError: 30,
+        },
+        id3: {
+          _expOrImpId: 'id3',
+          numError: 30,
+        },
+      };
 
       return expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
         .provide([
-          [select(selectors.errorMap, flowId), {data: previousFlowErrors}],
+          [select(selectors.openErrorsDetails, flowId), prevFlowOpenErrorDetails],
+          [select(selectors.openErrorsMap, flowId), previousFlowErrorsMap],
         ])
         .put(actions.errorManager.flowErrorDetails.notifyUpdate({
           flowId,

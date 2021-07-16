@@ -189,6 +189,57 @@ export const getAS2Url = () => {
   return `${apiUrl.substr(apiUrl.indexOf('://'))}/v1/as2`;
 };
 
+const getMediaTypeFromContentTypeHeader = headersArray => {
+  let mediaType = null;
+
+  if (!Array.isArray(headersArray) || headersArray.length === 0) {
+    return mediaType;
+  }
+
+  const lcHeaderName = 'content-type';
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const headerObj of headersArray) {
+    const headerName = headerObj.name;
+    let headerValue = headerObj.value;
+
+    if (headerName && headerName.trim().toLowerCase() === lcHeaderName && headerValue) {
+      headerValue = headerValue.trim();
+      headerValue = headerValue.toLowerCase();
+      if (headerValue === 'application/json') {
+        mediaType = 'json';
+
+        return mediaType;
+      } if (headerValue === 'application/xml') {
+        mediaType = 'xml';
+
+        return mediaType;
+      } if (headerValue === 'application/x-www-form-urlencoded') {
+        mediaType = 'urlencoded';
+
+        return mediaType;
+      } if (headerValue === 'text/csv') {
+        mediaType = 'csv';
+
+        return mediaType;
+      }
+    }
+  }
+
+  return mediaType;
+};
+
+export const getMediaTypeForImport = (conn, headers = []) => {
+  let reqMediaType = getMediaTypeFromContentTypeHeader(headers);
+
+  if (!reqMediaType) {
+    reqMediaType = getMediaTypeFromContentTypeHeader(conn?.rest?.headers || []);
+    reqMediaType = reqMediaType || ((conn?.rest?.mediaType === 'urlencoded') ? 'urlencoded' : 'json');
+  }
+
+  return reqMediaType;
+};
+
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
   const { webHookProvider, webHookToken, webHookVerify} = options;

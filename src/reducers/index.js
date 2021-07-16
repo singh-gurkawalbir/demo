@@ -5,7 +5,8 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { map, isEmpty, uniq } from 'lodash';
+import { map, isEmpty, uniq, get} from 'lodash';
+import sift from 'sift';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -49,7 +50,9 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID} from '../utils/constants';
+  MISCELLANEOUS_SECTION_ID,
+  NO_ENVIRONMENT_RESOURCE_TYPES,
+  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -579,69 +582,128 @@ selectors.mkTileApplications = () => createSelector(
   }
 );
 
-selectors.resourceList = (state, options = {}) => {
-  if (
-    !options.ignoreEnvironmentFilter &&
-    ![
-      'accesstokens',
-      'agents',
-      'iClients',
-      'scripts',
-      'stacks',
-      'templates',
-      'published',
-      'transfers',
-      'apis',
-      'connectors',
-    ].includes(
-      /* These resources are common for both production & sandbox environments. */
-      options.type
-    )
-  ) {
-    const preferences = selectors.userPreferences(state);
+const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
+  const filterByEnvironment = typeof sandbox === 'boolean';
 
-    // eslint-disable-next-line no-param-reassign
-    options.sandbox = preferences.environment === 'sandbox';
+  if (!filterByEnvironment) { return resources; }
+
+  if (resourceType === 'recycleBinTTL') {
+    // NO_ENVIRONMENT_MODELS_FOR_BIN are common for sandbox and production,
+    // so should be visible at both places
+
+    return resources.filter(r => {
+      if (NO_ENVIRONMENT_MODELS_FOR_BIN.includes(r.model)) return true;
+
+      return !!r.doc?.sandbox === sandbox;
+    });
   }
 
-  return fromData.resourceList(state && state.data, options);
-};
-
-selectors.resourceListModified = (userState, resourcesState, options = {}) => {
-  if (
-    !options.ignoreEnvironmentFilter &&
-    ![
-      'accesstokens',
-      'agents',
-      'iclients',
-      'scripts',
-      'stacks',
-      'templates',
-      'published',
-      'transfers',
-      'connectors',
-    ].includes(
-      /* These resources are common for both production & sandbox environments. */
-      options.type
-    )
-  ) {
-    const preferences = fromUser.userPreferences(userState);
-
-    // eslint-disable-next-line no-param-reassign
-    options.sandbox = preferences.environment === 'sandbox';
-  }
-
-  return fromResources.resourceList(resourcesState, options);
+  return resources.filter(r => !!r.sandbox === sandbox);
 };
 
 selectors.makeResourceListSelector = () =>
   createSelector(
-    selectors.userState,
-    selectors.resourceState,
+    selectors.currentEnvironment,
+    (state, options) => {
+      const type = options?.type;
+
+      if (!state || !type || typeof type !== 'string') { return null; }
+
+      return selectors.resourceState(state)?.[type];
+    },
     (_, options) => options,
-    (userState, resourcesState, options) =>
-      selectors.resourceListModified(userState, resourcesState, options)
+    (currentEnvironment, resources, options) => {
+      const result = {
+        resources: [],
+        total: 0,
+        filtered: 0,
+        count: 0,
+      };
+
+      if (!options) return result;
+      const { type, take, keyword, sort, ignoreEnvironmentFilter, filter, searchBy } = options;
+
+      let {sandbox} = options;
+
+      // NO_ENVIRONMENT_RESOURCE_TYPES resources are common for both production & sandbox environments.
+      if (
+        !ignoreEnvironmentFilter &&
+        !NO_ENVIRONMENT_RESOURCE_TYPES.includes(type)
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        sandbox = currentEnvironment === 'sandbox';
+      }
+      result.type = type;
+      // console.log('selector args', state, name, take, keyword);
+
+      if (!resources) {
+        return result;
+      }
+
+      // TODO: what is the siginificance of this
+      // if (type === 'ui/assistants') {
+      //   return state[type];
+      // }
+
+      if (!resources) return result;
+
+      result.total = resources.length;
+      result.count = resources.length;
+
+      function searchKey(resource, key) {
+        if (key === 'environment') {
+          return get(resource, 'sandbox') ? 'Sandbox' : 'Production';
+        }
+
+        const value = get(resource, key);
+
+        return typeof value === 'string' ? value : '';
+      }
+
+      const stringTest = r => {
+        if (!keyword) return true;
+        const searchableText =
+            Array.isArray(searchBy) && searchBy.length
+              ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
+              : `${r._id}|${r.name}|${r.description}`;
+
+        return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+      };
+      const matchTest = rOrig => {
+        const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
+
+        return stringTest(r);
+      };
+
+      const comparer = ({ order, orderBy }) =>
+        order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+        // console.log('sort:', sort, resources.sort(comparer, sort));
+      const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
+
+      const filteredByEnvironment = filterByEnvironmentResources(sorted, sandbox, type);
+
+      const filtered = filteredByEnvironment.filter(
+        filter ? sift({ $and: [filter, matchTest] }) : matchTest
+      );
+
+      result.filtered = filtered.length;
+      result.resources = filtered;
+
+      if (typeof take !== 'number' || take < 1) {
+        return result;
+      }
+
+      const slice = filtered.slice(0, take);
+
+      return {
+        ...result,
+        resources: slice,
+        count: slice.length,
+      };
+    }
   );
+
+selectors.resourceList = selectors.makeResourceListSelector();
 
 const integrationsFilter = {
   type: 'integrations',
@@ -837,17 +899,18 @@ const reportsFilter = {
   type: 'eventreports',
 };
 
-selectors.getIntegrationIdForEventReport = (state, eventReport) => {
+selectors.getAnyValidFlowFromEventReport = (state, eventReport) => {
   const foundFlow = eventReport._flowIds.find(flowId => selectors.resource(state, 'flows', flowId));
 
-  // deleted flows case
-  if (!foundFlow) { return null; }
-
-  return selectors.resource(state, 'flows', foundFlow)?._integrationId || STANDALONE_INTEGRATION.id;
+  return selectors.resource(state, 'flows', foundFlow);
 };
 
 selectors.getEventReportIntegrationName = (state, r) => {
-  const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+  const flow = selectors.getAnyValidFlowFromEventReport(state, r);
+
+  // if flow is deleted then we cannot find the integrationId
+  if (!flow) return '';
+  const integrationId = flow?._integrationId;
 
   const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -862,10 +925,12 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   if (!eventReports) { return emptyArray; }
 
   const allIntegrations = eventReports.map(r => {
-    const integrationId = selectors.getIntegrationIdForEventReport(state, r);
+    const foundFlow = selectors.getAnyValidFlowFromEventReport(state, r);
 
-    // integration has been deleted
-    if (!integrationId) return null;
+    // if flow is deleted then we cannot find the integrationId
+    if (!foundFlow) return null;
+
+    const integrationId = foundFlow?._integrationId;
 
     const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -899,6 +964,33 @@ selectors.getAllFlowsTiedToEventReports = createSelector(state => {
 },
 flows => flows
 );
+selectors.mkGetFlowsTiedToEventReports = () => {
+  const eventReportsSel = selectors.makeResourceListSelector();
+  const flowsSel = selectors.makeResourceListSelector();
+
+  return createSelector(
+    state => eventReportsSel(state, reportsFilter)?.resources,
+    state => flowsSel(state, flowsFilter)?.resources,
+    (_1, integrationIds) => integrationIds,
+    (eventReports, flows, integrationIds) => {
+      if (!eventReports) { return emptyArray; }
+
+      const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
+        r?._flowIds || []
+      ).filter(Boolean));
+
+      if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
+
+      const allFlows = flows.filter(({_id: flowId}) =>
+        allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
+
+      if (!integrationIds || !integrationIds.length) { return allFlows; }
+
+      return allFlows.filter(flow => flow && integrationIds.includes(flow._integrationId));
+    }
+
+  );
+};
 
 selectors.mkEventReportsFiltered = () => {
   const resourceListSelector = selectors.makeResourceListSelector();
@@ -926,7 +1018,7 @@ selectors.mkEventReportsFiltered = () => {
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
         const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.includes(_id));
 
-        // flow is deleted do not list the report
+        // flow is deleted we don't know the integration id for it
         if (!flow) {
           return false;
         }
@@ -1296,58 +1388,37 @@ selectors.filteredResourceList = (
   ? selectors.matchingConnectionList(state, resource, environment, manageOnly)
   : selectors.matchingStackList(state);
 
-selectors.marketplaceConnectors = (
-  userState,
-  marketPlaceState,
-  resourceState,
-  application,
-  sandbox,
-  isAccountOwnerOrAdmin,
-) => {
-  const licenses = fromUser.licenses(userState);
-  const connectors = fromMarketPlace.connectors(
-    marketPlaceState,
-    application,
-    sandbox,
-    licenses,
-    isAccountOwnerOrAdmin,
-  );
+selectors.makeMarketPlaceConnectorsSelector = () => {
+  const integrationsList = selectors.makeResourceListSelector();
 
-  return connectors
-    .map(c => {
-      const installedIntegrationApps = selectors.resourceListModified(
-        userState,
-        resourceState,
-        {
-          type: 'integrations',
-          sandbox,
-          filter: { _connectorId: c._id },
-        }
-      );
-
-      return { ...c, installed: !!installedIntegrationApps.resources.length };
-    })
-    .sort(stringCompare('name'));
-};
-
-selectors.makeMarketPlaceConnectorsSelector = () =>
-  createSelector(
+  return createSelector(
+    state => integrationsList(state, integrationsFilter)?.resources,
     selectors.userState,
     selectors.marketPlaceState,
-    selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
     selectors.isAccountOwnerOrAdmin,
-    (userState, marketPlaceState, resourceState, application, sandbox, isAccountOwnerOrAdmin) =>
-      selectors.marketplaceConnectors(
-        userState,
+    (integrations, userState, marketPlaceState, application, sandbox, isAccountOwnerOrAdmin) => {
+      const licenses = fromUser.licenses(userState);
+      const connectors = fromMarketPlace.connectors(
         marketPlaceState,
-        resourceState,
         application,
         sandbox,
+        licenses,
         isAccountOwnerOrAdmin,
-      )
+      );
+
+      return connectors
+        .map(c => {
+          const installedIntegrationApps = integrations.filter(int => int._connectionId === c._id);
+
+          return { ...c, installed: !!installedIntegrationApps.length };
+        })
+        .sort(stringCompare('name'));
+    }
+
   );
+};
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
@@ -1689,6 +1760,42 @@ selectors.mkFlowResources = () => createSelector(
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
 
+selectors.mkFlowStepsErrorInfo = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    flowResources,
+    selectors.openErrorsDetails,
+    (state, _1, _2, _3, filterKey) => selectors.filter(state, filterKey),
+    (_, flowId) => flowId,
+    (_1, _2, integrationId) => integrationId,
+    (_1, _2, _3, childId) => childId,
+    (flowResources, openErrorsDetails, errorStepsFilter, flowId, integrationId, childId) => {
+      const errorSteps = flowResources
+        .filter(r => r._id !== flowId)
+        .map(r => ({
+          id: r._id,
+          name: r.name || r._id,
+          count: openErrorsDetails?.[r._id]?.numError,
+          lastErrorAt: openErrorsDetails?.[r._id]?.lastErrorAt,
+          flowId,
+          type: r.type,
+          isLookup: r.isLookup,
+          childId,
+          integrationId,
+        }));
+
+      if (errorStepsFilter?.sort) {
+        const { order, orderBy } = errorStepsFilter.sort;
+
+        return errorSteps.sort(stringCompare(orderBy, order === 'desc'));
+      }
+
+      return errorSteps;
+    }
+  );
+};
+
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
 // also the new selector (that fetches metadata about a token) should be for a
@@ -1855,7 +1962,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (_1, _2, childId) => childId,
   (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
   (_1, _2, _3, _4, options) => options,
-  selectors.errorMap,
+  selectors.openErrorsMap,
   selectors.currentEnvironment,
   (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
     integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
@@ -1869,7 +1976,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
       return childIntegrationIds.includes(f._integrationId);
     });
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+    integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0}));
 
     // this transformation adds properties to make the the flow lastExecutedAt sortable
     integrationFlows = integrationFlows.map(flow => {
@@ -2435,9 +2542,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
-    selectors.errorMap,
+    selectors.openErrorsMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, errorMap = emptyObject, options = emptyObject) => {
+    (integration, flows = [], integrationId, section, childId, errorMap, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
@@ -2491,7 +2598,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map(f => ({...f, errors: (errorMap && errorMap.data && errorMap.data[f._id]) || 0}))
+        ).map(f => ({...f, errors: errorMap?.[f._id] || 0}))
         .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
     }
   );
@@ -4859,7 +4966,7 @@ selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsI
  */
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
@@ -4909,7 +5016,7 @@ selectors.integrationErrorsPerChild = (state, integrationId) => {
  */
 selectors.integrationErrorsPerFlowGroup = createSelector(
   selectors.integrationEnabledFlowIds,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
@@ -5680,3 +5787,36 @@ selectors.isUserAllowedOptionalSSOSignIn = state => {
   }
 };
 // #endregion sso selectors
+
+selectors.httpPagingValidationError = (state, formKey, pagingMethodsToValidate, pagingFieldsToValidate) => {
+  const formFields = selectors.formState(state, formKey)?.fields || {};
+  const pagingMethod = formFields['http.paging.method']?.value;
+
+  // if a particular paging method is selected
+  // do validations against pagingFieldsToValidate to verify if any field contains the setup
+  if (pagingMethodsToValidate && pagingMethod && Object.keys(pagingMethodsToValidate).includes(pagingMethod)) {
+    const regex = pagingMethodsToValidate[pagingMethod];
+
+    const validated = pagingFieldsToValidate?.some(f => regex.test(formFields[f]?.value));
+
+    if (!validated) {
+      return `The paging method selected must use {{export.http.paging.${pagingMethod}}} in either the relative URI or HTTP request body.`;
+    }
+  }
+};
+
+selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => {
+  const formFields = selectors.formState(state, formKey)?.fields || {};
+  const exportType = formFields.type?.value;
+  const regex = /.*{{.*lastExportDateTime.*}}/;
+
+  // if delta export type
+  // do validations against deltaFieldsToValidate to verify if any field contains the setup
+  if (exportType === 'delta' && deltaFieldsToValidate) {
+    const validated = deltaFieldsToValidate.some(f => regex.test(formFields[f]?.value));
+
+    if (!validated) {
+      return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
+    }
+  }
+};

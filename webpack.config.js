@@ -7,6 +7,7 @@ const DotenvPlugin = require('dotenv-webpack');
 const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') }).parsed;
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const { UnusedFilesWebpackPlugin } = require('unused-files-webpack-plugin');
 
 const config = {
   target: 'web',
@@ -76,6 +77,17 @@ const config = {
     new DotenvPlugin(),
     new webpack.ProvidePlugin({
       React: 'react',
+    }),
+    new UnusedFilesWebpackPlugin({
+      patterns: ['src/**/*.js', 'src/**/*.jsx'],
+      globOptions: {
+        // test are standalone files are always unreferenced so lets ignore it
+        // some icons could be used in the future lets not delete all the unused ones
+        // stories are also standalone so lets ignore it as well
+        ignore: ['**/*test.js', '**/components/icons/**', '**/stories/**',
+          // this folder has some js data files used primarily for test cases
+          'src/utils/assistant/assistantTestcases/**'],
+      },
     }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({

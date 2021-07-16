@@ -450,9 +450,11 @@ describe('job sagas', () => {
         { resourceId: jobId }
       );
 
+      opts.body = {fileIds: ['f1', 'f2']};
+
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
-          path: `${path}?fileId=f1&fileId=f2`,
+          path,
           opts,
         })
       );

@@ -15,7 +15,7 @@ import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
-  tablePaginationRoot: { float: 'right' },
+  tablePaginationRoot: { float: 'right'},
   fileInput: { display: 'none' },
   spinner: {
     left: '0px',
@@ -76,6 +76,9 @@ const useStyles = makeStyles(theme => ({
   },
   darkGray: {
     color: theme.palette.text.secondary,
+  },
+  errorMessageTable: {
+    width: '100%',
   },
 }));
 
@@ -284,6 +287,7 @@ export default function JobErrorTable({
               isSelectableRow={r => !r.resolved}
               onSelectChange={handleJobErrorSelectChange}
               useColumns={useColumns}
+              className={classes.errorMessageTable}
             />
           </>
         </>

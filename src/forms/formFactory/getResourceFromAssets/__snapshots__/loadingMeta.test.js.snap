@@ -1187,8 +1187,11 @@ Object {
         ],
       },
       "netsuite.authType": Object {
-        "fieldId": "netsuite.authType",
+        "id": "netsuite.authType",
+        "label": "Authentication type",
         "required": true,
+        "skipSort": true,
+        "type": "nsauthtype",
       },
       "netsuite.concurrencyLevel": Object {
         "fieldId": "netsuite.concurrencyLevel",
@@ -1337,6 +1340,22 @@ Object {
           },
         ],
       },
+      "netsuite.wsdlVersion": Object {
+        "defaultValue": [Function],
+        "id": "netsuite.wsdlVersion",
+        "label": "WSDL version",
+        "options": Array [
+          Object {
+            "items": Array [
+              "2020.2",
+              "2018.1",
+              "2016.2",
+            ],
+          },
+        ],
+        "skipSort": true,
+        "type": "select",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -1378,6 +1397,7 @@ Object {
                 "netsuite.linkSuiteScriptIntegrator",
                 "_borrowConcurrencyFromConnectionId",
                 "netsuite.concurrencyLevel",
+                "netsuite.wsdlVersion",
               ],
               "label": "Advanced",
             },
@@ -3330,20 +3350,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -3620,8 +3640,9 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
-      "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
         "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
@@ -3892,9 +3913,6 @@ Object {
       "http.paging.page": Object {
         "fieldId": "http.paging.page",
       },
-      "http.paging.path": Object {
-        "fieldId": "http.paging.path",
-      },
       "http.paging.pathAfterFirstRequest": Object {
         "fieldId": "http.paging.pathAfterFirstRequest",
       },
@@ -3909,6 +3927,12 @@ Object {
       },
       "http.paging.token": Object {
         "fieldId": "http.paging.token",
+      },
+      "http.paging.tokenPath": Object {
+        "fieldId": "http.paging.tokenPath",
+      },
+      "http.paging.urlPath": Object {
+        "fieldId": "http.paging.urlPath",
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
@@ -3941,7 +3965,18 @@ Object {
         "fieldId": "http.successMediaType",
       },
       "once.booleanField": Object {
-        "fieldId": "once.booleanField",
+        "connectionId": [Function],
+        "id": "once.booleanField",
+        "label": "Boolean field to mark records as exported",
+        "type": "textwithconnectioncontext",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
       },
       "outputMode": Object {
         "defaultValue": [Function],
@@ -3987,26 +4022,33 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "description": "Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.",
+                "fieldsToValidate": Array [
+                  "http.relativeURI",
+                  "http.body",
+                ],
+                "helpKey": "export.delta",
+                "label": "Delta – export only modified data",
+                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
         ],
         "required": true,
-        "type": "select",
+        "type": "selectwithvalidations",
         "visibleWhen": Array [
           Object {
             "field": "outputMode",
@@ -4037,9 +4079,9 @@ Object {
               "fields": Array [
                 "http.method",
                 "http.blobMethod",
+                "http.relativeURI",
                 "http.headers",
                 "http.requestMediaType",
-                "http.relativeURI",
                 "http.body",
                 "http.response.blobFormat",
               ],
@@ -4052,8 +4094,8 @@ Object {
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
-                "http.once.relativeURI",
                 "http.once.method",
+                "http.once.relativeURI",
                 "http.once.body",
               ],
               "label": "Configure export type",
@@ -4064,8 +4106,9 @@ Object {
                 "http.paging.method",
                 "http.paging.skip",
                 "http.paging.page",
+                "http.paging.urlPath",
+                "http.paging.tokenPath",
                 "http.paging.token",
-                "http.paging.path",
                 "http.paging.relativeURI",
                 "http.paging.linkHeaderRelation",
                 "http.paging.pathAfterFirstRequest",
@@ -4077,7 +4120,7 @@ Object {
                 "http.paging.lastPagePath",
                 "http.paging.lastPageValues",
               ],
-              "label": "Does this API support paging?",
+              "label": "Does this API use paging?",
             },
             Object {
               "collapsed": true,
@@ -4085,11 +4128,11 @@ Object {
                 Object {
                   "fields": Array [
                     "http.response.resourcePath",
-                    "http.response.errorPath",
-                    "http.response.successPath",
-                    "http.response.successValues",
                     "http.response.failPath",
                     "http.response.failValues",
+                    "http.response.successPath",
+                    "http.response.successValues",
+                    "http.response.errorPath",
                     "http.successMediaType",
                   ],
                 },
@@ -4178,20 +4221,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -4630,8 +4673,8 @@ Object {
         "connectionId": [Function],
         "filterKey": "webservices-booleanField",
         "id": "once.booleanField",
-        "label": "Boolean field",
-        "placeholder": "Please select a Boolean field",
+        "label": "Boolean field to mark records as exported",
+        "placeholder": "Please select a boolean field",
         "refreshOptionsOnChangesTo": Array [
           "netsuite.webservices.recordType",
         ],
@@ -4720,7 +4763,7 @@ Object {
         "filterKey": "suitescript-dateField",
         "helpKey": "export.delta.dateField",
         "id": "restlet.delta.dateField",
-        "label": "Date field(s)",
+        "label": "Date fields to use in delta search",
         "multiselect": true,
         "placeholder": "Please select a date field",
         "refreshOptionsOnChangesTo": Array [
@@ -4765,7 +4808,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "export.delta.lagOffset",
         "id": "restlet.delta.lagOffset",
-        "label": "Offset",
+        "label": "Delta date lag offset",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -4804,10 +4847,10 @@ Object {
         "connectionId": [Function],
         "defaultValue": [Function],
         "filterKey": "suitescript-booleanField",
-        "helpKey": "export.delta.booleanField",
+        "helpKey": "export.once.booleanField",
         "id": "restlet.once.booleanField",
-        "label": "Boolean field",
-        "placeholder": "Please select a Boolean field",
+        "label": "Boolean field to mark records as exported",
+        "placeholder": "Please select a boolean field",
         "refreshOptionsOnChangesTo": Array [
           "netsuite.restlet.recordType",
         ],
@@ -4859,20 +4902,20 @@ Object {
         "required": true,
         "selectOptions": Array [
           Object {
-            "label": "All",
+            "label": "All – always export all data",
             "value": "all",
           },
           Object {
-            "label": "Test",
-            "value": "test",
-          },
-          Object {
-            "label": "Delta",
+            "label": "Delta – export only modified data",
             "value": "delta",
           },
           Object {
-            "label": "Once",
+            "label": "Once – export records only once",
             "value": "once",
+          },
+          Object {
+            "label": "Test – export only 1 record",
+            "value": "test",
           },
         ],
         "type": "netsuiteexporttype",
@@ -4931,20 +4974,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -5295,8 +5338,9 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
-      "http.relativeURI": Object {
-        "fieldId": "http.relativeURI",
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
         "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
@@ -5480,7 +5524,7 @@ Object {
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
-        "label": "Date field(s)",
+        "label": "Date fields to use in delta search",
         "multiselect": true,
         "placeholder": "Please select a date field",
         "refreshOptionsOnChangesTo": Array [
@@ -5508,8 +5552,9 @@ Object {
         "connectionId": [Function],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
+        "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
-        "label": "Boolean field",
+        "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
         "type": "salesforcerefreshableselect",
@@ -5675,20 +5720,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -6126,20 +6171,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -6395,7 +6440,7 @@ Object {
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
-        "label": "Date field(s)",
+        "label": "Date fields to use in delta search",
         "multiselect": true,
         "placeholder": "Please select a date field",
         "refreshOptionsOnChangesTo": Array [
@@ -6423,8 +6468,9 @@ Object {
         "connectionId": [Function],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
+        "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
-        "label": "Boolean field",
+        "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
         "type": "salesforcerefreshableselect",
@@ -6590,20 +6636,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -6715,7 +6761,18 @@ Object {
         "fieldId": "formView",
       },
       "once.booleanField": Object {
-        "fieldId": "once.booleanField",
+        "connectionId": [Function],
+        "id": "once.booleanField",
+        "label": "Boolean field to mark records as exported",
+        "type": "textwithconnectioncontext",
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
       },
       "outputMode": Object {
         "defaultValue": [Function],
@@ -6769,11 +6826,14 @@ Object {
       "rest.method": Object {
         "fieldId": "rest.method",
       },
-      "rest.nextPagePath": Object {
-        "fieldId": "rest.nextPagePath",
-      },
       "rest.nextPageRelativeURI": Object {
         "fieldId": "rest.nextPageRelativeURI",
+      },
+      "rest.nextPageTokenPath": Object {
+        "fieldId": "rest.nextPageTokenPath",
+      },
+      "rest.nextPageURLPath": Object {
+        "fieldId": "rest.nextPageURLPath",
       },
       "rest.once.method": Object {
         "fieldId": "rest.once.method",
@@ -6844,6 +6904,9 @@ Object {
       "rest.successValues": Object {
         "fieldId": "rest.successValues",
       },
+      "rest.tokenPageArgument": Object {
+        "fieldId": "rest.tokenPageArgument",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -6855,26 +6918,33 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "description": "Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.",
+                "fieldsToValidate": Array [
+                  "rest.relativeURI",
+                  "rest.postBody",
+                ],
+                "helpKey": "export.delta",
+                "label": "Delta – export only modified data",
+                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
         ],
         "required": true,
-        "type": "select",
+        "type": "selectwithvalidations",
         "visibleWhen": Array [
           Object {
             "field": "outputMode",
@@ -6904,8 +6974,8 @@ Object {
               "fields": Array [
                 "rest.method",
                 "rest.blobMethod",
-                "rest.headers",
                 "rest.relativeURI",
+                "rest.headers",
                 "rest.postBody",
                 "rest.blobFormat",
               ],
@@ -6918,8 +6988,8 @@ Object {
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
-                "rest.once.relativeURI",
                 "rest.once.method",
+                "rest.once.relativeURI",
                 "rest.once.postBody",
               ],
               "label": "Configure export type",
@@ -6928,11 +6998,13 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "rest.pagingMethod",
-                "rest.nextPagePath",
+                "rest.nextPageURLPath",
+                "rest.nextPageTokenPath",
                 "rest.linkHeaderRelation",
                 "rest.skipArgument",
                 "rest.nextPageRelativeURI",
                 "rest.pageArgument",
+                "rest.tokenPageArgument",
                 "rest.pagingPostBody",
                 "rest.maxPagePath",
                 "rest.maxCountPath",
@@ -6940,7 +7012,7 @@ Object {
                 "rest.lastPagePath",
                 "rest.lastPageValue",
               ],
-              "label": "Does this API support paging?",
+              "label": "Does this API use paging?",
             },
             Object {
               "collapsed": true,
@@ -7164,7 +7236,7 @@ Object {
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
-        "label": "Date field(s)",
+        "label": "Date fields to use in delta search",
         "multiselect": true,
         "placeholder": "Please select a date field",
         "refreshOptionsOnChangesTo": Array [
@@ -7192,8 +7264,9 @@ Object {
         "connectionId": [Function],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
+        "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
-        "label": "Boolean field",
+        "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
         "type": "salesforcerefreshableselect",
@@ -7359,20 +7432,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -7499,20 +7572,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -7612,20 +7685,20 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "All",
+                "label": "All – always export all data",
                 "value": "all",
               },
               Object {
-                "label": "Test",
-                "value": "test",
-              },
-              Object {
-                "label": "Delta",
+                "label": "Delta – export only modified data",
                 "value": "delta",
               },
               Object {
-                "label": "Once",
+                "label": "Once – export records only once",
                 "value": "once",
+              },
+              Object {
+                "label": "Test – export only 1 record",
+                "value": "test",
               },
             ],
           },
@@ -8493,6 +8566,7 @@ Object {
       },
       "http.compositeMethodCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.method",
         "id": "http.compositeMethodCreate",
         "label": "HTTP method",
         "options": Array [
@@ -8513,6 +8587,7 @@ Object {
             ],
           },
         ],
+        "required": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -8538,6 +8613,7 @@ Object {
       },
       "http.compositeMethodUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.method",
         "id": "http.compositeMethodUpdate",
         "label": "HTTP method",
         "options": Array [
@@ -8558,6 +8634,7 @@ Object {
             ],
           },
         ],
+        "required": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -8627,8 +8704,9 @@ Object {
       },
       "http.failPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.failPath",
         "id": "http.failPathCreate",
-        "label": "Fail path",
+        "label": "Path to error field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8654,8 +8732,9 @@ Object {
       },
       "http.failPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.failPath",
         "id": "http.failPathUpdate",
-        "label": "Fail path",
+        "label": "Path to error field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8682,8 +8761,9 @@ Object {
       "http.failValuesCreate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.failValues",
         "id": "http.failValuesCreate",
-        "label": "Fail values",
+        "label": "Error values",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8710,8 +8790,9 @@ Object {
       "http.failValuesUpdate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.failValues",
         "id": "http.failValuesUpdate",
-        "label": "Fail values",
+        "label": "Error values",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8755,6 +8836,7 @@ Object {
         "arrayIndex": 1,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
         "id": "http.relativeURICreate",
         "label": "Relative URI",
         "type": "relativeuri",
@@ -8784,6 +8866,7 @@ Object {
         "arrayIndex": 0,
         "connectionId": [Function],
         "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
         "id": "http.relativeURIUpdate",
         "label": "Relative URI",
         "type": "relativeuri",
@@ -8814,8 +8897,9 @@ Object {
       },
       "http.resourceIdPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
         "id": "http.resourceIdPathCreate",
-        "label": "Response ID path",
+        "label": "Path to id field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8841,8 +8925,9 @@ Object {
       },
       "http.resourceIdPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
         "id": "http.resourceIdPathUpdate",
-        "label": "Response ID path",
+        "label": "Path to id field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8868,8 +8953,9 @@ Object {
       },
       "http.resourcePathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourcePath",
         "id": "http.resourcePathCreate",
-        "label": "Response path",
+        "label": "Path to records in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8895,8 +8981,9 @@ Object {
       },
       "http.resourcePathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.resourcePath",
         "id": "http.resourcePathUpdate",
-        "label": "Response path",
+        "label": "Path to records in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8950,8 +9037,9 @@ Object {
       },
       "http.successPathCreate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
         "id": "http.successPathCreate",
-        "label": "Success path",
+        "label": "Path to success field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -8977,8 +9065,9 @@ Object {
       },
       "http.successPathUpdate": Object {
         "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
         "id": "http.successPathUpdate",
-        "label": "Success path",
+        "label": "Path to success field in HTTP response body",
         "type": "text",
         "visibleWhenAll": Array [
           Object {
@@ -9005,6 +9094,7 @@ Object {
       "http.successValuesCreate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.successValues",
         "id": "http.successValuesCreate",
         "label": "Success values",
         "type": "text",
@@ -9033,6 +9123,7 @@ Object {
       "http.successValuesUpdate": Object {
         "defaultValue": [Function],
         "delimiter": ",",
+        "helpKey": "import.http.response.successValues",
         "id": "http.successValuesUpdate",
         "label": "Success values",
         "type": "text",
@@ -9209,11 +9300,11 @@ Object {
               "fields": Array [
                 "http.method",
                 "http.blobMethod",
+                "http.compositeType",
+                "http.relativeURI",
                 "http.headers",
                 "http.requestMediaType",
-                "http.compositeType",
                 "http.lookups",
-                "http.relativeURI",
                 "http.batchSize",
                 "http.body",
                 "uploadFile",
@@ -9224,43 +9315,49 @@ Object {
               "collapsed": true,
               "containers": Array [
                 Object {
-                  "collapsed": true,
-                  "fields": Array [
-                    "http.resourcePathCreate",
-                    "http.resourceIdPathCreate",
-                    "http.successPathCreate",
-                    "http.successValuesCreate",
-                    "http.failPathCreate",
-                    "http.failValuesCreate",
+                  "containers": Array [
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
+                        "http.resourcePathCreate",
+                        "http.resourceIdPathCreate",
+                        "http.failPathCreate",
+                        "http.failValuesCreate",
+                        "http.successPathCreate",
+                        "http.successValuesCreate",
+                      ],
+                      "label": "Create new data",
+                    },
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
+                        "http.resourcePathUpdate",
+                        "http.resourceIdPathUpdate",
+                        "http.failPathUpdate",
+                        "http.failValuesUpdate",
+                        "http.successPathUpdate",
+                        "http.successValuesUpdate",
+                      ],
+                      "label": "Update existing data",
+                    },
                   ],
-                  "label": "Create new data",
+                  "type": "collapse",
                 },
                 Object {
-                  "collapsed": true,
                   "fields": Array [
-                    "http.resourcePathUpdate",
-                    "http.resourceIdPathUpdate",
-                    "http.successPathUpdate",
-                    "http.successValuesUpdate",
-                    "http.failPathUpdate",
-                    "http.failValuesUpdate",
+                    "http.response.resourcePath",
+                    "http.response.resourceIdPath",
+                    "http.response.failPath",
+                    "http.response.failValues",
+                    "http.response.successPath",
+                    "http.response.successValues",
+                    "http.response.errorPath",
+                    "http.successMediaType",
+                    "http.errorMediaType",
                   ],
-                  "label": "Update existing data",
                 },
               ],
-              "fields": Array [
-                "http.response.resourcePath",
-                "http.response.resourceIdPath",
-                "http.response.errorPath",
-                "http.response.successPath",
-                "http.response.successValues",
-                "http.response.failPath",
-                "http.response.failValues",
-                "http.successMediaType",
-                "http.errorMediaType",
-              ],
               "label": "Non-standard API response patterns",
-              "type": "collapse",
             },
             Object {
               "collapsed": true,
@@ -9421,13 +9518,13 @@ Object {
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
           },
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "createandupdate",
               "createandignore",
@@ -9458,19 +9555,497 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.blobMethod": Object {
+        "fieldId": "http.blobMethod",
+      },
+      "http.body": Object {
+        "fieldId": "http.body",
+      },
+      "http.bodyCreate": Object {
+        "arrayIndex": 1,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "helpKey": "import.http.body",
+        "id": "http.bodyCreate",
+        "label": "HTTP request body",
+        "refreshOptionsOnChangesTo": Array [
+          "http.lookups",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.bodyUpdate": Object {
+        "arrayIndex": 0,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "helpKey": "import.http.body",
+        "id": "http.bodyUpdate",
+        "label": "HTTP request body",
+        "refreshOptionsOnChangesTo": Array [
+          "http.lookups",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.compositeMethodCreate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.method",
+        "id": "http.compositeMethodCreate",
+        "label": "HTTP method",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "POST",
+                "value": "POST",
+              },
+              Object {
+                "label": "PUT",
+                "value": "PUT",
+              },
+              Object {
+                "label": "PATCH",
+                "value": "PATCH",
+              },
+            ],
+          },
+        ],
+        "required": true,
+        "type": "select",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.compositeMethodUpdate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.method",
+        "id": "http.compositeMethodUpdate",
+        "label": "HTTP method",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "POST",
+                "value": "POST",
+              },
+              Object {
+                "label": "PUT",
+                "value": "PUT",
+              },
+              Object {
+                "label": "PATCH",
+                "value": "PATCH",
+              },
+            ],
+          },
+        ],
+        "required": true,
+        "type": "select",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.compositeType": Object {
+        "fieldId": "http.compositeType",
+      },
+      "http.existingDataId": Object {
+        "defaultValue": [Function],
+        "id": "http.existingDataId",
+        "label": "Existing data id",
+        "required": true,
+        "showSuggestionsWithoutHandlebar": true,
+        "type": "textwithflowsuggestion",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.headers": Object {
+        "fieldId": "http.headers",
+      },
+      "http.lookups": Object {
+        "fieldId": "http.lookups",
+        "visible": false,
+      },
+      "http.method": Object {
+        "fieldId": "http.method",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "required": true,
+      },
+      "http.relativeURICreate": Object {
+        "arrayIndex": 1,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
+        "id": "http.relativeURICreate",
+        "label": "Relative URI",
+        "required": true,
+        "type": "relativeuri",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.relativeURIUpdate": Object {
+        "arrayIndex": 0,
+        "connectionId": [Function],
+        "defaultValue": [Function],
+        "helpKey": "import.http.relativeURI",
+        "id": "http.relativeURIUpdate",
+        "label": "Relative URI",
+        "required": true,
+        "type": "relativeuri",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.response.resourceIdPath": Object {
+        "fieldId": "http.response.resourceIdPath",
+      },
+      "http.response.successPath": Object {
+        "fieldId": "http.response.successPath",
+      },
+      "http.response.successValues": Object {
+        "fieldId": "http.response.successValues",
+      },
+      "http.responseIdPathCreate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
+        "id": "http.responseIdPathCreate",
+        "label": "Path to id field in HTTP response body",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.responseIdPathUpdate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.response.resourceIdPath",
+        "id": "http.responseIdPathUpdate",
+        "label": "Path to id field in HTTP response body",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successPathCreate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
+        "id": "http.successPathCreate",
+        "label": "Path to success field in HTTP response body",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successPathUpdate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.response.successPath",
+        "id": "http.successPathUpdate",
+        "label": "Path to success field in HTTP response body",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successValuesCreate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.response.successValues",
+        "id": "http.successValuesCreate",
+        "label": "Success values",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "createandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.successValuesUpdate": Object {
+        "defaultValue": [Function],
+        "helpKey": "import.http.response.successValues",
+        "id": "http.successValuesUpdate",
+        "label": "Success values",
+        "type": "text",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "createandupdate",
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "http.update.existingDataId": Object {
+        "defaultValue": [Function],
+        "id": "http.update.existingDataId",
+        "label": "Existing data id",
+        "required": true,
+        "showSuggestionsWithoutHandlebar": true,
+        "type": "textwithflowsuggestion",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "http.compositeType",
+            "is": Array [
+              "updateandignore",
+            ],
+          },
+          Object {
+            "field": "http.method",
+            "is": Array [
+              "COMPOSITE",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "ignoreExistingData": Object {
         "id": "ignoreExistingData",
         "label": "Ignore existing records",
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "createandignore",
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
@@ -9489,13 +10064,13 @@ Object {
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "updateandignore",
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
@@ -9529,471 +10104,6 @@ Object {
         "type": "mode",
         "visible": false,
       },
-      "rest.blobMethod": Object {
-        "fieldId": "rest.blobMethod",
-      },
-      "rest.body": Object {
-        "fieldId": "rest.body",
-      },
-      "rest.bodyCreate": Object {
-        "arrayIndex": 1,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.bodyCreate",
-        "label": "HTTP request body",
-        "refreshOptionsOnChangesTo": Array [
-          "rest.lookups",
-        ],
-        "type": "httprequestbody",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.bodyUpdate": Object {
-        "arrayIndex": 0,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.bodyUpdate",
-        "label": "HTTP request body",
-        "refreshOptionsOnChangesTo": Array [
-          "rest.lookups",
-        ],
-        "type": "httprequestbody",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.compositeMethodCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.compositeMethodCreate",
-        "label": "HTTP method",
-        "options": Array [
-          Object {
-            "items": Array [
-              Object {
-                "label": "POST",
-                "value": "POST",
-              },
-              Object {
-                "label": "PUT",
-                "value": "PUT",
-              },
-              Object {
-                "label": "PATCH",
-                "value": "PATCH",
-              },
-            ],
-          },
-        ],
-        "required": true,
-        "type": "select",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.compositeMethodUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.compositeMethodUpdate",
-        "label": "HTTP method",
-        "options": Array [
-          Object {
-            "items": Array [
-              Object {
-                "label": "POST",
-                "value": "POST",
-              },
-              Object {
-                "label": "PUT",
-                "value": "PUT",
-              },
-              Object {
-                "label": "PATCH",
-                "value": "PATCH",
-              },
-            ],
-          },
-        ],
-        "required": true,
-        "type": "select",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.compositeType": Object {
-        "fieldId": "rest.compositeType",
-      },
-      "rest.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "rest.existingDataId",
-        "label": "Existing data id",
-        "required": true,
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.headers": Object {
-        "fieldId": "rest.headers",
-      },
-      "rest.lookups": Object {
-        "fieldId": "rest.lookups",
-        "visible": false,
-      },
-      "rest.method": Object {
-        "fieldId": "rest.method",
-      },
-      "rest.relativeURI": Object {
-        "fieldId": "rest.relativeURI",
-      },
-      "rest.relativeURICreate": Object {
-        "arrayIndex": 1,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.relativeURICreate",
-        "label": "Relative URI",
-        "required": true,
-        "type": "relativeuri",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.relativeURIUpdate": Object {
-        "arrayIndex": 0,
-        "connectionId": [Function],
-        "defaultValue": [Function],
-        "id": "rest.relativeURIUpdate",
-        "label": "Relative URI",
-        "required": true,
-        "type": "relativeuri",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.responseIdPath": Object {
-        "fieldId": "rest.responseIdPath",
-      },
-      "rest.responseIdPathCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.responseIdPathCreate",
-        "label": "Response ID path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.responseIdPathUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.responseIdPathUpdate",
-        "label": "Response ID path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successPath": Object {
-        "fieldId": "rest.successPath",
-      },
-      "rest.successPathCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successPathCreate",
-        "label": "Success path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successPathUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successPathUpdate",
-        "label": "Success path",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successValues": Object {
-        "fieldId": "rest.successValues",
-      },
-      "rest.successValuesCreate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successValuesCreate",
-        "label": "Success values",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.successValuesUpdate": Object {
-        "defaultValue": [Function],
-        "id": "rest.successValuesUpdate",
-        "label": "Success values",
-        "type": "text",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "rest.update.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "rest.update.existingDataId",
-        "label": "Existing data id",
-        "required": true,
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "rest.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "rest.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "sampleData": Object {
         "fieldId": "sampleData",
         "visibleWhenAll": Array [
@@ -10004,7 +10114,7 @@ Object {
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "isNot": Array [
               "DELETE",
             ],
@@ -10023,7 +10133,7 @@ Object {
             ],
           },
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "isNot": Array [
               "DELETE",
             ],
@@ -10039,13 +10149,13 @@ Object {
         "type": "labeltitle",
         "visibleWhenAll": Array [
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "COMPOSITE",
             ],
           },
           Object {
-            "field": "rest.compositeType",
+            "field": "http.compositeType",
             "is": Array [
               "createandupdate",
               "updateandignore",
@@ -10086,44 +10196,44 @@ Object {
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.compositeMethodCreate",
-                    "rest.relativeURICreate",
-                    "rest.bodyCreate",
+                    "http.compositeMethodCreate",
+                    "http.relativeURICreate",
+                    "http.bodyCreate",
                   ],
                   "label": "Create new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.existingDataId",
+                    "http.existingDataId",
                   ],
                   "label": "Ignore existing records",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.update.existingDataId",
+                    "http.update.existingDataId",
                   ],
                   "label": "Ignore new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.compositeMethodUpdate",
-                    "rest.relativeURIUpdate",
-                    "rest.bodyUpdate",
+                    "http.compositeMethodUpdate",
+                    "http.relativeURIUpdate",
+                    "http.bodyUpdate",
                   ],
                   "label": "Update existing data",
                 },
               ],
               "fields": Array [
-                "rest.method",
-                "rest.blobMethod",
-                "rest.headers",
-                "rest.compositeType",
-                "rest.lookups",
-                "rest.relativeURI",
-                "rest.body",
+                "http.method",
+                "http.blobMethod",
+                "http.compositeType",
+                "http.relativeURI",
+                "http.headers",
+                "http.lookups",
+                "http.body",
               ],
               "label": [Function],
               "type": "collapse",
@@ -10141,26 +10251,26 @@ Object {
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.successPathCreate",
-                    "rest.successValuesCreate",
-                    "rest.responseIdPathCreate",
+                    "http.responseIdPathCreate",
+                    "http.successPathCreate",
+                    "http.successValuesCreate",
                   ],
                   "label": "Create new data",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "rest.successPathUpdate",
-                    "rest.successValuesUpdate",
-                    "rest.responseIdPathUpdate",
+                    "http.responseIdPathUpdate",
+                    "http.successPathUpdate",
+                    "http.successValuesUpdate",
                   ],
                   "label": "Update existing data",
                 },
               ],
               "fields": Array [
-                "rest.successPath",
-                "rest.successValues",
-                "rest.responseIdPath",
+                "http.response.resourceIdPath",
+                "http.response.successPath",
+                "http.response.successValues",
               ],
               "label": "Non-standard API response patterns",
               "type": "collapse",

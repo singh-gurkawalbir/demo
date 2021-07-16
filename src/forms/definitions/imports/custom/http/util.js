@@ -271,10 +271,10 @@ export function fieldMeta({ resource, assistantData }) {
 
   if (adaptorType === 'RESTImport') {
     adaptorType = 'rest';
-    headers = resource.rest.headers;
+    headers = resource.rest?.headers || [];
   } else {
     adaptorType = 'http';
-    headers = resource.http.headers;
+    headers = resource.http?.headers || [];
   }
 
   const hiddenFields = hiddenFieldsMeta({
