@@ -49,13 +49,9 @@ const ConfirmDialog = props => {
         },
       });
     } else confirmDialog(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     commErrorMessage,
-    confirmDialog,
-    formValues,
-    handleCloseAndClearForm,
-    handleSaveCompleted,
-    handleSubmit,
   ]);
 
   return null;

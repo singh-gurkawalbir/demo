@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import resourceConstants from '../../../../forms/constants/connection';
@@ -6,7 +6,6 @@ import { getResourceSubType, multiStepSaveResourceTypes } from '../../../../util
 import consolidatedActions from '../../../ResourceFormFactory/Actions';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import ButtonGroup from '../../../ButtonGroup';
 import RenderActionButtonWhenVisible from '../../../DynaForm/RenderActionButtonWhenVisible';
 
 const getConnectionType = resource => {
@@ -35,93 +34,36 @@ const useStyles = makeStyles(theme => ({
 const ActionButtons = ({actions, formProps, consolidatedActions}) => {
   const classes = useStyles();
 
-  // TODO:dead code
-  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
-
-  const {primaryActions,
-    secondaryActions, group} = useMemo(() => {
-    if (!actions?.length) return {};
+  const groups = useMemo(() => {
+    if (!actions?.length) return null;
     // remove form disabled prop...
     // they dont necessary apply to action button
     const { disabled, ...rest } = formProps;
 
-    if (actions?.[0]?.mode === 'group') {
-      return {group: actions.map(({id, ...actionProps}) => {
-        const Action = consolidatedActions[id];
+    return actions.map(({id, ...actionProps}) => {
+      const Action = consolidatedActions[id];
 
-        return (
-          <RenderActionButtonWhenVisible
-            key={id}
-            id={id}
-            formKey={formProps.formKey}
+      return (
+        <RenderActionButtonWhenVisible
+          key={id}
+          id={id}
+          formKey={formProps.formKey}
           >
-            <Action
-              dataTest={id}
-              {...rest}
-              {...actionProps}
+          <Action
+            dataTest={id}
+            {...rest}
+            {...actionProps}
         />
-          </RenderActionButtonWhenVisible>
-        );
-      }),
-
-      };
-    }
-
-    return actions.reduce((acc, action) => {
-      const Action = consolidatedActions[action.id];
-      let actionProps = {};
-
-      /**
-      * Passes a global state for disable functionality for actions except 'cancel'
-      * used to manage disable states across buttons
-      * Ex: when save is clicked , save&close gets disabled
-      * In these cases, individual actions are recommended to use this disable prop to update
-      * rather than a local state
-      */
-      if (action.id !== 'cancel') {
-        actionProps = {
-          disableSaveOnClick,
-          setDisableSaveOnClick,
-        };
-      }
-
-      const actionContainer = (
-        <Action
-          key={action.id}
-          dataTest={action.id}
-          {...rest}
-          {...action}
-          {...actionProps}
-      />
+        </RenderActionButtonWhenVisible>
       );
-
-      if (action.mode === 'secondary') {
-        acc.secondaryActions.push(actionContainer);
-      } else {
-        acc.primaryActions.push(actionContainer);
-      }
-
-      return acc;
-    }, {
-      primaryActions: [],
-      secondaryActions: [],
-
     });
-  }, [actions, consolidatedActions, disableSaveOnClick, formProps]);
+  }, [actions, consolidatedActions, formProps]);
 
-  if (group) {
-    return (
-      <div className={classes.actions}>
-        {group}
-      </div>
-    );
-  }
   if (!actions?.length) { return null; }
 
   return (
     <div className={classes.actions}>
-      {primaryActions?.length ? <ButtonGroup> {primaryActions} </ButtonGroup> : null}
-      {secondaryActions?.length ? <ButtonGroup> { secondaryActions }</ButtonGroup> : null}
+      {groups}
     </div>
   );
 };
