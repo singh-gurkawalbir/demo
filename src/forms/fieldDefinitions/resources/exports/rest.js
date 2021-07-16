@@ -178,7 +178,7 @@ export default {
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Override query parameter name',
+    label: 'Override skip number query parameter name',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
