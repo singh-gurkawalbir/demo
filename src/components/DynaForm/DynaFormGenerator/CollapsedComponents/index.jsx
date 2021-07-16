@@ -39,7 +39,7 @@ export default function CollapsedComponents(props) {
       const header = typeof label === 'function' ? label(resource) : label;
 
       return (
-        <ExpansionPannelExpandOnInValidState
+        <ExpansionPanelExpandOnInValidState
           // eslint-disable-next-line react/no-array-index-key
           key={index}
           collapsed={collapsed}
@@ -57,7 +57,7 @@ export default function CollapsedComponents(props) {
   return <div className={classes.fieldsContainer}>{transformedContainers}</div>;
 }
 
-const ExpansionPannelExpandOnInValidState = props => {
+const ExpansionPanelExpandOnInValidState = props => {
   const { collapsed, layout, classes, header, fieldMap, formKey, dataPublic } = props;
   const revalidationIdentifier = useSelector(state => selectors.formState(state, formKey)?.validationOnSaveIdentifier);
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
