@@ -5,7 +5,6 @@ import http from './http';
 import mongodb from './mongodb';
 import netsuiteDistributed from './netsuiteDistributed';
 import rdbms from './rdbms';
-import rest from './rest';
 import s3 from './s3';
 import salesforce from './salesforce';
 import wrapper from './wrapper';
@@ -21,7 +20,6 @@ const allFieldDefinitions = {
   ...mongodb,
   ...netsuiteDistributed,
   ...rdbms,
-  ...rest,
   ...s3,
   ...salesforce,
   ...wrapper,
