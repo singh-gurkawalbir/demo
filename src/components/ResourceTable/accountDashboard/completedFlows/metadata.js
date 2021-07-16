@@ -133,7 +133,7 @@ export default {
     {
       key: 'avgRuntime',
       heading: 'Average run time',
-      Value: ({rowData: r}) => r.avgRuntime || 0,
+      Value: ({rowData: r}) => new Date(r.avgRuntime * 1000).toISOString().substr(11, 8),
       width: '10%',
     },
     {
