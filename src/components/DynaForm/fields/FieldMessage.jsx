@@ -52,7 +52,7 @@ export default function FieldMessage({ description, errorMessages, warningMessag
       {warningMessages && (
         <span className={classes.warning}>
           {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
-          {isValid ? description : warningMessages}
+          {warningMessages}
         </span>
       )}
     </FormHelperText>
