@@ -917,6 +917,7 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
+    description: 'Note: for security reasons this field must always be re-entered.',
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
