@@ -39,7 +39,7 @@ export default {
       Value: ({rowData: al}) => {
         const tableContext = useGetTableContext();
 
-        return <NameCell al={{resourceType: 'integration', _resourceId: al._integrationId}} actionProps={tableContext} />;
+        return <NameCell al={{resourceType: 'integration', _resourceId: al._integrationId || 'none'}} actionProps={tableContext} />;
       },
     },
     {
@@ -97,7 +97,7 @@ export default {
     },
     {
       key: 'ignore',
-      heading: 'Ignore',
+      heading: 'Ignored',
       Value: ({rowData: r}) => r.numIgnore || 0,
       width: '10%',
     },
@@ -109,7 +109,7 @@ export default {
     },
     {
       key: 'resolved',
-      heading: 'Resolved',
+      heading: 'Auto-resolved',
       Value: ({rowData: r}) => r.numResolved || 0,
       width: '10%',
     },

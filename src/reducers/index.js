@@ -927,7 +927,13 @@ selectors.getAllFlows = createSelector(state => {
   const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
 
   if (selectedIntegrations.length) {
-    allFlows = allFlows.filter(f => selectedIntegrations.includes(f._integrationId));
+    allFlows = allFlows.filter(f => {
+      if (selectedIntegrations.includes('none') && !f._integrationId) {
+        return true;
+      }
+
+      return selectedIntegrations.includes(f._integrationId);
+    });
   }
 
   const defaultFilter = [{ _id: 'all', name: 'All flows'}];
@@ -945,6 +951,20 @@ selectors.getAllIntegrations = createSelector(state => {
   let allIntegrations = selectors.resourceList(state, {
     type: 'integrations',
   }).resources;
+  const allTiles = state?.data?.resources?.tiles || [];
+  const currentEnvironment = selectors.currentEnvironment(state);
+  const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
+
+  const hasStandaloneTile = tiles.find(
+    t => t._integrationId === STANDALONE_INTEGRATION.id
+  );
+
+  if (hasStandaloneTile) {
+    allIntegrations = [
+      ...allIntegrations,
+      { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+    ];
+  }
   const defaultFilter = [{ _id: 'all', name: 'All integrations'}];
 
   if (!allIntegrations) { return defaultFilter; }
@@ -1476,7 +1496,7 @@ selectors.mkTiles = () => createSelector(
 
     const hasStandaloneTile = tiles.find(
       t => t._integrationId === STANDALONE_INTEGRATION.id
-    );
+    ); // this one i need to use
 
     if (hasStandaloneTile) {
       integrations = [

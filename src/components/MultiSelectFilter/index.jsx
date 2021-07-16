@@ -1,10 +1,14 @@
 import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../ArrowPopper';
 import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
+import ArrowUpIcon from '../icons/ArrowUpIcon';
+import ChildDetails from './ChildDetails';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'grid',
     gridTemplateColumns: '1fr',
+  },
+  moreIcon: {
+    marginTop: -theme.spacing(1),
   },
   heading: {
     fontWeight: 'bold',
@@ -76,6 +83,19 @@ const useStyles = makeStyles(theme => ({
   multiSelectFilterPopperArrow: {
     left: '150px !important',
   },
+  checkAction: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    display: 'flex',
+    // justifyContent: 'flex-start',
+    '& li:first-child': {
+      width: 30,
+    },
+    '& li': {
+      width: 'calc(100% - 30px)',
+    },
+  },
 }));
 
 export default function MultiSelectFilter(props) {
@@ -83,7 +103,12 @@ export default function MultiSelectFilter(props) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
+
+  function handleExpandCollapseClick() {
+    setExpanded(!expanded);
+  }
 
   const toggleClick = useCallback(event => {
     if (anchorEl) {
@@ -117,6 +142,38 @@ export default function MultiSelectFilter(props) {
       });
     }
   };
+  const handleChildSelect = (id, parentId) => event => {
+    event.stopPropagation();
+
+    setChecked(checked => {
+      if (checked.includes(id)) {
+        if (checked.includes(parentId)) {
+          return checked.filter(i => i !== id && i !== parentId);
+        }
+
+        return checked.filter(i => i !== id);
+      }
+      if (checked.includes(parentId)) {
+        return [...checked, id];
+      }
+      const parent = items.find(i => i._id === parentId);
+      let allChildsSelected = true;
+
+      parent?.children?.forEach(c => {
+        if (c._id !== id && !checked.includes(c._id)) { allChildsSelected = false; }
+      });
+
+      if (allChildsSelected && parent?.children) {
+        return [...checked, id, parentId].filter(c => c !== 'all');
+      }
+
+      return [...checked, id].filter(c => c !== 'all');
+    });
+  };
+
+  function RowIcon({expanded}) {
+    return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
+  }
 
   return (
     <>
@@ -140,22 +197,42 @@ export default function MultiSelectFilter(props) {
                 <FormControl component="fieldset" className={classes.formControl}>
                   <FormGroup className={classes.formGroup}>
                     {items.map(m => (
-                      <FormControlLabel
-                        className={classes.selectResourceItem}
-                        control={(
-                          <Checkbox
-                            color="primary"
-                            checked={checked.includes(m._id)}
-                            onChange={handleSelect(m._id)}
-                            value="required"
-                            className={classes.selectResourceCheck}
-                            />
+                      <>
+                        <ul key={m._id} className={classes.checkAction}>
+                          <li>
+                            { m?.children?.length && (
+                              <IconButton
+                                data-test="toggleJobDetail"
+                                className={classes.moreIcon}
+                                size="small"
+                                onClick={handleExpandCollapseClick}>
+                                <RowIcon expanded={expanded} childLoaded={m.children} />
+                              </IconButton>
                           )}
-                        label={m.name}
-                        key={m._id}
-                        />
-                    ))}
+                          </li>
+                          <li>
+                            <FormControlLabel
+                              className={classes.selectResourceItem}
+                              control={(
+                                <Checkbox
+                                  color="primary"
+                                  checked={checked.includes(m._id)}
+                                  onChange={handleSelect(m._id)}
+                                  value="required"
+                                  className={classes.selectResourceCheck} />
+                                  )}
+                              label={m.name}
+                              key={m._id} />
+                            {expanded && m.children && m.children.map(c => (
+                              <ChildDetails
+                                key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                                checked={checked} />
+                            ))}
+                          </li>
+                        </ul>
 
+                      </>
+                    ))}
                   </FormGroup>
                 </FormControl>
               </div>

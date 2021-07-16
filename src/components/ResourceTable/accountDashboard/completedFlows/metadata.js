@@ -51,7 +51,7 @@ export default {
       Value: ({rowData: al}) => {
         const tableContext = useGetTableContext();
 
-        return <NameCell al={{resourceType: 'integration', _resourceId: al._integrationId}} actionProps={tableContext} />;
+        return <NameCell al={{resourceType: 'integration', _resourceId: al._integrationId || 'none'}} actionProps={tableContext} />;
       },
     },
     {
