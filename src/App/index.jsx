@@ -25,6 +25,7 @@ import ErrorNotifications from './ErrorNotifications';
 import CeligoAppBar from './CeligoAppBar';
 import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
+import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -148,29 +149,31 @@ export default function App() {
       <CrashReporter>
         <Fragment key={reloadCount}>
           <ConfirmDialogProvider>
-            <SnackbarProvider
-              classes={snackbarClasses} maxSnack={3} ContentProps={{
-                classes: { root: classes.root },
-              }}>
-              <FontStager />
-              <CssBaseline />
-              <BrowserRouter>
-                <div className={classes.root}>
-                  <LoadingNotification />
-                  <ErrorNotifications />
-                  {/* Headers */}
-                  <Switch>
-                    <Route path={getRoutePath('/signin')} component={null} />
-                    <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
-                  </Switch>
-                  {/* page content */}
-                  <WithAuth>
-                    <PageContentComponents />
-                  </WithAuth>
-                </div>
-              </BrowserRouter>
-              <ConflictAlertDialog />
-            </SnackbarProvider>
+            <FormOnCancelProvider>
+              <SnackbarProvider
+                classes={snackbarClasses} maxSnack={3} ContentProps={{
+                  classes: { root: classes.root },
+                }}>
+                <FontStager />
+                <CssBaseline />
+                <BrowserRouter>
+                  <div className={classes.root}>
+                    <LoadingNotification />
+                    <ErrorNotifications />
+                    {/* Headers */}
+                    <Switch>
+                      <Route path={getRoutePath('/signin')} component={null} />
+                      <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
+                    </Switch>
+                    {/* page content */}
+                    <WithAuth>
+                      <PageContentComponents />
+                    </WithAuth>
+                  </div>
+                </BrowserRouter>
+                <ConflictAlertDialog />
+              </SnackbarProvider>
+            </FormOnCancelProvider>
           </ConfirmDialogProvider>
         </Fragment>
       </CrashReporter>
