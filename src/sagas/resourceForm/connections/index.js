@@ -269,7 +269,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
 }
 
 export function* pingConnection({ resourceId, values }) {
-  const asyncKey = `connections-${resourceId}`;
+  const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
   const connectionPayload = yield call(createPayload, {
@@ -310,7 +310,7 @@ export function* pingConnection({ resourceId, values }) {
       )
     );
   }
-  yield put(actions.asyncKey.success(asyncKey));
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(
     actions.resource.connections.testSuccessful(
       resourceId,
@@ -332,7 +332,7 @@ export function* pingConnectionWithAbort(params) {
 
   // perform submit cleanup
   if (abortPing) {
-    const asyncKey = `connections-${resourceId}`;
+    const asyncKey = getAsyncKey('connections', resourceId);
 
     yield put(actions.asyncTask.success(asyncKey));
     yield put(

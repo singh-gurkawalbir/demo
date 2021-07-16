@@ -5,7 +5,7 @@ import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
-import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
+import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet, getAsyncKey} from '../index';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
 import { commitStagedChanges } from '../../resources';
@@ -664,6 +664,8 @@ describe('pingConnectionWithAbort', () => {
     expect(JSON.stringify(saga.next().value)).toEqual(
       JSON.stringify(raceBetweenApiCallAndAbort)
     );
+
+    expect(saga.next(response).value).toEqual(put(actions.asyncTask.success(getAsyncKey('connections', resourceId))));
     expect(saga.next(response).value).toEqual(
       put(
         actions.resource.connections.testCancelled(
