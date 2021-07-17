@@ -1608,6 +1608,7 @@ const job = {
       requestInProgressJobStatus: () =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS),
       clear: () => action(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR),
+      error: () => action(actionTypes.JOB.DASHBOARD.RUNNING.ERROR),
       noInProgressJobs: () => action(actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS),
       receivedFamily: ({collection}) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
@@ -1620,6 +1621,8 @@ const job = {
           nextPageURL,
         }),
       clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
+      error: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.ERROR),
+
     },
   },
   requestCollection: ({ integrationId, flowId, filters, options }) =>

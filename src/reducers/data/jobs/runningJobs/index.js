@@ -34,6 +34,9 @@ export default (state = {}, action) => {
         draft.status = undefined;
         draft.nextPageURL = nextPageURL;
         break;
+      case actionTypes.JOB.DASHBOARD.RUNNING.ERROR:
+        draft.status = undefined;
+        break;
       case actionTypes.JOB.DASHBOARD.RUNNING.CANCELED:
         if (!draft.runningJobs) draft.runningJobs = [];
         draft.runningJobs = draft.runningJobs.filter(job => job._id !== jobId);

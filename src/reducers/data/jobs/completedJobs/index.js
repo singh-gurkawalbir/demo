@@ -16,6 +16,9 @@ export default (state = {}, action) => {
         draft.status = undefined;
         draft.nextPageURL = undefined;
         break;
+      case actionTypes.JOB.DASHBOARD.COMPLETED.ERROR:
+        draft.status = undefined;
+        break;
 
       case actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION:
         draft.status = 'loading';

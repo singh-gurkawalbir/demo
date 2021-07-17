@@ -256,7 +256,7 @@ export function* requestCompletedJobCollection({nextPageURL}) {
       opts,
     });
   } catch (error) {
-    return true;
+    return yield put(actions.job.dashboard.completed.error());
   }
 
   if (!Array.isArray(collection?.stats)) {
@@ -281,7 +281,7 @@ export function* requestRunningJobCollection({nextPageURL}) {
       opts,
     });
   } catch (error) {
-    return true;
+    return yield put(actions.job.dashboard.running.error());
   }
   if (!Array.isArray(collection?.jobs)) {
     collection = [];
