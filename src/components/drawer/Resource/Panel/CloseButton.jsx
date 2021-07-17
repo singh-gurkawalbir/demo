@@ -3,7 +3,7 @@ import { IconButton, makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import Close from '../../../icons/CloseIcon';
 import { selectors } from '../../../../reducers';
-import { FORM_SAVE_STATUS } from '../../../../utils/constants';
+import useFormOnCancel from '../../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -18,22 +18,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CloseButton({onClose,
-  resourceType,
-  resourceId,
-}) {
+export default function CloseButton({formKey}) {
   const classes = useStyles();
-  const status = useSelector(state =>
-    selectors.asyncTaskStatus(state, `${resourceType}-${resourceId}`));
-
-  const disabled = status === FORM_SAVE_STATUS.LOADING;
+  const disabled = useSelector(state =>
+    selectors.isAsyncTaskLoading(state, formKey));
+  const {setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
     <IconButton
       data-test="closeDrawer"
       className={classes.closeButton}
       disabled={disabled}
-      onClick={onClose}>
+      onClick={setCancelTriggered}>
       <Close />
     </IconButton>
   );

@@ -6,6 +6,8 @@ import { FORM_SAVE_STATUS } from '../../utils/constants';
 import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
 import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
+import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
+
 
 export default function SaveAndCloseMiniResourceForm({
   formKey,
@@ -19,6 +21,8 @@ export default function SaveAndCloseMiniResourceForm({
 
   useClearAsyncStateOnUnmount(formKey);
   const inProgress = formSaveStatus === FORM_SAVE_STATUS.LOADING;
+
+  useTriggerCancelFromContext(formKey, handleCancelClick);
 
   return (
     <ActionGroup>

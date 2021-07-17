@@ -97,14 +97,10 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
     remount: count,
   });
 
-  const {setCancelTriggered} = useFormOnCancel();
-
-  const onCloseWithDiscardChanges = useCallback(() => {
-    setCancelTriggered(formKey);
-  }, [setCancelTriggered]);
+  const {setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
-    <ModalDialog show={open} onClose={onCloseWithDiscardChanges} disableClose={isSaving}>
+    <ModalDialog show={open} onClose={setCancelTriggered} disableClose={isSaving}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
         <DynaForm formKey={formKey} />

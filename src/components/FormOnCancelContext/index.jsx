@@ -1,4 +1,4 @@
-import React, { useState, useContext} from 'react';
+import React, { useState, useContext, useCallback} from 'react';
 
 const FormOnCancelContext = React.createContext({
   setCancelTriggered: () => {},
@@ -16,14 +16,23 @@ export const FormOnCancelProvider = ({ children }) => {
   );
 };
 
-export default function useFormOnCancel() {
+export default function useFormOnCancel(key) {
   const {
-    setCancelTriggered,
+    setCancelTriggered: onCancel,
     cancelTriggeredForAsyncKey,
   } = useContext(FormOnCancelContext);
 
+  const setCancelTriggered = useCallback(() => {
+    onCancel(key);
+  }, [key, onCancel]);
+
+  const closeCancelTriggered = useCallback(() => {
+    onCancel(null);
+  }, [onCancel]);
+
   return {
     setCancelTriggered,
+    closeCancelTriggered,
     cancelTriggeredForAsyncKey,
   };
 }
