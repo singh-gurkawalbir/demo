@@ -11,8 +11,8 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
-import SaveAndCloseButtonGroup from '../../SaveAndCloseButtonGroup';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { useFormOnCancel } from '../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   errorText: {
@@ -110,7 +110,8 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
       </DrawerContent>
 
       <DrawerFooter>
-        <SaveAndCloseButtonGroup
+        <SaveAndCloseButtonGroupAuto
+          asyncKey={asyncKey}
           isDirty={isDirty}
           status={status}
           onClose={handleClose}
@@ -125,8 +126,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
 
 export default function RetryDrawer({height, jobId, flowJobId}) {
   const asyncKey = `retrydata-${jobId}-${flowJobId}`;
-  const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
-  const disableClose = status === FORM_SAVE_STATUS.LOADING;
+  const {setCancelTriggered, disabled} = useFormOnCancel(asyncKey);
 
   return (
     <RightDrawer
@@ -134,7 +134,7 @@ export default function RetryDrawer({height, jobId, flowJobId}) {
       height={height}
       width="large"
       variant="permanent">
-      <DrawerHeader disableClose={disableClose} title="Edit retry data" />
+      <DrawerHeader handleClose={setCancelTriggered} disableClose={disabled} title="Edit retry data" />
       <RetryForm asyncKey={asyncKey} jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>
   );

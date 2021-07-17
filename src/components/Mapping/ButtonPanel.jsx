@@ -5,16 +5,17 @@ import { useRouteMatch } from 'react-router-dom';
 import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
-import SaveAndCloseButtonGroup from '../SaveAndCloseButtonGroup';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
-import useHandleCancelBasic from '../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
+import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { mappingsFormKey } from '../../views/MappingDrawer';
 
 const useStyles = makeStyles({
   previewButton: {
     float: 'right',
   },
 });
+
 export default function ButtonPanel({importId, disabled, onClose}) {
   const classes = useStyles();
   const match = useRouteMatch();
@@ -53,17 +54,17 @@ export default function ButtonPanel({importId, disabled, onClose}) {
     ? FORM_SAVE_STATUS.LOADING
     : FORM_SAVE_STATUS.COMPLETE;
 
-  const handleClose = useHandleCancelBasic({isDirty: mappingsChanged, onClose, handleSave: handleSaveClick});
-
   return (
     <>
       <ButtonGroup>
-        <SaveAndCloseButtonGroup
+        <SaveAndCloseButtonGroupAuto
           isDirty={mappingsChanged}
           disabled={disabled}
           status={formStatus}
           onSave={handleSaveClick}
-          onClose={handleClose}
+          onClose={onClose}
+          asyncKey={mappingsFormKey}
+          shouldHandleCancel
         />
         {showPreviewButton && (
         <Button

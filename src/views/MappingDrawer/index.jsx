@@ -11,6 +11,7 @@ import DrawerContent from '../../components/drawer/Right/DrawerContent';
 import DatabaseMapping from './DatabaseMapping_afe';
 import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
+import useFormOnCancelContext from '../../components/FormOnCancelContext';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -33,12 +34,14 @@ const MappingWrapper = ({integrationId}) => {
 
   );
 };
-
+export const mappingsFormKey = 'mappings';
 export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
   const { saveStatus } = useSelector(state => selectors.mapping(state));
   const closeDisabled = saveStatus === 'requested';
+
+  const {setCancelTriggered} = useFormOnCancelContext(mappingsFormKey);
 
   let importId;
 
@@ -69,7 +72,7 @@ export default function MappingDrawerRoute(props) {
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         variant="persistent"
       >
-        <DrawerHeader title={title} disableClose={closeDisabled} />
+        <DrawerHeader title={title} handleClose={setCancelTriggered} disableClose={closeDisabled} />
         <Switch>
           <Route
             path={[

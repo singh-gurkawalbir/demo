@@ -5,6 +5,7 @@ import actions from '../../../actions';
 import {selectors} from '../../../reducers';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { responseMappingsFormKey } from '../Drawer';
 
 export default function SaveButtonGroup({ onClose }) {
   const match = useRouteMatch();
@@ -28,6 +29,7 @@ export default function SaveButtonGroup({ onClose }) {
         onSave={onSave}
         onClose={onClose}
         shouldHandleCancel
+        formKey={responseMappingsFormKey}
         />
     </>
   );

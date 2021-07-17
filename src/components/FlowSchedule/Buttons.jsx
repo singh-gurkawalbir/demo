@@ -85,7 +85,7 @@ export default function FlowScheduleButtons({
   }, [dispatch, flow, pg, index, scheduleStartMinute, formKey]);
 
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
-  const handleValidateAndSubmit = useCallback(() => {
+  const handleValidateAndSubmit = useCallback(closeAfterSave => {
     if (
       formValues.startTime &&
       formValues.endTime &&
@@ -98,7 +98,10 @@ export default function FlowScheduleButtons({
     }
     // If valid form values
     onSave(formValues);
-  }, [enqueueSnackbar, formValues, onSave]
+    if (closeAfterSave) {
+      onClose();
+    }
+  }, [enqueueSnackbar, formValues, onClose, onSave]
   );
 
   const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';

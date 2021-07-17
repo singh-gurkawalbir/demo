@@ -13,8 +13,7 @@ import DrawerContent from '../Right/DrawerContent';
 import DrawerFooter from '../Right/DrawerFooter';
 import DynaForm from '../../DynaForm';
 import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
-import useFormOnCancel from '../../FormOnCancelContext';
+import { useFormOnCancel } from '../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   remaining: {
@@ -111,13 +110,7 @@ function ConfigConnForm() {
 }
 
 export default function ConfigConnectionDebugger() {
-  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
-  const disableClose = status === FORM_SAVE_STATUS.LOADING;
-
-  const {setCancelTriggered} = useFormOnCancel();
-  const handleClose = useCallback(() => {
-    setCancelTriggered(formKey);
-  }, [setCancelTriggered]);
+  const {setCancelTriggered, disabled} = useFormOnCancel(formKey);
 
   return (
     <RightDrawer
@@ -127,8 +120,8 @@ export default function ConfigConnectionDebugger() {
       <DrawerHeader
         title="Debug connection"
         helpKey="connection.debug"
-        disableClose={disableClose}
-        handleClose={handleClose}
+        disableClose={disabled}
+        handleClose={setCancelTriggered}
       />
       <ConfigConnForm />
     </RightDrawer>

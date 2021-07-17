@@ -11,12 +11,13 @@ import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
-import { emptyObject, FORM_SAVE_STATUS, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
 import EditorDrawer from '../../../../components/AFE/Drawer';
 import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import { useFormOnCancel } from '../../../../components/FormOnCancelContext';
 
 const formKey = 'flowbuildersettings';
 
@@ -203,16 +204,16 @@ function Settings({
 }
 
 export default function SettingsDrawer(props) {
-  const status = useSelector(state =>
-    selectors.asyncTaskStatus(state, formKey));
-
-  const disabled = status === FORM_SAVE_STATUS.LOADING;
+  const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
     <RightDrawer
       path="settings"
       width="medium">
-      <DrawerHeader title="Settings" disableClose={disabled} />
+      <DrawerHeader
+        title="Settings" disableClose={disabled}
+        handleClose={setCancelTriggered}
+      />
       <Settings {...props} />
       <EditorDrawer />
     </RightDrawer>

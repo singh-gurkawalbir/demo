@@ -25,8 +25,11 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
       return;
     }
     // SHOULD_FORCE_CLOSE directly closes the component without the dirty change dialog on save and close
-    if (closeTriggered && isSuccess) onClose(SHOULD_FORCE_CLOSE);
-  }, [closeTriggered, onClose, isSuccess, disableOnCloseAfterSave]);
+    if (closeTriggered && isSuccess) {
+      onClose(SHOULD_FORCE_CLOSE);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closeTriggered, isSuccess, disableOnCloseAfterSave]);
 
   return (
     <ActionGroup>
