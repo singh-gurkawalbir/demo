@@ -24,7 +24,6 @@ export default function (props) {
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
     if (actions) return actions.map(action => ({...action, mode: 'group'}));
-    // let actionButtons;
 
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && resource?.type !== 'other') {
@@ -32,11 +31,6 @@ export default function (props) {
     }
 
     return [{id: 'saveandclosegroup', mode: 'group' }];
-
-    // return actionButtons.map(id => ({
-    //   id,
-    //   mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
-    // }));
   }, [actions, resource?.type, resourceType]);
 
   if (!formState.initComplete) return null;

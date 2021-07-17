@@ -5,7 +5,9 @@ import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
+import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
+
 
 export default function SaveAndCloseMiniResourceForm({
   formKey,
@@ -17,6 +19,7 @@ export default function SaveAndCloseMiniResourceForm({
 }) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
+  useClearAsyncStateOnUnmount(formKey);
   const inProgress = formSaveStatus === FORM_SAVE_STATUS.LOADING;
 
   useTriggerCancelFromContext(formKey, handleCancelClick);

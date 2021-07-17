@@ -87,10 +87,10 @@ export default function DynaHook_afe({
     setHookState({ type: 'setShowCreateScriptDialog', value: true });
   };
 
-  const handleCreateScriptSave = useCallback(values => {
+  const handleCreateScriptSave = useCallback((values, formKey) => {
     const options = { dispatch, isNew: true };
 
-    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId });
+    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId }, formKey);
   }, [dispatch, flowId, hookState.tempScriptId]);
 
   const handleCreateScriptDialogClose = useCallback(() => {

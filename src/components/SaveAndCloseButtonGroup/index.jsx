@@ -6,6 +6,7 @@ import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 
 export const CLOSE_AFTER_SAVE = true;
+export const SHOULD_FORCE_CLOSE = true;
 
 export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterSave, isDirty, status, onClose, onSave }) {
   const [closeTriggered, setCloseTriggered] = useState(false);
@@ -23,7 +24,8 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
     if (disableOnCloseAfterSave) {
       return;
     }
-    if (closeTriggered && isSuccess) onClose();
+    // SHOULD_FORCE_CLOSE directly closes the component without the dirty change dialog on save and close
+    if (closeTriggered && isSuccess) onClose(SHOULD_FORCE_CLOSE);
   }, [closeTriggered, onClose, isSuccess, disableOnCloseAfterSave]);
 
   return (
