@@ -104,12 +104,29 @@ export default function MultiSelectFilter(props) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
   const isChildExists = items?.find(i => i.children);
+  const initialExpandedState = {};
+  let nodeExpanded;
 
-  function handleExpandCollapseClick() {
-    setExpanded(!expanded);
+  items.forEach(i => {
+    nodeExpanded = false;
+    if (i.children) {
+      i.children.forEach(c => {
+        if (selected.includes(c._id)) {
+          nodeExpanded = true;
+        }
+      });
+      initialExpandedState[i._id] = nodeExpanded;
+    }
+  });
+
+  const [expanded, setExpanded] = useState(initialExpandedState);
+
+  function handleExpandCollapseClick(newNode) {
+    const result = {...expanded, [newNode]: !expanded[newNode]};
+
+    setExpanded(result);
   }
 
   const toggleClick = useCallback(event => {
@@ -173,8 +190,8 @@ export default function MultiSelectFilter(props) {
     });
   };
 
-  function RowIcon({expanded}) {
-    return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
+  function RowIcon({expanded, node}) {
+    return expanded[node] ? <ArrowUpIcon /> : <ArrowDownIcon />;
   }
 
   return (
@@ -208,8 +225,8 @@ export default function MultiSelectFilter(props) {
                               data-test="toggleJobDetail"
                               className={classes.moreIcon}
                               size="small"
-                              onClick={handleExpandCollapseClick}>
-                              <RowIcon expanded={expanded} childLoaded={m.children} />
+                              onClick={() => { handleExpandCollapseClick(m._id); }}>
+                              <RowIcon expanded={expanded} node={m._id} />
                             </IconButton>
                           )}
                           </li>
@@ -227,7 +244,7 @@ export default function MultiSelectFilter(props) {
                                   )}
                               label={m.name}
                               key={m._id} />
-                            {expanded && m.children && m.children.map(c => (
+                            {expanded[m._id] && m.children && m.children.map(c => (
                               <ChildDetails
                                 key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
                                 checked={checked} />
