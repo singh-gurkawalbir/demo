@@ -1840,8 +1840,8 @@ export default {
     'When integrator.io runs this lookup it will read the column named in this field from the SQL result set and return that single value as the result of the lookup. Please make sure this field contains a valid column name from your database table.',
   'import.rdbms.lookups.query':
     'The query that fetches records to be exported.',
-  'import.rdbms.lookups.name':
-    'Name of the lookups that will be exposed to the mapping to refer.',
+  'import.lookups.name':
+    'Enter a unique name so that you can identify this lookup later.',
   'import.mongodb.lookupType':
     'There are two ways to identify existing records. Either by testing for the existence of a field value on the export record (such as id), or by performing a lookup against the destination application. Choose the option, "Records have a specific field populated" if you can identify existing records by examining the content of your export records. If on the other hand a lookup is necessary, select the "Run a dynamic search against MongoDB" option. After making this selection, other fields will become available to describe how to define your lookup.',
   'import.oneToMany':
