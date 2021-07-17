@@ -1,9 +1,7 @@
 import React from 'react';
 import { IconButton, makeStyles } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 import Close from '../../../icons/CloseIcon';
-import { selectors } from '../../../../reducers';
-import useFormOnCancel from '../../../FormOnCancelContext';
+import { useFormOnCancel } from '../../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -20,9 +18,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CloseButton({formKey}) {
   const classes = useStyles();
-  const disabled = useSelector(state =>
-    selectors.isAsyncTaskLoading(state, formKey));
-  const {setCancelTriggered} = useFormOnCancel(formKey);
+  const {setCancelTriggered, disabled} = useFormOnCancel(formKey);
 
   return (
     <IconButton

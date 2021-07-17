@@ -11,6 +11,7 @@ import { isNewId } from '../../../../../utils/resource';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import useFormOnCancelContext from '../../../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   editorContainer: {
@@ -103,6 +104,7 @@ export default function EditorDrawer(props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceCommStatus]);
+  const {setCancelTriggered} = useFormOnCancelContext(id);
 
   return (
     <Drawer
@@ -114,7 +116,7 @@ export default function EditorDrawer(props) {
           [classes.fullWidthDrawerOpen]: drawerOpened,
         }),
       }}>
-      <DrawerTitleBar disableClose={disableClose} backToParent onClose={handleClose} title={label} />
+      <DrawerTitleBar disableClose={disableClose} backToParent onClose={setCancelTriggered} title={label} />
       <div className={classes.editorContainer}>
         <CodeEditor
           name={id}
@@ -131,6 +133,7 @@ export default function EditorDrawer(props) {
           onSave={handleSaveClick}
           onClose={handleClose}
           shouldHandleCancel
+          asyncKey={id}
           />
       </div>
     </Drawer>

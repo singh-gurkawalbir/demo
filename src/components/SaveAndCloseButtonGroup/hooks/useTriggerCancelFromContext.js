@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import useFormOnCancel from '../../FormOnCancelContext';
+import useFormOnCancelContext from '../../FormOnCancelContext';
 
 export default function useTriggerCancelFromContext(formKey, onCloseWithDiscardWarning) {
   const {
     cancelTriggeredForAsyncKey,
     closeCancelTriggered,
-  } = useFormOnCancel(formKey);
+  } = useFormOnCancelContext(formKey);
 
   useEffect(() => {
     if (cancelTriggeredForAsyncKey === formKey && onCloseWithDiscardWarning) {

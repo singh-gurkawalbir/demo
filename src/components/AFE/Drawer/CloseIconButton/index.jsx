@@ -4,13 +4,13 @@ import { IconButton } from '@material-ui/core';
 import CloseIcon from '../../../icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import { AFE_SAVE_STATUS } from '../../../../utils/constants';
-import useFormOnCancel from '../../../FormOnCancelContext';
+import useFormOnCancelContext from '../../../FormOnCancelContext';
 
 export default function EditorDrawerCloseIconButton({editorId}) {
   const saveStatus = useSelector(state => selectors.editor(state, editorId).saveStatus);
   const saveInProgress = saveStatus === AFE_SAVE_STATUS.REQUESTED;
 
-  const {setCancelTriggered} = useFormOnCancel(editorId);
+  const {setCancelTriggered} = useFormOnCancelContext(editorId);
 
   return (
     <IconButton

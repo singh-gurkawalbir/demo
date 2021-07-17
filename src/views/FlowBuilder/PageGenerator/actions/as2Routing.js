@@ -9,8 +9,7 @@ import DynaForm from '../../../../components/DynaForm';
 import LoadResources from '../../../../components/LoadResources';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
-import { FORM_SAVE_STATUS } from '../../../../utils/constants';
-import useFormOnCancel from '../../../../components/FormOnCancelContext';
+import useFormOnCancelContext from '../../../../components/FormOnCancelContext';
 
 const getFieldMeta = defaultValue => ({
   fieldMap: {
@@ -87,8 +86,6 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const remountAfterSaveFn = useCallback(() => {
     setCount(count => count + 1);
   }, []);
-  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector
-  const isSaving = status === FORM_SAVE_STATUS.LOADING;
 
   useFormInitWithPermissions({
     fieldMeta,
@@ -97,10 +94,10 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
     remount: count,
   });
 
-  const {setCancelTriggered} = useFormOnCancel(formKey);
+  const {setCancelTriggered, disabled} = useFormOnCancelContext(formKey);
 
   return (
-    <ModalDialog show={open} onClose={setCancelTriggered} disableClose={isSaving}>
+    <ModalDialog show={open} onClose={setCancelTriggered} disableClose={disabled}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
         <DynaForm formKey={formKey} />

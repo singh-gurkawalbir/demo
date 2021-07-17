@@ -1,4 +1,6 @@
 import React, { useState, useContext, useCallback} from 'react';
+import { useSelector } from 'react-redux';
+import { selectors } from '../../reducers';
 
 const FormOnCancelContext = React.createContext({
   setCancelTriggered: () => {},
@@ -16,7 +18,7 @@ export const FormOnCancelProvider = ({ children }) => {
   );
 };
 
-export default function useFormOnCancel(key) {
+export default function useFormOnCancelContext(key) {
   const {
     setCancelTriggered: onCancel,
     cancelTriggeredForAsyncKey,
@@ -37,3 +39,13 @@ export default function useFormOnCancel(key) {
   };
 }
 
+export function useFormOnCancel(key) {
+  const {setCancelTriggered} = useFormOnCancelContext(key);
+
+  const disabled = useSelector(state => selectors.isAsyncTaskLoading(state, key));
+
+  return {
+    setCancelTriggered,
+    disabled,
+  };
+}
