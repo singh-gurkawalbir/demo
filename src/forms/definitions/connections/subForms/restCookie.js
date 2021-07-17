@@ -1,25 +1,25 @@
 export default {
   fieldMap: {
-    'rest.cookieAuth.method': {
-      fieldId: 'rest.cookieAuth.method',
+    'http.auth.cookie.method': {
+      fieldId: 'http.auth.cookie.method',
       required: true,
     },
-    'rest.cookieAuth.body': {
-      fieldId: 'rest.cookieAuth.body',
-      visibleWhenAll: [{ field: 'rest.cookieAuth.method', is: ['POST'] }],
+    'http.auth.cookie.body': {
+      fieldId: 'http.auth.cookie.body',
+      visibleWhenAll: [{ field: 'http.auth.cookie.method', is: ['POST'] }],
       required: true,
     },
-    'rest.cookieAuth.uri': { fieldId: 'rest.cookieAuth.uri', required: true },
-    'rest.cookieAuth.successStatusCode': {
-      fieldId: 'rest.cookieAuth.successStatusCode',
+    'http.auth.cookie.uri': { fieldId: 'http.auth.cookie.uri', required: true },
+    'http.auth.cookie.successStatusCode': {
+      fieldId: 'http.auth.cookie.successStatusCode',
     },
   },
   layout: {
     fields: [
-      'rest.cookieAuth.method',
-      'rest.cookieAuth.uri',
-      'rest.cookieAuth.body',
-      'rest.cookieAuth.successStatusCode',
+      'http.auth.cookie.method',
+      'http.auth.cookie.uri',
+      'http.auth.cookie.body',
+      'http.auth.cookie.successStatusCode',
     ],
   },
 };
