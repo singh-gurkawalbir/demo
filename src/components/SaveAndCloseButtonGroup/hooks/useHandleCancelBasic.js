@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { CLOSE_AFTER_SAVE } from '..';
+import { CLOSE_AFTER_SAVE, SHOULD_FORCE_CLOSE } from '..';
 import useConfirmDialog from '../../ConfirmDialog';
 
 export default function useHandleCancelBasic({ isDirty, onClose, handleSave}) {
@@ -8,9 +8,8 @@ export default function useHandleCancelBasic({ isDirty, onClose, handleSave}) {
   const closeAfterSave = useCallback(() => {
     handleSave(CLOSE_AFTER_SAVE);
   }, [handleSave]);
-  const handleCancelClick = useCallback(() => {
-    if (!isDirty) return onClose();
-
+  const handleCancelClick = useCallback(shouldForceClose => {
+    if (!isDirty || shouldForceClose === SHOULD_FORCE_CLOSE) return onClose();
     saveDiscardDialog({
       onSave: closeAfterSave,
       onDiscard: onClose,

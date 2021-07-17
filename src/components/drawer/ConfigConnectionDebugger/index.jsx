@@ -1,19 +1,20 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import moment from 'moment';
-import { makeStyles, Typography, Button } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
 import useForm from '../../Form';
-import ButtonGroup from '../../ButtonGroup';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';
 import DrawerFooter from '../Right/DrawerFooter';
 import DynaForm from '../../DynaForm';
+import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import useFormOnCancel from '../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   remaining: {
@@ -51,21 +52,23 @@ function ConfigConnForm() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { connectionId } = useParams();
+  const [remountCount, setRemountCount] = useState(0);
   const debugDate = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)?.debugDate
   );
   const handleClose = history.goBack;
-  const handleSave = useCallback(({ debugDate }) => {
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleSave = useCallback(() => {
     const patchSet = [
       {
-        op: debugDate !== '0' ? 'replace' : 'remove',
+        op: values.debugDate !== '0' ? 'replace' : 'remove',
         path: '/debugDate',
-        value: moment().add(debugDate, 'm').toISOString(),
+        value: moment().add(values.debugDate, 'm').toISOString(),
       },
     ];
 
-    dispatch(actions.resource.patch('connections', connectionId, patchSet));
-  }, [dispatch, connectionId]);
+    dispatch(actions.resource.patch('connections', connectionId, patchSet, formKey));
+  }, [dispatch, connectionId, values]);
   const defaultVal = useMemo(() => {
     if (!(debugDate && moment().isBefore(moment(debugDate)))) {
       return '0';
@@ -76,17 +79,12 @@ function ConfigConnForm() {
       return moment(debugDate).diff(moment(), 'minutes');
     }
   }, [debugDate]);
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: `/connections/${connectionId}`,
-      method: 'PATCH',
-      onSave: handleSave,
-      onClose: handleClose,
-    }
-  );
   const fieldMeta = getFieldMeta(defaultVal);
+  const remountForm = useCallback(() => {
+    setRemountCount(remountCount => remountCount + 1);
+  }, []);
 
-  useForm({formKey, fieldMeta});
+  useForm({formKey, fieldMeta, remount: remountCount});
 
   return (
     <>
@@ -101,37 +99,26 @@ function ConfigConnForm() {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <DynaSubmit
-            formKey={formKey}
-            data-test="saveDebuggerConfiguration"
-            color="primary"
-            onClick={submitHandler()}
-            disabled={disableSave} >
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            data-test="saveAndCloseDebuggerConfiguration"
-            color="secondary"
-            onClick={submitHandler(true)}
-            disabled={disableSave} >
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button
-            variant="text"
-            color="primary"
-            data-test="closeEditor"
-            onClick={handleClose}>
-            Cancel
-          </Button>
-        </ButtonGroup>
+        <SaveAndCloseButtonGroupForm
+          formKey={formKey}
+          onSave={handleSave}
+          onClose={handleClose}
+          remountAfterSaveFn={remountForm}
+          />
       </DrawerFooter>
     </>
   );
 }
 
 export default function ConfigConnectionDebugger() {
+  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
+  const disableClose = status === FORM_SAVE_STATUS.LOADING;
+
+  const {setCancelTriggered} = useFormOnCancel();
+  const handleClose = useCallback(() => {
+    setCancelTriggered(formKey);
+  }, [setCancelTriggered]);
+
   return (
     <RightDrawer
       height="tall"
@@ -140,6 +127,8 @@ export default function ConfigConnectionDebugger() {
       <DrawerHeader
         title="Debug connection"
         helpKey="connection.debug"
+        disableClose={disableClose}
+        handleClose={handleClose}
       />
       <ConfigConnForm />
     </RightDrawer>

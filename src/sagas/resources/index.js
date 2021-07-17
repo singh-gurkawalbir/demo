@@ -579,13 +579,14 @@ export function* updateIntegrationSettings({
   }
 }
 
-export function* patchResource({ resourceType, id, patchSet, options = {} }) {
+export function* patchResource({ resourceType, id, patchSet, options = {}, asyncKey}) {
   const isNew = isNewId(id);
 
   if (!patchSet || isNew) return; // nothing to do.
 
   const path = `/${resourceType}/${id}`;
 
+  yield put(actions.asyncTask.start(asyncKey));
   try {
     yield call(apiCallWithRetry, {
       path,
@@ -609,7 +610,9 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+    yield put(actions.asyncTask.failed(asyncKey));
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
