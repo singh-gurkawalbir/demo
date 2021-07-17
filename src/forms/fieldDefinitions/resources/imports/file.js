@@ -109,7 +109,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File generator helper',
-    helpkey: 'import.file.filedefinition.rules',
+    helpKey: 'import.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
