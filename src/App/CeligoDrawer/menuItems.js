@@ -49,6 +49,7 @@ export default function menuItems(
       label: 'Dashboard',
       Icon: DashboardIcon,
       path: '/dashboard',
+      dataTest: 'account-dashboard',
     },
     {
       label: 'Tools',

@@ -71,7 +71,7 @@ export default {
 
         return (r.numOpenError && (
           <Status variant="error" size="mini" >
-            <Link to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
+            <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
           </Status>
         )
         );
@@ -101,7 +101,7 @@ export default {
 
         const match = useRouteMatch();
 
-        return (r.numRuns && (<Link to={`${match.url}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
+        return (r.numRuns && (<Link data-test="account-dashboard-run-history" to={`${match.url}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
         );
       },
       width: '10%',

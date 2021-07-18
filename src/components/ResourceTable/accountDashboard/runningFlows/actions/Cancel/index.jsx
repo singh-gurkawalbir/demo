@@ -5,7 +5,7 @@ import CancelIcon from '../../../../../icons/CancelIcon';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 
 export default {
-  key: 'cancel',
+  key: 'account-dashboard-cancel-run',
   useLabel: () => 'Cancel',
   icon: CancelIcon,
   useOnClick: rowData => {
