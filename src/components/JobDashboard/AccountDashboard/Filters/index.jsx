@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles, Typography,
 } from '@material-ui/core';
-import { addDays, startOfDay, endOfDay } from 'date-fns';
+import { addDays, startOfDay } from 'date-fns';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -85,8 +85,8 @@ export default function Filters(props) {
     [dispatch, filterKey]
   );
   const defaultRange = {
-    startDate: startOfDay(addDays(new Date(), -29)),
-    endDate: endOfDay(new Date()),
+    startDate: startOfDay(addDays(new Date(), -1)),
+    endDate: new Date(),
     preset: null,
   };
   const defaultFilter = filterKey === FILTER_KEYS_AD.RUNNING ? DEFAULTS_RUNNING_JOBS_FILTER : DEFAULTS_COMPLETED_JOBS_FILTER;

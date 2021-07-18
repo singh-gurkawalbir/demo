@@ -970,9 +970,9 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   let allFlowIds = [];
   const {startDate, endDate} = jobFilter?.range || {};
 
-  if (startDate && endDate && filterKey === FILTER_KEYS_AD.COMPLETED) {
-    body.time_gt = startDate.valueOf();
-    body.time_lte = endDate.valueOf();
+  if (filterKey === FILTER_KEYS_AD.COMPLETED) {
+    if (startDate) { body.time_gt = startDate.getTime(); }
+    if (endDate) { body.time_lte = endDate.getTime(); }
   }
 
   if (selectedStatus.length) {
