@@ -11,26 +11,24 @@ export default function SaveButtonGroup({ onClose }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const saveInProgress = useSelector(
-    state => selectors.responseMappingSaveStatus(state).saveInProgress
+    state => selectors.responseMappingSaveStatus(state)?.saveInProgress
   );
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)
   );
-  const status = saveInProgress && FORM_SAVE_STATUS.LOADING;
+  const status = saveInProgress ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
   const onSave = useCallback(() => {
     dispatch(actions.responseMapping.save({ match }));
   }, [dispatch, match]);
 
   return (
-    <>
-      <SaveAndCloseButtonGroupAuto
-        isDirty={mappingsChanged}
-        status={status}
-        onSave={onSave}
-        onClose={onClose}
-        shouldHandleCancel
-        formKey={responseMappingsFormKey}
-        />
-    </>
+    <SaveAndCloseButtonGroupAuto
+      isDirty={mappingsChanged}
+      status={status}
+      onSave={onSave}
+      onClose={onClose}
+      shouldHandleCancel
+      asyncKey={responseMappingsFormKey}
+    />
   );
 }

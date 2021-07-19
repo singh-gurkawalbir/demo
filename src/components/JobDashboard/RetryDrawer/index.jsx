@@ -82,7 +82,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
     );
     history.goBack(2);
   }, [dispatch, flowJobId, history, jobId, match, retryId]);
-  const handleClose = () => history.goBack;
+  const handleClose = history.goBack;
 
   useEffect(() => {
     if (retryId && !retryData) {
