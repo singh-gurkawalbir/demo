@@ -311,7 +311,6 @@ export default function BottomDrawer({
             scrollButtons="auto"
             aria-label="scrollable auto tabs example">
             {tabs?.map(({label, tabType, resourceId}) => {
-              console.log('should not render', tabType);
               switch (tabType) {
                 case 'dashboard':
                   return (
