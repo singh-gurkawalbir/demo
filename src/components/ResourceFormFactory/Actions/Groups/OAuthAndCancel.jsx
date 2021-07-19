@@ -3,7 +3,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../sagas/resourceForm';
-import useHandleCancel from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancel';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import useHandleSaveAndAuth from './hooks/useHandleSaveAndAuth';
 
@@ -20,11 +19,6 @@ export default function OAuthAndCancel({
 
   const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId});
 
-  const handleCancelClick = useHandleCancel({
-    formKey, onClose: onCancel, handleSave,
-
-  });
-
   return (
     <SaveAndCloseMiniResourceForm
       formKey={formKey}
@@ -32,8 +26,7 @@ export default function OAuthAndCancel({
       submitButtonLabel="Save & authorize"
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}
-      handleCancelClick={handleCancelClick}
-
+      handleCancel={onCancel}
       />
   );
 }
