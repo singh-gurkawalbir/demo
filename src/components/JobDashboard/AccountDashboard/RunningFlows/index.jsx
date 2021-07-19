@@ -78,7 +78,7 @@ export default function RunningFlows() {
           </>
         )}
       </div>
-      {!jobs?.length ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any running flows. </Typography> : ''}
+      {!jobs?.length && !isRunningJobsCollectionLoading ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any running flows. </Typography> : ''}
     </>
   );
 }

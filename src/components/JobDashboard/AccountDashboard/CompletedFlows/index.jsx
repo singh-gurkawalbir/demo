@@ -72,7 +72,7 @@ export default function CompletedFlows() {
           </>
         )}
       </div>
-      {!jobs?.length ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
+      {!jobs?.length && !isCompletedJobsCollectionLoading ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
 

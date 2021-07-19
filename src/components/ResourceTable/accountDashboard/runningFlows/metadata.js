@@ -9,7 +9,7 @@ import Cancel from './actions/Cancel';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, STATUS_OPTIONS} from '../../../../utils/accountDashboard';
 
 export default {
   useColumns: () => [
@@ -66,10 +66,7 @@ export default {
       key: 'status',
       heading: 'Status',
       HeaderValue: function FlowSearchFilter() {
-        const statusOptions = [{_id: 'all', name: 'All status'},
-          {_id: 'running', name: 'In progress'},
-          {_id: 'canceling', name: 'Canceling'},
-          {_id: 'queued', name: 'Queued'}];
+        const statusOptions = STATUS_OPTIONS;
 
         return (
           <MultiSelectColumnFilter

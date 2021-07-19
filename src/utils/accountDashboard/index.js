@@ -1,4 +1,3 @@
-
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
   COMPLETED: 'completedFlows',
@@ -30,3 +29,9 @@ export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
   {id: 'last30days', label: 'Last 30 Days'},
   {id: 'custom', label: 'Custom'},
 ];
+
+export const STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
+  {_id: 'running', name: 'In progress'},
+  {_id: 'canceling', name: 'Canceling'},
+  {_id: 'queued', name: 'Queued'}];
+
