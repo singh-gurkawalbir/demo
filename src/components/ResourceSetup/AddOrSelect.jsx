@@ -13,7 +13,6 @@ import {
 } from '../../constants/resource';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -38,9 +37,9 @@ export default function AddOrSelect(props) {
     resourceType = 'connections',
     manageOnly = false,
     onClose,
+    formKey,
   } = props;
   const classes = useStyles();
-  const [newFormId] = useState(generateNewId());
   const [useNew, setUseNew] = useState(true);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
@@ -101,9 +100,10 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    formKey,
   });
 
   return (
@@ -131,7 +131,7 @@ export default function AddOrSelect(props) {
           {useNew ? (
 
             <ResourceFormWithStatusPanel
-              formKey={newFormId}
+              formKey={formKey}
               heightOffset="250"
               occupyFullWidth
               resourceType={resourceType}
@@ -149,7 +149,7 @@ export default function AddOrSelect(props) {
 
       {useNew ? (
         <ResourceFormActionsPanel
-          formKey={newFormId}
+          formKey={formKey}
           resourceType={resourceType}
           resourceId={resourceId}
           submitButtonLabel="Save & close"

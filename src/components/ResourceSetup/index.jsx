@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect} from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 import LoadResources from '../LoadResources';
@@ -8,8 +8,9 @@ import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import DrawerTitleBar from '../drawer/TitleBar';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { generateNewId } from '../../utils/resource';
 import ResourceDrawer from '../drawer/Resource';
+import { useFormOnCancel } from '../FormOnCancelContext/index';
+import { getAsyncKey } from '../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -46,7 +47,8 @@ export default function ResourceSetupDrawer(props) {
 
   const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
 
-  const [newId] = useState(generateNewId());
+  const formKey = getAsyncKey(resourceType, resourceId);
+  const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
     <LoadResources required resources={resourceType}>
@@ -57,24 +59,24 @@ export default function ResourceSetupDrawer(props) {
           paper: classes.drawerPaper,
         }}
         >
-        <DrawerTitleBar title={title} onClose={onClose} />
+        <DrawerTitleBar disableClose={disabled} title={title} onClose={setCancelTriggered} />
         <ResourceDrawer />
 
         <div>
           {addOrSelect ? (
-            <AddOrSelect {...props} />
+            <AddOrSelect {...props} formKey={formKey} />
           ) : (
             <>
               <ResourceFormWithStatusPanel
                 occupyFullWidth
-                formKey={newId}
+                formKey={formKey}
                 className={classes.resourceFormWrapper}
                 resourceType={resourceType}
                 resourceId={resourceId}
                 onSubmitComplete={onSubmitComplete}
             />
               <ResourceFormActionsPanel
-                formKey={newId}
+                formKey={formKey}
                 resourceType={resourceType}
                 resourceId={resourceId}
                 cancelButtonLabel="Cancel"
