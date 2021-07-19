@@ -263,7 +263,7 @@ export function* requestCompletedJobCollection({nextPageURL}) {
     collection = [];
   }
 
-  yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats, nextPageURL: collection.nextPageURL }));
+  yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats, nextPageURL: collection.nextPageURL, loadMore: !!nextPageURL }));
 }
 
 export function* requestRunningJobCollection({nextPageURL}) {
@@ -286,7 +286,7 @@ export function* requestRunningJobCollection({nextPageURL}) {
   if (!Array.isArray(collection?.jobs)) {
     collection = [];
   }
-  yield put(actions.job.dashboard.running.receivedCollection({ collection: collection.jobs, nextPageURL: collection.nextPageURL}));
+  yield put(actions.job.dashboard.running.receivedCollection({ collection: collection.jobs, nextPageURL: collection.nextPageURL, loadMore: !!nextPageURL}));
   yield put(actions.job.dashboard.running.requestInProgressJobStatus());
 }
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {

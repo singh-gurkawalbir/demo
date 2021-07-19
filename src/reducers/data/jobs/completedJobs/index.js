@@ -3,7 +3,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, collection = [], nextPageURL } = action;
+  const { type, collection = [], nextPageURL, loadMore } = action;
 
   if (!type) {
     return state;
@@ -24,7 +24,7 @@ export default (state = {}, action) => {
         draft.status = 'loading';
         break;
       case actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION:
-        draft.completedJobs = collection;
+        draft.completedJobs = loadMore ? [...draft.completedJobs, ...collection] : collection;
         draft.status = undefined;
         draft.nextPageURL = nextPageURL;
         break;

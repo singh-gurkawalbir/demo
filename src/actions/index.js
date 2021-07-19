@@ -1598,10 +1598,11 @@ const job = {
     running: {
       requestCollection: nextPageURL =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, {nextPageURL}),
-      receivedCollection: ({ collection, nextPageURL }) =>
+      receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
           nextPageURL,
+          loadMore,
         }),
       canceled: ({ jobId }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.CANCELED, { jobId }),
@@ -1615,10 +1616,11 @@ const job = {
     completed: {
       requestCollection: nextPageURL =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, {nextPageURL}),
-      receivedCollection: ({ collection, nextPageURL }) =>
+      receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
           nextPageURL,
+          loadMore,
         }),
       clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
       error: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.ERROR),

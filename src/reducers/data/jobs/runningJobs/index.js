@@ -12,7 +12,7 @@ function getParentJobIndex(jobs, jobId) {
   return jobs.findIndex(j => j._id === jobId);
 }
 export default (state = {}, action) => {
-  const { type, collection = [], jobId, nextPageURL } = action;
+  const { type, collection = [], jobId, nextPageURL, loadMore } = action;
 
   if (!type) {
     return state;
@@ -30,7 +30,7 @@ export default (state = {}, action) => {
         draft.status = 'loading';
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION:
-        draft.runningJobs = collection;
+        draft.runningJobs = loadMore ? [...draft.runningJobs, ...collection] : collection;
         draft.status = undefined;
         draft.nextPageURL = nextPageURL;
         break;
