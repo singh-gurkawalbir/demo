@@ -11,11 +11,11 @@ import useHandleCloseOnSave from './hooks/useHandleCloseOnSave';
 export default function SaveAndCloseResourceForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, status}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
   const handleSave = useHandleClickWhenValid(formKey, onSave);
-  const formIsValid = useSelector(state => selectors.formState(state, formKey)?.isValid);
 
   const saveOnClose = useHandleCloseOnSave({onSave: handleSave, status, onClose});
-  const handleSaveAndClose = (disableOnCloseAfterSave || !formIsValid) ? handleSave : saveOnClose;
-  const handleCancelClick = useHandleCancel({formKey, onClose, handleSave: handleSaveAndClose});
+  const handleSaveAndClose = useHandleClickWhenValid(formKey, saveOnClose);
+  const finalHandleSaveAndClose = (disableOnCloseAfterSave) ? handleSave : handleSaveAndClose;
+  const handleCancelClick = useHandleCancel({formKey, onClose, handleSave: finalHandleSaveAndClose});
 
   useTriggerCancelFromContext(formKey, handleCancelClick);
 

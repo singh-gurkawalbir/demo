@@ -12,11 +12,11 @@ import useHandleCloseOnSave from './hooks/useHandleCloseOnSave';
 export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, remountAfterSaveFn}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector
-  const formIsValid = useSelector(state => selectors.formState(state, formKey)?.isValid);
 
   const handleSave = useHandleClickWhenValid(formKey, onSave);
   const saveAndClose = useHandleCloseOnSave({onSave, status, onClose});
-  const handleSaveAndClose = (disableOnCloseAfterSave || !formIsValid) ? handleSave : saveAndClose;
+  const handleSaveAndClose = useHandleClickWhenValid(formKey, saveAndClose);
+  const finalHandleSaveAndClose = (disableOnCloseAfterSave) ? handleSave : handleSaveAndClose;
 
   useClearAsyncStateOnUnmount(formKey);
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, d
       status={status}
       onClose={handleCancelClick}
       handleSave={handleSave}
-      handleSaveAndClose={handleSaveAndClose}
+      handleSaveAndClose={finalHandleSaveAndClose}
       disabled={disabled}
     />
   );
