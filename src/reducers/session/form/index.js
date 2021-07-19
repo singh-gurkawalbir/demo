@@ -149,7 +149,8 @@ const calculateAllFieldsValue = (form, key) => Object.values(form.fields).reduce
   const {name} = field;
   const val = field[key];
 
-  acc[name] = val;
+  if (val === undefined || val === null) acc[name] = '';
+  else { acc[name] = val; }
 
   return acc;
 }, {});

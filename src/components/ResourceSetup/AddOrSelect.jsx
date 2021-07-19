@@ -13,7 +13,6 @@ import {
 } from '../../constants/resource';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -38,10 +37,11 @@ export default function AddOrSelect(props) {
     resourceType = 'connections',
     manageOnly = false,
     onClose,
+    formKey,
   } = props;
   const classes = useStyles();
-  const [newFormId] = useState(generateNewId());
   const [useNew, setUseNew] = useState(true);
+  const [remountCount, setRemountCount] = useState(0);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
     RESOURCE_TYPE_SINGULAR_TO_LABEL[
@@ -68,6 +68,7 @@ export default function AddOrSelect(props) {
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
+    setRemountCount(remountCount => remountCount + 1);
   };
 
   const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
@@ -101,9 +102,11 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    formKey,
+    remount: remountCount,
   });
 
   return (
@@ -131,7 +134,7 @@ export default function AddOrSelect(props) {
           {useNew ? (
 
             <ResourceFormWithStatusPanel
-              formKey={newFormId}
+              formKey={formKey}
               heightOffset="250"
               occupyFullWidth
               resourceType={resourceType}
@@ -149,7 +152,7 @@ export default function AddOrSelect(props) {
 
       {useNew ? (
         <ResourceFormActionsPanel
-          formKey={newFormId}
+          formKey={formKey}
           resourceType={resourceType}
           resourceId={resourceId}
           submitButtonLabel="Save & close"

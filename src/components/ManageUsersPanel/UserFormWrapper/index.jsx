@@ -10,6 +10,7 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import useCommStatus from '../../../hooks/useCommStatus';
+import { INVITE_USER_DRAWER_FORM_KEY } from '../Drawers/InviteUser';
 
 export default function UserFormWrapper({ userId, dataPublic }) {
   const dispatch = useDispatch();
@@ -52,9 +53,9 @@ export default function UserFormWrapper({ userId, dataPublic }) {
       }
 
       if (aShareData._id) {
-        dispatch(actions.user.org.users.update(aShareData._id, aShareData));
+        dispatch(actions.user.org.users.update(aShareData._id, aShareData, INVITE_USER_DRAWER_FORM_KEY));
       } else {
-        dispatch(actions.user.org.users.create(aShareData));
+        dispatch(actions.user.org.users.create(aShareData, INVITE_USER_DRAWER_FORM_KEY));
       }
       setDisableSave(true);
     },
@@ -92,7 +93,6 @@ export default function UserFormWrapper({ userId, dataPublic }) {
   return (
     <UserForm
       id={userId}
-      disableSave={disableSave}
       dataPublic={dataPublic}
       onSaveClick={handleSaveClick}
       onCancelClick={handleClose}

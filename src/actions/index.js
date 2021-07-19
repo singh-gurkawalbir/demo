@@ -1213,9 +1213,9 @@ const user = {
     users: {
       requestCollection: message =>
         resource.requestCollection('ashares', message),
-      create: user => action(actionTypes.USER_CREATE, { user }),
+      create: (user, asyncKey) => action(actionTypes.USER_CREATE, { user, asyncKey }),
       created: user => action(actionTypes.USER_CREATED, { user }),
-      update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
+      update: (_id, user, asyncKey) => action(actionTypes.USER_UPDATE, { _id, user, asyncKey }),
       updated: user => action(actionTypes.USER_UPDATED, { user }),
       delete: _id => action(actionTypes.USER_DELETE, { _id }),
       deleted: _id => action(actionTypes.USER_DELETED, { _id }),
