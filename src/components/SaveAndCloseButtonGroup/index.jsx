@@ -5,7 +5,7 @@ import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 
-const CLOSE_AFTER_SAVE = true;
+export const CLOSE_AFTER_SAVE = true;
 export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, handleSave, handleSaveAndClose}) {
   const inProgress = status === FORM_SAVE_STATUS.LOADING;
 
