@@ -87,7 +87,7 @@ export default function Filters(props) {
   const defaultRange = {
     startDate: startOfDay(addDays(new Date(), -1)),
     endDate: new Date(),
-    preset: null,
+    preset: 'last24hours',
   };
   const defaultFilter = filterKey === FILTER_KEYS_AD.RUNNING ? DEFAULTS_RUNNING_JOBS_FILTER : DEFAULTS_COMPLETED_JOBS_FILTER;
 
