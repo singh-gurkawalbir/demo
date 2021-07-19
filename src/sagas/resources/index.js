@@ -519,8 +519,8 @@ export function* updateIntegrationSettings({
 
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('flows'));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('flows', null, true));
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
@@ -558,9 +558,9 @@ export function* updateIntegrationSettings({
     } else {
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
-      yield put(actions.resource.requestCollection('imports'));
+      yield put(actions.resource.requestCollection('imports', null, true));
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
-      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('exports', null, true));
     }
 
     yield put(

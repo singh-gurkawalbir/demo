@@ -6,9 +6,11 @@ import TestAndSave from './Groups/TestAndSave';
 import SaveFileDefinitions from './Groups/SaveFileDefinitions';
 import ValidateAndSave from './Groups/ValidateAndSave';
 import SaveAndContinueGroup from './Groups/SaveAndContinueGroup';
+import IntegrationSettings from './Groups/IntegrationSettingsGroup';
 
 export default {
   // action groups
+  integrationsettings: IntegrationSettings,
   validateandsave: ValidateAndSave,
   testandsavegroup: TestAndSave,
   nextandcancel: NextAndCancel,

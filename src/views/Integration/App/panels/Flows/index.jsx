@@ -18,7 +18,6 @@ import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
-import { generateNewId } from '../../../../../utils/resource';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
@@ -135,10 +134,24 @@ export const ActionsPanel = ({actions, actionProps}) => {
     </div>
   );
 };
+
+const IASettingsActionsGroupMeta = [{id: 'integrationsettings'}];
+const IAFormActionsPanel = ({isDrawer, onCancel, ...rest}) => {
+  if (isDrawer) {
+    return <ActionsPanel {...rest} onCancel={onCancel} actions={IASettingsActionsGroupMeta} />;
+  }
+
+  return (
+    <ActionsPanel
+      {...rest}
+/>
+  );
+};
+export const integrationSettingsKey = 'integrationSettings';
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
-  const [formKey] = useState(generateNewId());
-  const { integrationId, flowId, sectionId, fieldMeta } = props;
+  const { integrationId, flowId, sectionId, fieldMeta, isDrawer, onCancel } = props;
+  const formKey = integrationSettingsKey;
   const allProps = useMemo(() => ({
     ...props,
     resourceType: 'integrations',
@@ -169,9 +182,11 @@ export const IAFormStateManager = props => {
     <>
       <FormStateManager {...allProps} formKey={formKey} />
       {!!fieldMeta?.actions?.length && (
-      <ActionsPanel
+      <IAFormActionsPanel
         {...fieldMeta}
         actionProps={allActionProps}
+        isDrawer={isDrawer}
+        onCancel={onCancel}
       />
       )}
     </>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo} from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,9 +8,11 @@ import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager, useActiveTab } from '..';
+import { IAFormStateManager, integrationSettingsKey, useActiveTab } from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 import EditorDrawer from '../../../../../../components/AFE/Drawer';
+import useFormOnCancelContext from '../../../../../../components/FormOnCancelContext';
+import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -94,6 +96,9 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
   );
   const activeTabProps = useActiveTab();
 
+  const {setCancelTriggered} = useFormOnCancelContext(integrationSettingsKey);
+  const disableClose = formState === FORM_SAVE_STATUS.LOADING;
+
   // Todo: Sravan, we should use Rightdrawer here
   return (
     <Drawer
@@ -103,8 +108,12 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
       classes={{
         paper: classes.drawerPaper,
       }}
-      onClose={handleClose}>
-      <DrawerTitleBar title={`Settings: ${flowName}`} />
+      >
+      <DrawerTitleBar
+        title={`Settings: ${flowName}`}
+        onClose={setCancelTriggered}
+        disableClose={disableClose}
+      />
 
       <IAFormStateManager
         {...activeTabProps}
@@ -115,9 +124,10 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
         integrationId={integrationId}
         flowId={flowId}
         childId={childId}
-        onSubmitComplete={handleClose}
         formState={formState}
         fieldMeta={flowSettingsMemo}
+        onCancel={handleClose}
+        isDrawer
 
       />
     </Drawer>
