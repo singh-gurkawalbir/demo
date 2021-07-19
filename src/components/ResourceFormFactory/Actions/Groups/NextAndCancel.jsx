@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import useHandleCancel from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancel';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import useHandleSubmit from './hooks/useHandleSubmit';
 
@@ -31,15 +30,6 @@ export default function NextAndCancel(props) {
     () => {
       saveResource(closeAfterSave);
     }, [saveResource, closeAfterSave]);
-  const handleCloseAfterSave = useCallback(
-    () => {
-      saveResource(true);
-    }, [saveResource]);
-
-  const handleCancelClick = useHandleCancel({
-    formKey, onClose: onCancel, handleSave: handleCloseAfterSave,
-
-  });
 
   return (
     <SaveAndCloseMiniResourceForm
@@ -48,7 +38,7 @@ export default function NextAndCancel(props) {
       submitButtonLabel={submitButtonLabel}
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}
-      handleCancelClick={handleCancelClick}
+      handleCancel={onCancel}
     />
   );
 }

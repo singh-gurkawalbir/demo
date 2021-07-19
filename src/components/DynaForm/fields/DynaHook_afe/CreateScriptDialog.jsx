@@ -7,7 +7,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import { selectors } from '../../../../reducers';
 import { FORM_SAVE_STATUS } from '../../../../utils/constants';
-import useHandleCancel from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancel';
+import { useFormOnCancel } from '../../../FormOnCancelContext';
 
 const formKey = 'dynahookafecreatescriptdialog';
 
@@ -22,17 +22,16 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
     formKey,
   });
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
-  const disableClose = status === FORM_SAVE_STATUS.LOADING;
-  const handleClose = useHandleCancel({formKey, onClose, handleSave: handleSubmit});
 
   useEffect(() => {
     if (status === FORM_SAVE_STATUS.COMPLETE) {
       onClose();
     }
   }, [status, onClose]);
+  const {setCancelTriggered, disabled} = useFormOnCancel(formKey);
 
   return (
-    <ModalDialog disableClose={disableClose} show onClose={handleClose} minWidth="sm">
+    <ModalDialog disableClose={disabled} show onClose={setCancelTriggered} minWidth="sm">
       <div>Create script</div>
       <div>
         <DynaForm
@@ -43,7 +42,7 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
           formKey={formKey}
           formSaveStatus={status}
           handleSave={handleSubmit}
-          handleCancelClick={handleClose}
+          handleCancel={onClose}
           submitButtonLabel="Save & Close"
           submitTransientLabel="Saving..."
           />

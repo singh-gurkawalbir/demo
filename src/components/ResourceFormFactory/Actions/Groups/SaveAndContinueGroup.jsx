@@ -4,10 +4,7 @@ import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../sagas/resourceForm';
-import { CLOSE_AFTER_SAVE } from '../../../SaveAndCloseButtonGroup';
-import useHandleCancel from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancel';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
-import useHandleClickWhenValid from './hooks/useHandleClickWhenValid';
 import TestButton from './TestAndSave/TestButton';
 
 export default function SaveAndContinueGroup(props) {
@@ -29,7 +26,7 @@ export default function SaveAndContinueGroup(props) {
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const handleSaveAndContinue = useCallback(
-    closeAfterSave => {
+    () => {
       const newValues = {...values};
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
@@ -42,20 +39,12 @@ export default function SaveAndContinueGroup(props) {
           resourceId,
           newValues,
           match,
-          !closeAfterSave
+          false
         )
       );
     },
     [dispatch, match, resourceId, resourceType, values]
   );
-  const onSave = useHandleClickWhenValid(formKey, handleSaveAndContinue);
-
-  const handleCloseAfterSave = useCallback(() => {
-    handleSaveAndContinue(CLOSE_AFTER_SAVE);
-  }, [handleSaveAndContinue]);
-  const handleCancelClick = useHandleCancel({
-    formKey, onClose: onCancel, handleSave: handleCloseAfterSave,
-  });
 
   return (
     <>
@@ -64,8 +53,8 @@ export default function SaveAndContinueGroup(props) {
         submitButtonLabel="Save & continue"
         submitTransientLabel="Saving..."
         formSaveStatus={formSaveStatus}
-        handleSave={onSave}
-        handleCancelClick={handleCancelClick}
+        handleSave={handleSaveAndContinue}
+        handleCancel={onCancel}
   />
       <TestButton
         resourceId={resourceId}
