@@ -33,8 +33,8 @@ const MiniResourceForm = ({isDirty, inProgress, handleSave, handleCancel, submit
 );
 export default function SaveAndCloseMiniResourceForm({
   formKey,
-  submitButtonLabel = '',
-  submitTransientLabel = '',
+  submitButtonLabel = 'Save & Close',
+  submitTransientLabel = 'Saving...',
   formSaveStatus,
   handleSave,
   handleCancel,

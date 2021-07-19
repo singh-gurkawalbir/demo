@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../reducers';
-import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../../../utils/constants';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import actions from '../../../actions';
+import { getEditorStatus } from '../../../utils/editor';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
   const dispatch = useDispatch();
@@ -15,19 +15,11 @@ export default function SaveButtonGroup({ editorId, onClose }) {
   const editorViolations = useSelector(state => selectors.editorViolations(state, editorId));
   const disable = !!editorViolations || disabled;
 
-  const getStatus = () => {
-    switch (saveStatus) {
-      case AFE_SAVE_STATUS.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
-      case AFE_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
-      default: return undefined;
-    }
-  };
-
   return (
     <SaveAndCloseButtonGroupAuto
       asyncKey={editorId}
       isDirty={isEditorDirty}
-      status={getStatus()}
+      status={getEditorStatus(saveStatus)}
       onClose={onClose}
       onSave={handleSave}
       disabled={disable}
