@@ -20,6 +20,7 @@ export default function NetSuiteMappingAssistant({
   netSuiteRecordType,
   data,
   onFieldClick,
+  importRecordType,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -36,9 +37,15 @@ export default function NetSuiteMappingAssistant({
 
   const netSuiteRecordMetadata = useMemo(() => {
     if (recordTypes) {
-      return recordTypes.find(r => r.value === netSuiteRecordType);
+      if (importRecordType === netSuiteRecordType) {
+        return recordTypes.find(r => r.value === netSuiteRecordType);
+      }
+      // sub-record type mapping where importRecordType is the parent record
+      const parentObj = recordTypes.find(r => r.value === importRecordType);
+
+      return parentObj?.subRecordConfig?.find(s => s.subRecordType === netSuiteRecordType);
     }
-  }, [netSuiteRecordType, recordTypes]);
+  }, [importRecordType, netSuiteRecordType, recordTypes]);
 
   useEffect(() => {
     if (!netSuiteRecordMetadata) {

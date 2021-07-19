@@ -21,7 +21,7 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
   const dispatch = useDispatch();
   const previewData = useSelector(state => selectors.mapping(state).preview?.data);
   const recordType = useSelector(state => selectors.mappingNSRecordType(state, importId, subRecordMappingId));
-  const {adaptorType, _connectionId: connectionId, salesforce} = useSelector(state =>
+  const {adaptorType, _connectionId: connectionId, salesforce, netsuite, netsuite_da: netsuiteDA} = useSelector(state =>
     selectors.resource(state, 'imports', importId)
   );
 
@@ -61,9 +61,10 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
     if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
       return {
         netSuiteRecordType: recordType,
+        importRecordType: netsuiteDA?.recordType || netsuite?.recordType,
       };
     }
-  }, [adaptorType, salesforce, recordType]);
+  }, [adaptorType, salesforce, recordType, netsuiteDA?.recordType, netsuite?.recordType]);
   const handleSFNSAssistantFieldClick = useCallback(
     meta => {
       if (disabled) {
