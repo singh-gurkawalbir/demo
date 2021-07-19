@@ -84,8 +84,7 @@ export default function EditorDrawer(props) {
     switch (resourceCommStatus) {
       case COMM_STATES.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
       case COMM_STATES.LOADING: return FORM_SAVE_STATUS.LOADING;
-      case COMM_STATES.ERROR: return FORM_SAVE_STATUS.ERROR;
-      default:
+      default: return FORM_SAVE_STATUS.FAILED;
     }
   };
   const disableClose = resourceCommStatus === COMM_STATES.LOADING;
