@@ -5,12 +5,17 @@ import SaveAndCloseButtonGroup from '.';
 import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
 import useHandleCancel from './hooks/useHandleCancel';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
+import useHandleCloseOnSave from './hooks/useHandleCloseOnSave';
 
 // All onSave functions are automatically trimmed
 export default function SaveAndCloseResourceForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, status}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
-  const handleClickWhenValid = useHandleClickWhenValid(formKey, onSave);
-  const handleCancelClick = useHandleCancel({formKey, onClose, handleSave: handleClickWhenValid});
+  const handleSave = useHandleClickWhenValid(formKey, onSave);
+  const formIsValid = useSelector(state => selectors.formState(state, formKey)?.isValid);
+
+  const saveOnClose = useHandleCloseOnSave({onSave: handleSave, status, onClose});
+  const handleSaveAndClose = (disableOnCloseAfterSave || !formIsValid) ? handleSave : saveOnClose;
+  const handleCancelClick = useHandleCancel({formKey, onClose, handleSave: handleSaveAndClose});
 
   useTriggerCancelFromContext(formKey, handleCancelClick);
 
@@ -19,9 +24,9 @@ export default function SaveAndCloseResourceForm({formKey, onClose, onSave, disa
       isDirty={isDirty}
       status={status}
       onClose={handleCancelClick}
-      onSave={handleClickWhenValid}
+      handleSave={handleSave}
+      handleSaveAndClose={handleSaveAndClose}
       disabled={disabled}
-      disableOnCloseAfterSave={disableOnCloseAfterSave}
     />
   );
 }

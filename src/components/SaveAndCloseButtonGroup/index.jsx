@@ -1,35 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@material-ui/core';
 import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 
-export const CLOSE_AFTER_SAVE = true;
-export const SHOULD_FORCE_CLOSE = true;
-
-export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterSave, isDirty, status, onClose, onSave }) {
-  const [closeTriggered, setCloseTriggered] = useState(false);
-  const isSuccess = status === FORM_SAVE_STATUS.COMPLETE;
+const CLOSE_AFTER_SAVE = true;
+export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, handleSave, handleSaveAndClose}) {
   const inProgress = status === FORM_SAVE_STATUS.LOADING;
-  const handleSave = useCallback(() => {
-    onSave(!CLOSE_AFTER_SAVE);
-  }, [onSave]);
-  const handleSaveAndClose = useCallback(() => {
-    onSave(CLOSE_AFTER_SAVE);
-    setCloseTriggered(true);
-  }, [onSave]);
 
-  useEffect(() => {
-    if (disableOnCloseAfterSave) {
-      return;
-    }
-    // SHOULD_FORCE_CLOSE directly closes the component without the dirty change dialog on save and close
-    if (closeTriggered && isSuccess) {
-      onClose(SHOULD_FORCE_CLOSE);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closeTriggered, isSuccess, disableOnCloseAfterSave]);
+  const handleSaveClick = useCallback(() => {
+    handleSave(!CLOSE_AFTER_SAVE);
+  }, [handleSave]);
+
+  const handleSaveAndCloseClick = useCallback(() => {
+    handleSaveAndClose(CLOSE_AFTER_SAVE);
+  }, [handleSaveAndClose]);
 
   return (
     <ActionGroup>
@@ -38,7 +24,7 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
         data-test="save"
         disabled={disabled || !isDirty || inProgress}
         color="primary"
-        onClick={handleSave}>
+        onClick={handleSaveClick}>
         {inProgress ? <Spinner size="small">Saving...</Spinner> : 'Save'}
       </Button>
 
@@ -47,7 +33,7 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
           variant="outlined"
           data-test="saveAndClose"
           color="secondary"
-          onClick={handleSaveAndClose}>
+          onClick={handleSaveAndCloseClick}>
           Save & close
         </Button>
       ) : null}
@@ -66,9 +52,9 @@ export default function SaveAndCloseButtonGroup({ disabled, disableOnCloseAfterS
 
 SaveAndCloseButtonGroup.propTypes = {
   onClose: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  handleSaveAndClose: PropTypes.func.isRequired,
   status: PropTypes.oneOf([undefined, 'success', 'inProgress', 'fail']),
-  disableOnCloseAfterSave: PropTypes.bool,
   disabled: PropTypes.bool,
   isDirty: PropTypes.bool,
 };

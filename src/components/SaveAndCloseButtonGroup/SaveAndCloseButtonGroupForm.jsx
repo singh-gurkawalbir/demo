@@ -7,11 +7,16 @@ import { FORM_SAVE_STATUS } from '../../utils/constants';
 import useHandleCancel from './hooks/useHandleCancel';
 import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
+import useHandleCloseOnSave from './hooks/useHandleCloseOnSave';
 
 export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, remountAfterSaveFn}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector
-  const handleClickWhenValid = useHandleClickWhenValid(formKey, onSave);
+  const formIsValid = useSelector(state => selectors.formState(state, formKey)?.isValid);
+
+  const handleSave = useHandleClickWhenValid(formKey, onSave);
+  const saveAndClose = useHandleCloseOnSave({onSave, status, onClose});
+  const handleSaveAndClose = (disableOnCloseAfterSave || !formIsValid) ? handleSave : saveAndClose;
 
   useClearAsyncStateOnUnmount(formKey);
   useEffect(() => {
@@ -19,7 +24,7 @@ export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, d
       remountAfterSaveFn();
     }
   }, [remountAfterSaveFn, status]);
-  const handleCancelClick = useHandleCancel({formKey, isDirty, onClose, handleSave: onSave});
+  const handleCancelClick = useHandleCancel({formKey, isDirty, onClose, handleSave: handleSaveAndClose});
 
   useTriggerCancelFromContext(formKey, handleCancelClick);
 
@@ -28,9 +33,9 @@ export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, d
       isDirty={isDirty}
       status={status}
       onClose={handleCancelClick}
-      onSave={handleClickWhenValid}
+      handleSave={handleSave}
+      handleSaveAndClose={handleSaveAndClose}
       disabled={disabled}
-      disableOnCloseAfterSave={disableOnCloseAfterSave}
     />
   );
 }
