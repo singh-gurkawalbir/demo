@@ -9,9 +9,9 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { isNewId } from '../../../../../utils/resource';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
-import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
+import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
 
 const useStyles = makeStyles(theme => ({
   editorContainer: {
@@ -79,14 +79,6 @@ export default function EditorDrawer(props) {
   }, [handleUpdate, content]);
 
   const handleSaveClick = isNewResource ? handleDone : handleSave;
-
-  const getStatus = () => {
-    switch (resourceCommStatus) {
-      case COMM_STATES.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
-      case COMM_STATES.LOADING: return FORM_SAVE_STATUS.LOADING;
-      default: return FORM_SAVE_STATUS.FAILED;
-    }
-  };
   const disableClose = resourceCommStatus === COMM_STATES.LOADING;
 
   // useEffect
@@ -128,7 +120,7 @@ export default function EditorDrawer(props) {
       <div className={classes.footer}>
         <SaveAndCloseButtonGroupAuto
           isDirty={isContentChanged}
-          status={getStatus()}
+          status={getFormSaveStatusFromCommStatus(resourceCommStatus)}
           onSave={handleSaveClick}
           onClose={handleClose}
           shouldHandleCancel
