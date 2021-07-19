@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../reducers';
 import LoadResources from '../../LoadResources';
 import RightDrawer from '../../drawer/Right';
@@ -8,10 +9,14 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
+import {FILTER_KEYS_AD} from '../../../utils/accountDashboard';
+import {FILTER_KEYS} from '../../../utils/errorManagement';
+import actions from '../../../actions';
 
 export default function RunHistoryDrawer() {
   const match = useRouteMatch();
   const history = useHistory();
+  const dispatch = useDispatch();
   const location = useLocation();
   const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/runHistory`}) || {};
   const flow = useSelectorMemo(
@@ -22,6 +27,34 @@ export default function RunHistoryDrawer() {
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [match.url, history]);
+  const filter = useSelector(state =>
+    selectors.filter(state, FILTER_KEYS_AD.COMPLETED),
+  shallowEqual
+  );
+  let selectedDate;
+
+  if (filter?.range) {
+    selectedDate = {
+      startDate: new Date(filter.range.startDate),
+      endDate: new Date(filter.range.endDate),
+      preset: filter.range.preset,
+    };
+  } else {
+    selectedDate = {
+      startDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
+      endDate: new Date(),
+      preset: 'last24hours',
+    };
+  }
+
+  useEffect(() => {
+    dispatch(
+      actions.patchFilter(FILTER_KEYS.RUN_HISTORY, {
+        ...filter,
+        range: selectedDate,
+      })
+    );
+  }, [dispatch, filter, selectedDate]);
 
   return (
     <LoadResources

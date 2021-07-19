@@ -85,7 +85,7 @@ export default function Filters(props) {
     [dispatch, filterKey]
   );
   const defaultRange = {
-    startDate: startOfDay(addDays(new Date(), -1)),
+    startDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
     endDate: new Date(),
     preset: 'last24hours',
   };
