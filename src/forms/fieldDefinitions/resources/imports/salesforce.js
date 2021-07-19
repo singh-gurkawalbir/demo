@@ -561,6 +561,7 @@ export default {
   'salesforce.idLookup.whereClause': {
     type: 'salesforcelookup',
     label: 'How can we find existing records?',
+    required: true,
     visibleWhen: [
       {
         field: 'ignoreExisting',

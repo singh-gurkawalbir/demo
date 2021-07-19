@@ -77,9 +77,10 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'netsuite.authType': {
-      fieldId: 'netsuite.authType',
+      id: 'netsuite.authType',
+      label: 'Authentication type',
+      type: 'nsauthtype',
       required: true,
-      refreshOptionsOnChangesTo: ['netsuite.wsdlVersion'],
       skipSort: true,
     },
     'netsuite.email': {
@@ -209,19 +210,18 @@ export default {
     },
     'netsuite.wsdlVersion': {
       id: 'netsuite.wsdlVersion',
-      name: 'netsuite.wsdlVersion',
       type: 'select',
-      label: 'WSDL Version',
-      defaultValue: r => r?.netsuite?.wsdlVersion || '2020.2',
-      options: [
-        {
-          items: [
-            { label: '2020.2', value: '2020.2' },
-            { label: '2018.1', value: 'next' },
-            { label: '2016.2', value: 'current' },
-          ],
-        },
-      ],
+      label: 'WSDL version',
+      skipSort: true,
+      defaultValue: r => {
+        const version = r?.netsuite?.wsdlVersion;
+
+        if (version === 'next') return '2018.1';
+        if (version === 'current') return '2016.2';
+
+        return version || '2020.2';
+      },
+      options: [{ items: ['2020.2', '2018.1', '2016.2'] }],
     },
   },
   layout: {

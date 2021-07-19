@@ -138,7 +138,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
   const dispatch = useDispatch();
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    dispatch(actions.bottomDrawer.setActiveTab({ tabType: 'dashboard' }));
+    dispatch(actions.bottomDrawer.switchTab({ tabType: 'dashboard' }));
 
     // Raising bottom drawer in cases where console is minimized
     // and user can not see dashboard after running the flow
@@ -250,9 +250,7 @@ const pageBarUseStyles = makeStyles(({
 
 const TotalErrors = ({flowId}) => {
   const classes = pageBarUseStyles();
-  const {
-    total: totalErrors = 0,
-  } = useSelector(state => selectors.errorMap(state, flowId));
+  const totalErrors = useSelector(state => selectors.totalOpenErrors(state, flowId));
 
   if (!totalErrors) {
     return null;

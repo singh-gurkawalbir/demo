@@ -175,14 +175,14 @@ export default {
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2021-04',
+        '2021-07',
       visible: r => !(r?._connectorId),
       options: [
         {
           items: [
-            { label: '2020-10', value: '2020-10' },
             { label: '2021-01', value: '2021-01' },
             { label: '2021-04', value: '2021-04' },
+            { label: '2021-07', value: '2021-07' },
           ],
         },
       ],

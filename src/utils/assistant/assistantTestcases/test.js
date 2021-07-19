@@ -24,7 +24,7 @@ import {
   convertFromImport,
   convertToImport,
   isMetaRequiredValuesMet,
-} from '.';
+} from '..';
 
 describe('getMatchingRoute', () => {
   const testCases = [

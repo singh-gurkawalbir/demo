@@ -17,7 +17,13 @@ export default {
         expression.push({ 'rdbms.type': r.type });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
-        expression.push({ type: ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type });
+        const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
+
+        if (r?.http?.useRestForm || r.type === 'rest') {
+          expression.push({ $or: [{ 'http.useRestForm': true }, { type: 'rest' }] });
+        } else {
+          expression.push({ type: destinationType });
+        }
         if (r.assistant) {
           expression.push({ assistant: r.assistant });
         }
@@ -250,24 +256,13 @@ export default {
       },
     ],
   },
-  'rest.tokenParam': {
-    type: 'text',
-    label: 'Parameter name',
-    helpKey: 'connection.http.auth.token.paramName',
-  },
+
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
     helpKey: 'connection.http.auth.oauth.scope',
   },
-  'rest.oauthTokenURI': {
-    type: 'text',
-    label: 'REST oauth token URI',
-  },
-  'rest.disableStrictSSL': {
-    type: 'checkbox',
-    label: 'Disable strict SSL',
-  },
+
   'rest.authType': {
     type: 'select',
     label: 'Auth type',
@@ -283,12 +278,7 @@ export default {
       },
     ],
   },
-  'rest.authHeader': {
-    type: 'text',
-    label: 'Header name',
-    helpKey: 'connection.http.auth.token.headerName',
-    defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
-  },
+
   'rest.authScheme': {
     type: 'select',
     label: 'Header scheme',
@@ -323,40 +313,7 @@ export default {
     required: true,
     defaultValue: '',
   },
-  'rest.cookieAuth.uri': {
-    type: 'uri',
-    showLookup: false,
-    showExtract: false,
-    label: 'Absolute URL',
-    helpKey: 'connection.http.auth.cookie.uri',
-  },
-  'rest.cookieAuth.body': {
-    type: 'httprequestbody',
-    label: 'HTTP request body',
-  },
-  'rest.cookieAuth.method': {
-    type: 'select',
-    label: 'HTTP method',
-    helpKey: 'connection.http.auth.cookie.method',
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-  },
-  'rest.cookieAuth.successStatusCode': {
-    type: 'text',
-    label: 'Override HTTP status code for success',
-    helpKey: 'connection.http.auth.cookie.successStatusCode',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
+
   'rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
@@ -376,33 +333,6 @@ export default {
     label: 'Unencrypted',
     mode: 'json',
   },
-  'rest.oauth.accessTokenPath': {
-    type: 'text',
-    label: 'REST oauth access token path',
-  },
-  'rest.oauth.grantType': {
-    type: 'radiogroup',
-    label: 'REST oauth grant type',
-    options: [
-      {
-        items: [
-          { label: 'Authorizecode', value: 'authorizecode' },
-          { label: 'Password', value: 'password' },
-        ],
-      },
-    ],
-  },
-  'rest.oauth.username': {
-    type: 'text',
-    label: 'REST oauth username',
-  },
-  'rest.oauth.password': {
-    type: 'text',
-    inputType: 'password',
-    label: 'REST oauth password',
-    description:
-      'Note: for security reasons this field must always be re-entered.',
-  },
   'rest.refreshTokenMethod': {
     type: 'select',
     label: 'HTTP method',
@@ -412,7 +342,6 @@ export default {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],
@@ -421,18 +350,6 @@ export default {
     type: 'httprequestbody',
     label: 'HTTP request body',
     helpKey: 'connection.http.auth.token.refreshBody',
-  },
-  'rest.refreshTokenURI': {
-    type: 'relativeuri',
-    showLookup: false,
-    showExtract: false,
-    label: 'Relative URI',
-    helpKey: 'connection.http.auth.token.refreshRelativeURI',
-  },
-  'rest.refreshTokenPath': {
-    type: 'text',
-    label: 'Path to token field in HTTP response body',
-    helpKey: 'connection.http.auth.token.refreshTokenPath',
   },
   'rest.refreshTokenMediaType': {
     type: 'select',
@@ -449,85 +366,7 @@ export default {
       },
     ],
   },
-  'rest.refreshTokenHeaders': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Configure HTTP headers',
-    helpKey: 'connection.http.auth.token.refreshHeaders',
-  },
-  'rest.pingRelativeURI': {
-    type: 'relativeuri',
-    showLookup: false,
-    showExtract: false,
-    label: 'Relative URI',
-    helpKey: 'connection.http.ping.relativeURI',
-  },
-  'rest.pingSuccessPath': {
-    type: 'text',
-    label: 'Path to success field in HTTP response body',
-    helpKey: 'connection.http.ping.successPath',
-  },
-  'rest.pingSuccessValues': {
-    type: 'text',
-    delimiter: ',',
-    label: 'Success values',
-    helpKey: 'connection.http.ping.successValues',
-  },
-  'rest.pingFailurePath': {
-    type: 'text',
-    label: 'REST ping failure path',
-  },
-  'rest.pingFailureValues': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'REST ping failure values',
-  },
-  'rest.concurrencyLevel': {
-    type: 'select',
-    label: 'Concurrency level',
-    helpKey: 'connection.http.concurrencyLevel',
-    options: [
-      {
-        items: [
-          { label: '1', value: 1 },
-          { label: '2', value: 2 },
-          { label: '3', value: 3 },
-          { label: '4', value: 4 },
-          { label: '5', value: 5 },
-          { label: '6', value: 6 },
-          { label: '7', value: 7 },
-          { label: '8', value: 8 },
-          { label: '9', value: 9 },
-          { label: '10', value: 10 },
-          { label: '11', value: 11 },
-          { label: '12', value: 12 },
-          { label: '13', value: 13 },
-          { label: '14', value: 14 },
-          { label: '15', value: 15 },
-          { label: '16', value: 16 },
-          { label: '17', value: 17 },
-          { label: '18', value: 18 },
-          { label: '19', value: 19 },
-          { label: '20', value: 20 },
-          { label: '21', value: 21 },
-          { label: '22', value: 22 },
-          { label: '23', value: 23 },
-          { label: '24', value: 24 },
-          { label: '25', value: 25 },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: '_borrowConcurrencyFromConnectionId',
-        is: [''],
-      },
-    ],
-  },
+
   'rest.pingMethod': {
     type: 'select',
     label: 'HTTP method',
@@ -540,11 +379,6 @@ export default {
         ],
       },
     ],
-  },
-  'rest.pingBody': {
-    type: 'httprequestbody',
-    label: 'HTTP request body',
-    helpKey: 'connection.http.ping.body',
   },
   // #endregion rest
   // #region http
@@ -960,7 +794,6 @@ export default {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],
@@ -1084,6 +917,7 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
+    description: 'Note: for security reasons this field must always be re-entered.',
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
@@ -1301,7 +1135,6 @@ export default {
         items: [
           { label: 'zip', value: 'zip' },
           { label: 'zlib', value: 'zlib' },
-          { label: 'bzip2', value: 'bzip2' },
         ],
       },
     ],
@@ -2014,19 +1847,6 @@ export default {
   },
   // #endregion as2
   // #region netsuite
-  'netsuite.authType': {
-    type: 'select',
-    label: 'Authentication type',
-    options: [
-      {
-        items: [
-          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
-          { label: 'Token Based Auth (Manual)', value: 'token' },
-          { label: 'Basic (To be deprecated - Do not use)', value: 'basic' },
-        ],
-      },
-    ],
-  },
   'netsuite.account': {
     type: 'netsuiteuserroles',
     label: 'Account ID',
@@ -2331,6 +2151,7 @@ export default {
         is: [''],
       },
     ],
+    required: true,
   },
   // #endregion salesforce
   // #region wrapper

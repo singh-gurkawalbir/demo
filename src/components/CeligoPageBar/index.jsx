@@ -77,7 +77,7 @@ export default function CeligoPageBar(props) {
         elevation={0}
         square>
 
-        <Grid item container wrap="nowrap">
+        <Grid item container wrap="nowrap" alignItems="center">
           {parentUrl && (
           // eslint-disable-next-line react/jsx-handler-names
           <IconButton size="small" onClick={handleOnClick}>
