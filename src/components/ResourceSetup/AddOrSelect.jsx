@@ -41,6 +41,7 @@ export default function AddOrSelect(props) {
   } = props;
   const classes = useStyles();
   const [useNew, setUseNew] = useState(true);
+  const [remountCount, setRemountCount] = useState(0);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
     RESOURCE_TYPE_SINGULAR_TO_LABEL[
@@ -67,6 +68,7 @@ export default function AddOrSelect(props) {
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
+    setRemountCount(remountCount => remountCount + 1);
   };
 
   const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
@@ -104,6 +106,7 @@ export default function AddOrSelect(props) {
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
     formKey,
+    remount: remountCount,
   });
 
   return (
