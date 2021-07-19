@@ -186,11 +186,11 @@ function MappingSettings({
       handleLookupUpdate(oldLookupValue, updatedLookup);
       patchSettings(settings);
       if (closeAfterSave) {
-        return handleClose();
+        return;
       }
       setCount(count => count + 1);
     },
-    [enquesnackbar, extract, formVal, generate, handleClose, handleLookupUpdate, lookupName, lookups, patchSettings]
+    [enquesnackbar, extract, formVal, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
   );
 
   useFormInitWithPermissions({

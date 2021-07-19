@@ -13,8 +13,8 @@ export default function useHandleCloseOnSave({onSave, status, onClose}) {
       onClose();
       setCloseTriggered(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closeTriggered, isSuccess]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closeTriggered, isTerminated]);
 
   return useCallback(closeAfterSave => {
     onSave(closeAfterSave);
