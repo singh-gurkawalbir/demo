@@ -14,7 +14,7 @@ import {FILTER_KEYS_AD, RUNNNING_STATUS_OPTIONS} from '../../../../utils/account
 export default {
   useColumns: () => [
     {
-      key: 'integrationName',
+      key: '_integrationId',
       HeaderValue: function IntegrationSearchFilter() {
         const dispatch = useDispatch();
         const integrationOptions = useSelector(state => selectors.getAllAccountDashboardIntegrations(state));
@@ -43,7 +43,7 @@ export default {
       },
     },
     {
-      key: 'flowName',
+      key: '_flowId',
       HeaderValue: function FlowSearchFilter() {
         const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, FILTER_KEYS_AD.RUNNING));
 
