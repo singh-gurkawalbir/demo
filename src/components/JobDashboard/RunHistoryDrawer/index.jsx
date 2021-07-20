@@ -50,7 +50,7 @@ export default function RunHistoryDrawer() {
         range: selectedDate,
       })
     );
-  }, [dispatch, filter, selectedDate]);
+  }, [dispatch, filter, selectedDate, flowId]);
 
   return (
     <LoadResources
