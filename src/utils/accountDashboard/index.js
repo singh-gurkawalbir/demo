@@ -1,3 +1,5 @@
+import { JOB_STATUS } from '../constants';
+
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
   COMPLETED: 'completedFlows',
@@ -39,12 +41,12 @@ export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
 ];
 
 export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
-  {_id: 'running', name: 'In progress'},
-  {_id: 'canceling', name: 'Canceling'},
-  {_id: 'queued', name: 'Queued'}];
+  {_id: JOB_STATUS.RUNNING, name: 'In progress'},
+  {_id: JOB_STATUS.CANCELING, name: 'Canceling'},
+  {_id: JOB_STATUS.QUEUED, name: 'Queued'}];
 
 export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
-  {_id: 'canceled', name: 'Canceled'},
-  {_id: 'completed', name: 'Completed'},
-  {_id: 'failed', name: 'failed'}];
+  {_id: JOB_STATUS.CANCELED, name: 'Canceled'},
+  {_id: JOB_STATUS.COMPLETED, name: 'Completed'},
+  {_id: JOB_STATUS.FAILED, name: 'failed'}];
 
