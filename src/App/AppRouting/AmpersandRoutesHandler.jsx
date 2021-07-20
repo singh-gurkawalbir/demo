@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 export default function AmpersandRoutesHandler({ match }) {
   const {
@@ -193,6 +194,6 @@ export default function AmpersandRoutesHandler({ match }) {
       );
 
     default:
-      return <Redirect to={getRoutePath('/home')} />;
+      return <Redirect to={getRoutePath(HOME_PAGE_PATH)} />;
   }
 }

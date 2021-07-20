@@ -700,3 +700,4 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 ]);
 
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+export const HOME_PAGE_PATH = '/home';

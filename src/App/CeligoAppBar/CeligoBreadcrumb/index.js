@@ -17,6 +17,7 @@ import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
+import {HOME_PAGE_PATH} from '../../../utils/constants';
 
 const modelLabelToPlural = resourceType => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '';
 const useStyles = makeStyles(theme => ({
@@ -127,7 +128,7 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
-  { path: getRoutePath('/home') }, // exclusion of breadcrumb prop will skip this segment.
+  { path: getRoutePath(HOME_PAGE_PATH) }, // exclusion of breadcrumb prop will skip this segment.
   {
     path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationAppCrumb,

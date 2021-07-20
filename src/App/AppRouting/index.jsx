@@ -10,7 +10,7 @@ import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
-import { AMPERSAND_ROUTES } from '../../utils/constants';
+import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../utils/constants';
 import retry from '../../utils/retry';
 import UpgradeEM from '../../views/UpgradeErrorManagement';
 import ResourceListInfo from '../../views/ResourceList/infoText';
@@ -104,7 +104,7 @@ export default function AppRouting() {
       <Route
         path={['/pg', '']}
         exact
-        render={({ history }) => history.replace(getRoutePath('/home'))}
+        render={({ history }) => history.replace(getRoutePath(HOME_PAGE_PATH))}
         />
       <Route
         path={['/pg/*']}
@@ -243,7 +243,7 @@ export default function AppRouting() {
         />
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
-      <Route path={getRoutePath('/home')} component={Home} />
+      <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
       <Route path={getRoutePath('/dashboard/:tab')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route

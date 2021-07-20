@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
+import {HOME_PAGE_PATH} from '../../../utils/constants';
 
 describe('integration redirectTo action', () => {
   test('should set redirectTo prop on to the state and should not clear other data', () => {
@@ -51,6 +52,6 @@ describe('shouldRedirect selector test', () => {
       },
     };
 
-    expect(selectors.shouldRedirect(state, 'integration')).toEqual('/home');
+    expect(selectors.shouldRedirect(state, 'integration')).toEqual(HOME_PAGE_PATH);
   });
 });

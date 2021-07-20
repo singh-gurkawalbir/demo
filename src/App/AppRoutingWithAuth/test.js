@@ -16,6 +16,7 @@ import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../../theme/themeProvider';
 import { PageContentComponents as AppRouting } from '..';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 // fireEvent
 // Ok, so here's what your tests might look like
@@ -232,7 +233,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe(getRoutePath('/home'));
+      expect(history.location.pathname).toBe(getRoutePath(HOME_PAGE_PATH));
       expect(history.location.state).toBe(undefined);
     });
   });
@@ -264,7 +265,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       })
     );
 
-    expect(history.location.pathname).toBe(getRoutePath('/home'));
+    expect(history.location.pathname).toBe(getRoutePath(HOME_PAGE_PATH));
   });
 
   const loggedOut = {

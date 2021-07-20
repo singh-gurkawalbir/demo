@@ -948,6 +948,18 @@ selectors.getAllFlows = createSelector(state => {
 },
 flows => flows
 );
+selectors.accountDashboardJobs = (state, filterKey) => {
+  const {jobs: totalRunningJobs, nextPageURL: runningNextPageURL, status: runnningStatus} = selectors.runningJobs(state);
+
+  const {jobs: totalCompletedJobs, nextPageURL: completedNextPageURL, status: completedStatus} = selectors.completedJobs(state);
+
+  const totalJobs = filterKey === FILTER_KEYS_AD.RUNNING ? totalRunningJobs : totalCompletedJobs;
+  const nextPageURL = filterKey === FILTER_KEYS_AD.RUNNING ? runningNextPageURL : completedNextPageURL;
+
+  const status = filterKey === FILTER_KEYS_AD.RUNNING ? runnningStatus : completedStatus;
+
+  return {jobs: totalJobs, nextPageURL, status};
+};
 selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
   let path;
 

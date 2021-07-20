@@ -10,7 +10,12 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 import IconTextButton from '../../../IconTextButton';
 import CeligoPagination from '../../../CeligoPagination';
 import DateRangeSelector from '../../../DateRangeSelector';
-import { FILTER_KEYS_AD, ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS, DEFAULTS_COMPLETED_JOBS_FILTER, DEFAULTS_RUNNING_JOBS_FILTER } from '../../../../utils/accountDashboard';
+import { FILTER_KEYS_AD,
+  ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS,
+  DEFAULTS_COMPLETED_JOBS_FILTER,
+  DEFAULTS_RUNNING_JOBS_FILTER,
+  DEFAULT_ROWS_PER_PAGE,
+  ROWS_PER_PAGE_OPTIONS } from '../../../../utils/accountDashboard';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
@@ -54,18 +59,7 @@ export default function Filters(props) {
   const {filterKey} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const rowsPerPageOptions = [10, 25, 50];
-  const DEFAULT_ROWS_PER_PAGE = 50;
-  const {jobs: totalRunningJobs, nextPageURL: runningNextPageURL, status: runnningStatus} = useSelector(state =>
-    selectors.runningJobs(state)
-  );
-  const {jobs: totalCompletedJobs, nextPageURL: completedNextPageURL, status: completedStatus} = useSelector(state =>
-    selectors.completedJobs(state)
-  );
-  const totalJobs = filterKey === FILTER_KEYS_AD.RUNNING ? totalRunningJobs : totalCompletedJobs;
-  const nextPageURL = filterKey === FILTER_KEYS_AD.RUNNING ? runningNextPageURL : completedNextPageURL;
-
-  const status = filterKey === FILTER_KEYS_AD.RUNNING ? runnningStatus : completedStatus;
+  const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, filterKey));
 
   const jobFilter = useSelector(state => selectors.filter(state, filterKey));
   const {currPage = 0,
@@ -178,17 +172,20 @@ export default function Filters(props) {
 
         ) : ''}
         <div className={classes.rightActionContainer}>
-          <CeligoPagination
-            {...paginationOptions}
-            rowsPerPageOptions={rowsPerPageOptions}
-            className={classes.tablePaginationRoot}
-            count={totalJobs?.length}
-            page={currPage}
-            rowsPerPage={rowsPerPage}
-            resultPerPageLabel="Results per page:"
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
+          {jobs?.length ? (
+            <CeligoPagination
+              {...paginationOptions}
+              rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+              className={classes.tablePaginationRoot}
+              count={jobs?.length}
+              page={currPage}
+              rowsPerPage={rowsPerPage}
+              resultPerPageLabel="Results per page:"
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+            )
+            : '' }
           <IconTextButton onClick={handleRefreshClick}>
             <RefreshIcon /> Refresh
           </IconTextButton>
