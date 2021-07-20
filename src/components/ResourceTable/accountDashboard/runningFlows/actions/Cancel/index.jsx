@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../../../actions';
 import CancelIcon from '../../../../../icons/CancelIcon';
 import useConfirmDialog from '../../../../../ConfirmDialog';
+import {CANCEL_JOB} from '../../../../../../utils/messageStore';
 
 export default {
   key: 'account-dashboard-cancel-run',
@@ -15,8 +16,7 @@ export default {
     const confirmCancel = useCallback(() => {
       confirmDialog({
         title: 'Confirm cancel',
-        message:
-          'Are you sure you want to cancel?  Please note that canceling this job will discard all associated data currently queued for processing.',
+        message: CANCEL_JOB,
         buttons: [
           {
             label: 'Yes, cancel',
