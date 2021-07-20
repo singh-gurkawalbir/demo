@@ -52,7 +52,7 @@ import {
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
-  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
+  NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -415,7 +415,7 @@ selectors.redirectToOnInstallationComplete = (
   { resourceType = 'integrations', resourceId, templateId }
 ) => {
   let environment;
-  let redirectTo = 'dashboard';
+  let redirectTo = HOME_PAGE_PATH;
   let flow;
   let flowDetails;
   let integration;
@@ -1015,7 +1015,13 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
     // If any store is selected and its parent is not selected, then we need to send all flowIds of all selected integrations.
     // UI should send either flowIds or integrationIds, should not send both together.
     if (body._flowIds?.length && body._integrationIds?.length) {
-      allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
+      allFlows = allFlows.filter(f => {
+        if (!f._integrationId) { // this check is for stand alone flows
+          return body._integrationIds.includes('none');
+        }
+
+        return body._integrationIds.includes(f._integrationId);
+      });
       allFlowIds = (allFlows || []).map(({_id}) => _id);
       delete body._integrationIds;
       body._flowIds = [...body._flowIds, ...allFlowIds];
