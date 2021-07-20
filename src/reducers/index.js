@@ -98,6 +98,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import { JOB_UI_STATUS } from '../utils/jobdashboard';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
+import { getSelectedRange } from '../utils/flowMetrics';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -969,6 +970,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   const jobFilter = selectors.filter(state, filterKey);
   const userPreferences = selectors.userPreferences(state);
   const sandbox = userPreferences.environment === 'sandbox';
+  // If 'all' selected, it can be filtered out, as by defaults it considered "all".
   const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
   const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
   const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
@@ -978,7 +980,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   let storeId;
   let { resources: allFlows } = selectors.resourceList(state, { type: 'flows' });
   let allFlowIds = [];
-  const {startDate, endDate} = jobFilter?.range || {};
+  const {startDate, endDate} = getSelectedRange(jobFilter?.range) || {};
 
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
@@ -991,6 +993,8 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   if (selectedFlows.length) {
     body._flowIds = selectedFlows;
   } else if (selectedIntegrations.length) {
+    // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
+    // below logic is used to extact store id and integration id from this.
     selectedStores = selectedIntegrations.filter(i => {
       if (!i.includes('store')) return false;
       storeId = i.substring(5, i.indexOf('pid'));
@@ -1008,18 +1012,14 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
         storeId
       )];
     }
+    // If any store is selected and its parent is not selected, then we need to send all flowIds of all selected integrations.
+    // UI should send either flowIds or integrationIds, should not send both together.
     if (body._flowIds?.length && body._integrationIds?.length) {
       allFlows = allFlows.filter(f => body._integrationIds.includes(f._integrationId));
       allFlowIds = (allFlows || []).map(({_id}) => _id);
       delete body._integrationIds;
       body._flowIds = [...body._flowIds, ...allFlowIds];
     }
-
-    // remove all integration which has store in it
-    // get integration id and store id in that
-    // Check parent id is part of selectedIntegrations, if yes ignore this
-    // If no, get all flows in that store and push all those to flowIds
-    // body._integrationIds = selectedIntegrations;
   }
 
   return {path, opts: {method: 'POST', body}};

@@ -7,6 +7,7 @@ export const JOB_UI_STATUS = Object.freeze({
   [JOB_STATUS.FAILED]: 'Failed',
   [JOB_STATUS.CANCELED]: 'Canceled',
   [JOB_STATUS.RETRYING]: 'Retrying...',
+  [JOB_STATUS.CANCELING]: 'Cancelling...',
   COMPLETING: 'Completing...',
   CANCELLING: 'Cancelling...',
   WAITING: 'Waiting...',

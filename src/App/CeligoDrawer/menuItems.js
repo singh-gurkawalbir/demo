@@ -45,12 +45,12 @@ export default function menuItems(
         exact: true,
       },
     },
-    {
-      label: 'Dashboard',
-      Icon: DashboardIcon,
-      path: '/dashboard',
-      dataTest: 'account-dashboard',
-    },
+    ...(isUserInErrMgtTwoDotZero
+      ? [{ label: 'Dashboard',
+        Icon: DashboardIcon,
+        path: '/dashboard',
+        dataTest: 'account-dashboard' }]
+      : []),
     {
       label: 'Tools',
       routeProps: [
@@ -153,10 +153,6 @@ export default function menuItems(
       path: '/marketplace',
     },
   ];
-
-  if (!isUserInErrMgtTwoDotZero) {
-    items = items.filter(i => !['Dashboard'].includes(i.label));
-  }
 
   if (['monitor', 'tile'].includes(accessLevel)) {
     items = items.filter(i => !['Resources'].includes(i.label));

@@ -1,4 +1,5 @@
 import { JOB_STATUS } from '../constants';
+import { JOB_UI_STATUS } from '../jobdashboard';
 
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
@@ -9,8 +10,6 @@ export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
 export const DEFAULT_RANGE = {
-  startDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
-  endDate: new Date(),
   preset: 'last24hours',
 };
 
@@ -41,12 +40,21 @@ export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
 ];
 
 export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
-  {_id: JOB_STATUS.RUNNING, name: 'In progress'},
-  {_id: JOB_STATUS.CANCELING, name: 'Canceling'},
-  {_id: JOB_STATUS.QUEUED, name: 'Queued'}];
+  {_id: JOB_STATUS.RUNNING, name: JOB_UI_STATUS[JOB_STATUS.RUNNING]},
+  {_id: JOB_STATUS.CANCELING, name: JOB_UI_STATUS[JOB_STATUS.CANCELING]},
+  {_id: JOB_STATUS.QUEUED, name: JOB_UI_STATUS[JOB_STATUS.QUEUED]}];
 
 export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
-  {_id: JOB_STATUS.CANCELED, name: 'Canceled'},
-  {_id: JOB_STATUS.COMPLETED, name: 'Completed'},
-  {_id: JOB_STATUS.FAILED, name: 'failed'}];
+  {_id: JOB_STATUS.CANCELED, name: JOB_UI_STATUS[JOB_STATUS.CANCELED]},
+  {_id: JOB_STATUS.COMPLETED, name: JOB_UI_STATUS[JOB_STATUS.COMPLETED]},
+  {_id: JOB_STATUS.FAILED, name: JOB_UI_STATUS[JOB_STATUS.FAILED]}];
+
+export function getTimeString(timeInMs, delim = ':') {
+  const showWith0 = value => (value < 10 ? `0${value}` : value);
+  const hours = showWith0(Math.floor((timeInMs / (1000 * 60 * 60)) % 60));
+  const minutes = showWith0(Math.floor((timeInMs / (1000 * 60)) % 60));
+  const seconds = showWith0(Math.floor((timeInMs / 1000) % 60));
+
+  return `${hours}${delim}${minutes}${delim}${seconds}`;
+}
 

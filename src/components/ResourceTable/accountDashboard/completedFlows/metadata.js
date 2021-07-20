@@ -8,7 +8,7 @@ import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, getTimeString} from '../../../../utils/accountDashboard';
 import Status from '../../../Buttons/Status';
 
 export default {
@@ -109,7 +109,7 @@ export default {
     {
       key: 'avgRuntime',
       heading: 'Average run time',
-      Value: ({rowData: r}) => new Date(r.avgRuntime * 1000).toISOString().substr(11, 8),
+      Value: ({rowData: r}) => getTimeString(r.avgRuntime),
       width: '10%',
       orderBy: 'avgRuntime',
     },
