@@ -21,7 +21,7 @@ export default {
           {
             label: 'Yes, cancel',
             onClick: () => {
-              dispatch(actions.job.cancel({ jobId: rowData._id, isDashboardJob: true }));
+              dispatch(actions.job.dashboard.running.cancel({ jobId: rowData._id }));
             },
           },
           {

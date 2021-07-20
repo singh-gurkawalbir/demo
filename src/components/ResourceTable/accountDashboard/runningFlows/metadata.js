@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import NameCell from '../../auditLog/cells/Name';
+import NameCell from '../../commonCells/Name';
 import JobStatus from '../../../JobDashboard/JobStatus';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import { getPages, getSuccess } from '../../../../utils/jobdashboard';
@@ -9,7 +9,7 @@ import Cancel from './actions/Cancel';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import {FILTER_KEYS_AD, STATUS_OPTIONS} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, RUNNNING_STATUS_OPTIONS} from '../../../../utils/accountDashboard';
 
 export default {
   useColumns: () => [
@@ -45,7 +45,7 @@ export default {
     {
       key: 'flowName',
       HeaderValue: function FlowSearchFilter() {
-        const flowOptions = useSelector(state => selectors.getAllFlows(state));
+        const flowOptions = useSelector(state => selectors.getAllFlows(state, FILTER_KEYS_AD.RUNNING));
 
         return (
           <MultiSelectColumnFilter
@@ -66,14 +66,12 @@ export default {
       key: 'status',
       heading: 'Status',
       HeaderValue: function FlowSearchFilter() {
-        const statusOptions = STATUS_OPTIONS;
-
         return (
           <MultiSelectColumnFilter
             title="Status"
             filterBy="status"
             filterKey="runningFlows"
-            options={statusOptions.map(({ _id, name}) => ({_id, name }))} />
+            options={RUNNNING_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
         );
       },
       Value: ({rowData: al}) => <JobStatus job={al} />,

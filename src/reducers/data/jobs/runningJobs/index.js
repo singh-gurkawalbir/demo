@@ -83,20 +83,23 @@ selectors.dashboardInProgressJobIds = createSelector(
   }
 );
 
-selectors.runningJobs = createSelector(state => state?.runningJobs, state => state?.status, state => state?.nextPageURL, (runningJobs = [], status, nextPageURL) => {
-  const jobs = runningJobs.map(job => {
-    const additionalProps = {
-      uiStatus: job.status,
-      duration: getJobDuration(job),
-      doneExporting: !!job.doneExporting,
-      numPagesProcessed: 0,
-    };
+selectors.runningJobs = createSelector(state => state?.runningJobs,
+  state => state?.status,
+  state => state?.nextPageURL,
+  (runningJobs = [], status, nextPageURL) => {
+    const jobs = runningJobs.map(job => {
+      const additionalProps = {
+        uiStatus: job.status,
+        duration: getJobDuration(job),
+        doneExporting: !!job.doneExporting,
+        numPagesProcessed: 0,
+      };
 
-    return { ...job, ...additionalProps };
+      return { ...job, ...additionalProps };
+    });
+
+    return {jobs, status, nextPageURL};
   });
-
-  return {jobs, status, nextPageURL};
-});
 
 selectors.isRunningJobsCollectionLoading = state => state?.status === 'loading';
 

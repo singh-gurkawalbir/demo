@@ -1604,6 +1604,8 @@ const job = {
           nextPageURL,
           loadMore,
         }),
+      cancel: ({ jobId }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.CANCEL, { jobId }),
       canceled: ({ jobId }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.CANCELED, { jobId }),
       requestInProgressJobStatus: () =>
@@ -1653,8 +1655,8 @@ const job = {
     action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
 
-  cancel: ({ jobId, flowJobId, isDashboardJob }) =>
-    action(actionTypes.JOB.CANCEL, { jobId, flowJobId, isDashboardJob }),
+  cancel: ({ jobId, flowJobId }) =>
+    action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolveSelected: ({ jobs, match }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),

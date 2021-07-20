@@ -15,6 +15,7 @@ import { FILTER_KEYS_AD,
   DEFAULTS_COMPLETED_JOBS_FILTER,
   DEFAULTS_RUNNING_JOBS_FILTER,
   DEFAULT_ROWS_PER_PAGE,
+  DEFAULT_RANGE,
   ROWS_PER_PAGE_OPTIONS } from '../../../../utils/accountDashboard';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
@@ -55,8 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Filters(props) {
-  const {filterKey} = props;
+export default function Filters({filterKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, filterKey));
@@ -78,11 +78,6 @@ export default function Filters(props) {
     },
     [dispatch, filterKey]
   );
-  const defaultRange = {
-    startDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
-    endDate: new Date(),
-    preset: 'last24hours',
-  };
   const defaultFilter = filterKey === FILTER_KEYS_AD.RUNNING ? DEFAULTS_RUNNING_JOBS_FILTER : DEFAULTS_COMPLETED_JOBS_FILTER;
 
   const loadMoreJobs = useCallback(
@@ -123,13 +118,13 @@ export default function Filters(props) {
     ),
     [dispatch, filterKey, jobFilter?.paging]
   );
-  const isDateFilterSelected = !!(jobFilter.range && jobFilter.range.preset !== defaultRange.preset);
+  const isDateFilterSelected = !!(jobFilter.range && jobFilter.range.preset !== DEFAULT_RANGE.preset);
 
   const selectedDate = useMemo(() => isDateFilterSelected ? {
     startDate: new Date(jobFilter.range?.startDate),
     endDate: new Date(jobFilter.range?.endDate),
     preset: jobFilter.range?.preset,
-  } : defaultRange, [defaultRange, isDateFilterSelected, jobFilter.range?.endDate, jobFilter.range?.preset, jobFilter.range?.startDate]);
+  } : DEFAULT_RANGE, [isDateFilterSelected, jobFilter.range?.endDate, jobFilter.range?.preset, jobFilter.range?.startDate]);
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -162,7 +157,7 @@ export default function Filters(props) {
             <DateRangeSelector
               clearable
               placement="right"
-              clearValue={defaultRange}
+              clearValue={DEFAULT_RANGE}
               onSave={handleDateFilter}
               value={selectedDate}
               customPresets={ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS}

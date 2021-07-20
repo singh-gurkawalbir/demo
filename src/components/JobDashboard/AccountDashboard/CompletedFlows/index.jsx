@@ -75,7 +75,6 @@ export default function CompletedFlows() {
       {!jobs?.length && !isCompletedJobsCollectionLoading ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
-
     </>
   );
 }

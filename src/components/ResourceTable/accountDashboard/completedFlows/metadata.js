@@ -3,7 +3,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import NameCell from '../../auditLog/cells/Name';
+import NameCell from '../../commonCells/Name';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
@@ -45,7 +45,7 @@ export default {
     {
       key: 'flowName',
       HeaderValue: function FlowSearchFilter() {
-        const flowOptions = useSelector(state => selectors.getAllFlows(state));
+        const flowOptions = useSelector(state => selectors.getAllFlows(state, FILTER_KEYS_AD.COMPLETED));
 
         return (
           <MultiSelectColumnFilter

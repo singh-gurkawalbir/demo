@@ -36,7 +36,13 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.completedJobs = createSelector(state => state?.completedJobs, state => state?.status, state => state?.nextPageURL, (completedJobs = [], status, nextPageURL) => ({jobs: completedJobs, status, nextPageURL}));
+selectors.completedJobs = createSelector(state => state?.completedJobs,
+  state => state?.status,
+  state => state?.nextPageURL,
+  (completedJobs = [], status, nextPageURL) =>
+    ({jobs: completedJobs,
+      status,
+      nextPageURL}));
 
 selectors.isCompletedJobsCollectionLoading = state => state?.status === 'loading';
 

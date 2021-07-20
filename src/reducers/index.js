@@ -920,11 +920,11 @@ selectors.getEventReportIntegrationName = (state, r) => {
   return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
-selectors.getAllFlows = createSelector(state => {
+selectors.getAllFlows = (state, filterKey) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources;
-  const jobFilter = selectors.filter(state, FILTER_KEYS_AD.RUNNING);
+  const jobFilter = selectors.filter(state, filterKey);
   const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
 
   if (selectedIntegrations.length) {
@@ -945,9 +945,7 @@ selectors.getAllFlows = createSelector(state => {
   allFlows = [...defaultFilter, ...allFlows];
 
   return allFlows;
-},
-flows => flows
-);
+};
 selectors.accountDashboardJobs = (state, filterKey) => {
   const {jobs: totalRunningJobs, nextPageURL: runningNextPageURL, status: runnningStatus} = selectors.runningJobs(state);
 
@@ -1026,7 +1024,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
 
   return {path, opts: {method: 'POST', body}};
 };
-selectors.getAllIntegrations = createSelector(state => {
+selectors.getAllIntegrations = state => {
   let allIntegrations = selectors.resourceList(state, {
     type: 'integrations',
   }).resources;
@@ -1059,9 +1057,7 @@ selectors.getAllIntegrations = createSelector(state => {
   });
 
   return allIntegrations;
-},
-integrations => integrations
-);
+};
 
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;

@@ -4,6 +4,7 @@ import { getJobDuration, getJobStatus, FILTER_KEYS } from '../../../utils/errorM
 import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
+import {COMPLETED_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 
 export default {
   useColumns: () => [
@@ -11,17 +12,12 @@ export default {
       key: 'status',
       heading: 'Status',
       HeaderValue: function FlowSearchFilter() {
-        const statusOptions = [{_id: 'all', name: 'All status'},
-          {_id: 'canceled', name: 'Canceled'},
-          {_id: 'completed', name: 'Completed'},
-          {_id: 'failed', name: 'failed'}];
-
         return (
           <MultiSelectColumnFilter
             title="Status"
             filterBy="status"
             filterKey={FILTER_KEYS.RUN_HISTORY}
-            options={statusOptions.map(({ _id, name}) => ({_id, name }))} />
+            options={COMPLETED_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
         );
       },
       Value: ({rowData: r}) => getJobStatus(r),

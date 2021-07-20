@@ -372,7 +372,7 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   }
 }
 
-export function* cancelJob({ jobId, isDashboardJob }) {
+export function* cancelJob({ jobId }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
     resourceId: jobId,
   });
@@ -384,13 +384,24 @@ export function* cancelJob({ jobId, isDashboardJob }) {
   } catch (error) {
     return true;
   }
-  if (isDashboardJob) {
-    yield put(actions.job.dashboard.running.canceled({ jobId }));
-  } else if (job._flowJobId) {
+  if (job._flowJobId) {
     yield call(getJobFamily, { jobId: job._flowJobId });
   } else {
     yield put(actions.job.receivedFamily({ job }));
   }
+}
+export function* cancelDashboardJob({ jobId }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return true;
+  }
+  yield put(actions.job.dashboard.running.canceled({ jobId }));
 }
 
 export function* resolveCommit({ jobs = [] }) {
@@ -875,6 +886,7 @@ export const jobSagas = [
   takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS, startPollingForDashboardInProgressJobs),
   takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
+  takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.CANCEL, cancelDashboardJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
   takeEvery(actionTypes.JOB.RETRY_SELECTED, retrySelected),

@@ -7,7 +7,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../../constants/resource';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import OldValue from './cells/OldValue';
 import NewValue from './cells/NewValue';
-import NameCell from './cells/Name';
+import NameCell from '../commonCells/Name';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {

@@ -9,7 +9,7 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
-import {FILTER_KEYS_AD} from '../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
@@ -40,11 +40,7 @@ export default function RunHistoryDrawer() {
       preset: filter.range.preset,
     };
   } else {
-    selectedDate = {
-      startDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
-      endDate: new Date(),
-      preset: 'last24hours',
-    };
+    selectedDate = DEFAULT_RANGE;
   }
 
   useEffect(() => {
