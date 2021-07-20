@@ -921,16 +921,41 @@ selectors.getEventReportIntegrationName = (state, r) => {
   return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
-selectors.getAllFlows = (state, filterKey) => {
+selectors.getAllAccountDashboardFlows = (state, filterKey) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
-  }).resources;
+  }).resources || [];
+  let allStoreFlows = [];
   const jobFilter = selectors.filter(state, filterKey);
+  let storeId;
+  let parentIntegrationId;
   const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
 
+  // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
+  // below logic is used to extact store id and integration id from this.
+  const selectedStores = selectedIntegrations.filter(i => {
+    if (!i.includes('store')) return false;
+    storeId = i.substring(5, i.indexOf('pid'));
+    parentIntegrationId = i.substring(i.indexOf('pid') + 3);
+
+    return !(selectedIntegrations.includes(parentIntegrationId));
+  });
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const s of selectedStores) {
+    storeId = s.substring(5, s.indexOf('pid'));
+    parentIntegrationId = s.substring(s.indexOf('pid') + 3);
+    allStoreFlows = [...allStoreFlows, ...selectors.integrationAppFlowIds(state,
+      parentIntegrationId,
+      storeId
+    )];
+  }
   if (selectedIntegrations.length) {
     allFlows = allFlows.filter(f => {
       if (selectedIntegrations.includes('none') && !f._integrationId) {
+        return true;
+      }
+      if (allStoreFlows.includes(f._id)) {
         return true;
       }
 
@@ -1030,7 +1055,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
 
   return {path, opts: {method: 'POST', body}};
 };
-selectors.getAllIntegrations = state => {
+selectors.getAllAccountDashboardIntegrations = state => {
   let allIntegrations = selectors.resourceList(state, {
     type: 'integrations',
   }).resources;

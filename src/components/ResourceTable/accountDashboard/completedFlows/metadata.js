@@ -17,7 +17,7 @@ export default {
       key: 'integrationName',
       HeaderValue: function IntegrationSearchFilter() {
         const dispatch = useDispatch();
-        const integrationOptions = useSelector(state => selectors.getAllIntegrations(state));
+        const integrationOptions = useSelector(state => selectors.getAllAccountDashboardIntegrations(state));
         const handleSave = useCallback(
           () => {
             dispatch(actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
@@ -45,7 +45,7 @@ export default {
     {
       key: 'flowName',
       HeaderValue: function FlowSearchFilter() {
-        const flowOptions = useSelector(state => selectors.getAllFlows(state, FILTER_KEYS_AD.COMPLETED));
+        const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, FILTER_KEYS_AD.COMPLETED));
 
         return (
           <MultiSelectColumnFilter
