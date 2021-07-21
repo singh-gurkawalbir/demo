@@ -22,8 +22,8 @@ export default function Dashboard() {
   }
 
   return (
-    <LoadResources required resources="flows,integrations"><CeligoPageBar
-      title="Dashboard" />
+    <LoadResources required resources="flows,integrations">
+      <CeligoPageBar title="Dashboard" />
       <Tabs />
       <QueuedJobsDrawer />
     </LoadResources>

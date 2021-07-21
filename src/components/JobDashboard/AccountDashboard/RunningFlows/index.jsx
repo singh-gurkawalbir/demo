@@ -24,8 +24,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
   },
 }));
+const filterKey = FILTER_KEYS_AD.RUNNING;
+
 export default function RunningFlows() {
-  const filterKey = FILTER_KEYS_AD.RUNNING;
   const classes = useStyles();
 
   const dispatch = useDispatch();

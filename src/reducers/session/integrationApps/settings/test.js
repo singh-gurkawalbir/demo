@@ -2,6 +2,7 @@
 import shortid from 'shortid';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
+import {HOME_PAGE_PATH} from '../../../../utils/constants';
 
 const amazonCategoryMappings = {
   uiAssistant: 'amazon',
@@ -10601,7 +10602,7 @@ describe('integrationApps selectors test cases', () => {
           meta: {
             data: 'dummy',
           },
-          redirectTo: '/home',
+          redirectTo: HOME_PAGE_PATH,
         },
         licenseId: true,
         licenseId2: false,

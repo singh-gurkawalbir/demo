@@ -921,6 +921,7 @@ selectors.getEventReportIntegrationName = (state, r) => {
   return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
+// It will give list of flows which to be displayed in flows filter in account dashboard.
 selectors.getAllAccountDashboardFlows = (state, filterKey) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
@@ -1090,6 +1091,7 @@ selectors.getAllAccountDashboardIntegrations = state => {
   return allIntegrations;
 };
 
+// It will give list of all integrations which to be displayed in integration filter in account dashboard.
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;
 

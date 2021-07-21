@@ -3,7 +3,6 @@ import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
-import LoadResources from '../../LoadResources';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -73,25 +72,19 @@ export default function RunHistoryDrawer() {
   }, [dispatch, filter, selectedDate, flowId]);
 
   return (
-    <LoadResources
-      required="true"
-      resources="imports, exports, connections">
-      <RightDrawer
-        path=":flowId/runHistory"
-        height="tall"
-        width="full"
-        variant="permanent"
-        onClose={handleClose}
+    <RightDrawer
+      path=":flowId/runHistory"
+      height="tall"
+      width="full"
+      variant="permanent"
+      onClose={handleClose}
         >
-
-        <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
-
-        <DrawerContent>
-          <RunHistory
-            flowId={flowId} className={classes.runHistoryPage}
+      <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
+      <DrawerContent>
+        <RunHistory
+          flowId={flowId} className={classes.runHistoryPage}
             />
-        </DrawerContent>
-      </RightDrawer>
-    </LoadResources>
+      </DrawerContent>
+    </RightDrawer>
   );
 }

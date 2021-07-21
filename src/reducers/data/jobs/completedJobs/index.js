@@ -13,11 +13,11 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR:
         draft.completedJobs = [];
-        draft.status = undefined;
-        draft.nextPageURL = undefined;
+        delete draft.status;
+        delete draft.nextPageURL;
         break;
       case actionTypes.JOB.DASHBOARD.COMPLETED.ERROR:
-        draft.status = undefined;
+        delete draft.status;
         break;
 
       case actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION:
@@ -25,7 +25,7 @@ export default (state = {}, action) => {
         break;
       case actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION:
         draft.completedJobs = loadMore ? [...draft.completedJobs, ...collection] : collection;
-        draft.status = undefined;
+        delete draft.status;
         draft.nextPageURL = nextPageURL;
         break;
       default:

@@ -22,8 +22,8 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.JOB.DASHBOARD.RUNNING.CLEAR:
         draft.runningJobs = [];
-        draft.status = undefined;
-        draft.nextPageURL = undefined;
+        delete draft.status;
+        delete draft.nextPageURL;
         break;
 
       case actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION:
@@ -31,16 +31,16 @@ export default (state = {}, action) => {
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION:
         draft.runningJobs = loadMore ? [...draft.runningJobs, ...collection] : collection;
-        draft.status = undefined;
+        delete draft.status;
         draft.nextPageURL = nextPageURL;
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.ERROR:
-        draft.status = undefined;
+        delete draft.status;
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.CANCELED:
         if (!draft.runningJobs) draft.runningJobs = [];
         draft.runningJobs = draft.runningJobs.filter(job => job._id !== jobId);
-        draft.status = undefined;
+        delete draft.status;
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY:
         collection.forEach(job => {
@@ -51,7 +51,7 @@ export default (state = {}, action) => {
           }
         });
         draft.runningJobs = draft.runningJobs.filter(job => [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.CANCELING].includes(job.status));
-        draft.status = undefined;
+        delete draft.status;
         break;
       default:
     }

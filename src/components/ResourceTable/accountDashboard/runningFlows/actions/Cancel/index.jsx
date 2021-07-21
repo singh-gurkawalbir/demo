@@ -7,7 +7,7 @@ import {CANCEL_JOB} from '../../../../../../utils/messageStore';
 
 export default {
   key: 'account-dashboard-cancel-run',
-  useLabel: () => 'Cancel',
+  useLabel: () => 'Cancel run',
   icon: CancelIcon,
   useOnClick: rowData => {
     const dispatch = useDispatch();

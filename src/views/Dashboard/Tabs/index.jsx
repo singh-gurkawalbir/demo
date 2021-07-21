@@ -33,26 +33,26 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
   },
 }));
-
+const tabs = [
+  {
+    path: 'runningFlows',
+    label: 'Running flows',
+    Icon: RunningIcon,
+    Panel: Running,
+    dataTest: 'account-dashboard-running-flows',
+  },
+  {
+    path: 'completedFlows',
+    label: 'Completed flows',
+    Icon: CompletedIcon,
+    Panel: Completed,
+    dataTest: 'account-dashboard-completed-flows',
+  }];
 export default function DashboardTabs() {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const tabs = [
-    {
-      path: 'runningFlows',
-      label: 'Running flows',
-      Icon: RunningIcon,
-      Panel: Running,
-      dataTest: 'account-dashboard-running-flows',
-    },
-    {
-      path: 'completedFlows',
-      label: 'Completed flows',
-      Icon: CompletedIcon,
-      Panel: Completed,
-      dataTest: 'account-dashboard-completed-flows',
-    }];
+
   const { tab } = match.params;
   let currentTabIndex = tabs.findIndex(t => t.path === tab);
 
@@ -68,7 +68,7 @@ export default function DashboardTabs() {
         })
       );
     },
-    [history, match.params, match.path, tabs]
+    [history, match.params, match.path]
   );
 
   return (

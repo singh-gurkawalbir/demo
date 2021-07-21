@@ -48,7 +48,7 @@ describe('shouldRedirect selector test', () => {
         meta: {
           data: 'dummy',
         },
-        redirectTo: '/home',
+        redirectTo: HOME_PAGE_PATH,
       },
     };
 

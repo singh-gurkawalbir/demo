@@ -102,8 +102,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter(props) {
-  const { items = [], selected = [], onSave, Icon, onSelect} = props;
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -164,7 +163,7 @@ export default function MultiSelectFilter(props) {
       });
     }
   };
-  const handleChildSelect = (id, parentId) => event => {
+  const handleChildSelect = useCallback((id, parentId) => event => {
     event.stopPropagation();
 
     setChecked(checked => {
@@ -191,7 +190,7 @@ export default function MultiSelectFilter(props) {
 
       return [...checked, id].filter(c => c !== 'all');
     });
-  };
+  }, [items]);
 
   function RowIcon({expanded, node}) {
     return expanded[node] ? <ArrowUpIcon /> : <ArrowDownIcon />;

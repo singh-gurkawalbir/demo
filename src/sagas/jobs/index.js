@@ -89,12 +89,10 @@ export function* getDasboardInProgressJobsStatus() {
   if (
     inProgressJobIds.length === 0
   ) {
-    yield put(actions.job.dashboard.running.noInProgressJobs());
+    return yield put(actions.job.dashboard.running.noInProgressJobs());
   }
 
-  if (inProgressJobIds.length > 0) {
-    yield call(getDashboardJobFamily, { inProgressJobIds });
-  }
+  return yield call(getDashboardJobFamily, { inProgressJobIds });
 }
 
 export function* pollForInProgressJobs() {

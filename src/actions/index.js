@@ -1626,7 +1626,6 @@ const job = {
         }),
       clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
       error: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.ERROR),
-
     },
   },
   requestCollection: ({ integrationId, flowId, filters, options }) =>

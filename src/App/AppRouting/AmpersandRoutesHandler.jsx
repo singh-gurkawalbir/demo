@@ -39,7 +39,7 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/create'):
       return (
         <Redirect
-          to={getRoutePath(`/home/add/integrations/new-${shortid.generate()}`)}
+          to={getRoutePath(`${HOME_PAGE_PATH}/add/integrations/new-${shortid.generate()}`)}
       />
       );
     case getRoutePath('/:resourceType/create'):
