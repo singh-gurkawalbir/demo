@@ -213,6 +213,7 @@ import quickbase from './quickbase';
 import pagerdutyevents from './pagerdutyevents';
 import orangehrm from './orangehrm';
 import sapsuccessfactors from './sapsuccessfactors';
+import braintree from './braintree';
 import zenefits from './zenefits';
 
 export default {
@@ -431,5 +432,6 @@ export default {
   pagerdutyevents,
   orangehrm,
   sapsuccessfactors,
+  braintree,
   zenefits,
 };

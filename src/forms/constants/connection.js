@@ -125,11 +125,13 @@ export default {
     'quickbase',
     'pagerdutyevents',
     'sapsuccessfactors',
+    'braintree',
     'zenefits',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
     'azurestorageaccount',
+    'amazonmws',
     'squareup',
     'shipbob',
     'ebay',
