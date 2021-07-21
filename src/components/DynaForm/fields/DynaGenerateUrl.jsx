@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   dynaGenerateTokenbtn: {
-    marginTop: 26,
+    marginTop: 28,
     marginLeft: theme.spacing(1),
   },
 }));
