@@ -322,6 +322,10 @@ export const getFormattedResourceForPreview = (
     }
   }
 
+  if (resource.useTechAdaptorForm && !resource.assistant) {
+    delete resource.rest;
+  }
+
   if (isPostDataNeededInResource(resource)) {
     resource.postData = {
       lastExportDateTime: getLastExportDateTime(resource),

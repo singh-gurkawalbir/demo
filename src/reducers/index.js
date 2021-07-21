@@ -4560,7 +4560,7 @@ selectors.applicationType = (state, resourceType, id) => {
   }
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-  const adaptorType = resourceType === 'connections'
+  let adaptorType = resourceType === 'connections'
     ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
@@ -4570,6 +4570,10 @@ selectors.applicationType = (state, resourceType, id) => {
       getStagedValue('/webhook/provider') ||
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
     );
+  }
+
+  if (adaptorType === 'http' && resourceObj?.http?.useRestForm) {
+    adaptorType = 'rest';
   }
 
   // For Data Loader cases, there is no image.
@@ -4585,6 +4589,10 @@ selectors.applicationType = (state, resourceType, id) => {
     );
 
     return connection && connection.rdbms && connection.rdbms.type;
+  }
+
+  if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.useTechAdaptorForm && !assistant) {
+    adaptorType = adaptorType.replace(/HTTP/, 'REST');
   }
 
   return assistant || adaptorType;

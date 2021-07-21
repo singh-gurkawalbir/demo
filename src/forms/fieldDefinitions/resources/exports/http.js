@@ -591,7 +591,7 @@ export default {
     required: true,
     refreshOptionsOnChangesTo: ['http.requestMediaType'],
     requestMediaType: r =>
-      r?.http?.requestMediaType || 'json',
+      r?.http?.requestMediaType || '',
     visibleWhenAll: [
       {
         field: 'outputMode',
