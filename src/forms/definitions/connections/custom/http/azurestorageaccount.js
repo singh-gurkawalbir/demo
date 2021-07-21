@@ -61,6 +61,7 @@ export default {
       fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    fileAdvanced: {formId: 'fileAdvanced'},
   },
   layout: {
     type: 'collapse',
@@ -69,7 +70,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.unencrypted.storageAccount', 'http.unencrypted.tenantId', 'http._iClientId'] },
-      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['fileAdvanced', 'httpAdvanced'] },
     ],
   },
 };
