@@ -50,7 +50,7 @@ export default (state = {}, action) => {
             draft.runningJobs[index] = {...job};
           }
         });
-        draft.runningJobs = draft.runningJobs.filter(job => ['running', 'canceling', 'queued'].includes(job.status));
+        draft.runningJobs = draft.runningJobs.filter(job => [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.CANCELING].includes(job.status));
         draft.status = undefined;
         break;
       default:
