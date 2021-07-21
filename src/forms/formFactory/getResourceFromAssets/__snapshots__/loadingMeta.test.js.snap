@@ -8198,6 +8198,30 @@ Object {
         "fieldId": "file.fileName",
         "required": true,
       },
+      "file.json.body": Object {
+        "connectionId": [Function],
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "required": true,
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -8361,6 +8385,7 @@ Object {
                 "ftp.directoryPath",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "ftp.blobFileName",
                 "file.lookups",
               ],
@@ -10364,6 +10389,30 @@ Object {
       "file.fileName": Object {
         "fieldId": "file.fileName",
         "required": true,
+      },
+      "file.json.body": Object {
+        "connectionId": [Function],
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "required": true,
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",

@@ -216,6 +216,24 @@ fileAdvanced: { formId: 'fileAdvanced' },
     },
   ],
 },
+'file.json.body': {
+  id: 'file.json.body',
+  type: 'httprequestbody',
+  connectionId: r => r && r._connectionId,
+  label: 'JSON document',
+  refreshOptionsOnChangesTo: ['file.type'],
+  required: true,
+  visibleWhenAll: [
+    {
+      field: 'file.type',
+      is: ['json'],
+    },
+    {
+      field: 'inputMode',
+      is: ['records'],
+    },
+  ],
+},
 uploadFile: {
   fieldId: 'uploadFile',
   refreshOptionsOnChangesTo: ['file.type'],
