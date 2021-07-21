@@ -5518,6 +5518,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     '_relativeURI',
     '_query',
     'file.xml.body',
+    'file.json.body',
   ];
   const uriFields = [
     'http.relativeURI',
