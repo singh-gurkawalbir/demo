@@ -925,8 +925,8 @@ describe('updateIntegrationSettings saga', () => {
       [matchers.call.fn(apiCallWithRetry), {settings: {}, _flowId: 'flow-123'}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.requestCollection('exports'))
-    .put(actions.resource.requestCollection('flows'))
+    .put(actions.resource.requestCollection('exports', null, true))
+    .put(actions.resource.requestCollection('flows', null, true))
     .put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'))
     .run());
   test('should dispatch patch and commit actions if response is a success and options action is flowEnableDisable', () => {
@@ -970,8 +970,8 @@ describe('updateIntegrationSettings saga', () => {
       [matchers.call.fn(apiCallWithRetry), {success: true}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.requestCollection('imports'))
-    .put(actions.resource.requestCollection('exports'))
+    .put(actions.resource.requestCollection('imports', null, true))
+    .put(actions.resource.requestCollection('exports', null, true))
     .put(
       actions.integrationApp.settings.submitComplete({
         childId: undefined,
