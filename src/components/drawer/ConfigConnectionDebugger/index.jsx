@@ -60,9 +60,9 @@ function ConfigConnForm() {
   const handleSave = useCallback(() => {
     const patchSet = [
       {
-        op: values.debugDate !== '0' ? 'replace' : 'remove',
+        op: values?.debugDate !== '0' ? 'replace' : 'remove',
         path: '/debugDate',
-        value: moment().add(values.debugDate, 'm').toISOString(),
+        value: moment().add(values?.debugDate, 'm').toISOString(),
       },
     ];
 

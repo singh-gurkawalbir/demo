@@ -194,7 +194,6 @@ const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
 
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
-  // TODO:make this into resourceType-resourceId key
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();

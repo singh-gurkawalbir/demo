@@ -647,7 +647,7 @@ export function* submitResourceForm(params) {
 
 export function* saveAndContinueResourceForm(params) {
   const { resourceId } = params;
-  const asyncKey = `connections-${resourceId}`;
+  const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
   yield call(submitResourceForm, params);
