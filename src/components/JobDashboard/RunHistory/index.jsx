@@ -50,7 +50,7 @@ const defaultRange = {
 
 const ROWS_PER_PAGE = 50;
 
-export default function RunHistory({ flowId }) {
+export default function RunHistory({ flowId, className }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [currentPage, setCurrentPage] = useState(0);
@@ -126,7 +126,7 @@ export default function RunHistory({ flowId }) {
   );
 
   return (
-    <>
+    <div className={className}>
       <div className={classes.filterContainerRunHistory}>
         <>
           <div className={classes.rangeFilter}>
@@ -166,6 +166,6 @@ export default function RunHistory({ flowId }) {
           You don&apos;t have any run history.
         </MessageWrapper>
         )}
-    </>
+    </div>
   );
 }

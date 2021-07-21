@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import LoadResources from '../../LoadResources';
 import RightDrawer from '../../drawer/Right';
@@ -13,8 +14,27 @@ import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
+const useStyles = makeStyles(theme => ({
+  runHistoryPage: {
+    '& > div': {
+      border: 'none',
+      padding: theme.spacing(0, 0, 3),
+      '& > div': {
+        padding: 0,
+        margin: 0,
+        alignItems: 'center',
+      },
+    },
+    '& table': {
+      border: `1px solid ${theme.palette.secondary.lightest}`,
+    },
+
+  },
+}));
+
 export default function RunHistoryDrawer() {
   const match = useRouteMatch();
+  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -67,7 +87,9 @@ export default function RunHistoryDrawer() {
         <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
 
         <DrawerContent>
-          <RunHistory flowId={flowId} />
+          <RunHistory
+            flowId={flowId} className={classes.runHistoryPage}
+            />
         </DrawerContent>
       </RightDrawer>
     </LoadResources>

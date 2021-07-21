@@ -7,6 +7,7 @@ import LoadResources from '../../components/LoadResources';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import getRoutePath from '../../utils/routePaths';
 import {HOME_PAGE_PATH} from '../../utils/constants';
+import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 export default function Dashboard() {
   const history = useHistory();
@@ -24,6 +25,7 @@ export default function Dashboard() {
     <LoadResources required resources="flows,integrations"><CeligoPageBar
       title="Dashboard" />
       <Tabs />
+      <QueuedJobsDrawer />
     </LoadResources>
   );
 }

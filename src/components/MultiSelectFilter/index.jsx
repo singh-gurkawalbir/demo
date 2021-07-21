@@ -96,6 +96,9 @@ const useStyles = makeStyles(theme => ({
     '& li': {
       maxWidth: 'calc(100% - 30px)',
     },
+    '& li:only-child': {
+      maxWidth: '100%',
+    },
   },
 }));
 

@@ -95,6 +95,33 @@ selectors.runningJobs = createSelector(state => state?.runningJobs,
         numPagesProcessed: 0,
       };
 
+      if (job.children && job.children.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        job.children = job.children.filter(cJob => !!cJob).map(cJob => {
+          const additionalChildProps = {
+            uiStatus: cJob.status,
+            duration: getJobDuration(cJob),
+          };
+
+          if (cJob.type === 'import') {
+            if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
+              additionalChildProps.percentComplete = Math.floor(
+                (cJob.numPagesProcessed * 100) / job.numPagesGenerated
+              );
+            } else {
+              additionalChildProps.percentComplete = 0;
+            }
+
+            additionalProps.numPagesProcessed += parseInt(
+              cJob.numPagesProcessed,
+              10
+            );
+          }
+
+          return { ...cJob, ...additionalChildProps };
+        });
+      }
+
       return { ...job, ...additionalProps };
     });
 

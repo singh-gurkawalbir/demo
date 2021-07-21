@@ -5030,9 +5030,44 @@ selectors.flowDashboardJobs = createSelector(
 selectors.accountDashboardRunningJobs = createSelector(
   (state, options) => selectors.runningJobs(state, options)?.jobs,
   state => selectors.filter(state, FILTER_KEYS_AD.RUNNING),
-  (runningJobs = [], jobFilter) => {
+  state => fromData.resourceDetailsMap(state?.data),
+  (runningJobs = [], jobFilter, resourceMap) => {
+    const jobsWithAdditionalProps = runningJobs.map(job => {
+      if (job.children && job.children.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        job.children = job.children.map(cJob => {
+          const additionalChildProps = {
+            name: cJob._exportId
+              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+            flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
+          };
+
+          return { ...cJob, ...additionalChildProps };
+        });
+      }
+      const additionalProps = {
+        name: resourceMap.flows && resourceMap.flows[job._flowId]?.name,
+        flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
+      };
+
+      if (job.doneExporting && job.numPagesGenerated > 0) {
+        additionalProps.percentComplete = Math.floor(
+          (job.numPagesProcessed * 100) /
+            (job.numPagesGenerated *
+              ((resourceMap.flows &&
+                resourceMap.flows[job._flowId] &&
+                resourceMap.flows[job._flowId].numImports) ||
+                1))
+        );
+      } else {
+        additionalProps.percentComplete = 0;
+      }
+
+      return { ...job, ...additionalProps };
+    });
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
-    const dashboardJobs = jobFilter.sort ? [...runningJobs].sort(comparer(jobFilter.sort)) : [...runningJobs];
+    const dashboardJobs = jobFilter.sort ? [...jobsWithAdditionalProps].sort(comparer(jobFilter.sort)) : [...jobsWithAdditionalProps];
 
     return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });
