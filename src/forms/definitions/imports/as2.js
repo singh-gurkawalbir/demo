@@ -158,7 +158,6 @@ export default {
     'file.json.body': {
       id: 'file.json.body',
       type: 'httprequestbody',
-      connectionId: r => r && r._connectionId,
       label: 'JSON document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,

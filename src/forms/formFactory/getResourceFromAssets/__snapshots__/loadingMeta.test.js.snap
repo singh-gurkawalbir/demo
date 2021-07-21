@@ -7874,7 +7874,6 @@ Object {
         "required": true,
       },
       "file.json.body": Object {
-        "connectionId": [Function],
         "id": "file.json.body",
         "label": "JSON document",
         "refreshOptionsOnChangesTo": Array [
@@ -8264,7 +8263,6 @@ Object {
         "required": true,
       },
       "file.json.body": Object {
-        "connectionId": [Function],
         "id": "file.json.body",
         "label": "JSON document",
         "refreshOptionsOnChangesTo": Array [
@@ -10456,7 +10454,6 @@ Object {
         "required": true,
       },
       "file.json.body": Object {
-        "connectionId": [Function],
         "id": "file.json.body",
         "label": "JSON document",
         "refreshOptionsOnChangesTo": Array [
