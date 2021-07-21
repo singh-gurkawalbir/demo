@@ -7879,7 +7879,6 @@ Object {
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
-        "required": true,
         "type": "httprequestbody",
         "visibleWhenAll": Array [
           Object {
@@ -8268,7 +8267,6 @@ Object {
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
-        "required": true,
         "type": "httprequestbody",
         "visibleWhenAll": Array [
           Object {
@@ -10459,7 +10457,6 @@ Object {
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
-        "required": true,
         "type": "httprequestbody",
         "visibleWhenAll": Array [
           Object {

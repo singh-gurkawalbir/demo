@@ -160,7 +160,6 @@ export default {
       type: 'httprequestbody',
       label: 'JSON document',
       refreshOptionsOnChangesTo: ['file.type'],
-      required: true,
       visibleWhenAll: [
         {
           field: 'file.type',
