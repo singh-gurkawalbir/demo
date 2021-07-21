@@ -51,7 +51,6 @@ export default function SaveAndContinueGroup(props) {
       <SaveAndCloseMiniResourceForm
         formKey={formKey}
         submitButtonLabel="Save & continue"
-        submitTransientLabel="Saving..."
         formSaveStatus={formSaveStatus}
         handleSave={handleSaveAndContinue}
         handleCancel={onCancel}

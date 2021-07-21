@@ -6,7 +6,6 @@ export default function useHandleCloseOnSave({onSave, status, onClose}) {
   const isTerminated = status === FORM_SAVE_STATUS.COMPLETE;
 
   useEffect(() => {
-    // SHOULD_FORCE_CLOSE directly closes the component without the dirty change dialog on save and close
     if (closeTriggered && isTerminated) {
       onClose();
       setCloseTriggered(false);

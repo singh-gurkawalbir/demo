@@ -705,3 +705,5 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
 
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
+
+export const MAPPINGS_FORM_KEY = 'mappingsformkey';

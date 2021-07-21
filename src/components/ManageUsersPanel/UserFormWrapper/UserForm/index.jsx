@@ -1,6 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
@@ -218,8 +217,6 @@ export default function UserForm({
       <DrawerFooter>
         <SaveAndCloseMiniResourceForm
           formKey={INVITE_USER_DRAWER_FORM_KEY}
-          submitButtonLabel="Save & Close"
-          submitTransientLabel="Saving..."
           formSaveStatus={formSaveStatus}
           handleSave={handleSave}
           handleCancel={onCancelClick}
