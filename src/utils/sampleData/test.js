@@ -659,6 +659,11 @@ describe('generateTransformationRulesOnXMLData util', () => {
 
     expect(generateTransformationRulesOnXMLData(xmlJsonData)).toEqual(expectedRules);
   });
+  test('should generate empty rules and not throw exception if path is invalid', () => {
+    const xmlJsonData = {};
+
+    expect(generateTransformationRulesOnXMLData(xmlJsonData)).toEqual([[]]);
+  });
 });
 
 describe('isValidPathToMany util', () => {
