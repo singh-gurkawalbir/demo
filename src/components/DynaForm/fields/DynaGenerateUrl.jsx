@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   dynaGenerateTokenbtn: {
-    marginTop: 18,
+    marginTop: 26,
     marginLeft: theme.spacing(1),
   },
 }));
@@ -112,7 +112,8 @@ export default function GenerateUrl(props) {
               onCopy={handleCopy}
               text={value}>
               <IconButtonWithTooltip
-                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}>
+                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+                buttonSize={{size: 'small'}}>
                 <CopyIcon />
               </IconButtonWithTooltip>
             </CopyToClipboard>
@@ -120,6 +121,7 @@ export default function GenerateUrl(props) {
           {!value && (
             <IconButtonWithTooltip
               tooltipProps={{title: buttonLabel, placement: 'bottom'}}
+              buttonSize={{size: 'small'}}
               onClick={handleGenerateUrl}>
               <AddIcon />
             </IconButtonWithTooltip>

@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   dynaWebhookTokenbtn: {
-    marginTop: 18,
+    marginTop: 26,
     marginLeft: theme.spacing(1),
   },
   warningText: {
@@ -138,13 +138,15 @@ export default function DynaWebhookTokenGenerator(props) {
               onCopy={handleCopy}
               text={value}>
               <IconButtonWithTooltip
-                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}>
+                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+                buttonSize={{size: 'small'}}>
                 <CopyIcon />
               </IconButtonWithTooltip>
             </CopyToClipboard>
           ) : (
             <IconButtonWithTooltip
               tooltipProps={{title: buttonLabel, placement: 'bottom'}}
+              buttonSize={{size: 'small'}}
               onClick={handleGenerateClick}>
               <AddIcon />
             </IconButtonWithTooltip>
