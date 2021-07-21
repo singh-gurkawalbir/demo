@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
-import * as _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -13,6 +13,7 @@ import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { useFormOnCancel } from '../../FormOnCancelContext';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 const useStyles = makeStyles(theme => ({
   errorText: {
@@ -44,7 +45,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   });
 
   const [data, setData] = useState(retryData?.data);
-  const isDirty = typeof (data) === 'string' ? !_.isEqual(JSON.parse(data), retryData?.data) : !_.isEqual(data, retryData?.data);
+  const isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
@@ -125,7 +126,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
 }
 
 export default function RetryDrawer({height, jobId, flowJobId}) {
-  const asyncKey = `retrydata-${jobId}-${flowJobId}`;
+  const asyncKey = getAsyncKey(`retryDrawer-${jobId}`, flowJobId); // added retryDrawer to make it unique
   const {setCancelTriggered, disabled} = useFormOnCancel(asyncKey);
 
   return (

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import { getAsyncKey } from '../../../../sagas/resourceForm';
+import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import useHandleSaveAndAuth from './hooks/useHandleSaveAndAuth';
 

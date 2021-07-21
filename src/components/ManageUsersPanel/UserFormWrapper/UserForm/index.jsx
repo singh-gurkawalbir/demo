@@ -6,6 +6,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
+  INVITE_USER_DRAWER_FORM_KEY,
 } from '../../../../utils/constants';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -14,7 +15,6 @@ import DynaForm from '../../../DynaForm';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
-import { INVITE_USER_DRAWER_FORM_KEY } from '../../Drawers/InviteUser/index';
 
 const integrationsFilterConfig = {
   type: 'integrations',

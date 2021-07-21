@@ -5,7 +5,7 @@ import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
-import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet, getAsyncKey} from '../index';
+import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
 import { commitStagedChanges } from '../../resources';
@@ -13,6 +13,7 @@ import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import actionTypes from '../../../actions/types';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 jest.mock('../../../forms/formFactory/getResourceFromAssets');
 

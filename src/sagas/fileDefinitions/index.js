@@ -3,10 +3,11 @@ import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import { SCOPES, saveResourceWithDefinitionID, getAsyncKey } from '../resourceForm';
+import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
 import { isNewId, generateNewId } from '../../utils/resource';
 import { commitStagedChangesWrapper } from '../resources';
 import { selectors } from '../../reducers';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 
 /*
  * Fetches all Supported File Definitions

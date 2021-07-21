@@ -7,6 +7,7 @@ import consolidatedActions from '../../../ResourceFormFactory/Actions';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RenderActionButtonWhenVisible from '../../../DynaForm/RenderActionButtonWhenVisible';
+import useTriggerCancelFromContext from '../../../SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
@@ -68,8 +69,14 @@ const ActionButtons = ({actions, formProps, consolidatedActions}) => {
   );
 };
 
+function ProceedOnChange({formKey, onCancel}) {
+  useTriggerCancelFromContext(formKey, onCancel);
+
+  return null;
+}
+
 export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap, actions, ...props }) {
-  const { resourceType, isNew} = props;
+  const { resourceType, isNew, onCancel, formKey} = props;
 
   if (variant === 'view') { return null; }
 
@@ -80,7 +87,8 @@ export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap
   const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
 
   // hide action buttons when its a new connections form for a single application dropdown
-  if (proceedOnChange) { return null; }
+
+  if (proceedOnChange) { return <ProceedOnChange formKey={formKey} onCancel={onCancel} />; }
 
   return (
 

@@ -72,13 +72,13 @@ export default function MappingDrawerRoute(props) {
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         variant="persistent"
       >
-        <DrawerHeader title={title} handleClose={setCancelTriggered} disableClose={closeDisabled} />
         <Switch>
           <Route
             path={[
               `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
               `${match.url}/mapping/:flowId/:importId/view`,
             ]} >
+            <DrawerHeader title={title} handleClose={setCancelTriggered} disableClose={closeDisabled} />
             <MappingWrapper
               integrationId={integrationId}
               {...props} />
@@ -90,6 +90,7 @@ export default function MappingDrawerRoute(props) {
               `${match.url}/mapping/:flowId/:importId`,
             ]}
             >
+            <DrawerHeader title={title} />
             <SelectImport />
           </Route>
         </Switch>

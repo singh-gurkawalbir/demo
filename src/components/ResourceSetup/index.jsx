@@ -10,7 +10,7 @@ import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
 import ResourceDrawer from '../drawer/Resource';
 import { useFormOnCancel } from '../FormOnCancelContext/index';
-import { getAsyncKey } from '../../sagas/resourceForm';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {

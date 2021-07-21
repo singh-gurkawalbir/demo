@@ -20,7 +20,7 @@ export const HOOK_STAGES = [
   'handleRequest',
 ];
 
-export const getEditorStatus = saveStatus => {
+export const getFormSaveStatusFromEditorStatus = saveStatus => {
   switch (saveStatus) {
     case AFE_SAVE_STATUS.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
     case AFE_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
