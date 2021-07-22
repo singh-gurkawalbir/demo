@@ -165,7 +165,7 @@ export const getAllFormValuesAssociatedToMeta = (values, meta = {}) => {
 };
 
 export const getMetadatasForIndividualTabs = (meta = {}) => {
-  const { layout, fieldMap } = meta;
+  const { layout, fieldMap, actions } = meta;
 
   if (!layout || !fieldMap) {
     return null;
@@ -187,6 +187,7 @@ export const getMetadatasForIndividualTabs = (meta = {}) => {
       fieldMeta: {
         fieldMap: containerSpecificFieldMap,
         layout: container,
+        actions,
       },
     };
   });
@@ -663,7 +664,7 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  if (!sections) finalData.actions = [{ id: 'saveintegrationsettings' }];
+  if (!sections || !isFlow) finalData.actions = [{ id: 'saveintegrationsettings' }];
   else finalData.actions = [];
 
   return finalData;

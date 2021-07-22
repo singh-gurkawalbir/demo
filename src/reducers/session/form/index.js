@@ -10,7 +10,7 @@ import {
   isVisible,
 } from '../../../utils/form';
 import fields from './fields';
-import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/formFactory/utils';
+import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta, getInvalidFields} from '../../../forms/formFactory/utils';
 import trim from '../../../utils/trim';
 
 function form(state = {}, action) {
@@ -137,6 +137,11 @@ selectors.isExpansionPanelErroredForMetaForm = (
   const { fields } = selectors.formState(state, formKey) || {};
 
   return isExpansionPanelErrored(fieldMeta, fields || [], shouldShowPurelyInvalid);
+};
+selectors.isFormPurelyInvalid = (state, formKey) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return getInvalidFields(fields || [], true).length !== 0;
 };
 
 selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
