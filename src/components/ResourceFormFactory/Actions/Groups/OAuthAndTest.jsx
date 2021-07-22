@@ -6,7 +6,7 @@ import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveA
 import useHandleSaveAndAuth from './hooks/useHandleSaveAndAuth';
 import TestButton from './TestAndSave/TestButton';
 
-export default function OAuthAndCancel({
+export default function OAuthAndTest({
   resourceType,
   resourceId,
   onCancel,
