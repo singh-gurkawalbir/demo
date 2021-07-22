@@ -60,6 +60,7 @@ export const ConfirmDialog = (
     message,
     title = 'Confirm',
     isHtml = false,
+    allowedTags,
     onClose,
     maxWidth,
     buttons = [
@@ -89,7 +90,7 @@ export const ConfirmDialog = (
     <ModalDialog show onClose={handleClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
-        <RawHtml className={classes.message} html={message} />
+        <RawHtml className={classes.message} html={message} options={{allowedTags}} />
       ) : (
         <div className={classes.message}>{message}</div>
       )}

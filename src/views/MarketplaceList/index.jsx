@@ -191,6 +191,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: 'You have already used up your trial license',
         isHtml: true,
+        allowedTags: ['b'],
         message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
         buttons: [
           {
@@ -209,6 +210,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: `This will start your ${connector.trialPeriod} days free trial plan`,
         isHtml: true,
+        allowedTags: ['b'],
         message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
         buttons: [
           {
