@@ -3,12 +3,14 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
+import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
 import themeProvider from '../src/theme/themeProvider';
 import FontStager from '../src/components/FontStager';
 import { ConfirmDialogProvider } from '../src/components/ConfirmDialog';
 import rootReducer from '../src/reducers';
 import rootSaga from '../src/sagas';
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   options: {
@@ -29,6 +31,13 @@ export const globalTypes = {
   },
 };
 
+const withSnackbarProvider = (Story, context) => {
+  return (
+    <SnackbarProvider>
+      <Story {...context} />
+    </SnackbarProvider>
+  )
+}
 
 const withConfirmDialogProvider = (Story, context) => {
   return (
@@ -71,6 +80,7 @@ const withRedux = (Story, context) => {
       })) || compose;
   const store = createStore(
     rootReducer,
+    {user: { profile: {}}},
     composeEnhancers(applyMiddleware(...middleware))
   );
   sagaMiddleware.run(rootSaga);
@@ -92,6 +102,9 @@ export const decorators = [
   // possibly this does not need to be global as many
   // atomic components do not need redux.
   withRedux,
+
+  // support for 'useSnackbar' (notistack)
+  withSnackbarProvider, 
 
   // This decorator adds support for confirmation dialogs
   // The provider code is what injects the modal into the document 
