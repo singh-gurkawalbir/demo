@@ -164,6 +164,33 @@ export const getAllFormValuesAssociatedToMeta = (values, meta = {}) => {
     }, {});
 };
 
+export const getMetadatasForIndividualTabs = (meta = {}) => {
+  const { layout, fieldMap } = meta;
+
+  if (!layout || !fieldMap) {
+    return null;
+  }
+
+  const {containers} = layout;
+
+  return containers.map(container => {
+    const containerSpecificFieldMap = Object.keys(fieldMap)
+      .filter(key => !!getFieldByIdFromLayout(container, fieldMap, key))
+      .reduce((acc, curr) => {
+        acc[curr] = fieldMap[curr];
+
+        return acc;
+      }, {});
+
+    return {
+      key: container.label,
+      fieldMeta: {
+        fieldMap: containerSpecificFieldMap,
+        layout: container,
+      },
+    };
+  });
+};
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
   const addMissing = missingPath => {
