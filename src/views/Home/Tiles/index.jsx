@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import LoadResources from '../../../components/LoadResources';
-import DashboardCard from '../DashboardCard';
+import HomeCard from '../HomeCard';
 import { sortTiles } from '../util';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
@@ -33,7 +33,7 @@ export default function DashboardTiles() {
     <LoadResources
       required
       resources="published,integrations,connections,marketplacetemplates">
-      <DashboardCard sortedTiles={sortedTiles} />
+      <HomeCard sortedTiles={sortedTiles} />
     </LoadResources>
   );
 }

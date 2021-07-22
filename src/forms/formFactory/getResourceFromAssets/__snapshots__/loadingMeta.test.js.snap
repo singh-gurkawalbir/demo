@@ -7873,6 +7873,28 @@ Object {
         ],
         "required": true,
       },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -7941,6 +7963,7 @@ Object {
                 "as2.fileNameTemplate",
                 "as2.messageIdTemplate",
                 "file.xml.body",
+                "file.json.body",
                 "file.xlsx.includeHeader",
                 "file.filedefinition.rules",
                 "as2.headers",
@@ -8238,6 +8261,28 @@ Object {
         "fieldId": "file.fileName",
         "required": true,
       },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -8401,6 +8446,7 @@ Object {
                 "ftp.directoryPath",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "ftp.blobFileName",
                 "file.lookups",
               ],
@@ -10405,6 +10451,28 @@ Object {
         "fieldId": "file.fileName",
         "required": true,
       },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -10569,6 +10637,7 @@ Object {
                 "s3.bucket",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "file.lookups",
               ],
               "label": "Where would you like the files transferred?",

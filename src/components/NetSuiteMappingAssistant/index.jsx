@@ -36,6 +36,12 @@ export default function NetSuiteMappingAssistant({
 
   const netSuiteRecordMetadata = useMemo(() => {
     if (recordTypes) {
+      // although componentinventorydetail is a valid sub-record type,
+      // it is not valid from BE Apis and has same metadata as inventorydetail
+      if (netSuiteRecordType === 'componentinventorydetail') {
+        return recordTypes.find(r => r.value === 'inventorydetail');
+      }
+
       return recordTypes.find(r => r.value === netSuiteRecordType);
     }
   }, [netSuiteRecordType, recordTypes]);

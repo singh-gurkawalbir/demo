@@ -10,8 +10,8 @@ import rdbmsMappingSettings from './rdbms';
 const getFormattedLookup = (lookup, formVal) => {
   const lookupTmp = {};
 
-  if (lookup && lookup.name) {
-    lookupTmp.name = lookup.name;
+  if (formVal.name) {
+    lookupTmp.name = formVal.name;
   } else {
     // generating random lookup name
     lookupTmp.name = shortid.generate();
