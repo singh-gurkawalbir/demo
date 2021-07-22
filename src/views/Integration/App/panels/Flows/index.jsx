@@ -29,6 +29,7 @@ import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import ButtonGroup from '../../../../../components/ButtonGroup';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
+import useTriggerCancelFromContext from '../../../../../components/SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,6 +80,12 @@ const useStyles = makeStyles(theme => ({
   emptyMessageWrapper: {
     padding: theme.spacing(1, 2),
   },
+  displayNone: {
+    display: 'none',
+    '& + div': {
+      display: 'none',
+    },
+  },
   flowTitle: {
     position: 'relative',
     paddingTop: theme.spacing(1),
@@ -118,10 +125,11 @@ export const useActiveTab = () => {
   return {externalTabState, setExternalTabState, index: 0 };
 };
 
-export const ActionsPanel = ({actions, actionProps}) => {
+export const ActionsPanel = ({actions, actionProps, ...rest}) => {
   const classes = useStyles();
 
   if (!actions || !actions.length) { return null; }
+  console.log('here ', actionProps, rest);
 
   return (
     <div className={classes.actions}>
@@ -134,6 +142,7 @@ export const ActionsPanel = ({actions, actionProps}) => {
               key={id}
               dataTest={id}
               {...actionProps}
+              {...rest}
             />
           );
         })}
@@ -146,6 +155,7 @@ export const ActionsPanel = ({actions, actionProps}) => {
 const IASettingsActionsGroupMeta = [{id: 'integrationsettings'}];
 const IAFormActionsPanel = ({isDrawer, onCancel, ...rest}) => {
   console.log('check ', isDrawer);
+
   if (isDrawer) {
     return <ActionsPanel {...rest} onCancel={onCancel} actions={IASettingsActionsGroupMeta} />;
   }
@@ -186,30 +196,33 @@ const IATabIAForm = props => {
 const TabLabel = ({label, formKey}) => {
   const isValid = useSelector(state => selectors.formState(state, formKey)?.isValid);
 
-  console.log('check ', label, formKey);
+  if (!isValid) { return <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography>; }
 
-  return isValid
-    ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography>
-    : label;
+  return label;
 };
 
-const SelectTabForm = ({children, selectedTab}) => {
-  console.error('tabs ', React.Children.toArray(children), children);
+const AllTabForms = ({formMetas, selectedTab, ...props}) => {
+  const classes = useStyles();
 
-  const tabs = React.Children.toArray(children);
+  return (
+    <>
+      {formMetas.map(({key, fieldMeta}, index) => {
+        console.log('check ', index !== selectedTab);
 
-  return tabs[selectedTab] || null;
+        return (
+          <IATabIAForm
+            {...props}
+            fieldMeta={fieldMeta}
+            className={({[classes.displayNone]: index !== selectedTab})}
+            formKey={key}
+            key={key} />
+        );
+      })}
+    </>
+
+  );
 };
 
-const AllTabForms = ({formMetas, ...props}) => (
-  <>
-
-    {formMetas.map(({key, fieldMeta}) =>
-      <IATabIAForm {...props} fieldMeta={fieldMeta} key={key} />
-
-    )}
-  </>
-);
 const IAForms = props => {
   const {fieldMeta} = props;
   const classes = useStyles();
@@ -222,10 +235,9 @@ const IAForms = props => {
   if (layout.type !== 'tabIA') {
     <IATabIAForm
       {...props}
+      formKey={integrationSettingsKey}
     />;
   }
-
-  console.log('check ', formMetas);
 
   return (
     <div className={classes.tabComponentRoot}>
@@ -255,9 +267,10 @@ const IAForms = props => {
 
       </Tabs>
       <div className={classes.panelContainer}>
-        <SelectTabForm selectedTab={selectedTab} >
-          <AllTabForms {...props} formMetas={formMetas} />
-        </SelectTabForm>
+        <AllTabForms
+          {...props} formMetas={formMetas}
+          selectedTab={selectedTab}
+        />
       </div>
     </div>
 
@@ -266,16 +279,11 @@ const IAForms = props => {
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
   const { integrationId, flowId, sectionId, isDrawer, onCancel } = props;
-  const formKey = integrationSettingsKey;
   const allProps = useMemo(() => ({
     ...props,
     resourceType: 'integrations',
     resourceId: integrationId,
   }), [integrationId, props]);
-
-  const allActionProps = useMemo(() => ({
-    ...allProps, formKey,
-  }), [allProps, formKey]);
 
   console.log('see ', isDrawer);
 
@@ -298,7 +306,6 @@ export const IAFormStateManager = props => {
   return (
     <IAForms
       {...allProps}
-      actionProps={allActionProps}
       isDrawer={isDrawer}
       onCancel={onCancel}
      />
