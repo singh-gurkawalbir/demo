@@ -680,7 +680,12 @@ describe('getResourceDetails', () => {
 describe('getExportOperationDetails', () => {
   const testCases = [
     [
-      { headers: {}, pathParameters: [], queryParameters: [] },
+      {
+        headers: {},
+        headersMetadata: [],
+        pathParameters: [],
+        queryParameters: [],
+      },
       undefined,
       undefined,
       undefined,
@@ -689,6 +694,7 @@ describe('getExportOperationDetails', () => {
     [
       {
         headers: {},
+        headersMetadata: [],
         pathParameters: [],
         queryParameters: [],
         id: 'op2',
@@ -752,6 +758,7 @@ describe('getExportOperationDetails', () => {
     [
       {
         headers: {},
+        headersMetadata: [],
         pathParameters: [],
         queryParameters: [],
         id: 'op2',
@@ -817,6 +824,7 @@ describe('getExportOperationDetails', () => {
     [
       {
         headers: {},
+        headersMetadata: [],
         pathParameters: [],
         queryParameters: [],
         id: 'op2',
@@ -856,6 +864,7 @@ describe('getExportOperationDetails', () => {
     [
       {
         headers: {},
+        headersMetadata: [],
         pathParameters: [],
         queryParameters: [],
         id: 'op2',
@@ -897,6 +906,7 @@ describe('getExportOperationDetails', () => {
         some: 'r1',
         allowUndefinedResource: true,
         headers: { h1: 'v1', h2: 'v2' },
+        headersMetadata: [],
         paging: { abc: 'def' },
         queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
         successMediaType: 'something',
@@ -945,6 +955,7 @@ describe('getExportOperationDetails', () => {
         some: 'r1',
         allowUndefinedResource: false,
         headers: { h1: 'v1', h2: 'v22', h3: 'v3' },
+        headersMetadata: [],
         paging: { abc: 'def' },
         queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
         successMediaType: 'something',
@@ -2456,6 +2467,7 @@ describe('convertFromExport', () => {
             hardcoded: 'header',
             manual: '',
           },
+          headersMetadata: [],
           id: 'ep1',
         },
         pathParams: {},
@@ -2518,6 +2530,7 @@ describe('convertFromExport', () => {
             hardcoded: 'header',
             manual: '',
           },
+          headersMetadata: [],
           pathParameters: [],
           queryParameters: [],
           url: 'some/unique/url',
@@ -2556,6 +2569,7 @@ describe('convertFromExport', () => {
             hardcoded: 'header',
             manual: '',
           },
+          headersMetadata: [],
           id: 'ep2',
           paging: {
             nextPagePath: 'npp',
@@ -2636,6 +2650,7 @@ describe('convertFromImport', () => {
       operation: 'create_or_update_contacts',
       operationDetails: {
         headers: {},
+        headersMetadata: [],
         howToFindIdentifier: {},
         id: 'create_or_update_contacts',
         method: [
@@ -2758,6 +2773,7 @@ describe('convertFromImport', () => {
         operationDetails: {
           askForHowToGetIdentifier: true,
           headers: {},
+          headersMetadata: [],
           howToFindIdentifier: {},
           id: 'delete_contacts',
           method: 'DELETE',
@@ -2857,6 +2873,7 @@ describe('convertFromImport', () => {
         operationDetails: {
           askForHowToGetIdentifier: true,
           headers: {},
+          headersMetadata: [],
           howToFindIdentifier: {},
           id: 'delete_contacts',
           method: 'DELETE',
@@ -2951,6 +2968,7 @@ describe('convertFromImport', () => {
       operation: 'create_or_update_contacts',
       operationDetails: {
         headers: {},
+        headersMetadata: [],
         howToFindIdentifier: {},
         id: 'create_or_update_contacts',
         method: [
