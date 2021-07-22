@@ -1,70 +1,31 @@
-import { difference } from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../actions';
-import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
-import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
-import ResourceDrawer from '../../components/drawer/Resource';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
-import DashboardPageBar from './PageBar';
-import DashboardTiles from './Tiles';
-import InstallZip from './InstallZip';
-import OfflineConnectionDrawer from './OfflineConnectionDrawer';
-
-// This component does not return a jsx ..it is sort of a hook
-// is there any better pattern to this
-const LoadTiles = () => {
-  const dispatch = useDispatch();
-  const ssLinkedConnections = useSelector(state =>
-    selectors.suiteScriptLinkedConnections(state)
-  );
-
-  const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
-    []
-  );
-
-  useEffect(() => {
-    const ssLinkedConnectionIds = ssLinkedConnections.map(c => c._id);
-    const newSuiteScriptResourcesToLoad = difference(
-      ssLinkedConnectionIds,
-      suiteScriptResourcesToLoad
-    );
-
-    if (newSuiteScriptResourcesToLoad.length > 0) {
-      setSuiteScriptResourcesToLoad(
-        suiteScriptResourcesToLoad.concat(newSuiteScriptResourcesToLoad)
-      );
-    }
-  }, [ssLinkedConnections, suiteScriptResourcesToLoad]);
-
-  useEffect(() => {
-    dispatch(actions.resource.requestCollection('tiles'));
-  }, [dispatch]);
-
-  useEffect(() => {
-    suiteScriptResourcesToLoad.forEach(connectionId =>
-      dispatch(
-        actions.resource.requestCollection(
-          `suitescript/connections/${connectionId}/tiles`
-        )
-      )
-    );
-  }, [dispatch, suiteScriptResourcesToLoad]);
-
-  return null;
-};
+import Tabs from './Tabs';
+import LoadResources from '../../components/LoadResources';
+import CeligoPageBar from '../../components/CeligoPageBar';
+import getRoutePath from '../../utils/routePaths';
+import {HOME_PAGE_PATH} from '../../utils/constants';
+import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 export default function Dashboard() {
+  const history = useHistory();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
+  if (!isUserInErrMgtTwoDotZero) {
+    history.push(getRoutePath(HOME_PAGE_PATH));
+
+    return null;
+  }
+
   return (
-    <>
-      <LoadTiles />
-      <InstallZip />
-      <ResourceDrawer />
-      <DownloadIntegrationDrawer />
-      <InstallIntegrationDrawer />
-      <OfflineConnectionDrawer />
-      <DashboardPageBar />
-      <DashboardTiles />
-    </>
+    <LoadResources required resources="flows,integrations">
+      <CeligoPageBar title="Dashboard" />
+      <Tabs />
+      <QueuedJobsDrawer />
+    </LoadResources>
   );
 }
