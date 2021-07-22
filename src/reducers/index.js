@@ -5690,8 +5690,13 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
+  const fieldsWithOnlyV2DataSupport = [
+    'file.backupPath',
+    'traceKeyTemplate',
+    'file.json.body',
+  ];
 
-  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath' || fieldId === 'traceKeyTemplate') return true;
+  if (editorType === 'csvGenerator' || fieldsWithOnlyV2DataSupport.includes(fieldId)) return true;
 
   return false;
 };
@@ -5740,6 +5745,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     '_relativeURI',
     '_query',
     'file.xml.body',
+    'file.json.body',
   ];
   const uriFields = [
     'http.relativeURI',

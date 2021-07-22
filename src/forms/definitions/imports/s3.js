@@ -158,6 +158,7 @@ export default {
           's3.bucket',
           'file.fileName',
           'file.xml.body',
+          'file.json.body',
           'file.lookups',
         ],
       },
