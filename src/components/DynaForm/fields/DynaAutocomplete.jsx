@@ -142,6 +142,7 @@ export default function DynaAutocomplete(props) {
           <Autocomplete
             disableClearable
             freeSolo
+            disabled={disabled}
             className={classes.inputTextField}
             options={options}
             onOpen={() => { setModalOpen(true); }}

@@ -199,7 +199,7 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
         <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
 
         <DrawerContent>
-          <ErrorsList integrationId={integrationId} childId={childId} />
+          <ErrorsList integrationId={integrationId || flow._integrationId} childId={childId} />
         </DrawerContent>
       </RightDrawer>
     </LoadResources>
