@@ -1600,7 +1600,7 @@ const job = {
   dashboard: {
     running: {
       requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, {nextPageURL}),
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
@@ -1616,11 +1616,11 @@ const job = {
       clear: () => action(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR),
       error: () => action(actionTypes.JOB.DASHBOARD.RUNNING.ERROR),
       noInProgressJobs: () => action(actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS),
-      receivedFamily: ({collection}) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
+      receivedFamily: ({ collection }) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
       requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, {nextPageURL}),
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
