@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 export default function AmpersandRoutesHandler({ match }) {
   const {
@@ -38,7 +39,7 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/create'):
       return (
         <Redirect
-          to={getRoutePath(`/dashboard/add/integrations/new-${shortid.generate()}`)}
+          to={getRoutePath(`${HOME_PAGE_PATH}/add/integrations/new-${shortid.generate()}`)}
       />
       );
     case getRoutePath('/:resourceType/create'):
@@ -193,6 +194,6 @@ export default function AmpersandRoutesHandler({ match }) {
       );
 
     default:
-      return <Redirect to={getRoutePath('/dashboard')} />;
+      return <Redirect to={getRoutePath(HOME_PAGE_PATH)} />;
   }
 }

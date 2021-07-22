@@ -114,9 +114,17 @@ export function platformLicenseActionDetails(license) {
   if (!license) {
     return licenseActionDetails;
   }
-  const expiresInDays = license && Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
+  const expiresInDays = Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
 
-  if (license.tier === 'none') {
+  if (license.resumable) {
+    licenseActionDetails = {
+      action: 'resume',
+    };
+  } else if (license.expires && expiresInDays <= 0) {
+    licenseActionDetails = {
+      action: 'expired',
+    };
+  } else if (license.tier === 'none') {
     if (!license.trialEndDate) {
       licenseActionDetails = {
         action: 'startTrial',
@@ -124,12 +132,7 @@ export function platformLicenseActionDetails(license) {
       };
     }
   } else if (license.tier === 'free') {
-    if (!license.trialEndDate) {
-      licenseActionDetails = {
-        action: 'startTrial',
-        label: 'Get unlimited flows',
-      };
-    } else if (license.status === 'TRIAL_EXPIRED') {
+    if (license.status === 'TRIAL_EXPIRED') {
       licenseActionDetails = {
         action: 'upgrade',
         label: 'UPGRADE NOW',
@@ -147,15 +150,17 @@ export function platformLicenseActionDetails(license) {
         };
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;
       }
+    } else if (license.type === 'endpoint' && !license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'Get unlimited flows',
+      };
+    } else if (!license.trialEndDate && !license.expires) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'Get unlimited flows',
+      };
     }
-  } else if (license?.resumable) {
-    licenseActionDetails = {
-      action: 'resume',
-    };
-  } else if (expiresInDays <= 0) {
-    licenseActionDetails = {
-      action: 'expired',
-    };
   }
 
   licenseActionDetails.upgradeRequested = license.upgradeRequested;

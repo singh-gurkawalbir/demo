@@ -1595,6 +1595,40 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
+  dashboard: {
+    running: {
+      requestCollection: nextPageURL =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, {nextPageURL}),
+      receivedCollection: ({ collection, nextPageURL, loadMore }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
+          collection,
+          nextPageURL,
+          loadMore,
+        }),
+      cancel: ({ jobId }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.CANCEL, { jobId }),
+      canceled: ({ jobId }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.CANCELED, { jobId }),
+      requestInProgressJobStatus: () =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS),
+      clear: () => action(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR),
+      error: () => action(actionTypes.JOB.DASHBOARD.RUNNING.ERROR),
+      noInProgressJobs: () => action(actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS),
+      receivedFamily: ({collection}) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
+    },
+    completed: {
+      requestCollection: nextPageURL =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, {nextPageURL}),
+      receivedCollection: ({ collection, nextPageURL, loadMore }) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
+          collection,
+          nextPageURL,
+          loadMore,
+        }),
+      clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
+      error: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.ERROR),
+    },
+  },
   requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,

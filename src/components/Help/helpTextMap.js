@@ -2166,6 +2166,8 @@ export default {
   'users.accountSSOLinked': ' This field indicates whether the user has successfully signed in using the account’s SSO settings. If yes, the user can only sign in to integrator.io using this account’s SSO settings. If no, the user can sign in to integrator.io using other authentication methods.',
   'users.requireAccountSSO': 'This field indicates whether the user is required to sign in with the account’s SSO settings.',
   'users.actions': 'These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.',
+  'accountdashboard.numRuns': 'The number of times the flow has completed for the selected date range.',
+  'accountdashboard.avgRuntime': 'The average time the flow takes to complete running. The run time includes the time the flow is “Waiting in queue” status.',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':
