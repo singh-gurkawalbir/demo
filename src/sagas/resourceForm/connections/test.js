@@ -666,7 +666,11 @@ describe('pingConnectionWithAbort', () => {
       JSON.stringify(raceBetweenApiCallAndAbort)
     );
 
-    expect(saga.next(response).value).toEqual(put(actions.asyncTask.success(getAsyncKey('connections', resourceId))));
+    expect(saga.next(response).value).toEqual(
+      put(actions.asyncTask.success(
+        getAsyncKey('connections', resourceId))
+      )
+    );
     expect(saga.next(response).value).toEqual(
       put(
         actions.resource.connections.testCancelled(
