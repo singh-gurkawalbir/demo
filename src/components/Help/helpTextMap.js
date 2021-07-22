@@ -1841,7 +1841,7 @@ export default {
   'import.rdbms.lookups.query':
     'The query that fetches records to be exported.',
   'import.lookups.name':
-    'Enter a unique name so that you can identify this lookup later.',
+    'Please enter the name of the lookup. If no name is provided, then integrator.io will generate a random string for the name field.',
   'import.mongodb.lookupType':
     'There are two ways to identify existing records. Either by testing for the existence of a field value on the export record (such as id), or by performing a lookup against the destination application. Choose the option, "Records have a specific field populated" if you can identify existing records by examining the content of your export records. If on the other hand a lookup is necessary, select the "Run a dynamic search against MongoDB" option. After making this selection, other fields will become available to describe how to define your lookup.',
   'import.oneToMany':
