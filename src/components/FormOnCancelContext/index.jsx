@@ -4,7 +4,7 @@ import { selectors } from '../../reducers';
 
 const FormOnCancelContext = React.createContext({
   setCancelTriggered: () => {},
-  isCancelTriggered: false,
+  cancelTriggeredForAsyncKey: null,
 });
 
 export const FormOnCancelProvider = ({ children }) => {
