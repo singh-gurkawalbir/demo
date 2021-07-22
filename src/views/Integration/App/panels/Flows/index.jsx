@@ -29,7 +29,6 @@ import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import ButtonGroup from '../../../../../components/ButtonGroup';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
-import useTriggerCancelFromContext from '../../../../../components/SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -129,7 +128,6 @@ export const ActionsPanel = ({actions, actionProps, ...rest}) => {
   const classes = useStyles();
 
   if (!actions || !actions.length) { return null; }
-  console.log('here ', actionProps, rest);
 
   return (
     <div className={classes.actions}>
@@ -154,9 +152,9 @@ export const ActionsPanel = ({actions, actionProps, ...rest}) => {
 
 const IASettingsActionsGroupMeta = [{id: 'integrationsettings'}];
 const IAFormActionsPanel = ({isDrawer, onCancel, ...rest}) => {
-  console.log('check ', isDrawer);
-
   if (isDrawer) {
+    console.log('check ', rest);
+
     return <ActionsPanel {...rest} onCancel={onCancel} actions={IASettingsActionsGroupMeta} />;
   }
 
@@ -206,18 +204,14 @@ const AllTabForms = ({formMetas, selectedTab, ...props}) => {
 
   return (
     <>
-      {formMetas.map(({key, fieldMeta}, index) => {
-        console.log('check ', index !== selectedTab);
-
-        return (
-          <IATabIAForm
-            {...props}
-            fieldMeta={fieldMeta}
-            className={({[classes.displayNone]: index !== selectedTab})}
-            formKey={key}
-            key={key} />
-        );
-      })}
+      {formMetas.map(({key, fieldMeta}, index) => (
+        <IATabIAForm
+          {...props}
+          fieldMeta={fieldMeta}
+          className={({[classes.displayNone]: index !== selectedTab})}
+          formKey={key}
+          key={key} />
+      ))}
     </>
 
   );
@@ -232,48 +226,50 @@ const IAForms = props => {
 
   const [selectedTab, setSelectedTab] = useState(0);
 
-  if (layout.type !== 'tabIA') {
-    <IATabIAForm
-      {...props}
-      formKey={integrationSettingsKey}
-    />;
+  if (layout.type === 'tabIA') {
+    return (
+      <div className={classes.tabComponentRoot}>
+        <Tabs
+          value={selectedTab}
+          variant="scrollable"
+          orientation="vertical"
+          indicatorColor="primary"
+          textColor="primary"
+          scrollButtons="auto"
+          onChange={(evt, value) => {
+            setSelectedTab(value);
+          }}
+   >
+          {formMetas.map(({ key }) => (
+            <Tab
+              label={(
+                <TabLabel
+                  label={key}
+                  formKey={key}
+              />
+)}
+              key={key}
+              data-test={key}
+            />
+          ))}
+
+        </Tabs>
+        <div className={classes.panelContainer}>
+          <AllTabForms
+            {...props} formMetas={formMetas}
+            selectedTab={selectedTab}
+        />
+        </div>
+      </div>
+
+    );
   }
 
   return (
-    <div className={classes.tabComponentRoot}>
-      <Tabs
-        value={selectedTab}
-        variant="scrollable"
-        orientation="vertical"
-        indicatorColor="primary"
-        textColor="primary"
-        scrollButtons="auto"
-        onChange={(evt, value) => {
-          setSelectedTab(value);
-        }}
-   >
-        {formMetas.map(({ key }) => (
-          <Tab
-            label={(
-              <TabLabel
-                label={key}
-                formKey={key}
-              />
-)}
-            key={key}
-            data-test={key}
-            />
-        ))}
-
-      </Tabs>
-      <div className={classes.panelContainer}>
-        <AllTabForms
-          {...props} formMetas={formMetas}
-          selectedTab={selectedTab}
-        />
-      </div>
-    </div>
-
+    <IATabIAForm
+      {...props}
+      formKey={integrationSettingsKey}
+          />
   );
 };
 export const IAFormStateManager = props => {
@@ -284,8 +280,6 @@ export const IAFormStateManager = props => {
     resourceType: 'integrations',
     resourceId: integrationId,
   }), [integrationId, props]);
-
-  console.log('see ', isDrawer);
 
   useEffect(() => {
     dispatch(

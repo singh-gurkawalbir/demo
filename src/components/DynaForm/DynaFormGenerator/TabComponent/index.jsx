@@ -178,10 +178,7 @@ export function SuiteScriptTabIACompleteSave(props) {
 // this is necessary when we clone props we want all of its children to receive them
 function TabWithCompleteSave(props) {
   return (
-    <>
-      <FormGenerator {...props} />
-      <IntegrationSettingsSaveButton {...props} />
-    </>
+    <FormGenerator {...props} />
   );
 }
 
