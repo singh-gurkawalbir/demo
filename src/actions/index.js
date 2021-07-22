@@ -508,7 +508,7 @@ const connectors = {
         _integrationId,
       }),
     error: _integrationId =>
-      action(actionTypes.CONNECTORS.ERROR, {
+      action(actionTypes.CONNECTORS.PUBLISH.ERROR, {
         _integrationId,
       }),
   },
