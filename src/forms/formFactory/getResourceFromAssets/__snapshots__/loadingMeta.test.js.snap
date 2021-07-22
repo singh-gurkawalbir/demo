@@ -3375,9 +3375,6 @@ Object {
           },
         ],
       },
-      Object {
-        "id": "cancel",
-      },
     ],
     "fieldMap": Object {
       "apiIdentifier": Object {
