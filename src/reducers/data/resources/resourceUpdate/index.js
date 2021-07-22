@@ -2,7 +2,7 @@ import produce from 'immer';
 import { isEqual } from 'lodash';
 import uniqBy from 'lodash/uniqBy';
 import actionTypes from '../../../../actions/types';
-import { convertOldFlowSchemaToNewOne } from '../../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, populateRestSchema } from '../../../../utils/flows';
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
@@ -38,6 +38,7 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
   }
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
+  if (type === 'exports') resource = populateRestSchema(resource);
 
   if (!draft[type]) {
     draft[type] = [resource];
@@ -110,6 +111,22 @@ const addResourceCollection = (draft, resourceType, collection) => {
     const newCollection = collection?.map?.(convertOldFlowSchemaToNewOne);
 
     updateStateWhenValueDiff(draft, 'flows', newCollection || []);
+
+    return;
+  }
+
+  // we need to convert http subdoc to rest subdoc for REST exports.
+  // Once rest is deprecated in backend, UI still needs to support REST forms and REST export form needs rest subdoc
+  if (resourceType === 'exports') {
+    let newCollection;
+
+    try {
+      newCollection = collection?.map?.(populateRestSchema);
+    } catch (e) {
+      newCollection = collection;
+    }
+
+    updateStateWhenValueDiff(draft, 'exports', newCollection || []);
 
     return;
   }

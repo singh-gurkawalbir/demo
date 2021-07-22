@@ -763,6 +763,12 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  azurestorageaccount: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
   as2: [
     {
       label: 'Transfer files out of source application',
@@ -820,6 +826,16 @@ export const destinationOptions = {
     },
   ],
   googledrive: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  azurestorageaccount: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',

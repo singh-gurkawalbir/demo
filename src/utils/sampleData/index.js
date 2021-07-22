@@ -367,6 +367,8 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
   const rule = [];
 
   paths.forEach(path => {
+    if (!path || typeof path !== 'string') { return; }
+
     const extract = path;
     const generate = path
       .replace(/\[0]\._$/, '')

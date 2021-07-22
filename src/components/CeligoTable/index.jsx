@@ -42,9 +42,6 @@ const useStyles = makeStyles(theme => ({
   actionColHead: {
     width: 125,
   },
-  tableContainer: {
-    overflowX: 'auto',
-  },
 }));
 
 const emptyObj = {};
@@ -81,9 +78,7 @@ export default function CeligoTable({
             useColumns={useColumns}
             filterKey={filterKey}
             useRowActions={useRowActions}
-
-  />
-
+          />
           <TableBodyContent
             rowKey={rowKey}
             data={data}

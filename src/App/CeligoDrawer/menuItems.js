@@ -1,4 +1,5 @@
 import HomeIcon from '../../components/icons/HomeIcon';
+import DashboardIcon from '../../components/icons/DashboardIcon';
 import ToolsIcon from '../../components/icons/ToolsIcon';
 import ResourcesIcon from '../../components/icons/ResourcesIcon';
 import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
@@ -17,7 +18,7 @@ import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL } from '../../utils/constants';
+import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL, HOME_PAGE_PATH} from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
@@ -30,7 +31,8 @@ export default function menuItems(
   accessLevel,
   integrations,
   canUserPublish,
-  marketplaceConnectors
+  marketplaceConnectors,
+  isUserInErrMgtTwoDotZero,
 ) {
   const isDeveloper = userProfile && userProfile.developer;
   let items = [
@@ -39,10 +41,16 @@ export default function menuItems(
       Icon: HomeIcon,
       path: '/',
       routeProps: {
-        path: [getRoutePath(''), getRoutePath('/dashboard')],
+        path: [getRoutePath(''), getRoutePath(HOME_PAGE_PATH)],
         exact: true,
       },
     },
+    ...(isUserInErrMgtTwoDotZero
+      ? [{ label: 'Dashboard',
+        Icon: DashboardIcon,
+        path: '/dashboard',
+        dataTest: 'account-dashboard' }]
+      : []),
     {
       label: 'Tools',
       routeProps: [

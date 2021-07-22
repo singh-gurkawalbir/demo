@@ -38,12 +38,14 @@ export default {
       id: 'http.unencrypted.storageAccount',
       type: 'text',
       label: 'Storage Account Name',
+      helpKey: 'azurestorageaccount.connecton.http.unencrypted.storageAccount',
       required: true,
     },
     'http.unencrypted.tenantId': {
       id: 'http.unencrypted.tenantId',
       type: 'text',
       label: 'Tenant ID',
+      helpKey: 'azurestorageaccount.connecton.http.unencrypted.tenantId',
       required: true,
     },
     'http._iClientId': {
@@ -59,6 +61,7 @@ export default {
       fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    fileAdvanced: {formId: 'fileAdvanced'},
   },
   layout: {
     type: 'collapse',
@@ -67,7 +70,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.unencrypted.storageAccount', 'http.unencrypted.tenantId', 'http._iClientId'] },
-      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['fileAdvanced', 'httpAdvanced'] },
     ],
   },
 };

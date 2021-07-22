@@ -270,6 +270,7 @@ export const JOB_STATUS = Object.freeze({
   QUEUED: 'queued',
   RUNNING: 'running',
   RETRYING: 'retrying',
+  CANCELING: 'canceling',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
@@ -644,7 +645,7 @@ export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
-export const FILE_PROVIDER_ASSISTANTS = ['googledrive'];
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
 export const CONNECTORS_TO_IGNORE = ['yammer',
   'hybris',
   'etsy',
@@ -700,3 +701,4 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 ]);
 
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+export const HOME_PAGE_PATH = '/home';
