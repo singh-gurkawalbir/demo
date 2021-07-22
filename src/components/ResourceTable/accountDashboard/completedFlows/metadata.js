@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
+import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import NameCell from '../../commonCells/Name';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
@@ -94,7 +94,7 @@ export default {
     },
     {
       key: 'numRuns',
-      heading: 'Runs',
+      HeaderValue: () => <HeaderWithHelpText title="Runs" helpKey="accountdashboard.numRuns" />,
       orderBy: 'numRuns',
       Value: props => {
         const {rowData: r} = props;
@@ -108,7 +108,7 @@ export default {
     },
     {
       key: 'avgRuntime',
-      heading: 'Average run time',
+      HeaderValue: () => <HeaderWithHelpText title="Average run time" helpKey="accountdashboard.avgRuntime" />,
       Value: ({rowData: r}) => getTimeString(r.avgRuntime),
       width: '10%',
       orderBy: 'avgRuntime',
