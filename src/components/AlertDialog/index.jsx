@@ -11,7 +11,7 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
-import { emptyList } from '../../utils/constants';
+import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
 
 const contentWrapper = {
   minWidth: 432,
@@ -33,7 +33,7 @@ const LoggedInWithADifferentAccount = () => (
     <Button
       data-test="ok"
       onClick={() => {
-        window.location.replace(getRoutePath('/dashboard'));
+        window.location.replace(getRoutePath(HOME_PAGE_PATH));
       }}
       variant="outlined"
       color="primary">

@@ -110,8 +110,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
-          helpText:
-            'Name of the lookups that will be exposed to the mapping to refer.',
+          helpKey: 'import.lookups.name',
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',

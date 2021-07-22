@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DashboardCard({ sortedTiles }) {
+export default function HomeCard({ sortedTiles }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const preferences = useSelector(state => selectors.userPreferences(state));

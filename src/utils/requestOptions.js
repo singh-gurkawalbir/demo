@@ -2,6 +2,7 @@ import moment from 'moment';
 import actionTypes from '../actions/types';
 import { JOB_TYPES, JOB_STATUS } from './constants';
 import { getStaticCodesList } from './listenerLogs';
+import { getSelectedRange } from './flowMetrics';
 
 let path;
 
@@ -362,14 +363,16 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
       let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
-      const statusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
-      const { range } = filters || {};
+      const { range, status } = filters || {};
       const queryParams = [];
+      const statusFilter = status?.length ? status : [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const {startDate, endDate} = getSelectedRange(range) || {};
 
       statusFilter.forEach(status => queryParams.push(`status=${status}`));
-      if (range?.startDate && range?.endDate) {
-        queryParams.push(`createdAt_gte=${moment(range.startDate).toISOString()}`);
-        queryParams.push(`createdAt_lte=${moment(range.endDate).toISOString()}`);
+
+      if (startDate && endDate) {
+        queryParams.push(`createdAt_gte=${moment(startDate).toISOString()}`);
+        queryParams.push(`createdAt_lte=${moment(endDate).toISOString()}`);
       }
       path += `&${queryParams.join('&')}`;
 
