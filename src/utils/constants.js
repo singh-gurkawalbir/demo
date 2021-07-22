@@ -269,6 +269,7 @@ export const JOB_STATUS = Object.freeze({
   QUEUED: 'queued',
   RUNNING: 'running',
   RETRYING: 'retrying',
+  CANCELING: 'canceling',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
@@ -699,3 +700,4 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 ]);
 
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+export const HOME_PAGE_PATH = '/home';

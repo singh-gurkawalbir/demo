@@ -13,6 +13,7 @@ import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import getRoutePath from '../../../utils/routePaths';
 import { DrawerProvider } from './DrawerContext';
+import {HOME_PAGE_PATH} from '../../../utils/constants';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -78,7 +79,7 @@ export default function RightDrawer({
   const location = useLocation();
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const showBanner = location.pathname.includes(getRoutePath('dashboard')) && bannerOpened;
+  const showBanner = location.pathname.includes(getRoutePath(HOME_PAGE_PATH)) && bannerOpened;
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       return onClose();

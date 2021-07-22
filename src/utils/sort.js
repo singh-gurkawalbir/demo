@@ -47,3 +47,6 @@ export const celigoListCompare = (a, b) => {
 
   return stringCompare('id')(a, b);
 };
+
+export const comparer = ({ order, orderBy }) =>
+  order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);

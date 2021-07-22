@@ -10,7 +10,7 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH} from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -524,7 +524,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH)
       );
     }
 
@@ -665,7 +665,7 @@ export function* deleteIntegration({integrationId}) {
   yield put(actions.resource.requestCollection('integrations', null, true));
   yield put(actions.resource.requestCollection('tiles', null, true));
   yield put(actions.resource.requestCollection('scripts', null, true));
-  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
+  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
 export function* getResourceCollection({ resourceType, refresh}) {
