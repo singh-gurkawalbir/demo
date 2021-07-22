@@ -6,9 +6,8 @@ import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS, MAPPINGS_FORM_KEY } from '../../utils/constants';
 import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
-import { mappingsFormKey } from '../../views/MappingDrawer';
 
 const useStyles = makeStyles({
   previewButton: {
@@ -63,7 +62,7 @@ export default function ButtonPanel({importId, disabled, onClose}) {
           status={formStatus}
           onSave={handleSaveClick}
           onClose={onClose}
-          asyncKey={mappingsFormKey}
+          asyncKey={MAPPINGS_FORM_KEY}
           shouldHandleCancel
         />
         {showPreviewButton && (

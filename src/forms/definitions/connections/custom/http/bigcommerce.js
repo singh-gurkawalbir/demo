@@ -86,7 +86,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
+      defaultValue: r => r?.http?.auth?.type || '',
       label: 'Authentication type',
       helpKey: 'bigcommerce.connection.http.auth.type',
       options: [
@@ -208,8 +208,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          // TODO: check this is correct or not
-          is: ['', 'basic'],
+          is: [''],
         },
       ],
     },
@@ -227,7 +226,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token'],
+          is: ['token', 'basic'],
         },
       ],
     },

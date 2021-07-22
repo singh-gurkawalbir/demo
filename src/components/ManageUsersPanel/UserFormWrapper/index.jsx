@@ -5,12 +5,12 @@ import UserForm from './UserForm';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  INVITE_USER_DRAWER_FORM_KEY,
 } from '../../../utils/constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import useCommStatus from '../../../hooks/useCommStatus';
-import { INVITE_USER_DRAWER_FORM_KEY } from '../Drawers/InviteUser';
 
 export default function UserFormWrapper({ userId, dataPublic }) {
   const dispatch = useDispatch();

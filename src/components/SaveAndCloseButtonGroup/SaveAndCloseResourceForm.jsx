@@ -6,6 +6,7 @@ import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks
 import useHandleCancel from './hooks/useHandleCancel';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
 import useHandleCloseOnSave from './hooks/useHandleCloseOnSave';
+import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
 
 // All onSave functions are automatically trimmed
 export default function SaveAndCloseResourceForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, status}) {
@@ -17,6 +18,7 @@ export default function SaveAndCloseResourceForm({formKey, onClose, onSave, disa
   const finalHandleSaveAndClose = (disableOnCloseAfterSave) ? handleSave : handleSaveAndClose;
   const handleCancelClick = useHandleCancel({formKey, onClose, handleSave: finalHandleSaveAndClose});
 
+  useClearAsyncStateOnUnmount(formKey);
   useTriggerCancelFromContext(formKey, handleCancelClick);
 
   return (

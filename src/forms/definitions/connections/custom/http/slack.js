@@ -147,7 +147,7 @@ export default {
       ],
     },
     {
-      id: 'testandsavegroup',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'http.auth.type',

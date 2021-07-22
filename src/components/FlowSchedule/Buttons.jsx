@@ -1,7 +1,6 @@
 import moment from 'moment';
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../actions';
 import { sanitizePatchSet } from '../../forms/formFactory/utils';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';

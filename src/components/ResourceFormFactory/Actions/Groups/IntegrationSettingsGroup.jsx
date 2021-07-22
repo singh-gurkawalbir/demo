@@ -4,18 +4,16 @@ import { selectors } from '../../../../reducers';
 import SaveAndCloseButtonGroupAuto from '../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import useHandleIntegrationSettings from './hooks/useHandleIntegrationSettings';
 
-export default function IntegrationSettings(props) {
-  const {
-    integrationId,
-    childId,
-    flowId,
-    postProcessValuesFn,
-    sectionId,
-    formKey,
-    onCancel,
-    disabled,
-  } = props;
-
+export default function IntegrationSettings({
+  integrationId,
+  childId,
+  flowId,
+  postProcessValuesFn,
+  sectionId,
+  formKey,
+  onCancel,
+  disabled,
+}) {
   const onSave = useHandleIntegrationSettings({
     integrationId,
     childId,
