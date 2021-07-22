@@ -40,9 +40,9 @@ export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
 ];
 
 export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
-  {_id: JOB_STATUS.RUNNING, name: JOB_UI_STATUS[JOB_STATUS.RUNNING]},
-  {_id: JOB_STATUS.CANCELING, name: JOB_UI_STATUS[JOB_STATUS.CANCELING]},
-  {_id: JOB_STATUS.QUEUED, name: JOB_UI_STATUS[JOB_STATUS.QUEUED]}];
+  {_id: JOB_STATUS.RUNNING, name: 'In progress'},
+  {_id: JOB_STATUS.CANCELING, name: 'Canceling'},
+  {_id: JOB_STATUS.QUEUED, name: 'Waiting in queue'}];
 
 export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
   {_id: JOB_STATUS.CANCELED, name: JOB_UI_STATUS[JOB_STATUS.CANCELED]},
