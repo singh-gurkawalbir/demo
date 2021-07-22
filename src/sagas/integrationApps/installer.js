@@ -32,7 +32,7 @@ export function* initInstall({ id }) {
 export function* installStep({ id, installerFunction, childId, addOnId, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
-  const body = formVal || { storeId: childId, addOnId };
+  const body = { storeId: childId, addOnId, ...(formVal && { formVal }) };
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {

@@ -604,6 +604,7 @@ export default function ConnectorInstallation(props) {
           {helpUrl ? (
             <RawHtml
               className={classes.message}
+              options={{ allowedHtmlTags: ['a', 'br'] }}
               html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (

@@ -31,8 +31,8 @@ export default function FormStep({ integrationId, installerFunction, formMeta, t
           actions.integrationApp.installer.installStep(
             integrationId,
             installerFunction,
-            null,
-            null,
+            undefined,
+            undefined,
             formVal
           )
         )

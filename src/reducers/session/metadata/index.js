@@ -222,13 +222,6 @@ selectors.assistantData = (state, { adaptorType, assistant }) => {
 
   return { ...state.assistants[adaptorType][assistant] };
 };
-// selectors.mkAssistantData = () => createSelector(
-//   state => state?.assistants,
-//   (_, options = emptyObject) => options.adaptorType,
-//   (_, options = emptyObject) => options.assistant,
-//   (assistants, adaptorType, assistant) => ({ ...assistants[adaptorType][assistant] })
-// );
-// selectors.assistantData = selectors.mkAssistantData();
 
 selectors.assistantPreviewData = (state, resourceId) => {
   if (!state || !state.preview || !state.preview[resourceId]) {
