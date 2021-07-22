@@ -2,7 +2,7 @@ import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@mat
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
 import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
@@ -108,20 +108,25 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const isChildExists = items?.find(i => i.children);
-  const initialExpandedState = {};
-  let nodeExpanded;
 
-  items.forEach(i => {
-    nodeExpanded = false;
-    if (i.children) {
-      i.children.forEach(c => {
-        if (selected.includes(c._id)) {
-          nodeExpanded = true;
-        }
-      });
-      initialExpandedState[i._id] = nodeExpanded;
-    }
-  });
+  const initialExpandedState = useMemo(() => {
+    const initialState = {};
+    let nodeExpanded;
+
+    items.forEach(i => {
+      nodeExpanded = false;
+      if (i.children) {
+        i.children.forEach(c => {
+          if (selected.includes(c._id)) {
+            nodeExpanded = true;
+          }
+        });
+        initialState[i._id] = nodeExpanded;
+      }
+    });
+
+    return initialState;
+  }, [items, selected]);
 
   const [expanded, setExpanded] = useState(initialExpandedState);
 
