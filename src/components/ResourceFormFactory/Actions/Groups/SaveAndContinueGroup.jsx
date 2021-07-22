@@ -3,7 +3,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { getAsyncKey } from '../../../../sagas/resourceForm';
+import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import TestButton from './TestAndSave/TestButton';
 
@@ -51,7 +51,6 @@ export default function SaveAndContinueGroup(props) {
       <SaveAndCloseMiniResourceForm
         formKey={formKey}
         submitButtonLabel="Save & continue"
-        submitTransientLabel="Saving..."
         formSaveStatus={formSaveStatus}
         handleSave={handleSaveAndContinue}
         handleCancel={onCancel}

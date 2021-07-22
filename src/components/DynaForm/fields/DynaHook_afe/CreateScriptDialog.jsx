@@ -43,8 +43,6 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
           formSaveStatus={status}
           handleSave={handleSubmit}
           handleCancel={onClose}
-          submitButtonLabel="Save & Close"
-          submitTransientLabel="Saving..."
           />
       </div>
     </ModalDialog>

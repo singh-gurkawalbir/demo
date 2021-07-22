@@ -59,12 +59,12 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
         {
           op: 'replace',
           path: '/as2/contentBasedFlowRouter/_scriptId',
-          value: formValues.contentBasedFlowRouter._scriptId,
+          value: formValues?.contentBasedFlowRouter?._scriptId,
         },
         {
           op: 'replace',
           path: '/as2/contentBasedFlowRouter/function',
-          value: formValues.contentBasedFlowRouter.function,
+          value: formValues?.contentBasedFlowRouter?.function,
         },
       ];
 
@@ -73,7 +73,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
         actions.resource.patch('connections', connectionId, patchSet, formKey)
       );
     },
-    [formValues.contentBasedFlowRouter._scriptId, formValues.contentBasedFlowRouter.function, dispatch, connectionId]
+    [formValues?.contentBasedFlowRouter?._scriptId, formValues?.contentBasedFlowRouter?.function, dispatch, connectionId]
   );
   const value =
     connection && connection.as2 && connection.as2.contentBasedFlowRouter

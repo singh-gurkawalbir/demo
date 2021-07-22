@@ -18,6 +18,7 @@ import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/const
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 
 export const SCOPES = {
   META: 'meta',
@@ -26,7 +27,6 @@ export const SCOPES = {
 };
 
 Object.freeze(SCOPES);
-export const getAsyncKey = (resourceType, resourceId) => `${resourceType}-${resourceId}`;
 export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
@@ -647,7 +647,7 @@ export function* submitResourceForm(params) {
 
 export function* saveAndContinueResourceForm(params) {
   const { resourceId } = params;
-  const asyncKey = `connections-${resourceId}`;
+  const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
   yield call(submitResourceForm, params);

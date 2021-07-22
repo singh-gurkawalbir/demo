@@ -34,7 +34,6 @@ export default function NextAndCancel(props) {
   return (
     <SaveAndCloseMiniResourceForm
       formKey={formKey}
-      submitTransientLabel="Saving..."
       submitButtonLabel={submitButtonLabel}
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}

@@ -25,7 +25,7 @@ import IconTextButton from '../../../IconTextButton';
 import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import CloseButton from './CloseButton';
-import { getAsyncKey } from '../../../../sagas/resourceForm';
+import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -194,7 +194,6 @@ const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
 
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
-  // TODO:make this into resourceType-resourceId key
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();

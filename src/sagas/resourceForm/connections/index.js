@@ -17,7 +17,6 @@ import {
   submitFormValues,
   SCOPES,
   newIAFrameWorkPayload,
-  getAsyncKey,
 } from '../index';
 import { selectors } from '../../../reducers/index';
 import { commitStagedChangesWrapper } from '../../resources';
@@ -26,6 +25,7 @@ import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';

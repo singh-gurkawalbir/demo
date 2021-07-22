@@ -9,6 +9,7 @@ import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
 import useHandleCloseOnSave from './hooks/useHandleCloseOnSave';
 
+// Use this component for forms, it handles status and isDirty check on its own
 export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, disabled, disableOnCloseAfterSave, remountAfterSaveFn}) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
+import { INVITE_USER_DRAWER_FORM_KEY } from '../../../../utils/constants';
 import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import { useFormOnCancel } from '../../../FormOnCancelContext';
 import UserFormWrapper from '../../UserFormWrapper';
-import { INVITE_USER_DRAWER_FORM_KEY } from '../InviteUser';
 
 function ManagePermissions({ integrationId, dataPublic }) {
   const match = useRouteMatch();

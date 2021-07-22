@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../reducers';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import actions from '../../../actions';
-import { getEditorStatus } from '../../../utils/editor';
+import { getFormSaveStatusFromEditorStatus } from '../../../utils/editor';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
     <SaveAndCloseButtonGroupAuto
       asyncKey={editorId}
       isDirty={isEditorDirty}
-      status={getEditorStatus(saveStatus)}
+      status={getFormSaveStatusFromEditorStatus(saveStatus)}
       onClose={onClose}
       onSave={handleSave}
       disabled={disable}

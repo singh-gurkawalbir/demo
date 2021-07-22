@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getEditorStatus } from './index';
+import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getFormSaveStatusFromEditorStatus } from './index';
 
 describe('editor utils test cases', () => {
   describe('dataAsString util', () => {
@@ -19,15 +19,15 @@ describe('editor utils test cases', () => {
       expect(dataAsString({})).toEqual('{}');
     });
   });
-  describe('getEditorStatus util', () => {
+  describe('getFormSaveStatusFromEditorStatus util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(getEditorStatus()).toEqual('failed');
+      expect(getFormSaveStatusFromEditorStatus()).toEqual('failed');
     });
     test('should return complete if status is success', () => {
-      expect(getEditorStatus('success')).toEqual('complete');
+      expect(getFormSaveStatusFromEditorStatus('success')).toEqual('complete');
     });
     test('should return loading if status is requested', () => {
-      expect(getEditorStatus('requested')).toEqual('loading');
+      expect(getFormSaveStatusFromEditorStatus('requested')).toEqual('loading');
     });
   });
 

@@ -18,7 +18,7 @@ export default function SaveFileDefinitions(props) {
   } = props;
 
   const dispatch = useDispatch();
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const [enqueuesnackbar] = useEnqueueSnackbar();
 
   const formSaveStatus = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)?.formSaveStatus
@@ -47,14 +47,14 @@ export default function SaveFileDefinitions(props) {
         );
       } catch (e) {
         // Handle incase of JSON parsing error
-        enquesnackbar({
+        enqueuesnackbar({
           message:
             'Filedefinition rules provided is not a valid json, Please correct it.',
           variant: 'error',
         });
       }
     },
-    [values, dispatch, resourceId, resourceType, flowId, enquesnackbar]
+    [values, dispatch, resourceId, resourceType, flowId, enqueuesnackbar]
   );
 
   return (
