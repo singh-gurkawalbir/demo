@@ -20,7 +20,6 @@ export default function NetSuiteMappingAssistant({
   netSuiteRecordType,
   data,
   onFieldClick,
-  importRecordType,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -37,15 +36,15 @@ export default function NetSuiteMappingAssistant({
 
   const netSuiteRecordMetadata = useMemo(() => {
     if (recordTypes) {
-      if (importRecordType === netSuiteRecordType) {
-        return recordTypes.find(r => r.value === netSuiteRecordType);
+      // although componentinventorydetail is a valid sub-record type,
+      // it is not valid from BE Apis and has same metadata as inventorydetail
+      if (netSuiteRecordType === 'componentinventorydetail') {
+        return recordTypes.find(r => r.value === 'inventorydetail');
       }
-      // sub-record type mapping where importRecordType is the parent record
-      const parentObj = recordTypes.find(r => r.value === importRecordType);
 
-      return parentObj?.subRecordConfig?.find(s => s.subRecordType === netSuiteRecordType);
+      return recordTypes.find(r => r.value === netSuiteRecordType);
     }
-  }, [importRecordType, netSuiteRecordType, recordTypes]);
+  }, [netSuiteRecordType, recordTypes]);
 
   useEffect(() => {
     if (!netSuiteRecordMetadata) {
