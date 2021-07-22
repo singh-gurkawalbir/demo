@@ -329,6 +329,8 @@ const resource = {
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
+    fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
+    updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
     redirectTo: (integrationId, redirectTo) =>
@@ -506,7 +508,7 @@ const connectors = {
         _integrationId,
       }),
     error: _integrationId =>
-      action(actionTypes.CONNECTORS.ERROR, {
+      action(actionTypes.CONNECTORS.PUBLISH.ERROR, {
         _integrationId,
       }),
   },
