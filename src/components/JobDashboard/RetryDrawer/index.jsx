@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-handler-names */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
@@ -83,7 +84,6 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
     );
     history.goBack(2);
   }, [dispatch, flowJobId, history, jobId, match, retryId]);
-  const handleClose = history.goBack;
 
   useEffect(() => {
     if (retryId && !retryData) {
@@ -115,7 +115,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
           asyncKey={asyncKey}
           isDirty={isDirty}
           status={status}
-          onClose={handleClose}
+          onClose={history.goBack}
           onSave={handleSave}
           shouldHandleCancel
           />

@@ -9,7 +9,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useHandleCancel from '../../../../components/SaveAndCloseButtonGroup/hooks/useHandleCancel';
-import { FORM_SAVE_STATUS } from '../../../../utils/constants';
 
 const emptyObject = {};
 
@@ -97,8 +96,7 @@ function ProceedOnFailureDialog(props) {
     remount: count,
   });
 
-  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey)); // get the status from the selector
-  const isSaving = status === FORM_SAVE_STATUS.LOADING;
+  const isSaving = useSelector(state => selectors.isAsyncTaskLoading(state, formKey));
 
   const onCloseWithDirtyChangesDialog = useHandleCancel({formKey, onClose, handleSave: saveFormValues});
 

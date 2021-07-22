@@ -123,7 +123,6 @@ export default {
     {
       id: 'saveandclosegroup',
       visibleWhen: [
-        // TODO:check this
         {
           field: 'http.auth.type',
           is: [''],

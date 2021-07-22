@@ -487,7 +487,7 @@ export default {
       ],
     },
     {
-      id: 'oauthandcancel',
+      id: 'oauthandtest',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -511,6 +511,10 @@ export default {
         {
           field: 'http.auth.type',
           isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          isNot: [''],
         },
       ],
     },
