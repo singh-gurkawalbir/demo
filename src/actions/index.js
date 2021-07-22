@@ -1379,6 +1379,9 @@ const flowData = {
       responseMapping,
     }),
 };
+const resourceFormSampleData = {
+  request: formKey => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey }),
+};
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, {version}),
@@ -2277,4 +2280,5 @@ export default {
   logs,
   sso,
   bottomDrawer,
+  resourceFormSampleData,
 };
