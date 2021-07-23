@@ -398,7 +398,9 @@ export function* commitStagedChangesWrapper({asyncKey, ...props}) {
 
     if (resp?.error) {
     // save error message
-      return yield put(actions.asyncTask.failed(asyncKey));
+      yield put(actions.asyncTask.failed(asyncKey));
+
+      return resp;
     }
     yield put(actions.asyncTask.success(asyncKey));
 
