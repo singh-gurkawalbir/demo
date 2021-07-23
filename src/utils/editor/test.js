@@ -33,7 +33,7 @@ describe('editor utils test cases', () => {
 
   describe('getFormSaveStatusFromCommStatus util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(getFormSaveStatusFromCommStatus()).toEqual('failed');
+      expect(getFormSaveStatusFromCommStatus()).toEqual('complete');
     });
     test('should return complete if commStatus is success', () => {
       expect(getFormSaveStatusFromCommStatus('success')).toEqual('complete');
