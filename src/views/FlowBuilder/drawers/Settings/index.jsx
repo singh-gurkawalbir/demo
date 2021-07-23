@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import DynaForm from '../../../../components/DynaForm';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';

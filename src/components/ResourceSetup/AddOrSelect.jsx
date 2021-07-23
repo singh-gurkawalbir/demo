@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import DynaForm from '../DynaForm';
 import { selectors } from '../../reducers';
 import LoadResources from '../LoadResources';
-import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
+import SaveAndCloseMiniResourceForm from '../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -94,7 +94,8 @@ export default function AddOrSelect(props) {
       fields: [resourceName],
     },
   };
-  const handleSubmit = formVal => {
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleSubmit = () => {
     if (!formVal[resourceName]) {
       return false;
     }
@@ -161,9 +162,14 @@ export default function AddOrSelect(props) {
           connectionType={connectionType}
           onCancel={onClose} />
       ) : (
-        <DynaSubmit formKey={formKey} onClick={handleSubmit} className={classes.doneBtn}>
-          Done
-        </DynaSubmit>
+        <SaveAndCloseMiniResourceForm
+          className={classes.doneBtn}
+          formKey={formKey}
+          submitButtonLabel="Done"
+          handleSave={handleSubmit}
+          shouldNotShowCancelButton
+          handleCancel={onClose}
+        />
       )}
     </LoadResources>
   );

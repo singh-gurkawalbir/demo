@@ -27,7 +27,7 @@ export default function SaveAndCloseResourceForm({formKey, onClose, onSave, disa
       status={status}
       onClose={handleCancelClick}
       handleSave={handleSave}
-      handleSaveAndClose={handleSaveAndClose}
+      handleSaveAndClose={finalHandleSaveAndClose}
       disabled={disabled}
     />
   );

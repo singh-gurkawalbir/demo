@@ -11,7 +11,7 @@ export default function SaveButtonGroup({ onClose }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const saveInProgress = useSelector(
-    state => selectors.responseMappingSaveStatus(state)?.saveInProgress
+    state => selectors.responseMappingSaveStatus(state).saveInProgress
   );
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)

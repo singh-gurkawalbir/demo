@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Icon from '../../../../components/icons/RoutingIcon';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';

@@ -29,9 +29,9 @@ export const getFormSaveStatusFromEditorStatus = saveStatus => {
 };
 export const getFormSaveStatusFromCommStatus = resourceCommStatus => {
   switch (resourceCommStatus) {
-    case COMM_STATES.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
     case COMM_STATES.LOADING: return FORM_SAVE_STATUS.LOADING;
-    default: return FORM_SAVE_STATUS.FAILED;
+    case COMM_STATES.ERROR: return FORM_SAVE_STATUS.FAILED;
+    default: return FORM_SAVE_STATUS.COMPLETE;
   }
 };
 

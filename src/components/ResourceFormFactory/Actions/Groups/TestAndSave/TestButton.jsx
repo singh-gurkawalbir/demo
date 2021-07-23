@@ -34,7 +34,7 @@ export const PingMessage = props => {
 };
 
 export default function TestButton(props) {
-  const { resourceId, formKey } = props;
+  const { resourceId, formKey, disabled } = props;
   const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
@@ -67,7 +67,7 @@ export default function TestButton(props) {
       <PingMessage resourceId={resourceId} />
       <DynaAction
         {...props}
-        disabled={pingLoading}
+        disabled={disabled || pingLoading}
         onClick={handleTestConnection}
         size="small"
         variant="outlined"
