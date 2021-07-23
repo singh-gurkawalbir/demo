@@ -19,16 +19,17 @@ const MiniResourceForm = ({
   submitButtonLabel,
   shouldNotShowCancelButton,
   className,
+  disabled,
 }) => (
   <ActionGroup>
     <Button
       variant="outlined"
       data-test="save"
-      disabled={!isDirty || inProgress}
+      disabled={!isDirty || inProgress || disabled}
       color="primary"
       className={className}
       onClick={handleSave}>
-      {inProgress ? <Spinner size="small">{submitTransientLabel}</Spinner> : submitButtonLabel}
+      {inProgress && !disabled ? <Spinner size="small">{submitTransientLabel}</Spinner> : submitButtonLabel}
     </Button>
     {shouldNotShowCancelButton ? null : (
       <Button
@@ -51,6 +52,7 @@ export default function SaveAndCloseMiniResourceForm({
   handleSave,
   handleCancel,
   shouldNotShowCancelButton,
+  disabled,
   className,
 }) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
@@ -74,6 +76,7 @@ export default function SaveAndCloseMiniResourceForm({
       handleCancel={handleCancelWithWarning}
       shouldNotShowCancelButton={shouldNotShowCancelButton}
       className={className}
+      disabled={disabled}
     />
   );
 }
