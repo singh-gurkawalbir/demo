@@ -10,25 +10,37 @@ import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
 import useHandleCancel from './hooks/useHandleCancel';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
 
-const MiniResourceForm = ({isDirty, inProgress, handleSave, handleCancel, submitTransientLabel, submitButtonLabel}) => (
+const MiniResourceForm = ({
+  isDirty,
+  inProgress,
+  handleSave,
+  handleCancel,
+  submitTransientLabel,
+  submitButtonLabel,
+  shouldNotShowCancelButton,
+  className,
+}) => (
   <ActionGroup>
     <Button
       variant="outlined"
       data-test="save"
       disabled={!isDirty || inProgress}
       color="primary"
+      className={className}
       onClick={handleSave}>
       {inProgress ? <Spinner size="small">{submitTransientLabel}</Spinner> : submitButtonLabel}
     </Button>
-
-    <Button
-      variant="text"
-      color="primary"
-      data-test="cancel"
-      disabled={inProgress}
-      onClick={handleCancel}>
-      Cancel
-    </Button>
+    {shouldNotShowCancelButton ? null : (
+      <Button
+        variant="text"
+        color="primary"
+        data-test="cancel"
+        disabled={inProgress}
+        className={className}
+        onClick={handleCancel}>
+        Cancel
+      </Button>
+    )}
   </ActionGroup>
 );
 export default function SaveAndCloseMiniResourceForm({
@@ -38,6 +50,8 @@ export default function SaveAndCloseMiniResourceForm({
   formSaveStatus,
   handleSave,
   handleCancel,
+  shouldNotShowCancelButton,
+  className,
 }) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
@@ -58,6 +72,8 @@ export default function SaveAndCloseMiniResourceForm({
       submitTransientLabel={submitTransientLabel}
       handleSave={handleSaveWhenValid}
       handleCancel={handleCancelWithWarning}
+      shouldNotShowCancelButton={shouldNotShowCancelButton}
+      className={className}
     />
   );
 }

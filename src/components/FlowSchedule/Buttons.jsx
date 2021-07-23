@@ -86,9 +86,9 @@ export default function FlowScheduleButtons({
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
   const handleValidateAndSubmit = useCallback(closeAfterSave => {
     if (
-      formValues.startTime &&
-      formValues.endTime &&
-        !moment(formValues.startTime, 'LT').isBefore(moment(formValues.endTime, 'LT'))
+      formValues?.startTime &&
+      formValues?.endTime &&
+        !moment(formValues?.startTime, 'LT').isBefore(moment(formValues?.endTime, 'LT'))
     ) {
       return enqueueSnackbar({
         message: 'End Time is invalid.',
