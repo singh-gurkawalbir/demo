@@ -184,7 +184,7 @@ export default function TestSaveAndClose(props) {
     dispatchLocalAction({ type: 'setFormValues', closeAfterSave, formValues: values });
   }, [handleTestForm, testClear, values]);
 
-  const formSaveStatus = (savingForm || pingLoading) ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
+  const formSaveStatus = (savingForm) ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
 
   return (
     <>
@@ -202,12 +202,13 @@ export default function TestSaveAndClose(props) {
       <SaveAndCloseResourceForm
         disableOnCloseAfterSave
         formKey={formKey}
-        disabled={disabled}
+        disabled={disabled || pingLoading}
         status={formSaveStatus}
         onClose={onCancel}
         onSave={handleTestAndSave}
   />
       <TestButton
+        disabled={savingForm}
         resourceId={resourceId}
         formKey={formKey}
       />
