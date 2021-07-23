@@ -3,7 +3,7 @@ import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
 export default function useHandleCloseOnSave({onSave, status, onClose}) {
   const [closeTriggered, setCloseTriggered] = useState(false);
-  const isTerminated = status === FORM_SAVE_STATUS.COMPLETE || status === FORM_SAVE_STATUS.FAILED;
+  const isTerminated = status === FORM_SAVE_STATUS.COMPLETE;
 
   useEffect(() => {
     if (closeTriggered && isTerminated) {
