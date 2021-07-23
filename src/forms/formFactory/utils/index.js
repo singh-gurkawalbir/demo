@@ -167,11 +167,11 @@ export const getAllFormValuesAssociatedToMeta = (values, meta = {}) => {
 export const getMetadatasForIndividualTabs = (meta = {}) => {
   const { layout, fieldMap, actions } = meta;
 
-  if (!layout || !fieldMap) {
+  const {containers} = layout;
+
+  if (!layout || !fieldMap || !containers) {
     return null;
   }
-
-  const {containers} = layout;
 
   return containers.map(container => {
     const containerSpecificFieldMap = Object.keys(fieldMap)
