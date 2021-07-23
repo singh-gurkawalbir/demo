@@ -9,7 +9,7 @@ import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -43,7 +43,14 @@ export default function CompletedFlows() {
   useEffect(
     () => () => {
       dispatch(actions.job.dashboard.completed.clear());
+      dispatch(
+        actions.patchFilter(filterKey, {
+          ...filters,
+          range: DEFAULT_RANGE,
+        })
+      );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch]
   );
 
