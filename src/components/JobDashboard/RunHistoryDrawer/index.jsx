@@ -14,10 +14,13 @@ import {FILTER_KEYS} from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
+  runHistoryDrawer: {
+    padding: theme.spacing(0, 3, 3),
+  },
   runHistoryPage: {
-    '& > div': {
-      border: 'none',
-      padding: theme.spacing(0, 0, 3),
+    '& > div:first-child': {
+      borderTop: 'none',
+      padding: theme.spacing(3, 0, 3),
       '& > div': {
         padding: 0,
         margin: 0,
@@ -80,7 +83,7 @@ export default function RunHistoryDrawer() {
       onClose={handleClose}
         >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
-      <DrawerContent>
+      <DrawerContent className={classes.runHistoryDrawer}>
         <RunHistory
           flowId={flowId} className={classes.runHistoryPage}
             />

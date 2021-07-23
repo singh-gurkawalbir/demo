@@ -59,6 +59,7 @@ export default function CeligoTable({
   isSelectableRow,
   filterKey,
   className,
+  size,
   actionProps = emptyObj,
 }) {
   const classes = useStyles();
@@ -69,7 +70,7 @@ export default function CeligoTable({
   return (
     <div className={clsx(classes.tableContainer, className)}>
       <TableContextWrapper value={actionProps}>
-        <Table data-public className={classes.table}>
+        <Table data-public size={size || 'medium'} className={classes.table}>
           <TableHeader
             data={data}
             onSelectChange={onSelectChange}
