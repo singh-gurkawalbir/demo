@@ -255,7 +255,7 @@ const IAForms = props => {
             className={classes.tabsContainer}
             value={selectedTab}
             variant="scrollable"
-            orientation="vertical"
+            orientation="horizontal"
             indicatorColor="primary"
             textColor="primary"
             scrollButtons="auto"
@@ -277,12 +277,13 @@ const IAForms = props => {
             ))}
 
           </Tabs>
-          <div className={classes.panelContainer}>
-            <AllTabForms
-              {...props} formMetas={formMetas}
-              selectedTab={selectedTab}
+        </div>
+
+        <div className={classes.panelContainer}>
+          <AllTabForms
+            {...props} formMetas={formMetas}
+            selectedTab={selectedTab}
         />
-          </div>
         </div>
       </>
     );
