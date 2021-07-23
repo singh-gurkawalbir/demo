@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import resourceConstants from '../../../../forms/constants/connection';
@@ -6,7 +6,8 @@ import { getResourceSubType, multiStepSaveResourceTypes } from '../../../../util
 import consolidatedActions from '../../../ResourceFormFactory/Actions';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import ButtonGroup from '../../../ButtonGroup';
+import RenderActionButtonWhenVisible from '../../../DynaForm/RenderActionButtonWhenVisible';
+import useTriggerCancelFromContext from '../../../SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
@@ -34,68 +35,48 @@ const useStyles = makeStyles(theme => ({
 const ActionButtons = ({actions, formProps, consolidatedActions}) => {
   const classes = useStyles();
 
-  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
+  const groups = useMemo(() => {
+    if (!actions?.length) return null;
+    // remove form disabled prop...
+    // they dont necessary apply to action button
+    const { disabled, ...rest } = formProps;
 
-  const {primaryActions,
-    secondaryActions} = useMemo(() => {
-    if (!actions?.length) return {};
+    return actions.map(({id, ...actionProps}) => {
+      const Action = consolidatedActions[id];
 
-    return actions.reduce((acc, action) => {
-      const Action = consolidatedActions[action.id];
-      let actionProps = {};
-
-      /**
-      * Passes a global state for disable functionality for actions except 'cancel'
-      * used to manage disable states across buttons
-      * Ex: when save is clicked , save&close gets disabled
-      * In these cases, individual actions are recommended to use this disable prop to update
-      * rather than a local state
-      */
-      if (action.id !== 'cancel') {
-        actionProps = {
-          disableSaveOnClick,
-          setDisableSaveOnClick,
-        };
-      }
-      // remove form disabled prop...
-      // they dont necessary apply to action button
-      const { disabled, ...rest } = formProps;
-      const actionContainer = (
-        <Action
-          key={action.id}
-          dataTest={action.id}
-          {...rest}
-          {...action}
-          {...actionProps}
-      />
+      return (
+        <RenderActionButtonWhenVisible
+          key={id}
+          id={id}
+          formKey={formProps.formKey}
+          >
+          <Action
+            dataTest={id}
+            {...rest}
+            {...actionProps}
+        />
+        </RenderActionButtonWhenVisible>
       );
-
-      if (action.mode === 'secondary') {
-        acc.secondaryActions.push(actionContainer);
-      } else {
-        acc.primaryActions.push(actionContainer);
-      }
-
-      return acc;
-    }, {
-      primaryActions: [],
-      secondaryActions: [],
-
     });
-  }, [actions, consolidatedActions, disableSaveOnClick, formProps]);
+  }, [actions, consolidatedActions, formProps]);
 
   if (!actions?.length) { return null; }
 
   return (
     <div className={classes.actions}>
-      {primaryActions?.length ? <ButtonGroup> {primaryActions} </ButtonGroup> : null}
-      {secondaryActions?.length ? <ButtonGroup> { secondaryActions }</ButtonGroup> : null}
+      {groups}
     </div>
   );
 };
 
+function ProceedOnChange({formKey, onCancel}) {
+  useTriggerCancelFromContext(formKey, onCancel);
+
+  return null;
+}
+
 export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap, actions, ...props }) {
-  const { resourceType, isNew} = props;
+  const { resourceType, isNew, onCancel, formKey} = props;
 
   if (variant === 'view') { return null; }
 
@@ -106,7 +87,8 @@ export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap
   const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
 
   // hide action buttons when its a new connections form for a single application dropdown
-  if (proceedOnChange) { return null; }
+
+  if (proceedOnChange) { return <ProceedOnChange formKey={formKey} onCancel={onCancel} />; }
 
   return (
 
@@ -131,31 +113,25 @@ export default function ResourceFormActionsPanel(props) {
   // Any extra actions other than Save, Cancel which needs to be separated goes here
 
   const actionButtons = useMemo(() => {
-    const secondaryActions = ['test', 'validate'];
-
     // if props has defined actions return it
-    if (actions) return actions;
-    let actionButtons;
+    if (actions) return actions.map(action => ({...action, mode: 'group'}));
 
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && !isNew) {
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-        actionButtons = ['oauth', 'cancel'];
-      } else {
-        actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
+        // should close after saving
+        return [{id: 'oauthandcancel', mode: 'group' }];
       }
-    } else if (resourceType === 'eventreports') {
-      actionButtons = ['saveandclose', 'cancel'];
-    } else if (!isNew || (isNew && !isMultiStepSaveResource)) {
-      actionButtons = ['save', 'saveandclose', 'cancel'];
-    } else {
-      actionButtons = ['saveandclose', 'cancel'];
+
+      return [{id: 'testandsavegroup', mode: 'group' }];
+    } if (resourceType === 'eventreports') {
+      // should close after saving
+      return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Run Report', closeAfterSave: true}];
+    } if (!isNew || (isNew && !isMultiStepSaveResource)) {
+      return [{id: 'saveandclosegroup', mode: 'group'}];
     }
 
-    return actionButtons.map(id => ({
-      id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
-    }));
+    return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: false}];
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
 
   if (!formState.initComplete) return null;

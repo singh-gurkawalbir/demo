@@ -1,13 +1,14 @@
 import React, { useEffect, useCallback, useReducer } from 'react';
 import { deepClone } from 'fast-json-patch';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers/index';
-import useConfirmDialog from '../../../ConfirmDialog';
-import DynaAction from '../../../DynaForm/DynaAction';
-import { PING_STATES } from '../../../../reducers/comms/ping';
-import { PingMessage } from './TestButton';
-import { useLoadingSnackbarOnSave } from '.';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import actions from '../../../../../../actions';
+import { selectors } from '../../../../../../reducers/index';
+import useConfirmDialog from '../../../../../ConfirmDialog';
+import { PING_STATES } from '../../../../../../reducers/comms/ping';
+import TestButton, { PingMessage } from './TestButton';
+import useHandleClickWhenValid from '../../../../../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
+import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
+import SaveAndCloseResourceForm from '../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 const ConfirmDialog = props => {
   const {
@@ -60,12 +61,12 @@ const ConfirmDialog = props => {
 };
 
 function reducer(state, action) {
-  const { type, erroredMessage, formValues } = action;
+  const { type, erroredMessage, formValues, closeAfterSave } = action;
   const { savingForm } = state;
 
   switch (type) {
     case 'setFormValues':
-      return { ...state, savingForm: true, formValues };
+      return { ...state, closeAfterSave, savingForm: true, formValues };
     case 'testInitiated':
       return { ...state, testInitiated: true };
     case 'clearFormData':
@@ -78,24 +79,25 @@ function reducer(state, action) {
       throw new Error();
   }
 }
+
 // TODO @Raghu: Refactor this component and push complexity to sagas
-export default function TestAndSaveButton(props) {
+export default function TestAndSave(props) {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const {
     resourceType,
     resourceId,
-    label,
     disabled,
-    disableSaveOnClick,
-    setDisableSaveOnClick,
-    skipCloseOnSave,
-    submitButtonColor = 'secondary',
+    formKey,
     ssLinkedConnectionId,
+    onCancel,
   } = props;
 
   const dispatch = useDispatch();
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const { formValues, testInitiated, erroredMessage, savingForm, closeAfterSave } = formState;
+
   const handleSaveForm = useCallback(
-    values =>
+    () =>
       dispatch(actions.suiteScript.resourceForm.submit(
         ssLinkedConnectionId,
         undefined,
@@ -103,17 +105,19 @@ export default function TestAndSaveButton(props) {
         resourceId,
         values,
         undefined,
-        skipCloseOnSave,
+        !closeAfterSave,
         undefined,
       )),
-    [dispatch, resourceId, resourceType, skipCloseOnSave, ssLinkedConnectionId]
+    [closeAfterSave, dispatch, resourceId, resourceType, ssLinkedConnectionId, values]
   );
-  const handleTestConnection = useCallback(values =>
+  const handleTestConnection = useCallback(() => {
     dispatch(actions.suiteScript.resource.connections.test(
       resourceId,
       values,
       ssLinkedConnectionId
-    )), [dispatch, resourceId, ssLinkedConnectionId]);
+    ));
+  },
+  [dispatch, resourceId, ssLinkedConnectionId, values]);
   const testClear = useCallback(
     () => dispatch(actions.suiteScript.resource.connections.testClear(
       resourceId,
@@ -131,7 +135,6 @@ export default function TestAndSaveButton(props) {
   );
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
   const { commState, message } = testConnectionCommState;
-  const { formValues, testInitiated, erroredMessage, savingForm } = formState;
   const saveTerminated = useSelector(state =>
     selectors.suiteScriptResourceFormSaveProcessTerminated(state, {
       resourceType,
@@ -139,11 +142,9 @@ export default function TestAndSaveButton(props) {
       ssLinkedConnectionId,
     })
   );
-  const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
-    saveTerminated,
-    onSave: handleSaveForm,
-    resourceType,
-  });
+
+  const handleSubmitForm = useHandleClickWhenValid(formKey, handleSaveForm);
+  const handleTestForm = useHandleClickWhenValid(formKey, handleTestConnection);
 
   useEffect(() => {
     if (commState === PING_STATES.LOADING && formValues) {
@@ -183,14 +184,6 @@ export default function TestAndSaveButton(props) {
     }
   }, [saveTerminated]);
 
-  useEffect(() => {
-    if (pingLoading || savingForm || disabled || isSaving || erroredMessage) {
-      setDisableSaveOnClick(true);
-    } else {
-      setDisableSaveOnClick(false);
-    }
-  }, [pingLoading, savingForm, setDisableSaveOnClick, disabled, isSaving, erroredMessage]);
-
   const handleCloseAndClearForm = useCallback(() => {
     dispatchLocalAction({
       type: 'clearFormData',
@@ -201,11 +194,13 @@ export default function TestAndSaveButton(props) {
     dispatchLocalAction({ type: 'saveCompleted' });
   }, []);
 
-  const handleTestAndSave = useCallback(values => {
+  const handleTestAndSave = useCallback(closeAfterSave => {
     testClear();
-    handleTestConnection(values);
-    dispatchLocalAction({ type: 'setFormValues', formValues: values });
-  }, [handleTestConnection, testClear]);
+    handleTestForm();
+    dispatchLocalAction({ type: 'setFormValues', closeAfterSave, formValues: values });
+  }, [handleTestForm, testClear, values]);
+
+  const formSaveStatus = (savingForm || pingLoading) ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
 
   // TODO: @Surya Do we need to pass all props to DynaAction?
   // Please revisit after form refactor
@@ -221,15 +216,18 @@ export default function TestAndSaveButton(props) {
       {/* Test button which hides the test button and shows the ping snackbar */}
       <PingMessage resourceId={resourceType} />
       {/* its a two step process we first test the connection then we save..therefore we disable testAndSave button during this period */}
-      <DynaAction
-        {...props}
-        disabled={disableSaveOnClick}
-        onClick={handleTestAndSave}
-        size="small"
-        variant="outlined"
-        color={submitButtonColor}>
-        {savingForm ? 'Saving' : (label || 'Save & close')}
-      </DynaAction>
+      <SaveAndCloseResourceForm
+        formKey={formKey}
+        disableOnCloseAfterSave
+        disabled={disabled}
+        status={formSaveStatus}
+        onClose={onCancel}
+        onSave={handleTestAndSave}
+        />
+      <TestButton
+        resourceId={resourceId}
+        formKey={formKey}
+      />
     </>
   );
 }

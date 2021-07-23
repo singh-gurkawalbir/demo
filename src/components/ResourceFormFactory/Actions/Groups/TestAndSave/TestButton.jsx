@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PingMessageSnackbar from '../../PingMessageSnackbar';
-import actions from '../../../actions';
-import { selectors } from '../../../reducers/index';
-import DynaAction from '../../DynaForm/DynaAction';
-import { PING_STATES } from '../../../reducers/comms/ping';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import PingMessageSnackbar from '../../../../PingMessageSnackbar';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers/index';
+import DynaAction from '../../../../DynaForm/DynaAction';
+import { PING_STATES } from '../../../../../reducers/comms/ping';
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -33,11 +34,13 @@ export const PingMessage = props => {
 };
 
 export default function TestButton(props) {
-  const { resourceId } = props;
+  const { resourceId, formKey, disabled } = props;
   const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
   const handleTestConnection = useCallback(
-    values => {
+    () => {
       const newValues = { ...values };
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
@@ -46,7 +49,7 @@ export default function TestButton(props) {
       setIsTesting(true);
       dispatch(actions.resource.connections.test(resourceId, newValues));
     },
-    [dispatch, resourceId]
+    [dispatch, resourceId, values]
   );
   const testConnectionCommState = useSelector(state =>
     selectors.testConnectionCommState(state, resourceId)
@@ -64,7 +67,7 @@ export default function TestButton(props) {
       <PingMessage resourceId={resourceId} />
       <DynaAction
         {...props}
-        disabled={pingLoading}
+        disabled={disabled || pingLoading}
         onClick={handleTestConnection}
         size="small"
         variant="outlined"

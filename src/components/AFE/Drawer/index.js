@@ -69,12 +69,11 @@ function RouterWrappedContent({ hideSave }) {
   }
 
   const { label } = editorMetadata[editorType] || {};
-
   const handleClose = () => {
     dispatch(actions.editor.clear(editorId));
     onClose();
   };
-  const CloseButton = <CloseIconButton onClose={handleClose} editorId={editorId} />;
+  const CloseButton = <CloseIconButton editorId={editorId} />;
   const drawerTitle = editorTitle || label;
 
   return (

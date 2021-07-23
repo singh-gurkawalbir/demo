@@ -19,12 +19,13 @@ import {
   newIAFrameWorkPayload,
 } from '../index';
 import { selectors } from '../../../reducers/index';
-import { commitStagedChanges } from '../../resources';
+import { commitStagedChangesWrapper } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -268,11 +269,15 @@ export function* requestToken({ resourceId, fieldId, values }) {
 }
 
 export function* pingConnection({ resourceId, values }) {
+  const asyncKey = getAsyncKey('connections', resourceId);
+
+  yield put(actions.asyncTask.start(asyncKey));
   const connectionPayload = yield call(createPayload, {
     values,
     resourceType: 'connections',
     resourceId,
   });
+
   let resp;
 
   try {
@@ -285,6 +290,8 @@ export function* pingConnection({ resourceId, values }) {
       hidden: true,
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
@@ -294,6 +301,8 @@ export function* pingConnection({ resourceId, values }) {
   }
 
   if (resp && resp.errors) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
@@ -301,7 +310,7 @@ export function* pingConnection({ resourceId, values }) {
       )
     );
   }
-
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(
     actions.resource.connections.testSuccessful(
       resourceId,
@@ -323,6 +332,9 @@ export function* pingConnectionWithAbort(params) {
 
   // perform submit cleanup
   if (abortPing) {
+    const asyncKey = getAsyncKey('connections', resourceId);
+
+    yield put(actions.asyncTask.success(asyncKey));
     yield put(
       actions.resource.connections.testCancelled(
         resourceId,
@@ -421,10 +433,11 @@ function* saveAndAuthorizeConnectionForm(params) {
 }
 
 export function* commitAndAuthorizeConnection({ resourceId }) {
-  const resp = yield call(commitStagedChanges, {
+  const resp = yield call(commitStagedChangesWrapper, {
     resourceType: 'connections',
     id: resourceId,
     scope: SCOPES.VALUE,
+    asyncKey: getAsyncKey('connections', resourceId),
   });
 
   // if there is conflict let conflict dialog show up

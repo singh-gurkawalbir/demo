@@ -2,11 +2,11 @@ import Button from '@material-ui/core/Button';
 import { makeStyles} from '@material-ui/core/styles';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { selectors } from '../../../reducers';
-import trim from '../../../utils/trim';
-import useFormContext from '../../Form/FormContext';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import actions from '../../../../../actions';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import { selectors } from '../../../../../reducers';
+import useFormContext from '../../../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing.double,
   },
 }));
+
 export default function NetsuiteValidateButton(props) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -26,7 +27,7 @@ export default function NetsuiteValidateButton(props) {
   } = props;
   const classes = useStyles();
 
-  const { fields, disabled: formDisabled, value } = useFormContext(formKey) || {};
+  const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
   const { disabled = formDisabled } = props;
   const onFieldChange = useCallback(
     (fieldId, value, skipFieldTouched) =>
@@ -39,7 +40,8 @@ export default function NetsuiteValidateButton(props) {
     field => dispatch(actions.form.registerField(formKey)(field)),
     [dispatch, formKey]
   );
-  const handleValidate = values => {
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleValidate = () => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
     dispatch(actions.resource.connections.testClear(resourceId));
     dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
@@ -120,9 +122,7 @@ export default function NetsuiteValidateButton(props) {
       color="secondary"
       className={classes.actionButton}
       disabled={disabled || isValidatingNetsuiteUserRoles}
-      onClick={() => {
-        handleValidate(trim(value));
-      }}>
+      onClick={handleValidate}>
       {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test Connection'}
     </Button>
   );

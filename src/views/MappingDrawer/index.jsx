@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
@@ -11,6 +11,8 @@ import DrawerContent from '../../components/drawer/Right/DrawerContent';
 import DatabaseMapping from './DatabaseMapping_afe';
 import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
+import useFormOnCancelContext from '../../components/FormOnCancelContext';
+import { MAPPINGS_FORM_KEY } from '../../utils/constants';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -33,10 +35,13 @@ const MappingWrapper = ({integrationId}) => {
 
   );
 };
-
 export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
+  const { saveStatus } = useSelector(state => selectors.mapping(state));
+  const closeDisabled = saveStatus === 'requested';
+
+  const {setCancelTriggered} = useFormOnCancelContext(MAPPINGS_FORM_KEY);
 
   let importId;
 
@@ -67,13 +72,13 @@ export default function MappingDrawerRoute(props) {
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         variant="persistent"
       >
-        <DrawerHeader title={title} />
         <Switch>
           <Route
             path={[
               `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
               `${match.url}/mapping/:flowId/:importId/view`,
             ]} >
+            <DrawerHeader title={title} handleClose={setCancelTriggered} disableClose={closeDisabled} />
             <MappingWrapper
               integrationId={integrationId}
               {...props} />
@@ -85,6 +90,7 @@ export default function MappingDrawerRoute(props) {
               `${match.url}/mapping/:flowId/:importId`,
             ]}
             >
+            <DrawerHeader title={title} />
             <SelectImport />
           </Route>
         </Switch>
