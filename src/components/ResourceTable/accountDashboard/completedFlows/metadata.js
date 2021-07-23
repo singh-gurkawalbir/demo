@@ -60,7 +60,6 @@ export default {
 
         return <NameCell al={{resourceType: 'flow', _resourceId: al._flowId}} actionProps={tableContext} />;
       },
-      width: '10%',
     },
     {
       key: 'numOpenError',
@@ -76,20 +75,17 @@ export default {
         )
         );
       },
-      width: '10%',
     },
     {
       key: 'lastErrorAt',
       orderBy: 'lastErrorAt',
       heading: 'Last open error',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
-      width: '10%',
     },
     {
       key: 'lastExecutedAt',
       heading: 'Last run completed',
       Value: ({rowData: r}) => <CeligoTimeAgo date={new Date(r.lastExecutedAt)} />,
-      width: '10%',
       orderBy: 'lastExecutedAt',
     },
     {
@@ -104,55 +100,47 @@ export default {
         return (r.numRuns && (<Link data-test="account-dashboard-run-history" to={`${match.url}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
         );
       },
-      width: '10%',
     },
     {
       key: 'avgRuntime',
       HeaderValue: () => <HeaderWithHelpText title="Average run time" helpKey="accountdashboard.avgRuntime" />,
       Value: ({rowData: r}) => getTimeString(r.avgRuntime),
-      width: '10%',
       orderBy: 'avgRuntime',
     },
     {
       key: 'success',
       heading: 'Success',
       Value: ({rowData: r}) => r.numSuccess,
-      width: '10%',
       orderBy: 'success',
     },
     {
       key: 'numIgnore',
       heading: 'Ignored',
       Value: ({rowData: r}) => r.numIgnore,
-      width: '10%',
       orderBy: 'numIgnore',
     },
     {
       key: 'numError',
       heading: 'Errors',
       Value: ({rowData: r}) => r.numError,
-      width: '10%',
       orderBy: 'numError',
     },
     {
       key: 'numResolvedByAuto',
       heading: 'Auto-resolved',
       Value: ({rowData: r}) => r.numResolvedByAuto,
-      width: '10%',
       orderBy: 'numResolvedByAuto',
     },
     {
       key: 'numResolvedByUser',
       heading: 'User-resolved',
       Value: ({rowData: r}) => r.numResolvedByUser,
-      width: '10%',
       orderBy: 'numResolvedByUser',
     },
     {
       key: 'numPages',
       heading: 'Pages',
       Value: ({rowData: r}) => r.numPages,
-      width: '10%',
       orderBy: 'numPages',
     },
   ],
