@@ -234,6 +234,7 @@ export default {
           'ftp.directoryPath',
           'file.fileName',
           'file.xml.body',
+          'file.json.body',
           'ftp.blobFileName',
           'file.lookups',
         ],

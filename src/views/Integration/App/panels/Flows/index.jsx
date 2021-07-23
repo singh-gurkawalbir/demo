@@ -5,7 +5,7 @@ import {
   useRouteMatch,
   useHistory,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem, Tabs, Tab, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -28,6 +28,10 @@ import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Dra
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import ButtonGroup from '../../../../../components/ButtonGroup';
+import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
+import useFormOnCancelContext from '../../../../../components/FormOnCancelContext';
+import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,6 +56,14 @@ const useStyles = makeStyles(theme => ({
     marginTop: '10px',
     marginBottom: '10px',
   },
+  tabComponentRoot: {
+    display: 'flex',
+  },
+  panelContainer: {
+    flexGrow: 1,
+    // overflowY: 'auto',
+    paddingLeft: theme.spacing(2),
+  },
   content: {
     width: '100%',
     height: '100%',
@@ -70,6 +82,19 @@ const useStyles = makeStyles(theme => ({
   },
   emptyMessageWrapper: {
     padding: theme.spacing(1, 2),
+  },
+  displayNone: {
+    display: 'none',
+    '& + div': {
+      display: 'none',
+    },
+  },
+  tabsContainer: {
+    minWidth: 150,
+    background: theme.palette.background.paper,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    marginBottom: theme.spacing(1),
+
   },
   flowTitle: {
     position: 'relative',
@@ -98,19 +123,7 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-export const useActiveTab = () => {
-  const [externalTabState, setExternalTabStateFn] = useState({activeTab: 0});
-  const setExternalTabState = useCallback(
-    (index, val) => {
-      setExternalTabStateFn({activeTab: val});
-    },
-    []
-  );
-
-  return {externalTabState, setExternalTabState, index: 0 };
-};
-
-export const ActionsPanel = ({actions, actionProps}) => {
+export const ActionsPanel = ({actions, actionProps, ...rest}) => {
   const classes = useStyles();
 
   if (!actions || !actions.length) { return null; }
@@ -126,6 +139,7 @@ export const ActionsPanel = ({actions, actionProps}) => {
               key={id}
               dataTest={id}
               {...actionProps}
+              {...rest}
             />
           );
         })}
@@ -140,56 +154,187 @@ const IAFormActionsPanel = ({isDrawer, onCancel, ...rest}) => {
   if (isDrawer) {
     return <ActionsPanel {...rest} onCancel={onCancel} actions={IASettingsActionsGroupMeta} />;
   }
+  const actions = rest?.fieldMeta?.actions;
+
+  if (!actions?.length) { return null; }
 
   return (
     <ActionsPanel
       {...rest}
-/>
+      actions={actions}
+  />
   );
 };
 export const integrationSettingsKey = 'integrationSettings';
+
+const RegularIAForm = props => {
+  const {
+    actionProps,
+    isDrawer,
+    onCancel,
+    handleInit,
+    ...rest
+  } = props;
+
+  const [count, setCount] = useState(0);
+
+  const handleInitForm = useCallback(() => {
+    setCount(count => count + 1);
+    handleInit();
+  }, [handleInit]);
+
+  return (
+    <>
+      <FormStateManager {...rest} handleInitForm={handleInitForm} key={count} />
+      <IAFormActionsPanel
+        {...rest}
+        actionProps={actionProps}
+        isDrawer={isDrawer}
+        onCancel={onCancel}
+      />
+    </>
+  );
+};
+
+const TabLabel = ({label, formKey}) => {
+  const isInValid = useSelector(state => selectors.isFormPurelyInvalid(state, formKey)?.isValid);
+
+  if (isInValid) { return <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography>; }
+
+  return label;
+};
+
+const AllTabForms = ({formMetas, selectedTab, ...props}) => {
+  const classes = useStyles();
+
+  return (
+    <>
+      {formMetas.map(({key, fieldMeta}, index) => (
+        <RegularIAForm
+          {...props}
+          fieldMeta={fieldMeta}
+          className={({[classes.displayNone]: index !== selectedTab})}
+          formKey={key}
+          key={key} />
+      ))}
+    </>
+
+  );
+};
+
+const IAForms = props => {
+  const {fieldMeta, flowId, formState, isDrawer} = props;
+  const classes = useStyles();
+
+  const {layout} = fieldMeta;
+  const formMetas = useMemo(() => getMetadatasForIndividualTabs(fieldMeta), [fieldMeta]);
+
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const flow =
+  useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
+  const flowName = flow.name || flow._id;
+
+  const {setCancelTriggered} = useFormOnCancelContext(integrationSettingsKey);
+  const disableClose = formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING;
+
+  const DrawerTitle = isDrawer && (
+    <DrawerTitleBar
+      title={`Settings: ${flowName}`}
+      onClose={setCancelTriggered}
+      disableClose={disableClose}
+/>
+  );
+
+  if (layout.type === 'tabIA') {
+    return (
+      <>
+        {DrawerTitle}
+        <div className={classes.tabComponentRoot}>
+          <Tabs
+            className={classes.tabsContainer}
+            value={selectedTab}
+            variant="scrollable"
+            orientation="horizontal"
+            indicatorColor="primary"
+            textColor="primary"
+            scrollButtons="auto"
+            onChange={(evt, value) => {
+              setSelectedTab(value);
+            }}
+   >
+            {formMetas.map(({ key }) => (
+              <Tab
+                label={(
+                  <TabLabel
+                    label={key}
+                    formKey={key}
+              />
+)}
+                key={key}
+                data-test={key}
+            />
+            ))}
+
+          </Tabs>
+        </div>
+
+        <div className={classes.panelContainer}>
+          <AllTabForms
+            {...props} formMetas={formMetas}
+            selectedTab={selectedTab}
+        />
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {DrawerTitle}
+      <RegularIAForm
+        {...props}
+        formKey={integrationSettingsKey}
+          />
+
+    </>
+  );
+};
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
-  const { integrationId, flowId, sectionId, fieldMeta, isDrawer, onCancel } = props;
-  const formKey = integrationSettingsKey;
+  const { integrationId, flowId, sectionId, isDrawer, onCancel } = props;
   const allProps = useMemo(() => ({
     ...props,
     resourceType: 'integrations',
     resourceId: integrationId,
   }), [integrationId, props]);
+  const handleInit = useCallback(() => dispatch(
+    actions.integrationApp.settings.initComplete(
+      integrationId,
+      flowId,
+      sectionId
+    )
+  ), [dispatch, flowId, integrationId, sectionId]);
 
-  const allActionProps = useMemo(() => ({
-    ...allProps, formKey,
-  }), [allProps, formKey]);
+  const handleFormClear = useCallback(() => dispatch(
+    actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
+  ), [dispatch, flowId, integrationId, sectionId]);
 
   useEffect(() => {
-    dispatch(
-      actions.integrationApp.settings.initComplete(
-        integrationId,
-        flowId,
-        sectionId
-      )
-    );
+    handleInit();
 
     return () => {
-      dispatch(
-        actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
-      );
+      handleFormClear();
     };
-  }, [dispatch, flowId, integrationId, sectionId]);
+  }, [handleInit, handleFormClear]);
 
   return (
-    <>
-      <FormStateManager {...allProps} formKey={formKey} />
-      {!!fieldMeta?.actions?.length && (
-      <IAFormActionsPanel
-        {...fieldMeta}
-        actionProps={allActionProps}
-        isDrawer={isDrawer}
-        onCancel={onCancel}
-      />
-      )}
-    </>
+    <IAForms
+      {...allProps}
+      handleInit={handleInit}
+      isDrawer={isDrawer}
+      onCancel={onCancel}
+     />
   );
 };
 const defaultFilter = {

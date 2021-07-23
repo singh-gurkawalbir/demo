@@ -110,6 +110,9 @@ export default function () {
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
@@ -131,15 +134,9 @@ export default function () {
     accessLevel,
     integrations,
     canUserPublish,
-    marketplaceConnectors),
-  [
-
-    userProfile,
-    accessLevel,
-    canUserPublish,
-    integrations,
     marketplaceConnectors,
-  ]);
+    isUserInErrMgtTwoDotZero),
+  [userProfile, accessLevel, integrations, canUserPublish, marketplaceConnectors, isUserInErrMgtTwoDotZero]);
 
   return (
 

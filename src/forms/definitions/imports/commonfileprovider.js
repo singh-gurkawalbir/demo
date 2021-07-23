@@ -163,6 +163,7 @@ export default {
           'http.relativeURI',
           'file.fileName',
           'file.xml.body',
+          'file.json.body',
           'file.lookups',
         ],
       },

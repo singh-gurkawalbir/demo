@@ -119,9 +119,6 @@ export const evaluateAllRules = ({
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
 
-      // eslint-disable-next-line no-console
-      console.error(`invalid rule properties ${rule} passed returning default result`);
-
       return defaultResult;
     });
   }
@@ -141,8 +138,6 @@ export const evaluateSomeRules = ({
       if (rule.field && fieldsById.hasOwnProperty(rule.field)) {
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
-      // eslint-disable-next-line no-console
-      console.error(`invalid rule properties ${rule} passed returning default result`);
 
       return defaultResult;
     });

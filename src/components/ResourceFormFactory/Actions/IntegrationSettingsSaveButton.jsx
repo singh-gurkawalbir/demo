@@ -16,6 +16,8 @@ export default function IntegrationSettingsSaveButton(props) {
     disabled,
   } = props;
 
+  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
+
   const onSave = useHandleIntegrationSettings({
     integrationId,
     childId,
@@ -40,7 +42,7 @@ export default function IntegrationSettingsSaveButton(props) {
     <Button
       variant="outlined"
       color="primary"
-      disabled={disabled || isSaving}
+      disabled={disabled || !isDirty || isSaving}
       onClick={onSave}>
       {isSaving ? 'Saving...' : 'Save'}
     </Button>

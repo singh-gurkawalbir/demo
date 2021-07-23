@@ -155,6 +155,22 @@ export default {
         },
       ],
     },
+    'file.json.body': {
+      id: 'file.json.body',
+      type: 'httprequestbody',
+      label: 'JSON document',
+      refreshOptionsOnChangesTo: ['file.type'],
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['json'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
   },
   layout: {
@@ -178,6 +194,7 @@ export default {
           'as2.fileNameTemplate',
           'as2.messageIdTemplate',
           'file.xml.body',
+          'file.json.body',
           'file.xlsx.includeHeader',
           'file.filedefinition.rules',
           'as2.headers',

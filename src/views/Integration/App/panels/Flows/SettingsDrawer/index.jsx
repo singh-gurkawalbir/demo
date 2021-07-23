@@ -6,13 +6,10 @@ import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
-import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager, integrationSettingsKey, useActiveTab } from '..';
+import { IAFormStateManager} from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 import EditorDrawer from '../../../../../../components/AFE/Drawer';
-import useFormOnCancelContext from '../../../../../../components/FormOnCancelContext';
-import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -61,7 +58,6 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._id;
   // TODO: Fix this convoluted way of getting settings for a specific flow.
   // the data layer should have a simple, clean, selector api, that, given a flowId,
   // returns the flow settings. Right now to look up this info, i need to
@@ -94,10 +90,6 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
     null,
     parentUrl
   );
-  const activeTabProps = useActiveTab();
-
-  const {setCancelTriggered} = useFormOnCancelContext(integrationSettingsKey);
-  const disableClose = formState === FORM_SAVE_STATUS.LOADING;
 
   // Todo: Sravan, we should use Rightdrawer here
   return (
@@ -109,14 +101,8 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
         paper: classes.drawerPaper,
       }}
       >
-      <DrawerTitleBar
-        title={`Settings: ${flowName}`}
-        onClose={setCancelTriggered}
-        disableClose={disableClose}
-      />
 
       <IAFormStateManager
-        {...activeTabProps}
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
           [classes.settingsDrawerDetails]: !sections,
