@@ -123,18 +123,6 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-export const useActiveTab = () => {
-  const [externalTabState, setExternalTabStateFn] = useState({activeTab: 0});
-  const setExternalTabState = useCallback(
-    (index, val) => {
-      setExternalTabStateFn({activeTab: val});
-    },
-    []
-  );
-
-  return {externalTabState, setExternalTabState, index: 0 };
-};
-
 export const ActionsPanel = ({actions, actionProps, ...rest}) => {
   const classes = useStyles();
 

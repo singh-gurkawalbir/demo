@@ -50,22 +50,16 @@ export function TabComponent(props) {
   const { containers, fieldMap, children, type, className,
     ...rest } = props;
   const {
-    externalTabState,
-    setExternalTabState,
-    index,
     orientation = 'vertical',
   } = rest;
   const classes = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
-  const selectedTabIndex =
-    (externalTabState && (index === 0 && externalTabState.activeTab)) ||
-    (index === 1 && externalTabState.tabHistory[externalTabState.activeTab]) ||
-    selectedTab;
+  const selectedTabIndex = selectedTab;
 
   return (
     <div className={orientation === 'vertical' ? classes.root : null}>
       <Tabs
-        value={selectedTabIndex}
+        value={selectedTab}
         classes={{ indicator: classes.MuiTabsIndicator }}
         className={clsx(classes.tabsContainer, className)}
         variant="scrollable"
@@ -75,10 +69,6 @@ export function TabComponent(props) {
         scrollButtons="auto"
         aria-label="Settings Actions"
         onChange={(evt, value) => {
-          if (setExternalTabState) {
-            return setExternalTabState(index, value);
-          }
-
           setSelectedTab(value);
         }}>
         {containers.map(({ label, ...layout }) => (

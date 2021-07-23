@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager, useActiveTab } from '..';
+import { IAFormStateManager} from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 import EditorDrawer from '../../../../../../components/AFE/Drawer';
 
@@ -90,7 +90,6 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
     null,
     parentUrl
   );
-  const activeTabProps = useActiveTab();
 
   // Todo: Sravan, we should use Rightdrawer here
   return (
@@ -104,7 +103,6 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
       >
 
       <IAFormStateManager
-        {...activeTabProps}
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
           [classes.settingsDrawerDetails]: !sections,
