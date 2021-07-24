@@ -1,8 +1,6 @@
 import React, {useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-
-// import AfeProto from '../Prototype';
 import actions from '../../../../actions';
 import Editor from '../../../../components/AFE/Editor';
 
