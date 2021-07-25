@@ -495,6 +495,33 @@ export function* requestEditorSampleData({
     body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     body.fieldPath = fieldId || filterPath;
 
+    const isPagingConfigured = !!resource?.http?.paging?.method;
+
+    const previewDataDependentFieldIds = [
+      'http.paging.body',
+      'rest.pagingPostBody',
+      'rest.nextPageRelativeURI',
+      'http.paging.relativeURI',
+      'rest.relativeURI',
+      'http.relativeURI',
+      'http.once.relativeURI',
+      'rest.once.relativeURI',
+      'rest.postBody',
+      'rest.once.postBody',
+      'http.body',
+      'http.once.body',
+    ];
+
+    if (resourceType === 'exports' && (previewDataDependentFieldIds.includes(fieldId)) && isPagingConfigured) {
+      if (!fetchPreviewStageData) {
+        // If export sample data is not fetched previously, fetch now
+        yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+      }
+      const previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
+
+      body.previewData = previewData;
+    }
+
     const opts = {
       method: 'POST',
       body,
@@ -619,7 +646,6 @@ export function* initEditor({ id, editorType, options }) {
   const init = processorLogic.init(editorType);
 
   if (init) {
-    // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
