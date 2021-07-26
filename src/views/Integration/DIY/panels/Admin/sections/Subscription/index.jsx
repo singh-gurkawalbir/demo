@@ -13,6 +13,7 @@ import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 const emptyObject = {};
 const metadata = {
@@ -242,14 +243,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
             <div>
-              <Button
-                variant="outlined"
-                color="primary"
+              <FilledButton
                 className={classes.button}
                 component={Link}
                 to={match.url.replace('admin/subscription', 'addons')}>
                 GET ADD-ONS
-              </Button>
+              </FilledButton>
             </div>
           </div>
         )}

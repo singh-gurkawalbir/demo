@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Typography, Button, Divider } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
@@ -9,6 +9,7 @@ import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -16,15 +17,6 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     margin: theme.spacing(3, 0),
-    color: theme.palette.error.main,
-    borderColor: theme.palette.error.main,
-    '&:hover': {
-      borderColor: theme.palette.error.main,
-      color: theme.palette.error.light,
-    },
-  },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
   },
   divider: {
     marginTop: '30px',
@@ -101,15 +93,14 @@ export default function UninstallSection({ childId, integrationId }) {
           Once you uninstall this Integration App there is no going back. Please
           be certain.
         </Typography>
-        <Button
+        <OutlinedButton
           data-test="uninstallConnector"
-          variant="outlined"
-          color="secondary"
+          error
           className={classes.button}
+          startIcon={<DeleteIcon />}
           onClick={handleUninstall}>
           Uninstall
-          <DeleteIcon className={classes.rightIcon} />
-        </Button>
+        </OutlinedButton>
       </div>
     </>
   );

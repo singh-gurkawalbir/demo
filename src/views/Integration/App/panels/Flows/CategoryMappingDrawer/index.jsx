@@ -15,7 +15,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Button,
 } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -36,12 +35,15 @@ import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
-import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import SettingsDrawer from '../../../../../../components/Mapping/Settings';
 import { capitalizeFirstLetter } from '../../../../../../utils/string';
+import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
+import TextButton from '../../../../../../components/Buttons/TextButton';
+import ActionGroup from '../../../../../../components/ActionGroup';
+import FilledButton from '../../../../../../components/Buttons/FilledButton';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -63,7 +65,6 @@ const useStyles = makeStyles(theme => ({
   },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
-    float: 'left',
   },
   fullWidth: {
     width: '100%',
@@ -667,35 +668,31 @@ const ButtonComp = ({flowId, integrationId, parentUrl}) => {
 
   return (
 
-    <ButtonGroup className={classes.saveButtonGroup}>
-      <Button
+    <ActionGroup className={classes.saveButtonGroup}>
+      <FilledButton
         id={flowId}
-        variant="outlined"
-        color="primary"
         disabled={!mappingsChanged || isSaving}
         data-test="saveCategoryMappings"
         onClick={handleSave}>
         {isSaving ? 'Saving...' : 'Save'}
-      </Button>
+      </FilledButton>
       {(mappingsChanged || isSaving) && (
-      <Button
+      <OutlinedButton
         id={flowId}
-        variant="outlined"
-        color="secondary"
         disabled={isSaving}
         data-test="saveAndCloseImportMapping"
         onClick={handleSaveAndClose}>
         Save & close
-      </Button>
+      </OutlinedButton>
       )}
-      <Button
+      <TextButton
         variant="text"
         data-test="saveImportMapping"
         disabled={isSaving}
         onClick={handleClose}>
         Close
-      </Button>
-    </ButtonGroup>
+      </TextButton>
+    </ActionGroup>
   );
 };
 export default function CategoryMappingDrawerRoute(props) {

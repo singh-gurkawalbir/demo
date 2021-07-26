@@ -1,17 +1,19 @@
 import React, { useCallback, useState } from 'react';
-import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
+
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import IconTextButton from '../IconTextButton';
+import ActionGroup from '../ActionGroup';
+import FilledButton from '../Buttons/FilledButton';
+import TextButton from '../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -189,14 +191,14 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
                 </div>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                <ActionGroup>
+                  <FilledButton onClick={handleSave}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </FilledButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
@@ -12,6 +11,8 @@ import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
 import IconTextButton from '../../../components/IconTextButton';
+import OutlinedButton from '../../../components/Buttons/OutlinedButton';
+import TextButton from '../../../components/Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   profilePopper: {
@@ -160,24 +161,20 @@ function ProfileMenuButton() {
             </Typography>
             <div>
               <div className={classes.actions}>
-                <Button
+                <OutlinedButton
                   data-test="myAccountOrMyProfile"
                   onClick={handleClose}
-                  variant="outlined"
                   color="secondary"
-                  className={classes.myAccBtn}
                   component={Link}
                   to={getRoutePath('/myAccount/profile')}>
                   {isAccountOwner ? 'My account' : 'My profile'}
-                </Button>
-                <Button
+                </OutlinedButton>
+                <TextButton
                   data-test="signOut"
                   className={classes.actionsBtn}
-                  onClick={handleUserLogout}
-                  variant="text"
-                  color="primary">
+                  onClick={handleUserLogout}>
                   Sign out
-                </Button>
+                </TextButton>
               </div>
             </div>
           </div>

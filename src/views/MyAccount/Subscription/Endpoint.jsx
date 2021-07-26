@@ -18,6 +18,7 @@ import Spinner from '../../../components/Spinner';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
+import FilledButton from '../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -310,39 +311,35 @@ export default function Endpoint() {
             {licenseActionDetails.subscriptionActions.actions.indexOf(
               'start-free-trial'
             ) > -1 && (
-            <Button
+            <FilledButton
               onClick={onStartFreeTrialClick}
-              className={classes.subscriptionUpgradeBtn}
-              color="primary"
-              variant="outlined">
+              className={classes.subscriptionUpgradeBtn}>
               Go unlimited for 30 days!
-            </Button>
+            </FilledButton>
             )}
             {(licenseActionDetails.subscriptionActions.actions.indexOf(
               'request-upgrade'
             ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
               'request-subscription'
             ) > -1) && (
-            <Button
+            <FilledButton
               onClick={onRequestUpgradeClick}
               disabled={upgradeRequested}
               className={classes.subscriptionUpgradeBtn}
-              color="primary"
-              variant="outlined">
+             >
               Upgrade
-            </Button>
+            </FilledButton>
             )}
             {licenseActionDetails.subscriptionActions.actions.indexOf(
               'add-more-flows'
             ) > -1 && (
-            <Button
+            <FilledButton
               onClick={onRequestUpgradeClick}
               disabled={upgradeRequested}
               className={classes.subscriptionUpgradeBtn}
-              color="primary"
-              variant="outlined">
+             >
               Add more flows
-            </Button>
+            </FilledButton>
             )}
           </div>
           )}

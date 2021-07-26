@@ -1,18 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
+import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../reducers';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import CancelIcon from '../icons/CancelIcon';
 import IconTextButton from '../IconTextButton';
+import FilledButton from '../Buttons/FilledButton';
+import TextButton from '../Buttons/TextButton';
+import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -234,14 +236,14 @@ export default function StartDebugEnhanced({
                 </div>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={updateTimeHandler}>
+                <ActionGroup>
+                  <FilledButton onClick={updateTimeHandler}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </FilledButton>
+                  <TextButton onClick={handleClose}>
                     Close
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>
