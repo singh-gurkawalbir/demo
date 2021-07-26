@@ -440,5 +440,5 @@ export function getFirstErroredFieldId(formState) {
 
   const orderedFieldIds = getFieldIdsInLayoutOrder(fieldMeta?.layout);
 
-  return orderedFieldIds.find(fieldId => fields[fieldId] && !fields[fieldId].isValid);
+  return orderedFieldIds.find(fieldId => fields[fieldId] && fields[fieldId].visible && !fields[fieldId].isValid);
 }
