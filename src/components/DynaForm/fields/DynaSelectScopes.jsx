@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { FormControl, Button, FormLabel } from '@material-ui/core';
+import { FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
+import FilledButton from '../../Buttons/FilledButton';
+import OutlinedButton from '../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {
@@ -52,16 +54,14 @@ const TransferListModal = props => {
 
       <TransferList {...transferListProps} />
       <>
-        <Button
+        <FilledButton
           data-test="saveSelectedScopes"
-          variant="outlined"
-          color="primary"
           onClick={() => {
             onFieldChange(id, selectedScopes);
             handleClose();
           }}>
           Save
-        </Button>
+        </FilledButton>
       </>
     </ModalDialog>
   );
@@ -116,14 +116,12 @@ export default function DynaSelectScopesDialog(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
           className={classes.scopesBtn}
-          color="secondary"
           onClick={() => setShowScopesModal(true)}>
           {label}
-        </Button>
+        </OutlinedButton>
 
         <FieldMessage {...props} />
       </FormControl>

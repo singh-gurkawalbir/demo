@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
 import ButtonGroup from '../../../../ButtonGroup';
+import OutlinedButton from '../../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   previewButtonGroup: {
@@ -36,14 +37,12 @@ export default function PreviewButtonGroup({ editorId }) {
         label="Auto preview"
         value={autoEvaluate} />
       {!autoEvaluate && (
-        <Button
+        <OutlinedButton
           data-test="previewEditorResult"
-          variant="outlined"
-          color="secondary"
           disabled={saveInProgress}
           onClick={handlePreview}>
           Preview
-        </Button>
+        </OutlinedButton>
       )}
     </ButtonGroup>
   );

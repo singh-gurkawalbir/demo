@@ -2,13 +2,14 @@ import React, { useEffect} from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
+import { Typography} from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import getRoutePath from '../../../../utils/routePaths';
 import messageStore from '../../../../constants/messages';
+import FilledButton from '../../../Buttons/FilledButton';
 
 const emptyObject = {};
 
@@ -87,13 +88,11 @@ export default function IntegrationPreview() {
         <PreviewTable templateId={templateId} />
       </div>
 
-      <Button
+      <FilledButton
         className={classes.installButton}
-        variant="outlined"
-        color="primary"
         onClick={handleInstallIntegration}>
         Install integration
-      </Button>
+      </FilledButton>
     </div>
   );
 }

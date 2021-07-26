@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { makeStyles, Button, FormLabel } from '@material-ui/core';
+import { makeStyles, FormLabel } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -14,6 +14,7 @@ import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe/FileDataChange';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const getParserValue = ({
   resourcePath,
@@ -186,14 +187,12 @@ export default function DynaXmlParse_afe({
           <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
         </div>
-        <Button
+        <OutlinedButton
           data-test={`parse-helper-${id}`}
-          variant="outlined"
-          color="secondary"
           className={classes.button}
           onClick={handleEditorClick}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
 
       <DynaForm

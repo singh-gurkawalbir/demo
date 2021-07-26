@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -15,6 +15,7 @@ import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowVal
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import { emptyObject } from '../../../../utils/constants';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
@@ -147,14 +148,12 @@ export default function DynaCsvGenerate_afe(props) {
           <FormLabel className={classes.csvLabel}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
-          color="secondary"
           className={classes.csvBtn}
           onClick={handleEditorClick}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
       <DynaForm
         formKey={formKeyComponent}

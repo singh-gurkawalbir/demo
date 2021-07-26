@@ -5,6 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import FilledButton from '../../../Buttons/FilledButton';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
+import TextButton from '../../../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -100,20 +103,20 @@ export default function Actions({
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <div className={classes.action}>
-        <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
+        <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
-        </Button>
-        <Button variant="outlined" color="secondary" disabled={!isRetryDataChanged} onClick={updateRetry}>
+        </FilledButton>
+        <OutlinedButton disabled={!isRetryDataChanged} onClick={updateRetry}>
           Save &amp; close
-        </Button>
+        </OutlinedButton>
         { !isResolved && (
-          <Button variant="outlined" color="secondary" onClick={resolve}>
+          <OutlinedButton onClick={resolve}>
             Resolve
-          </Button>
+          </OutlinedButton>
         )}
-        <Button variant="text" color="primary" onClick={onClose}>
+        <TextButton onClick={onClose}>
           Close
-        </Button>
+        </TextButton>
       </div>
     );
   }

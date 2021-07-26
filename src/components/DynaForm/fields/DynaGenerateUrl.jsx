@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
@@ -11,6 +9,7 @@ import { isNewId, getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { getInvalidFields } from '../../../forms/formFactory/utils';
+import OutlinedButton from '../../Buttons/OutlinedButton';
 
 const hasInValidFields = (fields, fieldStates) => getInvalidFields(fieldStates).some(field => fields.includes(field.id));
 
@@ -109,22 +108,19 @@ export default function GenerateUrl(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <Button
+              <OutlinedButton
                 data-test="copyToClipboard"
                 title="Copy to clipboard"
-                variant="outlined"
-                color="secondary">
+                >
                 Copy URL
-              </Button>
+              </OutlinedButton>
             </CopyToClipboard>
           )}
           {!value && (
-            <Button
-              variant="outlined"
-              color="secondary"
+            <OutlinedButton
               onClick={handleGenerateUrl}>
               {buttonLabel}
-            </Button>
+            </OutlinedButton>
           )}
         </div>
       </div>

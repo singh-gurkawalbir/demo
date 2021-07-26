@@ -19,8 +19,10 @@ import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import ActionButton from '../../../../ActionButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import ButtonGroup from '../../../../ButtonGroup';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import ActionGroup from '../../../../ActionGroup';
+import FilledButton from '../../../../Buttons/FilledButton';
+import TextButton from '../../../../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
@@ -315,25 +317,21 @@ function FirstLevelModal(props) {
         )}
       </div>
       {!editListItemModelOpen && (
-        <ButtonGroup>
-          <Button
+        <ActionGroup>
+          <FilledButton
             data-test="saveRelatedList"
-            variant="outlined"
-            color="primary"
             onClick={() => {
               onFieldChange(id, value);
               handleClose();
             }}>
             Save
-          </Button>
-          <Button
+          </FilledButton>
+          <TextButton
             data-test="closeRelatedListModal"
-            onClick={handleClose}
-            variant="text"
-            color="primary">
+            onClick={handleClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       )}
     </ModalDialog>
   );

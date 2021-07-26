@@ -3,8 +3,8 @@ import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
-import { Button } from '@material-ui/core';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   doneButton: {
@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     border: '1px solid',
-    borderColor: `${theme.palette.secondary.lightest} !important`,
     borderRadius: 0,
   },
   select: {
@@ -61,15 +60,13 @@ export const DoneButton = ({onClose}) => {
 
   return (
 
-    <Button
+    <OutlinedButton
       id="select-close"
       data-test="closeSelect"
-      variant="outlined"
-      color="secondary"
       onClick={onClose}
       className={classes.doneButton}>
       Done
-    </Button>
+    </OutlinedButton>
   );
 };
 const MenuComponent = React.forwardRef((props, ref) => {

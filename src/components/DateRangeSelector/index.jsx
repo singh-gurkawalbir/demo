@@ -14,6 +14,7 @@ import { getSelectedRange } from '../../utils/flowMetrics';
 import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -251,14 +252,12 @@ export default function DateRangeSelector({
             <Icon />
           </ActionButton>
         ) : (
-          <Button
+          <OutlinedButton
             disabled={!!disabled}
             onClick={toggleClick}
-            variant="outlined"
-            color="secondary"
             className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
             {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
-          </Button>
+          </OutlinedButton>
         )
       }
       <ArrowPopper

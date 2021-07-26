@@ -1,7 +1,7 @@
 import React, { useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
+import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
@@ -10,6 +10,8 @@ import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
 import messageStore from '../../../../constants/messages';
+import FilledButton from '../../../Buttons/FilledButton';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -225,20 +227,16 @@ export default function TemplatePreview() {
 
       <div data-public className={classes.container}>
         <div className={classes.appDetails}>
-          <Button
-            variant="outlined"
-            color="primary"
+          <FilledButton
             onClick={handleInstallIntegration}>
             Install now
-          </Button>
+          </FilledButton>
           <br />
           {hasReadMe && (
-            <Button
-              color="secondary"
-              variant="outlined"
+            <OutlinedButton
               onClick={handleReadMeClick}>
               View Readme
-            </Button>
+            </OutlinedButton>
           )}
           <Divider variant="middle" className={classes.divider} />
           <Typography>{description}</Typography>

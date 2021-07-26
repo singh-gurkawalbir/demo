@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,6 +13,9 @@ import { selectors } from '../../../../../reducers';
 import SearchCriteriaEditor from '.';
 import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../../../icons/FullScreenCloseIcon';
+import FilledButton from '../../../../Buttons/FilledButton';
+import OutlinedButton from '../../../../Buttons/OutlinedButton';
+import TextButton from '../../../../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -152,29 +154,23 @@ export default function SearchCriteriaDialog(props) {
         />
       </DialogContent>
       <DialogActions className={classes.actions}>
-        <Button
-          variant="outlined"
+        <FilledButton
           data-test="saveEditor"
           disabled={disabled || !isEmpty(invalidFields)}
-          color="primary"
           onClick={handleSave}>
           Save
-        </Button>
-        <Button
-          variant="outlined"
+        </FilledButton>
+        <OutlinedButton
           data-test="saveEditor"
           disabled={disabled || !isEmpty(invalidFields)}
-          color="secondary"
           onClick={handleSaveAndClose}>
           Save & close
-        </Button>
-        <Button
-          variant="text"
-          color="primary"
+        </OutlinedButton>
+        <TextButton
           data-test="closeEditor"
           onClick={onClose}>
           Cancel
-        </Button>
+        </TextButton>
       </DialogActions>
     </Dialog>
   );

@@ -13,6 +13,9 @@ import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
+import FilledButton from '../../Buttons/FilledButton';
+import ActionGroup from '../../ActionGroup';
+import TextButton from '../../Buttons/TextButton';
 
 const fieldMeta = {
   fieldMap: {
@@ -94,19 +97,17 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <Button
-            variant="outlined"
-            color="primary"
+        <ActionGroup>
+          <FilledButton
             data-test="downloadErrors"
             disabled={!isValidForm}
             onClick={handleDownload}>
             Download
-          </Button>
-          <Button data-test="cancelDownload" onClick={onClose}>
+          </FilledButton>
+          <TextButton data-test="cancelDownload" onClick={onClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </>
   );

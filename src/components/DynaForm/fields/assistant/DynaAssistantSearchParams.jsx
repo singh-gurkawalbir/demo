@@ -16,6 +16,7 @@ import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -173,15 +174,13 @@ export default function DynaAssistantSearchParams(props) {
           {/* {Todo (shiva): we need helpText for the component} */}
           <FieldHelp {...props} helpText="Configure search parameters" />
         </div>
-        <Button
+        <OutlinedButton
           disabled={disabled}
           data-test={id}
-          variant="outlined"
-          color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
       <FieldMessage
         isValid={isValid}

@@ -4,9 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
 import {v4} from 'uuid';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
@@ -14,6 +12,7 @@ import { getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import WarningIcon from '../../icons/WarningIcon';
+import OutlinedButton from '../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
@@ -129,21 +128,18 @@ export default function DynaWebhookTokenGenerator(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <Button
+              <OutlinedButton
                 data-test="copyToClipboard"
                 title="Copy to clipboard"
-                variant="outlined"
-                color="secondary">
+               >
                 Copy token
-              </Button>
+              </OutlinedButton>
             </CopyToClipboard>
           ) : (
-            <Button
-              variant="outlined"
-              color="secondary"
+            <OutlinedButton
               onClick={handleGenerateClick}>
               {buttonLabel}
-            </Button>
+            </OutlinedButton>
           )}
         </div>
       </div>
