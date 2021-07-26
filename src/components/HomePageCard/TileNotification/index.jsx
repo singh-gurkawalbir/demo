@@ -4,9 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
-import ButtonGroup from '../../ButtonGroup';
 import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
@@ -14,6 +12,9 @@ import getRoutePath from '../../../utils/routePaths';
 import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
 import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import ActionGroup from '../../ActionGroup';
+import FilledButton from '../../Buttons/FilledButton';
+import TextButton from '../../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -140,30 +141,38 @@ export default function TileNotification({ content, expired, connectorId, licens
       </div>
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
         {single && !showTrialLicenseMessage && (
-          <Button
-            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivate" variant="outlined"
-            color="primary">
+          <FilledButton
+            disabled={upgradeRequested}
+            onClick={onClickRenewOrReactivateButton}
+            data-test="RenewOrReactivate"
+           >
             {resumable ? 'Reactivate' : 'Renew'}
-          </Button>
+          </FilledButton>
         )}
         {single && showTrialLicenseMessage && (
-          <Button
-            disabled={upgradeRequested} onClick={onClickBuyButton} data-test="buy" variant="outlined"
-            color="primary">
+          <FilledButton
+            disabled={upgradeRequested}
+            onClick={onClickBuyButton}
+            data-test="buy"
+            >
             Buy
-          </Button>
+          </FilledButton>
         )}
         {!single && (
-        <ButtonGroup>
-          <Button
-            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
-            color="primary">
+        <ActionGroup>
+          <FilledButton
+            disabled={upgradeRequested}
+            onClick={onClickRenewOrReactivateButton}
+            data-test="RenewOrReactivateDouble"
+           >
             {showTrialLicenseMessage ? 'Buy' : 'Renew'}
-          </Button>
-          <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
+          </FilledButton>
+          <TextButton
+            data-test="uninstall"
+            onClick={handleUninstall}>
             Uninstall
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
         )}
       </div>
       <div />
