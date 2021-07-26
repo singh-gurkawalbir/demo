@@ -170,7 +170,9 @@ selectors.isFormDirty = (state, formKey) => {
   const defaultValueState = calculateAllFieldsValue(form, 'defaultValue');
   const value = calculateAllFieldsValue(form, 'value');
 
-  return !isEqual(value, defaultValueState);
+  const isDirty = !isEqual(value, defaultValueState);
+
+  return isDirty;
 };
 
 selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
