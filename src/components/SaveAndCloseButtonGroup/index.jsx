@@ -44,7 +44,7 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
         data-test="cancel"
         disabled={inProgress}
         onClick={onClose}>
-        Cancel
+        Close
       </Button>
     </ActionGroup>
   );
