@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@material-ui/core';
 import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
+import FilledButton from '../Buttons/FilledButton';
+import OutlinedButton from '../Buttons/OutlinedButton';
+import TextButton from '../Buttons/TextButton';
 
 export const CLOSE_AFTER_SAVE = true;
 export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, handleSave, handleSaveAndClose}) {
@@ -19,33 +21,27 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
 
   return (
     <ActionGroup>
-      <Button
-        variant="outlined"
+      <FilledButton
         data-test="save"
         disabled={disabled || !isDirty || inProgress}
-        color="primary"
         onClick={handleSaveClick}>
         {inProgress ? <Spinner size="small">Saving...</Spinner> : 'Save'}
-      </Button>
+      </FilledButton>
 
       {(!disabled && isDirty && !inProgress) ? (
-        <Button
-          variant="outlined"
+        <OutlinedButton
           data-test="saveAndClose"
-          color="secondary"
           onClick={handleSaveAndCloseClick}>
           Save & close
-        </Button>
+        </OutlinedButton>
       ) : null}
 
-      <Button
-        variant="text"
-        color="primary"
+      <TextButton
         data-test="cancel"
         disabled={inProgress}
         onClick={onClose}>
         Cancel
-      </Button>
+      </TextButton>
     </ActionGroup>
   );
 }

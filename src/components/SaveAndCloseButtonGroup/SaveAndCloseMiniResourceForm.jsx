@@ -1,9 +1,10 @@
-import { Button } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import ActionGroup from '../ActionGroup';
+import FilledButton from '../Buttons/FilledButton';
+import TextButton from '../Buttons/TextButton';
 import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
 import Spinner from '../Spinner';
 import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
@@ -22,25 +23,21 @@ const MiniResourceForm = ({
   disabled,
 }) => (
   <ActionGroup>
-    <Button
-      variant="outlined"
+    <FilledButton
       data-test="save"
       disabled={!isDirty || inProgress || disabled}
-      color="primary"
       className={className}
       onClick={handleSave}>
       {inProgress && !disabled ? <Spinner size="small">{submitTransientLabel}</Spinner> : submitButtonLabel}
-    </Button>
+    </FilledButton>
     {shouldNotShowCancelButton ? null : (
-      <Button
-        variant="text"
-        color="primary"
+      <TextButton
         data-test="cancel"
         disabled={inProgress}
         className={className}
         onClick={handleCancel}>
         Cancel
-      </Button>
+      </TextButton>
     )}
   </ActionGroup>
 );
