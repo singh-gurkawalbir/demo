@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import { isIntegrationApp } from '../../../../utils/flows';
 import { isNewId } from '../../../../utils/resource';
 
@@ -61,7 +62,7 @@ export default {
     id: 'formView',
     type: 'formview',
     label: 'Form view',
-    visible: r => !r?.useTechAdaptorForm,
+    visible: r => !r?.useTechAdaptorForm || !isEmpty(r?.assistantMetadata),
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
     helpKey: 'formView',
   },

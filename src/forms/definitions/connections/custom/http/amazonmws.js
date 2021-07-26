@@ -27,11 +27,11 @@ export default {
     } else { // http.type is either SP-API or Hybrid
       newValues['/http/baseURI'] = amazonSellerCentralBaseUriForNonMWSConnection[newValues['/http/unencrypted/sellingRegion']];
       newValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
-      newValues['/http/auth/token/refreshTokenPath'] = 'access_token';
       newValues['/http/auth/token/location'] = 'body';
       newValues['/http/auth/failStatusCode'] = 403;
       newValues['/http/auth/oauth/authURI'] = amazonSellerCentralAuthURI[newValues['/http/unencrypted/marketplace']];
       newValues['/http/auth/oauth/tokenURI'] = 'https://api.amazon.com/auth/o2/token';
+      newValues['/http/auth/oauth/accessTokenPath'] = 'access_token';
       newValues['/http/unencrypted/marketplaceId'] = newValues['/http/unencrypted/marketplace'];
       delete newValues['/http/sellingPartnerId'];
       delete newValues['/http/unencrypted/marketplace'];
@@ -90,7 +90,7 @@ export default {
       type: 'select',
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
-      defaultDisabled: r => !isNewId(r?._id) && r?.http?.type,
+      defaultDisabled: r => !isNewId(r?._id) && !!r?.http?.type,
       skipSort: true,
       options: [
         {
@@ -119,7 +119,7 @@ export default {
       label: 'Marketplace',
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
-      defaultDisabled: r => !isNewId(r?._id) && r?.http?.type,
+      defaultDisabled: r => !isNewId(r?._id) && !!r?.http?.type,
       defaultValue: r => r?.http?.unencrypted?.marketplaceId,
     },
     'http.sellingPartnerId': {
@@ -317,7 +317,7 @@ export default {
   },
   actions: [
     {
-      id: 'oauth',
+      id: 'oauthandcancel',
       label: 'Save & authorize',
       visibleWhen: [
         {
@@ -327,13 +327,8 @@ export default {
       ],
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.type',
-          is: ['Amazon-MWS'],
-        },
         {
           field: 'http.type',
           is: [''],
@@ -341,24 +336,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.type',
-          is: ['Amazon-MWS'],
-        },
-        {
-          field: 'http.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'http.type',

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
+import { FORM_SAVE_STATUS } from '../../utils/constants';
 import DynaForm from '../DynaForm';
 import {
   getMetadata,
@@ -25,6 +26,14 @@ export default function FlowScheduleForm({
   const exp = useSelector(state =>
     selectors.resource(state, 'exports', pg && pg._exportId)
   );
+  const [remountCount, setRemountCount] = useState(0);
+  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
+
+  useEffect(() => {
+    if (status === FORM_SAVE_STATUS.COMPLETE) {
+      setRemountCount(remountCount => remountCount + 1);
+    }
+  }, [status]);
   let resource = pg || flow;
   const schedule = pg?.schedule || flow?.schedule;
   const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
@@ -55,6 +64,7 @@ export default function FlowScheduleForm({
     disabled,
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    remount: remountCount,
   });
 
   return <DynaForm formKey={formKey} />;

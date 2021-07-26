@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '17px',
   },
   fill: {
+    fontFamily: 'Roboto500',
     borderColor: theme.palette.primary.main,
     background: theme.palette.primary.main,
     color: theme.palette.common.white,
@@ -16,16 +17,17 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.common.white,
       background: theme.palette.primary.light,
     },
+
   },
 }));
 
-export default function PillButton({fill, ...rest}) {
+export default function PillButton({fill, className, ...rest}) {
   const classes = useStyles();
 
   return (
     <Button
       variant="outlined"
-      className={clsx(classes.root, {[classes.fill]: fill})}
+      className={clsx(classes.root, {[classes.fill]: fill}, className)}
       {...rest} />
   );
 }
@@ -34,9 +36,11 @@ PillButton.propTypes = {
   disabled: PropTypes.bool,
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
+  fill: PropTypes.bool,
 };
 
 PillButton.defaultProps = {
   color: 'secondary',
   size: 'medium',
+  fill: false,
 };

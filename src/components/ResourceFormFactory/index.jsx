@@ -15,7 +15,7 @@ const Form = props => {
   return <DynaForm {...props} formKey={formKey} />;
 };
 
-export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
+export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, ...props }) => {
   const { fieldMeta } = props;
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
@@ -31,8 +31,11 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const isSubmitComplete = formState?.formSaveStatus === FORM_SAVE_STATUS.COMPLETE;
 
   useEffect(() => {
-    if (isSubmitComplete && onSubmitComplete) {
-      onSubmitComplete('', false, formState.formValues);
+    if (isSubmitComplete) {
+      onSubmitComplete && onSubmitComplete('', false, formState.formValues);
+      // when submit is complete reinitialize the resourceForm
+      // this applies to Regular resource forms and suiteScript forms
+      handleInitForm && handleInitForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitComplete]);
@@ -64,7 +67,7 @@ export const ResourceFormFactory = props => {
   );
   const dispatch = useDispatch();
   const handleInitForm = useCallback(
-    (resourceType, resourceId, isNew, flowId) => {
+    () => {
       const skipCommit =
         isNew &&
         [
@@ -85,28 +88,20 @@ export const ResourceFormFactory = props => {
         )
       );
     },
-    [dispatch]
+    [dispatch, flowId, isNew, resourceId, resourceType]
   );
   const handleClearResourceForm = useCallback(
-    (resourceType, resourceId) => {
+    () => {
       dispatch(actions.resourceForm.clear(resourceType, resourceId));
     },
-    [dispatch]
+    [dispatch, resourceId, resourceType]
   );
 
   useEffect(() => {
-    handleInitForm(resourceType, resourceId, isNew, flowId, integrationId);
+    handleInitForm();
 
-    return () => handleClearResourceForm(resourceType, resourceId);
-  }, [
-    flowId,
-    handleClearResourceForm,
-    handleInitForm,
-    isNew,
-    resourceId,
-    resourceType,
-    integrationId,
-  ]);
+    return () => handleClearResourceForm();
+  }, [handleClearResourceForm, handleInitForm]);
 
   const { optionsHandler, validationHandler } = useMemo(
     () => {
@@ -136,6 +131,7 @@ export const ResourceFormFactory = props => {
       {...props}
       formState={formState}
       fieldMeta={fieldMeta}
+      handleInitForm={handleInitForm}
       optionsHandler={optionsHandler}
       validationHandler={validationHandler}
     />

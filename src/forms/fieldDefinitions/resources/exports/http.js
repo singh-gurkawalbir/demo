@@ -591,7 +591,7 @@ export default {
     required: true,
     refreshOptionsOnChangesTo: ['http.requestMediaType'],
     requestMediaType: r =>
-      r?.http?.requestMediaType || 'json',
+      r?.http?.requestMediaType || '',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -625,7 +625,7 @@ export default {
   },
   'http.response.blobFormat': {
     type: 'select',
-    label: 'Blob format',
+    label: 'File encoding',
     options: [
       {
         items: [

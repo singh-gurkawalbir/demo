@@ -477,8 +477,7 @@ export default {
   },
   actions: [
     {
-      id: 'saveandcontinue',
-      label: 'Save & continue',
+      id: 'saveandcontinuegroup',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -488,8 +487,7 @@ export default {
       ],
     },
     {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandtest',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -499,13 +497,8 @@ export default {
       ],
     },
     {
-      id: 'save',
-      label: 'Test and save',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          isNot: ['oauth'],
-        },
+      id: 'saveandclosegroup',
+      visibleWhenAll: [
         {
           field: 'http.auth.type',
           is: [''],
@@ -513,29 +506,15 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
+      id: 'testandsavegroup',
+      visibleWhenAll: [
         {
           field: 'http.auth.type',
           isNot: ['oauth'],
         },
         {
           field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      label: 'Test',
-      mode: 'secondary',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
+          isNot: [''],
         },
       ],
     },
