@@ -54,13 +54,6 @@ const useStyles = makeStyles(theme => ({
   expiredIcon: {
     color: theme.palette.error.main,
   },
-  closeIconBtn: {
-    float: 'right',
-    padding: 0,
-  },
-  closeIcon: {
-    fontSize: 18,
-  },
   contentWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
