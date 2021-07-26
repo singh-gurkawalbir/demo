@@ -1,6 +1,7 @@
 import React, { useEffect, Fragment } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
@@ -9,21 +10,34 @@ import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
     height: '100%',
-    overflow: 'auto',
+    '& td:last-child': {
+      minWidth: 'initial',
+    },
+    '& .MuiTableCell-sizeSmall': {
+      padding: theme.spacing(1),
+    },
+    '& .MuiTableCell-root:first-child': {
+      paddingLeft: theme.spacing(2),
+    },
   },
   emptyMessage: {
     margin: theme.spacing(3, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+  },
+  scrollTable: {
+    overflow: 'auto',
+  },
+  completeFlowTable: {
+    minHeight: '300px',
   },
 }));
 const filterKey = FILTER_KEYS_AD.COMPLETED;
@@ -43,7 +57,14 @@ export default function CompletedFlows() {
   useEffect(
     () => () => {
       dispatch(actions.job.dashboard.completed.clear());
+      dispatch(
+        actions.patchFilter(filterKey, {
+          ...filters,
+          range: DEFAULT_RANGE,
+        })
+      );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch]
   );
 
@@ -55,8 +76,10 @@ export default function CompletedFlows() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, filterHash]);
 
+  const showEmptyMessage = !jobs?.length && !isCompletedJobsCollectionLoading;
+
   return (
-    <>
+    <div className={!showEmptyMessage && classes.completeFlowTable}>
       <div className={classes.root}>
         {isCompletedJobsCollectionLoading ? (<Spinner centerAll />) : (
           <>
@@ -67,15 +90,16 @@ export default function CompletedFlows() {
             </span>
             <ResourceTable
               resources={jobs}
-              className={classes.jobTable}
+              className={clsx(classes.jobTable, !showEmptyMessage && classes.scrollTable)}
               resourceType={filterKey}
+              size="small"
           />
           </>
         )}
       </div>
-      {!jobs?.length && !isCompletedJobsCollectionLoading ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
+      {showEmptyMessage ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
-    </>
+    </div>
   );
 }

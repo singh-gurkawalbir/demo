@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import DynaForm from '../DynaForm';
 import { selectors } from '../../reducers';
 import LoadResources from '../LoadResources';
-import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { generateNewId } from '../../utils/resource';
+import SaveAndCloseMiniResourceForm from '../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -38,10 +37,11 @@ export default function AddOrSelect(props) {
     resourceType = 'connections',
     manageOnly = false,
     onClose,
+    formKey,
   } = props;
   const classes = useStyles();
-  const [newFormId] = useState(generateNewId());
   const [useNew, setUseNew] = useState(true);
+  const [remountCount, setRemountCount] = useState(0);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
     RESOURCE_TYPE_SINGULAR_TO_LABEL[
@@ -68,6 +68,7 @@ export default function AddOrSelect(props) {
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
+    setRemountCount(remountCount => remountCount + 1);
   };
 
   const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
@@ -93,7 +94,8 @@ export default function AddOrSelect(props) {
       fields: [resourceName],
     },
   };
-  const handleSubmit = formVal => {
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleSubmit = () => {
     if (!formVal[resourceName]) {
       return false;
     }
@@ -101,9 +103,11 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    formKey,
+    remount: remountCount,
   });
 
   return (
@@ -131,7 +135,7 @@ export default function AddOrSelect(props) {
           {useNew ? (
 
             <ResourceFormWithStatusPanel
-              formKey={newFormId}
+              formKey={formKey}
               heightOffset="250"
               occupyFullWidth
               resourceType={resourceType}
@@ -149,7 +153,7 @@ export default function AddOrSelect(props) {
 
       {useNew ? (
         <ResourceFormActionsPanel
-          formKey={newFormId}
+          formKey={formKey}
           resourceType={resourceType}
           resourceId={resourceId}
           submitButtonLabel="Save & close"
@@ -158,9 +162,14 @@ export default function AddOrSelect(props) {
           connectionType={connectionType}
           onCancel={onClose} />
       ) : (
-        <DynaSubmit formKey={formKey} onClick={handleSubmit} className={classes.doneBtn}>
-          Done
-        </DynaSubmit>
+        <SaveAndCloseMiniResourceForm
+          className={classes.doneBtn}
+          formKey={formKey}
+          submitButtonLabel="Done"
+          handleSave={handleSubmit}
+          shouldNotShowCancelButton
+          handleCancel={onClose}
+        />
       )}
     </LoadResources>
   );

@@ -119,6 +119,13 @@ const auth = {
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
+
+const asyncTask = {
+  start: key => action(actionTypes.ASYNC_TASK.START, { key }),
+  success: key => action(actionTypes.ASYNC_TASK.SUCCESS, { key }),
+  failed: key => action(actionTypes.ASYNC_TASK.FAILED, { key }),
+  clear: key => action(actionTypes.ASYNC_TASK.CLEAR, { key }),
+};
 const api = {
   request: (path, method, message, hidden, refresh) =>
     action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
@@ -279,8 +286,8 @@ const resource = {
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
-  patch: (resourceType, id, patchSet) =>
-    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
+  patch: (resourceType, id, patchSet, asyncKey) =>
+    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
 
@@ -313,13 +320,14 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options, context) =>
+  commitStaged: (resourceType, id, scope, options, context, asyncKey) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
       context,
+      asyncKey,
     }),
 
   commitConflict: (id, conflict, scope) =>
@@ -1208,9 +1216,9 @@ const user = {
     users: {
       requestCollection: message =>
         resource.requestCollection('ashares', message),
-      create: user => action(actionTypes.USER_CREATE, { user }),
+      create: (user, asyncKey) => action(actionTypes.USER_CREATE, { user, asyncKey }),
       created: user => action(actionTypes.USER_CREATED, { user }),
-      update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
+      update: (_id, user, asyncKey) => action(actionTypes.USER_UPDATE, { _id, user, asyncKey }),
       updated: user => action(actionTypes.USER_UPDATED, { user }),
       delete: _id => action(actionTypes.USER_DELETE, { _id }),
       deleted: _id => action(actionTypes.USER_DELETED, { _id }),
@@ -1724,9 +1732,9 @@ const job = {
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
   receivedRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
-  updateRetryData: ({ retryData, retryId }) =>
-    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
-  downloadRetryData: ({ retryId }) => action(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, { retryId }),
+  updateRetryData: ({ retryData, retryId, asyncKey }) =>
+    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId, asyncKey}),
+  downloadRetryData: ({retryId}) => action(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, {retryId}),
   retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
     action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
       jobId,
@@ -2262,6 +2270,7 @@ const sso = {
 };
 
 export default {
+  asyncTask,
   form,
   postFeedback,
   app,

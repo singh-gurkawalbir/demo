@@ -86,7 +86,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
+      defaultValue: r => r?.http?.auth?.type || '',
       label: 'Authentication type',
       helpKey: 'bigcommerce.connection.http.auth.type',
       options: [
@@ -204,13 +204,8 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic'],
-        },
         {
           field: 'http.auth.type',
           is: [''],
@@ -218,21 +213,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -241,11 +222,7 @@ export default {
       ],
     },
     {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'http.auth.type',

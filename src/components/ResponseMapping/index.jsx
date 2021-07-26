@@ -86,9 +86,6 @@ const ResponseMapping = ({ flowId, resourceId, integrationId}) => {
       </DrawerContent>
       <DrawerFooter>
         <SaveButtonGroup
-          flowId={flowId}
-          resourceId={resourceId}
-          disabled={disabled}
           onClose={handleClose}
                 />
       </DrawerFooter>

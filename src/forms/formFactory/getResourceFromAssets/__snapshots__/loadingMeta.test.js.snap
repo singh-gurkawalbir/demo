@@ -310,13 +310,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
-      },
-      Object {
-        "id": "saveandclose",
-      },
-      Object {
-        "id": "cancel",
+        "id": "saveandclosegroup",
       },
     ],
     "fieldMap": Object {
@@ -1040,15 +1034,8 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
-        "label": "Save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "basic",
-            ],
-          },
           Object {
             "field": "netsuite.authType",
             "is": Array [
@@ -1058,25 +1045,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "basic",
-            ],
-          },
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "oauth",
-        "label": "Save & authorize",
+        "id": "oauthandcancel",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1087,7 +1056,7 @@ Object {
         ],
       },
       Object {
-        "id": "testandsave",
+        "id": "testandsavegroup",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1098,40 +1067,12 @@ Object {
         ],
       },
       Object {
-        "id": "testsaveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "token",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
-      },
-      Object {
-        "id": "validate",
-        "label": "Validate",
-        "mode": "secondary",
+        "id": "validateandsave",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
             "is": Array [
               "basic",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "test",
-        "mode": "secondary",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "token",
             ],
           },
         ],
@@ -3019,7 +2960,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3032,20 +2973,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3056,22 +2984,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -3438,7 +3350,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3451,20 +3363,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3475,22 +3374,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -5136,7 +5019,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -5149,33 +5032,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7773,7 +7630,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7786,20 +7643,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7810,22 +7654,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -8172,7 +8000,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -8185,20 +8013,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -8209,22 +8024,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -10362,7 +10161,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -10375,20 +10174,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -10399,22 +10185,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {

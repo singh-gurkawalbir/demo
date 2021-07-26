@@ -8,7 +8,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
-import { commitStagedChanges } from '../resources';
+import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
@@ -18,6 +18,7 @@ import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/const
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 
 export const SCOPES = {
   META: 'meta',
@@ -26,7 +27,6 @@ export const SCOPES = {
 };
 
 Object.freeze(SCOPES);
-
 export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
@@ -323,10 +323,11 @@ export function* submitFormValues({
     // no context = {flowId} sent on purpose for the resource forms
     // on resource submit complete updateFlowDoc will be called anyway
     // sending context = {flowId} will trigger updateFlowDoc again
-    const resp = yield call(commitStagedChanges, {
+    const resp = yield call(commitStagedChangesWrapper, {
       resourceType: type,
       id: resourceId,
       scope: SCOPES.VALUE,
+      asyncKey: getAsyncKey(type, resourceId),
     });
 
     if (resp && (resp.error || resp.conflict)) {
@@ -646,7 +647,9 @@ export function* submitResourceForm(params) {
 
 export function* saveAndContinueResourceForm(params) {
   const { resourceId } = params;
+  const asyncKey = getAsyncKey('connections', resourceId);
 
+  yield put(actions.asyncTask.start(asyncKey));
   yield call(submitResourceForm, params);
   const formState = yield select(
     selectors.resourceFormState,
@@ -671,6 +674,8 @@ export function* saveAndContinueResourceForm(params) {
       });
 
       if (response?.errors) {
+        yield put(actions.asyncTask.failed(asyncKey));
+
         return yield put(
           actions.api.failure(
             path,
@@ -686,9 +691,12 @@ export function* saveAndContinueResourceForm(params) {
         hidden: true,
       });
     } catch (error) {
+      yield put(actions.asyncTask.failed(asyncKey));
+
       return { error };
     }
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* saveResourceWithDefinitionID({

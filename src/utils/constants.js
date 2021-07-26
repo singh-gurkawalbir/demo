@@ -5,6 +5,10 @@ export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
+export const AFE_SAVE_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  REQUESTED: 'requested',
+});
 export const FORM_SAVE_STATUS = Object.freeze({
   COMPLETE: 'complete',
   FAILED: 'failed',
@@ -701,4 +705,8 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 ]);
 
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+
+export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
+
+export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const HOME_PAGE_PATH = '/home';
