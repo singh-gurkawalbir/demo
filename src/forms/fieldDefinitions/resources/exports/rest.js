@@ -1,46 +1,5 @@
 export default {
-  'rest.method': {
-    type: 'select',
-    label: 'HTTP method',
-    helpKey: 'export.http.method',
-    required: true,
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'rest.blobMethod': {
-    type: 'select',
-    label: 'HTTP method',
-    helpKey: 'export.http.method',
-    required: true,
-    defaultValue: r => r && r.rest && r.rest.method,
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
-  },
+
   'rest.postBody': {
     type: 'httprequestbody',
     label: 'HTTP request body',
@@ -54,26 +13,7 @@ export default {
       },
     ],
   },
-  'rest.resourcePath': {
-    type: 'text',
-    label: r => {
-      if (r?.resourceType === 'lookupFiles' || r?.type === 'blob') { return 'Path to file in HTTP response body'; }
 
-      return 'Path to records in HTTP response body';
-    },
-    helpKey: r => {
-      if (r?.resourceType === 'lookupFiles' || r?.type === 'blob') { return 'export.http.response.file.resourcePath'; }
-
-      return 'export.http.response.resourcePath';
-    },
-  },
-  'rest.headers': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Configure HTTP headers',
-  },
   // #region paging
   'rest.pagingMethod': {
     type: 'selectwithvalidations',
@@ -238,7 +178,7 @@ export default {
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Override query parameter name',
+    label: 'Override skip number query parameter name',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -258,56 +198,6 @@ export default {
     validateInComponent: true,
     deltaFieldsToValidate: ['rest.relativeURI', 'rest.postBody'],
     connectionId: r => r && r._connectionId,
-  },
-  'rest.successPath': {
-    type: 'text',
-    label: 'Path to success field in HTTP response body',
-    helpKey: 'export.http.response.successPath',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'rest.successValues': {
-    type: 'text',
-    label: 'Success values',
-    helpKey: 'export.http.response.successValues',
-    delimiter: ',',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'rest.lastPageStatusCode': {
-    type: 'text',
-    label: 'Override HTTP status code for last page',
-    helpKey: 'export.http.paging.lastPageStatusCode',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  'rest.lastPagePath': {
-    type: 'text',
-    label: 'Path to paging complete field in HTTP response body',
-    helpKey: 'export.http.paging.lastPagePath',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
   },
   'rest.lastPageValue': {
     type: 'text',
@@ -382,29 +272,6 @@ export default {
     label: 'HTTP request body to update records',
     helpKey: 'export.http.once.body',
     required: true,
-  },
-  'rest.blobFormat': {
-    type: 'select',
-    label: 'Blob format',
-    helpKey: 'export.http.response.blobFormat',
-    options: [
-      {
-        items: [
-          { label: 'ASCII', value: 'ascii' },
-          { label: 'Base64', value: 'base64' },
-          { label: 'Binary', value: 'binary' },
-          { label: 'Hex', value: 'hex' },
-          { label: 'UTF-16LE', value: 'utf-16le' },
-          { label: 'UTF-8', value: 'utf8' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
   },
   // #endregion once
 };

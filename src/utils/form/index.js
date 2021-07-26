@@ -119,9 +119,6 @@ export const evaluateAllRules = ({
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
 
-      // eslint-disable-next-line no-console
-      console.error(`invalid rule properties ${rule} passed returning default result`);
-
       return defaultResult;
     });
   }
@@ -141,8 +138,6 @@ export const evaluateSomeRules = ({
       if (rule.field && fieldsById.hasOwnProperty(rule.field)) {
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
-      // eslint-disable-next-line no-console
-      console.error(`invalid rule properties ${rule} passed returning default result`);
 
       return defaultResult;
     });
@@ -280,7 +275,7 @@ export const processOptions = ({
     }
   });
 
-export const updateFieldValue = (field, value) => {
+export const updateFieldValue = (field, value, skipFieldTouched) => {
   const updateValue = typeof value !== 'undefined' && value;
 
   if (field.omitWhenHidden && !field.visible) {
@@ -288,6 +283,9 @@ export const updateFieldValue = (field, value) => {
     console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
+    if (skipFieldTouched) {
+      field.defaultValue = updateValue;
+    }
   }
 };
 

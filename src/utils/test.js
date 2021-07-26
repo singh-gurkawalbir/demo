@@ -10,6 +10,7 @@ import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
 import { MISCELLANEOUS_SECTION_ID } from './constants';
+import { getAsyncKey } from './saveAndCloseButtons';
 
 const uiRoutePathPrefix = '';
 
@@ -497,5 +498,16 @@ describe('redirectFirstFlowGrouping', () => {
     const flows = null;
 
     expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+  });
+});
+
+describe('saveAndCloseButtons tests', () => {
+  describe('getAsyncKey tests', () => {
+    test('should not throw errors on invalid props', () => {
+      expect(getAsyncKey()).toEqual('undefined-undefined');
+    });
+    test('should return resourceType-resourceId as a string on passing correct arguments', () => {
+      expect(getAsyncKey('exports', '324324')).toEqual('exports-324324');
+    });
   });
 });

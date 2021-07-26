@@ -29,15 +29,16 @@ export function* initInstall({ id }) {
   yield put(actions.resource.request('integrations', id));
 }
 
-export function* installStep({ id, installerFunction, childId, addOnId }) {
+export function* installStep({ id, installerFunction, childId, addOnId, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
+  const body = { storeId: childId, addOnId, ...(formVal && { formVal }) };
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+      opts: { body, method: 'PUT' },
       hidden: true,
     }) || {};
   } catch (error) {
@@ -73,10 +74,10 @@ export function* installStep({ id, installerFunction, childId, addOnId }) {
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
       yield put(actions.resource.request('integrations', id));
-      yield put(actions.resource.requestCollection('flows'));
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('imports'));
-      yield put(actions.resource.requestCollection('connections'));
+      yield put(actions.resource.requestCollection('flows', null, true));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('imports', null, true));
+      yield put(actions.resource.requestCollection('connections', null, true));
       yield put(
         actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
@@ -96,7 +97,7 @@ export function* installStep({ id, installerFunction, childId, addOnId }) {
     );
   }
 }
-export function* installInitChild({id}) {
+export function* installInitChild({ id }) {
   const path = `/integrations/${id}/initChild`;
 
   try {
@@ -135,7 +136,7 @@ export function* installScriptStep({
   let body = {};
 
   if (stackId) {
-    body = {_stackId: stackId};
+    body = { _stackId: stackId };
   } else {
     body = formSubmission ||
     (connectionId
@@ -185,7 +186,7 @@ export function* installScriptStep({
       integration.initChild &&
       integration.initChild.function
     ) {
-      yield call(installInitChild, {id});
+      yield call(installInitChild, { id });
     }
 
     // to clear session state

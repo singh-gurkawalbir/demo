@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {makeStyles} from '@material-ui/core';
+import {makeStyles, Button } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import DynaAction from '../../../DynaForm/DynaAction';
 
 const useStyles = makeStyles(theme => ({
   linkWrapper: {
@@ -33,12 +33,11 @@ function SiliconValleyDashboardLink({ssLinkedConnectionId, isSVBNSGeneralSection
 
 export default function SuiteScriptIASettingsSaveButton(props) {
   const {
-    submitButtonLabel = 'Save',
     disabled = false,
     sectionId,
     ssLinkedConnectionId,
     integrationId,
-    ...rest
+    formKey,
   } = props;
   const dispatch = useDispatch();
   const saving = useSelector(state =>
@@ -47,25 +46,31 @@ export default function SuiteScriptIASettingsSaveButton(props) {
       integrationId,
     })
   );
+
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
+  const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
+
   const onSave = useCallback(
-    values => {
+    () => {
       dispatch(
         actions.suiteScript.iaForm.submit(ssLinkedConnectionId, integrationId, sectionId, values)
       );
     },
-    [dispatch, integrationId, sectionId, ssLinkedConnectionId]
+    [dispatch, integrationId, sectionId, ssLinkedConnectionId, values]
   );
 
   return (
     <>
       {/* SiliconValleyDashboardLink renders a hyperlink and it should be above the general settings save button  */}
       <SiliconValleyDashboardLink {...props} />
-      <DynaAction
-        {...rest}
-        disabled={disabled || saving}
+      <Button
+        variant="outlined"
+        color="primary"
+        disabled={disabled || !isDirty || saving}
         onClick={onSave}>
-        {saving ? 'Saving' : submitButtonLabel}
-      </DynaAction>
+        {saving ? 'Saving...' : 'Save'}
+      </Button>
     </>
   );
 }

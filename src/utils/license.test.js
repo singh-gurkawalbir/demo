@@ -283,7 +283,7 @@ describe('platformLicenseActionDetails function test', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(platformLicenseActionDetails(undefined)).toEqual({});
   });
-  test('should return correct number of trail days left for trial license', () => {
+  test('should return correct number of trial days left for trial license', () => {
     const state =
       {
         user: {
@@ -313,13 +313,13 @@ describe('platformLicenseActionDetails function test', () => {
     const expected = {
       action: 'upgrade',
       expiresSoon: false,
-      label: '10 DAYS LEFT UPGRADE NOW',
+      label: 'Upgrade now - 10 days left',
     };
     const license = selectors.platformLicense(state);
 
     expect(platformLicenseActionDetails(license)).toEqual(expected);
   });
-  test('should return upgrade now for trail license expired account', () => {
+  test('should return upgrade now for trial license expired account', () => {
     const state =
       {
         user: {
@@ -447,5 +447,76 @@ describe('platformLicenseActionDetails function test', () => {
     const license = selectors.platformLicense(state);
 
     expect(platformLicenseActionDetails(license)).toEqual({});
+  });
+  test('should return action resume for resumable license account', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [
+                    {
+                      _id: 'license1',
+                      type: 'integrator',
+                      tier: 'free',
+                      expires: moment()
+                        .add(5, 'days')
+                        .toISOString(),
+                      resumable: true,
+                    },
+                  ],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const expected = {
+      action: 'resume',
+    };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual(expected);
+  });
+  test('should return action startTrial for integrator type with no expiry', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [
+                    {
+                      _id: 'license1',
+                      type: 'integrator',
+                      tier: 'free',
+                    },
+                  ],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const expected = {
+      action: 'startTrial',
+      label: 'Get unlimited flows',
+    };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual(expected);
   });
 });

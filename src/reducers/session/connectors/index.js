@@ -67,13 +67,6 @@ selectors.connectorMetadata = (state, fieldName, id, _integrationId) => {
   if (typeof metadata === 'object') {
     return metadata;
   }
-  if (
-    Array.isArray(metadata) &&
-    metadata.length &&
-    typeof metadata[0] === 'object'
-  ) {
-    return metadata[0];
-  }
 
   return { isLoading: false };
 };

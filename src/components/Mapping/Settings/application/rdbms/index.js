@@ -241,7 +241,7 @@ export default {
                 [],
             },
           ],
-          helpkey: 'mapping.extractDateTimezone',
+          helpKey: 'mapping.extractDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },

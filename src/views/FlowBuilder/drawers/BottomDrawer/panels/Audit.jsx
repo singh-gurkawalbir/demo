@@ -5,6 +5,7 @@ import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
   auditLog: {
+    marginTop: -1,
     '& > div': {
       '&:first-child': {
         backgroundColor: theme.palette.common.white,

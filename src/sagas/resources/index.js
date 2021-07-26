@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race, all } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -10,7 +10,7 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS } from '../../utils/constants';
+import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -203,6 +203,16 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
   }
+
+  // For exports,imports delete rest subdoc when useTechAdaptorForm is set to true and it is not assistant.
+  // With new REST forms supporting http backend, we are not updating rest subdoc any more when user makes changes
+  if (['exports', 'imports'].includes(resourceType) && !merged.assistant && merged.useTechAdaptorForm && merged.rest && merged.http?.method) {
+    delete merged.rest;
+  }
+  if (resourceType === 'exports' && merged._rest) {
+    delete merged._rest;
+  }
+
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
   // and connection will be auto registered to the integration.
   // This is required for tile level monitor access users
@@ -380,7 +390,25 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     );
   }
 }
+export function* commitStagedChangesWrapper({asyncKey, ...props}) {
+  // if asyncKey is defined we should try tagging with async updates
+  if (asyncKey) {
+    yield put(actions.asyncTask.start(asyncKey));
+    const resp = yield call(commitStagedChanges, props);
 
+    if (resp?.error) {
+    // save error message
+      yield put(actions.asyncTask.failed(asyncKey));
+
+      return resp;
+    }
+    yield put(actions.asyncTask.success(asyncKey));
+
+    return resp;
+  }
+
+  return yield call(commitStagedChanges, props);
+}
 export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
     resourceId: id,
@@ -503,8 +531,8 @@ export function* updateIntegrationSettings({
 
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('flows'));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('flows', null, true));
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
@@ -514,7 +542,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH)
       );
     }
 
@@ -542,9 +570,9 @@ export function* updateIntegrationSettings({
     } else {
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
-      yield put(actions.resource.requestCollection('imports'));
+      yield put(actions.resource.requestCollection('imports', null, true));
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
-      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('exports', null, true));
     }
 
     yield put(
@@ -563,13 +591,14 @@ export function* updateIntegrationSettings({
   }
 }
 
-export function* patchResource({ resourceType, id, patchSet, options = {} }) {
+export function* patchResource({ resourceType, id, patchSet, options = {}, asyncKey}) {
   const isNew = isNewId(id);
 
   if (!patchSet || isNew) return; // nothing to do.
 
   const path = `/${resourceType}/${id}`;
 
+  yield put(actions.asyncTask.start(asyncKey));
   try {
     yield call(apiCallWithRetry, {
       path,
@@ -593,7 +622,9 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+    yield put(actions.asyncTask.failed(asyncKey));
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
@@ -655,7 +686,7 @@ export function* deleteIntegration({integrationId}) {
   yield put(actions.resource.requestCollection('integrations', null, true));
   yield put(actions.resource.requestCollection('tiles', null, true));
   yield put(actions.resource.requestCollection('scripts', null, true));
-  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
+  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
 export function* getResourceCollection({ resourceType, refresh}) {
@@ -900,6 +931,36 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
+export function* fetchUnloadedResources({ integrationId, resourceType }) {
+  let resources = yield select(selectors.resources, resourceType);
+
+  if (!resources || resources.length === 0) {
+    yield call(getResourceCollection, { resourceType }, true);
+    resources = yield select(selectors.resources, resourceType);
+  }
+  if (!integrationId || !resources || resources.length < GET_DOCS_MAX_LIMIT) {
+    return;
+  }
+  const url = `/integrations/${integrationId}/${resourceType}`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: url,
+      hidden: true,
+    });
+    yield put(actions.resource.integrations.updateResources(resourceType, response));
+  } catch (e) {
+  // do nothing
+  }
+}
+
+export function* fetchUnloadedIntegrationResources({ integrationId }) {
+  yield all(
+    ['flows', 'exports', 'imports'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
+  );
+}
+
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -1067,7 +1128,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
@@ -1077,7 +1138,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-
+  takeLatest(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, fetchUnloadedIntegrationResources),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),

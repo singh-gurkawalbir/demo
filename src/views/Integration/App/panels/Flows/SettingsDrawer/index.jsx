@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo} from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,9 +6,8 @@ import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
-import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager, useActiveTab } from '..';
+import { IAFormStateManager} from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 import EditorDrawer from '../../../../../../components/AFE/Drawer';
 
@@ -59,7 +58,6 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._id;
   // TODO: Fix this convoluted way of getting settings for a specific flow.
   // the data layer should have a simple, clean, selector api, that, given a flowId,
   // returns the flow settings. Right now to look up this info, i need to
@@ -92,7 +90,6 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
     null,
     parentUrl
   );
-  const activeTabProps = useActiveTab();
 
   // Todo: Sravan, we should use Rightdrawer here
   return (
@@ -103,11 +100,9 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
       classes={{
         paper: classes.drawerPaper,
       }}
-      onClose={handleClose}>
-      <DrawerTitleBar title={`Settings: ${flowName}`} />
+      >
 
       <IAFormStateManager
-        {...activeTabProps}
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
           [classes.settingsDrawerDetails]: !sections,
@@ -115,9 +110,10 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
         integrationId={integrationId}
         flowId={flowId}
         childId={childId}
-        onSubmitComplete={handleClose}
         formState={formState}
         fieldMeta={flowSettingsMemo}
+        onCancel={handleClose}
+        isDrawer
 
       />
     </Drawer>

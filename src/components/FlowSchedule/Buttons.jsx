@@ -1,19 +1,16 @@
-import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../actions';
 import { sanitizePatchSet } from '../../forms/formFactory/utils';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import { selectors } from '../../reducers';
-import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   getScheduleStartMinute,
   getScheduleVal,
   setValues,
 } from './util';
-import ButtonGroup from '../ButtonGroup';
+import SaveAndCloseButtonGroupForm from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 
 export default function FlowScheduleButtons({
   formKey,
@@ -83,33 +80,27 @@ export default function FlowScheduleButtons({
     });
 
     dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-  }, [dispatch, flow, pg, index, scheduleStartMinute]);
+    dispatch(actions.resource.commitStaged('flows', flow._id, 'value', null, null, formKey));
+  }, [dispatch, flow, pg, index, scheduleStartMinute, formKey]);
 
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: `/flows/${flow._id}`,
-      onSave,
-      onClose,
+  const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleValidateAndSubmit = useCallback(closeAfterSave => {
+    if (
+      formValues?.startTime &&
+      formValues?.endTime &&
+        !moment(formValues?.startTime, 'LT').isBefore(moment(formValues?.endTime, 'LT'))
+    ) {
+      return enqueueSnackbar({
+        message: 'End Time is invalid.',
+        variant: 'error',
+      });
     }
-  );
-
-  const handleValidateAndSubmit = useCallback(
-    closeOnSave => formVal => {
-      if (
-        formVal.startTime &&
-        formVal.endTime &&
-        !moment(formVal.startTime, 'LT').isBefore(moment(formVal.endTime, 'LT'))
-      ) {
-        return enqueueSnackbar({
-          message: 'End Time is invalid.',
-          variant: 'error',
-        });
-      }
-      // If valid form values
-      submitHandler(closeOnSave)(formVal);
-    },
-    [enqueueSnackbar, submitHandler]
+    // If valid form values
+    onSave(formValues);
+    if (closeAfterSave) {
+      onClose();
+    }
+  }, [enqueueSnackbar, formValues, onClose, onSave]
   );
 
   const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';
@@ -121,26 +112,10 @@ export default function FlowScheduleButtons({
   }
 
   return (
-    <ButtonGroup>
-      <DynaSubmit
-        formKey={formKey}
-        onClick={handleValidateAndSubmit()}
-        color="primary"
-        data-test="saveFlowSchedule"
-        disabled={disableSave}>
-        {defaultLabels.saveLabel}
-      </DynaSubmit>
-      <DynaSubmit
-        formKey={formKey}
-        onClick={handleValidateAndSubmit(true)}
-        color="secondary"
-        data-test="saveAndCloseFlowSchedule"
-        disabled={disableSave}>
-        {defaultLabels.saveAndCloseLabel}
-      </DynaSubmit>
-      <Button onClick={onClose} variant="text" color="primary">
-        Cancel
-      </Button>
-    </ButtonGroup>
+    <SaveAndCloseButtonGroupForm
+      formKey={formKey}
+      onSave={handleValidateAndSubmit}
+      onClose={onClose}
+     />
   );
 }

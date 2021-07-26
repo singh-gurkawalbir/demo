@@ -7,7 +7,7 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import InstallationStep from '../../../../../components/InstallStep';
-import { UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import { HOME_PAGE_PATH, UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import Spinner from '../../../../../components/Spinner';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
@@ -89,7 +89,7 @@ export default function Uninstaller2({ integration, integrationId }) {
           integrationId
         )
       );
-      history.replace(getRoutePath('dashboard'));
+      history.replace(getRoutePath(HOME_PAGE_PATH));
     }
   }, [dispatch, history, integrationId, isComplete]);
 
@@ -161,7 +161,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   );
 
   if (error) {
-    return <Redirect push={false} to={getRoutePath('dashboard')} />;
+    return <Redirect push={false} to={getRoutePath(HOME_PAGE_PATH)} />;
   }
   if (!uninstallSteps || uninstallSteps.length === 0) {
     return (

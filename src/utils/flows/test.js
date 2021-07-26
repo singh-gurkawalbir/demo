@@ -1,6 +1,44 @@
 /* global describe, test, expect */
 
-import { getFlowResources, getFlowType, flowbuilderUrl, getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport, getScriptsReferencedInFlow, isFreeFlowResource, isLookupResource, isActionUsed, isImportMappingAvailable, getPageProcessorImportsFromFlow, getFlowReferencesForResource, getFlowDetails, getUsedActionsMapForResource, getIAFlowSettings, flowSupportsSettings, getNextDataFlows, flowAllowsScheduling, getIAResources, defaultIA2Flow} from '.';
+import {
+  getFlowResources,
+  getFlowType,
+  flowbuilderUrl,
+  getFlowListWithMetadata,
+  getImportsFromFlow,
+  isRunnable,
+  showScheduleIcon,
+  hasBatchExport,
+  isRealtimeFlow,
+  isSimpleImportFlow,
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
+  isDeltaFlow,
+  isIntegrationApp,
+  isPageGeneratorResource,
+  isFlowUpdatedWithPgOrPP,
+  convertOldFlowSchemaToNewOne,
+  isOldFlowSchema,
+  getAllConnectionIdsUsedInTheFlow,
+  getFirstExportFromFlow,
+  isRealtimeExport,
+  getScriptsReferencedInFlow,
+  isFreeFlowResource,
+  isLookupResource,
+  isActionUsed,
+  isImportMappingAvailable,
+  getPageProcessorImportsFromFlow,
+  getFlowReferencesForResource,
+  getFlowDetails,
+  getUsedActionsMapForResource,
+  getIAFlowSettings,
+  flowSupportsSettings,
+  getNextDataFlows,
+  flowAllowsScheduling,
+  getIAResources,
+  defaultIA2Flow,
+  populateRestSchema,
+} from '.';
 import getRoutePath from '../routePaths';
 
 const integration = {
@@ -40,6 +78,316 @@ const convertedFlow = {
   _integrationId: integration._id,
 };
 const emptyFlow = {};
+const emptyExport = {};
+
+const nsExport = {
+  adaptorType: 'NetSuiteExport',
+  name: 'NetSuite export',
+  netsuite: {
+    restlet: {
+      search: 'search1',
+    },
+  },
+};
+const sfExport = {
+  adaptorType: 'SalesforceExport',
+  name: 'Salesforce Export',
+  salesforce: {
+    sObjectType: 'sObject',
+  },
+};
+const assistantExport = {
+  adaptorType: 'HTTPExport',
+  assistant: 'assistant',
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    response: {
+      resourcePath: 'users',
+    },
+  },
+};
+const httpExport = {
+  adaptorType: 'HTTPExport',
+  type: 'delta',
+  delta: {
+    dateFormat: 'x',
+  },
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    response: {
+      resourcePath: 'users',
+    },
+  },
+};
+const restDeltaExport = {
+  adaptorType: 'RESTExport',
+  type: 'delta',
+  rest: {
+    relativeURI: '/users',
+    method: 'GET',
+    resourcePath: 'users',
+  },
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    response: {
+      resourcePath: 'users',
+    },
+  },
+};
+const restWithPagination = {
+  adaptorType: 'RESTExport',
+  type: 'delta',
+  rest: {
+    relativeURI: '/users',
+    method: 'GET',
+    resourcePath: 'users',
+    maxPagePath: '/maxPath',
+    pagingMethod: 'skipargument',
+    skipArgument: 'skipParam',
+    lastPageStatusCode: 203,
+  },
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    response: {
+      resourcePath: 'users',
+    },
+  },
+};
+
+const restWithUrlPagination = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  type: 'delta',
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'relativeuri',
+      relativeURI: '/pagination/URI',
+      lastPageStatusCode: 204,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '201',
+      ],
+    },
+  },
+};
+
+const restWithCustomBodyPagination = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  type: 'delta',
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'body',
+      lastPageStatusCode: 204,
+      lastPagePath: '/path/complete',
+      lastPageValues: [
+        '201',
+      ],
+      body: '{ "pagination": "body" }',
+    },
+  },
+};
+const restWithLinkHeaderRelation = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'linkheader',
+      lastPageStatusCode: 201,
+      lastPagePath: '/complete/path',
+      lastPageValues: [
+        '201',
+      ],
+      linkHeaderRelation: 'linkHeader',
+    },
+  },
+};
+
+const restWithNextPageToken = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'token',
+      path: '/nextPageTokenPath',
+      relativeURI: '/users?tokenParam={{{export.http.paging.token}}}',
+      lastPageStatusCode: 204,
+      lastPagePath: '/completePath',
+      lastPageValues: [
+        '204',
+      ],
+    },
+  },
+};
+
+const restWithNextPageURL = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'url',
+      path: '/path/to/nextPageURL',
+      lastPageStatusCode: 201,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '201',
+      ],
+    },
+  },
+};
+
+const restWithNextPageNumberParam1 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users?id=123&other=param{{#compare export.http.paging.page "!=" "1"}}&pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'page',
+      page: 1,
+      relativeURI: '/users?id=123&other=param{{#compare export.http.paging.page "!=" "1"}}&pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+      lastPageStatusCode: 201,
+      lastPagePath: '/completePath',
+      lastPageValues: [
+        '202',
+      ],
+      maxPagePath: '/path/totalNumber',
+    },
+  },
+};
+
+const restWithNextPageNumberParam2 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users?id=123&pageNumberQueryParam={{{export.http.paging.page}}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'page',
+      page: 2,
+      relativeURI: '/users?id=123&pageNumberQueryParam={{{export.http.paging.page}}}',
+      lastPageStatusCode: 204,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '202',
+      ],
+      maxPagePath: '/path/toatl/pages',
+    },
+  },
+};
+
+const restWithNextPageNumberParam3 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'page',
+      page: 1,
+      relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+      lastPageStatusCode: 201,
+      lastPagePath: '/completePath',
+      lastPageValues: [
+        '202',
+      ],
+      maxPagePath: '/path/totalNumber',
+    },
+  },
+};
+
+const restWithSkipPageNumberParam1 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users?id=123{{#compare export.http.paging.skip "!=" "0"}}&skipParam={{{export.http.paging.skip}}}{{/compare}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'skip',
+      skip: 0,
+      relativeURI: '/users?id=123{{#compare export.http.paging.skip "!=" "0"}}&skipParam={{{export.http.paging.skip}}}{{/compare}}',
+      lastPageStatusCode: 231,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '204',
+      ],
+    },
+  },
+};
+const restWithSkipPageNumberParam2 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'skip',
+      skip: 12,
+      relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
+      lastPageStatusCode: 204,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '202',
+      ],
+    },
+  },
+};
+
+const restWithSkipPageNumberParam3 = {
+  adaptorType: 'HTTPExport',
+  useTechAdaptorForm: true,
+  http: {
+    relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+    method: 'GET',
+    successMediaType: 'json',
+    errorMediaType: 'json',
+    paging: {
+      method: 'skip',
+      skip: 0,
+      relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+      lastPageStatusCode: 231,
+      lastPagePath: '/complete',
+      lastPageValues: [
+        '204',
+      ],
+    },
+  },
+};
+
 const flowWithOnlyPGs = {
   _id: 'f4',
   pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
@@ -451,6 +799,400 @@ describe('convertOldFlowSchemaToNewOne', () => {
   });
   test('should return empty object for empty flow', () => {
     expect(convertOldFlowSchemaToNewOne(emptyFlow)).toEqual(emptyFlow);
+  });
+});
+
+describe('populateRestSchema', () => {
+  test('should return same doc for non rest adaptors', () => {
+    expect(populateRestSchema(emptyExport)).toEqual(emptyExport);
+    expect(populateRestSchema(nsExport)).toEqual(nsExport);
+    expect(populateRestSchema(sfExport)).toEqual(sfExport);
+  });
+  test('should return same doc with _rest for rest adaptors', () => {
+    expect(populateRestSchema(restDeltaExport)).toEqual({
+      adaptorType: 'RESTExport',
+      type: 'delta',
+      rest: {
+        relativeURI: '/users',
+        method: 'GET',
+        resourcePath: 'users',
+      },
+      _rest: {
+        relativeURI: '/users',
+        method: 'GET',
+        resourcePath: 'users',
+      },
+      http: {
+        relativeURI: '/users',
+        method: 'GET',
+        response: {
+          resourcePath: 'users',
+        },
+      },
+    });
+
+    expect(populateRestSchema(restWithPagination)).toEqual({
+      adaptorType: 'RESTExport',
+      type: 'delta',
+      rest: {
+        relativeURI: '/users',
+        method: 'GET',
+        resourcePath: 'users',
+        maxPagePath: '/maxPath',
+        pagingMethod: 'skipargument',
+        skipArgument: 'skipParam',
+        lastPageStatusCode: 203,
+      },
+      _rest: {
+        relativeURI: '/users',
+        method: 'GET',
+        resourcePath: 'users',
+        maxPagePath: '/maxPath',
+        pagingMethod: 'skipargument',
+        skipArgument: 'skipParam',
+        lastPageStatusCode: 203,
+      },
+      http: {
+        relativeURI: '/users',
+        method: 'GET',
+        response: {
+          resourcePath: 'users',
+        },
+      },
+    });
+  });
+
+  test('should return same doc for HTTP adaptors if useTechAdaptor is set to false or undefined', () => {
+    expect(populateRestSchema(httpExport)).toEqual(httpExport);
+  });
+
+  test('should return same doc for assistants', () => {
+    expect(populateRestSchema(assistantExport)).toEqual(assistantExport);
+  });
+
+  describe('should return correct _rest subdoc for HTTP exports with useTechAdaptorForm set to true', () => {
+    test('pagination URL parameter', () => {
+      expect(populateRestSchema(restWithUrlPagination)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 204,
+          lastPageValue: '201',
+          nextPageRelativeURI: '/pagination/URI',
+          pagingMethod: 'relativeuri',
+          relativeURI: '/users',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 204,
+            lastPageValues: ['201'],
+            method: 'relativeuri',
+            relativeURI: '/pagination/URI',
+          },
+          relativeURI: '/users',
+          successMediaType: 'json',
+        },
+        type: 'delta',
+        useTechAdaptorForm: true,
+      });
+    });
+    test('pagination custom body', () => {
+      expect(populateRestSchema(restWithCustomBodyPagination)).toEqual({
+        _rest: {
+          lastPagePath: '/path/complete',
+          lastPageStatusCode: 204,
+          lastPageValue: '201',
+          pagingMethod: 'postbody',
+          pagingPostBody: '{ "pagination": "body" }',
+          relativeURI: '/users',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            body: '{ "pagination": "body" }',
+            lastPagePath: '/path/complete',
+            lastPageStatusCode: 204,
+            lastPageValues: ['201'],
+            method: 'body',
+          },
+          relativeURI: '/users',
+          successMediaType: 'json',
+        },
+        type: 'delta',
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination linkHeaderRelation', () => {
+      expect(populateRestSchema(restWithLinkHeaderRelation)).toEqual({
+        _rest: {
+          lastPagePath: '/complete/path',
+          lastPageStatusCode: 201,
+          lastPageValue: '201',
+          linkHeaderRelation: 'linkHeader',
+          pagingMethod: 'linkheader',
+          relativeURI: '/users',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete/path',
+            lastPageStatusCode: 201,
+            lastPageValues: ['201'],
+            linkHeaderRelation: 'linkHeader',
+            method: 'linkheader',
+          },
+          relativeURI: '/users',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination nextPageToken', () => {
+      expect(populateRestSchema(restWithNextPageToken)).toEqual({
+        _rest: {
+          lastPagePath: '/completePath',
+          lastPageStatusCode: 204,
+          lastPageValue: '204',
+          nextPagePath: '/nextPageTokenPath',
+          pageArgument: 'tokenParam',
+          pagingMethod: 'token',
+          relativeURI: '/users',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/completePath',
+            lastPageStatusCode: 204,
+            lastPageValues: ['204'],
+            method: 'token',
+            path: '/nextPageTokenPath',
+            relativeURI: '/users?tokenParam={{{export.http.paging.token}}}',
+          },
+          relativeURI: '/users',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination nextPageURL', () => {
+      expect(populateRestSchema(restWithNextPageURL)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 201,
+          lastPageValue: '201',
+          nextPagePath: '/path/to/nextPageURL',
+          pagingMethod: 'nextpageurl',
+          relativeURI: '/users',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 201,
+            lastPageValues: ['201'],
+            method: 'url',
+            path: '/path/to/nextPageURL',
+          },
+          relativeURI: '/users',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination pageNumberparameter with url not containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithNextPageNumberParam1)).toEqual({
+        _rest: {
+          lastPagePath: '/completePath',
+          lastPageStatusCode: 201,
+          lastPageValue: '202',
+          maxPagePath: '/path/totalNumber',
+          pageArgument: 'pageNumberQueryParam',
+          pagingMethod: 'pageargument',
+          relativeURI: '/users?id=123&other=param',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/completePath',
+            lastPageStatusCode: 201,
+            lastPageValues: ['202'],
+            maxPagePath: '/path/totalNumber',
+            method: 'page',
+            page: 1,
+            relativeURI: '/users?id=123&other=param{{#compare export.http.paging.page "!=" "1"}}&pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+          },
+          relativeURI: '/users?id=123&other=param{{#compare export.http.paging.page "!=" "1"}}&pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination pageNumberparameter with url containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithNextPageNumberParam2)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 204,
+          lastPageValue: '202',
+          maxPagePath: '/path/toatl/pages',
+          pageArgument: 'pageNumberQueryParam',
+          pagingMethod: 'pageargument',
+          relativeURI: '/users?id=123&pageNumberQueryParam=2',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 204,
+            lastPageValues: ['202'],
+            maxPagePath: '/path/toatl/pages',
+            method: 'page',
+            page: 2,
+            relativeURI: '/users?id=123&pageNumberQueryParam={{{export.http.paging.page}}}',
+          },
+          relativeURI: '/users?id=123&pageNumberQueryParam={{{export.http.paging.page}}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination pageNumberparameter with url containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithNextPageNumberParam3)).toEqual({
+        _rest: {
+          lastPagePath: '/completePath',
+          lastPageStatusCode: 201,
+          lastPageValue: '202',
+          maxPagePath: '/path/totalNumber',
+          pageArgument: 'pageNumberQueryParam',
+          pagingMethod: 'pageargument',
+          relativeURI: '/users/123{{{lastExportDateTime}}}',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/completePath',
+            lastPageStatusCode: 201,
+            lastPageValues: ['202'],
+            maxPagePath: '/path/totalNumber',
+            method: 'page',
+            page: 1,
+            relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+          },
+          relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination skipNumberParameter with url not containing the skipNumberqueryParam', () => {
+      expect(populateRestSchema(restWithSkipPageNumberParam1)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 231,
+          lastPageValue: '204',
+          pagingMethod: 'skipargument',
+          relativeURI: '/users?id=123',
+          skipArgument: 'skipParam',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 231,
+            lastPageValues: ['204'],
+            method: 'skip',
+            relativeURI: '/users?id=123{{#compare export.http.paging.skip "!=" "0"}}&skipParam={{{export.http.paging.skip}}}{{/compare}}',
+            skip: 0,
+          },
+          relativeURI: '/users?id=123{{#compare export.http.paging.skip "!=" "0"}}&skipParam={{{export.http.paging.skip}}}{{/compare}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination skipNumberParameter with url containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithSkipPageNumberParam2)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 204,
+          lastPageValue: '202',
+          pagingMethod: 'skipargument',
+          relativeURI: '/users?id=1234&skipParam=12',
+          skipArgument: 'skipParam',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 204,
+            lastPageValues: ['202'],
+            method: 'skip',
+            relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
+            skip: 12,
+          },
+          relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
+
+    test('pagination skipNumberParameter with url containing the pageNumberqueryParam', () => {
+      expect(populateRestSchema(restWithSkipPageNumberParam3)).toEqual({
+        _rest: {
+          lastPagePath: '/complete',
+          lastPageStatusCode: 231,
+          lastPageValue: '204',
+          pagingMethod: 'skipargument',
+          relativeURI: '/users',
+          skipArgument: 'skipParam',
+        },
+        adaptorType: 'HTTPExport',
+        http: {
+          errorMediaType: 'json',
+          method: 'GET',
+          paging: {
+            lastPagePath: '/complete',
+            lastPageStatusCode: 231,
+            lastPageValues: ['204'],
+            method: 'skip',
+            relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+            skip: 0,
+          },
+          relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
+          successMediaType: 'json',
+        },
+        useTechAdaptorForm: true,
+      });
+    });
   });
 });
 

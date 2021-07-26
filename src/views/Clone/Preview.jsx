@@ -21,6 +21,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -219,7 +220,7 @@ export default function ClonePreview(props) {
             getRoutePath(`/integrations/${integration._id}/flows`)
           );
         } else {
-          props.history.push(getRoutePath('dashboard'));
+          props.history.push(getRoutePath(HOME_PAGE_PATH));
         }
       } else {
         props.history.push(getRoutePath(`/${resourceType}`));

@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import { REQUIRED_MESSAGE } from '../../../utils/messageStore';
 import DynaURI from './DynaURI_afe';
 
 const emptyObj = {};
@@ -19,6 +20,7 @@ export default function DynaRelativeUri_afe(props) {
     pagingFieldsToValidate,
     deltaFieldsToValidate,
     validateInComponent,
+    required,
   } = rest;
 
   const dispatch = useDispatch();
@@ -33,7 +35,11 @@ export default function DynaRelativeUri_afe(props) {
 
   useEffect(() => {
     if (!validateInComponent) return;
-    const errorMessages = deltaMsg || pagingMsg;
+    let errorMessages = deltaMsg || pagingMsg;
+
+    if (required && !value) {
+      errorMessages = REQUIRED_MESSAGE;
+    }
 
     // if there are validations error, show the error message
     if (errorMessages) {
@@ -41,7 +47,7 @@ export default function DynaRelativeUri_afe(props) {
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }
-  }, [validateInComponent, deltaMsg, dispatch, formKey, id, pagingMsg]);
+  }, [validateInComponent, deltaMsg, dispatch, formKey, id, pagingMsg, required, value]);
 
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));

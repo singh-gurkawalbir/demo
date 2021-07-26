@@ -52,7 +52,7 @@ import {
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
-  NO_ENVIRONMENT_MODELS_FOR_BIN} from '../utils/constants';
+  NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -78,7 +78,7 @@ import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
-import { stringCompare } from '../utils/sort';
+import { stringCompare, comparer} from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -97,6 +97,8 @@ import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import { JOB_UI_STATUS } from '../utils/jobdashboard';
+import {FILTER_KEYS_AD} from '../utils/accountDashboard';
+import { getSelectedRange } from '../utils/flowMetrics';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -413,7 +415,7 @@ selectors.redirectToOnInstallationComplete = (
   { resourceType = 'integrations', resourceId, templateId }
 ) => {
   let environment;
-  let redirectTo = 'dashboard';
+  let redirectTo = HOME_PAGE_PATH;
   let flow;
   let flowDetails;
   let integration;
@@ -919,6 +921,177 @@ selectors.getEventReportIntegrationName = (state, r) => {
   return integration?.name || STANDALONE_INTEGRATION.name;
 };
 
+// It will give list of flows which to be displayed in flows filter in account dashboard.
+selectors.getAllAccountDashboardFlows = (state, filterKey) => {
+  let allFlows = selectors.resourceList(state, {
+    type: 'flows',
+  }).resources || [];
+  let allStoreFlows = [];
+  const jobFilter = selectors.filter(state, filterKey);
+  let storeId;
+  let parentIntegrationId;
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
+
+  // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
+  // below logic is used to extact store id and integration id from this.
+  const selectedStores = selectedIntegrations.filter(i => {
+    if (!i.includes('store')) return false;
+    storeId = i.substring(5, i.indexOf('pid'));
+    parentIntegrationId = i.substring(i.indexOf('pid') + 3);
+
+    return !(selectedIntegrations.includes(parentIntegrationId));
+  });
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const s of selectedStores) {
+    storeId = s.substring(5, s.indexOf('pid'));
+    parentIntegrationId = s.substring(s.indexOf('pid') + 3);
+    allStoreFlows = [...allStoreFlows, ...selectors.integrationAppFlowIds(state,
+      parentIntegrationId,
+      storeId
+    )];
+  }
+  if (selectedIntegrations.length) {
+    allFlows = allFlows.filter(f => {
+      if (selectedIntegrations.includes('none') && !f._integrationId) {
+        return true;
+      }
+      if (allStoreFlows.includes(f._id)) {
+        return true;
+      }
+
+      return selectedIntegrations.includes(f._integrationId);
+    });
+  }
+
+  const defaultFilter = [{ _id: 'all', name: 'All flows'}];
+
+  if (!allFlows) { return defaultFilter; }
+
+  allFlows = uniqBy(allFlows, '_id').sort(stringCompare('name'));
+  allFlows = [...defaultFilter, ...allFlows];
+
+  return allFlows;
+};
+selectors.accountDashboardJobs = (state, filterKey) => {
+  const {jobs: totalRunningJobs, nextPageURL: runningNextPageURL, status: runnningStatus} = selectors.runningJobs(state);
+
+  const {jobs: totalCompletedJobs, nextPageURL: completedNextPageURL, status: completedStatus} = selectors.completedJobs(state);
+
+  const totalJobs = filterKey === FILTER_KEYS_AD.RUNNING ? totalRunningJobs : totalCompletedJobs;
+  const nextPageURL = filterKey === FILTER_KEYS_AD.RUNNING ? runningNextPageURL : completedNextPageURL;
+
+  const status = filterKey === FILTER_KEYS_AD.RUNNING ? runnningStatus : completedStatus;
+
+  return {jobs: totalJobs, nextPageURL, status};
+};
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+  let path;
+
+  if (nextPageURL) {
+    path = nextPageURL.replace('/api', '');
+  } else {
+    path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
+  }
+  const jobFilter = selectors.filter(state, filterKey);
+  const userPreferences = selectors.userPreferences(state);
+  const sandbox = userPreferences.environment === 'sandbox';
+  // If 'all' selected, it can be filtered out, as by defaults it considered "all".
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
+  const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
+  const body = {sandbox};
+  let selectedStores = [];
+  let parentIntegrationId;
+  let storeId;
+  let { resources: allFlows } = selectors.resourceList(state, { type: 'flows' });
+  let allFlowIds = [];
+  const {startDate, endDate} = getSelectedRange(jobFilter?.range) || {};
+
+  if (filterKey === FILTER_KEYS_AD.COMPLETED) {
+    if (startDate) { body.time_gt = startDate.getTime(); }
+    if (endDate) { body.time_lte = endDate.getTime(); }
+  }
+
+  if (selectedStatus.length) {
+    body.status = selectedStatus;
+  }
+  if (selectedFlows.length) {
+    body._flowIds = selectedFlows;
+  } else if (selectedIntegrations.length) {
+    // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
+    // below logic is used to extact store id and integration id from this.
+    selectedStores = selectedIntegrations.filter(i => {
+      if (!i.includes('store')) return false;
+      storeId = i.substring(5, i.indexOf('pid'));
+      parentIntegrationId = i.substring(i.indexOf('pid') + 3);
+
+      return !(selectedIntegrations.includes(parentIntegrationId));
+    });
+    body._integrationIds = selectedIntegrations.filter(i => !i.includes('store'));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const s of selectedStores) {
+      storeId = s.substring(5, s.indexOf('pid'));
+      parentIntegrationId = s.substring(s.indexOf('pid') + 3);
+      body._flowIds = [...(body._flowIds || []), ...selectors.integrationAppFlowIds(state,
+        parentIntegrationId,
+        storeId
+      )];
+    }
+    // If any store is selected and its parent is not selected, then we need to send all flowIds of all selected integrations.
+    // UI should send either flowIds or integrationIds, should not send both together.
+    if (body._flowIds?.length && body._integrationIds?.length) {
+      allFlows = allFlows.filter(f => {
+        if (!f._integrationId) { // this check is for stand alone flows
+          return body._integrationIds.includes('none');
+        }
+
+        return body._integrationIds.includes(f._integrationId);
+      });
+      allFlowIds = (allFlows || []).map(({_id}) => _id);
+      delete body._integrationIds;
+      body._flowIds = [...body._flowIds, ...allFlowIds];
+    }
+  }
+
+  return {path, opts: {method: 'POST', body}};
+};
+selectors.getAllAccountDashboardIntegrations = state => {
+  let allIntegrations = selectors.resourceList(state, {
+    type: 'integrations',
+  }).resources;
+  const allTiles = state?.data?.resources?.tiles || [];
+  const currentEnvironment = selectors.currentEnvironment(state);
+  const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
+
+  const hasStandaloneTile = tiles.find(
+    t => t._integrationId === STANDALONE_INTEGRATION.id
+  );
+
+  if (hasStandaloneTile) {
+    allIntegrations = [
+      ...allIntegrations,
+      { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+    ];
+  }
+  const defaultFilter = [{ _id: 'all', name: 'All integrations'}];
+
+  if (!allIntegrations) { return defaultFilter; }
+
+  allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
+  allIntegrations = [...defaultFilter, ...allIntegrations];
+  allIntegrations.forEach(i => {
+    const { supportsMultiStore, sections: children = [] } = i.settings || {};
+
+    if (supportsMultiStore) {
+      i.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
+    }
+  });
+
+  return allIntegrations;
+};
+
+// It will give list of all integrations which to be displayed in integration filter in account dashboard.
 selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   const eventReports = resourceListSel(state, reportsFilter)?.resources;
 
@@ -4560,7 +4733,7 @@ selectors.applicationType = (state, resourceType, id) => {
   }
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-  const adaptorType = resourceType === 'connections'
+  let adaptorType = resourceType === 'connections'
     ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
@@ -4570,6 +4743,10 @@ selectors.applicationType = (state, resourceType, id) => {
       getStagedValue('/webhook/provider') ||
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
     );
+  }
+
+  if (adaptorType === 'http' && resourceObj?.http?.useRestForm) {
+    adaptorType = 'rest';
   }
 
   // For Data Loader cases, there is no image.
@@ -4585,6 +4762,10 @@ selectors.applicationType = (state, resourceType, id) => {
     );
 
     return connection && connection.rdbms && connection.rdbms.type;
+  }
+
+  if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.useTechAdaptorForm && !assistant) {
+    adaptorType = adaptorType.replace(/HTTP/, 'REST');
   }
 
   return assistant || adaptorType;
@@ -4847,6 +5028,60 @@ selectors.flowDashboardJobs = createSelector(
       status: latestFlowJobs?.status,
       data: dashboardSteps,
     };
+  });
+selectors.accountDashboardRunningJobs = createSelector(
+  (state, options) => selectors.runningJobs(state, options)?.jobs,
+  state => selectors.filter(state, FILTER_KEYS_AD.RUNNING),
+  state => fromData.resourceDetailsMap(state?.data),
+  (runningJobs = [], jobFilter, resourceMap) => {
+    const jobsWithAdditionalProps = runningJobs.map(job => {
+      if (job.children && job.children.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        job.children = job.children.map(cJob => {
+          const additionalChildProps = {
+            name: cJob._exportId
+              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+            flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
+          };
+
+          return { ...cJob, ...additionalChildProps };
+        });
+      }
+      const additionalProps = {
+        name: resourceMap.flows && resourceMap.flows[job._flowId]?.name,
+        flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
+      };
+
+      if (job.doneExporting && job.numPagesGenerated > 0) {
+        additionalProps.percentComplete = Math.floor(
+          (job.numPagesProcessed * 100) /
+            (job.numPagesGenerated *
+              ((resourceMap.flows &&
+                resourceMap.flows[job._flowId] &&
+                resourceMap.flows[job._flowId].numImports) ||
+                1))
+        );
+      } else {
+        additionalProps.percentComplete = 0;
+      }
+
+      return { ...job, ...additionalProps };
+    });
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
+    const dashboardJobs = jobFilter.sort ? [...jobsWithAdditionalProps].sort(comparer(jobFilter.sort)) : [...jobsWithAdditionalProps];
+
+    return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+  });
+
+selectors.accountDashboardCompletedJobs = createSelector(
+  (state, options) => selectors.completedJobs(state, options)?.jobs,
+  state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED),
+  (completedJobs = [], jobFilter) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = jobFilter.paging || {};
+    const dashboardJobs = jobFilter.sort ? [...completedJobs].sort(comparer(jobFilter.sort)) : [...completedJobs];
+
+    return dashboardJobs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
   });
 
 selectors.flowJob = (state, ops = {}) => {
@@ -5455,8 +5690,13 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
+  const fieldsWithOnlyV2DataSupport = [
+    'file.backupPath',
+    'traceKeyTemplate',
+    'file.json.body',
+  ];
 
-  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath' || fieldId === 'traceKeyTemplate') return true;
+  if (editorType === 'csvGenerator' || fieldsWithOnlyV2DataSupport.includes(fieldId)) return true;
 
   return false;
 };
@@ -5505,6 +5745,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     '_relativeURI',
     '_query',
     'file.xml.body',
+    'file.json.body',
   ];
   const uriFields = [
     'http.relativeURI',

@@ -12,12 +12,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerContent({ children, noPadding }) {
+export default function DrawerContent({ children, noPadding, className }) {
   const classes = useStyles();
 
   return (
     <div
-      className={clsx(classes.drawerContent, { [classes.withPadding]: !noPadding })}>
+      className={clsx(classes.drawerContent, { [classes.withPadding]: !noPadding }, className)}>
       {children}
     </div>
   );

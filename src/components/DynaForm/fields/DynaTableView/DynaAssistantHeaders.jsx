@@ -11,22 +11,29 @@ export default function DynaAssistantHeaders(props) {
     disabled,
     formKey,
     isValid,
+    headersMetadata = [],
     description,
     errorMessages,
     onFieldChange,
   } = props;
   const dispatch = useDispatch();
+  const isRequired = headerName => headersMetadata.find(header => header.name === headerName)?.required !== false;
+  const getRequiredMessage = value => {
+    const missingRequiredHeaders = value.filter(header => !header.value && isRequired(header.name)).map(header => header.name);
+
+    return `${missingRequiredHeaders.join(', ')} headers are required`;
+  };
   const optionsMap = useMemo(() => [
     {
       id: 'name',
-      required: true,
+      required: false,
       readOnly: true,
       type: 'input',
       supportsRefresh: false,
     },
     {
       id: 'value',
-      required: true,
+      required: false,
       readOnly: false,
       type: 'input',
       supportsRefresh: false,
@@ -34,8 +41,8 @@ export default function DynaAssistantHeaders(props) {
   ], [disabled]);
 
   useEffect(() => {
-    if (value.find(header => ((header.name && !header.value) || (!header.name && header.value)))) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'All header values are required'}));
+    if (value.find(header => (header.name && isRequired(header.name) && !header.value))) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: getRequiredMessage(value)}));
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }

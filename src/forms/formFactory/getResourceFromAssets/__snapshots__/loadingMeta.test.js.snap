@@ -310,13 +310,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
-      },
-      Object {
-        "id": "saveandclose",
-      },
-      Object {
-        "id": "cancel",
+        "id": "saveandclosegroup",
       },
     ],
     "fieldMap": Object {
@@ -1040,15 +1034,8 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
-        "label": "Save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "basic",
-            ],
-          },
           Object {
             "field": "netsuite.authType",
             "is": Array [
@@ -1058,25 +1045,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "basic",
-            ],
-          },
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "oauth",
-        "label": "Save & authorize",
+        "id": "oauthandcancel",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1087,7 +1056,7 @@ Object {
         ],
       },
       Object {
-        "id": "testandsave",
+        "id": "testandsavegroup",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1098,40 +1067,12 @@ Object {
         ],
       },
       Object {
-        "id": "testsaveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "token",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
-      },
-      Object {
-        "id": "validate",
-        "label": "Validate",
-        "mode": "secondary",
+        "id": "validateandsave",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
             "is": Array [
               "basic",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "test",
-        "mode": "secondary",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "token",
             ],
           },
         ],
@@ -3019,7 +2960,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3032,20 +2973,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3056,22 +2984,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -3438,7 +3350,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3451,20 +3363,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3475,22 +3374,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -3965,6 +3848,7 @@ Object {
         "fieldId": "http.successMediaType",
       },
       "once.booleanField": Object {
+        "connectionId": [Function],
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
@@ -5135,7 +5019,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -5148,33 +5032,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -6284,6 +6142,26 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.blobMethod": Object {
+        "fieldId": "http.blobMethod",
+      },
+      "http.headers": Object {
+        "fieldId": "http.headers",
+      },
+      "http.response.blobFormat": Object {
+        "fieldId": "http.response.blobFormat",
+      },
+      "http.response.resourcePath": Object {
+        "fieldId": "http.response.resourcePath",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "blob",
+            ],
+          },
+        ],
+      },
       "outputMode": Object {
         "defaultValue": [Function],
         "id": "outputMode",
@@ -6306,28 +6184,9 @@ Object {
         "type": "radiogroup",
         "visible": false,
       },
-      "rest.blobFormat": Object {
-        "fieldId": "rest.blobFormat",
-      },
-      "rest.blobMethod": Object {
-        "fieldId": "rest.blobMethod",
-      },
-      "rest.headers": Object {
-        "fieldId": "rest.headers",
-      },
       "rest.relativeURI": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.relativeURI",
-      },
-      "rest.resourcePath": Object {
-        "fieldId": "rest.resourcePath",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "blob",
-            ],
-          },
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -6366,9 +6225,9 @@ Object {
               "containers": Array [
                 Object {
                   "fields": Array [
-                    "rest.blobMethod",
+                    "http.blobMethod",
                     "rest.relativeURI",
-                    "rest.headers",
+                    "http.headers",
                     "uploadFile",
                   ],
                 },
@@ -6384,7 +6243,7 @@ Object {
                 },
                 Object {
                   "fields": Array [
-                    "rest.blobFormat",
+                    "http.response.blobFormat",
                   ],
                 },
               ],
@@ -6393,7 +6252,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.resourcePath",
+                "http.response.resourcePath",
               ],
               "label": "Non-standard API response patterns",
             },
@@ -6759,7 +6618,38 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "http.blobMethod": Object {
+        "fieldId": "http.blobMethod",
+      },
+      "http.headers": Object {
+        "fieldId": "http.headers",
+      },
+      "http.method": Object {
+        "fieldId": "http.method",
+      },
+      "http.once.relativeURI": Object {
+        "fieldId": "http.once.relativeURI",
+      },
+      "http.paging.lastPagePath": Object {
+        "fieldId": "http.paging.lastPagePath",
+      },
+      "http.paging.lastPageStatusCode": Object {
+        "fieldId": "http.paging.lastPageStatusCode",
+      },
+      "http.response.blobFormat": Object {
+        "fieldId": "http.response.blobFormat",
+      },
+      "http.response.resourcePath": Object {
+        "fieldId": "http.response.resourcePath",
+      },
+      "http.response.successPath": Object {
+        "fieldId": "http.response.successPath",
+      },
+      "http.response.successValues": Object {
+        "fieldId": "http.response.successValues",
+      },
       "once.booleanField": Object {
+        "connectionId": [Function],
         "id": "once.booleanField",
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
@@ -6794,46 +6684,36 @@ Object {
         "type": "radiogroup",
         "visible": false,
       },
-      "rest.blobFormat": Object {
-        "fieldId": "rest.blobFormat",
-      },
-      "rest.blobMethod": Object {
-        "fieldId": "rest.blobMethod",
-      },
-      "rest.headers": Object {
-        "fieldId": "rest.headers",
-      },
-      "rest.lastPagePath": Object {
-        "fieldId": "rest.lastPagePath",
-      },
-      "rest.lastPageStatusCode": Object {
-        "fieldId": "rest.lastPageStatusCode",
-      },
       "rest.lastPageValue": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.lastPageValue",
       },
       "rest.linkHeaderRelation": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.linkHeaderRelation",
       },
       "rest.maxCountPath": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.maxCountPath",
       },
       "rest.maxPagePath": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.maxPagePath",
       },
-      "rest.method": Object {
-        "fieldId": "rest.method",
-      },
       "rest.nextPageRelativeURI": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.nextPageRelativeURI",
       },
       "rest.nextPageTokenPath": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.nextPageTokenPath",
       },
       "rest.nextPageURLPath": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.nextPageURLPath",
       },
       "rest.once.method": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.once.method",
         "visibleWhen": Array [
           Object {
@@ -6845,6 +6725,7 @@ Object {
         ],
       },
       "rest.once.postBody": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.once.postBody",
         "visibleWhen": Array [
           Object {
@@ -6855,31 +6736,24 @@ Object {
           },
         ],
       },
-      "rest.once.relativeURI": Object {
-        "fieldId": "rest.once.relativeURI",
-        "visibleWhen": Array [
-          Object {
-            "field": "type",
-            "is": Array [
-              "once",
-            ],
-          },
-        ],
-      },
       "rest.pageArgument": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.pageArgument",
       },
       "rest.pagingMethod": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.pagingMethod",
       },
       "rest.pagingPostBody": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.pagingPostBody",
       },
       "rest.postBody": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.postBody",
         "visibleWhen": Array [
           Object {
-            "field": "rest.method",
+            "field": "http.method",
             "is": Array [
               "POST",
               "PUT",
@@ -6888,21 +6762,15 @@ Object {
         ],
       },
       "rest.relativeURI": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.relativeURI",
       },
-      "rest.resourcePath": Object {
-        "fieldId": "rest.resourcePath",
-      },
       "rest.skipArgument": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.skipArgument",
       },
-      "rest.successPath": Object {
-        "fieldId": "rest.successPath",
-      },
-      "rest.successValues": Object {
-        "fieldId": "rest.successValues",
-      },
       "rest.tokenPageArgument": Object {
+        "defaultValue": [Function],
         "fieldId": "rest.tokenPageArgument",
       },
       "settings": Object {
@@ -6970,12 +6838,12 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.method",
-                "rest.blobMethod",
+                "http.method",
+                "http.blobMethod",
                 "rest.relativeURI",
-                "rest.headers",
+                "http.headers",
                 "rest.postBody",
-                "rest.blobFormat",
+                "http.response.blobFormat",
               ],
               "label": [Function],
             },
@@ -6987,7 +6855,7 @@ Object {
                 "delta.lagOffset",
                 "once.booleanField",
                 "rest.once.method",
-                "rest.once.relativeURI",
+                "http.once.relativeURI",
                 "rest.once.postBody",
               ],
               "label": "Configure export type",
@@ -7006,8 +6874,8 @@ Object {
                 "rest.pagingPostBody",
                 "rest.maxPagePath",
                 "rest.maxCountPath",
-                "rest.lastPageStatusCode",
-                "rest.lastPagePath",
+                "http.paging.lastPageStatusCode",
+                "http.paging.lastPagePath",
                 "rest.lastPageValue",
               ],
               "label": "Does this API use paging?",
@@ -7015,9 +6883,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "rest.resourcePath",
-                "rest.successPath",
-                "rest.successValues",
+                "http.response.resourcePath",
+                "http.response.successPath",
+                "http.response.successValues",
               ],
               "label": "Non-standard API response patterns",
             },
@@ -7762,7 +7630,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7775,20 +7643,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7799,22 +7654,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -7861,6 +7700,28 @@ Object {
           "file.type",
         ],
         "required": true,
+      },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",
@@ -7930,6 +7791,7 @@ Object {
                 "as2.fileNameTemplate",
                 "as2.messageIdTemplate",
                 "file.xml.body",
+                "file.json.body",
                 "file.xlsx.includeHeader",
                 "file.filedefinition.rules",
                 "as2.headers",
@@ -8138,7 +8000,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -8151,20 +8013,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -8175,22 +8024,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -8226,6 +8059,28 @@ Object {
       "file.fileName": Object {
         "fieldId": "file.fileName",
         "required": true,
+      },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",
@@ -8390,6 +8245,7 @@ Object {
                 "ftp.directoryPath",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "ftp.blobFileName",
                 "file.lookups",
               ],
@@ -10305,7 +10161,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -10318,20 +10174,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -10342,22 +10185,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -10393,6 +10220,28 @@ Object {
       "file.fileName": Object {
         "fieldId": "file.fileName",
         "required": true,
+      },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",
@@ -10558,6 +10407,7 @@ Object {
                 "s3.bucket",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "file.lookups",
               ],
               "label": "Where would you like the files transferred?",

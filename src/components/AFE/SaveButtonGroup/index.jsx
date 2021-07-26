@@ -1,42 +1,29 @@
-import React from 'react';
-import { Button } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../reducers';
-import ButtonGroup from '../../ButtonGroup';
-import useCancelConfirm from '../useCancelConfirm';
+import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import actions from '../../../actions';
+import { getFormSaveStatusFromEditorStatus } from '../../../utils/editor';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
-  const { handleSave, handleSaveAndClose, handleCancelClick, saveInProgress, isEditorDirty } = useCancelConfirm(editorId, onClose);
+  const dispatch = useDispatch();
+  const handleSave = useCallback(() => dispatch(actions.editor.saveRequest(editorId)), [dispatch, editorId]);
+  const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
+  const saveStatus = useSelector(state => selectors.editor(state, editorId).saveStatus);
+
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const editorViolations = useSelector(state => selectors.editorViolations(state, editorId));
-  const disable = !!editorViolations || disabled || saveInProgress || !isEditorDirty;
+  const disable = !!editorViolations || disabled;
 
   return (
-    <ButtonGroup>
-      <Button
-        variant="outlined"
-        data-test="saveEditor"
-        disabled={disable}
-        color="primary"
-        onClick={handleSave}>
-        Save
-      </Button>
-      <Button
-        variant="outlined"
-        data-test="saveAndCloseEditor"
-        disabled={disable}
-        color="secondary"
-        onClick={handleSaveAndClose}>
-        Save & close
-      </Button>
-      <Button
-        variant="text"
-        color="primary"
-        data-test="closeEditor"
-        disabled={saveInProgress}
-        onClick={handleCancelClick}>
-        Cancel
-      </Button>
-    </ButtonGroup>
+    <SaveAndCloseButtonGroupAuto
+      asyncKey={editorId}
+      isDirty={isEditorDirty}
+      status={getFormSaveStatusFromEditorStatus(saveStatus)}
+      onClose={onClose}
+      onSave={handleSave}
+      disabled={disable}
+      shouldHandleCancel
+    />
   );
 }
