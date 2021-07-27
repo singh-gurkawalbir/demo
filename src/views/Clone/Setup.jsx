@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import InstallWizard from '../../components/InstallationWizard';
 import getRoutePath from '../../utils/routePaths';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 export default function Clone(props) {
   const { resourceType, resourceId } = props.match.params;
@@ -21,7 +22,7 @@ export default function Clone(props) {
     (redirectTo, isInstallFailed, environment) => {
       // Incase clone is failed, then redirect to the dashboard
       if (isInstallFailed) {
-        history.replace(getRoutePath('/dashboard'));
+        history.replace(getRoutePath(HOME_PAGE_PATH));
       } else {
         if (environment) {
           dispatch(

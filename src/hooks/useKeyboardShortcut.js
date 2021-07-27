@@ -12,7 +12,7 @@ const keysReducer = (state, action) => {
   }
 };
 
-const useKeyboardShortcut = (shortcutKeys, callback) => {
+const useKeyboardShortcut = (shortcutKeys, callback, ignoreBlacklist = false) => {
   if (!Array.isArray(shortcutKeys)) {
     throw new Error(
       'The first parameter to `useKeyboardShortcut` must be an ordered array of `KeyboardEvent.key` strings.'
@@ -45,26 +45,26 @@ const useKeyboardShortcut = (shortcutKeys, callback) => {
 
       if (repeat) return;
 
-      if (blacklistedTargets.includes(target.tagName)) return;
+      if (!ignoreBlacklist && blacklistedTargets.includes(target.tagName)) return;
 
       if (keys[loweredKey] === undefined) return;
 
       if (keys[loweredKey] === false) setKeys({ type: 'set-key-down', key: loweredKey });
     },
-    [keys]
+    [ignoreBlacklist, keys]
   );
   const keyupListener = useCallback(
     keyupEvent => {
       const { key = '', target } = keyupEvent;
       const loweredKey = key.toLowerCase();
 
-      if (blacklistedTargets.includes(target.tagName)) return;
+      if (!ignoreBlacklist && blacklistedTargets.includes(target.tagName)) return;
 
       if (keys[loweredKey] === undefined) return;
 
       if (keys[loweredKey] === true) setKeys({ type: 'set-key-up', key: loweredKey });
     },
-    [keys]
+    [ignoreBlacklist, keys]
   );
 
   // Make sure that when you use this hook you properly cache your callback.

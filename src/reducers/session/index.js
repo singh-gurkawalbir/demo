@@ -37,9 +37,11 @@ import logs, {selectors as fromLogs} from './logs';
 import sso, {selectors as fromSSO} from './sso';
 import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
 import integrations, {selectors as fromIntegrations} from './integrations';
+import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
 import { genSelectors } from '../util';
 
 export default combineReducers({
+  asyncTask,
   form,
   recycleBin,
   stage,
@@ -83,6 +85,7 @@ export default combineReducers({
 // #region PUBLIC SELECTORS
 export const selectors = {};
 const subSelectors = {
+  asyncTask: fromAsyncTask,
   form: fromForm,
   stage: fromStage,
   filters: fromFilters,

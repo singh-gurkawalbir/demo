@@ -45,7 +45,7 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
     });
-    test('should return true for csv generator, backup path and traceKeyTemplate fields', () => {
+    test('should return true for csv generator, backup path, file json body and traceKeyTemplate fields', () => {
       state.session.editors[editorId] = {
         id: editorId,
         editorType: 'csvGenerator',
@@ -70,10 +70,19 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'traceKeyTemplate',
         stage: 'flowInput',
       };
+      state.session.editors.def2 = {
+        id: 'def2',
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '1234',
+        fieldId: 'file.json.body',
+        stage: 'flowInput',
+      };
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
       expect(selectors.editorSupportsOnlyV2Data(state, 'def')).toEqual(true);
       expect(selectors.editorSupportsOnlyV2Data(state, 'def1')).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, 'def2')).toEqual(true);
     });
     test('should return false for all other cases', () => {
       state.session.editors[editorId] = {

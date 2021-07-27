@@ -18,7 +18,7 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
+import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH} from '../../utils/constants';
 import { capitalizeFirstLetter } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
@@ -167,7 +167,7 @@ export default function MarketplaceList() {
                   tag
                 )
               );
-              history.push(getRoutePath('/dashboard'));
+              history.push(getRoutePath(HOME_PAGE_PATH));
             },
           },
           {
@@ -178,7 +178,7 @@ export default function MarketplaceList() {
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
-      history.push(getRoutePath('/dashboard'));
+      history.push(getRoutePath(HOME_PAGE_PATH));
     }
   };
 
@@ -191,6 +191,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: 'You have already used up your trial license',
         isHtml: true,
+        allowedTags: ['b'],
         message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
         buttons: [
           {
@@ -209,6 +210,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: `This will start your ${connector.trialPeriod} days free trial plan`,
         isHtml: true,
+        allowedTags: ['b'],
         message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
         buttons: [
           {

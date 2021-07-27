@@ -155,6 +155,22 @@ export default {
         },
       ],
     },
+    'file.json.body': {
+      id: 'file.json.body',
+      type: 'httprequestbody',
+      label: 'JSON document',
+      refreshOptionsOnChangesTo: ['file.type'],
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['json'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
   },
   layout: {
@@ -178,6 +194,7 @@ export default {
           'as2.fileNameTemplate',
           'as2.messageIdTemplate',
           'file.xml.body',
+          'file.json.body',
           'file.xlsx.includeHeader',
           'file.filedefinition.rules',
           'as2.headers',
@@ -196,16 +213,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'saveandclose',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'file.type',
@@ -215,26 +223,13 @@ export default {
     },
     {
       // Button that saves file defs and then submit resource
-      id: 'savedefinition',
+      id: 'savefiledefinitions',
       visibleWhen: [
         {
           field: 'file.type',
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
-    },
-    {
-      // Button that saves file defs and then submit resource
-      id: 'saveandclosedefinition',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
     },
   ],
 };

@@ -275,7 +275,7 @@ export const processOptions = ({
     }
   });
 
-export const updateFieldValue = (field, value) => {
+export const updateFieldValue = (field, value, skipFieldTouched) => {
   const updateValue = typeof value !== 'undefined' && value;
 
   if (field.omitWhenHidden && !field.visible) {
@@ -283,6 +283,9 @@ export const updateFieldValue = (field, value) => {
     console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
+    if (skipFieldTouched) {
+      field.defaultValue = updateValue;
+    }
   }
 };
 
@@ -413,3 +416,29 @@ export const getNextStateFromFields = formState => {
 
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
+
+export function getFieldIdsInLayoutOrder(layout) {
+  const fields = [];
+
+  if (!layout) return fields;
+  if (layout.fields?.length) {
+    // add the fields in this layout to the list
+    fields.push(...layout.fields);
+  }
+  if (layout.containers?.length) {
+    // traverse through each container and fetch the fields
+    layout.containers.forEach(container => {
+      fields.push(...getFieldIdsInLayoutOrder(container));
+    });
+  }
+
+  return fields;
+}
+
+export function getFirstErroredFieldId(formState) {
+  const { fields, fieldMeta } = formState || {};
+
+  const orderedFieldIds = getFieldIdsInLayoutOrder(fieldMeta?.layout);
+
+  return orderedFieldIds.find(fieldId => fields[fieldId] && fields[fieldId].visible && !fields[fieldId].isValid);
+}

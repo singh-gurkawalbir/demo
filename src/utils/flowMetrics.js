@@ -90,6 +90,10 @@ export const getSelectedRange = (range, skipLastEndDate) => {
       start = moment().subtract(24, 'hours').toDate();
       end = currentDate;
       break;
+    case 'last36hours':
+      start = moment().subtract(36, 'hours').toDate();
+      end = currentDate;
+      break;
     case 'today':
       start = moment().startOf('day').toDate();
       end = currentDate;

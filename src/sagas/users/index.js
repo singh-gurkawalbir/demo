@@ -248,10 +248,11 @@ export function* leaveAccount({ id }) {
   }
 }
 
-export function* createUser({ user }) {
+export function* createUser({ user, asyncKey }) {
   const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
   const { path, opts } = requestOptions;
 
+  yield put(actions.asyncTask.start(asyncKey));
   opts.body = user;
   let response;
 
@@ -262,13 +263,17 @@ export function* createUser({ user }) {
       message: 'Inviting User',
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return true;
   }
-
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(actions.user.org.users.created(response));
 }
 
-export function* updateUser({ _id, user }) {
+export function* updateUser({ _id, user, asyncKey }) {
+  yield put(actions.asyncTask.start(asyncKey));
+
   const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
     resourceId: _id,
   });
@@ -283,9 +288,11 @@ export function* updateUser({ _id, user }) {
       message: 'Updating User',
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return true;
   }
-
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(actions.user.org.users.updated({ ...user, _id }));
 }
 
