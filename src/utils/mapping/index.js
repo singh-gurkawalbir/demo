@@ -13,7 +13,7 @@ import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
-import { emptyList, emptyObject } from '../constants';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -1462,5 +1462,12 @@ export default {
     }
 
     return '';
+  },
+  getFormStatusFromMappingSaveStatus: saveStatus => {
+    switch (saveStatus) {
+      case MAPPING_SAVE_STATUS.COMPLETED: return FORM_SAVE_STATUS.COMPLETE;
+      case MAPPING_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
+      default: return FORM_SAVE_STATUS.FAILED;
+    }
   },
 };
