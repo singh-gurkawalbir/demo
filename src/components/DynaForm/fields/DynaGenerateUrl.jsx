@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
+
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
@@ -9,7 +10,9 @@ import { isNewId, getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { getInvalidFields } from '../../../forms/formFactory/utils';
-import OutlinedButton from '../../Buttons/OutlinedButton';
+import CopyIcon from '../../icons/CopyIcon';
+import AddIcon from '../../icons/AddIcon';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 
 const hasInValidFields = (fields, fieldStates) => getInvalidFields(fieldStates).some(field => fields.includes(field.id));
 
@@ -23,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   dynaGenerateTokenbtn: {
-    marginTop: 26,
+    marginTop: 28,
     marginLeft: theme.spacing(1),
   },
 }));
@@ -108,19 +111,20 @@ export default function GenerateUrl(props) {
             <CopyToClipboard
               onCopy={handleCopy}
               text={value}>
-              <OutlinedButton
-                data-test="copyToClipboard"
-                title="Copy to clipboard"
-                >
-                Copy URL
-              </OutlinedButton>
+              <IconButtonWithTooltip
+                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+                buttonSize={{size: 'small'}}>
+                <CopyIcon />
+              </IconButtonWithTooltip>
             </CopyToClipboard>
           )}
           {!value && (
-            <OutlinedButton
+            <IconButtonWithTooltip
+              tooltipProps={{title: buttonLabel, placement: 'bottom'}}
+              buttonSize={{size: 'small'}}
               onClick={handleGenerateUrl}>
-              {buttonLabel}
-            </OutlinedButton>
+              <AddIcon />
+            </IconButtonWithTooltip>
           )}
         </div>
       </div>
