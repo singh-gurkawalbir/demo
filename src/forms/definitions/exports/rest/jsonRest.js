@@ -90,6 +90,7 @@ export default {
     }
 
     delete retValues['/outputMode'];
+    delete retValues['/http/blobMethod'];
 
     if (retValues['/http/paging/method'] === 'page') {
       retValues['/rest/nextPageURLPath'] = undefined;
