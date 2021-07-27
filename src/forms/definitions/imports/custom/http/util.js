@@ -308,7 +308,6 @@ export function fieldMeta({ resource, assistantData }) {
 
     const { operationDetails = {} } = assistantConfig;
 
-    console.log('operation Details', operationDetails);
     if (operationDetails) {
       headerFields = headerFieldsMeta({
         headers,
