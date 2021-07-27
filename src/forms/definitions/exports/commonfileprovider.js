@@ -142,7 +142,6 @@ export default {
           'skipRetries',
           'traceKeyTemplate',
           'apiIdentifier',
-          'file.batchSize',
         ],
       },
     ],
