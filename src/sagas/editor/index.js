@@ -429,10 +429,15 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
+  const needPreviewStagesData = resourceType === 'exports' && !!resource?.http?.paging?.method && previewDataDependentFieldIds.includes(fieldId);
 
-  if (fetchPreviewStageData) {
+  if (showPreviewStageData || needPreviewStagesData) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+  }
+
+  if (showPreviewStageData) {
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
       resourceId,
@@ -495,13 +500,7 @@ export function* requestEditorSampleData({
     body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     body.fieldPath = fieldId || filterPath;
 
-    const isPagingConfigured = !!resource?.http?.paging?.method;
-
-    if (resourceType === 'exports' && (previewDataDependentFieldIds.includes(fieldId)) && isPagingConfigured) {
-      if (!fetchPreviewStageData) {
-        // If export sample data is not fetched previously, fetch now
-        yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
-      }
+    if (needPreviewStagesData) {
       const previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
 
       body.previewData = previewData;
