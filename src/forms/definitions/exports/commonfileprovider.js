@@ -1,9 +1,8 @@
-import { EXPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
-import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
+import { EXPORT_FILE_FIELD_MAP, getFileProviderExportsOptionsHandler, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
-    const newValues = { ...formValues };
+    const newValues = updateFileProviderFormValues(formValues);
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
 
@@ -13,85 +12,6 @@ export default {
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
-    }
-
-    if (newValues['/file/type'] === 'json') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/parsers'];
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xml') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/json'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-      newValues['/file/xml/resourcePath'] = newValues['/parsers']?.resourcePath;
-    } else if (newValues['/file/type'] === 'xlsx') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-
-      delete newValues['/parsers'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'csv') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/parsers'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-    } else {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
-      // TODO: Ashok needs to revisit on delete form values.
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/parsers'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
     }
     newValues['/type'] = undefined;
 
@@ -165,57 +85,7 @@ export default {
       ...newValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    const fileType = fields.find(field => field.id === 'file.type');
-
-    if (fieldId === 'file.xlsx.keyColumns') {
-      const keyColumnField = fields.find(
-        field => field.id === 'file.xlsx.keyColumns'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'file.xlsx.hasHeaderRow'
-      );
-
-      // resetting key columns when hasHeaderRow changes
-      if (
-        keyColumnField &&
-        keyColumnField.hasHeaderRow !== hasHeaderRowField.value
-      ) {
-        keyColumnField.value = [];
-        keyColumnField.hasHeaderRow = hasHeaderRowField.value;
-      }
-
-      return {
-        hasHeaderRow: hasHeaderRowField.value,
-        fileType: fileType.value,
-      };
-    }
-
-    if (fieldId === 'uploadFile') {
-      return fileType.value;
-    }
-    if (fieldId === 'file.filedefinition.rules') {
-      let definitionFieldId;
-
-      // Fetch format specific Field Definition field to fetch id
-      // TODO: Raghu to refactor this code.
-      if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
-      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
-      else definitionFieldId = 'edifact.format';
-      const definition = fields.find(field => field.id === definitionFieldId);
-      const resourcePath = fields.find(
-        field => field.id === 'file.fileDefinition.resourcePath'
-      );
-
-      alterFileDefinitionRulesVisibility(fields);
-
-      return {
-        format: definition && definition.format,
-        definitionId: definition && definition.value,
-        resourcePath: resourcePath && resourcePath.value,
-      };
-    }
-  },
+  optionsHandler: getFileProviderExportsOptionsHandler,
   fieldMap: {
     ...EXPORT_FILE_FIELD_MAP,
   },
