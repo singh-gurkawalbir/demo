@@ -827,36 +827,40 @@ describe('editor sagas', () => {
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    // test('should call requestExportSampleData and feed preview stages data for getContext api call incase of relativeURI when paging method is configured', () => {
-    //   const editor = {
-    //     id: 'restrelativeuri',
-    //     editorType: 'handlebars',
-    //     flowId,
-    //     resourceType: 'exports',
-    //     resourceId,
-    //     fieldId: 'rest.relativeURI',
-    //     formKey: 'new-123',
-    //   };
-    //   const resourceObj = {
-    //     _id: resourceId,
-    //     http: {
-    //       paging: {
-    //         method: 'relativeuri',
-    //       },
-    //     },
-    //   };
+    test('should call requestExportSampleData 1 and get preview stage data for traceKeyTemplate field', () => {
+      const editor = {
+        id: 'restrelativeuri',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        fieldId: 'rest.relativeURI',
+        formKey: 'new-123',
+      };
 
-    //   return expectSaga(requestEditorSampleData, { id: 'restrelativeuri' })
-    //     .provide([
-    //       [select(selectors.editor, 'restrelativeuri'), editor],
-    //       [matchers.call.fn(constructResourceFromFormValues), resourceObj],
-    //       [matchers.call.fn(requestExportSampleData)],
-    //       [matchers.call.fn(apiCallWithRetry), {}],
-    //     ])
-    //     .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
-    //     .returns({data: undefined, templateVersion: undefined})
-    //     .run();
-    // });
+      const resource = {
+        _id: resourceId,
+        http: {
+          paging: {
+            method: 'relativeuri',
+          },
+        },
+      };
+      const formValues = [];
+
+      return expectSaga(requestEditorSampleData, { id: 'restrelativeuri' })
+        .provide([
+          [select(selectors.editor, 'restrelativeuri'), editor],
+          [select(selectors.formState, 'new-123'), { value: formValues}],
+          [matchers.call.fn(constructResourceFromFormValues), resource],
+          [matchers.call.fn(requestExportSampleData), {}],
+          [matchers.call.fn(requestSampleData), {}],
+          [matchers.call.fn(apiCallWithRetry), {}],
+        ])
+        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: formValues, options: {flowId} })
+        .returns({data: undefined, templateVersion: undefined})
+        .run();
+    });
     test('should reload sample data and call requestSampleData if no sample data exists in the state', () => {
       const editor = {
         id: 'tx-123',
