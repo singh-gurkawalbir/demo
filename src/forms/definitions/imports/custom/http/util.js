@@ -75,7 +75,7 @@ export function headerFieldsMeta({operationDetails, headers = []}) {
       type: 'assistantHeaders',
       keyName: 'name',
       validate: true,
-      headersMetadata: operationDetails?.headers,
+      headersMetadata: operationDetails?.headersMetadata,
       valueName: 'value',
       label: 'Configure HTTP headers',
       value: headersValue,
@@ -308,6 +308,7 @@ export function fieldMeta({ resource, assistantData }) {
 
     const { operationDetails = {} } = assistantConfig;
 
+    console.log('operation Details', operationDetails);
     if (operationDetails) {
       headerFields = headerFieldsMeta({
         headers,
