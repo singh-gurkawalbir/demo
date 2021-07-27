@@ -39,7 +39,7 @@ export default function CollapsedComponents(props) {
       const header = typeof label === 'function' ? label(resource) : label;
 
       return (
-        <ExpansionPannelExpandOnInValidState
+        <ExpansionPanelExpandOnInValidState
           // eslint-disable-next-line react/no-array-index-key
           key={index}
           collapsed={collapsed}
@@ -57,8 +57,9 @@ export default function CollapsedComponents(props) {
   return <div className={classes.fieldsContainer}>{transformedContainers}</div>;
 }
 
-const ExpansionPannelExpandOnInValidState = props => {
+const ExpansionPanelExpandOnInValidState = props => {
   const { collapsed, layout, classes, header, fieldMap, formKey, dataPublic } = props;
+  const revalidationIdentifier = useSelector(state => selectors.formState(state, formKey)?.validationOnSaveIdentifier);
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [expandOnce, setExpandOnce] = useState(false);
   const isPanelErrored = useSelector(state =>
@@ -88,6 +89,13 @@ const ExpansionPannelExpandOnInValidState = props => {
     }
   }, [expandOnce, isPanelErrored, isPanelRequired]);
 
+  useEffect(() => {
+    if (!shouldExpand && isPanelErrored) {
+      setShouldExpand(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revalidationIdentifier]);
+
   const toggleExpansionPanel = useCallback(() => {
     setShouldExpand(expand => !expand);
   }, []);
@@ -96,9 +104,7 @@ const ExpansionPannelExpandOnInValidState = props => {
 
   return (
     <div className={classes.child}>
-      <Accordion
-        // eslint-disable-next-line react/no-array-index-key
-        expanded={shouldExpand} elevation={0}>
+      <Accordion expanded={shouldExpand} elevation={0}>
         <AccordionSummary
           data-test={header}
           onClick={toggleExpansionPanel}
