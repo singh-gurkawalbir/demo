@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionGroup({ children, className, position = 'left' }) {
+export default function ActionGroup({ children, className, position}) {
   const classes = useStyles();
 
   return (
