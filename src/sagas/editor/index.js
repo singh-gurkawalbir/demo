@@ -20,7 +20,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId } from '../../utils/resource';
 
 /**
@@ -496,21 +496,6 @@ export function* requestEditorSampleData({
     body.fieldPath = fieldId || filterPath;
 
     const isPagingConfigured = !!resource?.http?.paging?.method;
-
-    const previewDataDependentFieldIds = [
-      'http.paging.body',
-      'rest.pagingPostBody',
-      'rest.nextPageRelativeURI',
-      'http.paging.relativeURI',
-      'rest.relativeURI',
-      'http.relativeURI',
-      'http.once.relativeURI',
-      'rest.once.relativeURI',
-      'rest.postBody',
-      'rest.once.postBody',
-      'http.body',
-      'http.once.body',
-    ];
 
     if (resourceType === 'exports' && (previewDataDependentFieldIds.includes(fieldId)) && isPagingConfigured) {
       if (!fetchPreviewStageData) {

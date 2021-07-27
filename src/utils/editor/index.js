@@ -78,6 +78,21 @@ export const getUniqueFieldId = (fieldId, resource) => {
   }
 };
 
+export const previewDataDependentFieldIds = [
+  'http.paging.body',
+  'rest.pagingPostBody',
+  'rest.nextPageRelativeURI',
+  'http.paging.relativeURI',
+  'rest.relativeURI',
+  'http.relativeURI',
+  'http.once.relativeURI',
+  'rest.once.relativeURI',
+  'rest.postBody',
+  'rest.once.postBody',
+  'http.body',
+  'http.once.body',
+];
+
 // DO NOT DELETE below utils
 // This file is unused right now but we might need
 // this logic later when a sample template needs to be shown
