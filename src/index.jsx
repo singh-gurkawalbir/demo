@@ -1,4 +1,5 @@
 import 'url-search-params-polyfill';
+import * as smoothscroll from 'smoothscroll-polyfill';
 import React from 'react';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -12,6 +13,8 @@ import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
 import { getDomain } from './utils/resource';
+
+smoothscroll.polyfill();
 
 let store;
 const env = process.env.NODE_ENV;

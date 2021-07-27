@@ -6,8 +6,9 @@ import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { FORM_SAVE_STATUS, MAPPINGS_FORM_KEY } from '../../utils/constants';
+import { MAPPINGS_FORM_KEY } from '../../utils/constants';
 import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import mappingUtil from '../../utils/mapping';
 
 const useStyles = makeStyles({
   previewButton: {
@@ -49,9 +50,7 @@ export default function ButtonPanel({importId, disabled, onClose}) {
     ? isNSAssistantFormLoaded
     : mappingPreviewType);
 
-  const formStatus = saveStatus === 'requested'
-    ? FORM_SAVE_STATUS.LOADING
-    : FORM_SAVE_STATUS.COMPLETE;
+  const formStatus = mappingUtil.getFormStatusFromMappingSaveStatus(saveStatus);
 
   return (
     <>

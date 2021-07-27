@@ -55,6 +55,15 @@ function form(state = {}, action) {
           draft[
             formKey
           ].showValidationBeforeTouched = showValidationBeforeTouched;
+          if (showValidationBeforeTouched) {
+            const validationIdentifier = draft[formKey].validationOnSaveIdentifier;
+
+            if (!validationIdentifier) {
+              draft[formKey].validationOnSaveIdentifier = 1;
+            } else {
+              draft[formKey].validationOnSaveIdentifier += 1;
+            }
+          }
         }
 
         if (disabled !== undefined) draft[formKey].formIsDisabled = disabled;
