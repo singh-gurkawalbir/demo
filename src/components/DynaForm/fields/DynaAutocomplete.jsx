@@ -162,6 +162,7 @@ export default function DynaAutocomplete(props) {
             renderInput={params => (
               <TextField
                 {...params}
+                multiline
                 name={name}
                 id={id}
                 variant="filled"
