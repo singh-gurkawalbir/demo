@@ -23,11 +23,11 @@ export default {
       {
         items: [
           { label: 'Next page URL', value: 'nextpageurl' },
-          { label: 'Page number parameter', value: 'pageargument'},
+          { label: 'Page number parameter', value: 'pageargument' },
           { label: 'Custom relative URI', value: 'relativeuri' },
           { label: 'Link header', value: 'linkheader' },
-          { label: 'Skip number parameter', value: 'skipargument'},
-          { label: 'Next page token', value: 'token'},
+          { label: 'Skip number parameter', value: 'skipargument' },
+          { label: 'Next page token', value: 'token' },
           { label: 'Custom request body', value: 'postbody' },
         ],
       },
@@ -201,7 +201,7 @@ export default {
   },
   'rest.lastPageValue': {
     type: 'text',
-    label: 'Paging complete values',
+    label: 'Paging complete value',
     helpKey: 'export.http.paging.lastPageValues',
     visibleWhen: [
       {
