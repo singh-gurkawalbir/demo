@@ -710,3 +710,9 @@ export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
 
 export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const HOME_PAGE_PATH = '/home';
+
+export const MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+};
