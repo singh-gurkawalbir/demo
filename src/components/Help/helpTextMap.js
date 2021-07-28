@@ -1285,8 +1285,7 @@ export default {
     "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'export.file.csv.columnDelimiter':
     'Either select a common character from the list or enter your own freeform value with multiple characters allowed – such as <b>||</b> – in this field, depending on how the columns are uniformly separated in your sample CSV file. The default value is <b>Comma (,)</b> simply by convention; integrator.io does not dynamically determine the column delimiter for you.',
-  'export.file.csv.rowDelimiter':
-    "The character, or set of characters used to identify the end of a row. If this field is left blank then integrator.io will attempt to identify the row delimiter itself. Some common row delimiters are: '\n', '\r\n', '\r'",
+  'export.file.csv.rowDelimiter': 'The characters used to identify the end of a row.',
   'export.file.csv.keyColumns':
     'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single transfer record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
   'export.file.csv.hasHeaderRow':

@@ -1,6 +1,7 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
+import { FILE_PROVIDER_ASSISTANTS } from '../constants';
 import { adaptorTypeMap } from '../resource';
 
 export const DEFAULT_RECORD_SIZE = 10;
@@ -33,13 +34,13 @@ export const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
 
 Object.freeze(PREVIEW_STAGE);
 export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
-  const { adaptorType } = resource || {};
+  const { adaptorType, assistant } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
 
   // Handles File based preview stage
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
 
-  if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
+  if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType) || FILE_PROVIDER_ASSISTANTS.includes(assistant)) {
     return PREVIEW_STAGE;
   }
 

@@ -164,15 +164,13 @@ export default {
       retValues['/http/paging/lastPagePath'] = undefined;
       retValues['/rest/lastPageValue'] = undefined;
     }
-    if (retValues['/rest/lastpageValue']) {
+    if (retValues['/rest/lastPageValue']) {
       retValues['/http/paging/lastPageValues'] = [retValues['/rest/lastPageValue']];
+    } else {
+      retValues['/http/paging/lastPageValues'] = undefined;
     }
-    if (retValues['/rest/maxPagePath']) {
-      retValues['http/paging/maxPagePath'] = retValues['/rest/maxPagePath'];
-    }
-    if (retValues['/rest/maxCountPath']) {
-      retValues['http/paging/maxCountPath'] = retValues['/rest/maxCountPath'];
-    }
+    retValues['/http/paging/maxPagePath'] = retValues['/rest/maxPagePath'];
+    retValues['/http/paging/maxCountPath'] = retValues['/rest/maxCountPath'];
 
     if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/relativeURI'] = retValues['/rest/nextPageRelativeURI'] || retValues['/http/relativeURI'];
@@ -181,10 +179,10 @@ export default {
       const uriObj = url.parse(retValues['/http/relativeURI'], true);
 
       uriObj.search = null;
-      if (retValues['/rest/pageArgument']) {
-        uriObj.query[retValues['/rest/pageArgument']] = '{{{export.http.paging.token}}}';
+      if (retValues['/rest/tokenPageArgument']) {
+        uriObj.query[retValues['/rest/tokenPageArgument']] = '{{{export.http.paging.token}}}';
       }
-      const tp = qs.stringify(uriObj.query, {encode: false});
+      const tp = qs.stringify(uriObj.query, { encode: false });
 
       retValues['/http/paging/relativeURI'] = `${path}?${tp}`; // url.format(uriObj) will encode the handlebar expression if present on relativeURI
     } else if (retValues['/http/paging/method'] === 'skip') {
@@ -200,7 +198,7 @@ export default {
           retValues['/http/paging/skip'] = Number(uriObj.query[skipArgument]);
           uriObj.search = null;
           uriObj.query[skipArgument] = '{{{export.http.paging.skip}}}';
-          tp = qs.stringify(uriObj.query, {encode: false});
+          tp = qs.stringify(uriObj.query, { encode: false });
           retValues['/http/paging/relativeURI'] = `${path}?${tp}`;
         } else {
           retValues['/http/paging/skip'] = 0;
