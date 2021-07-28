@@ -36,7 +36,7 @@ const MiniResourceForm = ({
         disabled={inProgress}
         className={className}
         onClick={handleCancel}>
-        Cancel
+        Close
       </TextButton>
     )}
   </ActionGroup>

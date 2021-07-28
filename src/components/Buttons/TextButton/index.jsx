@@ -20,7 +20,7 @@ export default function TextButton(props) {
       variant="text"
       color="secondary"
       className={classes.root}
-      bold
+      bold="true"
       disableElevation
       {...rest}>
       {children}

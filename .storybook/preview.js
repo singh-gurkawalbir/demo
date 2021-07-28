@@ -1,6 +1,5 @@
 import React from 'react';
-import { addDecorator } from '@storybook/react';
-import { withA11y } from '@storybook/addon-a11y';
+import { addParameters } from '@storybook/react';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
@@ -114,4 +113,4 @@ export const decorators = [
   ),
 ];
 
-addDecorator(withA11y)
+addParameters({ a11y: { element: '#root', manual: false } })

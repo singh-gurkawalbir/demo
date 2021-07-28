@@ -255,8 +255,5 @@ export default {
         },
       ],
     },
-    {
-      id: 'cancel',
-    },
   ],
 };
