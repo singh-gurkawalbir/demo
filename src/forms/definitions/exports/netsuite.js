@@ -282,13 +282,13 @@ export default {
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       defaultValue: r => r?.netsuite?.distributed?.useSS2Framework ? 'true' : 'false',
-      // defaultDisabled: r => {
-      //   if (!isNewId(r._id)) {
-      //     return true;
-      //   }
+      defaultDisabled: r => {
+        if (!isNewId(r._id)) {
+          return true;
+        }
 
-      //   return false;
-      // },
+        return false;
+      },
       options: [
         {
           items: [
