@@ -164,7 +164,7 @@ const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter
   const {name} = field;
   const val = field[key];
 
-  acc[name.substring(1)] = val;
+  if (name.startsWith('/')) { acc[name.substring(1)] = val; }
 
   return acc;
 }, {});
@@ -187,7 +187,8 @@ selectors.isFormDirty = (state, formKey) => {
 
   return diffAr.some(patch => {
     const { op, value, path} = patch;
-    const modifiedPath = path.substring(1).replace(/\//g, '.');
+    const updatedPath = path.substring(1).startsWith('/') ? path.substring(1) : path;
+    const modifiedPath = updatedPath.replace(/\//g, '.');
     const defaultValueOrig = get(defaultValueState, modifiedPath);
 
     if (op === 'replace' || op === 'add') {
