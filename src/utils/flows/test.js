@@ -38,6 +38,7 @@ import {
   getIAResources,
   defaultIA2Flow,
   populateRestSchema,
+  addLastExecutedAtSortableProp,
 } from '.';
 import getRoutePath from '../routePaths';
 
@@ -2950,5 +2951,74 @@ describe('getFlowDetails', () => {
       showUtilityMapping: true,
       disableRunFlow: true,
     });
+  });
+});
+
+describe('addLastExecutedAtSortableProp', () => {
+  const flows = [{
+    _id: 'f1',
+    pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+    pageProcessors: [
+      { _exportId: 'e3', type: 'export' },
+    ],
+    _integrationId: '_id123',
+    lastExecutedAt: '2021-05-04T09:43:25.488Z',
+  }];
+
+  test('should not throw error for invalid arguments', () => {
+    expect(addLastExecutedAtSortableProp({})).toBeUndefined();
+  });
+  test('should return lastExecutedAtSort from flow doc if user is not in em2.0', () => {
+    const expectedResult = [{
+      _id: 'f1',
+      pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+      pageProcessors: [
+        { _exportId: 'e3', type: 'export' },
+      ],
+      _integrationId: '_id123',
+      lastExecutedAt: '2021-05-04T09:43:25.488Z',
+      lastExecutedAtSort: '2021-05-04T09:43:25.488Z',
+      lastExecutedAtSortType: 'date',
+    }];
+
+    expect(addLastExecutedAtSortableProp({flows})).toEqual(expectedResult);
+  });
+  test('should return lastExecutedAtSort from latest job if user is in em2.0', () => {
+    const latestFlowJobs = [{_flowId: 'f2', lastExecutedAt: '2020-10-04T09:43:25.488Z', status: 'completed'},
+      {_flowId: 'f1', lastExecutedAt: '2021-01-10T09:43:25.488Z', status: 'failed'}];
+
+    const expectedResult = [{
+      _id: 'f1',
+      pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+      pageProcessors: [
+        { _exportId: 'e3', type: 'export' },
+      ],
+      _integrationId: '_id123',
+      lastExecutedAt: '2021-05-04T09:43:25.488Z',
+      lastExecutedAtSort: '2021-01-10T09:43:25.488Z',
+      lastExecutedAtSortType: 'date',
+    }];
+
+    expect(addLastExecutedAtSortableProp({flows, isUserInErrMgtTwoDotZero: true, latestFlowJobs })).toEqual(expectedResult);
+  });
+  test('should return lastExecutedAtSortType as status if job is incomplete', () => {
+    const latestFlowJobs = [{_flowId: 'f2', lastExecutedAt: '2020-10-04T09:43:25.488Z', status: 'completed'},
+      {_flowId: 'f1', lastExecutedAt: '2021-01-10T09:43:25.488Z', status: 'running'}];
+
+    const expectedResult = [{
+      _id: 'f1',
+      pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+      pageProcessors: [
+        { _exportId: 'e3', type: 'export' },
+      ],
+      _integrationId: '_id123',
+      lastExecutedAt: '2021-05-04T09:43:25.488Z',
+      lastExecutedAtSort: '2300-04-17T16:51:35.209Z',
+      lastExecutedAtSortType: 'status',
+      isJobInQueuedStatus: true,
+      lastExecutedAtSortJobStatus: 'In progress...',
+    }];
+
+    expect(addLastExecutedAtSortableProp({flows, isUserInErrMgtTwoDotZero: true, latestFlowJobs })).toEqual(expectedResult);
   });
 });
