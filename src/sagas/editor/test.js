@@ -827,7 +827,7 @@ describe('editor sagas', () => {
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    test('should call requestExportSampleData 1 and get preview stage data for traceKeyTemplate field', () => {
+    test('should call requestExportSampleData incase of http/rest resource when paging is configured', () => {
       const editor = {
         id: 'restrelativeuri',
         editorType: 'handlebars',

@@ -501,9 +501,7 @@ export function* requestEditorSampleData({
     body.fieldPath = fieldId || filterPath;
 
     if (needPreviewStagesData) {
-      const previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
-
-      body.previewData = previewData;
+      body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
     }
 
     const opts = {
