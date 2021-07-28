@@ -4501,6 +4501,7 @@ Object {
       },
       "netsuite.distributed.useSS2Framework": Object {
         "connectionId": [Function],
+        "defaultDisabled": [Function],
         "defaultValue": [Function],
         "fieldId": "netsuite.distributed.useSS2Framework",
         "isNew": [Function],
