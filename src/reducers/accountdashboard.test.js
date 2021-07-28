@@ -5,6 +5,16 @@ import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 
 const state = {
   data: {
+    completedJobs: {
+      completedJobs: [
+        {numPages: 3, numRuns: 2, _flowId: 'flow1'},
+        {numPages: 0, numRuns: 210, _flowId: 'flow2'},
+        {numPages: 0, numRuns: 2, _flowId: 'flow3'},
+        {numPages: 1, numRuns: 1, _flowId: 'flow4' },
+      ]},
+    runningJobs: {
+      runningJobs: [{_id: 'job1', type: 'flow', _exportId: 'exp1', _flowId: 'flow1' }],
+    },
     resources: {
       tiles: [
         { _integrationId: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
@@ -113,97 +123,21 @@ describe('selectors.getAllAccountDashboardIntegrations', () => {
     expect(res).toEqual(expected);
   });
 });
-describe('selectors.getAllAccountDashboardFlows', () => {
-  test('should return default flows list when state is null or undefined', () => {
-    const res = selectors.getAllAccountDashboardFlows({}, FILTER_KEYS_AD.RUNNING);
-    const expected = [
-      {
-        _id: 'all',
-        name: 'All flows',
-      },
-    ];
+describe('selectors.accountDashboardJobs', () => {
+  test('should return default object when state is null or undefined', () => {
+    const res = selectors.accountDashboardJobs();
+
+    expect(res).toEqual({jobs: [] });
+  });
+  test('should return all running jobs', () => {
+    const res = selectors.accountDashboardJobs(state, FILTER_KEYS_AD.RUNNING);
+    const expected = {jobs: [{_exportId: 'exp1', _flowId: 'flow1', _id: 'job1', doneExporting: false, duration: undefined, numPagesProcessed: 0, type: 'flow', uiStatus: undefined}], nextPageURL: undefined, status: undefined};
 
     expect(res).toEqual(expected);
   });
-  test('should return all flows of selected integrations list for running flows', () => {
-    state.session = {
-      filters: {
-        runningFlows: {
-          integrationIds: ['storesecIdpidi1', 'int2'],
-
-        },
-      },
-    };
-    const res = selectors.getAllAccountDashboardFlows(state, FILTER_KEYS_AD.RUNNING);
-    const expected = [
-      {
-        _id: 'all',
-        name: 'All flows',
-      },
-      {
-        _connectorId: 'ctr1',
-        _id: 'f1',
-        _integrationId: 'i1',
-        pageGenerators: [
-          {
-            _exportId: 'e1',
-          },
-        ],
-        pageProcessors: [
-          {
-            _importId: 'i1',
-          },
-        ],
-      },
-      {
-        _connectorId: 'ctr1',
-        _id: 'f2',
-        _integrationId: 'i1',
-        pageGenerators: [
-          {
-            _exportId: 'e2',
-          },
-        ],
-        pageProcessors: [
-          {
-            _importId: 'i1',
-          },
-        ],
-      },
-      {
-        _id: 'flow3',
-        _integrationId: 'int2',
-        name: 'flow3',
-      },
-      {
-        _id: 'flow4',
-        _integrationId: 'int2',
-        name: 'flow4',
-      },
-    ];
-
-    expect(res).toEqual(expected);
-  });
-  test('should return all flows of selected integrations list for completed flows', () => {
-    state.session = {
-      filters: {
-        completedFlows: {
-          integrationIds: ['none', 'int3'],
-
-        },
-      },
-    };
-    const res = selectors.getAllAccountDashboardFlows(state, FILTER_KEYS_AD.COMPLETED);
-    const expected = [
-      {
-        _id: 'all',
-        name: 'All flows',
-      },
-      {
-        _id: 'flow6',
-        name: 'flow6',
-      },
-    ];
+  test('should return all completed jobs', () => {
+    const res = selectors.accountDashboardJobs(state, FILTER_KEYS_AD.COMPLETED);
+    const expected = {jobs: [{_flowId: 'flow1', numPages: 3, numRuns: 2}, {_flowId: 'flow2', numPages: 0, numRuns: 210}, {_flowId: 'flow3', numPages: 0, numRuns: 2}, {_flowId: 'flow4', numPages: 1, numRuns: 1}], nextPageURL: undefined, status: undefined};
 
     expect(res).toEqual(expected);
   });
