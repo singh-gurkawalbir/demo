@@ -117,6 +117,11 @@ function Settings({
           path: '/_runNextFlowIds',
           value: formVal._runNextFlowIds,
         },
+        {
+          op: 'replace',
+          path: '/autoResolveMatchingTraceKeys',
+          value: (formVal.autoResolveMatchingTraceKeys === 'true'),
+        },
       ];
 
       if (integrationId && integrationId !== STANDALONE_INTEGRATION.id) {
