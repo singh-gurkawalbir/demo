@@ -1404,10 +1404,11 @@ describe('isFormDirty', () => {
       FIELD5: {
         id: 'FIELD5',
         type: 'text',
-        name: 'field5',
+        name: 'field5/something',
         defaultValue: [{a: '', b: ''}, {a: ''}],
         label: 'field5',
       },
+
     },
 
     layout: { fields: ['FIELD1', 'FIELD2', 'FIELD3', 'FIELD4', 'FIELD5'] },

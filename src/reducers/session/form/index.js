@@ -3,7 +3,7 @@
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import { get} from 'lodash';
-import { compare } from 'fast-json-patch';
+import { compare, getValueByPointer } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFields,
@@ -164,9 +164,7 @@ const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter
   const {name} = field;
   const val = field[key];
 
-  if (name.startsWith('/')) {
-    acc[name.substring(1)] = val;
-  } else acc[name] = val;
+  acc[name] = val;
 
   return acc;
 }, {});
@@ -189,15 +187,13 @@ selectors.isFormDirty = (state, formKey) => {
 
   return diffAr.some(patch => {
     const { op, value, path} = patch;
-    const updatedPath = path;
-    const modifiedPath = updatedPath.replace(/\//g, '.');
-    const defaultValueOrig = get(defaultValueState, modifiedPath);
+    const defaultValueOrig = getValueByPointer(defaultValueState, path);
 
     if ([undefined, null, ''].includes(defaultValueOrig) && op === 'remove') {
       return false;
     }
     if (op === 'replace' || op === 'add') {
-      if (([undefined, null, ''].includes(defaultValueOrig) && value === '')) {
+      if ([undefined, null, ''].includes(defaultValueOrig) && (value === '' || (Array.isArray(value) && value.length === 0))) {
         return false;
       }
 
