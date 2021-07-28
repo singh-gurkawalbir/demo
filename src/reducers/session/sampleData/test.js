@@ -611,6 +611,8 @@ describe('getResourceSampleDataStages', () => {
   };
 
   test('should return empty list if there is no sample data for the passed resourceId', () => {
+    expect(selectors.getResourceSampleDataStages()).toEqual([]);
+    expect(selectors.getResourceSampleDataStages({}, '111')).toEqual([]);
     expect(selectors.getResourceSampleDataStages(initialState, '111')).toEqual([]);
     expect(selectors.getResourceSampleDataStages(initialState, '456')).toEqual([]);
   });
