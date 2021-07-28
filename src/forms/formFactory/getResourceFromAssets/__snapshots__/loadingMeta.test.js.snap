@@ -3526,8 +3526,8 @@ Object {
       "http.fileRelativeURI": Object {
         "defaultValue": [Function],
         "fieldId": "http.fileRelativeURI",
-        "helpKey": "export.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -5195,8 +5195,8 @@ Object {
       "http.fileRelativeURI": Object {
         "defaultValue": [Function],
         "fieldId": "http.fileRelativeURI",
-        "helpKey": "export.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -8158,8 +8158,8 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
-        "helpKey": "import.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -10319,8 +10319,8 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
-        "helpKey": "import.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
