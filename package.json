@@ -19,8 +19,6 @@
     "lint": "eslint --ext .js --ext .jsx ./src",
     "test": "env NODE_ENV=test TZ=UTC jest",
     "coverage": "env NODE_ENV=test TZ=UTC jest --coverage",
-    "styleguide": "env NODE_ENV=styleguide styleguidist server",
-    "styleguide-build": "env NODE_ENV=styleguide styleguidist build",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -149,7 +147,6 @@
     "lint-staged": "^10.2.11",
     "logrocket-cli": "^0.12.0",
     "react-refresh": "^0.8.3",
-    "react-styleguidist": "^11.0.8",
     "redux-saga-test-plan": "^4.0.0-rc.3",
     "storybook-addon-designs": "^6.0.1",
     "storybook-addon-jsx": "^7.3.12",
