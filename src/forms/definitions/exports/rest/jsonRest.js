@@ -10,10 +10,164 @@ function isValidArray(value) {
   return false;
 }
 
+const restPreSave = formValues => {
+  const retValues = { ...formValues };
+
+  const restToHttpFieldMap = {
+    '/rest/method': '/http/method',
+    '/rest/blobMethod': '/http/blobMethod',
+    '/rest/headers': '/http/headers',
+    '/rest/resourcePath': '/http/response/resourcePath',
+    '/rest/successPath': '/http/response/successPath',
+    '/rest/successValues': '/http/response/successValues',
+    '/rest/blobFormat': '/http/response/blobFormat',
+    '/rest/once/relativeURI': '/http/once/relativeURI',
+    '/rest/lastPageStatusCode': '/http/paging/lastPageStatusCode',
+    '/rest/lastPagePath': '/http/paging/lastPagePath',
+  };
+
+  Object.keys(restToHttpFieldMap).forEach(restField => {
+    const httpField = restToHttpFieldMap[restField];
+
+    if (retValues[httpField]) {
+      retValues[restField] = retValues[httpField];
+    } else {
+      retValues[restField] = undefined;
+    }
+    delete retValues[httpField];
+  });
+
+  if (retValues['/type'] === 'all') {
+    retValues['/type'] = undefined;
+    retValues['/test'] = undefined;
+    retValues['/delta'] = undefined;
+    retValues['/once'] = undefined;
+    retValues['/rest/once'] = undefined;
+    delete retValues['/test/limit'];
+    delete retValues['/delta/dateFormat'];
+    delete retValues['/delta/lagOffset'];
+    delete retValues['/once/booleanField'];
+    delete retValues['/rest/once/relativeURI'];
+    delete retValues['/rest/once/postBody'];
+    delete retValues['/rest/once/method'];
+  } else if (retValues['/type'] === 'test') {
+    retValues['/test/limit'] = 1;
+    retValues['/delta'] = undefined;
+    retValues['/once'] = undefined;
+    retValues['/rest/once'] = undefined;
+    delete retValues['/delta/dateFormat'];
+    delete retValues['/delta/lagOffset'];
+    delete retValues['/once/booleanField'];
+    delete retValues['/rest/once/relativeURI'];
+    delete retValues['/rest/once/postBody'];
+    delete retValues['/rest/once/method'];
+  } else if (retValues['/type'] === 'delta') {
+    retValues['/once'] = undefined;
+    retValues['/rest/once'] = undefined;
+    retValues['/test'] = undefined;
+    delete retValues['/test/limit'];
+    delete retValues['/once/booleanField'];
+    delete retValues['/rest/once/relativeURI'];
+    delete retValues['/rest/once/postBody'];
+    delete retValues['/rest/once/method'];
+  } else if (retValues['/type'] === 'once') {
+    retValues['/delta'] = undefined;
+    retValues['/test'] = undefined;
+    delete retValues['/test/limit'];
+    delete retValues['/delta/dateFormat'];
+    delete retValues['/delta/lagOffset'];
+  }
+
+  if (
+    retValues['/rest/successValues'] &&
+    !retValues['/rest/successValues'].length
+  ) {
+    retValues['/rest/successValues'] = undefined;
+  }
+
+  if (retValues['/outputMode'] === 'blob') {
+    retValues['/type'] = 'blob';
+    retValues['/rest/method'] = retValues['/rest/blobMethod'];
+  }
+
+  delete retValues['/outputMode'];
+  delete retValues['/rest/blobMethod'];
+
+  if (retValues['/rest/pagingMethod'] === 'pageargument') {
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/nextPagePath'] = undefined;
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/pagingPostBody'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+  } else if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/pagingPostBody'] = undefined;
+    retValues['/rest/pageArgument'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+    retValues['/rest/nextPagePath'] = retValues['/rest/nextPageURLPath'];
+    retValues['/rest/nextPageURLPath'] = undefined;
+  } else if (retValues['/rest/pagingMethod'] === 'relativeuri') {
+    retValues['/rest/nextPagePath'] = undefined;
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/pagingPostBody'] = undefined;
+    retValues['/rest/pageArgument'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+  } else if (retValues['/rest/pagingMethod'] === 'linkheader') {
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/nextPagePath'] = undefined;
+    retValues['/rest/pagingPostBody'] = undefined;
+    retValues['/rest/pageArgument'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+  } else if (retValues['/rest/pagingMethod'] === 'skipargument') {
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/nextPagePath'] = undefined;
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/pagingPostBody'] = undefined;
+    retValues['/rest/pageArgument'] = undefined;
+  } else if (retValues['/rest/pagingMethod'] === 'token') {
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/pagingPostBody'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+    retValues['/rest/nextPagePath'] = retValues['/rest/nextPageTokenPath'];
+    retValues['/rest/nextPageTokenPath'] = undefined;
+  } else if (retValues['/rest/pagingMethod'] === 'postbody') {
+    retValues['/rest/nextPagePath'] = undefined;
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/pageArgument'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+  } else {
+    retValues['/rest/pagingMethod'] = undefined;
+    retValues['/rest/nextPagePath'] = undefined;
+    retValues['/rest/nextPageURLPath'] = undefined;
+    retValues['/rest/nextPageTokenPath'] = undefined;
+    retValues['/rest/linkHeaderRelation'] = undefined;
+    retValues['/rest/nextPageRelativeURI'] = undefined;
+    retValues['/rest/pageArgument'] = undefined;
+    retValues['/rest/skipArgument'] = undefined;
+    retValues['/rest/maxPagePath'] = undefined;
+    retValues['/rest/maxCountPath'] = undefined;
+    retValues['/rest/lastPageStatusCode'] = undefined;
+    retValues['/rest/lastPagePath'] = undefined;
+    retValues['/rest/lastPageValue'] = undefined;
+  }
+  retValues['/http'] = undefined;
+
+  return {
+    ...retValues,
+  };
+};
+
 export default {
-  preSave: (formValues, __, options = {}) => {
+  preSave: (formValues, resource, options = {}) => {
     const retValues = { ...formValues };
     const { connection } = options;
+
+    if ((resource.adaptorType === 'RESTExport' && resource?._id && !isNewId(resource?._id)) || !connection.isHTTP) {
+      return restPreSave(formValues);
+    }
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;

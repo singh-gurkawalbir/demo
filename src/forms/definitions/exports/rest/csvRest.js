@@ -1,7 +1,48 @@
+import { isNewId } from '../../../../utils/resource';
+
+const restPreSave = formValues => {
+  const retValues = { ...formValues };
+
+  const restToHttpFieldMap = {
+    '/rest/blobMethod': '/http/blobMethod',
+    '/rest/headers': '/http/headers',
+    '/rest/resourcePath': '/http/response/resourcePath',
+    '/rest/blobFormat': '/http/response/blobFormat',
+  };
+
+  Object.keys(restToHttpFieldMap).forEach(restField => {
+    const httpField = restToHttpFieldMap[restField];
+
+    if (retValues[httpField]) {
+      retValues[restField] = retValues[httpField];
+    } else {
+      retValues[restField] = undefined;
+    }
+    delete retValues[httpField];
+  });
+
+  retValues['/file/type'] = 'csv';
+  retValues['/rest/method'] = 'GET';
+
+  if (retValues['/outputMode'] === 'blob') {
+    retValues['/type'] = 'blob';
+    retValues['/rest/method'] = retValues['/rest/blobMethod'];
+  }
+
+  delete retValues['/outputMode'];
+
+  return {
+    ...retValues,
+  };
+};
 export default {
-  preSave: (formValues, __, options = {}) => {
+  preSave: (formValues, resource, options = {}) => {
     const retValues = { ...formValues };
     const { connection } = options;
+
+    if ((resource.adaptorType === 'RESTExport' && resource?._id && !isNewId(resource?._id)) || !connection.isHTTP) {
+      return restPreSave(formValues);
+    }
 
     retValues['/file/type'] = 'csv';
     retValues['/http/method'] = 'GET';
@@ -140,9 +181,9 @@ export default {
           {
             type: 'indent',
             containers: [
-              {fields: [
+              { fields: [
                 'file.csv',
-              ]},
+              ] },
             ],
           },
           {
