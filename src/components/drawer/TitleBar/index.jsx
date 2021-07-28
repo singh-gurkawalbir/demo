@@ -50,6 +50,7 @@ export default function DrawerTitleBar({
   helpTitle,
   backToParent,
   onClose,
+  disableClose,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -89,6 +90,7 @@ export default function DrawerTitleBar({
         data-test="closeRightDrawer"
         aria-label="Close"
         className={classes.closeButtonTitleBar}
+        disabled={disableClose}
         onClick={handleClick}>
         <CloseIcon />
       </IconButton>

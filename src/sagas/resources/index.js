@@ -390,7 +390,25 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     );
   }
 }
+export function* commitStagedChangesWrapper({asyncKey, ...props}) {
+  // if asyncKey is defined we should try tagging with async updates
+  if (asyncKey) {
+    yield put(actions.asyncTask.start(asyncKey));
+    const resp = yield call(commitStagedChanges, props);
 
+    if (resp?.error) {
+    // save error message
+      yield put(actions.asyncTask.failed(asyncKey));
+
+      return resp;
+    }
+    yield put(actions.asyncTask.success(asyncKey));
+
+    return resp;
+  }
+
+  return yield call(commitStagedChanges, props);
+}
 export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
     resourceId: id,
@@ -513,8 +531,8 @@ export function* updateIntegrationSettings({
 
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('flows'));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('flows', null, true));
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
@@ -552,9 +570,9 @@ export function* updateIntegrationSettings({
     } else {
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
-      yield put(actions.resource.requestCollection('imports'));
+      yield put(actions.resource.requestCollection('imports', null, true));
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
-      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('exports', null, true));
     }
 
     yield put(
@@ -573,13 +591,14 @@ export function* updateIntegrationSettings({
   }
 }
 
-export function* patchResource({ resourceType, id, patchSet, options = {} }) {
+export function* patchResource({ resourceType, id, patchSet, options = {}, asyncKey}) {
   const isNew = isNewId(id);
 
   if (!patchSet || isNew) return; // nothing to do.
 
   const path = `/${resourceType}/${id}`;
 
+  yield put(actions.asyncTask.start(asyncKey));
   try {
     yield call(apiCallWithRetry, {
       path,
@@ -603,7 +622,9 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+    yield put(actions.asyncTask.failed(asyncKey));
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
@@ -1107,7 +1128,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),

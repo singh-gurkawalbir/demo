@@ -21,6 +21,7 @@ export default function getForm(options) {
         helpKey: 'export.file.csv.rowDelimiter',
         defaultValue: options?.rowDelimiter,
         options: [{items: csvOptions.RowDelimiterOptions}],
+        skipDefault: true,
         required: true,
       },
       trimSpaces: {

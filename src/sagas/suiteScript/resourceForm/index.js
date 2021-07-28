@@ -8,7 +8,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../../../forms/formFactory/utils';
-import { commitStagedChanges, requestSuiteScriptMetadata } from '../resources';
+import { commitStagedChangesWrapper, requestSuiteScriptMetadata } from '../resources';
 import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
@@ -16,6 +16,7 @@ import { apiCallWithRetry } from '../..';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../../forms/formFactory/getFieldsWithDefaults';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 export const SCOPES = {
   META: 'meta',
@@ -147,12 +148,13 @@ export function* submitFormValues({
     // the commit saga.
 
     if (patch && patch.length) {
-      const resp = yield call(commitStagedChanges, {
+      const resp = yield call(commitStagedChangesWrapper, {
         resourceType,
         id: resourceId,
         scope: SCOPES.VALUE,
         ssLinkedConnectionId,
         integrationId,
+        asyncKey: getAsyncKey(resourceType, resourceId),
       });
 
       if (resp && (resp.error || resp.conflict)) {

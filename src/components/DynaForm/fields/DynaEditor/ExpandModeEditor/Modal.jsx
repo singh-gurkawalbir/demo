@@ -42,7 +42,7 @@ export default function EditorModal(props) {
           onClick={handleClose}
           variant="outlined"
           color="primary">
-          Done
+          Save & Close
         </Button>
       </div>
     </ModalDialog>

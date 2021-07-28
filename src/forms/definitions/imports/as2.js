@@ -1,4 +1,5 @@
 import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
+import { updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   optionsHandler: (fieldId, fields) => {
@@ -44,57 +45,7 @@ export default {
     return fieldMeta;
   },
   preSave: formValues => {
-    const newValues = {
-      ...formValues,
-    };
-
-    if (newValues['/file/type'] === 'json') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/replaceNewlineWithSpace'];
-      delete newValues['/file/csv/replaceTabWithSpace'];
-      delete newValues['/file/csv/wrapWithQuotes'];
-      delete newValues['/file/xml/body'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xml') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/json'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/replaceNewlineWithSpace'];
-      delete newValues['/file/csv/replaceTabWithSpace'];
-      delete newValues['/file/csv/wrapWithQuotes'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xlsx') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/replaceNewlineWithSpace'];
-      delete newValues['/file/csv/replaceTabWithSpace'];
-      delete newValues['/file/csv/wrapWithQuotes'];
-      delete newValues['/file/xml/body'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'csv') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/fileDefinition/resourcePath'];
-      delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/xml/body'];
-    }
+    const newValues = updateFileProviderFormValues(formValues);
 
     if (newValues['/file/compressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
@@ -213,16 +164,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'saveandclose',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'file.type',
@@ -232,26 +174,13 @@ export default {
     },
     {
       // Button that saves file defs and then submit resource
-      id: 'savedefinition',
+      id: 'savefiledefinitions',
       visibleWhen: [
         {
           field: 'file.type',
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
-    },
-    {
-      // Button that saves file defs and then submit resource
-      id: 'saveandclosedefinition',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
     },
   ],
 };

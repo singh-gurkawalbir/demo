@@ -46,26 +46,20 @@ const TabLabel = ({layout, formKey, fieldMap, label, tabType }) => {
     : label);
 };
 
-function TabComponent(props) {
+export function TabComponent(props) {
   const { containers, fieldMap, children, type, className,
     ...rest } = props;
   const {
-    externalTabState,
-    setExternalTabState,
-    index,
     orientation = 'vertical',
   } = rest;
   const classes = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
-  const selectedTabIndex =
-    (externalTabState && (index === 0 && externalTabState.activeTab)) ||
-    (index === 1 && externalTabState.tabHistory[externalTabState.activeTab]) ||
-    selectedTab;
+  const selectedTabIndex = selectedTab;
 
   return (
     <div className={orientation === 'vertical' ? classes.root : null}>
       <Tabs
-        value={selectedTabIndex}
+        value={selectedTab}
         classes={{ indicator: classes.MuiTabsIndicator }}
         className={clsx(classes.tabsContainer, className)}
         variant="scrollable"
@@ -75,10 +69,6 @@ function TabComponent(props) {
         scrollButtons="auto"
         aria-label="Settings Actions"
         onChange={(evt, value) => {
-          if (setExternalTabState) {
-            return setExternalTabState(index, value);
-          }
-
           setSelectedTab(value);
         }}>
         {containers.map(({ label, ...layout }) => (
@@ -178,10 +168,7 @@ export function SuiteScriptTabIACompleteSave(props) {
 // this is necessary when we clone props we want all of its children to receive them
 function TabWithCompleteSave(props) {
   return (
-    <>
-      <FormGenerator {...props} />
-      <IntegrationSettingsSaveButton {...props} />
-    </>
+    <FormGenerator {...props} />
   );
 }
 

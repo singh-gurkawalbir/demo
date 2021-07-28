@@ -1,7 +1,9 @@
+/* eslint-disable react/jsx-handler-names */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
+import isEqual from 'lodash/isEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -10,7 +12,9 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
-import ButtonGroup from '../../ButtonGroup';
+import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { useFormOnCancel } from '../../FormOnCancelContext';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 const useStyles = makeStyles(theme => ({
   errorText: {
@@ -23,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function RetryForm({jobId, flowJobId}) {
+function RetryForm({jobId, flowJobId, asyncKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -32,7 +36,7 @@ function RetryForm({jobId, flowJobId}) {
 
   const [error, setError] = useState();
   const [touched, setTouched] = useState(false);
-
+  const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
   const retryData = useSelector(state => {
     if (!retryId) return undefined;
 
@@ -42,6 +46,7 @@ function RetryForm({jobId, flowJobId}) {
   });
 
   const [data, setData] = useState(retryData?.data);
+  const isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
@@ -51,15 +56,11 @@ function RetryForm({jobId, flowJobId}) {
       actions.job.updateRetryData({
         retryId,
         retryData: { ...retryData, data: parsedData },
+        asyncKey,
       })
     );
     setTouched(false);
-  }, [dispatch, retryData, retryId, data]);
-
-  const handleSaveAndClose = useCallback(() => {
-    handleSave();
-    history.goBack();
-  }, [handleSave, history]);
+  }, [dispatch, retryData, retryId, data, asyncKey]);
 
   const handleChange = useCallback(value => {
     try {
@@ -100,8 +101,6 @@ function RetryForm({jobId, flowJobId}) {
     return <Spinner centerAll />;
   }
 
-  const disabled = !!error || !touched;
-
   return (
     <>
       <DrawerContent noPadding>
@@ -112,15 +111,14 @@ function RetryForm({jobId, flowJobId}) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
-          <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save & close</Button>
-          <Button
-            variant="text"
-            // eslint-disable-next-line react/jsx-handler-names
-            onClick={history.goBack}>Cancel
-          </Button>
-        </ButtonGroup>
+        <SaveAndCloseButtonGroupAuto
+          asyncKey={asyncKey}
+          isDirty={isDirty}
+          status={status}
+          onClose={history.goBack}
+          onSave={handleSave}
+          shouldHandleCancel
+          />
         <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
       </DrawerFooter>
     </>
@@ -128,14 +126,17 @@ function RetryForm({jobId, flowJobId}) {
 }
 
 export default function RetryDrawer({height, jobId, flowJobId}) {
+  const asyncKey = getAsyncKey(`retryDrawer-${jobId}`, flowJobId); // added retryDrawer to make it unique
+  const {setCancelTriggered, disabled} = useFormOnCancel(asyncKey);
+
   return (
     <RightDrawer
       path="editRetry/:retryId"
       height={height}
       width="large"
       variant="permanent">
-      <DrawerHeader title="Edit retry data" />
-      <RetryForm jobId={jobId} flowJobId={flowJobId} />
+      <DrawerHeader handleClose={setCancelTriggered} disableClose={disabled} title="Edit retry data" />
+      <RetryForm asyncKey={asyncKey} jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>
   );
 }

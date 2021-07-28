@@ -1,16 +1,15 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import DynaFormGenerator from './DynaFormGenerator';
 import { selectors } from '../../reducers';
+import useAutoScrollErrors from './useAutoScrollErrors';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
     maxHeight: '100%',
-    // overflowY: 'auto',
-    // padding: theme.spacing(1),
     border: 'none',
   },
   details: {
@@ -50,17 +49,7 @@ export default function DynaForm(props) {
   // useTraceUpdate(props);
   const formRef = useRef();
 
-  // TODO: deprecate this code no one is using it
-  useEffect(() => {
-    if (!autoFocus) return;
-
-    const firstInput = formRef.current?.querySelector?.('input');
-
-    if (firstInput?.focus) {
-      setTimeout(() => firstInput.focus(), 100);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formRef.current]);
+  useAutoScrollErrors({ formKey, formRef});
 
   const fieldMeta = useSelector(state => selectors.formState(state, formKey)?.fieldMeta, shallowEqual);
 

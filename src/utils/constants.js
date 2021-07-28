@@ -1,9 +1,13 @@
-import {invert} from 'lodash';
+import invert from 'lodash/invert';
 
 export const emptyList = Object.freeze([]);
 export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
+});
+export const AFE_SAVE_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  REQUESTED: 'requested',
 });
 export const FORM_SAVE_STATUS = Object.freeze({
   COMPLETE: 'complete',
@@ -159,7 +163,7 @@ export const PERMISSIONS = Object.freeze({
 export const GET_DOCS_MAX_LIMIT = process.env.GET_DOCS_MAX_LIMIT || 1500;
 export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
-export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
+export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite' };
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
@@ -701,4 +705,14 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 ]);
 
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+
+export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
+
+export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const HOME_PAGE_PATH = '/home';
+
+export const MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+};

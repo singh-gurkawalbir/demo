@@ -1,46 +1,49 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
+import React, { useEffect } from 'react';
+import shallowEqual, { useSelector } from 'react-redux';
 import DynaForm from '../..';
-import DynaSubmit from '../../DynaSubmit';
 import { getCreateScriptMetadata } from './utils';
 import ModalDialog from '../../../ModalDialog';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
+import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
+import { selectors } from '../../../../reducers';
+import { FORM_SAVE_STATUS } from '../../../../utils/constants';
+import { useFormOnCancel } from '../../../FormOnCancelContext';
+
+const formKey = 'dynahookafecreatescriptdialog';
 
 export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
   const { optionsHandler, ...rest } = getCreateScriptMetadata(scriptId);
-  const handleSubmit = values => onSave(values);
-  const { submitHandler, disableSave, saveInProgress} = useSaveStatusIndicator(
-    {
-      path: '/scripts',
-      method: 'post',
-      onSave: handleSubmit,
-      onClose,
-    }
-  );
-  const formKey = useFormInitWithPermissions({
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleSubmit = () => onSave(values, formKey);
+
+  useFormInitWithPermissions({
     fieldMeta: rest,
     optionsHandler,
+    formKey,
   });
+  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
+
+  useEffect(() => {
+    if (status === FORM_SAVE_STATUS.COMPLETE) {
+      onClose();
+    }
+  }, [status, onClose]);
+  const {setCancelTriggered, disabled} = useFormOnCancel(formKey);
 
   return (
-    <ModalDialog show onClose={onClose} minWidth="sm">
+    <ModalDialog disableClose={disabled} show onClose={setCancelTriggered} minWidth="sm">
       <div>Create script</div>
       <div>
         <DynaForm
           formKey={formKey} />
       </div>
       <div>
-        <DynaSubmit
+        <SaveAndCloseMiniResourceForm
           formKey={formKey}
-          data-test="saveScript"
-          onClick={submitHandler(true)}
-          disabled={disableSave}>
-          {saveInProgress ? 'Saving' : 'Save'}
-        </DynaSubmit>
-        <Button data-test="cancelScript" onClick={onClose}>
-          Cancel
-        </Button>
+          formSaveStatus={status}
+          handleSave={handleSubmit}
+          handleCancel={onClose}
+          />
       </div>
     </ModalDialog>
   );

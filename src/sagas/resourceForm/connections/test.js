@@ -13,6 +13,7 @@ import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import actionTypes from '../../../actions/types';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 jest.mock('../../../forms/formFactory/getResourceFromAssets');
 
@@ -663,6 +664,12 @@ describe('pingConnectionWithAbort', () => {
 
     expect(JSON.stringify(saga.next().value)).toEqual(
       JSON.stringify(raceBetweenApiCallAndAbort)
+    );
+
+    expect(saga.next(response).value).toEqual(
+      put(actions.asyncTask.success(
+        getAsyncKey('connections', resourceId))
+      )
     );
     expect(saga.next(response).value).toEqual(
       put(

@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PingMessageSnackbar from '../../../PingMessageSnackbar';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers/index';
-import DynaAction from '../../../DynaForm/DynaAction';
-import { PING_STATES } from '../../../../reducers/comms/ping';
+import PingMessageSnackbar from '../../../../../PingMessageSnackbar';
+import actions from '../../../../../../actions';
+import { selectors } from '../../../../../../reducers/index';
+import DynaAction from '../../../../../DynaForm/DynaAction';
+import { PING_STATES } from '../../../../../../reducers/comms/ping';
 
 export const PingMessage = props => {
   const { resourceId, ssLinkedConnectionId } = props;
