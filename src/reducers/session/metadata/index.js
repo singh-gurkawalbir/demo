@@ -210,18 +210,14 @@ selectors.makeOptionsFromMetadata = () => createSelector(
 );
 selectors.optionsFromMetadata = selectors.makeOptionsFromMetadata();
 
-selectors.assistantData = (state, { adaptorType, assistant }) => {
-  if (
-    !state ||
-    !state.assistants ||
-    !state.assistants[adaptorType] ||
-    !state.assistants[adaptorType][assistant]
-  ) {
-    return undefined;
-  }
+selectors.mkAssistantData = () => createSelector(
+  state => state?.assistants,
+  (_, options = emptyObject) => options.adaptorType,
+  (_, options = emptyObject) => options.assistant,
+  (assistants, adaptorType, assistant) => assistants?.[adaptorType]?.[assistant] ? ({ ...assistants[adaptorType][assistant] }) : undefined
+);
 
-  return { ...state.assistants[adaptorType][assistant] };
-};
+selectors.assistantData = selectors.mkAssistantData();
 
 selectors.assistantPreviewData = (state, resourceId) => {
   if (!state || !state.preview || !state.preview[resourceId]) {
