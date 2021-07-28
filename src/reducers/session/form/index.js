@@ -2,7 +2,8 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
-import { map, isEmpty, uniq, get, isEqualWith, isEqual } from 'lodash';
+import { get} from 'lodash';
+import { compare } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFields,
@@ -159,12 +160,11 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
-const calculateAllFieldsValue = (form, key) => Object.values(form.fields).reduce((acc, field) => {
+const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter(f => f.visible).reduce((acc, field) => {
   const {name} = field;
   const val = field[key];
 
-  if (val === undefined || val === null) acc[name] = '';
-  else { acc[name] = val; }
+  acc[name.substring(1)] = val;
 
   return acc;
 }, {});
@@ -179,9 +179,27 @@ selectors.isFormDirty = (state, formKey) => {
   const defaultValueState = calculateAllFieldsValue(form, 'defaultValue');
   const value = calculateAllFieldsValue(form, 'value');
 
-  const isDirty = !isEqual(value, defaultValueState);
+  const diffAr = compare(defaultValueState, value);
 
-  return isDirty;
+  if (!diffAr.length) {
+    return false;
+  }
+
+  return diffAr.some(patch => {
+    const { op, value, path} = patch;
+    const modifiedPath = path.substring(1).replace(/\//g, '.');
+    const defaultValueOrig = get(defaultValueState, modifiedPath);
+
+    if (op === 'replace' || op === 'add') {
+      if (([undefined, null, ''].includes(defaultValueOrig) && value === '')) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return true;
+  });
 };
 
 selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
