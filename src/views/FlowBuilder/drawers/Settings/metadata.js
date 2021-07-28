@@ -63,7 +63,7 @@ export default function getSettingsMetadata(props) {
         id: 'autoResolveMatchingTraceKeys',
         name: 'autoResolveMatchingTraceKeys',
         type: 'radiogroup',
-        defaultValue: flow.autoResolveMatchingTraceKeys === true ? 'true' : 'false',
+        defaultValue: flow.autoResolveMatchingTraceKeys === false ? 'false' : 'true',
         options: [
           {
             items: [
