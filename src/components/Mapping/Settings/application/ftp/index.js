@@ -104,6 +104,25 @@ export default {
           // helpText not present
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
+        'lookup.name': {
+          id: 'lookup.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpKey: 'import.lookups.name',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
+        },
         functions: {
           id: 'functions',
           name: 'functions',
@@ -370,6 +389,7 @@ export default {
           'discardIfEmpty',
           'fieldMappingType',
           'lookup.mapList',
+          'lookup.name',
           'functions',
           'extract',
           'expression',

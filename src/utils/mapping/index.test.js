@@ -5636,4 +5636,27 @@ describe('mapping utils', () => {
       expect(util.autoMapperRecordTypeForAssistant(resource)).toEqual(result);
     });
   });
+  test('getFormStatusFromMappingSaveStatus util', () => {
+    const testCases = [
+      {
+        result: 'failed',
+      },
+      {
+        saveStatus: 'requested',
+        result: 'loading',
+      },
+      {
+        saveStatus: 'completed',
+        result: 'complete',
+      },
+      {
+        saveStatus: 'failed',
+        result: 'failed',
+      },
+    ];
+
+    testCases.forEach(({saveStatus, result}) => {
+      expect(util.getFormStatusFromMappingSaveStatus(saveStatus)).toEqual(result);
+    });
+  });
 });

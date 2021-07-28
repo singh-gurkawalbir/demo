@@ -32,7 +32,9 @@ export function FormView(props) {
   );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: staggedResource.adaptorType,
+      adaptorType: ['RESTExport', 'RESTImport'].includes(staggedResource?.adaptorType)
+        ? 'rest'
+        : 'http',
       assistant: staggedResource.assistant,
     })
   );

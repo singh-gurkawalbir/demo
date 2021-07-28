@@ -310,13 +310,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
-      },
-      Object {
-        "id": "saveandclose",
-      },
-      Object {
-        "id": "cancel",
+        "id": "saveandclosegroup",
       },
     ],
     "fieldMap": Object {
@@ -1040,15 +1034,8 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
-        "label": "Save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "basic",
-            ],
-          },
           Object {
             "field": "netsuite.authType",
             "is": Array [
@@ -1058,25 +1045,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "basic",
-            ],
-          },
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "oauth",
-        "label": "Save & authorize",
+        "id": "oauthandcancel",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1087,7 +1056,7 @@ Object {
         ],
       },
       Object {
-        "id": "testandsave",
+        "id": "testandsavegroup",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1098,40 +1067,12 @@ Object {
         ],
       },
       Object {
-        "id": "testsaveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "token",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
-      },
-      Object {
-        "id": "validate",
-        "label": "Validate",
-        "mode": "secondary",
+        "id": "validateandsave",
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
             "is": Array [
               "basic",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "test",
-        "mode": "secondary",
-        "visibleWhen": Array [
-          Object {
-            "field": "netsuite.authType",
-            "is": Array [
-              "token",
             ],
           },
         ],
@@ -3019,7 +2960,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3032,20 +2973,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3056,22 +2984,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -3438,7 +3350,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3451,20 +3363,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -3475,22 +3374,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -3643,8 +3526,8 @@ Object {
       "http.fileRelativeURI": Object {
         "defaultValue": [Function],
         "fieldId": "http.fileRelativeURI",
-        "helpKey": "export.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -5136,7 +5019,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -5149,20 +5032,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -5173,22 +5043,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -5341,8 +5195,8 @@ Object {
       "http.fileRelativeURI": Object {
         "defaultValue": [Function],
         "fieldId": "http.fileRelativeURI",
-        "helpKey": "export.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -7773,7 +7627,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7786,20 +7640,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -7810,22 +7651,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -7872,6 +7697,28 @@ Object {
           "file.type",
         ],
         "required": true,
+      },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",
@@ -7941,6 +7788,7 @@ Object {
                 "as2.fileNameTemplate",
                 "as2.messageIdTemplate",
                 "file.xml.body",
+                "file.json.body",
                 "file.xlsx.includeHeader",
                 "file.filedefinition.rules",
                 "as2.headers",
@@ -8149,7 +7997,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -8162,20 +8010,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -8186,22 +8021,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -8237,6 +8056,28 @@ Object {
       "file.fileName": Object {
         "fieldId": "file.fileName",
         "required": true,
+      },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",
@@ -8317,8 +8158,8 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
-        "helpKey": "import.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -8401,6 +8242,7 @@ Object {
                 "ftp.directoryPath",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "ftp.blobFileName",
                 "file.lookups",
               ],
@@ -10316,7 +10158,7 @@ Object {
   "fieldMeta": Object {
     "actions": Array [
       Object {
-        "id": "save",
+        "id": "saveandclosegroup",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -10329,20 +10171,7 @@ Object {
         ],
       },
       Object {
-        "id": "saveandclose",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "isNot": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "savedefinition",
+        "id": "savefiledefinitions",
         "visibleWhen": Array [
           Object {
             "field": "file.type",
@@ -10353,22 +10182,6 @@ Object {
             ],
           },
         ],
-      },
-      Object {
-        "id": "saveandclosedefinition",
-        "visibleWhen": Array [
-          Object {
-            "field": "file.type",
-            "is": Array [
-              "filedefinition",
-              "fixed",
-              "delimited/edifact",
-            ],
-          },
-        ],
-      },
-      Object {
-        "id": "cancel",
       },
     ],
     "fieldMap": Object {
@@ -10404,6 +10217,28 @@ Object {
       "file.fileName": Object {
         "fieldId": "file.fileName",
         "required": true,
+      },
+      "file.json.body": Object {
+        "id": "file.json.body",
+        "label": "JSON document",
+        "refreshOptionsOnChangesTo": Array [
+          "file.type",
+        ],
+        "type": "httprequestbody",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.lookups": Object {
         "fieldId": "file.lookups",
@@ -10484,8 +10319,8 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
-        "helpKey": "import.gdrive.directoryPath",
-        "label": "Directory path",
+        "helpKey": [Function],
+        "label": [Function],
         "required": true,
         "type": "uri",
       },
@@ -10569,6 +10404,7 @@ Object {
                 "s3.bucket",
                 "file.fileName",
                 "file.xml.body",
+                "file.json.body",
                 "file.lookups",
               ],
               "label": "Where would you like the files transferred?",

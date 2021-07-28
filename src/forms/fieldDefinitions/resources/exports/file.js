@@ -127,6 +127,7 @@ export default {
     type: 'checkbox',
     label: 'Leave file on server',
     defaultValue: r => (r && r.file && r.file.skipDelete) || false,
+    helpKey: r => r?.assistant === 'azurestorageaccount' ? 'export.azure.skipDelete' : 'export.file.skipDelete',
   },
   'file.compressionFormat': {
     type: 'select',
@@ -254,7 +255,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File parser helper',
-    helpkey: 'export.file.filedefinition.rules',
+    helpKey: 'export.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',

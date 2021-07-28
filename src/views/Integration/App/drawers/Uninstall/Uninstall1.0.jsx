@@ -18,6 +18,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import Loader from '../../../../../components/Loader';
 import Spinner from '../../../../../components/Spinner';
+import {HOME_PAGE_PATH} from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -80,7 +81,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
       dispatch(
         actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
       );
-      history.push(getRoutePath('dashboard'));
+      history.push(getRoutePath(HOME_PAGE_PATH));
     }
   }, [dispatch, history, mode, integrationId, uninstallSteps]);
 
@@ -96,7 +97,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
         dispatch(
           actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
         );
-        history.push(getRoutePath('dashboard'));
+        history.push(getRoutePath(HOME_PAGE_PATH));
       }
     }
   }, [
@@ -113,7 +114,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   }
 
   if (error) {
-    return <Redirect push={false} to={getRoutePath('dashboard')} />;
+    return <Redirect push={false} to={getRoutePath(HOME_PAGE_PATH)} />;
   }
 
   if (!uninstallSteps) {

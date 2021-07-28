@@ -2,18 +2,19 @@ import React, { useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { Route } from 'react-router-dom';
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import LoadSuiteScriptResources from '../../LoadResources';
 import {ResourceFormFactory} from '../../ResourceFormFactory';
 import actions from '../../../../actions';
-import Close from '../../../icons/CloseIcon';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
-import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { useRedirectToParentRoute } from '../../../drawer/Resource/Panel';
 import SuiteScriptActionsPanel from '../../ResourceFormFactory/SuiteScriptActionsPanel';
 import EditorDrawer from '../../../AFE/Drawer';
+import CloseButton from '../../../drawer/Resource/Panel/CloseButton';
+import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,12 +63,6 @@ const useStyles = makeStyles(theme => ({
       paddingRight: theme.spacing(1),
     },
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(2),
-    padding: 0,
-  },
 }));
 const useSuiteScriptFormRedirectionToParentRoute = (ssLinkedConnectionId, resourceType, id) => {
   const initFailed = useSelector(state => selectors.suiteScriptResourceFormState(state, {
@@ -78,6 +73,7 @@ const useSuiteScriptFormRedirectionToParentRoute = (ssLinkedConnectionId, resour
 
   useRedirectToParentRoute(initFailed);
 };
+
 export default function Panel(props) {
   const {
     match,
@@ -90,7 +86,7 @@ export default function Panel(props) {
   } = props;
   const { resourceType, operation } = match.params;
   let { id } = match.params;
-  const [formKey] = useState(generateNewId());
+  const formKey = getAsyncKey(resourceType, id);
 
   if (['exports', 'imports'].includes(resourceType)) {
     if (!id) {
@@ -146,13 +142,7 @@ export default function Panel(props) {
       <div className={classes.root}>
         <div className={classes.title}>
           <Typography variant="h3">{`Edit ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}</Typography>
-          <IconButton
-            data-test="closeResourceForm"
-            aria-label="Close"
-            className={classes.closeButton}
-            onClick={onClose}>
-            <Close />
-          </IconButton>
+          <CloseButton formKey={formKey} />
         </div>
         <LoadSuiteScriptResources
           required
