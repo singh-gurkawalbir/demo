@@ -1422,43 +1422,44 @@ describe('isFormDirty', () => {
     })
   );
 
-  test('intially should be dirty', () => {
+  test('initially should be dirty', () => {
     const res = selectors.isFormDirty(formState, formKey);
 
     expect(res).toBe(false);
   });
-  test('after field change the form is dirty', () => {
+  test('should be dirty after changing value', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD2', 'csd'));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(true);
   });
 
-  test('after field change the form is dirty', () => {
+  test('should not be dirty changing the value to empty string from undefined', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD3', ''));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(false);
   });
-  test('after field change the form is dirty', () => {
+
+  test('should not be dirty replacing a defaut value with empty stings with undefined properties', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: ''}));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(false);
   });
-  test('after field change the form is dirty', () => {
+  test('should be dirty when changing and property from its default value', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: 'dsdsd'}));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(true);
   });
-  test('after field change the form is dirty', () => {
+  test('should not be dirty adding a new empty string property in an object belonging to a collection', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: '', b: ''}]));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(false);
   });
-  test('after field change the form is dirty', () => {
+  test('should be dirty after changing any property in an object belonging to a collection', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: 'dsds'}]));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
