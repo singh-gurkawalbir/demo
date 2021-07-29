@@ -4,7 +4,7 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { Button, Grid, Divider, Typography } from '@material-ui/core';
+import { Grid, Divider, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
@@ -212,14 +212,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
-                  <Button
-                    variant="contained"
-                    color="primary"
+                  <FilledButton
                     className={classes.button}
                     disabled={upgradeRequested}
                     onClick={handleUpgrade}>
                     {upgradeText}
-                  </Button>
+                  </FilledButton>
                 )}
               </Grid>
             </Grid>

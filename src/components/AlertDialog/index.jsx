@@ -1,4 +1,4 @@
-import { Typography, Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,6 +13,7 @@ import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
 import OutlinedButton from '../Buttons/OutlinedButton';
+import { FilledButton } from '../Buttons';
 
 const contentWrapper = {
   minWidth: 432,
@@ -88,15 +89,13 @@ const WarningSessionContent = () => {
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <Button
+        <FilledButton
           data-test="resumeWorking"
           onClick={() => {
             dispatch(actions.user.profile.request('Refreshing session'));
-          }}
-          variant="contained"
-          color="primary">
+          }}>
           Resume working
-        </Button>
+        </FilledButton>
       </DialogContent>
     </>
   );

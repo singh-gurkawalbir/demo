@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, InputLabel } from '@material-ui/core';
+import { InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -14,17 +14,16 @@ import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
+import { OutlinedButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
-    borderRadius: 4,
     background: `url(${getImageUrl(
       'images/googlelogo.png'
     )}) 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 38,
     fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
   },
   label: {
     marginRight: theme.spacing(1),
@@ -295,14 +294,13 @@ export default function ProfilePanel() {
               !preferences.auth_type_google.id) && (
               <InputLabel>
                 <span className={classes.label}>Link to:</span>
-                <Button
+                <OutlinedButton
                   data-test="linkWithGoogle"
-                  variant="contained"
                   color="secondary"
                   className={classes.googleBtn}
                   onClick={handleLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
-                </Button>
+                </OutlinedButton>
               </InputLabel>
           )}
           {preferences &&
@@ -310,14 +308,13 @@ export default function ProfilePanel() {
             preferences.auth_type_google.id && (
               <InputLabel>
                 <span className={classes.label}>Unlink from:</span>
-                <Button
+                <OutlinedButton
                   data-test="unlinkWithGoogle"
-                  variant="contained"
                   color="secondary"
                   className={classes.googleBtn}
                   onClick={handleUnLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
-                </Button>
+                </OutlinedButton>
               </InputLabel>
           )}
         </div>
