@@ -1366,3 +1366,103 @@ describe('selectors test cases', () => {
     });
   });
 });
+
+describe('isFormDirty', () => {
+  const fieldMeta = {
+    fieldMap: {
+      FIELD1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+        visibleWhen: [
+          {field: 'FIELD2', is: ['abc']},
+        ],
+      },
+
+      FIELD2: {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: 'abc',
+        label: 'field2',
+      },
+      FIELD3: {
+        id: 'FIELD3',
+        type: 'text',
+        name: 'field3',
+        label: 'field3',
+      },
+      FIELD4: {
+        id: 'FIELD4',
+        type: 'text',
+        name: 'field4',
+        defaultValue: {a: '', b: ''},
+        label: 'field4',
+      },
+      FIELD5: {
+        id: 'FIELD5',
+        type: 'text',
+        name: 'field5/something',
+        defaultValue: [{a: '', b: ''}, {a: ''}],
+        label: 'field5',
+      },
+
+    },
+
+    layout: { fields: ['FIELD1', 'FIELD2', 'FIELD3', 'FIELD4', 'FIELD5'] },
+  };
+  const formKey = '1-2';
+  const formState = forms(
+    undefined,
+    actions.form.init(formKey, '', {
+      fieldMeta,
+      showValidationBeforeTouched: true,
+    })
+  );
+
+  test('initially should be dirty', () => {
+    const res = selectors.isFormDirty(formState, formKey);
+
+    expect(res).toBe(false);
+  });
+  test('should be dirty after changing value', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD2', 'csd'));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(true);
+  });
+
+  test('should not be dirty changing the value to empty string from undefined', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD3', ''));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(false);
+  });
+
+  test('should not be dirty replacing a defaut value with empty stings with undefined properties', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: ''}));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(false);
+  });
+  test('should be dirty when changing and property from its default value', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: 'dsdsd'}));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(true);
+  });
+  test('should not be dirty adding a new empty string property in an object belonging to a collection', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: '', b: ''}]));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(false);
+  });
+  test('should be dirty after changing any property in an object belonging to a collection', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: 'dsds'}]));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(true);
+  });
+});
