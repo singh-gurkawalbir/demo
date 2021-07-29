@@ -8,9 +8,9 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     display: 'grid',
     gridTemplateAreas: `
-       'panel_0 dragBar_0 panel_1 dragBar_1 panel_3' 
-       'panel_0 dragBar_0 dragBar_2 dragBar_1 panel_3'
-       'panel_0 dragBar_0 panel_2 dragBar_1 panel_3'`,
+       'panel_0 dragBar_v_0 panel_1 dragBar_v_1 panel_3' 
+       'panel_0 dragBar_v_0 dragBar_h_2 dragBar_v_1 panel_3'
+       'panel_0 dragBar_v_0 panel_2 dragBar_v_1 panel_3'`,
     gridTemplateRows: '1fr auto 1fr',
     gridTemplateColumns: '1fr auto 1fr auto 1fr',
   },
@@ -38,7 +38,8 @@ const minGridSize = 150;
 export default function ResizeProto() {
   const classes = useStyles();
   const [isDragging, setIsDragging] = useState(false);
-  const [dragBarGridArea, setdragBarGridArea] = useState();
+  const [dragBarGridArea, setDragBarGridArea] = useState();
+  const [dragOrientation, setDragOrientation] = useState();
   const gridRef = useRef();
 
   function handleDragStart(event) {
@@ -61,11 +62,13 @@ export default function ResizeProto() {
       return;
     }
 
-    // const direction = geDirection(gridArea);
-    // console.log(`drag start for: ${gridArea}`);
+    const orientation = gridArea.split('_')[1];
 
+    // console.log(`orientation for: ${gridArea} is ${orientation}.`);
+
+    setDragOrientation(orientation);
     setIsDragging(true);
-    setdragBarGridArea(gridArea);
+    setDragBarGridArea(gridArea);
   }
 
   function handleDragEnd() {
@@ -74,6 +77,12 @@ export default function ResizeProto() {
 
   function handleDrag(event) {
     if (!isDragging) return;
+    if (dragOrientation === 'h') {
+      // console.log('Horizontal dragging not yet implemented.');
+
+      return;
+    }
+
     // console.log('Dragging');
 
     const dX = event.movementX;
@@ -114,9 +123,9 @@ export default function ResizeProto() {
       <SinglePanelGridItem area="panel_2" title="Panel 2">Panel2 content</SinglePanelGridItem>
       <SinglePanelGridItem area="panel_3" title="Panel 3">Panel3 content</SinglePanelGridItem>
 
-      <DragHandleGridArea area="dragBar_0" orientation="vertical" onMouseDown={handleDragStart} />
-      <DragHandleGridArea area="dragBar_1" orientation="vertical" onMouseDown={handleDragStart} />
-      <DragHandleGridArea area="dragBar_2" orientation="horizontal" onMouseDown={handleDragStart} />
+      <DragHandleGridArea area="dragBar_v_0" orientation="vertical" onMouseDown={handleDragStart} />
+      <DragHandleGridArea area="dragBar_v_1" orientation="vertical" onMouseDown={handleDragStart} />
+      <DragHandleGridArea area="dragBar_h_2" orientation="horizontal" onMouseDown={handleDragStart} />
     </div>
   );
 }
