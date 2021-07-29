@@ -227,6 +227,10 @@ describe('selectors.getChildIntegrationLabelsTiedToFlows ', () => {
   });
 });
 describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
+  const sortProperties = {
+    lastExecutedAtSort: undefined,
+    lastExecutedAtSortType: 'date',
+  };
   const getAllFlowsTiedToIntegrations = selectors.mkAllFlowsTiedToIntegrations();
 
   test('should return null for a an empty integrationId', () => {
@@ -276,11 +280,12 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
     });
   });
   describe('1.0', () => {
-    test('should return allFlows related to the parent integration when just the integrationParent is provided for a 1.0 multistore integration ', () => {
+    test('should return allFlows related to the parent integration when just the integrationParent is provided for a 1.0 multi store integration ', () => {
       const result = getAllFlowsTiedToIntegrations(state, 'integrationId');
 
       expect(result).toEqual([
-        {_id: 'ia1.0Flow1',
+        {...sortProperties,
+          _id: 'ia1.0Flow1',
           _integrationId: 'integrationId',
           childId: 'store1',
           childName: 'store1',
@@ -289,6 +294,7 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
           name: 'ia1.0Flow1',
         },
         {
+          ...sortProperties,
           _id: 'ia1.0Flow2',
           _integrationId: 'integrationId',
           childId: 'store2',
@@ -303,7 +309,8 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
       const result = getAllFlowsTiedToIntegrations(state, 'integrationId', ['store1']);
 
       expect(result).toEqual([
-        {_id: 'ia1.0Flow1',
+        {...sortProperties,
+          _id: 'ia1.0Flow1',
           _integrationId: 'integrationId',
           childId: 'store1',
           childName: 'store1',
@@ -318,12 +325,14 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
 
       expect(result).toEqual([
         {
+          ...sortProperties,
           _id: 'ia1.0Flow3',
           _integrationId: 'integrationId2',
           errors: 0,
           name: 'ia1.0Flow3',
         },
         {
+          ...sortProperties,
           _id: 'ia1.0Flow4',
           _integrationId: 'integrationId2',
           errors: 0,

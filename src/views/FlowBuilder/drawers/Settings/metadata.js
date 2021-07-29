@@ -59,6 +59,22 @@ export default function getSettingsMetadata(props) {
         ],
         label: 'Notify me on flow errors',
       },
+      autoResolveMatchingTraceKeys: {
+        id: 'autoResolveMatchingTraceKeys',
+        name: 'autoResolveMatchingTraceKeys',
+        type: 'radiogroup',
+        defaultValue: flow.autoResolveMatchingTraceKeys === false ? 'false' : 'true',
+        options: [
+          {
+            items: [
+              { value: 'true', label: 'Yes' },
+              { value: 'false', label: 'No' },
+            ],
+          },
+        ],
+        helpKey: 'flow.autoResolveMatchingTraceKeys',
+        label: 'Auto-resolve errors with matching trace key',
+      },
       settings: {
         id: 'settings',
         name: 'settings',
@@ -75,7 +91,7 @@ export default function getSettingsMetadata(props) {
             {
               collapsed: true,
               label: 'General',
-              fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError'] : []), '_runNextFlowIds'],
+              fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError', 'autoResolveMatchingTraceKeys'] : []), '_runNextFlowIds'],
             },
           ],
         },

@@ -353,11 +353,11 @@ const FlowsTable = ({integrationId, childId}) => {
   const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, childId, flowsFilterConfig);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, childId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, childId, flowsFilterConfig, isUserInErrMgtTwoDotZero);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, childId);
 
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
