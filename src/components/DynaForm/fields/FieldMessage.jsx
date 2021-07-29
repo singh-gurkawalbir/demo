@@ -9,7 +9,8 @@ const useStyles = makeStyles(theme => ({
   message: {
     marginTop: theme.spacing(0.5),
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    flexDirection: 'column',
     '&:empty': {
       display: 'none',
     },
@@ -42,7 +43,7 @@ export default function FieldMessage({ description, errorMessages, warningMessag
   return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(classes.message, { [classes.description]: description }, className)}>
+      className={clsx(classes.message, className)}>
       {description && (
       <span className={classes.description}>
         {description}
