@@ -13,7 +13,7 @@ import apiAccessTokens, { selectors as fromApiAccessTokens } from './apiAccessTo
 import connectionToken, { selectors as fromConnectionToken } from './connectionToken';
 import netsuiteUserRole, { selectors as fromNetsuiteUserRoles } from './netsuiteUserRoles';
 import sampleData, { selectors as fromSampleData } from './sampleData';
-// import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
+import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/imports';
 import flowData, { selectors as fromFlowData } from './sampleData/flows';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
@@ -79,7 +79,7 @@ export default combineReducers({
   logs,
   sso,
   bottomDrawer,
-  // resourceFormSampleData,
+  resourceFormSampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -123,7 +123,7 @@ const subSelectors = {
   logs: fromLogs,
   sso: fromSSO,
   bottomDrawer: fromBottomDrawer,
-  // resourceFormSampleData: fromResourceFormSampleData,
+  resourceFormSampleData: fromResourceFormSampleData,
 };
 
 genSelectors(selectors, subSelectors);

@@ -58,25 +58,25 @@ function PreviewInfo({
 
   const fetchExportPreviewData = useCallback(() => {
     // // Just a fail safe condition not to request for sample data incase of not exports
-    // if (resourceType !== 'exports') return;
+    if (resourceType !== 'exports') return;
 
-    // dispatch(actions.flowData.clearStages(flowId));
+    dispatch(actions.flowData.clearStages(flowId));
 
-    // // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
-    // if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
-    //   dispatch(actions.sampleData.request(resourceId, resourceType, value, null, {flowId, refreshCache: true}));
-    // } else {
-    //   dispatch(actions.sampleData.requestLookupPreview(resourceId, flowId, value, {refreshCache: true}));
-    // }
+    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
+    if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
+      dispatch(actions.sampleData.request(resourceId, resourceType, value, null, {flowId, refreshCache: true}));
+    } else {
+      dispatch(actions.sampleData.requestLookupPreview(resourceId, flowId, value, {refreshCache: true}));
+    }
     dispatch(actions.resourceFormSampleData.request(formKey));
   }, [
-    // isPageGeneratorExport,
+    isPageGeneratorExport,
     dispatch,
-    // resourceId,
-    // resourceType,
-    // value,
-    // flowId,
-    // resource,
+    resourceId,
+    resourceType,
+    value,
+    flowId,
+    resource,
     formKey,
   ]);
 
@@ -99,9 +99,12 @@ function PreviewInfo({
   // on close of the panel, updates record size to default
   // remove this action, if in future we need to retain record size
   useEffect(() =>
-    () => dispatch(actions.sampleData.patch(resourceId, {
-      recordSize: DEFAULT_RECORD_SIZE,
-    })),
+    () => {
+      dispatch(actions.sampleData.patch(resourceId, {
+        recordSize: DEFAULT_RECORD_SIZE,
+      }));
+      dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, DEFAULT_RECORD_SIZE));
+    },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
 

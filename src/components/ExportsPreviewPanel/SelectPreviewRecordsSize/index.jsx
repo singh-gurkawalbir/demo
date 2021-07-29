@@ -18,6 +18,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
     dispatch(actions.sampleData.patch(resourceId, {
       recordSize: size,
     }));
+    dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, size));
   }, [dispatch, resourceId]);
 
   const onRecordChange = useCallback((_id, value) => {
