@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { differenceWith, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import util from '../../../../../utils/json';
 import arrayUtil from '../../../../../utils/array';
 
@@ -40,10 +40,7 @@ export default {
     //   return true;
     // }
 
-    const rulesDiff = differenceWith(originalRule, rule, isEqual);
-    const isRulesEqual = originalRule.length === rule.length && !rulesDiff.length;
-
-    return !isRulesEqual;
+    return !isEqual(originalRule, rule);
   },
   processResult: (editor, result) => ({data: result?.data?.[0]}),
   preSaveValidate: editor => {

@@ -9,6 +9,9 @@ const useStyles = makeStyles(theme => ({
     minWidth: theme.spacing(3.5),
     cursor: 'move',
     background: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: theme.spacing(1.5),
   },
 }));
 const SortableDragHandle = ({className = '', isVisible}) => {
