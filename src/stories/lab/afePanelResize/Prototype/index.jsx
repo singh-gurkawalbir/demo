@@ -1,50 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import SinglePanelGridItem from '../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
+import DragHandleY from './DragHandleY';
 
 const useStyles = makeStyles(() => ({
   page: {
     height: '100%',
     display: 'grid',
     gridTemplateAreas: `
-       'rule dragbar0 data dragbar1 notes' 
-       'rule dragbar0 result dragbar1 notes'`,
+       'panel_0 dragbar_0 panel_1 dragbar_1 panel_3' 
+       'panel_0 dragbar_0 panel_2 dragbar_1 panel_3'`,
     gridTemplateRows: '1fr 1fr',
-    gridTemplateColumns: '1fr 6px 1fr 6px 1fr',
+    gridTemplateColumns: '1fr auto 1fr auto 1fr',
   },
-  panel: {
-    border: '1px solid black',
-  },
-  rule: {
-    gridArea: 'rule',
-  },
-  data: {
-    gridArea: 'data',
-  },
-  result: {
-    gridArea: 'result',
-  },
-  notes: {
-    gridArea: 'notes',
-  },
-  dragbar0: {
-    backgroundColor: 'black',
-    gridArea: 'dragbar0',
-    cursor: 'ew-resize',
-  },
-
-  dragbar1: {
-    backgroundColor: 'black',
-    gridArea: 'dragbar1',
-    cursor: 'ew-resize',
-  },
-
 }));
 
 function getGridArea(node) {
   const cssHandleArea = window.getComputedStyle(node).getPropertyValue('grid-area');
 
   // console.log(cssHandleArea);
+
   return cssHandleArea.split('/')[0].trim();
 }
 
@@ -57,14 +32,39 @@ function findGridColumn(grid, gridArea) {
   return colPos;
 }
 
+const minGridSize = 150;
+
 export default function ResizeProto() {
   const classes = useStyles();
   const [isDragging, setIsDragging] = useState(false);
   const [dragbarGridArea, setDragbarGridArea] = useState();
+  const gridRef = useRef();
 
   function handleDragStart(event) {
+    let { target } = event;
+    let gridArea;
+
+    while (target) {
+      gridArea = getGridArea(target); // dragHandle-vert-0, dragHandle-hor-1
+      // console.log(`current gridArea: ${gridArea}`);
+
+      if (gridArea.startsWith('dragbar')) break;
+      // If we can't find the dragbar grid area, most likely its because
+      // the original mouse event target was captured by a child node of the drag area.
+      // We thus need to traverse up the DOM to find the parent which contains the drag area.
+      target = target.parentNode;
+    }
+
+    // only initiate drag start IFF we have a proper dragbar area.
+    if (!gridArea?.startsWith('dragbar')) {
+      return;
+    }
+
+    // const direction = geDirection(gridArea);
+    // console.log(`drag start for: ${gridArea}`);
+
     setIsDragging(true);
-    setDragbarGridArea(getGridArea(event.target));
+    setDragbarGridArea(gridArea);
   }
 
   function handleDragEnd() {
@@ -75,34 +75,48 @@ export default function ResizeProto() {
     if (!isDragging) return;
     // console.log('Dragging');
 
-    const dragHandle = event.target;
     const dX = event.movementX;
-    const grid = dragHandle.parentNode;
-    const dragbarCol = findGridColumn(grid, dragbarGridArea);
-    // console.log(dX);
-    const cssGridCols = window.getComputedStyle(dragHandle.parentNode).getPropertyValue('grid-template-columns');
-    const colSizes = cssGridCols.split(' ').map(s => +s.replace('px', ''));
+    const gridNode = gridRef.current;
+    const dragbarCol = findGridColumn(gridNode, dragbarGridArea);
+
+    // console.log(dX, dragbarCol, dragbarGridArea);
+    // docs on relevant client browser API:
+    // https://stackoverflow.com/questions/35170581/how-to-access-styles-from-react
+    const cssGridCols = window.getComputedStyle(gridNode).getPropertyValue('grid-template-columns');
+    const colSizes = cssGridCols.split(' ').map(s => Number(s.replace('px', '')));
 
     // console.log(colSizes);
+
+    // we need to respect min grid size... if the dragging would cause any grid item to be
+    // smaller than a predetermined size, we should ignore the event.
+    const prevSize = colSizes[dragbarCol - 1];
+    const nextSize = colSizes[dragbarCol + 1];
+
+    if ((prevSize + dX) < minGridSize || (nextSize - dX) < minGridSize) {
+      return; // setIsDragging(false);
+    }
+
     colSizes[dragbarCol - 1] += dX;
     colSizes[dragbarCol + 1] -= dX;
 
     const newCssGridCols = colSizes.map(c => `${c}px`).join(' ');
 
     // console.log(newCssGridCols);
-    dragHandle.parentNode.style.gridTemplateColumns = newCssGridCols;
+    gridNode.style.gridTemplateColumns = newCssGridCols;
     event.preventDefault();
   }
 
   return (
-    <div className={classes.page} onMouseUp={handleDragEnd} onMouseMove={handleDrag}>
-      <div className={clsx(classes.panel, classes.rule)}>RULE</div>
-      <div className={clsx(classes.panel, classes.data)}>DATA</div>
-      <div className={clsx(classes.panel, classes.result)}>RESULT</div>
-      <div className={clsx(classes.panel, classes.notes)}>NOTES</div>
+    <div className={classes.page} ref={gridRef} onMouseUp={handleDragEnd} onMouseMove={handleDrag}>
+      <SinglePanelGridItem area="panel_0" title="Panel 0">Panel0 content</SinglePanelGridItem>
+      <SinglePanelGridItem area="panel_1" title="Panel 1">Panel1 content</SinglePanelGridItem>
+      <SinglePanelGridItem area="panel_2" title="Panel 2">Panel2 content</SinglePanelGridItem>
+      <SinglePanelGridItem area="panel_3" title="Panel 3">Panel3 content</SinglePanelGridItem>
 
-      <div className={classes.dragbar0} onMouseDown={handleDragStart} />
-      <div className={classes.dragbar1} onMouseDown={handleDragStart} />
+      {/* <DragHandleY orientation="vertical" gridArea="dragbar_0" onMouseDown={handleDragStart} /> */}
+
+      <DragHandleY area="dragbar_0" onMouseDown={handleDragStart} />
+      <DragHandleY area="dragbar_1" onMouseDown={handleDragStart} />
     </div>
   );
 }
