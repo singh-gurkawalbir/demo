@@ -14,6 +14,22 @@ import {
 } from '../../../utils/resource';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
 
+function* fetchResourceInfoFromFormKey({ formKey }) {
+  const formState = yield select(selectors.formState, formKey);
+  const parentContext = (yield select(selectors.formParentContext, formKey) || {});
+  const resourceObj = (yield call(constructResourceFromFormValues, {
+    formValues: formState?.value || [],
+    resourceId: parentContext.resourceObj,
+    resourceType: parentContext.resourceType,
+  })) || {};
+
+  return {
+    formState,
+    ...parentContext,
+    resourceObj,
+  };
+}
+
 function* handlePreviewError({ e, resourceId }) {
 // Handling Errors with status code between 400 and 500
   if (e.status === 403 || e.status === 401) {
@@ -29,13 +45,7 @@ function* handlePreviewError({ e, resourceId }) {
   }
 }
 function* requestRealTimeSampleData({ formKey, refreshCache = true }) {
-  const formState = yield select(selectors.formState, formKey);
-  const { resourceId } = (yield select(selectors.formParentContext, formKey) || {});
-  const resourceObj = (yield call(constructResourceFromFormValues, {
-    formValues: formState?.value || [],
-    resourceId,
-    resourceType: 'exports',
-  })) || {};
+  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   const realTimeSampleData = yield call(requestRealTimeMetadata, { resource: resourceObj, refresh: refreshCache });
 
@@ -45,13 +55,7 @@ function* requestRealTimeSampleData({ formKey, refreshCache = true }) {
 }
 
 function* requestExportPreviewData({ formKey }) {
-  const formState = yield select(selectors.formState, formKey);
-  const { resourceId, flowId, integrationId } = (yield select(selectors.formParentContext, formKey) || {});
-  const { transform, filter, hooks, ...resourceObj } = (yield call(constructResourceFromFormValues, {
-    formValues: formState?.value || [],
-    resourceId,
-    resourceType: 'exports',
-  })) || {};
+  const { resourceObj, resourceId, flowId, integrationId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
   const body = getFormattedResourceForPreview(resourceObj);
@@ -86,16 +90,12 @@ function* requestExportPreviewData({ formKey }) {
 
 function* requestFileSampleData({ formKey }) {
   // file related sample data is handled here
+  console.log('entered file sample data ', formKey);
+  yield 5;
 }
 
 function* requestPGExportSampleData({ formKey }) {
-  const formState = yield select(selectors.formState, formKey);
-  const { resourceId } = (yield select(selectors.formParentContext, formKey) || {});
-  const resourceObj = (yield call(constructResourceFromFormValues, {
-    formValues: formState?.value || [],
-    resourceId,
-    resourceType: 'exports',
-  })) || {};
+  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj) || isRestCsvExport) {
@@ -108,19 +108,12 @@ function* requestPGExportSampleData({ formKey }) {
 }
 
 function* requestLookupSampleData({ formKey }) {
-  const formState = yield select(selectors.formState, formKey);
-
-  const { resourceId, flowId } = (yield select(selectors.formParentContext, formKey) || {});
-  const formValues = formState?.value || [];
+  const { resourceId, resourceObj, flowId } = yield call(fetchResourceInfoFromFormKey, { formKey });
   const resourceType = 'exports';
   const recordSize = yield select(selectors.getSampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
-  const { transform, filter, hooks, sampleData, ...constructedResourceObj } = (yield call(constructResourceFromFormValues, {
-    formValues,
-    resourceId,
-    resourceType,
-  })) || {};
+  const { transform, filter, hooks, sampleData, ...constructedResourceObj } = resourceObj;
 
   // TODO: handle file related sample data for lookups
   let _pageProcessorDoc = constructedResourceObj;
@@ -156,7 +149,7 @@ function* requestLookupSampleData({ formKey }) {
 }
 
 function* requestExportSampleData({ formKey }) {
-  const { resourceId, flowId } = (yield select(selectors.formParentContext, formKey) || {});
+  const { resourceId, flowId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId) return;
 
@@ -174,7 +167,7 @@ function* requestImportSampleData({ formKey }) {
 }
 
 function* requestResourceFormSampleData({ formKey }) {
-  const { resourceType, resourceId } = (yield select(selectors.formParentContext, formKey) || {});
+  const { resourceType, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   yield put(actions.resourceFormSampleData.requested(resourceId));
   if (resourceType === 'exports') {
