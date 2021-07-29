@@ -586,6 +586,65 @@ describe('sampleData selectors', () => {
   });
 });
 
+describe('getResourceSampleDataStages', () => {
+  const initialState = {
+    123: {
+      status: 'received',
+      data: {
+        parse: [{
+          name: 'Bob',
+          age: 23,
+        }],
+        raw: [{
+          url: 'https://api.mocki.io/v1/awe',
+          statusCode: 200,
+          body: '{"name":"Bob","age":23}',
+        }],
+        request: [{
+          url: 'https://api.mocki.io/v1/awe',
+          method: 'GET',
+        }]},
+    },
+    456: { status: 'received', data: {} },
+    789: { status: 'received', data: {} },
+    111: { status: 'requested'},
+  };
+
+  test('should return empty list if there is no sample data for the passed resourceId', () => {
+    expect(selectors.getResourceSampleDataStages({}, '111')).toEqual([]);
+    expect(selectors.getResourceSampleDataStages(initialState, '111')).toEqual([]);
+    expect(selectors.getResourceSampleDataStages(initialState, '456')).toEqual([]);
+  });
+  test('should return correct stage data list if the state has stages corresponding to the passed resourceId', () => {
+    const expectedOutput = [
+      {
+        name: 'parse',
+        data: [{
+          name: 'Bob',
+          age: 23,
+        }],
+      },
+      {
+        name: 'raw',
+        data: [{
+          url: 'https://api.mocki.io/v1/awe',
+          statusCode: 200,
+          body: '{"name":"Bob","age":23}',
+        }],
+      },
+      {
+        name: 'request',
+        data: [{
+          url: 'https://api.mocki.io/v1/awe',
+          method: 'GET',
+        }],
+      },
+    ];
+
+    expect(selectors.getResourceSampleDataStages(initialState, '123')).toEqual(expectedOutput);
+  });
+});
+
 describe('sampleData extractStages util function', () => {
   test('should return empty object if sample data is empty', () => {
     expect(extractStages()).toEqual({});
