@@ -67,7 +67,9 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
             <GenericAdaptorNotification onClose={onCloseNotificationToaster} />
           </div>
         )}
-        <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
+        <div className={classes.notification}>
+          <NetSuiteBundleInstallNotification resourceType={resourceType} resourceId={resourceId} />
+        </div>
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <span {...shouldRedact}>
