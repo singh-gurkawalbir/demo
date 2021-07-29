@@ -43,17 +43,22 @@ export default function FieldMessage({ description, errorMessages, warningMessag
     <FormHelperText
       error={!isValid}
       className={clsx(classes.message, { [classes.description]: description }, className)}>
-      {errorMessages && (
-        <span className={classes.error}>
-          {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
-          {isValid ? description : errorMessages}
-        </span>
+      {description && (
+      <span className={classes.description}>
+        {description}
+      </span>
       )}
       {warningMessages && (
-        <span className={classes.warning}>
-          {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
-          {warningMessages}
-        </span>
+      <span className={classes.warning}>
+        {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
+        {warningMessages}
+      </span>
+      )}
+      {errorMessages && (
+      <span className={classes.error}>
+        {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
+        {isValid ? description : errorMessages}
+      </span>
       )}
     </FormHelperText>
   ) : null;
