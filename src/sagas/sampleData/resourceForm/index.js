@@ -19,7 +19,7 @@ function* fetchResourceInfoFromFormKey({ formKey }) {
   const parentContext = (yield select(selectors.formParentContext, formKey) || {});
   const resourceObj = (yield call(constructResourceFromFormValues, {
     formValues: formState?.value || [],
-    resourceId: parentContext.resourceObj,
+    resourceId: parentContext.resourceId,
     resourceType: parentContext.resourceType,
   })) || {};
 
@@ -91,7 +91,9 @@ function* requestExportPreviewData({ formKey }) {
 function* requestFileSampleData({ formKey }) {
   // file related sample data is handled here
   console.log('entered file sample data ', formKey);
-  yield 5;
+  const { resourceObj } = yield call(fetchResourceInfoFromFormKey, { formKey });
+
+  console.log('resource', resourceObj);
 }
 
 function* requestPGExportSampleData({ formKey }) {
