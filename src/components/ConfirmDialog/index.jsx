@@ -157,8 +157,8 @@ export default function useConfirmDialog() {
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',
         buttons: [
-          { label: 'Save Changes', variant: 'primary', onClick: onSave },
-          { label: 'Discard Changes', variant: 'secondary', onClick: onDiscard },
+          { label: 'Save changes', variant: 'primary', onClick: onSave },
+          { label: 'Discard changes', variant: 'secondary', onClick: onDiscard },
         ],
       });
     },

@@ -92,7 +92,7 @@ export default {
     ],
   },
   'rest.nextPageRelativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Override relative URI for subsequent page requests',
     helpKey: 'export.http.paging.relativeURI',
     visibleWhenAll: [

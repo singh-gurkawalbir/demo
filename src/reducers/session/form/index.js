@@ -2,7 +2,8 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
-import { map, isEmpty, uniq, get, isEqualWith, isEqual } from 'lodash';
+import { get} from 'lodash';
+import { compare, getValueByPointer } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFields,
@@ -159,12 +160,11 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
-const calculateAllFieldsValue = (form, key) => Object.values(form.fields).reduce((acc, field) => {
+const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter(f => f.visible).reduce((acc, field) => {
   const {name} = field;
   const val = field[key];
 
-  if (val === undefined || val === null) acc[name] = '';
-  else { acc[name] = val; }
+  acc[name] = val;
 
   return acc;
 }, {});
@@ -179,7 +179,29 @@ selectors.isFormDirty = (state, formKey) => {
   const defaultValueState = calculateAllFieldsValue(form, 'defaultValue');
   const value = calculateAllFieldsValue(form, 'value');
 
-  return !isEqual(value, defaultValueState);
+  const diffAr = compare(defaultValueState, value);
+
+  if (!diffAr.length) {
+    return false;
+  }
+
+  return diffAr.some(patch => {
+    const { op, value, path} = patch;
+    const defaultValueOrig = getValueByPointer(defaultValueState, path);
+
+    if ([undefined, null, ''].includes(defaultValueOrig) && op === 'remove') {
+      return false;
+    }
+    if (op === 'replace' || op === 'add') {
+      if ([undefined, null, ''].includes(defaultValueOrig) && (value === '' || (Array.isArray(value) && value.length === 0))) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return true;
+  });
 };
 
 selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
