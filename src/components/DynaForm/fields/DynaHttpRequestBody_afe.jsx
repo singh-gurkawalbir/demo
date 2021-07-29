@@ -47,6 +47,7 @@ export default function DynaHttpRequestBody_afe(props) {
       fieldId: id,
       stage: 'flowInput',
       onSave: handleSave,
+      url: match.url,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);

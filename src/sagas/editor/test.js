@@ -953,7 +953,7 @@ describe('editor sagas', () => {
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
         .run();
     });
-    test('should make /getContext api call call with flow and integration id', () => {
+    test('should make /getContext api call with flow and integration id', () => {
       const editor = {
         id: 'eFilter',
         editorType: 'exportFilter',
@@ -1064,6 +1064,81 @@ describe('editor sagas', () => {
         .not.call.fn(apiCallWithRetry)
         .select.selector(selectors.sampleDataWrapper)
         .returns({ data: { record: { id: 999 }, lastExportDateTime: 1089 }, templateVersion: undefined })
+        .run();
+    });
+    test('should make /getContext api call correctly for connection type when it has no flow context', () => {
+      const editor = {
+        id: 'httppingbody',
+        editorType: 'handlebars',
+        resourceType: 'connections',
+        resourceId,
+        stage: 'flowInput',
+        fieldId: 'http.ping.body',
+        url: '/connections/123/edit',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
+        .provide([
+          [select(selectors.editor, 'httppingbody'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {connection: {name: 'HTTP connection'}}}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              flowId: undefined,
+              integrationId: undefined,
+              type: 'connection',
+              connection: {},
+              fieldPath: 'http.ping.body',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
+        .run();
+    });
+    test('should make /getContext api call correctly for connection type when it has flow context', () => {
+      const editor = {
+        id: 'httppingbody',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'connections',
+        resourceId,
+        stage: 'flowInput',
+        fieldId: 'http.ping.body',
+        url: '/integrations/integration-1234/flowBuilder/456/edit/exports/789/edit/connections/conn-id',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
+        .provide([
+          [select(selectors.editor, 'httppingbody'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {connection: {name: 'HTTP connection'}}}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'integration-1234'}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              flowId,
+              integrationId: 'integration-1234',
+              exportId: '789',
+              type: 'connection',
+              connection: {},
+              fieldPath: 'http.ping.body',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
         .run();
     });
   });
