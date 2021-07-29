@@ -717,3 +717,10 @@ export const MAPPING_SAVE_STATUS = {
   COMPLETED: 'completed',
   FAILED: 'failed',
 };
+
+export const CATEGORY_MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  SAVED: 'saved',
+  CLOSE: 'close',
+  FAILED: 'failed',
+};
