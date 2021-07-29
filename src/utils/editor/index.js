@@ -78,6 +78,18 @@ export const getUniqueFieldId = (fieldId, resource) => {
   }
 };
 
+// fieldIds that show previewData when paging is configured
+export const previewDataDependentFieldIds = [
+  'http.paging.body',
+  'rest.pagingPostBody',
+  'rest.nextPageRelativeURI',
+  'http.paging.relativeURI',
+  'rest.relativeURI',
+  'http.relativeURI',
+  'rest.postBody',
+  'http.body',
+];
+
 // DO NOT DELETE below utils
 // This file is unused right now but we might need
 // this logic later when a sample template needs to be shown
