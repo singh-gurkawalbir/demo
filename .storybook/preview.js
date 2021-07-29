@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import { SnackbarProvider } from 'notistack';
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from '@material-ui/core/styles';
 import themeProvider from '../src/theme/themeProvider';
 import FontStager from '../src/components/FontStager';
@@ -51,6 +52,7 @@ const withThemeProvider = (Story, context) => {
   const theme = themeProvider(context.globals.theme);
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Story {...context} />
     </ThemeProvider>
   )
