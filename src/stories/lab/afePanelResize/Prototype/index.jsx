@@ -1,16 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core';
 import SinglePanelGridItem from '../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
-import DragHandleY from './DragHandleY';
+import DragHandleGridArea from './DragHandleGridArea';
 
 const useStyles = makeStyles(() => ({
   page: {
     height: '100%',
     display: 'grid',
     gridTemplateAreas: `
-       'panel_0 dragbar_0 panel_1 dragbar_1 panel_3' 
-       'panel_0 dragbar_0 panel_2 dragbar_1 panel_3'`,
-    gridTemplateRows: '1fr 1fr',
+       'panel_0 dragBar_0 panel_1 dragBar_1 panel_3' 
+       'panel_0 dragBar_0 dragBar_2 dragBar_1 panel_3'
+       'panel_0 dragBar_0 panel_2 dragBar_1 panel_3'`,
+    gridTemplateRows: '1fr auto 1fr',
     gridTemplateColumns: '1fr auto 1fr auto 1fr',
   },
 }));
@@ -37,7 +38,7 @@ const minGridSize = 150;
 export default function ResizeProto() {
   const classes = useStyles();
   const [isDragging, setIsDragging] = useState(false);
-  const [dragbarGridArea, setDragbarGridArea] = useState();
+  const [dragBarGridArea, setdragBarGridArea] = useState();
   const gridRef = useRef();
 
   function handleDragStart(event) {
@@ -48,15 +49,15 @@ export default function ResizeProto() {
       gridArea = getGridArea(target); // dragHandle-vert-0, dragHandle-hor-1
       // console.log(`current gridArea: ${gridArea}`);
 
-      if (gridArea.startsWith('dragbar')) break;
-      // If we can't find the dragbar grid area, most likely its because
+      if (gridArea.startsWith('dragBar')) break;
+      // If we can't find the dragBar grid area, most likely its because
       // the original mouse event target was captured by a child node of the drag area.
       // We thus need to traverse up the DOM to find the parent which contains the drag area.
       target = target.parentNode;
     }
 
-    // only initiate drag start IFF we have a proper dragbar area.
-    if (!gridArea?.startsWith('dragbar')) {
+    // only initiate drag start IFF we have a proper dragBar area.
+    if (!gridArea?.startsWith('dragBar')) {
       return;
     }
 
@@ -64,7 +65,7 @@ export default function ResizeProto() {
     // console.log(`drag start for: ${gridArea}`);
 
     setIsDragging(true);
-    setDragbarGridArea(gridArea);
+    setdragBarGridArea(gridArea);
   }
 
   function handleDragEnd() {
@@ -77,9 +78,9 @@ export default function ResizeProto() {
 
     const dX = event.movementX;
     const gridNode = gridRef.current;
-    const dragbarCol = findGridColumn(gridNode, dragbarGridArea);
+    const dragBarCol = findGridColumn(gridNode, dragBarGridArea);
 
-    // console.log(dX, dragbarCol, dragbarGridArea);
+    // console.log(dX, dragBarCol, dragBarGridArea);
     // docs on relevant client browser API:
     // https://stackoverflow.com/questions/35170581/how-to-access-styles-from-react
     const cssGridCols = window.getComputedStyle(gridNode).getPropertyValue('grid-template-columns');
@@ -89,15 +90,15 @@ export default function ResizeProto() {
 
     // we need to respect min grid size... if the dragging would cause any grid item to be
     // smaller than a predetermined size, we should ignore the event.
-    const prevSize = colSizes[dragbarCol - 1];
-    const nextSize = colSizes[dragbarCol + 1];
+    const prevSize = colSizes[dragBarCol - 1];
+    const nextSize = colSizes[dragBarCol + 1];
 
     if ((prevSize + dX) < minGridSize || (nextSize - dX) < minGridSize) {
       return; // setIsDragging(false);
     }
 
-    colSizes[dragbarCol - 1] += dX;
-    colSizes[dragbarCol + 1] -= dX;
+    colSizes[dragBarCol - 1] += dX;
+    colSizes[dragBarCol + 1] -= dX;
 
     const newCssGridCols = colSizes.map(c => `${c}px`).join(' ');
 
@@ -113,10 +114,9 @@ export default function ResizeProto() {
       <SinglePanelGridItem area="panel_2" title="Panel 2">Panel2 content</SinglePanelGridItem>
       <SinglePanelGridItem area="panel_3" title="Panel 3">Panel3 content</SinglePanelGridItem>
 
-      {/* <DragHandleY orientation="vertical" gridArea="dragbar_0" onMouseDown={handleDragStart} /> */}
-
-      <DragHandleY area="dragbar_0" onMouseDown={handleDragStart} />
-      <DragHandleY area="dragbar_1" onMouseDown={handleDragStart} />
+      <DragHandleGridArea area="dragBar_0" orientation="vertical" onMouseDown={handleDragStart} />
+      <DragHandleGridArea area="dragBar_1" orientation="vertical" onMouseDown={handleDragStart} />
+      <DragHandleGridArea area="dragBar_2" orientation="horizontal" onMouseDown={handleDragStart} />
     </div>
   );
 }
