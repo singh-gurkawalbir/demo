@@ -1,4 +1,4 @@
-import { Meta, Story, Canvas } from "@storybook/addon-docs";
+import { Meta, Story, Canvas, ArgsTable } from "@storybook/addon-docs";
 import FilledButton from "../../components/Buttons/FilledButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import TextButton from "../../components/Buttons/TextButton";
@@ -7,7 +7,9 @@ import AddIcon from "../../components/icons/AddIcon";
 import DeleteIcon from "../../components/icons/TrashIcon";
 import ActionGroup from "../../components/ActionGroup";
 
-<Meta title="Components/Buttons/All" />
+
+
+<Meta title="Components/Buttons/All"  />
 
 # Filled Buttons
 
@@ -33,6 +35,8 @@ when there are multiple buttons we use the ActionGroup component which will give
   </Story>
 </Canvas>
 
+<ArgsTable of={FilledButton} />
+
 # Outlined Buttons
 
 Below are the Outlined buttons used throughout the application
@@ -56,6 +60,8 @@ Below are the Outlined buttons used throughout the application
     </ActionGroup>
   </Story>
 </Canvas>
+
+ <ArgsTable of={OutlinedButton} />
 
 # Text Buttons
 
@@ -82,6 +88,8 @@ Below are the Outlined buttons used throughout the application
   </Story>
 </Canvas>
 
+ <ArgsTable of={TextButton} />
+
 # Pill Buttons
 
 Below are the pill buttons used on specific cases
@@ -105,3 +113,5 @@ Below are the pill buttons used on specific cases
         </ActionGroup>
     </Story>
 </Canvas>
+
+ <ArgsTable of={PillButton} />
