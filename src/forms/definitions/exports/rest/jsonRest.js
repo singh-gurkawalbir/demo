@@ -106,7 +106,6 @@ const restPreSave = formValues => {
     retValues['/rest/pageArgument'] = undefined;
     retValues['/rest/skipArgument'] = undefined;
     retValues['/rest/nextPagePath'] = retValues['/rest/nextPageURLPath'];
-    retValues['/rest/nextPageURLPath'] = undefined;
   } else if (retValues['/rest/pagingMethod'] === 'relativeuri') {
     retValues['/rest/nextPagePath'] = undefined;
     retValues['/rest/linkHeaderRelation'] = undefined;
@@ -131,7 +130,7 @@ const restPreSave = formValues => {
     retValues['/rest/pagingPostBody'] = undefined;
     retValues['/rest/skipArgument'] = undefined;
     retValues['/rest/nextPagePath'] = retValues['/rest/nextPageTokenPath'];
-    retValues['/rest/nextPageTokenPath'] = undefined;
+    retValues['/rest/pageArgument'] = retValues['/rest/tokenPageArgument'];
   } else if (retValues['/rest/pagingMethod'] === 'postbody') {
     retValues['/rest/nextPagePath'] = undefined;
     retValues['/rest/linkHeaderRelation'] = undefined;
@@ -141,8 +140,6 @@ const restPreSave = formValues => {
   } else {
     retValues['/rest/pagingMethod'] = undefined;
     retValues['/rest/nextPagePath'] = undefined;
-    retValues['/rest/nextPageURLPath'] = undefined;
-    retValues['/rest/nextPageTokenPath'] = undefined;
     retValues['/rest/linkHeaderRelation'] = undefined;
     retValues['/rest/nextPageRelativeURI'] = undefined;
     retValues['/rest/pageArgument'] = undefined;
@@ -153,6 +150,12 @@ const restPreSave = formValues => {
     retValues['/rest/lastPagePath'] = undefined;
     retValues['/rest/lastPageValue'] = undefined;
   }
+
+  // delete UI only fields
+  retValues['/rest/nextPageURLPath'] = undefined;
+  retValues['/rest/tokenPageArgument'] = undefined;
+  retValues['/rest/nextPageTokenPath'] = undefined;
+
   retValues['/http'] = undefined;
 
   return {
