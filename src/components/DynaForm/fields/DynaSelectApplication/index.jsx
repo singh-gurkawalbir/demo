@@ -162,6 +162,9 @@ export default function SelectApplication(props) {
     }),
     input: () => ({
       color: theme.palette.secondary.light,
+      '& input': {
+        fontFamily: 'inherit',
+      },
       // marginLeft: 3,
     }),
     placeholder: () => ({
@@ -202,7 +205,11 @@ export default function SelectApplication(props) {
       const transition = 'opacity 300ms';
       const color = theme.palette.secondary.light;
 
-      return { ...provided, opacity, transition, color };
+      return { ...provided,
+        opacity,
+        transition,
+        color,
+        margin: 0 };
     },
   };
   const options = groupedApps.map(group => ({
