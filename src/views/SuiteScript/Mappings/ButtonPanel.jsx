@@ -8,7 +8,7 @@ import { SUITESCRIPT_MAPPINGS_FORM_KEY } from '../../../utils/constants';
 import mappingUtil from '../../../utils/mapping';
 
 export default function ButtonPanel({disabled, onClose}) {
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
 
   const mappingsChanged = useSelector(state =>
@@ -25,7 +25,7 @@ export default function ButtonPanel({disabled, onClose}) {
 
   const handleButtonClick = () => {
     if (validationErrMsg) {
-      enquesnackbar({
+      enqueueSnackbar({
         message: validationErrMsg,
         variant: 'error',
       });
