@@ -136,13 +136,13 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   // get the map of all the stages with their respective sampleData for the stages
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
-  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
+  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList1, resourceId, previewStages);
 
   // get the default raw stage sampleData to track the status of the request
   // As the status is same for all the stages
   // TODO @Raghu : what if later on there is a need of individual status for each stage?
   const resourceSampleData = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
+    selectors.getResourceSampleDataWithStatus1(state, resourceId, 'raw'),
   shallowEqual
   );
 
