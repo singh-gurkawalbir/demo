@@ -2,12 +2,9 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import FilledButton from '../../../Buttons/FilledButton';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
-import TextButton from '../../../Buttons/TextButton';
+import {FilledButton, OutlinedButton, TextButton} from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -124,20 +121,20 @@ export default function Actions({
   return (
     <div className={classes.action}>
       {!isResolved && (
-        <Button variant="outlined" color="primary" onClick={resolve}>
+        <OutlinedButton onClick={resolve}>
           Resolve
-        </Button>
+        </OutlinedButton>
       )}
       {
         !!s3BlobKey && (
-        <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>
+        <OutlinedButton onClick={handleDownloadBlob}>
           Download file
-        </Button>
+        </OutlinedButton>
         )
       }
-      <Button variant="text" color="primary" onClick={onClose}>
+      <TextButton onClick={onClose}>
         Close
-      </Button>
+      </TextButton>
     </div>
   );
 }

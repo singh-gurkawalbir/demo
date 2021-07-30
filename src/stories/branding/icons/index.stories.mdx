@@ -1,7 +1,8 @@
 import { withDesign } from 'storybook-addon-designs';
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
-import { IconButton, Button } from '@material-ui/core';
+import { IconButton} from '@material-ui/core';
 import AdminIcon from '../../../components/icons/AdminIcon';
+import {TextButton} from '../../../components/Buttons';
 
 <Meta title="Branding/Icons/Examples" />
 
@@ -29,8 +30,8 @@ An Icon button with Text
 
 <Canvas>
   <Story name="Icon Text Button">
-    <Button startIcon={<AdminIcon/>}>
+    <TextButton startIcon={<AdminIcon/>}>
       Icon button
-    </Button>
+    </TextButton>
   </Story>
 </Canvas>

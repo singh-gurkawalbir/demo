@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
-import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
+import { OutlinedButton } from '../Buttons';
 
 export default function FormButton({
   onClick,
@@ -43,16 +43,15 @@ export default function FormButton({
   if (!fields || !value) return null;
 
   return (
-    <Button
+    <OutlinedButton
       data-test={
         id || (typeof children === 'string' && children) || 'saveButton'
       }
-      variant="outlined"
-      color={color || 'primary'}
+      color={color}
       className={className}
       disabled={buttonDisabled}
       onClick={onClickBtn}>
       {children}
-    </Button>
+    </OutlinedButton>
   );
 }

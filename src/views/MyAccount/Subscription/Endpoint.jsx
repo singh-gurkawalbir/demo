@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { capitalize, makeStyles, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -19,6 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -236,15 +236,13 @@ export default function Endpoint() {
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
             Need more flows? Do you use FTP or AS2 connections? Need to support EDI? We’ve got you covered!
-            <Button
+            <TextButton
               data-test="upgradeSubscription"
-              variant="text"
-              color="primary"
               onClick={onRequestUpgradeClick}
               className={classes.subscriptionUpgradeLink}
               >
               Upgrade today!
-            </Button>
+            </TextButton>
           </Typography>
         </NotificationToaster>
       </div>
@@ -254,14 +252,12 @@ export default function Endpoint() {
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
             Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet,
-            <Button
+            <TextButton
               data-test="upgradeSubscription"
-              variant="text"
-              color="primary"
               onClick={onTrialUpgradeClick}
               className={classes.subscriptionUpgradeLink}
               > upgrade now
-            </Button>
+            </TextButton>
             and keep them all!
           </Typography>
         </NotificationToaster>

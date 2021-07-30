@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import shortid from 'shortid';
-import { Button } from '@material-ui/core';
-import ButtonGroup from '../../../ButtonGroup';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../utils/constants';
+import ActionGroup from '../../../ActionGroup';
+import { TextButton } from '../../../Buttons';
 
 export default function SaveButtonGroup({ value, formKey, disabled, onCancel, resourceType, resourceId, parentOnSave }) {
   const resource = useSelectorMemo(
@@ -104,7 +104,7 @@ export default function SaveButtonGroup({ value, formKey, disabled, onCancel, re
   }, [isEdit, parentOnSave, submitHandler]);
 
   return (
-    <ButtonGroup>
+    <ActionGroup>
       <DynaSubmit
         formKey={formKey}
         disabled={disabled}
@@ -121,14 +121,12 @@ export default function SaveButtonGroup({ value, formKey, disabled, onCancel, re
         disabled={disabled} >
         Save & close
       </DynaSubmit>
-      <Button
+      <TextButton
         data-test="cancelLookupForm"
-        onClick={onCancel}
-        variant="text"
-        color="primary">
+        onClick={onCancel}>
         Cancel
-      </Button>
-    </ButtonGroup>
+      </TextButton>
+    </ActionGroup>
   );
 }
 

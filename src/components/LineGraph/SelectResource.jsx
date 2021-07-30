@@ -1,9 +1,9 @@
-import { Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useMemo } from 'react';
+import ActionGroup from '../ActionGroup';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
+import { FilledButton, OutlinedButton, TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -131,13 +131,12 @@ export default function SelectResource(props) {
 
   return (
     <>
-      <Button
+      <OutlinedButton
         onClick={toggleClick}
-        variant="outlined"
         color="secondary"
         className={classes.dateRangePopperBtn}>
         {buttonName}
-      </Button>
+      </OutlinedButton>
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
@@ -176,15 +175,14 @@ export default function SelectResource(props) {
                 </FormControl>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-
-                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                <ActionGroup>
+                  <FilledButton onClick={handleSave}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </FilledButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

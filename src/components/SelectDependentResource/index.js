@@ -1,10 +1,10 @@
-import { Button, FormLabel, FormControlLabel, Checkbox } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { FormLabel, FormControlLabel, Checkbox } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback, useState, useMemo } from 'react';
+import ActionGroup from '../ActionGroup';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
+import { FilledButton, OutlinedButton, TextButton } from '../Buttons';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -47,17 +47,11 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 1, 2),
   },
   dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
     minHeight: 36,
     padding: [[0, 12]],
     color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
     fontSize: 15,
     lineHeight: 2,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
-    },
   },
   selectResourceItem: {
     display: 'flex',
@@ -144,13 +138,13 @@ export default function SelectDependentResource({resources = emptySet, selectedR
 
   return (
     <>
-      <Button
+      <OutlinedButton
         onClick={toggleClick}
-        variant="outlined"
         color="secondary"
+        endIcon={<ArrowDownIcon />}
         className={classes.dateRangePopperBtn}>
-        {buttonName} <ArrowDownIcon />
-      </Button>
+        {buttonName}
+      </OutlinedButton>
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
@@ -200,14 +194,14 @@ export default function SelectDependentResource({resources = emptySet, selectedR
                 ))}
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                <ActionGroup>
+                  <FilledButton onClick={handleSave}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </FilledButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

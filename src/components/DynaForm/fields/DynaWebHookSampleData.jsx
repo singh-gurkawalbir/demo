@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../CodeEditor';
@@ -9,6 +8,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
 import FieldMessage from './FieldMessage';
+import { OutlinedButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -89,13 +89,12 @@ export default function DynaWebHookSampleData(props) {
         isValid={isValid}
         />
       <div className={classes.actions}>
-        <Button
-          variant="outlined"
+        <OutlinedButton
           color="secondary"
           className={classes.inlineActions}
           onClick={generateSampleData}>
           Click to show
-        </Button>
+        </OutlinedButton>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import React, { useState } from 'react';
 import DynaText from '../DynaText';
 import DynaSelect from '../DynaSelect';
+import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   dynaToggleTextWrapper: {
@@ -26,12 +26,10 @@ export default function DynaToggleSelectToText(props) {
     <div className={classes.dynaToggleTextWrapper}>
       {isText ? <DynaText {...rest} /> : <DynaSelect {...rest} />}
       <div className={classes.dynabtn}>
-        <Button
-          variant="outlined"
-          color="secondary"
+        <OutlinedButton
           onClick={() => setIsText(state => !state)}>
           {isText ? textHrefLabel : selectHrefLabel}
-        </Button>
+        </OutlinedButton>
       </div>
     </div>
   );

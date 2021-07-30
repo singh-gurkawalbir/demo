@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { FormLabel, Button } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
 import DynaHook from './DynaHook_afe';
 import ModalDialog from '../../ModalDialog';
 import OutlinedButton from '../../Buttons/OutlinedButton';
+import { FilledButton, TextButton } from '../../Buttons';
+import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {
@@ -46,14 +48,14 @@ export default function DynaRoutingRules(props) {
           <DynaHook
             {...props}
             label={title} />
-          <div>
-            <Button data-test="saveRoutingRules" onClick={handleClose}>
+          <ActionGroup>
+            <FilledButton data-test="saveRoutingRules" onClick={handleClose}>
               Save
-            </Button>
-            <Button data-test="cancelRoutingRules" onClick={handleClose}>
+            </FilledButton>
+            <TextButton data-test="cancelRoutingRules" onClick={handleClose}>
               Cancel
-            </Button>
-          </div>
+            </TextButton>
+          </ActionGroup>
         </ModalDialog>
       )}
       <div className={classes.dynaRoutingRulesWrapper}>

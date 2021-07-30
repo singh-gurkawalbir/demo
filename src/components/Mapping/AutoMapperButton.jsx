@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
-import { Button, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import Help from '../Help';
+import { OutlinedButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   spinner: {
@@ -61,9 +62,7 @@ export default function AutoMapperButton({disabled}) {
 
   return (
     <>
-      <Button
-        color="primary"
-        variant="outlined"
+      <OutlinedButton
         data-test="auto-map"
         disabled={disabled || isFetchingAutoSuggestions}
         onClick={handleButtonClick}
@@ -74,7 +73,7 @@ export default function AutoMapperButton({disabled}) {
         <span className={classes.betaLabel}>
           BETA
         </span>
-      </Button>
+      </OutlinedButton>
 
       <Help title="Auto-map fields" helpKey="autoMapFields" className={classes.helpTextButton} />
     </>

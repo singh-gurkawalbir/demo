@@ -2,7 +2,6 @@
 import React, { useState, useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import {
-  Button,
   makeStyles,
   TableCell,
   TableRow,
@@ -19,7 +18,7 @@ import AddEditLookup from './Manage';
 import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
 import AddIcon from '../../icons/AddIcon';
-import { TextButton } from '../../Buttons';
+import { OutlinedButton, TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   listing: {
@@ -186,13 +185,11 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       </DrawerContent>
       <DrawerFooter>
         {isExact ? (
-          <Button
+          <OutlinedButton
             data-test="closeLookupListing"
-            variant="outlined"
-            color="primary"
             onClick={history.goBack}>
             Close
-          </Button>
+          </OutlinedButton>
         ) : (
           <SaveButtonGroup
             value={selectedLookup}

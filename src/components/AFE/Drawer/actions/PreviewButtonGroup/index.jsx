@@ -4,8 +4,8 @@ import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
-import ButtonGroup from '../../../../ButtonGroup';
-import OutlinedButton from '../../../../Buttons/OutlinedButton';
+import {OutlinedButton} from '../../../../Buttons';
+import ActionGroup from '../../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   previewButtonGroup: {
@@ -29,7 +29,7 @@ export default function PreviewButtonGroup({ editorId }) {
   const handleToggle = () => dispatch(actions.editor.toggleAutoPreview(editorId));
 
   return (
-    <ButtonGroup className={classes.previewButtonGroup}>
+    <ActionGroup className={classes.previewButtonGroup}>
       <DynaCheckbox
         id="disableAutoPreview"
         onFieldChange={handleToggle}
@@ -44,6 +44,6 @@ export default function PreviewButtonGroup({ editorId }) {
           Preview
         </OutlinedButton>
       )}
-    </ButtonGroup>
+    </ActionGroup>
   );
 }

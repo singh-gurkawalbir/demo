@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -16,8 +15,9 @@ import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
-import ButtonGroup from '../../../ButtonGroup';
 import notificationsMetadata from './metadata';
+import ActionGroup from '../../../ActionGroup';
+import { TextButton } from '../../../Buttons';
 
 function ManageNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
@@ -100,7 +100,7 @@ function ManageNotifications({ integrationId, childId, onClose }) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
             onClick={submitHandler()}
@@ -117,10 +117,10 @@ function ManageNotifications({ integrationId, childId, onClose }) {
             disabled={disableSave}>
             {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
-          <Button onClick={onClose} variant="text" color="primary">
+          <TextButton onClick={onClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </LoadResources>
   );

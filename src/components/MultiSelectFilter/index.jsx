@@ -1,14 +1,15 @@
-import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
+import { FilledButton, TextButton } from '../Buttons';
+import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -265,14 +266,14 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                 </FormControl>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={handleSave} disabled={isEqual(checked, selected)}>
+                <ActionGroup>
+                  <FilledButton onClick={handleSave} disabled={isEqual(checked, selected)}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </FilledButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

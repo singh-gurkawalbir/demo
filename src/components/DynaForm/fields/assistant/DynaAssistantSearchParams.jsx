@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { isArray, isObject } from 'lodash';
 import { useDispatch } from 'react-redux';
@@ -17,6 +17,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -107,13 +108,11 @@ const SearchParamsModal = props => {
       </div>
       <div>
         <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
-        <Button
+        <TextButton
           data-test="cancelSearchParams"
-          onClick={onClose}
-          variant="text"
-          color="primary">
+          onClick={onClose}>
           Cancel
-        </Button>
+        </TextButton>
       </div>
 
     </ModalDialog>
