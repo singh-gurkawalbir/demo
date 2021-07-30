@@ -512,7 +512,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in NetSuite account',
             imageURL: 'images/company-logos/netsuite.png',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            name: 'Integrator Bundle',
+            name: 'Integrator Bundle 1',
             options: {},
             type: 'installPackage',
           },
@@ -523,6 +523,209 @@ describe('template util function test', () => {
             imageURL: 'images/company-logos/salesforce.png',
             installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
             name: 'Integrator Adaptor Package',
+            options: {},
+            type: 'installPackage',
+          },
+        ],
+      };
+
+      expect(received).toEqual(expectedResult);
+    });
+
+    test('should return correct distributed steps incase of multiple NS connections', () => {
+      const previewData = {
+        objects: [
+          {
+            model: 'Integration',
+            doc: {
+              _id: '5fbfed8cd964e440789b5aca',
+              lastModified: '2020-11-26T18:04:16.169Z',
+              name: 'Tile permissions issue2',
+              install: [],
+              _registeredConnectionIds: [
+                '569f5e778a34de4718a56178',
+              ],
+              createdAt: '2020-11-26T18:01:48.565Z',
+            },
+          },
+          {
+            model: 'Flow',
+            doc: {
+              _id: '5a816fd6a05a4b10ff6e1f64',
+              lastModified: '2020-11-26T18:04:17.449Z',
+              name: 'NetSuite to NetSuite flow',
+              disabled: false,
+              timezone: 'Asia/Calcutta',
+              _integrationId: '5fbfed8cd964e440789b5aca',
+              skipRetries: false,
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [
+
+                    ],
+                    lists: [
+
+                    ],
+                  },
+                  type: 'import',
+                  _importId: '61025c9cd2982450de2c2c74',
+                },
+                {
+                  responseMapping: {
+                    fields: [
+
+                    ],
+                    lists: [
+
+                    ],
+                  },
+                  type: 'import',
+                  _importId: '5a816fd6a05a4b10ff6e1f63',
+                },
+              ],
+              pageGenerators: [
+                {
+                  _exportId: '5a816fd5a05a4b10ff6e1f62',
+                },
+              ],
+              createdAt: '2018-02-12T10:43:34.632Z',
+              lastExecutedAt: '2020-11-03T02:25:16.798Z',
+            },
+          },
+          {
+            model: 'Export',
+            doc: {
+              _id: '5a816fd5a05a4b10ff6e1f62',
+              createdAt: '2018-02-12T10:43:33.908Z',
+              lastModified: '2018-02-12T10:43:33.908Z',
+              _connectionId: '569f5e778a34de4718a56176',
+              apiIdentifier: 'e2b2174975',
+              asynchronous: true,
+              type: 'distributed',
+              adaptorType: 'NetSuiteExport',
+            },
+          },
+          {
+            model: 'Import',
+            doc: {
+              _id: '61025c9cd2982450de2c2c74',
+              createdAt: '2018-02-12T10:43:35.908Z',
+              lastModified: '2018-02-12T10:50:33.908Z',
+              _connectionId: '569f5e778a34de4718a56176',
+              apiIdentifier: 'e3c2174975',
+              distributed: true,
+              adaptorType: 'NetSuiteImport',
+            },
+          },
+          {
+            model: 'Import',
+            doc: {
+              _id: '5a816fd6a05a4b10ff6e1f63',
+              createdAt: '2018-02-12T10:43:34.257Z',
+              lastModified: '2018-02-20T08:54:42.007Z',
+              _connectionId: '569f5e778a34de4718a56177',
+              distributed: true,
+              apiIdentifier: 'i30de7018d',
+              adaptorType: 'NetSuiteImport',
+            },
+          },
+          {
+            model: 'Connection',
+            doc: {
+              _id: '569f5e778a34de4718a56176',
+              createdAt: '2018-01-10T07:25:17.546Z',
+              lastModified: '2020-10-14T07:40:57.188Z',
+              type: 'netsuite',
+              name: 'NetSuite connection 1',
+              debugDate: '2020-02-17T08:27:47.887Z',
+              netsuite: {
+                type: 'sftp',
+              },
+            },
+          },
+          {
+            model: 'Connection',
+            doc: {
+              _id: '569f5e778a34de4718a56177',
+              createdAt: '2018-01-10T07:25:17.546Z',
+              lastModified: '2020-10-14T07:40:57.188Z',
+              type: 'netsuite',
+              name: 'NetSuite Connection 2',
+              debugDate: '2020-02-17T08:27:47.887Z',
+              netsuite: {
+                type: 'sftp',
+              },
+            },
+          },
+        ],
+        stackRequired: false,
+        _stackId: null,
+      };
+      const received = templateUtil.getInstallSteps(previewData);
+      const expectedResult = {
+        connectionMap: {
+          '569f5e778a34de4718a56176': {
+            _id: '569f5e778a34de4718a56176',
+            createdAt: '2018-01-10T07:25:17.546Z',
+            debugDate: '2020-02-17T08:27:47.887Z',
+            lastModified: '2020-10-14T07:40:57.188Z',
+            name: 'NetSuite connection 1',
+            netsuite: {
+              type: 'sftp',
+            },
+            type: 'netsuite',
+          },
+          '569f5e778a34de4718a56177': {
+            _id: '569f5e778a34de4718a56177',
+            createdAt: '2018-01-10T07:25:17.546Z',
+            debugDate: '2020-02-17T08:27:47.887Z',
+            lastModified: '2020-10-14T07:40:57.188Z',
+            name: 'NetSuite Connection 2',
+            netsuite: {
+              type: 'sftp',
+            },
+            type: 'netsuite',
+          },
+        },
+        installSteps: [
+          {
+            _connectionId: '569f5e778a34de4718a56176',
+            completed: false,
+            description: 'Please configure NetSuite connection',
+            name: 'NetSuite connection 1',
+            options: {
+              connectionType: 'netsuite',
+            },
+            type: 'Connection',
+          },
+          {
+            _connectionId: '569f5e778a34de4718a56177',
+            completed: false,
+            description: 'Please configure NetSuite connection',
+            name: 'NetSuite Connection 2',
+            options: {
+              connectionType: 'netsuite',
+            },
+            type: 'Connection',
+          },
+          {
+            application: 'netsuite',
+            completed: false,
+            description: 'Please install Integrator bundle in NetSuite account',
+            imageURL: 'images/company-logos/netsuite.png',
+            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+            name: 'Integrator Bundle 1',
+            options: {},
+            type: 'installPackage',
+          },
+          {
+            application: 'netsuite',
+            completed: false,
+            description: 'Please install Integrator bundle in NetSuite account',
+            imageURL: 'images/company-logos/netsuite.png',
+            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+            name: 'Integrator Bundle 2',
             options: {},
             type: 'installPackage',
           },
