@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react';
 import shortid from 'shortid';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
-import { Button } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
