@@ -40,7 +40,8 @@ export default {
     const retValues = { ...formValues };
     const { connection } = options;
 
-    if ((resource.adaptorType === 'RESTExport' && resource?._id && !isNewId(resource?._id)) || !connection.isHTTP) {
+    // For Edit cases, if resource was originally created as REST export or if connection has isHTTP as false, save it as REST export
+    if ((resource?.adaptorType === 'RESTExport' && resource._id && !isNewId(resource._id)) || connection?.isHTTP === false) {
       return restPreSave(formValues);
     }
 

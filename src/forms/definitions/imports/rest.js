@@ -249,7 +249,8 @@ export default {
   preSave: (formValues, resource, options = {}) => {
     const { connection } = options;
 
-    if ((resource.adaptorType === 'RESTImport' && resource?._id && !isNewId(resource?._id)) || !connection.isHTTP) {
+    // For Edit cases, if resource was originally created as REST import or if connection has isHTTP as false, save it as REST import
+    if ((resource?.adaptorType === 'RESTImport' && resource._id && !isNewId(resource._id)) || connection?.isHTTP === false) {
       return restPreSave(formValues);
     }
     const retValues = { ...formValues };

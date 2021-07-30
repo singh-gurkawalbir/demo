@@ -110,7 +110,8 @@ const restPreSave = formValues => {
 
 export default {
   preSave: (formValues, resource) => {
-    if (resource.type === 'rest' && resource._id && !isNewId(resource._id)) {
+    // Save it as REST connection for edit cases, converting to http will delete rest doc completely.
+    if (resource?.type === 'rest' && resource._id && !isNewId(resource._id)) {
       return restPreSave(formValues);
     }
     const newValues = { ...formValues };
