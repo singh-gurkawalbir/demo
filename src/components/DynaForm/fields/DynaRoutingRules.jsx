@@ -4,8 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
 import DynaHook from './DynaHook_afe';
 import ModalDialog from '../../ModalDialog';
-import OutlinedButton from '../../Buttons/OutlinedButton';
-import { FilledButton, TextButton } from '../../Buttons';
+import { OutlinedButton, FilledButton, TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles({
@@ -65,6 +64,7 @@ export default function DynaRoutingRules(props) {
         </div>
         <OutlinedButton
           data-test={id}
+          color="secondary"
           className={classes.dynaRoutingRulesBtn}
           onClick={handleEditorClick}>
           Launch

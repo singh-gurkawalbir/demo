@@ -188,6 +188,7 @@ export default function DynaXmlParse_afe({
           <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
         </div>
         <OutlinedButton
+          color="secondary"
           data-test={`parse-helper-${id}`}
           className={classes.button}
           onClick={handleEditorClick}>

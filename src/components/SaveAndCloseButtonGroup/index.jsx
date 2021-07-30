@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import ActionGroup from '../ActionGroup';
 import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
-import FilledButton from '../Buttons/FilledButton';
-import OutlinedButton from '../Buttons/OutlinedButton';
-import TextButton from '../Buttons/TextButton';
+import {FilledButton, OutlinedButton, TextButton} from '../Buttons';
 
 export const CLOSE_AFTER_SAVE = true;
 export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, handleSave, handleSaveAndClose}) {

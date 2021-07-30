@@ -27,6 +27,7 @@ export default function DynaToggleSelectToText(props) {
       {isText ? <DynaText {...rest} /> : <DynaSelect {...rest} />}
       <div className={classes.dynabtn}>
         <OutlinedButton
+          color="secondary"
           onClick={() => setIsText(state => !state)}>
           {isText ? textHrefLabel : selectHrefLabel}
         </OutlinedButton>

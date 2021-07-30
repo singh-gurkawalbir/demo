@@ -37,7 +37,10 @@ export default function RefreshCard(props) {
 
   return (
     <div className={classes.card}>
-      <TextButton startIcon={<Icon />} onClick={handleClick} className={classes.refresh}>
+      <TextButton
+        startIcon={<Icon />}
+        onClick={handleClick}
+        className={classes.refresh}>
         Refresh errors
       </TextButton>
     </div>

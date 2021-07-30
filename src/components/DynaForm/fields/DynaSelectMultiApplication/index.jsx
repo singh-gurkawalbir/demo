@@ -191,6 +191,7 @@ const Menu = props => {
     <components.Menu {...props}>
       {props.children}
       <OutlinedButton
+        color="secondary"
         id="select-multi-close"
         onClick={closeSelect}
         className={classes.doneButton}>

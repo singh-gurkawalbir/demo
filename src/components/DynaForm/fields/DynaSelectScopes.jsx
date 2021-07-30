@@ -5,8 +5,7 @@ import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
-import FilledButton from '../../Buttons/FilledButton';
-import OutlinedButton from '../../Buttons/OutlinedButton';
+import { FilledButton, OutlinedButton} from '../../Buttons';
 
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {

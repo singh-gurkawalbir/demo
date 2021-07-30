@@ -1,6 +1,5 @@
 import React, {useCallback, useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
@@ -13,8 +12,7 @@ import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../.
 import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
-import FilledButton from '../../Buttons/FilledButton';
-import TextButton from '../../Buttons/TextButton';
+import { FilledButton, OutlinedButton, TextButton} from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -134,13 +132,13 @@ export default function TileNotification({ content, expired, connectorId, licens
       </div>
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
         {single && !showTrialLicenseMessage && (
-          <FilledButton
+          <OutlinedButton
             disabled={upgradeRequested}
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivate"
            >
             {resumable ? 'Reactivate' : 'Renew'}
-          </FilledButton>
+          </OutlinedButton>
         )}
         {single && showTrialLicenseMessage && (
           <FilledButton
@@ -153,13 +151,13 @@ export default function TileNotification({ content, expired, connectorId, licens
         )}
         {!single && (
         <ActionGroup>
-          <FilledButton
+          <OutlinedButton
             disabled={upgradeRequested}
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivateDouble"
            >
             {showTrialLicenseMessage ? 'Buy' : 'Renew'}
-          </FilledButton>
+          </OutlinedButton>
           <TextButton
             data-test="uninstall"
             onClick={handleUninstall}>

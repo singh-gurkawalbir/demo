@@ -108,6 +108,7 @@ export default function ManageLookup({ editorId }) {
         onSave={handleUpdate} />
       <div className={classes.button}>
         <OutlinedButton
+          color="secondary"
           data-test={lookupFieldId}
           onClick={handleEditorClick}>
           {lookups?.length ? 'Manage lookups' : 'Create lookup'}

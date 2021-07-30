@@ -38,6 +38,7 @@ export default function PreviewButtonGroup({ editorId }) {
         value={autoEvaluate} />
       {!autoEvaluate && (
         <OutlinedButton
+          color="secondary"
           data-test="previewEditorResult"
           disabled={saveInProgress}
           onClick={handlePreview}>

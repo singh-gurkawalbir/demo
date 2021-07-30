@@ -103,11 +103,15 @@ export default function Actions({
         <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
         </FilledButton>
-        <OutlinedButton disabled={!isRetryDataChanged} onClick={updateRetry}>
+        <OutlinedButton
+          disabled={!isRetryDataChanged}
+          onClick={updateRetry}
+          color="secondary"
+         >
           Save &amp; close
         </OutlinedButton>
         { !isResolved && (
-          <OutlinedButton onClick={resolve}>
+          <OutlinedButton onClick={resolve} color="secondary">
             Resolve
           </OutlinedButton>
         )}
@@ -127,7 +131,7 @@ export default function Actions({
       )}
       {
         !!s3BlobKey && (
-        <OutlinedButton onClick={handleDownloadBlob}>
+        <OutlinedButton color="secondary" onClick={handleDownloadBlob}>
           Download file
         </OutlinedButton>
         )

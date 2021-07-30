@@ -65,6 +65,7 @@ export const DoneButton = ({onClose}) => {
 
     <OutlinedButton
       id="select-close"
+      color="secondary"
       data-test="closeSelect"
       onClick={onClose}
       className={classes.doneButton}>

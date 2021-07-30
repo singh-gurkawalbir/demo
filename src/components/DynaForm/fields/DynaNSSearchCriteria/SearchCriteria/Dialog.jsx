@@ -13,9 +13,7 @@ import { selectors } from '../../../../../reducers';
 import SearchCriteriaEditor from '.';
 import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../../../icons/FullScreenCloseIcon';
-import FilledButton from '../../../../Buttons/FilledButton';
-import OutlinedButton from '../../../../Buttons/OutlinedButton';
-import TextButton from '../../../../Buttons/TextButton';
+import {FilledButton, OutlinedButton, TextButton } from '../../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {

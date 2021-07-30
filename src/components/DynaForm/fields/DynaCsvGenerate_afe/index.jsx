@@ -149,6 +149,7 @@ export default function DynaCsvGenerate_afe(props) {
           <FieldHelp {...props} />
         </div>
         <OutlinedButton
+          color="secondary"
           data-test={id}
           className={classes.csvBtn}
           onClick={handleEditorClick}>

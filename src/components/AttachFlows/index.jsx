@@ -7,8 +7,7 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import FilledButton from '../Buttons/FilledButton';
-import TextButton from '../Buttons/TextButton';
+import {OutlinedButton, TextButton} from '../Buttons';
 
 const flowsFilterConfig = { type: 'flows' };
 
@@ -88,12 +87,11 @@ export default function AttachFlows({ onClose, integrationId }) {
       )}
       {hasFlows ? (
         <div>
-          <FilledButton
+          <OutlinedButton
             data-test="attachFlows"
-            onClick={handleAttachFlowsClick}
-          >
+            onClick={handleAttachFlowsClick}>
             Attach
-          </FilledButton>
+          </OutlinedButton>
           <TextButton
             onClick={onClose}>
             Cancel

@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ArrowPopper from '../ArrowPopper';
-
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import ActionGroup from '../ActionGroup';
@@ -144,9 +143,9 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
     <>
       <TextButton
         disabled={disabled}
+        startIcon={<DebugIcon />}
         onClick={toggleClick}
         data-test="refreshResource">
-        <DebugIcon />
         {debugUntil ? (
           <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}

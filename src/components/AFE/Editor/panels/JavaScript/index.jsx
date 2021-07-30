@@ -176,6 +176,7 @@ export default function JavaScriptPanel({ editorId }) {
           </FormControl>
           {scriptId && insertStubKey && (
           <OutlinedButton
+            color="secondary"
             onClick={handleInsertStubClick}
             disabled={disabled}
             className={classes.btnAction}

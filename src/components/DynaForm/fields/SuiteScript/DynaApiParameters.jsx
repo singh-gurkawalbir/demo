@@ -125,6 +125,7 @@ export default function DynaApiParameters(props) {
           <FieldHelp {...props} />
         </div>
         <OutlinedButton
+          color="secondary"
           disabled={disabled}
           data-test={id}
           className={classes.dynaAssistantbtn}

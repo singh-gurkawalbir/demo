@@ -8,9 +8,8 @@ import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
-import { TextButton } from '../Buttons';
+import { TextButton, OutlinedButton } from '../Buttons';
 import ActionGroup from '../ActionGroup';
-import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
