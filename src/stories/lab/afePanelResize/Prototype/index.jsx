@@ -83,7 +83,7 @@ export default function ResizeProto() {
       return;
     }
 
-    // console.log('Dragging');
+    // console.log('Dragging', event.target);
 
     const dX = event.movementX;
     const gridNode = gridRef.current;
