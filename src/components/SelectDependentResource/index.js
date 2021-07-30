@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import React, { useCallback, useState, useMemo } from 'react';
 import ActionGroup from '../ActionGroup';
 import ArrowPopper from '../ArrowPopper';
-import { FilledButton, OutlinedButton, TextButton } from '../Buttons';
+import { OutlinedButton, TextButton } from '../Buttons';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -195,9 +195,9 @@ export default function SelectDependentResource({resources = emptySet, selectedR
               </div>
               <div className={classes.actions}>
                 <ActionGroup>
-                  <FilledButton onClick={handleSave}>
+                  <OutlinedButton onClick={handleSave}>
                     Apply
-                  </FilledButton>
+                  </OutlinedButton>
                   <TextButton onClick={handleClose}>
                     Cancel
                   </TextButton>

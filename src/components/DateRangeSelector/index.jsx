@@ -12,7 +12,7 @@ import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import {FilledButton, OutlinedButton, TextButton} from '../Buttons/index';
+import { OutlinedButton, TextButton} from '../Buttons/index';
 import ActionGroup from '../ActionGroup';
 
 const defaultPresets = [
@@ -323,9 +323,9 @@ export default function DateRangeSelector({
             </div>
             <div className={classes.actions}>
               <ActionGroup>
-                <FilledButton onClick={handleSave}>
+                <OutlinedButton onClick={handleSave}>
                   Apply
-                </FilledButton>
+                </OutlinedButton>
                 {clearable && (
                 <TextButton onClick={handleClear}>
                   Clear

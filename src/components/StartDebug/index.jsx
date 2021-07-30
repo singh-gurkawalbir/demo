@@ -11,7 +11,7 @@ import ArrowPopper from '../ArrowPopper';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import ActionGroup from '../ActionGroup';
-import { FilledButton, TextButton} from '../Buttons/index';
+import { OutlinedButton, TextButton} from '../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -190,9 +190,9 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
               </div>
               <div className={classes.actions}>
                 <ActionGroup>
-                  <FilledButton onClick={handleSave}>
+                  <OutlinedButton onClick={handleSave}>
                     Apply
-                  </FilledButton>
+                  </OutlinedButton>
                   <TextButton onClick={handleClose}>
                     Cancel
                   </TextButton>
