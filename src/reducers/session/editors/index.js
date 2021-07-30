@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { original, produce } from 'immer';
-import { deepClone } from 'fast-json-patch';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 import { toggleData } from './processorLogic/settingsForm';
