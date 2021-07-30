@@ -299,7 +299,7 @@ export default {
     ],
   },
   'http.paging.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Override relative URI for subsequent page requests',
     visibleWhenAll: [
       {

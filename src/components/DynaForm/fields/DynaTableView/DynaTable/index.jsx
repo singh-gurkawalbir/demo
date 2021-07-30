@@ -88,7 +88,9 @@ const BaseTable = ({
 
   useEffect(() => {
     if (touched) {
-      onFieldChange(id, preSubmit(tableValue, optionsMapFinal, ignoreEmptyRow));
+      const val = preSubmit(tableValue, optionsMapFinal, ignoreEmptyRow);
+
+      onFieldChange(id, val);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
