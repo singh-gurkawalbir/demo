@@ -260,33 +260,13 @@ function* requestFileSampleData({ formKey }) {
 
   if (FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
-    if (fileType === 'json') {
-      yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileProps, fileType});
-    }
-    if (fileType === 'csv') {
-      yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, parserOptions});
-    }
-    if (fileType === 'xml') {
-      yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, parserOptions});
-    }
-    if (fileType === 'xlsx') {
-      yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, parserOptions});
+    if (['json', 'csv', 'xlsx', 'xml'].includes(fileType)) {
+      yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions});
     }
   } else if (hasSampleData) {
     // fetch from sample data and update state
-    const { sampleData } = resourceObj;
-
-    if (fileType === 'json') {
-      yield call(parseFileData, { resourceId, fileContent: sampleData, fileProps, fileType});
-    }
-    if (fileType === 'csv') {
-      yield call(parseFileData, { resourceId, fileContent: sampleData, fileType, parserOptions});
-    }
-    if (fileType === 'xml') {
-      yield call(parseFileData, { resourceId, fileContent: sampleData, fileType, parserOptions});
-    }
-    if (fileType === 'xlsx') {
-      yield call(parseFileData, { resourceId, fileContent: sampleData, fileType, parserOptions});
+    if (['json', 'csv', 'xlsx', 'xml'].includes(fileType)) {
+      yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
     }
   } else {
     // no sample data - so update with undefined
