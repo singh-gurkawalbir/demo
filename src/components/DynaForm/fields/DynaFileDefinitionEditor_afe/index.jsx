@@ -67,6 +67,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
         'file'
       )
     );
+    dispatch(actions.resourceFormSampleData.request(formKey));
 
     // update rules against this field each time it gets saved
     if (rule) {

@@ -79,6 +79,7 @@ export default function DynaUploadFile(props) {
           'file'
         )
       );
+      dispatch(actions.resourceFormSampleData.request(formKey));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, resourceId, resourceType, uploadedFile]);
@@ -90,6 +91,7 @@ export default function DynaUploadFile(props) {
     // TODO @Raghu: Find a better way to clean up only when needed
     if (options && !persistData) {
       dispatch(actions.sampleData.reset(resourceId));
+      dispatch(actions.resourceFormSampleData.clear(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
       setFileName('');

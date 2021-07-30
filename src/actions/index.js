@@ -1400,6 +1400,7 @@ const resourceFormSampleData = {
   receivedPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_DATA, { resourceId, previewData }),
   receivedCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_CSV_FILE_DATA, { resourceId, csvData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
+  clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
 };
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),

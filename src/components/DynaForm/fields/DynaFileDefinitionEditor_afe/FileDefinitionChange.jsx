@@ -52,6 +52,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
           'file'
         )
       );
+      dispatch(actions.resourceFormSampleData.request(formKey));
     }
     if (rule) {
       if (isEditorActive) {

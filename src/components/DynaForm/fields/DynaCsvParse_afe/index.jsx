@@ -50,6 +50,7 @@ export default function DynaCsvParse_afe(props) {
     disabled,
     formKey: parentFormKey,
     flowId,
+    formKey,
   } = props;
   const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
@@ -109,7 +110,8 @@ export default function DynaCsvParse_afe(props) {
     //     'file'
     //   )
     // );
-  }, [id, onFieldChange, resourceId, resourceType]);
+    dispatch(actions.resourceFormSampleData.request(formKey));
+  }, [id, onFieldChange, resourceId, resourceType, dispatch, formKey]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);

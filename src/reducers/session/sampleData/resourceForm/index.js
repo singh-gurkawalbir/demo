@@ -77,6 +77,9 @@ export default function (state = {}, action) {
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].recordSize = recordSize;
         break;
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR:
+        delete draft[resourceId];
+        break;
       default:
     }
 
