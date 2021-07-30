@@ -2,8 +2,8 @@ import React, {useCallback} from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
 import CopyIcon from '../../../icons/CopyIcon';
-import IconTextButton from '../../../IconTextButton';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   clipBoardContainer: {
@@ -35,14 +35,12 @@ export default function ClipboardPanel({ content }) {
         onCopy={handleCopy}
         text={clipBoardText}
         className={classes.clipBoard}>
-        <IconTextButton
+        <TextButton
           data-test="copyToClipboard"
           title="Copy to clipboard"
-          variant="text"
-          color="primary">
-          <CopyIcon />
+          startIcon={<CopyIcon />}>
           Copy
-        </IconTextButton>
+        </TextButton>
       </CopyToClipboard>
     </div>
   );

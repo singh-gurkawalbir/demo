@@ -39,6 +39,9 @@ const useStyles = makeStyles(theme => ({
       },
       '&.Mui-disabled': {
         borderColor: theme.palette.secondary.lightest,
+        '&:hover': {
+          borderColor: theme.palette.secondary.lightest,
+        },
       },
     },
     '& >.MuiSelect-selectMenu': {

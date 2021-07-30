@@ -4,11 +4,11 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import { TextButton } from '../../../../../components/Buttons';
 import Status from '../../../../../components/Buttons/Status';
 import CeligoTable from '../../../../../components/CeligoTable';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
-import IconTextButton from '../../../../../components/IconTextButton';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import LoadResources from '../../../../../components/LoadResources';
@@ -369,28 +369,31 @@ export default function FlowsPanel({ integrationId, childId }) {
             filterKey={filterKey}
         />
           {canCreate && !isIntegrationApp && (
-          <IconTextButton
+          <TextButton
             component={Link}
+            startIcon={<AddIcon />}
             to={`${basePath}/flowBuilder/new`}
             data-test="createFlow">
-            <AddIcon /> Create flow
-          </IconTextButton>
+            Create flow
+          </TextButton>
           )}
           {canAttach && !isStandalone && !isIntegrationApp && (
-          <IconTextButton
+          <TextButton
+            startIcon={<AttachIcon />}
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
-            <AttachIcon /> Attach flow
-          </IconTextButton>
+            Attach flow
+          </TextButton>
           )}
           {/* check if this condition is correct */}
           {canEdit && !isIntegrationApp && (
-          <IconTextButton
+          <TextButton
+            startIcon={<AddIcon />}
             component={Link}
             to={`${basePath}/dataLoader/new`}
             data-test="loadData">
-            <AddIcon /> Load data
-          </IconTextButton>
+            Load data
+          </TextButton>
           )}
         </div>
       </PanelHeader>

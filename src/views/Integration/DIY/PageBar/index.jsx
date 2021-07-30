@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
+import { TextButton } from '../../../../components/Buttons';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
@@ -10,7 +11,6 @@ import EditableText from '../../../../components/EditableText';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import TrashIcon from '../../../../components/icons/TrashIcon';
-import IconTextButton from '../../../../components/IconTextButton';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -281,23 +281,23 @@ export default function PageBar() {
               )
             }>
       {canClone && hasIntegration && (
-      <IconTextButton
+      <TextButton
         component={Link}
         to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
-        variant="text"
+        startIcon={<CopyIcon />}
         data-test="cloneIntegration">
-        <CopyIcon /> Clone integration
-      </IconTextButton>
+        Clone integration
+      </TextButton>
       )}
       {/* Sravan needs to move add child functionality to integrationApps */}
       { supportsChild && (
       <>
-        <IconTextButton
+        <TextButton
           onClick={handleAddNewChild}
-          variant="text"
+          startIcon={<CopyIcon />}
           data-test="addNewStore">
-          <CopyIcon /> Add new child
-        </IconTextButton>
+          Add new child
+        </TextButton>
         <Select
           displayEmpty
           data-test="select Child"
@@ -319,12 +319,12 @@ export default function PageBar() {
       )}
 
       {canDelete && hasIntegration && !isIntegrationApp && (
-      <IconTextButton
-        variant="text"
+      <TextButton
+        startIcon={<TrashIcon />}
         data-test="deleteIntegration"
         onClick={handleDelete}>
-        <TrashIcon /> Delete integration
-      </IconTextButton>
+        Delete integration
+      </TextButton>
       )}
     </CeligoPageBar>
   );

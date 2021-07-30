@@ -10,9 +10,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
-import IconTextButton from '../../../components/IconTextButton';
-import OutlinedButton from '../../../components/Buttons/OutlinedButton';
-import TextButton from '../../../components/Buttons/TextButton';
+import {OutlinedButton, TextButton } from '../../../components/Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   profilePopper: {
@@ -66,24 +64,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 13,
     padding: 0,
   },
-  // TODO (Azhar): we have to make a variant for this btn
-  myAccBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    color: theme.palette.secondary.light,
-    fontFamily: 'Roboto400',
-    '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
-    },
-  },
-  signOutBtn: {
-    fontFamily: 'Roboto400',
-    marginLeft: 10,
-  },
   bottomActionsBtn: {
     fontFamily: 'source sans pro',
     padding: 0,
-    paddingTop: 2,
   },
 }));
 
@@ -181,27 +164,23 @@ function ProfileMenuButton() {
 
         </div>
         <div className={classes.bottomActions}>
-          <IconTextButton
+          <TextButton
             data-test="uxFeedback"
             component="a"
-            variant="text"
             className={classes.bottomActionsBtn}
-            color="primary"
             href="mailto:product_feedback@celigo.com"
             target="_blank"
             >
             Provide UX feedback
-          </IconTextButton>
-          <IconTextButton
+          </TextButton>
+          <TextButton
             data-test="switchLegacy"
             component="a"
-            variant="text"
-            color="primary"
             className={classes.bottomActionsBtn}
             href="/legacy"
             >
             Switch to legacy UI
-          </IconTextButton>
+          </TextButton>
         </div>
       </ArrowPopper>
     </>

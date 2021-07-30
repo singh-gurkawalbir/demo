@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import IconTextButton from '../../../IconTextButton';
 import AddIcon from '../../../icons/AddIcon';
 import CeligoTable from '../../../CeligoTable';
 import metadata from './metadata';
@@ -12,6 +11,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import LoadResources from '../../../LoadResources';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -92,12 +92,11 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
   return (
     <>
       <div className={classes.actionChildLicense}>
-        <IconTextButton
+        <TextButton
           onClick={handleClick}
-          variant="text"
-          color="primary">
-          <AddIcon /> Create child license
-        </IconTextButton>
+          startIcon={<AddIcon />}>
+          Create child license
+        </TextButton>
       </div>
       <div>
         <LoadResources required resources="integrations,connectors" >

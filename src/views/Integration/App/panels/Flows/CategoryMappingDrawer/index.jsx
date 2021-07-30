@@ -20,7 +20,6 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import Spinner from '../../../../../../components/Spinner';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
@@ -40,10 +39,8 @@ import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIco
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import SettingsDrawer from '../../../../../../components/Mapping/Settings';
 import { capitalizeFirstLetter } from '../../../../../../utils/string';
-import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
-import TextButton from '../../../../../../components/Buttons/TextButton';
+import {OutlinedButton, TextButton, FilledButton} from '../../../../../../components/Buttons/index';
 import ActionGroup from '../../../../../../components/ActionGroup';
-import FilledButton from '../../../../../../components/Buttons/FilledButton';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -481,19 +478,18 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                     uiAssistant={uiAssistant}
                   />
                   {collapseStatus === 'collapsed' ? (
-                    <IconTextButton
-                      variant="text"
+                    <TextButton
                       onClick={handleExpandAll}
                       className={classes.expCollBtn}>
                       <ExpandWindowIcon /> Expand All
-                    </IconTextButton>
+                    </TextButton>
                   ) : (
-                    <IconTextButton
-                      variant="text"
+                    <TextButton
+                      startIcon={<CollapseWindowIcon />}
                       onClick={handleCollapseAll}
                       className={classes.expCollBtn}>
-                      <CollapseWindowIcon /> Collapse All
-                    </IconTextButton>
+                      Collapse All
+                    </TextButton>
                   )}
                 </PanelHeader>
                 <div className={classes.mappingHeader}>

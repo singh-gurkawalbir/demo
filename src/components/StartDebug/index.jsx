@@ -10,10 +10,8 @@ import ArrowPopper from '../ArrowPopper';
 
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
-import IconTextButton from '../IconTextButton';
 import ActionGroup from '../ActionGroup';
-import FilledButton from '../Buttons/FilledButton';
-import TextButton from '../Buttons/TextButton';
+import { FilledButton, TextButton} from '../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -144,7 +142,7 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         disabled={disabled}
         onClick={toggleClick}
         data-test="refreshResource">
@@ -152,7 +150,7 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
         {debugUntil ? (
           <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
-      </IconTextButton>
+      </TextButton>
       <ArrowPopper
         disabled={disabled}
         open={!!anchorEl}

@@ -9,7 +9,6 @@ import DateRangeSelector from '../../components/DateRangeSelector';
 import CeligoSelect from '../../components/CeligoSelect';
 import RunFlowButton from '../../components/RunFlowButton';
 import StartDebug from '../../components/StartDebug';
-import IconTextButton from '../../components/IconTextButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import CeligoPagination from '../../components/CeligoPagination';
 import CeligoTable from '../../components/CeligoTable';
@@ -21,6 +20,7 @@ import Spinner from '../../components/Spinner';
 import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
 import MessageWrapper from '../../components/MessageWrapper';
+import { TextButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -265,13 +265,13 @@ export default function ScriptLogs({ flowId, scriptId }) {
               resourceId={scriptId}
               resourceType="scripts"
             />
-            <IconTextButton
+            <TextButton
               onClick={handleRefreshClick}
               data-test="refreshResource"
-              disabled={status === 'requested'}>
-              <RefreshIcon />
+              disabled={status === 'requested'}
+              startIcon={<RefreshIcon />}>
               Refresh
-            </IconTextButton>
+            </TextButton>
           </div>
           <CeligoPagination
             {...paginationOptions}

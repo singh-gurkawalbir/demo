@@ -21,10 +21,10 @@ import Spinner from '../../../../../components/Spinner';
 import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import IconTextButton from '../../../../../components/IconTextButton';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -271,15 +271,14 @@ export default function IntegrationAppAddNewChild(props) {
         >
         <div className={classes.actions}>
           {showUninstall && (
-            <IconTextButton
+            <TextButton
               data-test="uninstall"
+              startIcon={<CloseIcon />}
               component={Link}
-              variant="text"
               onClick={handleUninstall}
-              color="primary">
-              <CloseIcon />
+              >
               Uninstall
-            </IconTextButton>
+            </TextButton>
           )}
         </div>
       </CeligoPageBar>

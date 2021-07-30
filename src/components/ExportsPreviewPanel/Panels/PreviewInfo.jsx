@@ -2,13 +2,13 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import OutlinedButton from '../../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -152,15 +152,14 @@ export default function PreviewInfo(props) {
     <div className={classes.previewContainer}>
       <div className={classes.previewData}>
         <div className={classes.previewDataLeft}>
-          <IconTextButton
-            variant="outlined"
+          <OutlinedButton
             color="secondary"
             className={classes.previewBtn}
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
-          </IconTextButton>
+          </OutlinedButton>
         </div>
         { canSelectRecords &&
           (

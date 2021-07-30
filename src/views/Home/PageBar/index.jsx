@@ -6,7 +6,6 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
 import ZipDownIcon from '../../../components/icons/DownloadIntegrationIcon';
 import ZipUpIcon from '../../../components/icons/InstallIntegrationIcon';
-// import IconTextButton from '../../../components/IconTextButton';
 import { generateNewId } from '../../../utils/resource';
 import TextButton from '../../../components/Buttons/TextButton';
 import ActionGroup from '../../../components/ActionGroup';

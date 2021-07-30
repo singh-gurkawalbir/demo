@@ -1,6 +1,5 @@
-import { Button, List, ListItem, ListItemText } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { List, ListItem, ListItemText } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
@@ -11,10 +10,10 @@ import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
-import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import OutlinedButton from '../Buttons/OutlinedButton';
+import {FilledButton, OutlinedButton, TextButton} from '../Buttons/index';
+import ActionGroup from '../ActionGroup';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -253,6 +252,7 @@ export default function DateRangeSelector({
           </ActionButton>
         ) : (
           <OutlinedButton
+            color="secondary"
             disabled={!!disabled}
             onClick={toggleClick}
             className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
@@ -322,19 +322,19 @@ export default function DateRangeSelector({
               )}
             </div>
             <div className={classes.actions}>
-              <ButtonGroup>
-                <Button variant="outlined" color="primary" onClick={handleSave}>
+              <ActionGroup>
+                <FilledButton onClick={handleSave}>
                   Apply
-                </Button>
+                </FilledButton>
                 {clearable && (
-                <Button variant="text" color="primary" onClick={handleClear}>
+                <TextButton onClick={handleClear}>
                   Clear
-                </Button>
+                </TextButton>
                 )}
-                <Button variant="text" color="primary" onClick={handleClose}>
+                <TextButton onClick={handleClose}>
                   Cancel
-                </Button>
-              </ButtonGroup>
+                </TextButton>
+              </ActionGroup>
             </div>
           </div>
         )}

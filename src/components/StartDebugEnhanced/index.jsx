@@ -11,9 +11,7 @@ import ArrowPopper from '../ArrowPopper';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import CancelIcon from '../icons/CancelIcon';
-import IconTextButton from '../IconTextButton';
-import FilledButton from '../Buttons/FilledButton';
-import TextButton from '../Buttons/TextButton';
+import {TextButton, FilledButton} from '../Buttons/index';
 import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
@@ -172,24 +170,25 @@ export default function StartDebugEnhanced({
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         disabled={disabled}
         onClick={toggleClick}
+        startIcon={<DebugIcon />}
         className={classes.debugButton}
         data-test="refreshResource">
-        <DebugIcon />
         {activeDebugUntil ? (
           <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
-      </IconTextButton>
+      </TextButton>
+
       {!!activeDebugUntil && (
-      <IconTextButton
+      <TextButton
         disabled={disabled}
+        startIcon={<CancelIcon />}
         className={clsx(classes.debugButton, classes.stopDebugButton)}
         onClick={handleStopDebug} >
-        <CancelIcon />
         Stop debug
-      </IconTextButton>
+      </TextButton>
       )}
       <ArrowPopper
         disabled={disabled}

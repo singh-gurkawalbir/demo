@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   googleBtn: {
     background: `url(${getImageUrl(
       'images/googlelogo.png'
-    )}) 20% center no-repeat`,
+    )}) 15% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 38,
     fontSize: 16,

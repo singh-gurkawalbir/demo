@@ -3,7 +3,6 @@ import { deepClone } from 'fast-json-patch';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
@@ -21,8 +20,7 @@ import ActionButton from '../../../../ActionButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../../ActionGroup';
-import FilledButton from '../../../../Buttons/FilledButton';
-import TextButton from '../../../../Buttons/TextButton';
+import { FilledButton, TextButton } from '../../../../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
@@ -272,18 +270,17 @@ function FirstLevelModal(props) {
       <div>
         {!editListItemModelOpen ? (
           <>
-            <IconTextButton
-              variant="outlined"
-              color="secondary"
+            <TextButton
               className={classes.relatedListBtn}
               data-test="addOrEditNewRelatedList"
+              startIcon={<AddIcon />}
               onClick={() => {
                 toggleListItemModelOpen();
                 setSelectedElement(null);
               }}>
-              <AddIcon />
+
               Add new related list
-            </IconTextButton>
+            </TextButton>
 
             <RelatedListView
               {...rest}
@@ -295,16 +292,15 @@ function FirstLevelModal(props) {
           </>
         ) : (
           <>
-            <IconTextButton
-              variant="outlined"
-              color="secondary"
+            <TextButton
+              startIcon={<ArrowLeftIcon />}
               className={classes.relatedListBtn}
               onClick={() => {
                 toggleListItemModelOpen();
               }} >
-              <ArrowLeftIcon /> Back to related list
+              Back to related list
 
-            </IconTextButton>
+            </TextButton>
 
             <EditListItemModal
               {...rest}
