@@ -1,8 +1,120 @@
 import { isNewId } from '../../../utils/resource';
 
+const restPreSave = formValues => {
+  const newValues = { ...formValues };
+
+  const restToHttpFieldMap = {
+    '/rest/headers': '/http/headers',
+    '/rest/baseURI': '/http/baseURI',
+    '/rest/encrypted': '/http/encrypted',
+    '/rest/unencrypted': '/http/unencrypted',
+    '/rest/disableStrictSSL': '/http/disableStrictSSL',
+    '/rest/pingBody': '/http/ping/body',
+    '/rest/pingRelativeURI': '/http/ping/relativeURI',
+    '/rest/pingSuccessPath': '/http/ping/successPath',
+    '/rest/pingSuccessValues': '/http/ping/successValues',
+    '/rest/basicAuth/username': '/http/auth/basic/username',
+    '/rest/basicAuth/password': '/http/auth/basic/password',
+    '/rest/cookieAuth/method': '/http/auth/cookie/method',
+    '/rest/cookieAuth/uri': '/http/auth/cookie/uri',
+    '/rest/cookieAuth/body': '/http/auth/cookie/body',
+    '/rest/cookieAuth/successStatusCode': '/http/auth/cookie/successStatusCode',
+    '/rest/refreshTokenMethod': '/http/auth/token/refreshMethod',
+    '/rest/refreshTokenHeaders': '/http/auth/token/refreshHeaders',
+    '/rest/refreshTokenBody': '/http/auth/token/refreshBody',
+    '/rest/refreshTokenURI': '/http/auth/token/refreshRelativeURI',
+    '/rest/refreshTokenPath': '/http/auth/token/refreshTokenPath',
+    '/rest/bearerToken': '/http/auth/token/token',
+    '/rest/tokenHeader': '/http/auth/token/headerName',
+    '/rest/tokenParam': '/http/auth/token/paramName',
+
+  };
+
+  Object.keys(restToHttpFieldMap).forEach(restField => {
+    const httpField = restToHttpFieldMap[restField];
+
+    if (newValues[httpField]) {
+      newValues[restField] = newValues[httpField];
+    } else {
+      newValues[restField] = undefined;
+    }
+    delete newValues[httpField];
+  });
+
+  if (newValues['/mode'] === 'cloud') {
+    newValues['/_agentId'] = undefined;
+  }
+  delete newValues['/mode'];
+
+  if (!newValues['/rest/pingSuccessPath']) {
+    newValues['/rest/pingSuccessValues'] = undefined;
+  }
+
+  if (newValues['/rest/pingMethod'] === 'GET') {
+    newValues['/rest/pingBody'] = undefined;
+  }
+
+  if (newValues['/rest/encrypted']) {
+    try {
+      newValues['/rest/encrypted'] = JSON.parse(newValues['/rest/encrypted']);
+    } catch (ex) {
+      newValues['/rest/encrypted'] = undefined;
+    }
+  }
+
+  if (newValues['/rest/unencrypted']) {
+    try {
+      newValues['/rest/unencrypted'] = JSON.parse(
+        newValues['/rest/unencrypted']
+      );
+    } catch (ex) {
+      newValues['/rest/unencrypted'] = undefined;
+    }
+  }
+
+  if (newValues['/rest/authType'] !== 'basic') {
+    delete newValues['/rest/basicAuth/username'];
+    delete newValues['/rest/basicAuth/password'];
+    newValues['/rest/basicAuth'] = undefined;
+  }
+
+  if (
+    newValues['/rest/authType'] !== 'token' ||
+    !formValues['/configureTokenRefresh']
+  ) {
+    newValues['/rest/refreshTokenMediaType'] = undefined;
+    newValues['/rest/refreshTokenPath'] = undefined;
+    newValues['/rest/refreshTokenHeaders'] = undefined;
+    newValues['/rest/refreshTokenMethod'] = undefined;
+    newValues['/rest/refreshTokenBody'] = undefined;
+    newValues['/rest/refreshTokenURI'] = undefined;
+    // newValues['/rest/auth/token/refreshMediaType'] = undefined;
+  }
+
+  if (newValues['/rest/authType'] !== 'token') {
+    newValues['/rest/bearerToken'] = undefined;
+    newValues['/rest/authScheme'] = undefined;
+    newValues['/rest/authHeader'] = undefined;
+    newValues['/rest/tokenLocation'] = undefined;
+    newValues['/rest/tokenParam'] = undefined;
+  }
+
+  if (newValues['/rest/authType'] !== 'cookie') {
+    if (newValues['/rest/cookieAuth/method'] === 'GET') {
+      newValues['/rest/cookieAuth/body'] = undefined;
+    }
+  }
+
+  return newValues;
+};
+
 export default {
-  preSave: formValues => {
-    const newValues = { ...formValues};
+  preSave: (formValues, resource) => {
+    // Save it as REST connection for edit cases, converting to http will delete rest doc completely.
+    if (resource?.type === 'rest' && resource._id && !isNewId(resource._id)) {
+      return restPreSave(formValues);
+    }
+    const newValues = { ...formValues };
 
     newValues['/http/useRestForm'] = true;
     if (newValues['/mode'] === 'cloud') {
