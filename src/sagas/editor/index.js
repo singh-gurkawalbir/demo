@@ -20,7 +20,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId } from '../../utils/resource';
 
 /**
@@ -429,10 +429,15 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
+  const needPreviewStagesData = resourceType === 'exports' && !!resource?.http?.paging?.method && previewDataDependentFieldIds.includes(fieldId);
 
-  if (fetchPreviewStageData) {
+  if (showPreviewStageData || needPreviewStagesData) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+  }
+
+  if (showPreviewStageData) {
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
       resourceId,
@@ -494,6 +499,10 @@ export function* requestEditorSampleData({
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     body.fieldPath = fieldId || filterPath;
+
+    if (needPreviewStagesData) {
+      body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
+    }
 
     const opts = {
       method: 'POST',
@@ -619,7 +628,6 @@ export function* initEditor({ id, editorType, options }) {
   const init = processorLogic.init(editorType);
 
   if (init) {
-    // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);

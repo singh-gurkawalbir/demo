@@ -11,7 +11,8 @@ import {
   isValidResourceReference,
   isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS } from '../constants';
+import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
 import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
 
@@ -1131,4 +1132,49 @@ export function getScriptsReferencedInFlow(
   const filtered = scripts.filter(({_id}) => scriptIdsUsed.includes(_id));
 
   return filtered;
+}
+
+// this util adds properties to make the the flow lastExecutedAt sortable
+export function addLastExecutedAtSortableProp({
+  flows,
+  isUserInErrMgtTwoDotZero,
+  latestFlowJobs,
+  supportsMultiStore,
+  childId,
+  requiredFlows }) {
+  const jobStatusPriorityMap = {
+    // large dates
+    [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
+    [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
+    [JOB_STATUS.RUNNING]: '2300-04-17T16:51:35.209Z',
+  };
+
+  const updatedFlows = flows?.map((flow, i) => {
+    const toReturnFlow = (supportsMultiStore && !childId) ? ({...flow, ...requiredFlows[i]}) : flow;
+
+    const {_id: flowId} = toReturnFlow;
+    const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+    if (!job || !isUserInErrMgtTwoDotZero) {
+      return {...toReturnFlow, lastExecutedAtSort: toReturnFlow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+    }
+
+    if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+      return {...toReturnFlow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+    }
+
+    // queued running retrying are the other statuses
+    const isJobInQueuedStatus =
+    (job.status === JOB_STATUS.QUEUED ||
+      (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+    return {
+      ...toReturnFlow,
+      lastExecutedAtSort: jobStatusPriorityMap[job.status],
+      lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+      isJobInQueuedStatus,
+      lastExecutedAtSortType: 'status'};
+  });
+
+  return updatedFlows;
 }
