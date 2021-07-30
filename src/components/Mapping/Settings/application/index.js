@@ -124,7 +124,8 @@ export default {
     if (formVal.dataType === 'date') {
       settings.dataType = 'string';
     } else if ('dataType' in formVal) {
-      settings.dataType = formVal.dataType;
+      // for empty dataType, BE requires undefined to be sent
+      settings.dataType = formVal.dataType || undefined;
     }
 
     if ('isKey' in formVal) {
