@@ -22,7 +22,7 @@ export function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, previewData, previewStagesData, previewError, parseData, rawData, recordSize } = action;
+  const { type, resourceId, previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -64,6 +64,14 @@ export default function (state = {}, action) {
           draft[resourceId].data = {};
         }
         draft[resourceId].data.preview = previewData;
+        break;
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_CSV_FILE_DATA:
+        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId].status = 'received';
+        if (!draft[resourceId].data) {
+          draft[resourceId].data = {};
+        }
+        draft[resourceId].data.csv = csvData;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE:
         draft[resourceId] = draft[resourceId] || {};

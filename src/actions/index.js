@@ -1398,6 +1398,7 @@ const resourceFormSampleData = {
   receivedParseData: (resourceId, parseData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PARSE_DATA, { resourceId, parseData }),
   receivedRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_RAW_FILE_DATA, { resourceId, rawData }),
   receivedPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_DATA, { resourceId, previewData }),
+  receivedCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_CSV_FILE_DATA, { resourceId, csvData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
 };
 const app = {
