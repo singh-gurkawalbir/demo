@@ -41,7 +41,8 @@ export default function AgentDownloadInstaller({ agentId }) {
       <TextButton
         endIcon={<ArrowDownIcon />}
         className={classes.donwloadInstallerBtn}
-        data-test="downloadAgentInstaller" onClick={handleMenuClick}>
+        data-test="downloadAgentInstaller"
+        onClick={handleMenuClick}>
         Download
       </TextButton>
     </>

@@ -88,6 +88,7 @@ export default function RefreshSearchFilters({ editorId }) {
         <FormLabel disabled={disabled} required={required} >
           Refresh  search filters
         </FormLabel>
+        {/* Todo: (Karthik) please check,there is no text in children in that case we can use the IconButton */}
         <TextButton
           disabled={disabled}
           data-test="refreshLookupFilters"
