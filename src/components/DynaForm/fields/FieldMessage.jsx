@@ -49,10 +49,15 @@ export default function FieldMessage({ description, errorMessages, warningMessag
           {isValid ? description : errorMessages}
         </span>
       )}
-      {warningMessages && (
+      {warningMessages && !errorMessages && (
         <span className={classes.warning}>
           {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
           {warningMessages}
+        </span>
+      )}
+      {description && !warningMessages && !errorMessages && isValid && (
+        <span>
+          {description}
         </span>
       )}
     </FormHelperText>
