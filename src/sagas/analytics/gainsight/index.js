@@ -2,7 +2,6 @@ import { takeEvery, select, call } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import * as gainsight from '../../../utils/analytics/gainsight';
-import { ACCOUNT_IDS } from '../../../utils/constants';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
 import { getResourceSubType, resourceCategory } from '../../../utils/resource';
 
@@ -10,12 +9,12 @@ export function* identifyUser() {
   const profile = yield select(
     selectors.userProfile
   );
-  const { _id, name, email, company, createdAt } = profile || {};
-  const { defaultAShareId } = yield select(selectors.userPreferences);
+  const user = yield select(selectors.ownerUser);
+  const { _id, name, email, createdAt } = profile || {};
   const [firstName, ...lastName] = (name || '').split(' ');
   const accountInfo = {
-    id: defaultAShareId === ACCOUNT_IDS.OWN ? _id : defaultAShareId,
-    name: company || name,
+    id: user?._id,
+    name: user?.company || user?.name,
   };
   const userInfo = {
     id: `${accountInfo.id}_${_id}`,
@@ -228,7 +227,7 @@ function* trackHookSave(a) {
 
 function* trackFlowEnableDisable(a) {
   if (!a.flowId || a.onOffInProgress) return;
-  const {flowId} = a;
+  const { flowId } = a;
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
   const eventId = (flow?.disabled) ? 'CUSTOM_FLOW_DISABLED' : 'CUSTOM_FLOW_ENABLED';

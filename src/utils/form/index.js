@@ -32,7 +32,10 @@ export const registerField = (field, formValue = {}) => {
   );
 
   adjustDefaultVisibleRequiredValue(field);
-  field.value = splitDelimitedValue(initialValue, valueDelimiter);
+  const finalDefaultValue = splitDelimitedValue(initialValue, valueDelimiter);
+
+  field.value = finalDefaultValue;
+  field.defaultValue = finalDefaultValue;
 };
 
 export const registerFields = (fieldMapToValidate, formValue = {}) =>
