@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DragHandleGridArea(props) {
+export default function DragHandleGridItem(props) {
   const classes = useStyles(props);
   const {orientation, onMouseDown} = props;
 
@@ -38,12 +38,12 @@ export default function DragHandleGridArea(props) {
   );
 }
 
-DragHandleGridArea.propTypes = {
+DragHandleGridItem.propTypes = {
   area: PropTypes.string.isRequired, // should follow pattern: `dragBar_[v|h]_[id]`
   onMouseDown: PropTypes.func.isRequired,
   orientation: PropTypes.oneOf(['vertical', 'horizontal']).isRequired,
 };
 
-DragHandleGridArea.defaultProps = {
+DragHandleGridItem.defaultProps = {
   orientation: 'vertical',
 };

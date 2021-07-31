@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core';
 import SinglePanelGridItem from '../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
-import DragHandleGridArea from './DragHandleGridArea';
+import DragHandleGridItem from './DragHandleGridItem';
+
+const minGridSize = 150;
 
 const useStyles = makeStyles(() => ({
   page: {
@@ -9,9 +11,11 @@ const useStyles = makeStyles(() => ({
     display: 'grid',
     gridTemplateAreas: `
        'panel_0 dragBar_v_0 panel_1 dragBar_v_1 panel_3' 
-       'panel_0 dragBar_v_0 dragBar_h_2 dragBar_v_1 panel_3'
-       'panel_0 dragBar_v_0 panel_2 dragBar_v_1 panel_3'`,
-    gridTemplateRows: '1fr auto 1fr',
+       'panel_0 dragBar_v_0 dragBar_h_0 dragBar_v_1 panel_3'
+       'panel_0 dragBar_v_0 panel_2 dragBar_v_1 panel_3'
+       'dragBar_h_1 dragBar_h_1 dragBar_h_1 dragBar_h_1 dragBar_h_1'
+       'panel_4 panel_4 panel_4 panel_4 panel_4'`,
+    gridTemplateRows: `2fr auto 2fr auto ${minGridSize}px`,
     gridTemplateColumns: '1fr auto 1fr auto 1fr',
   },
 }));
@@ -28,12 +32,22 @@ function findGridColumn(grid, gridArea) {
   const gridAreas = window.getComputedStyle(grid).getPropertyValue('grid-template-areas');
 
   const colPos = gridAreas.split(' ').findIndex(a => a === gridArea);
+
   // console.log(gridAreas, gridArea, colPos);
 
   return colPos;
 }
 
-const minGridSize = 150;
+function findGridRow(grid, gridArea) {
+  const gridAreas = window.getComputedStyle(grid).getPropertyValue('grid-template-areas');
+
+  const rows = gridAreas.split('" "').map(r => r.replace('"', ''));
+  const rowPos = rows.findIndex(r => r.includes(gridArea));
+
+  // console.log(rowPos);
+
+  return rowPos;
+}
 
 export default function ResizeProto() {
   const classes = useStyles();
@@ -75,16 +89,31 @@ export default function ResizeProto() {
     setIsDragging(false);
   }
 
-  function handleDrag(event) {
-    if (!isDragging) return;
-    if (dragOrientation === 'h') {
-      // console.log('Horizontal dragging not yet implemented.');
+  function getCssSizeString(cssGridSizes, dragBarPos, movement) {
+    const sizes = cssGridSizes.split(' ').map(s => Number(s.replace('px', '')));
 
-      return;
+    // we need to respect min grid size... if the dragging would cause any grid item to be
+    // smaller than a predetermined size, we should ignore the event.
+    const prevSize = sizes[dragBarPos - 1];
+    const nextSize = sizes[dragBarPos + 1];
+
+    // console.log(prevSize, nextSize, dragBarPos, movement);
+
+    if ((prevSize + movement) < minGridSize || (nextSize - movement) < minGridSize) {
+      return; // setIsDragging(false);
     }
 
-    // console.log('Dragging', event.target);
+    sizes[dragBarPos - 1] += movement;
+    sizes[dragBarPos + 1] -= movement;
 
+    const newCssGridSizes = sizes.map(c => `${c}px`).join(' ');
+
+    // console.log(cssGridSizes, newCssGridSizes);
+
+    return newCssGridSizes;
+  }
+
+  function handleVerticalDrag(event) {
     const dX = event.movementX;
     const gridNode = gridRef.current;
     const dragBarCol = findGridColumn(gridNode, dragBarGridArea);
@@ -93,26 +122,36 @@ export default function ResizeProto() {
     // docs on relevant client browser API:
     // https://stackoverflow.com/questions/35170581/how-to-access-styles-from-react
     const cssGridCols = window.getComputedStyle(gridNode).getPropertyValue('grid-template-columns');
-    const colSizes = cssGridCols.split(' ').map(s => Number(s.replace('px', '')));
+    const newCssGridCols = getCssSizeString(cssGridCols, dragBarCol, dX);
 
-    // console.log(colSizes);
+    if (!newCssGridCols) return;
 
-    // we need to respect min grid size... if the dragging would cause any grid item to be
-    // smaller than a predetermined size, we should ignore the event.
-    const prevSize = colSizes[dragBarCol - 1];
-    const nextSize = colSizes[dragBarCol + 1];
+    // console.log(cssGridCols, newCssGridCols);
+    gridNode.style.gridTemplateColumns = newCssGridCols;
+  }
 
-    if ((prevSize + dX) < minGridSize || (nextSize - dX) < minGridSize) {
-      return; // setIsDragging(false);
+  function handleHorizontalDrag(event) {
+    const dY = event.movementY;
+    const gridNode = gridRef.current;
+    const dragBarRow = findGridRow(gridNode, dragBarGridArea);
+
+    const cssGridRows = window.getComputedStyle(gridNode).getPropertyValue('grid-template-rows');
+    const newCssGridRows = getCssSizeString(cssGridRows, dragBarRow, dY);
+
+    if (!newCssGridRows) return;
+
+    gridNode.style.gridTemplateRows = newCssGridRows;
+  }
+
+  function handleDrag(event) {
+    if (!isDragging) return;
+
+    if (dragOrientation === 'v') {
+      handleVerticalDrag(event);
+    } else {
+      handleHorizontalDrag(event);
     }
 
-    colSizes[dragBarCol - 1] += dX;
-    colSizes[dragBarCol + 1] -= dX;
-
-    const newCssGridCols = colSizes.map(c => `${c}px`).join(' ');
-
-    // console.log(newCssGridCols);
-    gridNode.style.gridTemplateColumns = newCssGridCols;
     event.preventDefault();
   }
 
@@ -122,10 +161,12 @@ export default function ResizeProto() {
       <SinglePanelGridItem area="panel_1" title="Panel 1">Panel1 content</SinglePanelGridItem>
       <SinglePanelGridItem area="panel_2" title="Panel 2">Panel2 content</SinglePanelGridItem>
       <SinglePanelGridItem area="panel_3" title="Panel 3">Panel3 content</SinglePanelGridItem>
+      <SinglePanelGridItem area="panel_4" title="Panel 4">Panel4 content</SinglePanelGridItem>
 
-      <DragHandleGridArea area="dragBar_v_0" orientation="vertical" onMouseDown={handleDragStart} />
-      <DragHandleGridArea area="dragBar_v_1" orientation="vertical" onMouseDown={handleDragStart} />
-      <DragHandleGridArea area="dragBar_h_2" orientation="horizontal" onMouseDown={handleDragStart} />
+      <DragHandleGridItem area="dragBar_v_0" orientation="vertical" onMouseDown={handleDragStart} />
+      <DragHandleGridItem area="dragBar_v_1" orientation="vertical" onMouseDown={handleDragStart} />
+      <DragHandleGridItem area="dragBar_h_0" orientation="horizontal" onMouseDown={handleDragStart} />
+      <DragHandleGridItem area="dragBar_h_1" orientation="horizontal" onMouseDown={handleDragStart} />
     </div>
   );
 }
