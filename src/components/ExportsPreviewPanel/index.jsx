@@ -65,7 +65,7 @@ function PreviewInfo({
     } else {
       dispatch(actions.sampleData.requestLookupPreview(resourceId, flowId, value, {refreshCache: true}));
     }
-    dispatch(actions.resourceFormSampleData.request(formKey));
+    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
   }, [
     isPageGeneratorExport,
     dispatch,
