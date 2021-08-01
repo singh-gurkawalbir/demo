@@ -37,7 +37,7 @@ export default function (state = {}, action) {
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'received';
+        draft[resourceId].status = 'error';
         draft[resourceId].error = previewError?.errors;
         draft[resourceId].data = extractStages(previewError);
         break;

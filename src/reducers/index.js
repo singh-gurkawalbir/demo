@@ -5374,6 +5374,24 @@ selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
 };
 
 /*
+ * Given flowId, exportId determines if the export is a standalone export
+ * i.e., not linked to any flow PG/PP
+ */
+selectors.isStandaloneExport = (state, flowId, exportId) => {
+  if (!exportId || selectors.isPageGenerator(state, flowId, exportId, 'exports')) {
+    return false;
+  }
+
+  if (!flowId || isNewId(flowId)) {
+    return true;
+  }
+
+  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+
+  return !flow.pageProcessors?.find(pp => pp._exportId === exportId);
+};
+
+/*
  * Given flowId, resourceId determines whether resource is a pg/pp
  */
 selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {

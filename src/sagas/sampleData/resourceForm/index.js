@@ -390,8 +390,9 @@ function* requestExportSampleData({ formKey }) {
   if (!resourceId) return;
 
   const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
+  const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
 
-  if (isPageGenerator) {
+  if (isPageGenerator || isStandaloneExport) {
     yield call(requestPGExportSampleData, { formKey });
   } else {
     yield call(requestLookupSampleData, { formKey });
