@@ -47,7 +47,7 @@ export default function (state = {}, action) {
         if (!draft[resourceId].data) {
           draft[resourceId].data = {};
         }
-        draft[resourceId].data.parse = Array.isArray(parseData) ? parseData : [parseData];
+        draft[resourceId].data.parse = parseData ? [parseData] : DEFAULT_VALUE;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_RAW_FILE_DATA:
         draft[resourceId] = draft[resourceId] || {};

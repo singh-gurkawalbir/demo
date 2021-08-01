@@ -19,7 +19,8 @@ import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { safeParse } from '../../../utils/string';
 
-const FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
+const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
+const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
 const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
 /*
  * Parsers for different file types used for converting into JSON format
@@ -42,6 +43,13 @@ export function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
+}
+
+function* clearResourceSampleDataStages({ resourceId }) {
+  yield put(actions.resourceFormSampleData.receivedRawData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.receivedCsvFileData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.receivedParseData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, undefined));
 }
 
 export function* _getProcessorOutput({ processorData }) {
@@ -96,8 +104,6 @@ function* requestRealTimeSampleData({ formKey, refreshCache = true }) {
 
   const realTimeSampleData = yield call(requestRealTimeMetadata, { resource: resourceObj, refresh: refreshCache });
 
-  // TODO: should we morph this to array here or state handles it ?
-  // Figure out once we start dealing with file related sample data
   yield put(actions.resourceFormSampleData.receivedParseData(resourceId, realTimeSampleData));
 }
 
@@ -308,7 +314,7 @@ function* requestFileSampleData({ formKey }) {
       parserOptions: fieldValue || fileDefinitionData?.rule,
       fileType: 'fileDefinitionParser',
     });
-  } else if (FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
+  } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
     yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions});
   } else if (hasSampleData) {
@@ -316,10 +322,7 @@ function* requestFileSampleData({ formKey }) {
     yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
   } else {
     // no sample data - so clear sample data from state
-    yield put(actions.resourceFormSampleData.receivedRawData(resourceId, undefined));
-    yield put(actions.resourceFormSampleData.receivedCsvFileData(resourceId, undefined));
-    yield put(actions.resourceFormSampleData.receivedParseData(resourceId, undefined));
-    yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, undefined));
+    yield call(clearResourceSampleDataStages, { resourceId });
   }
 }
 
@@ -399,6 +402,52 @@ function* requestExportSampleData({ formKey }) {
   }
 }
 
+function* requestImportFileSampleData({ formKey }) {
+  // file related sample data is handled here
+  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+
+  const fileType = resourceObj?.file?.type;
+
+  if (!fileType) {
+    return;
+  }
+
+  const fileId = `${resourceId}-uploadFile`;
+  const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
+  const { file: uploadedFile } = uploadedFileObj || {};
+
+  if (FILE_DEFINITION_TYPES.includes(fileType)) {
+    const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
+    const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
+    const { format, definitionId } = fieldOptions || {};
+    const resourcePath = extractResourcePath(fieldValue, fileDefinitionResourcePath);
+
+    const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {
+      userDefinitionId,
+      resourceType: 'imports',
+      options: { format, definitionId, resourcePath },
+    });
+
+    const sampleData = fileDefinitionData?.sampleData || resourceObj.sampleData;
+
+    yield put(actions.resourceFormSampleData.receivedRawData(resourceId, sampleData));
+  } else if (IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
+    yield put(actions.resourceFormSampleData.receivedRawData(resourceId, uploadedFile));
+    if (fileType === 'json') {
+      // update parse stage for json file type as import saves parsed json file as sampleData
+      yield put(actions.resourceFormSampleData.receivedParseData(resourceId, processJsonSampleData(uploadedFile)));
+    }
+    if (fileType === 'xlsx') {
+      // update csv stage for xlsx file type as import saves csv content as sampleData
+      const csvFileContent = (yield call(getCsvFromXlsx, uploadedFile))?.result;
+
+      yield put(actions.resourceFormSampleData.receivedCsvFileData(resourceId, csvFileContent));
+    }
+  } else {
+    yield call(clearResourceSampleDataStages, { resourceId });
+  }
+}
+
 function* requestImportSampleData({ formKey }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
@@ -407,7 +456,7 @@ function* requestImportSampleData({ formKey }) {
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
     // TODO: No need of making preview calls for Imports File sample data
     // All we need is the uploaded file data
-    return yield call(requestFileSampleData, { formKey });
+    return yield call(requestImportFileSampleData, { formKey });
   }
 }
 
