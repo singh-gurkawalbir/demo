@@ -8,7 +8,6 @@ import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 import { isFileAdaptor } from '../../utils/resource';
-// import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -54,7 +53,6 @@ function PreviewInfo({
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
-  // const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
   const fetchExportPreviewData = useCallback(() => {
     // // Just a fail safe condition not to request for sample data incase of not exports
@@ -84,17 +82,6 @@ function PreviewInfo({
     fetchExportPreviewData();
     setShowPreviewData(true);
   }, [fetchExportPreviewData, setShowPreviewData]);
-
-  // useEffect(() => {
-  //   // Fetches preview data incase of initial load of an edit export mode
-  //   // Not fetched for online connections
-  //   // TODO @Raghu: should we make a offline preview call though connection is offline ?
-  //   // Needs a refactor to preview saga for that
-  //   if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
-  //     setIsPreviewDataFetched(true);
-  //     handlePreview();
-  //   }
-  // }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
 
   // on close of the panel, updates record size to default
   // remove this action, if in future we need to retain record size

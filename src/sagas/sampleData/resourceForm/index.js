@@ -310,14 +310,10 @@ function* requestFileSampleData({ formKey }) {
     });
   } else if (FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
-    if (['json', 'csv', 'xlsx', 'xml'].includes(fileType)) {
-      yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions});
-    }
+    yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions});
   } else if (hasSampleData) {
     // fetch from sample data and update state
-    if (['json', 'csv', 'xlsx', 'xml'].includes(fileType)) {
-      yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
-    }
+    yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
   } else {
     // no sample data - so clear sample data from state
     yield put(actions.resourceFormSampleData.receivedRawData(resourceId, undefined));
@@ -342,6 +338,13 @@ function* requestPGExportSampleData({ formKey }) {
 
 function* requestLookupSampleData({ formKey }) {
   const { resourceId, resourceObj, flowId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
+
+  // make file adaptor sample data calls
+  if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj) || isRestCsvExport) {
+    return yield call(requestFileSampleData, { formKey });
+  }
+  // make PP preview call incase of all other adaptors
   const resourceType = 'exports';
   const recordSize = yield select(selectors.getSampleDataRecordSize, resourceId);
   // exclude sampleData property if exists on pageProcessor Doc
@@ -397,6 +400,14 @@ function* requestExportSampleData({ formKey }) {
 
 function* requestImportSampleData({ formKey }) {
   // handle file related sample data for imports
+  // make file adaptor sample data calls
+  const { resourceObj } = yield call(fetchResourceInfoFromFormKey, { formKey });
+
+  if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
+    // TODO: No need of making preview calls for Imports File sample data
+    // All we need is the uploaded file data
+    return yield call(requestFileSampleData, { formKey });
+  }
 }
 
 function* requestResourceFormSampleData({ formKey }) {
