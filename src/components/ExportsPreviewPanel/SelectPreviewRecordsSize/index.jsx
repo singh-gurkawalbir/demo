@@ -56,6 +56,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
       dispatch(actions.sampleData.patch(resourceId, {
         recordSize: DEFAULT_RECORD_SIZE,
       }));
+      dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, DEFAULT_RECORD_SIZE));
     }
   }, [sampleDataRecordSize, dispatch, resourceId]);
 

@@ -3579,10 +3579,13 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
  * User can select number of records in all cases except for realtime adaptors
  * No need to show when export preview is disabled
  */
-selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
-  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
+selectors.canSelectRecordsInPreviewPanel = (state, formKey) => {
+  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, formKey);
 
   if (isExportPreviewDisabled) return false;
+
+  const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+
   const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
   // it is realtime incase of new export for realtime adaptors
@@ -3811,7 +3814,14 @@ selectors.sampleDataWrapper = createSelector(
  * are disabled if their respective connections are offline
  * Any other criteria to disable preview panel can be added here
  */
-selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
+selectors.isExportPreviewDisabled = (state, formKey) => {
+  if (!formKey) {
+    return true;
+  }
+
+  const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+  const formValues = selectors.formState(state, formKey)?.value || [];
+
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
@@ -3831,8 +3841,10 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
     return false;
   }
 
+  const connectionId = formValues['/_connectionId'];
+
   // In all other cases, where preview depends on connection being online, return the same
-  return selectors.isConnectionOffline(state, resourceObj._connectionId);
+  return selectors.isConnectionOffline(state, connectionId);
 };
 
 // Gives back supported stages of data flow based on resource type

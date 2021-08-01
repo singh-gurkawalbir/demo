@@ -37,7 +37,6 @@ function PreviewInfo({
   resourceType,
   resourceSampleData,
   previewStageDataList,
-  isPreviewDisabled,
   showPreviewData,
   setShowPreviewData,
 }) {
@@ -100,9 +99,8 @@ function PreviewInfo({
       fetchExportPreviewData={handlePreview}
       resourceSampleData={resourceSampleData}
       previewStageDataList={previewStageDataList}
-      disabled={isPreviewDisabled}
+      formKey={formKey}
       resourceId={resourceId}
-      resourceType={resourceType}
       showPreviewData={showPreviewData}
   />
   );
@@ -110,9 +108,6 @@ function PreviewInfo({
 
 export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
-
-  const isPreviewDisabled = useSelector(state =>
-    selectors.isExportPreviewDisabled(state, resourceId, resourceType));
   const availablePreviewStages = useSelector(state =>
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
@@ -144,7 +139,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
         <PreviewInfo
           resourceSampleData={resourceSampleData}
           previewStageDataList={previewStageDataList}
-          isPreviewDisabled={isPreviewDisabled}
           flowId={flowId}
           resourceId={resourceId}
           formKey={formKey}
