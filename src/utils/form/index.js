@@ -286,7 +286,7 @@ export const updateFieldValue = (field, value, skipFieldTouched) => {
     console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
-    if (skipFieldTouched) {
+    if (skipFieldTouched && !field.touched) {
       field.defaultValue = updateValue;
     }
   }
