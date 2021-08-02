@@ -46,10 +46,10 @@ export function extractResourcePath(value, initialResourcePath) {
 }
 
 function* clearResourceSampleDataStages({ resourceId }) {
-  yield put(actions.resourceFormSampleData.receivedRawData(resourceId, undefined));
-  yield put(actions.resourceFormSampleData.receivedCsvFileData(resourceId, undefined));
-  yield put(actions.resourceFormSampleData.receivedParseData(resourceId, undefined));
-  yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.setRawData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.setParseData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.setPreviewData(resourceId, undefined));
 }
 
 export function* _getProcessorOutput({ processorData }) {
@@ -104,7 +104,7 @@ function* requestRealTimeSampleData({ formKey, refreshCache = false }) {
 
   const realTimeSampleData = yield call(requestRealTimeMetadata, { resource: resourceObj, refresh: refreshCache });
 
-  yield put(actions.resourceFormSampleData.receivedParseData(resourceId, realTimeSampleData));
+  yield put(actions.resourceFormSampleData.setParseData(resourceId, realTimeSampleData));
 }
 
 function* requestExportPreviewData({ formKey }) {
@@ -163,17 +163,19 @@ export function* _hasSampleDataOnResource({ formKey }) {
   return bodyFileType === resourceFileType;
 }
 
-function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions }) {
+function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.getSampleDataRecordSize, resourceId);
 
+  if (isNewSampleData) {
+    yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
+  }
   switch (fileType) {
     case 'json': {
-      yield put(actions.resourceFormSampleData.receivedRawData(resourceId, fileContent));
       const processedJsonData = processJsonPreviewData(fileContent, fileProps);
       const parseData = processJsonSampleData(fileContent, fileProps);
 
-      yield put(actions.resourceFormSampleData.receivedParseData(resourceId, parseData));
-      yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, previewFileData(processedJsonData, recordSize)));
+      yield put(actions.resourceFormSampleData.setParseData(resourceId, parseData));
+      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(processedJsonData, recordSize)));
       break;
     }
     case 'csv': {
@@ -184,15 +186,14 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
-      yield put(actions.resourceFormSampleData.receivedRawData(resourceId, fileContent));
       if (processorOutput?.data) {
         const previewData = processorOutput.data.data;
 
-        yield put(actions.resourceFormSampleData.receivedParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, previewFileData(previewData, recordSize)));
+        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       }
       if (processorOutput?.error) {
-        yield put(
+        return yield put(
           actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
         );
       }
@@ -206,15 +207,14 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
-      yield put(actions.resourceFormSampleData.receivedRawData(resourceId, fileContent));
       if (processorOutput?.data) {
         const previewData = processorOutput.data.data;
 
-        yield put(actions.resourceFormSampleData.receivedParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, previewFileData(previewData, recordSize)));
+        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       }
       if (processorOutput?.error) {
-        yield put(
+        return yield put(
           actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
         );
       }
@@ -235,18 +235,18 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
-      if (typeof fileContent !== 'string') {
-        yield put(actions.resourceFormSampleData.receivedRawData(resourceId, fileContent));
+      if (isNewSampleData) {
+        yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, csvFileContent));
       }
-      yield put(actions.resourceFormSampleData.receivedCsvFileData(resourceId, csvFileContent));
       if (processorOutput?.data) {
         const previewData = processorOutput.data.data;
 
-        yield put(actions.resourceFormSampleData.receivedParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, previewFileData(previewData, recordSize)));
+        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       }
       if (processorOutput?.error) {
-        yield put(
+        // TODO: review this part
+        return yield put(
           actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
         );
       }
@@ -261,15 +261,15 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
 
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
-      yield put(actions.resourceFormSampleData.receivedRawData(resourceId, fileContent));
+      yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
       if (processorOutput?.data) {
         const previewData = processorOutput.data.data;
 
-        yield put(actions.resourceFormSampleData.receivedParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.receivedPreviewData(resourceId, previewFileData(previewData, recordSize)));
+        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       }
       if (processorOutput?.error) {
-        yield put(
+        return yield put(
           actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
         );
       }
@@ -277,6 +277,7 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
     }
     default:
   }
+  yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
 function* requestFileSampleData({ formKey }) {
@@ -316,7 +317,7 @@ function* requestFileSampleData({ formKey }) {
     });
   } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
-    yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions});
+    yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions, isNewSampleData: true});
   } else if (hasSampleData) {
     // fetch from sample data and update state
     yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
@@ -428,18 +429,18 @@ function* requestImportFileSampleData({ formKey }) {
 
     const sampleData = fileDefinitionData?.sampleData || resourceObj.sampleData;
 
-    yield put(actions.resourceFormSampleData.receivedRawData(resourceId, sampleData));
+    yield put(actions.resourceFormSampleData.setRawData(resourceId, sampleData));
   } else if (IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
-    yield put(actions.resourceFormSampleData.receivedRawData(resourceId, uploadedFile));
+    yield put(actions.resourceFormSampleData.setRawData(resourceId, uploadedFile));
     if (fileType === 'json') {
       // update parse stage for json file type as import saves parsed json file as sampleData
-      yield put(actions.resourceFormSampleData.receivedParseData(resourceId, processJsonSampleData(uploadedFile)));
+      yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(uploadedFile)));
     }
     if (fileType === 'xlsx') {
       // update csv stage for xlsx file type as import saves csv content as sampleData
       const csvFileContent = (yield call(getCsvFromXlsx, uploadedFile))?.result;
 
-      yield put(actions.resourceFormSampleData.receivedCsvFileData(resourceId, csvFileContent));
+      yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, csvFileContent));
     }
   } else {
     yield call(clearResourceSampleDataStages, { resourceId });
@@ -449,17 +450,18 @@ function* requestImportFileSampleData({ formKey }) {
 function* requestImportSampleData({ formKey }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
-  const { resourceObj } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
-    return yield call(requestImportFileSampleData, { formKey });
+    yield call(requestImportFileSampleData, { formKey });
+    yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
   }
 }
 
 function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
-  yield put(actions.resourceFormSampleData.requested(resourceId));
+  yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {
     const { refreshCache } = options;
 

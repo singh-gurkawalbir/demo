@@ -22,13 +22,13 @@ export function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize } = action;
+  const { type, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUESTED:
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'requested';
+        draft[resourceId].status = status;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES:
         draft[resourceId] = draft[resourceId] || {};
@@ -41,33 +41,29 @@ export default function (state = {}, action) {
         draft[resourceId].error = previewError?.errors;
         draft[resourceId].data = extractStages(previewError);
         break;
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PARSE_DATA:
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PARSE_DATA:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'received';
         if (!draft[resourceId].data) {
           draft[resourceId].data = {};
         }
         draft[resourceId].data.parse = parseData ? [parseData] : DEFAULT_VALUE;
         break;
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_RAW_FILE_DATA:
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'received';
         if (!draft[resourceId].data) {
           draft[resourceId].data = {};
         }
         draft[resourceId].data.raw = rawData;
         break;
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_DATA:
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'received';
         if (!draft[resourceId].data) {
           draft[resourceId].data = {};
         }
         draft[resourceId].data.preview = previewData;
         break;
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_CSV_FILE_DATA:
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'received';
         if (!draft[resourceId].data) {
           draft[resourceId].data = {};
         }
