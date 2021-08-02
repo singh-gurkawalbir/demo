@@ -48,6 +48,7 @@ export default function DynaSuiteScriptUploadFile(props) {
           'file'
         )
       );
+      dispatch(actions.resourceFormSampleData.request(formKey));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, resourceId, resourceType, uploadedFile]);
