@@ -123,6 +123,48 @@ describe('flow builder bottom drawer sagas', () => {
         .run();
     });
 
+    test('should not do anything in case user tries to switch to current active tab which has resource id', () => {
+      const index = 4;
+
+      return expectSaga(
+        switchTab, { index })
+        .provide([
+          [select(selectors.bottomDrawerTabs), {
+            tabs: [
+              {label: 'Dashboard', tabType: 'dashboard'},
+              {label: 'Connections', tabType: 'connections'},
+              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: undefined, tabType: 'connectionLogs', resourceId: '1234'},
+              {label: undefined, tabType: 'connectionLogs', resourceId: '9999'},
+            ],
+            activeTabIndex: 4,
+          }],
+        ])
+        .not.put(actions.bottomDrawer.setActiveTab({index}))
+        .run();
+    });
+
+    test('should dispatch setActiveTab action when user tries to switch to same tabType but different resource id', () => {
+      const index = 4;
+
+      return expectSaga(
+        switchTab, { index })
+        .provide([
+          [select(selectors.bottomDrawerTabs), {
+            tabs: [
+              {label: 'Dashboard', tabType: 'dashboard'},
+              {label: 'Connections', tabType: 'connections'},
+              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: undefined, tabType: 'connectionLogs', resourceId: '1234'},
+              {label: undefined, tabType: 'connectionLogs', resourceId: '9999'},
+            ],
+            activeTabIndex: 3,
+          }],
+        ])
+        .put(actions.bottomDrawer.setActiveTab({index}))
+        .run();
+    });
+
     test('should dispatch setActiveTab action correctly', () => {
       const tabType = 'dashboard';
       const index = undefined;
