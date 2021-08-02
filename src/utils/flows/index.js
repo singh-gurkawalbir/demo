@@ -1178,3 +1178,17 @@ export function addLastExecutedAtSortableProp({
 
   return updatedFlows;
 }
+
+export function shouldUpdateLastModified(flow, resource) {
+  return flow?.lastModified && resource?.lastModified && flow.lastModified < resource.lastModified;
+}
+
+export function flowLastModifiedPatch(flow, resource) {
+  if (!shouldUpdateLastModified(flow, resource)) return [];
+
+  return [{
+    op: 'replace',
+    path: '/lastModified',
+    value: resource.lastModified,
+  }];
+}
