@@ -7,11 +7,11 @@ import DrawerContent from '../../../../drawer/Right/DrawerContent';
 
 export default function LookupDrawer(props) {
   const history = useHistory();
-  const isEdit = history.location.pathname.includes('/lookup/edit');
+  const isEdit = history.location.pathname.includes('/lookups/edit');
 
   return (
     <RightDrawer
-      path={['lookup/edit/:lookupName', 'lookup/add']}
+      path={['lookups/edit/:lookupName', 'lookups/add']}
       height="tall"
       width="default"
       variant="persistent"

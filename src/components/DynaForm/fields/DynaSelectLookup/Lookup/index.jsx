@@ -17,7 +17,7 @@ export default function Lookup({onSave, disabled, importId, flowId, lookups, ...
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
-  const isEdit = history.location.pathname.includes('/lookup/edit');
+  const isEdit = history.location.pathname.includes('/lookups/edit');
   const {lookupName} = match.params;
   const value = (lookups || []).find(({ name}) => name === lookupName);
 
