@@ -10,8 +10,7 @@ import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
 import messageStore from '../../../../constants/messages';
-import FilledButton from '../../../Buttons/FilledButton';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
+import {FilledButton, OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {

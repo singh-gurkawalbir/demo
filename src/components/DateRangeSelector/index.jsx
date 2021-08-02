@@ -1,5 +1,4 @@
-import { List, ListItem, ListItemText } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';

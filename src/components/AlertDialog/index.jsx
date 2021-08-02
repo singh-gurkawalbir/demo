@@ -12,8 +12,7 @@ import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
-import OutlinedButton from '../Buttons/OutlinedButton';
-import { FilledButton } from '../Buttons';
+import { FilledButton, OutlinedButton } from '../Buttons';
 
 const contentWrapper = {
   minWidth: 432,
