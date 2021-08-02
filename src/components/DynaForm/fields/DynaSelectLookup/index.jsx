@@ -26,6 +26,13 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
+
+const actionsMenu = [
+  {
+    action: 'managelokups',
+    label: 'Manage lookups',
+  }];
+
 export default function DynaSelectLookup(props) {
   const { id, value, importId, flowId, disabled, onFieldChange, adaptorType, formKey} = props;
   const formContext = useFormContext(formKey);
@@ -35,11 +42,6 @@ export default function DynaSelectLookup(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const lookupOptions = useMemo(() => [{ items: lookups.map(l => ({ label: l.name, value: l.name })) }], [lookups]);
-  const actionsMenu = [
-    {
-      action: 'managelokups',
-      label: 'Manage lookups',
-    }];
 
   const handleAddLookupClick = useCallback(
     () => {
