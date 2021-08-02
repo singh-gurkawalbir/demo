@@ -561,14 +561,14 @@ selectors.mkTileApplications = () => createSelector(
         const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
         integrationConnections.forEach(c => {
-          applications.push(c.assistant || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.type);
         });
       });
 
       const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
       parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.type);
+        applications.push(c.assistant || c.rdbms?.type || c.type);
       });
       applications = uniq(applications);
     }
