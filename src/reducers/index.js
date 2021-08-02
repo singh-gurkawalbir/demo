@@ -3654,8 +3654,8 @@ selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, o
 selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinkedConnectionId}) => {
   if (ssLinkedConnectionId) return selectors.suiteScriptFileExportSampleData(state, {resourceId, resourceType, ssLinkedConnectionId});
 
-  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+  const stage = fileType === 'xlsx' ? 'csv' : 'raw';
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus1(
     state,
     resourceId,
     stage,
@@ -3669,7 +3669,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinke
     }
   }
 
-  return rawData?.body;
+  return rawData;
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
