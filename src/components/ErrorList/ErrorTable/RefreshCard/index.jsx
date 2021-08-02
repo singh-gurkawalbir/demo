@@ -28,7 +28,7 @@ export default function RefreshCard(props) {
         <TextButton
           startIcon={<Icon />}
           onClick={handleClick}
-          disabled className={classes.refreshDisabled}>
+          disabled>
           Refresh errors
         </TextButton>
       </div>
