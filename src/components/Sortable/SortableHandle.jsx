@@ -10,8 +10,8 @@ const useStyles = makeStyles(theme => ({
     cursor: 'move',
     background: 'none',
     display: 'flex',
-    alignItems: 'center',
-    paddingBottom: theme.spacing(1.5),
+    alignItems: 'start',
+    paddingTop: 6,
   },
 }));
 const SortableDragHandle = ({className = '', isVisible}) => {
