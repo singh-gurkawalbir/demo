@@ -14,21 +14,11 @@ describe('bottom drawer reducers', () => {
 
     expect({bottomDrawer: { tabs: [] }}).toEqual(state);
   });
-  test('should initialize state correct on init', () => {
-    const state = reducer(undefined, actions.bottomDrawer.init());
-
-    expect({bottomDrawer: { tabs: [] }}).toEqual(state);
-  });
   test('should set tabs value and activeTabIndex correctly', () => {
     const state = reducer(undefined, actions.bottomDrawer.init());
     const newState = reducer(state, actions.bottomDrawer.initComplete([{name: 'dashboard'}]));
 
     expect({bottomDrawer: { tabs: [{name: 'dashboard'}], activeTabIndex: 0 }}).toEqual(newState);
-  });
-  test('should  not set tabs if state is not initialized', () => {
-    const state = reducer(undefined, actions.bottomDrawer.initComplete([{name: 'dashboard'}]));
-
-    expect({}).toEqual(state);
   });
   test('should not set tabs if state is not initialized', () => {
     const state = reducer(undefined, actions.bottomDrawer.initComplete([{name: 'dashboard'}]));
