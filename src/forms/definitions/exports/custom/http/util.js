@@ -57,14 +57,24 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   });
 }
 export function headerFieldsMeta({operationDetails, headers = []}) {
-  const editableHeaders = Object.keys(operationDetails?.headers || {}).filter(key => !operationDetails.headers[key]);
-  const headersValue = uniqBy([...headers, ...editableHeaders.map(key => ({name: key, value: operationDetails.headers[key]}))], 'name');
+  const editableHeaders = Object.keys(operationDetails?.headers || {})
+    .filter(key => !operationDetails.headers[key]);
+  const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
+  const headersValue = uniqBy([
+    ...userEditableHeaderValues,
+    ...editableHeaders
+      .map(key => ({
+        name: key,
+        value: operationDetails.headers[key],
+      })),
+  ], 'name');
 
   if (editableHeaders.length) {
     return [{
       id: 'assistantMetadata.headers',
       type: 'assistantHeaders',
       keyName: 'name',
+      headersMetadata: operationDetails?.headersMetadata,
       validate: true,
       valueName: 'value',
       label: 'Configure HTTP headers',

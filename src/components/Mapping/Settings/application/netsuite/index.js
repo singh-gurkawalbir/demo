@@ -309,6 +309,26 @@ export default {
               { field: 'lookup.mode', is: ['static'] },
             ],
         },
+        'lookup.name': {
+          id: 'lookup.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpKey: 'import.lookups.name',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+          ],
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
+        },
         functions: {
           id: 'functions',
           name: 'functions',
@@ -501,6 +521,7 @@ export default {
           'lookup.expressionText',
           'lookup.resultField',
           'lookup.mapList',
+          'lookup.name',
           'functions',
           'extract',
           'expression',

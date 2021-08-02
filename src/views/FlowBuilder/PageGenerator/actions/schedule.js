@@ -4,6 +4,9 @@ import Icon from '../../../../components/icons/CalendarIcon';
 import ModalDialog from '../../../../components/ModalDialog';
 import { selectors } from '../../../../reducers';
 import FlowSchedule from '../../../../components/FlowSchedule';
+import useFormOnCancelContext from '../../../../components/FormOnCancelContext';
+
+const formKey = 'flow-schedule';
 
 function ScheduleDialog({
   flowId,
@@ -18,16 +21,21 @@ function ScheduleDialog({
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const pg = { _exportId: resourceId, schedule };
 
+  const {setCancelTriggered, disabled} = useFormOnCancelContext(formKey);
+
   return (
     <ModalDialog
       show={open}
-      onClose={onClose}
+      onClose={setCancelTriggered}
       minWidth="md"
       maxWidth="md"
-      disabled={isViewMode}>
+      disableClose={disabled}>
       <div>Flow schedule override</div>
       <div>
-        <FlowSchedule flow={flow} onClose={onClose} pg={pg} index={index} />
+        <FlowSchedule
+          formKey={formKey} flow={flow} onClose={onClose} pg={pg}
+          disabled={isViewMode}
+          index={index} />
       </div>
     </ModalDialog>
   );

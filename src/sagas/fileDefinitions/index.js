@@ -5,8 +5,9 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
 import { isNewId, generateNewId } from '../../utils/resource';
-import { commitStagedChanges } from '../resources';
+import { commitStagedChangesWrapper } from '../resources';
 import { selectors } from '../../reducers';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 
 /*
  * Fetches all Supported File Definitions
@@ -65,10 +66,11 @@ export function* saveUserFileDefinition({ definitionRules, formValues, flowId, s
   const patchSet = jsonPatch.compare({}, fileDefinition);
 
   yield put(actions.resource.patchStaged(definitionId, patchSet, SCOPES.VALUE));
-  yield call(commitStagedChanges, {
+  yield call(commitStagedChangesWrapper, {
     resourceType: 'filedefinitions',
     id: definitionId,
     scope: SCOPES.VALUE,
+    asyncKey: getAsyncKey('connections', definitionId),
   });
 
   if (isNewId(definitionId)) {

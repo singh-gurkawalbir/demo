@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     padding: 0,
-
+    alignItems: 'center',
   },
   multiSelectWrapper: {
     width: '100%',

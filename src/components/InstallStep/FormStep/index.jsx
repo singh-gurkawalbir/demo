@@ -20,22 +20,32 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormStep({ integrationId, formMeta, title, formSubmitHandler, formCloseHandler }) {
+export default function FormStep({ integrationId, installerFunction, formMeta, title, formSubmitHandler, formCloseHandler }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
     formVal => {
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(
-          integrationId,
-          '',
-          '',
-          formVal
+      installerFunction
+        ? dispatch(
+          actions.integrationApp.installer.installStep(
+            integrationId,
+            installerFunction,
+            undefined,
+            undefined,
+            formVal
+          )
         )
-      );
+        : dispatch(
+          actions.integrationApp.installer.scriptInstallStep(
+            integrationId,
+            '',
+            '',
+            formVal
+          )
+        );
     },
-    [dispatch, integrationId]
+    [dispatch, installerFunction, integrationId]
   );
   const onClose = useCallback(() => {
     dispatch(
@@ -43,7 +53,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
     );
   }, [dispatch, integrationId]);
 
-  const formKey = useFormInitWithPermissions({fieldMeta: formMeta});
+  const formKey = useFormInitWithPermissions({ fieldMeta: formMeta });
 
   return (
   // TODO: @ashu, this needs to be reverted to use RightDrawer,

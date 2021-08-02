@@ -1,4 +1,5 @@
 import { isArray, isEmpty } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
@@ -56,7 +57,17 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   });
 }
 export function headerFieldsMeta({operationDetails, headers = []}) {
-  const editableHeaders = Object.keys(operationDetails?.headers || {}).filter(key => !operationDetails.headers[key]);
+  const editableHeaders = Object.keys(operationDetails?.headers || {})
+    .filter(key => !operationDetails.headers[key]);
+  const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
+  const headersValue = uniqBy([
+    ...userEditableHeaderValues,
+    ...editableHeaders
+      .map(key => ({
+        name: key,
+        value: operationDetails.headers[key],
+      })),
+  ], 'name');
 
   if (editableHeaders.length) {
     return [{
@@ -64,14 +75,10 @@ export function headerFieldsMeta({operationDetails, headers = []}) {
       type: 'assistantHeaders',
       keyName: 'name',
       validate: true,
+      headersMetadata: operationDetails?.headersMetadata,
       valueName: 'value',
       label: 'Configure HTTP headers',
-      value: headers.length
-        ? headers.filter(header => editableHeaders.includes(header.name))
-        : editableHeaders.map(key => ({
-          name: key,
-          value: operationDetails?.headers[key],
-        })),
+      value: headersValue,
       required: true,
     }];
   }

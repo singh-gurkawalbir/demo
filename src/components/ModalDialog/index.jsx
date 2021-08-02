@@ -67,6 +67,7 @@ export default function ModalDialog({
   children,
   className,
   disableEnforceFocus,
+  disableClose,
 }) {
   const classes = useStyles();
 
@@ -88,6 +89,7 @@ export default function ModalDialog({
             <IconButton
               onClick={onClose}
               className={classes.closeButton}
+              disabled={disableClose}
               autoFocus>
               <CloseIcon />
             </IconButton>

@@ -7,7 +7,6 @@ import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
 import { useDrawerContext } from './DrawerContext';
-// import BackgroundToggle from './BackgroundToggle';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -62,6 +61,7 @@ export default function DrawerHeader({
   CloseButton,
   disableClose,
   className,
+  handleClose,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -71,7 +71,6 @@ export default function DrawerHeader({
   const showBackButton = !isExact && !hideBackButton;
 
   return (
-  // <BackgroundToggle>
     <div data-public className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
         <IconButton
@@ -98,8 +97,7 @@ export default function DrawerHeader({
 
       {/* Typically children are the action icons/buttons */}
       {children}
-      <CloseIconButton CloseButton={CloseButton} disableClose={disableClose} onClose={onClose} />
+      <CloseIconButton CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />
     </div>
-  // </BackgroundToggle>
   );
 }

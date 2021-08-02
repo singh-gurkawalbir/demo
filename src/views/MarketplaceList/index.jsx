@@ -18,7 +18,7 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
+import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH} from '../../utils/constants';
 import { capitalizeFirstLetter } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
@@ -40,6 +40,18 @@ const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.up('xs')]: {
       gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
+    },
+  },
+  pageCenter: {
+    padding: theme.spacing(3, 0),
+    width: '500px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    margin: '0 auto',
+    '& p': {
+      margin: theme.spacing(2, 0),
     },
   },
   card: {
@@ -99,9 +111,6 @@ const useStyles = makeStyles(theme => ({
   rightSubtitle: {
     paddingTop: theme.spacing(1),
   },
-  noDataTitle: {
-    padding: theme.spacing(3),
-  },
 }));
 
 export default function MarketplaceList() {
@@ -122,6 +131,7 @@ export default function MarketplaceList() {
     application,
     sandbox
   );
+  const marketPlaceConnectAppUrl = `${process.env.CDN_BASE_URI}images/react/marketplace-connect-app.png`;
   const templates = useSelector(state =>
     selectors.marketplaceTemplatesByApp(state, application)
   );
@@ -157,7 +167,7 @@ export default function MarketplaceList() {
                   tag
                 )
               );
-              history.push(getRoutePath('/dashboard'));
+              history.push(getRoutePath(HOME_PAGE_PATH));
             },
           },
           {
@@ -168,7 +178,7 @@ export default function MarketplaceList() {
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
-      history.push(getRoutePath('/dashboard'));
+      history.push(getRoutePath(HOME_PAGE_PATH));
     }
   };
 
@@ -181,6 +191,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: 'You have already used up your trial license',
         isHtml: true,
+        allowedTags: ['b'],
         message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
         buttons: [
           {
@@ -199,6 +210,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: `This will start your ${connector.trialPeriod} days free trial plan`,
         isHtml: true,
+        allowedTags: ['b'],
         message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
         buttons: [
           {
@@ -225,7 +237,11 @@ export default function MarketplaceList() {
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-        <Typography component="div" variant="body2" className={classes.noDataTitle}> Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create brand new custom flows using the prebuilt connector available for this application.</Typography>
+        <div className={classes.pageCenter}>
+          <Typography variant="h4">Connect this app to anything</Typography>
+          <Typography variant="body2">Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create new custom flows using the prebuilt connector available for this application.<br /><br />Need help? Check out our <a target="blank" href="https://docs.celigo.com/hc/en-us/categories/360002670492-Connectors">documentation</a> or <a target="blank" href="https://docs.celigo.com/hc/en-us/community/topics" >join our community</a>.</Typography>
+          <img src={marketPlaceConnectAppUrl} alt="Marketplace Connect App" />
+        </div>
       )}
       <div className={classes.root}>
         {connectors.map(connector => (

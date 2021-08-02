@@ -4344,6 +4344,11 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('integrationAppSectionFlows reducer', () => {
+    const sortProperties = {
+      lastExecutedAtSort: undefined,
+      lastExecutedAtSortType: 'date',
+    };
+
     test('should not throw error for bad params', () => {
       expect(selectors.integrationAppSectionFlows()).toEqual([]);
       expect(selectors.integrationAppSectionFlows({})).toEqual([]);
@@ -4366,72 +4371,73 @@ describe('integrationApps selector testcases', () => {
         selectors.integrationAppSectionFlows(state, 'integrationId2')
       ).toEqual([
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018a4',
           _integrationId: 'integrationId2',
           errors: 0,
           name: '5d9b20328a71fc911a4018a4',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018a7',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018a7',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018a8',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018a8',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018a9',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018a9',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018ac',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018ac',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018ad',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018ad',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018b0',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018b0',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018b2',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018b2',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018b3',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018b3',
         },
         {
+          ...sortProperties,
           _id: '5d9b20328a71fc911a4018ba',
           _integrationId: 'integrationId2',
           errors: 0,
-
           name: '5d9b20328a71fc911a4018ba',
         },
       ]);
@@ -4454,6 +4460,7 @@ describe('integrationApps selector testcases', () => {
         selectors.integrationAppSectionFlows(state, 'integrationId')
       ).toEqual([
         {
+          ...sortProperties,
           _id: '5d9f70b98a71fc911a4068bd',
           _integrationId: 'integrationId',
           name: '5d9f70b98a71fc911a4068bd',
@@ -4463,6 +4470,7 @@ describe('integrationApps selector testcases', () => {
           id: '5d9f70b98a71fc911a4068bd',
         },
         {
+          ...sortProperties,
           _id: '5d9f71628a71fc911a4068d9',
           _integrationId: 'integrationId',
           name: '5d9f71628a71fc911a4068d9',
@@ -4496,6 +4504,7 @@ describe('integrationApps selector testcases', () => {
         )
       ).toEqual([
         {
+          ...sortProperties,
           _id: '5d9f70b98a71fc911a4068bd',
           _integrationId: 'integrationId',
           errors: 0,

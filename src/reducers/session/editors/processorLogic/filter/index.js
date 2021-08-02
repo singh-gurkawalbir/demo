@@ -15,7 +15,7 @@ export default {
       ({ data } = editor);
     }
 
-    if (typeof data !== 'object') {
+    if (!data || typeof data !== 'object') {
       data = {};
     }
 

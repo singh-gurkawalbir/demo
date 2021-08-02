@@ -118,6 +118,10 @@ export default {
 
     if (fieldState?.type !== 'httprequestbody') {
       resultMode = 'text';
+    } else if (fieldId === 'file.xml.body') {
+      resultMode = 'xml';
+    } else if (fieldId === 'file.json.body') {
+      resultMode = 'json';
     } else {
       resultMode = contentType;
     }

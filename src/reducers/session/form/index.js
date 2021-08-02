@@ -2,6 +2,8 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
+import { get} from 'lodash';
+import { compare, getValueByPointer } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFields,
@@ -9,7 +11,8 @@ import {
   isVisible,
 } from '../../../utils/form';
 import fields from './fields';
-import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/formFactory/utils';
+import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta, getInvalidFields} from '../../../forms/formFactory/utils';
+import trim from '../../../utils/trim';
 
 function form(state = {}, action) {
   // we can have the same form key but different remount keys
@@ -53,6 +56,15 @@ function form(state = {}, action) {
           draft[
             formKey
           ].showValidationBeforeTouched = showValidationBeforeTouched;
+          if (showValidationBeforeTouched) {
+            const validationIdentifier = draft[formKey].validationOnSaveIdentifier;
+
+            if (!validationIdentifier) {
+              draft[formKey].validationOnSaveIdentifier = 1;
+            } else {
+              draft[formKey].validationOnSaveIdentifier += 1;
+            }
+          }
         }
 
         if (disabled !== undefined) draft[formKey].formIsDisabled = disabled;
@@ -82,6 +94,12 @@ selectors.formState = (state, formKey) => {
   return state[formKey];
 };
 
+selectors.formValueTrimmed = (state, formKey) => {
+  const formValue = selectors.formState(state, formKey)?.value;
+
+  return trim(formValue);
+};
+
 selectors.formRemountKey = (state, formKey) => state?.[formKey]?.remountKey;
 selectors.formParentContext = (state, formKey) => {
   const form = selectors.formState(state, formKey);
@@ -99,6 +117,7 @@ selectors.fieldState = (state, formKey, fieldId) => {
   return form.fields[fieldId];
 };
 
+// TODO: we can delete this code
 selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
   const form = selectors.formState(state, formKey);
 
@@ -129,6 +148,11 @@ selectors.isExpansionPanelErroredForMetaForm = (
 
   return isExpansionPanelErrored(fieldMeta, fields || [], shouldShowPurelyInvalid);
 };
+selectors.isFormPurelyInvalid = (state, formKey) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return getInvalidFields(fields || [], true).length !== 0;
+};
 
 selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
@@ -136,4 +160,58 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
+const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter(f => f.visible).reduce((acc, field) => {
+  const {name} = field;
+  const val = field[key];
+
+  acc[name] = val;
+
+  return acc;
+}, {});
+
+selectors.isFormDirty = (state, formKey) => {
+  const form = selectors.formState(state, formKey);
+
+  if (!form) {
+    return false;
+  }
+
+  const defaultValueState = calculateAllFieldsValue(form, 'defaultValue');
+  const value = calculateAllFieldsValue(form, 'value');
+
+  const diffAr = compare(defaultValueState, value);
+
+  if (!diffAr.length) {
+    return false;
+  }
+
+  return diffAr.some(patch => {
+    const { op, value, path} = patch;
+    const defaultValueOrig = getValueByPointer(defaultValueState, path);
+
+    if ([undefined, null, ''].includes(defaultValueOrig) && op === 'remove') {
+      return false;
+    }
+    if (op === 'replace' || op === 'add') {
+      if ([undefined, null, ''].includes(defaultValueOrig) && (value === '' || (Array.isArray(value) && value.length === 0))) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return true;
+  });
+};
+
+selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
+  const form = selectors.formState(state, formKey);
+
+  if (!form) return false;
+  const actionButtonMeta = form.fieldMeta.actions?.find?.(({id}) => id === actionButtonFieldId) || {};
+
+  if (!actionButtonMeta) { return true; }
+
+  return isVisible(actionButtonMeta, form.fields);
+};
 // #endregion

@@ -1,9 +1,13 @@
-import {invert} from 'lodash';
+import invert from 'lodash/invert';
 
 export const emptyList = Object.freeze([]);
 export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
+});
+export const AFE_SAVE_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  REQUESTED: 'requested',
 });
 export const FORM_SAVE_STATUS = Object.freeze({
   COMPLETE: 'complete',
@@ -156,9 +160,10 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
+export const GET_DOCS_MAX_LIMIT = process.env.GET_DOCS_MAX_LIMIT || 1500;
 export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
-export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
+export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite' };
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
@@ -269,6 +274,7 @@ export const JOB_STATUS = Object.freeze({
   QUEUED: 'queued',
   RUNNING: 'running',
   RETRYING: 'retrying',
+  CANCELING: 'canceling',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
@@ -312,7 +318,6 @@ export const REST_ASSISTANTS = [
   'asana',
   'shopify',
   'slack',
-  // 'desk',
   'eventbrite',
   'smartsheet',
   'campaignmonitor',
@@ -644,7 +649,7 @@ export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
-export const FILE_PROVIDER_ASSISTANTS = ['googledrive'];
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
 export const CONNECTORS_TO_IGNORE = ['yammer',
   'hybris',
   'etsy',
@@ -685,3 +690,29 @@ export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
 export const SENSITIVE_DATA = ['token', 'password'];
+
+export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
+  'accesstokens',
+  'agents',
+  'iClients',
+  'scripts',
+  'stacks',
+  'templates',
+  'published',
+  'transfers',
+  'apis',
+  'connectors',
+]);
+
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+
+export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
+
+export const MAPPINGS_FORM_KEY = 'mappingsformkey';
+export const HOME_PAGE_PATH = '/home';
+
+export const MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+};

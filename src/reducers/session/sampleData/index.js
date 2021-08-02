@@ -110,3 +110,12 @@ selectors.mkPreviewStageDataList = () => createSelector(
 
 selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize;
 
+selectors.getResourceSampleDataStages = (state, resourceId) => {
+  const sampleData = state?.[resourceId]?.data || {};
+
+  return Object.keys(sampleData).map(stage => ({
+    name: stage,
+    data: sampleData[stage],
+  }));
+};
+
