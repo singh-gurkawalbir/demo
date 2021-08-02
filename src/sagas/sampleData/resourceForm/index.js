@@ -50,6 +50,7 @@ function* clearResourceSampleDataStages({ resourceId }) {
   yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, undefined));
   yield put(actions.resourceFormSampleData.setParseData(resourceId, undefined));
   yield put(actions.resourceFormSampleData.setPreviewData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
 export function* _getProcessorOutput({ processorData }) {
@@ -287,7 +288,7 @@ function* requestFileSampleData({ formKey }) {
   const fileType = resourceObj?.file?.type;
 
   if (!fileType) {
-    return;
+    return yield call(clearResourceSampleDataStages, { resourceId });
   }
 
   const fileProps = resourceObj.file[fileType] || {};
@@ -389,9 +390,6 @@ function* requestLookupSampleData({ formKey, refreshCache }) {
 
 function* requestExportSampleData({ formKey, refreshCache }) {
   const { resourceId, flowId } = yield call(fetchResourceInfoFromFormKey, { formKey });
-
-  if (!resourceId) return;
-
   const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
   const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
 
@@ -409,7 +407,7 @@ function* requestImportFileSampleData({ formKey }) {
   const fileType = resourceObj?.file?.type;
 
   if (!fileType) {
-    return;
+    return yield call(clearResourceSampleDataStages, { resourceId });
   }
 
   const fileId = `${resourceId}-uploadFile`;
@@ -445,21 +443,23 @@ function* requestImportFileSampleData({ formKey }) {
   } else {
     yield call(clearResourceSampleDataStages, { resourceId });
   }
+  yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
 function* requestImportSampleData({ formKey }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
-  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
     yield call(requestImportFileSampleData, { formKey });
-    yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
   }
 }
 
 function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+
+  if (!resourceId) return;
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {
