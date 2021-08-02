@@ -393,6 +393,8 @@ function* requestExportSampleData({ formKey, refreshCache }) {
   const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
   const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
 
+  // need to handle standalone export as isPageGenerator returns false but still it needs export sample data
+  // ref: IO-21691
   if (isPageGenerator || isStandaloneExport) {
     yield call(requestPGExportSampleData, { formKey, refreshCache });
   } else {
@@ -469,7 +471,8 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
     const { refreshCache } = options;
 
     yield call(requestExportSampleData, { formKey, refreshCache });
-  } else {
+  }
+  if (resourceType === 'imports') {
     yield call(requestImportSampleData, { formKey });
   }
 }
