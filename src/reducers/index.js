@@ -4545,11 +4545,10 @@ selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectio
   });
 };
 selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
-  // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus1(
     state,
     resourceId,
-    'rawFile',
+    'raw',
   );
 
   if (!rawData) {
@@ -4562,7 +4561,7 @@ selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, reso
     }
   }
 
-  return rawData?.body;
+  return rawData;
 };
 selectors.getSuitescriptMappingSubRecordList = createSelector([
   (state, {integrationId,

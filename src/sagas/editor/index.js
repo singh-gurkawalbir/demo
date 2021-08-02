@@ -17,7 +17,8 @@ import { getResource, commitStagedChanges } from '../resources';
 import processorLogic, { featuresMap } from '../../reducers/session/editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
-import { requestExportSampleData } from '../sampleData/exports';
+// import { requestExportSampleData } from '../sampleData/exports';
+import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
@@ -434,12 +435,13 @@ export function* requestEditorSampleData({
   const needPreviewStagesData = resourceType === 'exports' && !!resource?.http?.paging?.method && previewDataDependentFieldIds.includes(fieldId);
 
   if (showPreviewStageData || needPreviewStagesData) {
-    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+    // yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+    yield call(requestResourceFormSampleData, { formKey });
   }
 
   if (showPreviewStageData) {
     const parsedData = yield select(
-      selectors.getResourceSampleDataWithStatus,
+      selectors.getResourceSampleDataWithStatus1,
       resourceId,
       'parse'
     );

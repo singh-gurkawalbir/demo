@@ -456,7 +456,7 @@ function* requestImportSampleData({ formKey }) {
   }
 }
 
-function* requestResourceFormSampleData({ formKey, options = {} }) {
+export function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId) return;

@@ -17,16 +17,13 @@ export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
   if (!resource || !newResourceId) return;
 
   const { data: sampleData } = yield select(
-    selectors.getResourceSampleDataWithStatus,
+    selectors.getResourceSampleDataWithStatus1,
     newResourceId,
     'raw'
   );
 
-  if (!sampleData || !sampleData.body) return;
-  const processedData = yield call(parseFileData, {
-    sampleData: sampleData.body,
-    resource,
-  });
+  if (!sampleData) return;
+  const processedData = yield call(parseFileData, { sampleData, resource });
 
   // processor calls return data wrapped inside 'data' array
   return processedData?.data?.[0];
