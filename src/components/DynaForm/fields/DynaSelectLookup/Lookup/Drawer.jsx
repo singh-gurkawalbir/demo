@@ -14,9 +14,9 @@ export default function LookupDrawer(props) {
       path={['lookup/edit/:lookupName', 'lookup/add']}
       height="tall"
       width="default"
-      variant="temporary"
+      variant="persistent"
       >
-      <DrawerHeader title={`${isEdit ? 'Edit' : 'Add'} Lookup`} />
+      <DrawerHeader title={`${isEdit ? 'Edit' : 'Create'} lookup`} />
       <DrawerContent>
         <Lookup {...props} />
       </DrawerContent>

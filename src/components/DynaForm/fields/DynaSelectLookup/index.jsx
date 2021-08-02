@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch/lib/core';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import DynaSelect from '../DynaSelect';
@@ -32,8 +32,7 @@ export default function DynaSelectLookup(props) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-
-  const lookupOptions = [{ items: lookups.map(l => ({ label: l.name, value: l.name })) }];
+  const lookupOptions = useMemo(() => [{ items: lookups.map(l => ({ label: l.name, value: l.name })) }], [lookups]);
 
   const handleAddLookupClick = useCallback(
     () => {
