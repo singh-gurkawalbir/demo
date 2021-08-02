@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import FormLabel, { makeStyles } from '@material-ui/core';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
@@ -19,8 +18,8 @@ const useStyles = makeStyles(theme => ({
   actions: {
     marginTop: theme.spacing(2),
   },
-  inlineActions: {
-    display: 'inline',
+  dynaWebhookWrapper: {
+    display: 'flex',
   },
 }));
 
@@ -72,26 +71,25 @@ export default function DynaWebHookSampleData(props) {
   );
 
   return (
-    <div>
-      <FormLabel error={!isValid} >{label}</FormLabel>
-
-      <div className={classes.container}>
-        <CodeEditor
-          name="sampleData"
-          value={sampleData}
-          mode="json"
-          onChange={handleSampleDataChange}
+    <div className={classes.dynaWebhookWrapper}>
+      <div>
+        <FormLabel error={!isValid} >{label}</FormLabel>
+        <div className={classes.container}>
+          <CodeEditor
+            name="sampleData"
+            value={sampleData}
+            mode="json"
+            onChange={handleSampleDataChange}
+        />
+        </div>
+        <FieldMessage
+          description={description}
+          errorMessages={errorMessages}
+          isValid={isValid}
         />
       </div>
-      <FieldMessage
-        description={description}
-        errorMessages={errorMessages}
-        isValid={isValid}
-        />
       <div className={classes.actions}>
         <OutlinedButton
-          color="secondary"
-          className={classes.inlineActions}
           onClick={generateSampleData}>
           Click to show
         </OutlinedButton>
