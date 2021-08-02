@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
+import ActionGroup from '../../../../../components/ActionGroup';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
 import { TextButton } from '../../../../../components/Buttons';
 import Status from '../../../../../components/Buttons/Status';
@@ -31,9 +32,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-  },
-  actions: {
-    display: 'flex',
   },
   divider: {
     width: 1,
@@ -364,7 +362,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       <QueuedJobsDrawer />
 
       <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
-        <div className={classes.actions}>
+        <ActionGroup>
           <KeywordSearch
             filterKey={filterKey}
         />
@@ -395,7 +393,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             Load data
           </TextButton>
           )}
-        </div>
+        </ActionGroup>
       </PanelHeader>
 
       <LoadResources required resources="flows, exports">

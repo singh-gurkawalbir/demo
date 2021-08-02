@@ -54,18 +54,6 @@ const useStyles = makeStyles(theme => ({
   actions: {
     marginTop: theme.spacing(2),
   },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
-    fontSize: 15,
-    lineHeight: 2,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
-    },
-  },
   selectResourceItem: {
     display: 'flex',
     alignItems: 'flex-start',

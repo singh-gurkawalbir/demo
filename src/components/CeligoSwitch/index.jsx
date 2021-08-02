@@ -88,11 +88,12 @@ export default function CeligoSwitch({
   );
 }
 
-CeligoSwitch.defaultProps = {
-  checked: false,
-};
 CeligoSwitch.propTypes = {
   disabled: PropTypes.bool,
   checked: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+};
+
+CeligoSwitch.defaultProps = {
+  checked: false,
 };

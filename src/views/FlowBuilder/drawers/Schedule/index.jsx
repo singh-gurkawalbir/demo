@@ -21,7 +21,6 @@ const useStyle = makeStyles(theme => ({
     // overflowX: 'hidden',
     '& > div:first-child': {
       marginLeft: theme.spacing(-1),
-      paddingRight: 0,
     },
   },
   paperDefault: {

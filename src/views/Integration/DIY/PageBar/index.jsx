@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
+import ActionGroup from '../../../../components/ActionGroup';
 import { TextButton } from '../../../../components/Buttons';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
@@ -280,52 +281,55 @@ export default function PageBar() {
                 undefined
               )
             }>
-      {canClone && hasIntegration && (
-      <TextButton
-        component={Link}
-        to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
-        startIcon={<CopyIcon />}
-        data-test="cloneIntegration">
-        Clone integration
-      </TextButton>
-      )}
-      {/* Sravan needs to move add child functionality to integrationApps */}
-      { supportsChild && (
-      <>
+
+      <ActionGroup>
+        {canClone && hasIntegration && (
         <TextButton
-          onClick={handleAddNewChild}
+          component={Link}
+          to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
           startIcon={<CopyIcon />}
-          data-test="addNewStore">
-          Add new child
+          data-test="cloneIntegration">
+          Clone integration
         </TextButton>
-        <Select
-          displayEmpty
-          data-test="select Child"
-          className={classes.storeSelect}
-          onChange={handleChildChange}
-          IconComponent={ArrowDownIcon}
-          value={childId}>
-          <MenuItem disabled value="">
-            Select child
-          </MenuItem>
-
-          {children.map(s => (
-            <MenuItem key={s.value} value={s.value}>
-              {s.label}
+        )}
+        {/* Sravan needs to move add child functionality to integrationApps */}
+        { supportsChild && (
+        <>
+          <TextButton
+            onClick={handleAddNewChild}
+            startIcon={<CopyIcon />}
+            data-test="addNewStore">
+            Add new child
+          </TextButton>
+          <Select
+            displayEmpty
+            data-test="select Child"
+            className={classes.storeSelect}
+            onChange={handleChildChange}
+            IconComponent={ArrowDownIcon}
+            value={childId}>
+            <MenuItem disabled value="">
+              Select child
             </MenuItem>
-          ))}
-        </Select>
-      </>
-      )}
 
-      {canDelete && hasIntegration && !isIntegrationApp && (
-      <TextButton
-        startIcon={<TrashIcon />}
-        data-test="deleteIntegration"
-        onClick={handleDelete}>
-        Delete integration
-      </TextButton>
-      )}
+            {children.map(s => (
+              <MenuItem key={s.value} value={s.value}>
+                {s.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </>
+        )}
+
+        {canDelete && hasIntegration && !isIntegrationApp && (
+        <TextButton
+          startIcon={<TrashIcon />}
+          data-test="deleteIntegration"
+          onClick={handleDelete}>
+          Delete integration
+        </TextButton>
+        )}
+      </ActionGroup>
     </CeligoPageBar>
   );
 }

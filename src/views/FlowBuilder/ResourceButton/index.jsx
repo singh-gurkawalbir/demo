@@ -7,7 +7,7 @@ import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../components/icons/TransferUpIcon';
-import { OutlinedButton } from '../../../components/Buttons';
+import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
@@ -50,14 +50,12 @@ export default function ResourceButton({ onClick, variant }) {
   const block = blockMap[variant];
 
   return (
-    <OutlinedButton
-      size="small"
-      color="secondary"
+    <TextButton
       className={classes.blockButton}
       data-test={block.label}
       startIcon={<block.Icon className={classes.blockIcon} />}
       onClick={onClick}>
       {block.label}
-    </OutlinedButton>
+    </TextButton>
   );
 }

@@ -12,7 +12,11 @@ const useStyles = makeStyles(theme => ({
   left: {
     '& > *': {
       marginRight: theme.spacing(2),
+      '&:last-child': {
+        marginRight: 0,
+      },
     },
+
   },
   right: {
     '& > :not(:last-child)': {
@@ -21,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionGroup({ children, className, position}) {
+export default function ActionGroup({ children, position, className }) {
   const classes = useStyles();
 
   return (
@@ -37,6 +41,7 @@ export default function ActionGroup({ children, className, position}) {
 ActionGroup.propTypes = {
   position: PropTypes.oneOf(['left', 'right']),
   children: PropTypes.node.isRequired,
+  className: PropTypes.string,
 };
 ActionGroup.defaultProps = {
   position: 'left',
