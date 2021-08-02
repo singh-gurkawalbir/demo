@@ -27,8 +27,8 @@ const useStyles = makeStyles(theme => ({
   description: {
     color: theme.palette.text.hint,
     '& a': {
-      marginLeft: 4,
-      marginRight: 4,
+      marginLeft: theme.spacing(0.5),
+      marginRight: theme.spacing(0.5),
     },
   },
 }));
