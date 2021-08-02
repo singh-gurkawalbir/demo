@@ -9,7 +9,7 @@ import {
 } from '../util';
 
 function getParentJobIndex(jobs, jobId) {
-  return jobs.findIndex(j => j._id === jobId);
+  return jobs?.findIndex(j => j._id === jobId);
 }
 export default (state = {}, action) => {
   const { type, collection = [], jobId, nextPageURL, loadMore } = action;
@@ -43,7 +43,10 @@ export default (state = {}, action) => {
         delete draft.status;
         break;
       case actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY:
-        collection.forEach(job => {
+        if (!draft.runningJobs) {
+          draft.runningJobs = [];
+        }
+        collection?.forEach(job => {
           const index = getParentJobIndex(state.runningJobs, job._id);
 
           if (index > -1) {
