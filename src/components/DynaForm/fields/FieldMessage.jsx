@@ -8,9 +8,7 @@ import WarningIcon from '../../icons/WarningIcon';
 const useStyles = makeStyles(theme => ({
   descriptionWrapper: {
     marginTop: theme.spacing(0.5),
-    display: 'flex',
-    alignItems: 'flex-start',
-    flexDirection: 'column',
+    lineHeight: '20px',
     '&:empty': {
       display: 'none',
     },
@@ -27,12 +25,10 @@ const useStyles = makeStyles(theme => ({
     verticalAlign: 'text-bottom',
   },
   description: {
-    lineHeight: '20px',
-    display: 'block',
     color: theme.palette.text.hint,
     '& a': {
-      marginLeft: theme.spacing(0.5),
-      marginRight: theme.spacing(0.5),
+      marginLeft: 4,
+      marginRight: 4,
     },
   },
 }));
@@ -43,23 +39,24 @@ export default function FieldMessage({ description, errorMessages, warningMessag
   return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(classes.descriptionWrapper, className)}>
+      className={clsx(classes.descriptionWrapper, className)}
+      component="div">
       {description && (
-      <span className={classes.description}>
+      <div className={classes.description}>
         {description}
-      </span>
+      </div>
       )}
       {warningMessages && (
-      <span className={classes.warning}>
+      <div className={classes.warning}>
         {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
         {warningMessages}
-      </span>
+      </div>
       )}
       {errorMessages && (
-      <span className={classes.error}>
+      <div className={classes.error}>
         {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
         {isValid ? description : errorMessages}
-      </span>
+      </div>
       )}
     </FormHelperText>
   ) : null;
