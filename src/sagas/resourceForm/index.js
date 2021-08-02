@@ -97,22 +97,21 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     return values;
   }
 
-  // 'rawFile' stage gives back the file content as well as file type
   const { data: rawData } = yield select(
-    selectors.getResourceSampleDataWithStatus,
+    selectors.getResourceSampleDataWithStatus1,
     resourceId,
-    'rawFile'
+    'raw'
   );
 
   if (!rawData) return values;
   // Gets application file type to be passed on file upload
-  const fileType = fileTypeToApplicationTypeMap[rawData.type];
+  const uploadedFileType = values['/file/type'];
+  const fileType = fileTypeToApplicationTypeMap[uploadedFileType];
   // Incase of JSON, we need to stringify the content to pass while uploading
-  const fileContent =
-    rawData.type === 'json' ? JSON.stringify(rawData.body) : rawData.body;
+  const fileContent = uploadedFileType === 'json' ? JSON.stringify(rawData) : rawData;
   const rawDataKey = yield call(uploadRawData, {
     file: fileContent,
-    fileName: `file.${rawData.type}`,
+    fileName: `file.${uploadedFileType}`,
     fileType,
   });
 
