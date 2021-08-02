@@ -158,7 +158,7 @@ export default function PreviewInfo(props) {
             color="secondary"
             className={classes.previewBtn}
             onClick={handlePreview}
-            disabled={disablePreview}
+            disabled={showPreviewData && disablePreview}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </IconTextButton>
