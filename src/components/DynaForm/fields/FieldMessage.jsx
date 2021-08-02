@@ -6,7 +6,7 @@ import ErrorIcon from '../../icons/ErrorIcon';
 import WarningIcon from '../../icons/WarningIcon';
 
 const useStyles = makeStyles(theme => ({
-  textMessage: {
+  descriptionWrapper: {
     marginTop: theme.spacing(0.5),
     display: 'flex',
     alignItems: 'flex-start',
@@ -43,7 +43,7 @@ export default function FieldMessage({ description, errorMessages, warningMessag
   return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(classes.textMessage, className)}>
+      className={clsx(classes.descriptionWrapper, className)}>
       {description && (
       <span className={classes.description}>
         {description}
