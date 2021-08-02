@@ -1,5 +1,4 @@
 import { deepClone } from 'fast-json-patch/lib/core';
-import { IconButton } from '@material-ui/core';
 import React, { useCallback, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,7 +10,7 @@ import LookupDrawer from './Lookup/Drawer';
 import ManageLookupDrawer from '../../../drawer/Lookup';
 import lookupUtil from '../../../../utils/lookup';
 import useFormContext from '../../../Form/FormContext';
-import EllipsisIcon from '../../../icons/EllipsisHorizontalIcon';
+import EllipsisActionMenu from '../../../EllipsisActionMenu';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,6 +35,11 @@ export default function DynaSelectLookup(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const lookupOptions = useMemo(() => [{ items: lookups.map(l => ({ label: l.name, value: l.name })) }], [lookups]);
+  const actionsMenu = [
+    {
+      action: 'managelokups',
+      label: 'Manage lookups',
+    }];
 
   const handleAddLookupClick = useCallback(
     () => {
@@ -85,7 +89,7 @@ export default function DynaSelectLookup(props) {
     },
     [adaptorType, onFieldChange],
   );
-  const handleMoreClick = useCallback(() => {
+  const handleManageLookupsClick = useCallback(() => {
     history.push(`${match.url}/lookup`);
   }, [history, match.url]);
 
@@ -105,14 +109,7 @@ export default function DynaSelectLookup(props) {
             onClick={handleEditLookupClick}>
             <EditIcon />
           </ActionButton>
-          <IconButton
-            data-test="openActionsMenu"
-            aria-label="more"
-            aria-haspopup="true"
-            size="small"
-            onClick={handleMoreClick}>
-            <EllipsisIcon />
-          </IconButton>
+          <EllipsisActionMenu actionsMenu={actionsMenu} onAction={handleManageLookupsClick} />
         </div>
       </div>
 
