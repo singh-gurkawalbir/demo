@@ -3,7 +3,7 @@
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,9 +22,11 @@ import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import IconTextButton from '../../../../../components/IconTextButton';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -89,6 +91,14 @@ export default function IntegrationAppAddNewChild(props) {
   const { steps: addNewChildSteps, error } = useSelector(state =>
     selectors.addNewChildSteps(state, integrationId)
   );
+  const currentStep = useMemo(() => (addNewChildSteps || []).find(s => s.isCurrentStep), [
+    addNewChildSteps,
+  ]);
+
+  const currStepIndex = useMemo(() => addNewChildSteps?.indexOf(currentStep), [
+    currentStep,
+    addNewChildSteps,
+  ]);
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
@@ -165,7 +175,7 @@ export default function IntegrationAppAddNewChild(props) {
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction } = step;
+    const { _connectionId, installURL, installerFunction, type, form } = step;
 
     // handle connection step click
     if (_connectionId) {
@@ -205,6 +215,14 @@ export default function IntegrationAppAddNewChild(props) {
         );
       }
       // handle Action step click
+    } else if (type === INSTALL_STEP_TYPES.FORM) {
+      console.log('handle Step Click should be here', form);
+      dispatch(actions.integrationApp.child.updateStep(
+        integrationId,
+        installerFunction,
+        'inProgress',
+        form
+      ));
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.child.updateStep(
@@ -289,6 +307,15 @@ export default function IntegrationAppAddNewChild(props) {
           resourceType="connections"
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
+        />
+      )}
+      {currentStep && currentStep.formMeta && (
+        <FormStepDrawer
+          integrationId={integrationId}
+          formMeta={currentStep.formMeta}
+          installerFunction={currentStep.installerFunction}
+          title={currentStep.name}
+          index={currStepIndex + 1}
         />
       )}
       <div className={classes.installIntegrationWrapper}>
