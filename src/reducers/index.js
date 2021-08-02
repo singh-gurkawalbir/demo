@@ -3655,7 +3655,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinke
   if (ssLinkedConnectionId) return selectors.suiteScriptFileExportSampleData(state, {resourceId, resourceType, ssLinkedConnectionId});
 
   const stage = fileType === 'xlsx' ? 'csv' : 'raw';
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus1(
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
     stage,
@@ -4545,7 +4545,7 @@ selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectio
   });
 };
 selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus1(
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
     'raw',

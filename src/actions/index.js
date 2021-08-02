@@ -1278,32 +1278,6 @@ const user = {
       action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
-const sampleData = {
-  request: (resourceId, resourceType, values, stage, options = {}) =>
-    action(actionTypes.SAMPLEDATA.REQUEST, {
-      resourceId,
-      resourceType,
-      values,
-      stage,
-      options,
-    }),
-  requestLookupPreview: (resourceId, flowId, formValues, options) =>
-    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
-      resourceId,
-      flowId,
-      formValues,
-      options,
-    }),
-  received: (resourceId, previewData) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
-  update: (resourceId, processedData, stage) =>
-    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
-  patch: (resourceId, patch) =>
-    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
-  receivedError: (resourceId, error, stage) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
-  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
-};
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
     action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, {
@@ -2316,7 +2290,7 @@ export default {
   file,
   assistantMetadata,
   stack,
-  sampleData,
+  resourceFormSampleData,
   importSampleData,
   flowData,
   connection,
@@ -2335,5 +2309,4 @@ export default {
   logs,
   sso,
   bottomDrawer,
-  resourceFormSampleData,
 };

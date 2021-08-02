@@ -96,20 +96,6 @@ export default function DynaCsvParse_afe(props) {
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
 
-    // todo: @raghu removing this dispatch action from here as it will be taken care
-    // by field change on the form itself. Please confirm and remove this comment
-    // dispatch(
-    //   actions.sampleData.request(
-    //     resourceId,
-    //     resourceType,
-    //     {
-    //       type: 'csv',
-    //       // file: csvData,
-    //       editorValues,
-    //     },
-    //     'file'
-    //   )
-    // );
     dispatch(actions.resourceFormSampleData.request(formKey));
   }, [id, onFieldChange, resourceId, resourceType, dispatch, formKey]);
 

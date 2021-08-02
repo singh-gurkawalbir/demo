@@ -98,7 +98,7 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   }
 
   const { data: rawData } = yield select(
-    selectors.getResourceSampleDataWithStatus1,
+    selectors.getResourceSampleDataWithStatus,
     resourceId,
     'raw'
   );

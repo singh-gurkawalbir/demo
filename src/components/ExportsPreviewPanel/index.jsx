@@ -7,7 +7,6 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
-import { isFileAdaptor } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -34,46 +33,19 @@ function PreviewInfo({
   flowId,
   resourceId,
   formKey,
-  resourceType,
   resourceSampleData,
   previewStageDataList,
   showPreviewData,
   setShowPreviewData,
 }) {
-  const value = useSelector(
-    state => selectors.formState(state, formKey)?.value,
-    shallowEqual
-  );
   const dispatch = useDispatch();
-  const isPageGeneratorExport = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId)
-  );
-
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
 
   const fetchExportPreviewData = useCallback(() => {
-    // // Just a fail safe condition not to request for sample data incase of not exports
-    if (resourceType !== 'exports') return;
-
     dispatch(actions.flowData.clearStages(flowId));
-
-    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
-    if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
-      dispatch(actions.sampleData.request(resourceId, resourceType, value, null, {flowId, refreshCache: true}));
-    } else {
-      dispatch(actions.sampleData.requestLookupPreview(resourceId, flowId, value, {refreshCache: true}));
-    }
     dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
   }, [
-    isPageGeneratorExport,
     dispatch,
-    resourceId,
-    resourceType,
-    value,
     flowId,
-    resource,
     formKey,
   ]);
 
@@ -86,9 +58,6 @@ function PreviewInfo({
   // remove this action, if in future we need to retain record size
   useEffect(() =>
     () => {
-      dispatch(actions.sampleData.patch(resourceId, {
-        recordSize: DEFAULT_RECORD_SIZE,
-      }));
       dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, DEFAULT_RECORD_SIZE));
     },
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,13 +87,13 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   // get the map of all the stages with their respective sampleData for the stages
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
-  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList1, resourceId, previewStages);
+  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
 
   // get the default raw stage sampleData to track the status of the request
   // As the status is same for all the stages
   // TODO @Raghu : what if later on there is a need of individual status for each stage?
   const resourceSampleData = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus1(state, resourceId, 'raw'),
+    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
   shallowEqual
   );
 
@@ -133,7 +102,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
       className={classes.previewPanelWrapper}>
       <Typography data-public className={classes.previewDataHeading}>
         Preview data
-        {/* <FieldHelp label="Preview data" helpKey="exports.previewData" /> */}
       </Typography>
       <div className={classes.container}>
         <PreviewInfo
@@ -142,7 +110,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
           flowId={flowId}
           resourceId={resourceId}
           formKey={formKey}
-          resourceType={resourceType}
           setShowPreviewData={setShowPreviewData}
           showPreviewData={showPreviewData}
       />

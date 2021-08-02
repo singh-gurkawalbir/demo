@@ -47,7 +47,7 @@ export default function DynaUploadFile(props) {
   );
 
   useEffect(() => {
-    const { status, file, rawFile, fileType, name } = uploadedFile || {};
+    const { status, file, rawFile, name } = uploadedFile || {};
 
     if (status === 'received') {
       setFileName(name);
@@ -66,19 +66,6 @@ export default function DynaUploadFile(props) {
       } else {
         onFieldChange(id, file);
       }
-
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: fileType,
-            file,
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
       dispatch(actions.resourceFormSampleData.request(formKey));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,7 +77,6 @@ export default function DynaUploadFile(props) {
     // when persistData is passed... no cleanup is done as it implies retaining existing state
     // TODO @Raghu: Find a better way to clean up only when needed
     if (options && !persistData) {
-      dispatch(actions.sampleData.reset(resourceId));
       dispatch(actions.resourceFormSampleData.clear(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);

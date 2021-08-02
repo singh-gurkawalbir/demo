@@ -33,7 +33,7 @@ export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type
   }
 
   const { data: rawData } = yield select(
-    selectors.getResourceSampleDataWithStatus1,
+    selectors.getResourceSampleDataWithStatus,
     tempResourceId || resourceId,
     stage
   );

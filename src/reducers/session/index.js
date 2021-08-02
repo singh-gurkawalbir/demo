@@ -12,7 +12,6 @@ import stackSystemTokens, { selectors as fromStackSystemTokens } from './stackSy
 import apiAccessTokens, { selectors as fromApiAccessTokens } from './apiAccessTokens';
 import connectionToken, { selectors as fromConnectionToken } from './connectionToken';
 import netsuiteUserRole, { selectors as fromNetsuiteUserRoles } from './netsuiteUserRoles';
-import sampleData, { selectors as fromSampleData } from './sampleData';
 import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/imports';
 import flowData, { selectors as fromFlowData } from './sampleData/flows';
@@ -57,7 +56,6 @@ export default combineReducers({
   apiAccessTokens,
   resource,
   netsuiteUserRole,
-  sampleData,
   importSampleData,
   flowData,
   flowMetrics,
@@ -99,7 +97,6 @@ const subSelectors = {
   apiAccessTokens: fromApiAccessTokens,
   connectionToken: fromConnectionToken,
   netsuiteUserRole: fromNetsuiteUserRoles,
-  sampleData: fromSampleData,
   importSampleData: fromImportSampleData,
   flowData: fromFlowData,
   integrationApps: fromIntegrationApps,

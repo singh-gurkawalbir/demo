@@ -39,19 +39,6 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
       if (isEditorActive) {
         dispatch(actions.editor.patchData(editorId, sampleData));
       }
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: parserType,
-            file: sampleData,
-            editorValues: { rule, data: sampleData },
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
       dispatch(actions.resourceFormSampleData.request(formKey));
     }
     if (rule) {

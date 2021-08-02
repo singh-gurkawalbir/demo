@@ -122,7 +122,7 @@ function* requestExportPreviewData({ formKey }) {
   body._flowId = flow?._id;
   body._integrationId = integrationId;
 
-  const recordSize = yield select(selectors.getSampleDataRecordSize, resourceId);
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (recordSize && !Number.isNaN(recordSize)) {
     body.test = { limit: recordSize };
@@ -165,7 +165,7 @@ export function* _hasSampleDataOnResource({ formKey }) {
 }
 
 function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
-  const recordSize = yield select(selectors.getSampleDataRecordSize, resourceId);
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
     yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
@@ -351,7 +351,7 @@ function* requestLookupSampleData({ formKey, refreshCache }) {
   }
   // make PP preview call incase of all other adaptors
   const resourceType = 'exports';
-  const recordSize = yield select(selectors.getSampleDataRecordSize, resourceId);
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
   const { transform, filter, hooks, sampleData, ...constructedResourceObj } = resourceObj;
@@ -457,6 +457,9 @@ function* requestImportSampleData({ formKey }) {
 }
 
 export function* requestResourceFormSampleData({ formKey, options = {} }) {
+  if (!formKey) {
+    return;
+  }
   const { resourceType, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId) return;

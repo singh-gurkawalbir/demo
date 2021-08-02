@@ -9,15 +9,12 @@ import { selectors } from '../../../reducers';
 export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValidRecordSize, resourceId }) {
   const dispatch = useDispatch();
   const sampleDataRecordSize = useSelector(state =>
-    selectors.sampleDataRecordSize(state, resourceId)
+  selectors.sampleDataRecordSize(state, resourceId)
   );
   const [recordSize, setRecordSize] = useState(`${sampleDataRecordSize || DEFAULT_RECORD_SIZE}`);
   const [errorMessage, setErrorMessage] = useState();
 
   const patchRecordSize = useCallback(size => {
-    dispatch(actions.sampleData.patch(resourceId, {
-      recordSize: size,
-    }));
     dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, size));
   }, [dispatch, resourceId]);
 
@@ -53,9 +50,6 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
 
   useEffect(() => {
     if (!sampleDataRecordSize) {
-      dispatch(actions.sampleData.patch(resourceId, {
-        recordSize: DEFAULT_RECORD_SIZE,
-      }));
       dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, DEFAULT_RECORD_SIZE));
     }
   }, [sampleDataRecordSize, dispatch, resourceId]);

@@ -17,7 +17,7 @@ export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
   if (!resource || !newResourceId) return;
 
   const { data: sampleData } = yield select(
-    selectors.getResourceSampleDataWithStatus1,
+    selectors.getResourceSampleDataWithStatus,
     newResourceId,
     'raw'
   );

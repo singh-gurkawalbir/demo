@@ -85,7 +85,7 @@ export default function (state = {}, action) {
 
 export const selectors = {};
 
-selectors.getSampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize || DEFAULT_RECORD_SIZE;
+selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize || DEFAULT_RECORD_SIZE;
 
 export const getResourceSampleData = (resourceIdSampleData, stage) => {
   const resourceData = resourceIdSampleData?.data;
@@ -108,9 +108,9 @@ const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
   error: resourceIdSampleData?.error,
 });
 
-selectors.getResourceSampleDataWithStatus1 = (state, resourceId, stage) => getResourceSampleDataWithStatus(state?.[resourceId], stage);
+selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getResourceSampleDataWithStatus(state?.[resourceId], stage);
 
-selectors.mkPreviewStageDataList1 = () => createSelector(
+selectors.mkPreviewStageDataList = () => createSelector(
   (state, resourceId) => state?.[resourceId],
   (_1, _2, stages) => stages,
   (resourceIdSampleData, stages) => {
@@ -123,3 +123,12 @@ selectors.mkPreviewStageDataList1 = () => createSelector(
     }, {});
   }
 );
+
+selectors.getResourceSampleDataStages = (state, resourceId) => {
+  const sampleData = state?.[resourceId]?.data || {};
+
+  return Object.keys(sampleData).map(stage => ({
+    name: stage,
+    data: sampleData[stage],
+  }));
+};
