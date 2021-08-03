@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function InfoIconButton({ info, size = 'small', className, disableHtml }) {
-  console.log('disableHtml', disableHtml);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
