@@ -128,6 +128,7 @@ export default {
           type: 'text',
           label: 'Enter default value',
           defaultValue: lookup.default,
+          helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
           placeholder: 'Enter default value',
           visibleWhen: [
             {
