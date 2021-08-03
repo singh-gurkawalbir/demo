@@ -42,7 +42,7 @@ describe('Sample data region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.canSelectRecordsInPreviewPanel()).toBeTruthy();
+      expect(selectors.canSelectRecordsInPreviewPanel()).toBeFalsy();
     });
     test('should return false for real time resources like distributed NS/SF/webhook ', () => {
       expect(selectors.canSelectRecordsInPreviewPanel(sampleState, '1234', 'exports')).toBeFalsy();

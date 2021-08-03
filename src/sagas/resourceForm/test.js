@@ -148,7 +148,7 @@ describe('resourceForm sagas', () => {
         [select(
           selectors.getResourceSampleDataWithStatus,
           resourceId,
-          'rawFile'
+          'raw'
         ), {}],
       ])
       .returns(values)
@@ -159,12 +159,12 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId
-        ), {merged: {_id: 'res-123', type: 'simple'}}],
+        ), {merged: {_id: 'res-123', type: 'simple', '/file/type': 'json'}}],
         [select(
           selectors.getResourceSampleDataWithStatus,
           resourceId,
-          'rawFile'
-        ), {data: {type: 'json', body: {}}}],
+          'raw'
+        ), {data: {}}],
         [matchers.call.fn(uploadRawData), 's3key'],
       ])
       .call(uploadRawData, {
