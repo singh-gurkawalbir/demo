@@ -90,12 +90,14 @@ export default {
       fieldId: 'http.clientCertificates.cert',
       label: 'SSL certificate',
       type: 'uploadfile',
+      required: true,
       helpKey: 'adp.connection.http.clientCertificates.cert',
     },
     'http.clientCertificates.key': {
       fieldId: 'http.clientCertificates.key',
       label: 'SSL client key',
       type: 'uploadfile',
+      required: true,
       helpKey: 'adp.connection.http.clientCertificates.key',
     },
     'http.clientCertificates.passphrase': {

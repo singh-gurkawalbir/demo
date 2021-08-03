@@ -323,7 +323,7 @@ export default function InstallationWizard(props) {
         <div className={classes.stepTable}>
           {installSteps.map((step, index) => (
             <InstallationStep
-              key={step.name}
+              key={step.key || step.name}
               templateId={templateId}
               connectionMap={connectionMap}
               handleStepClick={handleStepClick}
