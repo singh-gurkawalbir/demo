@@ -118,19 +118,16 @@ export default {
       ) {
         netsuiteBundleNeededForConnections.push(conn._id);
       }
+
+      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn._id)) {
+        salesforceBundleNeededForConnections.push(conn._id);
+      }
     });
     (importDocs || []).forEach(imp => {
       const conn = connections?.find(c => c._id === imp._connectionId);
 
       if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn._id))) {
         netsuiteBundleNeededForConnections.push(conn._id);
-      }
-    });
-    (exportDocs || []).forEach(exp => {
-      const conn = connections?.find(c => c._id === exp._connectionId);
-
-      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn._id)) {
-        salesforceBundleNeededForConnections.push(conn._id);
       }
     });
 
