@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
-import { OutlinedButton } from '../Buttons';
+import { FilledButton } from '../Buttons';
 
 export default function FormButton({
   onClick,
@@ -43,7 +43,7 @@ export default function FormButton({
   if (!fields || !value) return null;
 
   return (
-    <OutlinedButton
+    <FilledButton
       data-test={
         id || (typeof children === 'string' && children) || 'saveButton'
       }
@@ -52,6 +52,6 @@ export default function FormButton({
       disabled={buttonDisabled}
       onClick={onClickBtn}>
       {children}
-    </OutlinedButton>
+    </FilledButton>
   );
 }

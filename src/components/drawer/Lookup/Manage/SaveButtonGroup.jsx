@@ -109,8 +109,7 @@ export default function SaveButtonGroup({ value, formKey, disabled, onCancel, re
         formKey={formKey}
         disabled={disabled}
         data-test="saveLookupForm"
-        onClick={handleSubmit}
-        color="primary" >
+        onClick={handleSubmit}>
         Save
       </DynaSubmit>
       <DynaSubmit
