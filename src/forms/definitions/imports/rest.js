@@ -254,14 +254,6 @@ export default {
       return restPreSave(formValues);
     }
     const retValues = { ...formValues };
-    const lookups = retValues['/http/lookups'];
-    const lookup =
-      lookups &&
-      lookups.find(
-        l =>
-          `${l.name}` === retValues['/http/existingDataId'] ||
-          `${l.name}` === retValues['/http/update/existingDataId']
-      );
     const sampleData = retValues['/sampleData'];
 
     if (sampleData === '') {
@@ -354,13 +346,15 @@ export default {
         retValues['/ignoreExisting'] = true;
         retValues['/ignoreMissing'] = false;
 
-        if (lookup) {
-          retValues['/http/ignoreLookupName'] =
-            retValues['/http/existingDataId'];
-          retValues['/http/ignoreExtract'] = null;
+        if (retValues['/http/ignoreExistingLookupName']) {
+          retValues['/http/ignoreExtract'] = undefined;
+          retValues['/http/ignoreLookupName'] = retValues['/http/ignoreExistingLookupName'];
+        } else if (retValues['/http/ignoreExistingExtract']) {
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = retValues['/http/ignoreExistingExtract'];
         } else {
-          retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
-          retValues['/http/ignoreLookupName'] = null;
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = undefined;
         }
 
         retValues['/http/existingDataId'] = undefined;
@@ -406,14 +400,15 @@ export default {
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = true;
 
-        if (lookup) {
-          retValues['/http/ignoreLookupName'] =
-            retValues['/http/update/existingDataId'];
-          retValues['/http/ignoreExtract'] = null;
+        if (retValues['/http/ignoreNewLookupName']) {
+          retValues['/http/ignoreExtract'] = undefined;
+          retValues['/http/ignoreLookupName'] = retValues['/http/ignoreNewLookupName'];
+        } else if (retValues['/http/ignoreNewExtract']) {
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = retValues['/http/ignoreNewExtract'];
         } else {
-          retValues['/http/ignoreExtract'] =
-            retValues['/http/update/existingDataId'];
-          retValues['/http/ignoreLookupName'] = null;
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = undefined;
         }
 
         retValues['/http/update/existingDataId'] = undefined;
@@ -445,6 +440,12 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
+    delete retValues['/http/existingLookupType'];
+    delete retValues['/http/newLookupType'];
+    delete retValues['/http/ignoreExistingExtract'];
+    delete retValues['/http/ignoreNewExtract'];
+    delete retValues['/http/ignoreExistingLookupName'];
+    delete retValues['/http/ignoreNewLookupName'];
 
     // #region begin
     // Following modifications are done to replicate the backend resttoHttp conversion util
@@ -1030,75 +1031,23 @@ export default {
         },
       ],
     },
-    'http.existingDataId': {
-      id: 'http.existingDataId',
-      type: 'textwithflowsuggestion',
-      showSuggestionsWithoutHandlebar: true,
-      label: 'Existing data id',
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http) {
-          return '';
-        }
-
-        if (r.http.ignoreLookupName) {
-          return r.http.ignoreLookupName;
-        }
-        if (r.http.ignoreExtract) {
-          return r.http.ignoreExtract;
-        }
-
-        return '';
-      },
+    'http.existingLookupType': {
+      fieldId: 'http.existingLookupType',
     },
-    'http.update.existingDataId': {
-      id: 'http.update.existingDataId',
-      type: 'textwithflowsuggestion',
-      showSuggestionsWithoutHandlebar: true,
-      label: 'Existing data id',
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http) {
-          return '';
-        }
-
-        if (r.http.ignoreLookupName) {
-          return r.http.ignoreLookupName;
-        }
-        if (r.http.ignoreExtract) {
-          return r.http.ignoreExtract;
-        }
-
-        return '';
-      },
+    'http.ignoreExistingExtract': {
+      fieldId: 'http.ignoreExistingExtract',
+    },
+    'http.ignoreExistingLookupName': {
+      fieldId: 'http.ignoreExistingLookupName',
+    },
+    'http.newLookupType': {
+      fieldId: 'http.newLookupType',
+    },
+    'http.ignoreNewExtract': {
+      fieldId: 'http.ignoreNewExtract',
+    },
+    'http.ignoreNewLookupName': {
+      fieldId: 'http.ignoreNewLookupName',
     },
     sampleDataTitle: {
       id: 'sampleDataTitle',
@@ -1183,12 +1132,12 @@ export default {
           {
             collapsed: true,
             label: 'Ignore existing records',
-            fields: ['http.existingDataId'],
+            fields: ['http.existingLookupType', 'http.ignoreExistingExtract', 'http.ignoreExistingLookupName'],
           },
           {
             collapsed: true,
             label: 'Ignore new data',
-            fields: ['http.update.existingDataId'],
+            fields: ['http.newLookupType', 'http.ignoreNewExtract', 'http.ignoreNewLookupName'],
           },
           {
             collapsed: true,
