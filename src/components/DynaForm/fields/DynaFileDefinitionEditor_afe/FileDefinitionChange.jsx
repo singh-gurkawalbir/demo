@@ -59,7 +59,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
       }
       // todo @raghu, we need to handle below onFieldChange inside
       // DynaFileDefinitionSelect.jsx
-      dispatch(actions.form.fieldChange(formKey)(fieldId, rule));
+      dispatch(actions.form.fieldChange(formKey)(fieldId, rule, true));
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

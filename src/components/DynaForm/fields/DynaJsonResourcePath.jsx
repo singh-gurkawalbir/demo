@@ -32,7 +32,7 @@ export default function DynaJsonResourcePath(props) {
     onFieldChange(id, {
       resourcePathToShow: value.replace(/\.?\*$/, ''),
       resourcePathToSave: (Array.isArray(parsedJsonContent) && !value) ? '*' : value,
-    });
+    }, true);
   }
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function DynaJsonResourcePath(props) {
           resourcePathToSave = `${resourcePathToSave}.*`;
         }
       }
-      onFieldChange(id, { ...value, resourcePathToSave });
+      onFieldChange(id, { ...value, resourcePathToSave }, true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jsonContent]);
