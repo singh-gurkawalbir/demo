@@ -74,7 +74,7 @@ function* fetchResourceInfoFromFormKey({ formKey }) {
   const formState = yield select(selectors.formState, formKey);
   const parentContext = (yield select(selectors.formParentContext, formKey) || {});
   const resourceObj = (yield call(constructResourceFromFormValues, {
-    formValues: formState?.value || [],
+    formValues: formState?.value || {},
     resourceId: parentContext.resourceId,
     resourceType: parentContext.resourceType,
   })) || {};

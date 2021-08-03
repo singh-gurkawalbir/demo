@@ -3820,7 +3820,7 @@ selectors.isExportPreviewDisabled = (state, formKey) => {
   }
 
   const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
-  const formValues = selectors.formState(state, formKey)?.value || [];
+  const formValues = selectors.formState(state, formKey)?.value || {};
 
   const resourceObj = selectors.resourceData(
     state,

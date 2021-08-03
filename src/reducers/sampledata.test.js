@@ -5,6 +5,26 @@ describe('Sample data region selector testcases', () => {
   describe('selectors.canSelectRecordsInPreviewPanel test cases', () => {
     const sampleState = {
       session: {
+        form: {
+          'exports-new-123': {
+            parentContext: {
+              resourceId: 'new-123',
+              resourceType: 'exports',
+            },
+          },
+          'exports-1234': {
+            parentContext: {
+              resourceId: '1234',
+              resourceType: 'exports',
+            },
+          },
+          'exports-5678': {
+            parentContext: {
+              resourceId: '5678',
+              resourceType: 'exports',
+            },
+          },
+        },
         stage: {
           'new-123': {
             patch: [
@@ -45,8 +65,8 @@ describe('Sample data region selector testcases', () => {
       expect(selectors.canSelectRecordsInPreviewPanel()).toBeFalsy();
     });
     test('should return false for real time resources like distributed NS/SF/webhook ', () => {
-      expect(selectors.canSelectRecordsInPreviewPanel(sampleState, '1234', 'exports')).toBeFalsy();
-      expect(selectors.canSelectRecordsInPreviewPanel(sampleState, 'new-123', 'exports')).toBeFalsy();
+      expect(selectors.canSelectRecordsInPreviewPanel(sampleState, 'exports-1234')).toBeFalsy();
+      expect(selectors.canSelectRecordsInPreviewPanel(sampleState, 'exports-new-123')).toBeFalsy();
     });
     test('should return true for all other resources if the preview panel is enabled', () => {
       expect(selectors.canSelectRecordsInPreviewPanel(sampleState, '5678', 'exports')).toBeTruthy();
@@ -274,16 +294,11 @@ describe('Sample data region selector testcases', () => {
       };
       const jsonFileState = {
         session: {
-          sampleData: {
+          resourceFormSampleData: {
             'export-123': {
               recordSize: 10,
               status: 'received',
-              data: {
-                rawFile: {
-                  body: jsonContent,
-                  type: 'json',
-                },
-              },
+              data: { raw: jsonContent },
             },
           },
         },
@@ -295,14 +310,12 @@ describe('Sample data region selector testcases', () => {
       const csvContent = 'name,age,gender\nname0,21,male\n    ,    ,   \nname1,22,male\n,,\nname2,23,female\nname3,21,male\nname4,22,male\n,,\nname5,23,female\nname6,21,male\n,,\nname7,22,male\n,,\nname8,23,female\nname9,21,male\n';
       const csvFileState = {
         session: {
-          sampleData: {
+          resourceFormSampleData: {
             'export-123': {
               recordSize: 10,
               status: 'received',
               data: {
-                csv: {
-                  body: csvContent,
-                },
+                csv: csvContent,
               },
             },
           },
@@ -483,6 +496,40 @@ describe('Sample data region selector testcases', () => {
 
   describe('selectors.isExportPreviewDisabled test cases', () => {
     const sampleState = {
+      session: {
+        form: {
+          'exports-1234': {
+            parentContext: {
+              resourceId: '1234',
+              resourceType: 'exports',
+            },
+          },
+          'exports-1111': {
+            parentContext: {
+              resourceId: '1111',
+              resourceType: 'exports',
+            },
+          },
+          'exports-5678': {
+            parentContext: {
+              resourceId: '5678',
+              resourceType: 'exports',
+            },
+            value: {
+              '/_connectionId': 'conn-123',
+            },
+          },
+          'exports-2222': {
+            parentContext: {
+              resourceId: '2222',
+              resourceType: 'exports',
+            },
+            value: {
+              '/_connectionId': 'conn-456',
+            },
+          },
+        },
+      },
       data: {
         resources: {
           connections: [
@@ -530,16 +577,16 @@ describe('Sample data region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isExportPreviewDisabled()).toEqual(false);
+      expect(selectors.isExportPreviewDisabled()).toEqual(true);
     });
     test('should return false if the resource is a file type resource as we always allow user to preview', () => {
-      expect(selectors.isExportPreviewDisabled(sampleState, '1111', 'exports')).toBeFalsy();
+      expect(selectors.isExportPreviewDisabled(sampleState, 'exports-1111')).toBeFalsy();
     });
     test('should return true for the other adaptors if the connection is offline', () => {
-      expect(selectors.isExportPreviewDisabled(sampleState, '5678', 'exports')).toBeTruthy();
+      expect(selectors.isExportPreviewDisabled(sampleState, 'exports-5678')).toBeTruthy();
     });
     test('should return false for the other adaptors if the connection is online', () => {
-      expect(selectors.isExportPreviewDisabled(sampleState, '2222', 'exports')).toBeFalsy();
+      expect(selectors.isExportPreviewDisabled(sampleState, 'exports-2222')).toBeFalsy();
     });
   });
 
