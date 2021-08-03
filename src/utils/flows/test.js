@@ -39,6 +39,8 @@ import {
   defaultIA2Flow,
   populateRestSchema,
   addLastExecutedAtSortableProp,
+  shouldUpdateLastModified,
+  flowLastModifiedPatch,
 } from '.';
 import getRoutePath from '../routePaths';
 
@@ -3020,5 +3022,57 @@ describe('addLastExecutedAtSortableProp', () => {
     }];
 
     expect(addLastExecutedAtSortableProp({flows, isUserInErrMgtTwoDotZero: true, latestFlowJobs })).toEqual(expectedResult);
+  });
+
+  const newFlows = [
+    {
+      _id: 1,
+      lastModified: 1,
+    },
+    {
+      _id: 2,
+      lastModified: 2,
+    },
+    {
+      _id: 3,
+      lastModified: 3,
+    },
+  ];
+  const resource = {
+    _id: 1,
+    lastModified: 2,
+  };
+
+  describe('shouldUpdateLastModified', () => {
+    test('should return false if invalid props', () => {
+      expect(shouldUpdateLastModified()).toBeFalsy();
+    });
+    test('should return false if resource.lastModified is less than flow.lastModified', () => {
+      expect(shouldUpdateLastModified(newFlows[2], resource)).toBeFalsy();
+    });
+    test('should return false if resource.lastModified is equal to flow.lastModified', () => {
+      expect(shouldUpdateLastModified(newFlows[1], resource)).toBeFalsy();
+    });
+    test('should return true if resource.lastModified is greated than flow.lastModified', () => {
+      expect(shouldUpdateLastModified(newFlows[0], resource)).toBeTruthy();
+    });
+  });
+  describe('flowLastModifiedPatch', () => {
+    test('should return empty array in case of invalid props', () => {
+      expect(flowLastModifiedPatch()).toEqual([]);
+    });
+    test('should return empty array if resource.lastModified is less than flow.lastModified', () => {
+      expect(flowLastModifiedPatch(newFlows[2], resource)).toEqual([]);
+    });
+    test('should return empty array if resource.lastModified is equal to flow.lastModified', () => {
+      expect(flowLastModifiedPatch(newFlows[1], resource)).toEqual([]);
+    });
+    test('should return correct patch if resource.lastModified is greated than flow.lastModified', () => {
+      expect(flowLastModifiedPatch(newFlows[0], resource)).toEqual([{
+        op: 'replace',
+        path: '/lastModified',
+        value: resource.lastModified,
+      }]);
+    });
   });
 });

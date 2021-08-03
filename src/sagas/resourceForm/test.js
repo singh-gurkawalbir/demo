@@ -958,23 +958,6 @@ describe('resourceForm sagas', () => {
       .returns(undefined)
       .run()
     );
-    test('should not call updateFlowDoc if its an integration app', () => expectSaga(submitResourceForm, {resourceId, resourceType, flowId})
-      .provide([
-        [select(
-          selectors.resourceFormState,
-          resourceType,
-          resourceId
-        ), {}],
-        [select(
-          selectors.resourceData,
-          'flows',
-          flowId
-        ), {merged: {_connectorId: '123'}}],
-      ])
-      .not.call.fn(updateFlowDoc)
-      .returns(undefined)
-      .run()
-    );
     test('should not call updateFlowDoc if skipCommit is true and resource type is not pageGenerator and pageProcessor', () => expectSaga(submitResourceForm, {resourceId, resourceType, flowId})
       .provide([
         [select(

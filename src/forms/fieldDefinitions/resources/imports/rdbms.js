@@ -110,18 +110,111 @@ export default {
       },
     ],
   },
-  'rdbms.ignoreExtract': {
-    label: 'Existing data ID',
+  'rdbms.ignoreExistingExtract': {
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
     required: true,
-    defaultValue: r => {
-      const val =
-        r && r.rdbms && r.rdbms.ignoreLookupName
-          ? r.rdbms.ignoreLookupName
-          : r && r.rdbms && r.rdbms.ignoreExtract;
-
-      return val || '';
-    },
+    defaultValue: r => r.rdbms?.ignoreExtract,
+    visibleWhenAll: [
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
+        field: 'rdbms.lookupType',
+        is: ['source'],
+      },
+    ],
+  },
+  'rdbms.ignoreMissingExtract': {
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    defaultValue: r => r.rdbms?.ignoreExtract,
+    visibleWhenAll: [
+      {
+        field: 'ignoreMissing',
+        is: [true],
+      },
+      {
+        field: 'rdbms.lookupType',
+        is: ['source'],
+      },
+    ],
+  },
+  'rdbms.ignoreExistingLookupName': {
+    label: 'Lookup',
+    type: 'selectlookup',
+    omitWhenHidden: true,
+    defaultValue: r => r.rdbms?.ignoreLookupName,
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    helpKey: 'import.lookup',
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'rdbms.lookupType',
+        is: ['lookup'],
+      },
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+    ],
+  },
+  'rdbms.ignoreMissingLookupName': {
+    label: 'Lookup',
+    type: 'selectlookup',
+    omitWhenHidden: true,
+    required: true,
+    helpKey: 'import.lookup',
+    defaultValue: r => r.rdbms?.ignoreLookupName,
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    visibleWhenAll: [
+      {
+        field: 'rdbms.lookupType',
+        is: ['lookup'],
+      },
+      {
+        field: 'ignoreMissing',
+        is: [true],
+      },
+    ],
+  },
+  'rdbms.lookupType': {
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    defaultValue: r => (r.rdbms?.updateLookupName || r.rdbms?.ignoreLookupName) ? 'lookup' : 'source',
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
     visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['COMPOSITE'],
+      },
       {
         field: 'ignoreExisting',
         is: [true],
@@ -133,17 +226,37 @@ export default {
     ],
   },
   'rdbms.updateExtract': {
-    label: 'Existing data ID',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
     required: true,
-    defaultValue: r => {
-      const val =
-        r && r.rdbms && r.rdbms.updateLookupName
-          ? r.rdbms.updateLookupName
-          : r && r.rdbms && r.rdbms.updateExtract;
-
-      return val || '';
-    },
-    visibleWhen: [
+    visibleWhenAll: [
+      {
+        field: 'rdbms.lookupType',
+        is: ['source'],
+      },
+      {
+        field: 'rdbms.queryType',
+        is: ['COMPOSITE'],
+      },
+    ],
+  },
+  'rdbms.updateLookupName': {
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.lookup',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'rdbms.lookupType',
+        is: ['lookup'],
+      },
       {
         field: 'rdbms.queryType',
         is: ['COMPOSITE'],
