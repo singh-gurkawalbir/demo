@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import {
   Route,
   useRouteMatch,
@@ -383,7 +383,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const {setCancelTriggered} = useFormOnCancel(asyncKey);
 
   const mappingSaveStatus = useSelector(state =>
-    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId), shallowEqual
   );
   const disabled = mappingSaveStatus === CATEGORY_MAPPING_SAVE_STATUS.REQUESTED;
   const integrationName = useSelector(state => {

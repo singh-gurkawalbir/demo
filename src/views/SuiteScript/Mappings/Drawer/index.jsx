@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import { selectors } from '../../../../reducers';
@@ -16,7 +16,7 @@ export default function SuiteScriptMappingDrawer(props) {
   const isManageLevelUser = useSelector(
     state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId)
   );
-  const { saveStatus, mappings } = useSelector(state => selectors.suiteScriptMapping(state));
+  const { saveStatus, mappings } = useSelector(state => selectors.suiteScriptMapping(state), shallowEqual);
   const {setCancelTriggered} = useFormOnCancelContext(SUITESCRIPT_MAPPINGS_FORM_KEY);
   const isMappingLoaded = !!mappings;
   const closeDisabled = saveStatus === MAPPING_SAVE_STATUS.REQUESTED;

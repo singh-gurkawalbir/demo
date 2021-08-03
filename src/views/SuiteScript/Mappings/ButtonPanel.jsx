@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
@@ -16,7 +16,7 @@ export default function ButtonPanel({disabled, onClose}) {
   );
 
   const {validationErrMsg, saveStatus} = useSelector(state =>
-    selectors.suiteScriptMapping(state)
+    selectors.suiteScriptMapping(state), shallowEqual
   );
 
   const onSave = useCallback(() => {

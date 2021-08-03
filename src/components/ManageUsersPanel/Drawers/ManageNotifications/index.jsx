@@ -17,8 +17,7 @@ import notificationsMetadata from './metadata';
 import SaveAndCloseButtonGroupForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import commKeyGen from '../../../../utils/commKeyGenerator';
 import { useFormOnCancel } from '../../../FormOnCancelContext/index';
-
-const formKey = 'manageusernotifications';
+import { MANAGE_NOTIFICATIONS_FORM_KEY } from '../../../../utils/constants';
 
 function ManageNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
@@ -56,9 +55,9 @@ function ManageNotifications({ integrationId, childId, onClose }) {
     fieldMeta,
     remount: count,
     skipMonitorLevelAccessCheck: true,
-    formKey,
+    formKey: MANAGE_NOTIFICATIONS_FORM_KEY,
   });
-  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, MANAGE_NOTIFICATIONS_FORM_KEY), shallowEqual);
   const handleSubmit = useCallback(() => {
     setSaveTriggered(true);
     const resourcesToUpdate = {
@@ -66,7 +65,7 @@ function ManageNotifications({ integrationId, childId, onClose }) {
       subscribedFlows: formVal?.flows,
     };
 
-    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId, userEmail, asyncKey: formKey }));
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId, userEmail, asyncKey: MANAGE_NOTIFICATIONS_FORM_KEY }));
   }, [dispatch, integrationId, childId, userEmail, formVal]);
 
   const handleNotificationUpdate = useCallback(() => {
@@ -111,12 +110,12 @@ function ManageNotifications({ integrationId, childId, onClose }) {
   return (
     <LoadResources required resources="notifications,flows,connections">
       <DrawerContent>
-        <DynaForm formKey={formKey} />
+        <DynaForm formKey={MANAGE_NOTIFICATIONS_FORM_KEY} />
       </DrawerContent>
 
       <DrawerFooter>
         <SaveAndCloseButtonGroupForm
-          formKey={formKey}
+          formKey={MANAGE_NOTIFICATIONS_FORM_KEY}
           onSave={handleSubmit}
           onClose={onClose}
           remountAfterSaveFn={remountForm}
@@ -130,7 +129,7 @@ export default function ManageNotificationsDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
-  const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
+  const {disabled, setCancelTriggered} = useFormOnCancel(MANAGE_NOTIFICATIONS_FORM_KEY);
 
   return (
     <RightDrawer
