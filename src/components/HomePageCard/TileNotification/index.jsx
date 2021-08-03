@@ -12,7 +12,7 @@ import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../.
 import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
-import { FilledButton, OutlinedButton, TextButton} from '../../Buttons';
+import { OutlinedButton, TextButton} from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -141,13 +141,13 @@ export default function TileNotification({ content, expired, connectorId, licens
           </OutlinedButton>
         )}
         {single && showTrialLicenseMessage && (
-          <FilledButton
+          <OutlinedButton
             disabled={upgradeRequested}
             onClick={onClickBuyButton}
             data-test="buy"
             >
             Buy
-          </FilledButton>
+          </OutlinedButton>
         )}
         {!single && (
         <ActionGroup>
