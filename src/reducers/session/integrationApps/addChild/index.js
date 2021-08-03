@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { id, type, update, steps, installerFunction, message, formMeta } = action;
+  const { id, type, update, steps, installerFunction, message, showForm } = action;
   let step;
 
   return produce(state, draft => {
@@ -50,8 +50,8 @@ export default (state = {}, action) => {
 
         if (step) {
           // for 'form' type step
-          if (formMeta) {
-            step.showForm = formMeta;
+          if (showForm) {
+            step.showForm = showForm;
           }
           if (update === 'inProgress') {
             step.isTriggered = true;
