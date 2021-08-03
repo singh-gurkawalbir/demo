@@ -22,7 +22,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className }) {
+export default function InfoIconButton({ info, size = 'small', className, disableHtml }) {
+  console.log('disableHtml', disableHtml);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -55,7 +56,7 @@ export default function InfoIconButton({ info, size = 'small', className }) {
         anchorEl={anchorEl}
         placement="right-start"
         onClose={handleInfoClose}>
-        <TooltipContent className={classes.infoText}>{info}</TooltipContent>
+        <TooltipContent className={classes.infoText} disableHtml={disableHtml}>{info}</TooltipContent>
       </ArrowPopper>
     </>
   );

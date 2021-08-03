@@ -276,7 +276,9 @@ export default function PageBar({flowId, integrationId}) {
     <CeligoPageBar
       title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
-      infoText={description}>
+      infoText={description}
+      disableHtmlInInfoText
+    >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
         flowId={flowId} integrationId={integrationId}
