@@ -46,10 +46,7 @@ export function extractResourcePath(value, initialResourcePath) {
 }
 
 function* clearResourceSampleDataStages({ resourceId }) {
-  yield put(actions.resourceFormSampleData.setRawData(resourceId, undefined));
-  yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, undefined));
-  yield put(actions.resourceFormSampleData.setParseData(resourceId, undefined));
-  yield put(actions.resourceFormSampleData.setPreviewData(resourceId, undefined));
+  yield put(actions.resourceFormSampleData.clearStages(resourceId));
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
@@ -338,7 +335,7 @@ function* requestPGExportSampleData({ formKey, refreshCache }) {
   if (isRealTimeOrDistributedResource(resourceObj)) {
     return yield call(requestRealTimeSampleData, { formKey, refreshCache });
   }
-  yield call(requestExportPreviewData, { formKey, refreshCache });
+  yield call(requestExportPreviewData, { formKey });
 }
 
 function* requestLookupSampleData({ formKey, refreshCache }) {
