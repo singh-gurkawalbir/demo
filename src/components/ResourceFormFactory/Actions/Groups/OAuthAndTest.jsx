@@ -35,6 +35,7 @@ export default function OAuthAndTest({
         formSaveStatus={formSaveStatus}
         handleSave={handleSave}
         handleCancel={onCancel}
+        skipDirtyCheck
       />
       <TestButton
         disabled={disabled}
