@@ -76,7 +76,7 @@ selectors.userPreferences = createSelector(
   }
 );
 
-selectors.ownerUserId = createSelector(
+selectors.ownerUser = createSelector(
   state => fromPreferences.userOwnPreferences(state && state.preferences),
   state => state && state.org,
   state => state && state.profile,
@@ -84,11 +84,11 @@ selectors.ownerUserId = createSelector(
     const { defaultAShareId } = preferences;
 
     if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-      return profile?._id;
+      return profile;
     }
 
     if (!org || !org.accounts || !org.accounts.length) {
-      return profile?._id;
+      return profile;
     }
 
     const { accounts: orgAccounts = {} } = org;
@@ -97,11 +97,16 @@ selectors.ownerUserId = createSelector(
     );
 
     if (currentAccount && currentAccount.ownerUser) {
-      return currentAccount.ownerUser._id;
+      return currentAccount.ownerUser;
     }
 
-    return profile._id;
+    return profile;
   }
+);
+
+selectors.ownerUserId = createSelector(
+  state => selectors.ownerUser(state),
+  ownerUser => ownerUser?._id
 );
 
 selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
@@ -252,7 +257,7 @@ selectors.accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email, timezone, _id} = profile || {};
+      const { name, email, timezone, _id } = profile || {};
 
       return { name, email, timezone, _id };
     }

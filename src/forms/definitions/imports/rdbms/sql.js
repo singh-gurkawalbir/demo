@@ -1,14 +1,6 @@
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
-    const lookups = retValues['/rdbms/lookups'];
-    const lookup =
-      lookups &&
-      lookups.find(
-        l =>
-          `${l.name}` === retValues['/rdbms/ignoreExtract'] ||
-          `${l.name}` === retValues['/rdbms/updateExtract']
-      );
 
     if (retValues['/rdbms/queryType'] === 'COMPOSITE') {
       retValues['/rdbms/query'] = [
@@ -21,9 +13,7 @@ export default {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
 
-      if (lookup) {
-        retValues['/rdbms/updateLookupName'] =
-          retValues['/rdbms/updateExtract'];
+      if (retValues['/rdbms/updateLookupName']) {
         retValues['/rdbms/updateExtract'] = undefined;
       } else {
         retValues['/rdbms/updateLookupName'] = undefined;
@@ -35,12 +25,15 @@ export default {
       retValues['/rdbms/updateLookupName'] = undefined;
       retValues['/rdbms/updateExtract'] = undefined;
 
-      if (lookup) {
-        retValues['/rdbms/ignoreLookupName'] =
-          retValues['/rdbms/ignoreExtract'];
+      if (retValues['/rdbms/ignoreExistingLookupName']) {
         retValues['/rdbms/ignoreExtract'] = undefined;
+        retValues['/rdbms/ignoreLookupName'] = retValues['/rdbms/ignoreExistingLookupName'];
+      } else if (retValues['/rdbms/ignoreExistingExtract']) {
+        retValues['/rdbms/ignoreLookupName'] = undefined;
+        retValues['/rdbms/ignoreExtract'] = retValues['/rdbms/ignoreExistingExtract'];
       } else {
         retValues['/rdbms/ignoreLookupName'] = undefined;
+        retValues['/rdbms/ignoreExtract'] = undefined;
       }
     } else {
       retValues['/rdbms/query'] = [retValues['/rdbms/query2']];
@@ -49,14 +42,22 @@ export default {
       retValues['/rdbms/updateLookupName'] = undefined;
       retValues['/rdbms/updateExtract'] = undefined;
 
-      if (lookup) {
-        retValues['/rdbms/ignoreLookupName'] =
-          retValues['/rdbms/ignoreExtract'];
+      if (retValues['/rdbms/ignoreMissingLookupName']) {
         retValues['/rdbms/ignoreExtract'] = undefined;
+        retValues['/rdbms/ignoreLookupName'] = retValues['/rdbms/ignoreMissingLookupName'];
+      } else if (retValues['/rdbms/ignoreMissingExtract']) {
+        retValues['/rdbms/ignoreLookupName'] = undefined;
+        retValues['/rdbms/ignoreExtract'] = retValues['/rdbms/ignoreMissingExtract'];
       } else {
         retValues['/rdbms/ignoreLookupName'] = undefined;
+        retValues['/rdbms/ignoreExtract'] = undefined;
       }
     }
+    delete retValues['/rdbms/ignoreMissingLookupName'];
+    delete retValues['/rdbms/ignoreMissingExtract'];
+    delete retValues['/rdbms/ignoreExistingLookupName'];
+    delete retValues['/rdbms/ignoreExistingExtract'];
+    delete retValues['/rdbms/lookupType'];
 
     delete retValues['/rdbms/query1'];
     delete retValues['/rdbms/query2'];
@@ -148,8 +149,13 @@ export default {
       label: 'Ignore missing records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['UPDATE'] }],
     },
-    'rdbms.ignoreExtract': {
-      fieldId: 'rdbms.ignoreExtract',
+    'rdbms.ignoreExistingExtract': {
+      fieldId: 'rdbms.ignoreExistingExtract',
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
+    },
+    'rdbms.ignoreMissingExtract': {
+      fieldId: 'rdbms.ignoreMissingExtract',
       type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
     },
@@ -157,6 +163,18 @@ export default {
       fieldId: 'rdbms.updateExtract',
       type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
+    },
+    'rdbms.lookupType': {
+      fieldId: 'rdbms.lookupType',
+    },
+    'rdbms.ignoreExistingLookupName': {
+      fieldId: 'rdbms.ignoreExistingLookupName',
+    },
+    'rdbms.ignoreMissingLookupName': {
+      fieldId: 'rdbms.ignoreMissingLookupName',
+    },
+    'rdbms.updateLookupName': {
+      fieldId: 'rdbms.updateLookupName',
     },
     dataMappings: { formId: 'dataMappings' },
   },
@@ -175,7 +193,12 @@ export default {
           'rdbms.queryType',
           'ignoreExisting',
           'ignoreMissing',
-          'rdbms.ignoreExtract',
+          'rdbms.lookupType',
+          'rdbms.updateLookupName',
+          'rdbms.ignoreExistingExtract',
+          'rdbms.ignoreMissingExtract',
+          'rdbms.ignoreExistingLookupName',
+          'rdbms.ignoreMissingLookupName',
           'rdbms.updateExtract',
           'rdbms.lookups',
           'rdbms.query1',
