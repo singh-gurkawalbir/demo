@@ -1,4 +1,4 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
 
 export const getIntegrationAppUrlName = integrationAppName => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
@@ -289,3 +289,11 @@ export default {
 };
 
 export const getTitleIdFromSection = sec => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';
+
+export const getFormStatusFromCategoryMappingStatus = mappingSaveStatus => {
+  switch (mappingSaveStatus) {
+    case CATEGORY_MAPPING_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
+    case CATEGORY_MAPPING_SAVE_STATUS.SAVED: return FORM_SAVE_STATUS.COMPLETE;
+    default: return FORM_SAVE_STATUS.FAILED;
+  }
+};
