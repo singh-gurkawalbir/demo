@@ -507,6 +507,7 @@ describe('template util function test', () => {
             type: 'Connection',
           },
           {
+            key: 'NetSuite account 1',
             application: 'netsuite',
             completed: false,
             description: 'Please install Integrator bundle in NetSuite account',
@@ -517,6 +518,7 @@ describe('template util function test', () => {
             type: 'installPackage',
           },
           {
+            key: 'Salesforce account 1',
             application: 'salesforce',
             completed: false,
             description: 'Please install Integrator bundle in Salesforce account',
@@ -808,7 +810,7 @@ describe('template util function test', () => {
             type: 'Connection',
           },
           {
-            key: 'Netsuite account 1',
+            key: 'NetSuite account 1',
             application: 'netsuite',
             completed: false,
             description: 'Please install Integrator bundle in Netsuite Connection 1 account',
@@ -819,7 +821,7 @@ describe('template util function test', () => {
             type: 'installPackage',
           },
           {
-            key: 'Netsuite account 2',
+            key: 'NetSuite account 2',
             application: 'netsuite',
             completed: false,
             description: 'Please install Integrator bundle in Netsuite Connection 2 account',
