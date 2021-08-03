@@ -185,6 +185,7 @@ const getLookupMetadata = ({
         defaultValue: lookup.default,
         required: true,
         placeholder: 'Enter default value',
+        helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
         visibleWhen: [
           {
             field: '_failRecord',

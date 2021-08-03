@@ -709,10 +709,20 @@ export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', '
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
 
 export const MAPPINGS_FORM_KEY = 'mappingsformkey';
+export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
+export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
+export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
 export const HOME_PAGE_PATH = '/home';
 
 export const MAPPING_SAVE_STATUS = {
   REQUESTED: 'requested',
   COMPLETED: 'completed',
+  FAILED: 'failed',
+};
+
+export const CATEGORY_MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  SAVED: 'saved',
+  CLOSE: 'close',
   FAILED: 'failed',
 };
