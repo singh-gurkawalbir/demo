@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
@@ -96,6 +96,7 @@ export default function SelectApplication(props) {
   const classes = useStyles();
   const theme = useTheme();
   const ref = useRef(null);
+  const [menuIsOpen, setMenuIsOpen] = useState(!value);
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
@@ -161,6 +162,9 @@ export default function SelectApplication(props) {
     }),
     input: () => ({
       color: theme.palette.secondary.light,
+      '& input': {
+        fontFamily: 'inherit',
+      },
       // marginLeft: 3,
     }),
     placeholder: () => ({
@@ -201,7 +205,11 @@ export default function SelectApplication(props) {
       const transition = 'opacity 300ms';
       const color = theme.palette.secondary.light;
 
-      return { ...provided, opacity, transition, color };
+      return { ...provided,
+        opacity,
+        transition,
+        color,
+        margin: 0 };
     },
   };
   const options = groupedApps.map(group => ({
@@ -271,6 +279,7 @@ export default function SelectApplication(props) {
     ref?.current?.select?.blur();
     const newValue = isMulti ? [...value, e.value] : e.value;
 
+    setMenuIsOpen(false);
     if (onFieldChange) {
       onFieldChange(id, newValue);
     }
@@ -302,6 +311,7 @@ export default function SelectApplication(props) {
     if (inputValue) {
       refState.inputValue = inputValue;
     }
+    setMenuIsOpen(true);
   }, []);
 
   function handleRemove(index) {
@@ -331,11 +341,11 @@ export default function SelectApplication(props) {
         closeMenuOnSelect
         components={{ Option, DropdownIndicator }}
         defaultValue={defaultValue}
-        defaultMenuIsOpen={!value}
+        menuIsOpen={menuIsOpen}
         options={options}
         onChange={handleChange}
         onFocus={handleFocus}
-        // onBlur={handleBlur}
+        onBlur={() => setMenuIsOpen(!value)}
         styles={customStyles}
         filterOption={filterOptions}
       />

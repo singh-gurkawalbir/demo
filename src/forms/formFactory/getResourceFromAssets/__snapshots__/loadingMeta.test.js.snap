@@ -34,12 +34,14 @@ Object {
         "fieldId": "http.clientCertificates.cert",
         "helpKey": "adp.connection.http.clientCertificates.cert",
         "label": "SSL certificate",
+        "required": true,
         "type": "uploadfile",
       },
       "http.clientCertificates.key": Object {
         "fieldId": "http.clientCertificates.key",
         "helpKey": "adp.connection.http.clientCertificates.key",
         "label": "SSL client key",
+        "required": true,
         "type": "uploadfile",
       },
       "http.clientCertificates.passphrase": Object {
@@ -8578,40 +8580,8 @@ Object {
       "http.errorMediaType": Object {
         "fieldId": "http.errorMediaType",
       },
-      "http.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "http.existingDataId",
-        "label": "Existing data ID",
-        "requiredWhen": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-        ],
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
+      "http.existingLookupType": Object {
+        "fieldId": "http.existingLookupType",
       },
       "http.failPathCreate": Object {
         "defaultValue": [Function],
@@ -8733,12 +8703,27 @@ Object {
       "http.ignoreEmptyNodes": Object {
         "fieldId": "http.ignoreEmptyNodes",
       },
+      "http.ignoreExistingExtract": Object {
+        "fieldId": "http.ignoreExistingExtract",
+      },
+      "http.ignoreExistingLookupName": Object {
+        "fieldId": "http.ignoreExistingLookupName",
+      },
+      "http.ignoreNewExtract": Object {
+        "fieldId": "http.ignoreNewExtract",
+      },
+      "http.ignoreNewLookupName": Object {
+        "fieldId": "http.ignoreNewLookupName",
+      },
       "http.lookups": Object {
         "fieldId": "http.lookups",
         "visible": false,
       },
       "http.method": Object {
         "fieldId": "http.method",
+      },
+      "http.newLookupType": Object {
+        "fieldId": "http.newLookupType",
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
@@ -9060,41 +9045,6 @@ Object {
           },
         ],
       },
-      "http.update.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "http.update.existingDataId",
-        "label": "Existing data ID",
-        "requiredWhen": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-        ],
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "inputMode": Object {
         "defaultValue": [Function],
         "id": "inputMode",
@@ -9184,14 +9134,18 @@ Object {
                     Object {
                       "collapsed": true,
                       "fields": Array [
-                        "http.existingDataId",
+                        "http.existingLookupType",
+                        "http.ignoreExistingExtract",
+                        "http.ignoreExistingLookupName",
                       ],
                       "label": "Ignore existing records",
                     },
                     Object {
                       "collapsed": true,
                       "fields": Array [
-                        "http.update.existingDataId",
+                        "http.newLookupType",
+                        "http.ignoreNewExtract",
+                        "http.ignoreNewLookupName",
                       ],
                       "label": "Ignore new data",
                     },
@@ -9635,36 +9589,23 @@ Object {
       "http.compositeType": Object {
         "fieldId": "http.compositeType",
       },
-      "http.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "http.existingDataId",
-        "label": "Existing data id",
-        "required": true,
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
+      "http.existingLookupType": Object {
+        "fieldId": "http.existingLookupType",
       },
       "http.headers": Object {
         "fieldId": "http.headers",
+      },
+      "http.ignoreExistingExtract": Object {
+        "fieldId": "http.ignoreExistingExtract",
+      },
+      "http.ignoreExistingLookupName": Object {
+        "fieldId": "http.ignoreExistingLookupName",
+      },
+      "http.ignoreNewExtract": Object {
+        "fieldId": "http.ignoreNewExtract",
+      },
+      "http.ignoreNewLookupName": Object {
+        "fieldId": "http.ignoreNewLookupName",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -9672,6 +9613,9 @@ Object {
       },
       "http.method": Object {
         "fieldId": "http.method",
+      },
+      "http.newLookupType": Object {
+        "fieldId": "http.newLookupType",
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
@@ -9916,34 +9860,6 @@ Object {
           },
         ],
       },
-      "http.update.existingDataId": Object {
-        "defaultValue": [Function],
-        "id": "http.update.existingDataId",
-        "label": "Existing data id",
-        "required": true,
-        "showSuggestionsWithoutHandlebar": true,
-        "type": "textwithflowsuggestion",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "ignoreExistingData": Object {
         "id": "ignoreExistingData",
         "label": "Ignore existing records",
@@ -10116,14 +10032,18 @@ Object {
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "http.existingDataId",
+                    "http.existingLookupType",
+                    "http.ignoreExistingExtract",
+                    "http.ignoreExistingLookupName",
                   ],
                   "label": "Ignore existing records",
                 },
                 Object {
                   "collapsed": true,
                   "fields": Array [
-                    "http.update.existingDataId",
+                    "http.newLookupType",
+                    "http.ignoreNewExtract",
+                    "http.ignoreNewLookupName",
                   ],
                   "label": "Ignore new data",
                 },
@@ -11905,10 +11825,24 @@ Object {
         "fieldId": "modelMetadata",
         "visible": false,
       },
-      "rdbms.ignoreExtract": Object {
-        "fieldId": "rdbms.ignoreExtract",
+      "rdbms.ignoreExistingExtract": Object {
+        "fieldId": "rdbms.ignoreExistingExtract",
         "showSuggestionsWithoutHandlebar": true,
         "type": "textwithflowsuggestion",
+      },
+      "rdbms.ignoreExistingLookupName": Object {
+        "fieldId": "rdbms.ignoreExistingLookupName",
+      },
+      "rdbms.ignoreMissingExtract": Object {
+        "fieldId": "rdbms.ignoreMissingExtract",
+        "showSuggestionsWithoutHandlebar": true,
+        "type": "textwithflowsuggestion",
+      },
+      "rdbms.ignoreMissingLookupName": Object {
+        "fieldId": "rdbms.ignoreMissingLookupName",
+      },
+      "rdbms.lookupType": Object {
+        "fieldId": "rdbms.lookupType",
       },
       "rdbms.lookups": Object {
         "fieldId": "rdbms.lookups",
@@ -11942,6 +11876,9 @@ Object {
         "showSuggestionsWithoutHandlebar": true,
         "type": "textwithflowsuggestion",
       },
+      "rdbms.updateLookupName": Object {
+        "fieldId": "rdbms.updateLookupName",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -11965,7 +11902,12 @@ Object {
                 "rdbms.queryType",
                 "ignoreExisting",
                 "ignoreMissing",
-                "rdbms.ignoreExtract",
+                "rdbms.lookupType",
+                "rdbms.updateLookupName",
+                "rdbms.ignoreExistingExtract",
+                "rdbms.ignoreMissingExtract",
+                "rdbms.ignoreExistingLookupName",
+                "rdbms.ignoreMissingLookupName",
                 "rdbms.updateExtract",
                 "rdbms.lookups",
                 "rdbms.query1",
