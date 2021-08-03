@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import { some, reduce } from 'lodash';
+import { reduce } from 'lodash';
 import { applicationsList } from '../constants/applications';
 import {
   NETSUITE_BUNDLE_URL,
@@ -55,12 +55,12 @@ export default {
   getInstallSteps: previewData => {
     const connectionMap = {};
     const netsuiteBundleNeededForConnections = [];
+    const salesforceBundleNeededForConnections = [];
     const installSteps = [];
 
     if (!previewData || !previewData.objects) {
       return {connectionMap, installSteps};
     }
-    let salesforceConnFound = false;
     const {
       Connection: connections,
       Export: exportDocs,
@@ -94,16 +94,6 @@ export default {
 
     (connections || []).forEach(conn => {
       connectionMap[conn._id] = conn;
-
-      if (
-        (conn.type === 'salesforce' && salesforceConnFound)
-      ) {
-        return;
-      }
-
-      if (conn.type === 'salesforce') {
-        salesforceConnFound = true;
-      }
       const { name: connectionTypeName, id: connectionType} = getApplication(conn);
 
       installSteps.push({
@@ -117,7 +107,7 @@ export default {
         },
       });
     });
-    (exportDocs || []).filter(exp => {
+    (exportDocs || []).forEach(exp => {
       const conn = connections?.find(c => c._id === exp._connectionId);
 
       if (
@@ -127,27 +117,21 @@ export default {
           (!netsuiteBundleNeededForConnections.includes(conn._id))
       ) {
         netsuiteBundleNeededForConnections.push(conn._id);
-
-        return true;
       }
-
-      return false;
     });
-    (importDocs || []).filter(imp => {
+    (importDocs || []).forEach(imp => {
       const conn = connections?.find(c => c._id === imp._connectionId);
 
       if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn._id))) {
         netsuiteBundleNeededForConnections.push(conn._id);
-
-        return true;
       }
-
-      return false;
     });
-    const salesforceBundleNeeded = some(exportDocs || [], exp => {
+    (exportDocs || []).forEach(exp => {
       const conn = connections?.find(c => c._id === exp._connectionId);
 
-      return exp?.type === 'distributed' && conn?.type === 'salesforce';
+      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn._id)) {
+        salesforceBundleNeededForConnections.push(conn._id);
+      }
     });
 
     if (netsuiteBundleNeededForConnections.length > 0) {
@@ -163,17 +147,17 @@ export default {
       }));
     }
 
-    if (salesforceBundleNeeded) {
-      installSteps.push({
+    if (salesforceBundleNeededForConnections.length > 0) {
+      salesforceBundleNeededForConnections.forEach((connId, index) => installSteps.push({
         imageURL: 'images/company-logos/salesforce.png',
         installURL: SALESFORCE_DA_PACKAGE_URL,
         completed: false,
         application: 'salesforce',
         description: 'Please install Integrator bundle in Salesforce account',
-        name: 'Integrator Adaptor Package',
+        name: `Integrator Adaptor Package ${index + 1}`,
         type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
         options: {},
-      });
+      }));
     }
 
     return {
