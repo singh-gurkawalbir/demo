@@ -44,10 +44,9 @@ import { capitalizeFirstLetter } from '../../../../../../utils/string';
 import SaveAndCloseButtonGroupAuto from '../../../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { getFormStatusFromCategoryMappingStatus } from '../../../../../../utils/integrationApps';
 import { useFormOnCancel } from '../../../../../../components/FormOnCancelContext';
-import { CATEGORY_MAPPING_SAVE_STATUS } from '../../../../../../utils/constants';
+import { CATEGORY_MAPPING_SAVE_STATUS, CATEGORY_MAPPING_ASYNC_KEY } from '../../../../../../utils/constants';
 
 const emptySet = [];
-const asyncKey = 'categorymappingdrawer';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: '60%',
@@ -380,7 +379,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
-  const {setCancelTriggered} = useFormOnCancel(asyncKey);
+  const {setCancelTriggered} = useFormOnCancel(CATEGORY_MAPPING_ASYNC_KEY);
 
   const mappingSaveStatus = useSelector(state =>
     selectors.categoryMappingSaveStatus(state, integrationId, flowId), shallowEqual
@@ -672,7 +671,7 @@ const ButtonComp = ({flowId, integrationId, parentUrl}) => {
         onSave={handleSave}
         onClose={handleClose}
         shouldHandleCancel
-        asyncKey={asyncKey}
+        asyncKey={CATEGORY_MAPPING_ASYNC_KEY}
       />
     </ButtonGroup>
   );
