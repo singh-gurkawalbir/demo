@@ -561,7 +561,11 @@ function* updateIAFlowDoc({flow, resource }) {
 }
 
 export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
-  const flow = yield select(selectors.resource, 'flows', flowId);
+  const flow = (yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  ))?.merged || emptyObject;
 
   if (isIntegrationApp(flow)) {
     // update the last modified time
