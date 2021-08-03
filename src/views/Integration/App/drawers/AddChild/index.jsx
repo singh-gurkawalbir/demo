@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Link } from '@material-ui/core';
 import differenceBy from 'lodash/differenceBy';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
@@ -26,7 +27,6 @@ import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -175,7 +175,7 @@ export default function IntegrationAppAddNewChild(props) {
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction, type, form } = step;
+    const { _connectionId, installURL, installerFunction, form } = step;
 
     // handle connection step click
     if (_connectionId) {
@@ -215,13 +215,12 @@ export default function IntegrationAppAddNewChild(props) {
         );
       }
       // handle Action step click
-    } else if (type === INSTALL_STEP_TYPES.FORM) {
-      console.log('handle Step Click should be here', form);
+    } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.child.updateStep(
         integrationId,
         installerFunction,
         'inProgress',
-        form
+        true
       ));
     } else if (!step.isTriggered) {
       dispatch(
@@ -312,7 +311,7 @@ export default function IntegrationAppAddNewChild(props) {
       {currentStep && currentStep.formMeta && (
         <FormStepDrawer
           integrationId={integrationId}
-          formMeta={currentStep.formMeta}
+          formMeta={currentStep.form}
           installerFunction={currentStep.installerFunction}
           title={currentStep.name}
           index={currStepIndex + 1}
