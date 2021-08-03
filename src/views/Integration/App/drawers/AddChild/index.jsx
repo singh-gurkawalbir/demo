@@ -95,10 +95,7 @@ export default function IntegrationAppAddNewChild(props) {
     addNewChildSteps,
   ]);
 
-  const currStepIndex = useMemo(() => addNewChildSteps?.indexOf(currentStep), [
-    currentStep,
-    addNewChildSteps,
-  ]);
+  const currStepIndex = addNewChildSteps?.indexOf(currentStep);
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
@@ -308,7 +305,7 @@ export default function IntegrationAppAddNewChild(props) {
           onSubmitComplete={handleSubmitComplete}
         />
       )}
-      {currentStep && currentStep.formMeta && (
+      {currentStep && currentStep.showForm && (
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.form}

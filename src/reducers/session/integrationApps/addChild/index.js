@@ -50,7 +50,9 @@ export default (state = {}, action) => {
 
         if (step) {
           // for 'form' type step
-          step.formMeta = formMeta;
+          if (formMeta) {
+            step.showForm = formMeta;
+          }
           if (update === 'inProgress') {
             step.isTriggered = true;
           } else if (update === 'verify') {
