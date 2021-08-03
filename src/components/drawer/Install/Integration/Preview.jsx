@@ -9,7 +9,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import getRoutePath from '../../../../utils/routePaths';
 import messageStore from '../../../../constants/messages';
-import FilledButton from '../../../Buttons/FilledButton';
+import {OutlinedButton} from '../../../Buttons';
 
 const emptyObject = {};
 
@@ -88,11 +88,11 @@ export default function IntegrationPreview() {
         <PreviewTable templateId={templateId} />
       </div>
 
-      <FilledButton
+      <OutlinedButton
         className={classes.installButton}
         onClick={handleInstallIntegration}>
         Install integration
-      </FilledButton>
+      </OutlinedButton>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
 import messageStore from '../../../../constants/messages';
-import {FilledButton, OutlinedButton } from '../../../Buttons';
+import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -226,10 +226,10 @@ export default function TemplatePreview() {
 
       <div data-public className={classes.container}>
         <div className={classes.appDetails}>
-          <FilledButton
+          <OutlinedButton
             onClick={handleInstallIntegration}>
             Install now
-          </FilledButton>
+          </OutlinedButton>
           <br />
           {hasReadMe && (
             <OutlinedButton

@@ -8,7 +8,7 @@ import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import OutlinedButton from '../../Buttons/index';
+import {OutlinedButton} from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
