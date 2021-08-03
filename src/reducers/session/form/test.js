@@ -1408,10 +1408,16 @@ describe('isFormDirty', () => {
         defaultValue: [{a: '', b: ''}, {a: ''}],
         label: 'field5',
       },
-
+      FIELD6: {
+        id: 'FIELD6',
+        type: 'text',
+        name: 'field6/something/another',
+        defaultValue: '',
+        label: 'field6',
+      },
     },
 
-    layout: { fields: ['FIELD1', 'FIELD2', 'FIELD3', 'FIELD4', 'FIELD5'] },
+    layout: { fields: ['FIELD1', 'FIELD2', 'FIELD3', 'FIELD4', 'FIELD5', 'FIELD6'] },
   };
   const formKey = '1-2';
   const formState = forms(
@@ -1422,7 +1428,7 @@ describe('isFormDirty', () => {
     })
   );
 
-  test('initially should be dirty', () => {
+  test('initially should not be dirty', () => {
     const res = selectors.isFormDirty(formState, formKey);
 
     expect(res).toBe(false);
@@ -1441,7 +1447,7 @@ describe('isFormDirty', () => {
     expect(res).toBe(false);
   });
 
-  test('should not be dirty replacing a defaut value with empty stings with undefined properties', () => {
+  test('should not be dirty replacing a default value with empty stings with undefined properties', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: ''}));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
@@ -1461,6 +1467,18 @@ describe('isFormDirty', () => {
   });
   test('should be dirty after changing any property in an object belonging to a collection', () => {
     const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: 'dsds'}]));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(true);
+  });
+  test('should not be dirty after if the object has unassigned props', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD6', {a: '', b: ''}));
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(false);
+  });
+  test('should be dirty after changing any property in the object', () => {
+    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD6', {a: '', b: 'something'}));
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(true);
