@@ -34,12 +34,14 @@ Object {
         "fieldId": "http.clientCertificates.cert",
         "helpKey": "adp.connection.http.clientCertificates.cert",
         "label": "SSL certificate",
+        "required": true,
         "type": "uploadfile",
       },
       "http.clientCertificates.key": Object {
         "fieldId": "http.clientCertificates.key",
         "helpKey": "adp.connection.http.clientCertificates.key",
         "label": "SSL client key",
+        "required": true,
         "type": "uploadfile",
       },
       "http.clientCertificates.passphrase": Object {
