@@ -766,8 +766,10 @@ export function* validateResource({ resourceType, resourceId }) {
   return yield call(getResource, {resourceType, id: resourceId, hidden: true});
 }
 
-export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail }) {
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail, asyncKey }) {
   const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
+
+  yield put(actions.asyncTask.start(asyncKey));
   const {
     flows: availableFlows = [],
     connections: availableConnections = [],
@@ -809,12 +811,15 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, chi
       message: 'Updating notifications',
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return;
   }
 
   if (response) {
     yield put(actions.resource.requestCollection('notifications'));
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* updateFlowNotification({ flowId, isSubscribed }) {

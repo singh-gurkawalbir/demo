@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import {
   Route,
   useRouteMatch,
@@ -39,8 +39,12 @@ import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIco
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import SettingsDrawer from '../../../../../../components/Mapping/Settings';
 import { capitalizeFirstLetter } from '../../../../../../utils/string';
-import {OutlinedButton, TextButton, FilledButton} from '../../../../../../components/Buttons/index';
+import SaveAndCloseButtonGroupAuto from '../../../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { getFormStatusFromCategoryMappingStatus } from '../../../../../../utils/integrationApps';
+import { useFormOnCancel } from '../../../../../../components/FormOnCancelContext';
+import { CATEGORY_MAPPING_SAVE_STATUS, CATEGORY_MAPPING_ASYNC_KEY } from '../../../../../../utils/constants';
 import ActionGroup from '../../../../../../components/ActionGroup';
+import { TextButton } from '../../../../../../components/Buttons';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -374,7 +378,12 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
+  const {setCancelTriggered} = useFormOnCancel(CATEGORY_MAPPING_ASYNC_KEY);
 
+  const mappingSaveStatus = useSelector(state =>
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId), shallowEqual
+  );
+  const disabled = mappingSaveStatus === CATEGORY_MAPPING_SAVE_STATUS.REQUESTED;
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -461,7 +470,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           parentUrl={parentUrl}
         />
 
-        <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
+        <DrawerTitleBar disableClose={disabled} onClose={setCancelTriggered} flowId={flowId} parentUrl={parentUrl} />
         {metadataLoaded ? (
           <div className={classes.root}>
             <div className={classes.categoryMapWrapper}>
@@ -479,9 +488,10 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                   />
                   {collapseStatus === 'collapsed' ? (
                     <TextButton
+                      startIcon={<ExpandWindowIcon />}
                       onClick={handleExpandAll}
                       className={classes.expCollBtn}>
-                      <ExpandWindowIcon /> Expand All
+                      Expand All
                     </TextButton>
                   ) : (
                     <TextButton
@@ -632,23 +642,13 @@ const ButtonComp = ({flowId, integrationId, parentUrl}) => {
   const mappingSaveStatus = useSelector(state =>
     selectors.categoryMappingSaveStatus(state, integrationId, flowId)
   );
-
-  const isSaving = mappingSaveStatus === 'requested';
+  const saveStatus = getFormStatusFromCategoryMappingStatus(mappingSaveStatus);
 
   const handleSave = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.save(
         integrationId,
         flowId
-      )
-    );
-  }, [dispatch, flowId, integrationId]);
-  const handleSaveAndClose = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.save(
-        integrationId,
-        flowId,
-        true
       )
     );
   }, [dispatch, flowId, integrationId]);
@@ -663,31 +663,15 @@ const ButtonComp = ({flowId, integrationId, parentUrl}) => {
   }, [dispatch, flowId, history, integrationId, parentUrl]);
 
   return (
-
     <ActionGroup className={classes.saveButtonGroup}>
-      <FilledButton
-        id={flowId}
-        disabled={!mappingsChanged || isSaving}
-        data-test="saveCategoryMappings"
-        onClick={handleSave}>
-        {isSaving ? 'Saving...' : 'Save'}
-      </FilledButton>
-      {(mappingsChanged || isSaving) && (
-      <OutlinedButton
-        id={flowId}
-        disabled={isSaving}
-        data-test="saveAndCloseImportMapping"
-        onClick={handleSaveAndClose}>
-        Save & close
-      </OutlinedButton>
-      )}
-      <TextButton
-        variant="text"
-        data-test="saveImportMapping"
-        disabled={isSaving}
-        onClick={handleClose}>
-        Close
-      </TextButton>
+      <SaveAndCloseButtonGroupAuto
+        isDirty={mappingsChanged}
+        status={saveStatus}
+        onSave={handleSave}
+        onClose={handleClose}
+        shouldHandleCancel
+        asyncKey={CATEGORY_MAPPING_ASYNC_KEY}
+      />
     </ActionGroup>
   );
 };

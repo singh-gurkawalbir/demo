@@ -1,23 +1,23 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import LoadResources from '../../../LoadResources';
 import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import notificationsMetadata from './metadata';
-import ActionGroup from '../../../ActionGroup';
-import { TextButton } from '../../../Buttons';
+import SaveAndCloseButtonGroupForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import commKeyGen from '../../../../utils/commKeyGenerator';
+import { useFormOnCancel } from '../../../FormOnCancelContext/index';
+import { MANAGE_NOTIFICATIONS_FORM_KEY } from '../../../../utils/constants';
 
 function ManageNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
@@ -51,21 +51,22 @@ function ManageNotifications({ integrationId, childId, onClose }) {
     integrationId,
   });
 
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
     fieldMeta,
     remount: count,
     skipMonitorLevelAccessCheck: true,
+    formKey: MANAGE_NOTIFICATIONS_FORM_KEY,
   });
-
-  const handleSubmit = useCallback(formVal => {
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, MANAGE_NOTIFICATIONS_FORM_KEY), shallowEqual);
+  const handleSubmit = useCallback(() => {
     setSaveTriggered(true);
     const resourcesToUpdate = {
-      subscribedConnections: formVal.connections,
-      subscribedFlows: formVal.flows,
+      subscribedConnections: formVal?.connections,
+      subscribedFlows: formVal?.flows,
     };
 
-    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId, userEmail }));
-  }, [dispatch, integrationId, childId, userEmail]);
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId, userEmail, asyncKey: MANAGE_NOTIFICATIONS_FORM_KEY }));
+  }, [dispatch, integrationId, childId, userEmail, formVal]);
 
   const handleNotificationUpdate = useCallback(() => {
     const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
@@ -79,15 +80,28 @@ function ManageNotifications({ integrationId, childId, onClose }) {
     }
   }, [enquesnackbar, userEmail, users, saveTriggered]);
 
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: '/notifications',
-      method: 'put',
-      onSave: handleSubmit,
-      onClose,
-      onSuccess: handleNotificationUpdate,
+  const remountForm = useCallback(() => {
+    setCount(count => count + 1);
+  }, []);
+  const path = '/notifications';
+  const method = 'put';
+  const commStatus = useSelector(state => selectors.commStatusPerPath(state, path, method));
+  const clearCommState = useCallback(() => {
+    const key = commKeyGen(path, method);
+
+    dispatch(actions.clearCommByKey(key));
+  }, [dispatch, method, path]);
+
+  useEffect(() => {
+    // watches for commStatus and updates states
+    if (['success', 'error'].includes(commStatus)) {
+      clearCommState(); // Once API call is done (success/error), clears the comm state
     }
-  );
+    if (commStatus === 'success') {
+      handleNotificationUpdate();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commStatus]);
 
   useEffect(() => {
     setCount(count => count + 1);
@@ -96,31 +110,16 @@ function ManageNotifications({ integrationId, childId, onClose }) {
   return (
     <LoadResources required resources="notifications,flows,connections">
       <DrawerContent>
-        <DynaForm formKey={formKey} />
+        <DynaForm formKey={MANAGE_NOTIFICATIONS_FORM_KEY} />
       </DrawerContent>
 
       <DrawerFooter>
-        <ActionGroup>
-          <DynaSubmit
-            formKey={formKey}
-            onClick={submitHandler()}
-            color="primary"
-            data-test="saveFlowSchedule"
-            disabled={disableSave}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            onClick={submitHandler(true)}
-            color="secondary"
-            data-test="saveAndCloseFlowSchedule"
-            disabled={disableSave}>
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <TextButton onClick={onClose}>
-            Cancel
-          </TextButton>
-        </ActionGroup>
+        <SaveAndCloseButtonGroupForm
+          formKey={MANAGE_NOTIFICATIONS_FORM_KEY}
+          onSave={handleSubmit}
+          onClose={onClose}
+          remountAfterSaveFn={remountForm}
+          />
       </DrawerFooter>
     </LoadResources>
   );
@@ -130,6 +129,7 @@ export default function ManageNotificationsDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
+  const {disabled, setCancelTriggered} = useFormOnCancel(MANAGE_NOTIFICATIONS_FORM_KEY);
 
   return (
     <RightDrawer
@@ -137,7 +137,7 @@ export default function ManageNotificationsDrawer({ integrationId, childId }) {
       variant="temporary"
       width="medium"
       hideBackButton>
-      <DrawerHeader title="Manage notifications" />
+      <DrawerHeader disableClose={disabled} handleClose={setCancelTriggered} title="Manage notifications" />
       <ManageNotifications integrationId={integrationId} childId={childId} onClose={handleClose} />
     </RightDrawer>
   );

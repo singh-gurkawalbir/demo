@@ -60,6 +60,7 @@ export default function DrawerTitleBar({
   parentUrl,
   help,
   className,
+  disableClose,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -122,6 +123,7 @@ export default function DrawerTitleBar({
       <IconButton
         data-test="closeCategoryMapping"
         aria-label="Close"
+        disabled={disableClose}
         onClick={handleClose}
         className={classes.closeIcon}>
         <CloseIcon />

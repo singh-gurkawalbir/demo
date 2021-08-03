@@ -31,7 +31,7 @@ export default function Invite(props) {
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
-  ).resources;
+  ).resources?.filter(res => !res._parentId); // filter the child integrations
   const clearPreview = useCallback(() => {
     dispatch(actions.transfer.clearPreview());
   }, [dispatch]);
