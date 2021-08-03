@@ -359,6 +359,185 @@ describe('template util function test', () => {
           {
             model: 'Integration',
             doc: {
+              _id: '5fbfed8cd964e440789b5aca',
+              lastModified: '2020-11-26T18:04:16.169Z',
+              name: 'Tile permissions issue2',
+              install: [],
+              _registeredConnectionIds: [
+                '569f5e778a34de4718a56178',
+              ],
+              createdAt: '2020-11-26T18:01:48.565Z',
+            },
+          },
+          {
+            model: 'Flow',
+            doc: {
+              _id: '5a816fd6a05a4b10ff6e1f64',
+              lastModified: '2020-11-26T18:04:17.449Z',
+              name: 'NetSuite to Salelsforce flow',
+              disabled: false,
+              timezone: 'Asia/Calcutta',
+              _integrationId: '5fbfed8cd964e440789b5aca',
+              skipRetries: false,
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [
+
+                    ],
+                    lists: [
+
+                    ],
+                  },
+                  type: 'import',
+                  _importId: '5a816fd6a05a4b10ff6e1f63',
+                },
+              ],
+              pageGenerators: [
+                {
+                  _exportId: '5a816fd5a05a4b10ff6e1f62',
+                },
+              ],
+              createdAt: '2018-02-12T10:43:34.632Z',
+              lastExecutedAt: '2020-11-03T02:25:16.798Z',
+            },
+          },
+          {
+            model: 'Export',
+            doc: {
+              _id: '5a816fd5a05a4b10ff6e1f62',
+              createdAt: '2018-02-12T10:43:33.908Z',
+              lastModified: '2018-02-12T10:43:33.908Z',
+              _connectionId: '569f5e778a34de4718a56176',
+              apiIdentifier: 'e2b2174975',
+              asynchronous: true,
+              type: 'distributed',
+              adaptorType: 'SalesforceExport',
+            },
+          },
+          {
+            model: 'Import',
+            doc: {
+              _id: '5a816fd6a05a4b10ff6e1f63',
+              createdAt: '2018-02-12T10:43:34.257Z',
+              lastModified: '2018-02-20T08:54:42.007Z',
+              _connectionId: '569f5e778a34de4718a56177',
+              distributed: true,
+              apiIdentifier: 'i30de7018d',
+              adaptorType: 'NetSuiteImport',
+            },
+          },
+          {
+            model: 'Connection',
+            doc: {
+              _id: '569f5e778a34de4718a56176',
+              createdAt: '2018-01-10T07:25:17.546Z',
+              lastModified: '2020-10-14T07:40:57.188Z',
+              type: 'salesforce',
+              name: 'Salesforce connection',
+              debugDate: '2020-02-17T08:27:47.887Z',
+              salesforce: {
+                type: 'sftp',
+              },
+            },
+          },
+          {
+            model: 'Connection',
+            doc: {
+              _id: '569f5e778a34de4718a56177',
+              createdAt: '2018-01-10T07:25:17.546Z',
+              lastModified: '2020-10-14T07:40:57.188Z',
+              type: 'netsuite',
+              name: 'NetSuite Connection',
+              debugDate: '2020-02-17T08:27:47.887Z',
+              netsuite: {
+                type: 'sftp',
+              },
+            },
+          },
+        ],
+        stackRequired: false,
+        _stackId: null,
+      };
+      const received = templateUtil.getInstallSteps(previewData);
+      const expectedResult = {
+        connectionMap: {
+          '569f5e778a34de4718a56176': {
+            _id: '569f5e778a34de4718a56176',
+            createdAt: '2018-01-10T07:25:17.546Z',
+            debugDate: '2020-02-17T08:27:47.887Z',
+            lastModified: '2020-10-14T07:40:57.188Z',
+            name: 'Salesforce connection',
+            salesforce: {
+              type: 'sftp',
+            },
+            type: 'salesforce',
+          },
+          '569f5e778a34de4718a56177': {
+            _id: '569f5e778a34de4718a56177',
+            createdAt: '2018-01-10T07:25:17.546Z',
+            debugDate: '2020-02-17T08:27:47.887Z',
+            lastModified: '2020-10-14T07:40:57.188Z',
+            name: 'NetSuite Connection',
+            netsuite: {
+              type: 'sftp',
+            },
+            type: 'netsuite',
+          },
+        },
+        installSteps: [
+          {
+            _connectionId: '569f5e778a34de4718a56176',
+            completed: false,
+            description: 'Please configure Salesforce connection',
+            name: 'Salesforce connection',
+            options: {
+              connectionType: 'salesforce',
+            },
+            type: 'Connection',
+          },
+          {
+            _connectionId: '569f5e778a34de4718a56177',
+            completed: false,
+            description: 'Please configure NetSuite connection',
+            name: 'NetSuite Connection',
+            options: {
+              connectionType: 'netsuite',
+            },
+            type: 'Connection',
+          },
+          {
+            application: 'netsuite',
+            completed: false,
+            description: 'Please install Integrator bundle in NetSuite account',
+            imageURL: 'images/company-logos/netsuite.png',
+            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+            name: 'Integrator Bundle',
+            options: {},
+            type: 'installPackage',
+          },
+          {
+            application: 'salesforce',
+            completed: false,
+            description: 'Please install Integrator bundle in Salesforce account',
+            imageURL: 'images/company-logos/salesforce.png',
+            installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
+            name: 'Integrator Adaptor Package',
+            options: {},
+            type: 'installPackage',
+          },
+        ],
+      };
+
+      expect(received).toEqual(expectedResult);
+    });
+
+    test('should return correct distributed steps incase of multiple NS and SF connections', () => {
+      const previewData = {
+        objects: [
+          {
+            model: 'Integration',
+            doc: {
               _id: '610237dd89efa90341ceb6fa',
               lastModified: '2021-08-03T06:51:32.247Z',
               name: 'Salesforce-Netsuite',
@@ -500,7 +679,7 @@ describe('template util function test', () => {
               createdAt: '2020-10-21T15:13:30.914Z',
               lastModified: '2021-08-03T05:46:40.071Z',
               type: 'salesforce',
-              name: 'Salesforce',
+              name: 'Salesforce Connection 1',
               sandbox: false,
               salesforce: {},
             },
@@ -536,7 +715,7 @@ describe('template util function test', () => {
               createdAt: '2021-08-03T05:39:06.665Z',
               lastModified: '2021-08-03T05:39:16.102Z',
               type: 'salesforce',
-              name: 'Salesforce 2',
+              name: 'Salesforce Connection 2',
               offline: false,
               sandbox: false,
               salesforce: {},
@@ -553,7 +732,7 @@ describe('template util function test', () => {
             _id: '5f90501a6eb5c646194a1d09',
             createdAt: '2020-10-21T15:13:30.914Z',
             lastModified: '2021-08-03T05:46:40.071Z',
-            name: 'Salesforce',
+            name: 'Salesforce Connection 1',
             salesforce: {},
             sandbox: false,
             type: 'salesforce',
@@ -580,7 +759,7 @@ describe('template util function test', () => {
             _id: '6108d67a5891380354d1dce0',
             createdAt: '2021-08-03T05:39:06.665Z',
             lastModified: '2021-08-03T05:39:16.102Z',
-            name: 'Salesforce 2',
+            name: 'Salesforce Connection 2',
             offline: false,
             salesforce: {},
             sandbox: false,
@@ -592,7 +771,7 @@ describe('template util function test', () => {
             _connectionId: '5f90501a6eb5c646194a1d09',
             completed: false,
             description: 'Please configure Salesforce connection',
-            name: 'Salesforce',
+            name: 'Salesforce Connection 1',
             options: {
               connectionType: 'salesforce',
             },
@@ -622,49 +801,53 @@ describe('template util function test', () => {
             _connectionId: '6108d67a5891380354d1dce0',
             completed: false,
             description: 'Please configure Salesforce connection',
-            name: 'Salesforce 2',
+            name: 'Salesforce Connection 2',
             options: {
               connectionType: 'salesforce',
             },
             type: 'Connection',
           },
           {
+            key: 'Netsuite account 1',
             application: 'netsuite',
             completed: false,
-            description: 'Please install Integrator bundle in NetSuite account',
+            description: 'Please install Integrator bundle in Netsuite Connection 1 account',
             imageURL: 'images/company-logos/netsuite.png',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            name: 'Integrator Bundle 1',
+            name: 'Integrator Bundle',
             options: {},
             type: 'installPackage',
           },
           {
+            key: 'Netsuite account 2',
             application: 'netsuite',
             completed: false,
-            description: 'Please install Integrator bundle in NetSuite account',
+            description: 'Please install Integrator bundle in Netsuite Connection 2 account',
             imageURL: 'images/company-logos/netsuite.png',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            name: 'Integrator Bundle 2',
+            name: 'Integrator Bundle',
             options: {},
             type: 'installPackage',
           },
           {
+            key: 'Salesforce account 1',
             application: 'salesforce',
             completed: false,
-            description: 'Please install Integrator bundle in Salesforce account',
+            description: 'Please install Integrator bundle in Salesforce Connection 1 account',
             imageURL: 'images/company-logos/salesforce.png',
             installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
-            name: 'Integrator Adaptor Package 1',
+            name: 'Integrator Adaptor Package',
             options: {},
             type: 'installPackage',
           },
           {
+            key: 'Salesforce account 2',
             application: 'salesforce',
             completed: false,
-            description: 'Please install Integrator bundle in Salesforce account',
+            description: 'Please install Integrator bundle in Salesforce Connection 2 account',
             imageURL: 'images/company-logos/salesforce.png',
             installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
-            name: 'Integrator Adaptor Package 2',
+            name: 'Integrator Adaptor Package',
             options: {},
             type: 'installPackage',
           },

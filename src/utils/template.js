@@ -114,47 +114,71 @@ export default {
         (((exp?.netsuite || {}).type === 'restlet' &&
           exp?.netsuite?.restlet?.recordType) ||
           (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
-          (!netsuiteBundleNeededForConnections.includes(conn._id))
+          (!netsuiteBundleNeededForConnections.includes(conn))
       ) {
-        netsuiteBundleNeededForConnections.push(conn._id);
+        netsuiteBundleNeededForConnections.push(conn);
       }
 
-      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn._id)) {
-        salesforceBundleNeededForConnections.push(conn._id);
+      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn)) {
+        salesforceBundleNeededForConnections.push(conn);
       }
     });
     (importDocs || []).forEach(imp => {
       const conn = connections?.find(c => c._id === imp._connectionId);
 
-      if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn._id))) {
-        netsuiteBundleNeededForConnections.push(conn._id);
+      if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn))) {
+        netsuiteBundleNeededForConnections.push(conn);
       }
     });
 
-    if (netsuiteBundleNeededForConnections.length > 0) {
-      netsuiteBundleNeededForConnections.forEach((connId, index) => installSteps.push({
+    if (netsuiteBundleNeededForConnections.length > 1) {
+      netsuiteBundleNeededForConnections.forEach((conn, index) => installSteps.push({
+        key: `Netsuite account ${index + 1}`,
         installURL: NETSUITE_BUNDLE_URL,
         imageURL: 'images/company-logos/netsuite.png',
         completed: false,
-        description: 'Please install Integrator bundle in NetSuite account',
-        name: `Integrator Bundle ${index + 1}`,
+        description: `Please install Integrator bundle in ${conn.name} account`,
+        name: 'Integrator Bundle',
         application: 'netsuite',
         type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
         options: {},
       }));
+    } else if (netsuiteBundleNeededForConnections.length === 1) {
+      installSteps.push({
+        installURL: NETSUITE_BUNDLE_URL,
+        imageURL: 'images/company-logos/netsuite.png',
+        completed: false,
+        description: 'Please install Integrator bundle in NetSuite account',
+        name: 'Integrator Bundle',
+        application: 'netsuite',
+        type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+        options: {},
+      });
     }
 
-    if (salesforceBundleNeededForConnections.length > 0) {
-      salesforceBundleNeededForConnections.forEach((connId, index) => installSteps.push({
+    if (salesforceBundleNeededForConnections.length > 1) {
+      salesforceBundleNeededForConnections.forEach((conn, index) => installSteps.push({
+        key: `Salesforce account ${index + 1}`,
+        imageURL: 'images/company-logos/salesforce.png',
+        installURL: SALESFORCE_DA_PACKAGE_URL,
+        completed: false,
+        application: 'salesforce',
+        description: `Please install Integrator bundle in ${conn.name} account`,
+        name: 'Integrator Adaptor Package',
+        type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+        options: {},
+      }));
+    } else if (salesforceBundleNeededForConnections.length === 1) {
+      installSteps.push({
         imageURL: 'images/company-logos/salesforce.png',
         installURL: SALESFORCE_DA_PACKAGE_URL,
         completed: false,
         application: 'salesforce',
         description: 'Please install Integrator bundle in Salesforce account',
-        name: `Integrator Adaptor Package ${index + 1}`,
+        name: 'Integrator Adaptor Package',
         type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
         options: {},
-      }));
+      });
     }
 
     return {
