@@ -8,6 +8,7 @@ import AfeIcon from '../../icons/AfeIcon';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { getParentResourceContext } from './DynaHttpRequestBody_afe';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {
@@ -40,6 +41,8 @@ export default function DynaURI_afe(props) {
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
 
+  const {parentType, parentId} = getParentResourceContext(match.url) || {};
+
   const handleSave = useCallback(editorValues => {
     onFieldChange(id, editorValues.rule);
   }, [id, onFieldChange]);
@@ -53,10 +56,12 @@ export default function DynaURI_afe(props) {
       fieldId: id,
       stage: 'flowInput',
       onSave: handleSave,
+      parentType,
+      parentId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
 
   return (
     <>
