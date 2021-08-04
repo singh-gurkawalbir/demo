@@ -1091,7 +1091,7 @@ describe('editor sagas', () => {
               flowId: undefined,
               integrationId: undefined,
               type: 'connection',
-              connection: {},
+              connection: {_userId: undefined},
               fieldPath: 'http.ping.body',
             },
           },
@@ -1121,6 +1121,7 @@ describe('editor sagas', () => {
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
           [matchers.call.fn(apiCallWithRetry), {context: {connection: {name: 'HTTP connection'}}}],
           [select(selectors.resource, 'flows', flowId), {_integrationId: 'integration-1234'}],
+          [select(selectors.ownerUserId), 'userId-999'],
         ])
         .call(apiCallWithRetry, {
           path: '/processors/handleBar/getContext',
@@ -1131,7 +1132,7 @@ describe('editor sagas', () => {
               integrationId: 'integration-1234',
               exportId: '789',
               type: 'connection',
-              connection: {},
+              connection: {_userId: 'userId-999'},
               fieldPath: 'http.ping.body',
             },
           },

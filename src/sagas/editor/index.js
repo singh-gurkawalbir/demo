@@ -503,8 +503,14 @@ export function* requestEditorSampleData({
     }
 
     if (resourceType === 'connections') {
+      const _userId = yield select(selectors.ownerUserId);
+
       body.type = 'connection';
-      body.connection = resource || {};
+      // _userId is required in BE to get integration settings
+      body.connection = {
+        _userId,
+        ...(resource || {}),
+      };
 
       if (parentType) {
         body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;
