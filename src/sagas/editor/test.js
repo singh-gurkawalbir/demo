@@ -23,7 +23,7 @@ import {
   initEditor,
   toggleEditorVersion,
 } from '.';
-import { requestExportSampleData } from '../sampleData/exports';
+import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
@@ -781,7 +781,7 @@ describe('editor sagas', () => {
         .returns({})
         .run();
     });
-    test('should call requestExportSampleData and get preview stage data for dataURITemplate field', () => {
+    test('should call requestResourceFormSampleData and get preview stage data for dataURITemplate field', () => {
       const editor = {
         id: 'dataURITemplate',
         editorType: 'handlebars',
@@ -796,15 +796,15 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'dataURITemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestExportSampleData)],
+          [matchers.call.fn(requestResourceFormSampleData)],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    test('should call requestExportSampleData and get preview stage data for traceKeyTemplate field', () => {
+    test('should call requestResourceFormSampleData and get preview stage data for traceKeyTemplate field', () => {
       const editor = {
         id: 'traceKeyTemplate',
         editorType: 'handlebars',
@@ -819,15 +819,15 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'traceKeyTemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestExportSampleData)],
+          [matchers.call.fn(requestResourceFormSampleData)],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    test('should call requestExportSampleData incase of http/rest resource when paging is configured', () => {
+    test('should call requestResourceFormSampleData incase of http/rest resource when paging is configured', () => {
       const editor = {
         id: 'restrelativeuri',
         editorType: 'handlebars',
@@ -853,11 +853,11 @@ describe('editor sagas', () => {
           [select(selectors.editor, 'restrelativeuri'), editor],
           [select(selectors.formState, 'new-123'), { value: formValues}],
           [matchers.call.fn(constructResourceFromFormValues), resource],
-          [matchers.call.fn(requestExportSampleData), {}],
+          [matchers.call.fn(requestResourceFormSampleData), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: formValues, options: {flowId} })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });

@@ -73,6 +73,7 @@ export default function FileDataPanelTitle({editorId, fileType}) {
       hideFileName
       variant="text"
       classProps={classes}
+      formKey={formKey}
     />
   );
 }
