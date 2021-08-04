@@ -233,7 +233,7 @@ export default function JobActionsMenu({
                     return false;
                   }
                 } else {
-                  const retryJob = job.retries.find(r =>
+                  const retryJob = job.retries?.find(r =>
                     [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
                   );
 
