@@ -32,6 +32,7 @@ export default {
       newValues['/http/auth/oauth/authURI'] = amazonSellerCentralAuthURI[newValues['/http/unencrypted/marketplace']];
       newValues['/http/auth/oauth/tokenURI'] = 'https://api.amazon.com/auth/o2/token';
       newValues['/http/auth/oauth/accessTokenPath'] = 'access_token';
+      newValues['/http/auth/oauth/grantType'] = 'authorizecode';
       newValues['/http/unencrypted/marketplaceId'] = newValues['/http/unencrypted/marketplace'];
       delete newValues['/http/sellingPartnerId'];
       delete newValues['/http/unencrypted/marketplace'];
@@ -63,6 +64,7 @@ export default {
       type: 'select',
       required: true,
       helpKey: 'amazonmws.connection.http.type',
+      defaultDisabled: r => !isNewId(r?._id),
       defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
       skipSort: true,
       options: [
@@ -318,7 +320,6 @@ export default {
   actions: [
     {
       id: 'oauthandcancel',
-      label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'http.type',
