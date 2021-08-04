@@ -21,9 +21,11 @@ import {
   _handlePreviewError,
   _fetchResourceInfoFromFormKey,
   _hasSampleDataOnResource,
+  _getProcessorOutput,
 } from '.';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
+import { getCsvFromXlsx } from '../../../utils/file';
 
 const formKey = 'form-123';
 const resourceId = 'export-123';
@@ -533,33 +535,173 @@ describe('resourceFormSampleData sagas', () => {
         .run();
     });
   });
-  // describe('_requestImportFileSampleData saga', () => {
-  //   test('should dispatch clear stages action and do nothing if the file type does not exist', () => {
+  describe('_requestImportFileSampleData saga', () => {
+    const resourceId = 'import-123';
 
-  //   });
-  //   test('should dispatch setRawData action for fileDefinition import with sampleData fetched from fileDefinitionSampleData selector', () => {
+    test('should dispatch clear stages action and do nothing if the file type does not exist', () => expectSaga(_requestImportFileSampleData, { formKey })
+      .provide([
+        [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: {}, resourceId }],
+      ])
+      .put(actions.resourceFormSampleData.clearStages(resourceId))
+      .not.put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
+      .not.put(actions.resourceFormSampleData.setRawData(resourceId, undefined))
+      .run());
+    test('should dispatch setRawData action for fileDefinition import with sampleData fetched from fileDefinitionSampleData selector', () => {
+      const ftpResource = {
+        _id: 'import-123',
+        name: 'FTP import',
+        file: {
+          type: 'filedefinition',
+        },
+        adaptorType: 'FTPImport',
+      };
+      const fieldState = {
+        userDefinitionId: 'id-123',
+        options: {format: 'edi'},
+      };
+      const fileDefinitionSampleData = {
+        'SYNTAX IDENTIFIER': {
+          'Syntax identifier': 'UNOC',
+          'Syntax version number': '3',
+        },
+      };
 
-  //   });
-  //   test('should dispatch setParseData action in addition to setRawData incase of JSON file type', () => {
+      return expectSaga(_requestImportFileSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: ftpResource, resourceId }],
+          [select(selectors.fieldState, formKey, 'file.filedefinition.rules'), fieldState],
+          [select(selectors.fileDefinitionSampleData, {
+            userDefinitionId: fieldState.userDefinitionId,
+            resourceType: 'imports',
+            options: { format: fieldState.options.format, definitionId: undefined },
+          }), { sampleData: fileDefinitionSampleData }],
+        ])
+        .put(actions.resourceFormSampleData.setRawData(resourceId, fileDefinitionSampleData))
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
+        .run();
+    });
+    test('should dispatch setParseData action in addition to setRawData incase of JSON file type', () => {
+      const ftpResource = {
+        _id: 'import-123',
+        name: 'FTP import',
+        file: {
+          type: 'json',
+        },
+        adaptorType: 'FTPImport',
+      };
+      const fileId = `${resourceId}-uploadFile`;
+      const uploadedFileContent = { test: 5 };
 
-  //   });
-  //   test('should dispatch setCsvData action in addition to setRawData incase of xlsx file type', () => {
+      return expectSaga(_requestImportFileSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: ftpResource, resourceId }],
+          [select(selectors.getUploadedFile, fileId), { file: uploadedFileContent }],
+        ])
+        .put(actions.resourceFormSampleData.setRawData(resourceId, uploadedFileContent))
+        .put(actions.resourceFormSampleData.setParseData(resourceId, uploadedFileContent))
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
+        .run();
+    });
+    test('should dispatch setCsvData action in addition to setRawData incase of xlsx file type', () => {
+      const ftpResource = {
+        _id: 'import-123',
+        name: 'FTP import',
+        file: {
+          type: 'xlsx',
+        },
+        adaptorType: 'FTPImport',
+      };
+      const fileId = `${resourceId}-uploadFile`;
+      const uploadedFileContent = '00123450x12345';
+      const csvData = 'users,name,id';
 
-  //   });
-  //   test('should dispatch received action for all the valid file types', () => {
+      return expectSaga(_requestImportFileSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: ftpResource, resourceId }],
+          [select(selectors.getUploadedFile, fileId), { file: uploadedFileContent }],
+          [call(getCsvFromXlsx, uploadedFileContent), { result: csvData }],
+        ])
+        .put(actions.resourceFormSampleData.setRawData(resourceId, uploadedFileContent))
+        .put(actions.resourceFormSampleData.setCsvFileData(resourceId, csvData))
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
+        .run();
+    });
+  });
+  describe('_parseFileData saga', () => {
+    test('should dispatch raw, parse and preview stages for json file type with the content passed', () => {
+      const ftpResource = {
+        _id: 'export-123',
+        name: 'FTP export',
+        file: {
+          type: 'json',
+          json: {
+            resourcePath: 'users',
+          },
+        },
+        adaptorType: 'FTPExport',
+      };
+      const fileContent = { users: { test: 5 }};
+      const parseData = fileContent.users;
 
-  //   });
-  // });
-  // describe('_parseFileData saga', () => {
-  //   test('should dispatch raw, parse and preview stages for json file type with the content passed', () => {
+      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions: {}, isNewSampleData: true, fileType: 'json' })
+        .put(actions.resourceFormSampleData.setRawData(resourceId, fileContent))
+        .put(actions.resourceFormSampleData.setParseData(resourceId, parseData))
+        .put(actions.resourceFormSampleData.setPreviewData(resourceId, parseData))
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
+        .run();
+    });
+    test('should call _getProcessorOutput saga and update corresponding stages for csv, xml and file definition file type', () => {
+      const fileProps = {
+        columnDelimiter: '|',
+        hasHeaderRow: true,
+        rowsToSkip: 1,
+      };
+      const parserOptions = {
+        rowsToSkip: 1,
+        trimSpaces: undefined,
+        columnDelimiter: '|',
+        hasHeaderRow: true,
+        rowDelimiter: undefined,
+        multipleRowsPerRecord: undefined,
+        keyColumns: undefined,
+      };
+      const ftpResource = {
+        _id: 'export-123',
+        name: 'FTP export',
+        file: {
+          type: 'csv',
+          csv: fileProps,
+        },
+        adaptorType: 'FTPExport',
+      };
+      const fileContent = "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE↵C1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0";
 
-  //   });
-  //   test('should call _getProcessorOutput saga and update corresponding stages for csv, xml and file definition file type', () => {
+      const processorData = {
+        rule: parserOptions,
+        data: fileContent,
+        editorType: 'csvParser',
+      };
+      const processorResponse = {
+        data: {
+          data: {
+            users: { test: 5 },
+          },
+        },
+      };
 
-  //   });
-  //   test('should call getCsvFromXlsx saga to fetch csv content and update csv stage, then update other stages incase of xlsx file type ', () => {
+      const parseData = processorResponse.data.data;
 
-  //   });
-  // });
+      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+        .provide([
+          [call(_getProcessorOutput, { processorData }), processorResponse],
+        ])
+        .put(actions.resourceFormSampleData.setRawData(resourceId, fileContent))
+        .call.fn(_getProcessorOutput)
+        .put(actions.resourceFormSampleData.setParseData(resourceId, parseData))
+        .put(actions.resourceFormSampleData.setPreviewData(resourceId, parseData))
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
+        .run();
+    });
+  });
 });
 
