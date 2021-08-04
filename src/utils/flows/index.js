@@ -1178,3 +1178,19 @@ export function addLastExecutedAtSortableProp({
 
   return updatedFlows;
 }
+
+// this function determines if we need to update the last modified time of a flow
+export function shouldUpdateLastModified(flow, resource) {
+  return flow?.lastModified && resource?.lastModified && flow.lastModified < resource.lastModified;
+}
+
+// this function returns a patch used to 'patch and commit' the flow last modified time
+export function flowLastModifiedPatch(flow, resource) {
+  if (!shouldUpdateLastModified(flow, resource)) return [];
+
+  return [{
+    op: 'replace',
+    path: '/lastModified',
+    value: resource.lastModified,
+  }];
+}

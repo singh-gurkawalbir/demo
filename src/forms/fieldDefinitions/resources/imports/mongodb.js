@@ -37,7 +37,7 @@ export default {
   },
   'mongodb.lookupType': {
     type: 'select',
-    label: 'How should we identify existing records?',
+    label: 'How would you like to identify existing records?',
     required: true,
     helpText: 'Select an operation that will be performed in order to locate records in the destination application before attempting to sync the data in your flow. The search options available depend on the capabilities offered by the destination application.',
     defaultValue: r =>

@@ -29,7 +29,6 @@ export default function reducer(state = {}, action) {
   } = step;
   let currentStep;
   let bundleStep;
-  const connMap = {};
 
   return produce(state, draft => {
     // eslint-disable-next-line default-case
@@ -106,7 +105,7 @@ export default function reducer(state = {}, action) {
         currentStep = (draft[templateId].installSteps || []).find(
           s =>
             (_connectionId && s._connectionId === _connectionId) ||
-            (installURL && s.installURL === installURL) ||
+            (installURL && s.installURL === installURL && !s.completed) ||
             (stepType === INSTALL_STEP_TYPES.STACK &&
               s.type === INSTALL_STEP_TYPES.STACK)
         );
@@ -115,21 +114,10 @@ export default function reducer(state = {}, action) {
           if (status === 'completed') {
             currentStep.completed = true;
 
-            const { connectionMap = {} } = draft[templateId];
-
-            if (verifyBundleStep) {
-              Object.keys(connectionMap).forEach(key => {
-                if (connectionMap[key].type === verifyBundleStep) {
-                  connMap[connectionMap[key]._id] = newConnectionId;
-                }
-              });
-            }
-
             if (newConnectionId) {
               draft[templateId].cMap = {
                 ...draft[templateId].cMap,
                 [_connectionId]: newConnectionId,
-                ...connMap,
               };
             } else if (stackId) {
               draft[templateId].stackId = stackId;
@@ -137,7 +125,7 @@ export default function reducer(state = {}, action) {
 
             if (verifyBundleStep) {
               bundleStep = (draft[templateId].installSteps || []).find(
-                s => s.application === verifyBundleStep
+                s => (s.application === verifyBundleStep && s.completed === false)
               );
 
               if (bundleStep) {

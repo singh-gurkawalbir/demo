@@ -8,6 +8,7 @@ import IntegrationApp, {
   getTopLevelTabs,
   getIntegrationApp,
   getTitleIdFromSection,
+  getFormStatusFromCategoryMappingStatus,
 } from '.';
 
 describe('getIntegrationAppUrlName', () => {
@@ -1027,6 +1028,29 @@ describe('getTitleIdFromSection', () => {
     'should return %s when sec = %o',
     (expected, sec) => {
       expect(getTitleIdFromSection(sec)).toEqual(expected);
+    }
+  );
+});
+
+describe('getFormStatusFromCategoryMappingStatus test cases', () => {
+  const testCases = [
+    {
+      result: 'failed',
+    },
+    {
+      saveStatus: 'saved',
+      result: 'complete',
+    },
+    {
+      saveStatus: 'requested',
+      result: 'loading',
+    },
+  ];
+
+  each(testCases).test(
+    'should return %s when saveStatus is %o',
+    ({saveStatus, result}) => {
+      expect(getFormStatusFromCategoryMappingStatus(saveStatus)).toEqual(result);
     }
   );
 });
