@@ -44,7 +44,7 @@ export default {
   getLookupPath: adaptorType => {
     switch (adaptorType) {
       case 'RESTImport':
-        return '/http/lookups';
+        return '/rest/lookups';
       case 'NetSuiteDistributedImport':
         return '/netsuite_da/lookups';
       case 'NetSuiteImport':
