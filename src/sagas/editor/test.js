@@ -1074,7 +1074,6 @@ describe('editor sagas', () => {
         resourceId,
         stage: 'flowInput',
         fieldId: 'http.ping.body',
-        url: '/connections/123/edit',
       };
 
       return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
@@ -1111,7 +1110,8 @@ describe('editor sagas', () => {
         resourceId,
         stage: 'flowInput',
         fieldId: 'http.ping.body',
-        url: '/integrations/integration-1234/flowBuilder/456/edit/exports/789/edit/connections/conn-id',
+        parentId: '789',
+        parentType: 'exports',
       };
 
       return expectSaga(requestEditorSampleData, { id: 'httppingbody' })

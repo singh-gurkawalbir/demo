@@ -370,7 +370,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, url} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -506,16 +506,8 @@ export function* requestEditorSampleData({
       body.type = 'connection';
       body.connection = resource || {};
 
-      if (url) {
-        const splitURL = url.split('/');
-
-        // if the connection is viewed from inside the resource,
-        // we need to find its id to get settings from BE
-        if (splitURL.indexOf('exports') !== -1) {
-          body.exportId = splitURL[splitURL.indexOf('exports') + 1];
-        } else if (splitURL.indexOf('imports') !== -1) {
-          body.importId = splitURL[splitURL.indexOf('imports') + 1];
-        }
+      if (parentType) {
+        body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;
       }
 
       delete body.sampleData;
