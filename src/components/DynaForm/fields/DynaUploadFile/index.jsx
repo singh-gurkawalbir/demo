@@ -3,7 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import useFormContext from '../../../Form/FormContext';
 
 function findRowDelimiter(sampleData) {
   let rowDelimiter;
@@ -36,7 +35,6 @@ export default function DynaUploadFile(props) {
     placeholder,
     persistData = false,
   } = props;
-  const formContext = useFormContext(formKey);
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();

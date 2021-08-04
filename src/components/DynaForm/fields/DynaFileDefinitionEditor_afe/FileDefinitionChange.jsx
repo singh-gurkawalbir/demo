@@ -3,7 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
-import useFormContext from '../../../Form/FormContext';
 
 function extractResourcePath(value, initialResourcePath) {
   if (value) {
@@ -15,11 +14,9 @@ function extractResourcePath(value, initialResourcePath) {
   return initialResourcePath;
 }
 
-export default function FileDefinitionChange({editorId, formKey, fieldId, resourceType, resourceId}) {
+export default function FileDefinitionChange({editorId, formKey, fieldId, resourceType}) {
   const dispatch = useDispatch();
-  const formContext = useFormContext(formKey);
   const isEditorActive = useSelector(state => selectors.editor(state, editorId).id);
-  const parserType = resourceType === 'imports' ? 'fileDefinitionGenerator' : 'fileDefinitionParser';
 
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId));
 

@@ -9,7 +9,7 @@ import { selectors } from '../../../reducers';
 export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValidRecordSize, resourceId }) {
   const dispatch = useDispatch();
   const sampleDataRecordSize = useSelector(state =>
-  selectors.sampleDataRecordSize(state, resourceId)
+    selectors.sampleDataRecordSize(state, resourceId)
   );
   const [recordSize, setRecordSize] = useState(`${sampleDataRecordSize || DEFAULT_RECORD_SIZE}`);
   const [errorMessage, setErrorMessage] = useState();
