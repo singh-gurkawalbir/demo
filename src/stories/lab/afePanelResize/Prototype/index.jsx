@@ -1,4 +1,11 @@
 import React, { useState, useRef } from 'react';
+// Note that the resize detector is 2 major versions behind. The new interface supports hooks and
+// thus has an interface more in-line with our codebase. When this feature is moved into the UI
+// codebase, we should update to version 6. Here are the docs:
+// https://www.npmjs.com/package/react-resize-detector
+// I do not want to bump the version as we need to re-test each part of the existing UI which is
+// using the now-older version, as the interface may have slightly changed over 2 major releases.
+import ReactResizeDetector from 'react-resize-detector';
 import { makeStyles } from '@material-ui/core';
 import SinglePanelGridItem from '../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
 import DragHandleGridItem from './DragHandleGridItem';
@@ -26,6 +33,30 @@ function getGridArea(node) {
   // console.log(cssHandleArea);
 
   return cssHandleArea.split('/')[0].trim();
+}
+
+function getCssSizeString(cssGridSizes, dragBarPos, movement) {
+  const sizes = cssGridSizes.split(' ').map(s => Number(s.replace('px', '')));
+
+  // we need to respect min grid size... if the dragging would cause any grid item to be
+  // smaller than a predetermined size, we should ignore the event.
+  const prevSize = sizes[dragBarPos - 1];
+  const nextSize = sizes[dragBarPos + 1];
+
+  // console.log(prevSize, nextSize, dragBarPos, movement);
+
+  if ((prevSize + movement) < minGridSize || (nextSize - movement) < minGridSize) {
+    return; // setIsDragging(false);
+  }
+
+  sizes[dragBarPos - 1] += movement;
+  sizes[dragBarPos + 1] -= movement;
+
+  const newCssGridSizes = sizes.map(c => `${c}px`).join(' ');
+
+  // console.log(cssGridSizes, newCssGridSizes);
+
+  return newCssGridSizes;
 }
 
 function findGridColumn(grid, gridArea) {
@@ -89,30 +120,6 @@ export default function ResizeProto() {
     setIsDragging(false);
   }
 
-  function getCssSizeString(cssGridSizes, dragBarPos, movement) {
-    const sizes = cssGridSizes.split(' ').map(s => Number(s.replace('px', '')));
-
-    // we need to respect min grid size... if the dragging would cause any grid item to be
-    // smaller than a predetermined size, we should ignore the event.
-    const prevSize = sizes[dragBarPos - 1];
-    const nextSize = sizes[dragBarPos + 1];
-
-    // console.log(prevSize, nextSize, dragBarPos, movement);
-
-    if ((prevSize + movement) < minGridSize || (nextSize - movement) < minGridSize) {
-      return; // setIsDragging(false);
-    }
-
-    sizes[dragBarPos - 1] += movement;
-    sizes[dragBarPos + 1] -= movement;
-
-    const newCssGridSizes = sizes.map(c => `${c}px`).join(' ');
-
-    // console.log(cssGridSizes, newCssGridSizes);
-
-    return newCssGridSizes;
-  }
-
   function handleVerticalDrag(event) {
     const dX = event.movementX;
     const gridNode = gridRef.current;
@@ -155,6 +162,38 @@ export default function ResizeProto() {
     event.preventDefault();
   }
 
+  // I can not think of a better way to handle container resize issues.
+  // The resize panel mechanism relies on pixel math for dragging the handles.
+  // In the rare case a user ALSO changes their browser size, then the panels
+  // will not resize properly as their rows and cols are now set to fixed px dimensions.
+  // The solution I use here is to convert the pixel sizes to fractional units to
+  // restore the resizing... further optimizations can be made as this handler
+  // ONLY needs to fire IFF a panel drag event resized a panel. Also once this
+  // handler executes, it doesn't need to run again until AFTER a drag event occurs.
+  // This implementation is a POC and should be reviewed/refined when the UI task
+  // makes it to the UI codebase.
+  const handleResize = () => {
+    const gridNode = gridRef.current;
+
+    const pxToFr = pxSizes => {
+      const sizes = pxSizes.split(' ').map(s => Number(s.replace('px', '')));
+      // Note we are making an assumption here that any grid row/col with a size <30px
+      // is a dragBar and should NOT have fractional units. Setting to "auto" will
+      // force the width/height to match the dragBar within the grid item.
+      const fr = sizes.map(c => c < 30 ? 'auto' : `${c}fr`).join(' ');
+
+      // console.log(pxSizes, 'converted to: ', fr);
+
+      return fr;
+    };
+
+    const cssGridCols = window.getComputedStyle(gridNode).getPropertyValue('grid-template-columns');
+    const cssGridRows = window.getComputedStyle(gridNode).getPropertyValue('grid-template-rows');
+
+    gridNode.style.gridTemplateColumns = pxToFr(cssGridCols);
+    gridNode.style.gridTemplateRows = pxToFr(cssGridRows);
+  };
+
   return (
     <div className={classes.page} ref={gridRef} onMouseUp={handleDragEnd} onMouseMove={handleDrag}>
       <SinglePanelGridItem area="panel_0" title="Panel 0">Panel0 content</SinglePanelGridItem>
@@ -167,6 +206,8 @@ export default function ResizeProto() {
       <DragHandleGridItem area="dragBar_v_1" orientation="vertical" onMouseDown={handleDragStart} />
       <DragHandleGridItem area="dragBar_h_0" orientation="horizontal" onMouseDown={handleDragStart} />
       <DragHandleGridItem area="dragBar_h_1" orientation="horizontal" onMouseDown={handleDragStart} />
+
+      <ReactResizeDetector handleWidth handleHeight skipOnMount onResize={handleResize} />
     </div>
   );
 }
