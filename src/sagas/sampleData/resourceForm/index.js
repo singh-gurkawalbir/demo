@@ -22,6 +22,7 @@ import { safeParse } from '../../../utils/string';
 const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
 const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
 const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
+const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -35,7 +36,7 @@ const PARSERS = {
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
 
-export function extractResourcePath(value, initialResourcePath) {
+function extractResourcePath(value, initialResourcePath) {
   if (value) {
     const jsonValue = safeParse(value) || {};
 
@@ -62,7 +63,7 @@ export function* _getProcessorOutput({ processorData }) {
   }
 }
 
-function* fetchResourceInfoFromFormKey({ formKey }) {
+export function* _fetchResourceInfoFromFormKey({ formKey }) {
   const formState = yield select(selectors.formState, formKey);
   const parentContext = (yield select(selectors.formParentContext, formKey)) || {};
   const resourceObj = (yield call(constructResourceFromFormValues, {
@@ -78,7 +79,7 @@ function* fetchResourceInfoFromFormKey({ formKey }) {
   };
 }
 
-function* handlePreviewError({ e, resourceId }) {
+export function* _handlePreviewError({ e, resourceId }) {
 // Handling Errors with status code between 400 and 500
   if (e.status === 403 || e.status === 401) {
     return;
@@ -92,16 +93,17 @@ function* handlePreviewError({ e, resourceId }) {
     );
   }
 }
-function* requestRealTimeSampleData({ formKey, refreshCache = false }) {
-  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
+  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const realTimeSampleData = yield call(requestRealTimeMetadata, { resource: resourceObj, refresh: refreshCache });
 
   yield put(actions.resourceFormSampleData.setParseData(resourceId, realTimeSampleData));
+  yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-function* requestExportPreviewData({ formKey }) {
-  const { resourceObj, resourceId, flowId, integrationId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+export function* _requestExportPreviewData({ formKey }) {
+  const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
   const body = getFormattedResourceForPreview(resourceObj);
@@ -130,7 +132,7 @@ function* requestExportPreviewData({ formKey }) {
     // handle state updates for real time resources here
     yield put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData));
   } catch (e) {
-    yield call(handlePreviewError, { e, resourceId });
+    yield call(_handlePreviewError, { e, resourceId });
   }
 }
 
@@ -139,7 +141,7 @@ function* requestExportPreviewData({ formKey }) {
  * and if body has sampleData
  */
 export function* _hasSampleDataOnResource({ formKey }) {
-  const { resourceObj, resourceId, resourceType } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj, resourceId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
   if (!resource || !resourceObj?.sampleData) return false;
@@ -156,7 +158,7 @@ export function* _hasSampleDataOnResource({ formKey }) {
   return bodyFileType === resourceFileType;
 }
 
-function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
@@ -171,32 +173,12 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(processedJsonData, recordSize)));
       break;
     }
-    case 'csv': {
-      const processorData = {
-        rule: parserOptions,
-        data: fileContent,
-        editorType: PARSERS.csv,
-      };
-      const processorOutput = yield call(_getProcessorOutput, { processorData });
-
-      if (processorOutput?.data) {
-        const previewData = processorOutput.data.data;
-
-        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
-      }
-      if (processorOutput?.error) {
-        return yield put(
-          actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
-        );
-      }
-      break;
-    }
+    case 'csv':
     case 'xml': {
       const processorData = {
         rule: parserOptions,
         data: fileContent,
-        editorType: PARSERS.xml,
+        editorType: PARSERS[fileType],
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
@@ -273,9 +255,9 @@ function* parseFileData({ resourceId, fileContent, fileProps = {}, fileType, par
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-function* requestFileSampleData({ formKey }) {
+export function* _requestFileSampleData({ formKey }) {
   // file related sample data is handled here
-  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const fileType = resourceObj?.file?.type;
 
@@ -302,7 +284,7 @@ function* requestFileSampleData({ formKey }) {
       options: { format, definitionId, resourcePath },
     });
 
-    yield call(parseFileData, {
+    yield call(_parseFileData, {
       resourceId,
       fileContent: fileDefinitionData?.sampleData || resourceObj.sampleData,
       parserOptions: fieldValue || fileDefinitionData?.rule,
@@ -310,36 +292,36 @@ function* requestFileSampleData({ formKey }) {
     });
   } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
-    yield call(parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions, isNewSampleData: true});
+    yield call(_parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions, isNewSampleData: true});
   } else if (hasSampleData) {
     // fetch from sample data and update state
-    yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
+    yield call(_parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
   } else {
     // no sample data - so clear sample data from state
     yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
 }
 
-function* requestPGExportSampleData({ formKey, refreshCache }) {
-  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+export function* _requestPGExportSampleData({ formKey, refreshCache }) {
+  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj) || isRestCsvExport) {
-    return yield call(requestFileSampleData, { formKey });
+    return yield call(_requestFileSampleData, { formKey });
   }
   if (isRealTimeOrDistributedResource(resourceObj)) {
-    return yield call(requestRealTimeSampleData, { formKey, refreshCache });
+    return yield call(_requestRealTimeSampleData, { formKey, refreshCache });
   }
-  yield call(requestExportPreviewData, { formKey });
+  yield call(_requestExportPreviewData, { formKey });
 }
 
-function* requestLookupSampleData({ formKey, refreshCache }) {
-  const { resourceId, resourceObj, flowId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+export function* _requestLookupSampleData({ formKey, refreshCache }) {
+  const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   // make file adaptor sample data calls
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj) || isRestCsvExport) {
-    return yield call(requestFileSampleData, { formKey });
+    return yield call(_requestFileSampleData, { formKey });
   }
   // make PP preview call incase of all other adaptors
   const resourceType = 'exports';
@@ -376,27 +358,27 @@ function* requestLookupSampleData({ formKey, refreshCache }) {
       actions.resourceFormSampleData.receivedPreviewStages(resourceId, pageProcessorPreviewData)
     );
   } catch (e) {
-    yield call(handlePreviewError, { e, resourceId });
+    yield call(_handlePreviewError, { e, resourceId });
   }
 }
 
-function* requestExportSampleData({ formKey, refreshCache }) {
-  const { resourceId, flowId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+export function* _requestExportSampleData({ formKey, refreshCache }) {
+  const { resourceId, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
   const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
 
   // need to handle standalone export as isPageGenerator returns false but still it needs export sample data
   // ref: IO-21691
   if (isPageGenerator || isStandaloneExport) {
-    yield call(requestPGExportSampleData, { formKey, refreshCache });
+    yield call(_requestPGExportSampleData, { formKey, refreshCache });
   } else {
-    yield call(requestLookupSampleData, { formKey, refreshCache });
+    yield call(_requestLookupSampleData, { formKey, refreshCache });
   }
 }
 
-function* requestImportFileSampleData({ formKey }) {
+export function* _requestImportFileSampleData({ formKey }) {
   // file related sample data is handled here
-  const { resourceObj, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const fileType = resourceObj?.file?.type;
 
@@ -440,13 +422,13 @@ function* requestImportFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-function* requestImportSampleData({ formKey }) {
+export function* _requestImportSampleData({ formKey }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
-  const { resourceObj } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
-    yield call(requestImportFileSampleData, { formKey });
+    yield call(_requestImportFileSampleData, { formKey });
   }
 }
 
@@ -454,18 +436,18 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   if (!formKey) {
     return;
   }
-  const { resourceType, resourceId } = yield call(fetchResourceInfoFromFormKey, { formKey });
+  const { resourceType, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
-  if (!resourceId) return;
+  if (!resourceId || !VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA.includes(resourceType)) return;
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {
     const { refreshCache } = options;
 
-    yield call(requestExportSampleData, { formKey, refreshCache });
+    yield call(_requestExportSampleData, { formKey, refreshCache });
   }
   if (resourceType === 'imports') {
-    yield call(requestImportSampleData, { formKey });
+    yield call(_requestImportSampleData, { formKey });
   }
 }
 

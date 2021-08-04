@@ -1365,7 +1365,7 @@ const flowData = {
     }),
 };
 const resourceFormSampleData = {
-  request: formKey => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey }),
+  request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
   setStatus: (resourceId, status) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS, { resourceId, status }),
   receivedPreviewStages: (resourceId, previewStagesData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES, { resourceId, previewStagesData }),
   receivedPreviewError: (resourceId, previewError) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR, { resourceId, previewError }),
