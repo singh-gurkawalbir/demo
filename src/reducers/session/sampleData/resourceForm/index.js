@@ -74,7 +74,8 @@ export default function (state = {}, action) {
         draft[resourceId].recordSize = recordSize;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES:
-        if (draft[resourceId]?.data) {
+        if (draft[resourceId]) {
+          draft[resourceId].status = 'received';
           draft[resourceId].data = {};
         }
         break;
@@ -83,8 +84,6 @@ export default function (state = {}, action) {
         break;
       default:
     }
-
-    return draft;
   });
 }
 

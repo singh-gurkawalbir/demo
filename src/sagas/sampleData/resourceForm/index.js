@@ -45,11 +45,6 @@ export function extractResourcePath(value, initialResourcePath) {
   return initialResourcePath;
 }
 
-function* clearResourceSampleDataStages({ resourceId }) {
-  yield put(actions.resourceFormSampleData.clearStages(resourceId));
-  yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
-}
-
 export function* _getProcessorOutput({ processorData }) {
   try {
     const processedData = yield call(evaluateExternalProcessor, {
@@ -69,7 +64,7 @@ export function* _getProcessorOutput({ processorData }) {
 
 function* fetchResourceInfoFromFormKey({ formKey }) {
   const formState = yield select(selectors.formState, formKey);
-  const parentContext = (yield select(selectors.formParentContext, formKey) || {});
+  const parentContext = (yield select(selectors.formParentContext, formKey)) || {};
   const resourceObj = (yield call(constructResourceFromFormValues, {
     formValues: formState?.value || {},
     resourceId: parentContext.resourceId,
@@ -285,7 +280,7 @@ function* requestFileSampleData({ formKey }) {
   const fileType = resourceObj?.file?.type;
 
   if (!fileType) {
-    return yield call(clearResourceSampleDataStages, { resourceId });
+    return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
 
   const fileProps = resourceObj.file[fileType] || {};
@@ -321,7 +316,7 @@ function* requestFileSampleData({ formKey }) {
     yield call(parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
   } else {
     // no sample data - so clear sample data from state
-    yield call(clearResourceSampleDataStages, { resourceId });
+    yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
 }
 
@@ -361,7 +356,7 @@ function* requestLookupSampleData({ formKey, refreshCache }) {
     _pageProcessorDoc = { ..._pageProcessorDoc, oneToMany };
   }
   // add recordSize if passed to limit number of records from preview
-  if (recordSize) {
+  if (recordSize && !Number.isNaN(recordSize)) {
     _pageProcessorDoc.test = { limit: recordSize };
   }
 
@@ -406,7 +401,7 @@ function* requestImportFileSampleData({ formKey }) {
   const fileType = resourceObj?.file?.type;
 
   if (!fileType) {
-    return yield call(clearResourceSampleDataStages, { resourceId });
+    return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
 
   const fileId = `${resourceId}-uploadFile`;
@@ -440,7 +435,7 @@ function* requestImportFileSampleData({ formKey }) {
       yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, csvFileContent));
     }
   } else {
-    yield call(clearResourceSampleDataStages, { resourceId });
+    yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
