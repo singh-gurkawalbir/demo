@@ -5377,12 +5377,16 @@ selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
  * i.e., not linked to any flow PG/PP
  */
 selectors.isStandaloneExport = (state, flowId, exportId) => {
-  if (!exportId || selectors.isPageGenerator(state, flowId, exportId, 'exports')) {
+  if (!exportId) {
     return false;
   }
 
   if (!flowId || isNewId(flowId)) {
     return true;
+  }
+
+  if (selectors.isPageGenerator(state, flowId, exportId, 'exports')) {
+    return false;
   }
 
   const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
