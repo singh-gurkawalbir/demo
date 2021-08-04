@@ -930,7 +930,7 @@ selectors.getAllAccountDashboardFlows = (state, filterKey) => {
   const jobFilter = selectors.filter(state, filterKey);
   let storeId;
   let parentIntegrationId;
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i._id !== 'all') || [];
+  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
 
   // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
   // below logic is used to extact store id and integration id from this.
