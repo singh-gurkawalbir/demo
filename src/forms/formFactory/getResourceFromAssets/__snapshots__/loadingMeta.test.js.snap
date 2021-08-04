@@ -3943,6 +3943,9 @@ Object {
           },
         ],
       },
+      "unencrypted.apiType": Object {
+        "fieldId": "unencrypted.apiType",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -3962,6 +3965,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.relativeURI",
@@ -9950,6 +9954,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "unencrypted.apiType": Object {
+        "fieldId": "unencrypted.apiType",
+      },
       "upateExistingData": Object {
         "id": "upateExistingData",
         "label": "Upate existing data",
@@ -10038,6 +10045,7 @@ Object {
                 },
               ],
               "fields": Array [
+                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.compositeType",
