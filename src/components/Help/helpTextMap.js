@@ -41,8 +41,8 @@ export default {
   'connection.salesforce.info.email': 'Your Salesforce account email.',
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
-  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Omnisend account.<br>2. From the account avatar at the top right, select <b>Store settings</b>. Navigate to <b>Integrations & API > API keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click <b>Create APIKEY+</b>, select its permissions, and click <b>Save</b>.). ',
-  'pagerduty.connection.http.auth.token.token': 'Enter the API key of your Pagerduty account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → API Access Keys</b>.<br>3. Copy the API key.(If none exists yet or you want to change the API key,click to <b>Create New API Key</b> option and select appropriate permissions to create a new API key.)',
+  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign into the Omnisend account.<br>2. From the account avatar at the top right, select <b>Store settings</b>. Navigate to <b>Integrations & API > API keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click <b>Create APIKEY+</b>, select its permissions, and click <b>Save</b>.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pagerduty.connection.http.auth.token.token': 'Enter the API key of your Pagerduty account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → API Access Keys</b>.<br>3. Copy the API key.(If none exists yet or you want to change the API key,click to <b>Create New API Key</b> option and select appropriate permissions to create a new API key.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pagerduty.connection.http.auth.type': 'Please select Authentication Type.',
   'pagerduty.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><b>Steps to get the client ID and client secret:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → Developer Mode</b>.<br> 3. Click on the App(under functionality) → Manage option for OAuth 2.0.<br> 4. Copy the Client ID and Client Secret.(If none exists yet,click to <b>Create New App</b> option to create a new pair.)',
   'sharepoint.connection.http.subDomain':
@@ -339,9 +339,7 @@ export default {
   'connection.http.freshdeskSubdomain':
     "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
   'freshdesk.connection.http.auth.basic.username':
-    'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
-  'freshdesk.connection.http.auth.basic.password':
-    'The password of your Freshdesk account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+    'Enter the API key of your Freshdesk account.<br><b>Steps to get the API key:</b><br>1. Sign into the Freshdesk account.<br>2. From the account avatar at the top right, select <b>Profile settings</b>.<br>3. Copy the <b>API key</b> present in the sidebar.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'avalara.connection.accType':
     'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
   'connection.http.acceloSubdomain':
@@ -378,7 +376,7 @@ export default {
   'pitneybowes.connection.http.sandbox':
     'Please select your environment here.',
   'pitneybowes.connection.http.unencrypted.apiKey':
-    'Please enter API Key of your Pitney Bowes Account.',
+    'Please enter API Key of your Pitney Bowes Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.encrypted.apiSecret':
     'Please enter API Secret of your Pitney Bowes Account. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.auth.token.token':
