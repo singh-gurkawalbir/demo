@@ -41,10 +41,10 @@ export default {
     // returning deep cloned lookup object to avoid resource object manipulation
     return deepClone(lookup);
   },
-  getLookupPath: adaptorType => {
+  getLookupPath: (adaptorType, isMapping) => {
     switch (adaptorType) {
       case 'RESTImport':
-        return '/rest/lookups';
+        return isMapping ? '/rest/lookups' : '/http/lookups';
       case 'NetSuiteDistributedImport':
         return '/netsuite_da/lookups';
       case 'NetSuiteImport':

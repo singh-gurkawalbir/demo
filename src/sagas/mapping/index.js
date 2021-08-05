@@ -10,12 +10,12 @@ import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType} from '../../utils/resource';
+import { getResourceSubType } from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
-import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
-import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
-import {requestAssistantMetadata} from '../resources/meta';
-import {getMappingMetadata as getIAMappingMetadata} from '../integrationApps/settings';
+import { requestSampleData as requestFlowSampleData } from '../sampleData/flows';
+import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
+import { requestAssistantMetadata } from '../resources/meta';
+import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -332,7 +332,7 @@ export function* saveMappings() {
 
       return true;
     }).map(({isConditionalLookup, ...others}) => ({...others}));
-    const lookupPath = lookupUtil.getLookupPath(importResource.adaptorType);
+    const lookupPath = lookupUtil.getLookupPath(importResource.adaptorType, true);
 
     // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
     if (lookupPath) {
