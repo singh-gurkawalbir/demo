@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers/index';
@@ -10,6 +11,7 @@ import TestButton, { PingMessage } from './TestButton';
 import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
+import { getParentResourceContext } from '../../../../DynaForm/fields/DynaHttpRequestBody_afe';
 
 const ConfirmDialog = props => {
   const {
@@ -86,6 +88,14 @@ export default function TestSaveAndClose(props) {
     onCancel,
   } = props;
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const formParentContext = useSelector(
+    state => selectors.formParentContext(state, formKey),
+    shallowEqual
+  );
+  const { flowId, integrationId } = formParentContext || {};
+  const { parentType, parentId } = getParentResourceContext(match.url) || {};
+
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const { formValues, testInitiated, erroredMessage, savingForm, closeAfterSave } = formState;
@@ -112,8 +122,8 @@ export default function TestSaveAndClose(props) {
     if (!newValues['/_borrowConcurrencyFromConnectionId']) {
       newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
     }
-    dispatch(actions.resource.connections.test(resourceId, newValues));
-  }, [dispatch, resourceId, values]);
+    dispatch(actions.resource.connections.test(resourceId, newValues, { flowId, integrationId, parentType, parentId }));
+  }, [dispatch, flowId, integrationId, parentType, parentId, resourceId, values]);
 
   const testClear = useCallback(
     () => dispatch(actions.resource.connections.testClear(resourceId, true)),
