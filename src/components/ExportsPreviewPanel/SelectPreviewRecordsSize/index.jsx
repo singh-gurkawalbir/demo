@@ -15,9 +15,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
   const [errorMessage, setErrorMessage] = useState();
 
   const patchRecordSize = useCallback(size => {
-    dispatch(actions.sampleData.patch(resourceId, {
-      recordSize: size,
-    }));
+    dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, size));
   }, [dispatch, resourceId]);
 
   const onRecordChange = useCallback((_id, value) => {
@@ -52,9 +50,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
 
   useEffect(() => {
     if (!sampleDataRecordSize) {
-      dispatch(actions.sampleData.patch(resourceId, {
-        recordSize: DEFAULT_RECORD_SIZE,
-      }));
+      dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, DEFAULT_RECORD_SIZE));
     }
   }, [sampleDataRecordSize, dispatch, resourceId]);
 
