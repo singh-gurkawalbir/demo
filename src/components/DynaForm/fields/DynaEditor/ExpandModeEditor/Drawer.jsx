@@ -128,7 +128,7 @@ export default function EditorDrawer(props) {
                 disabled={!isContentChanged}
                 className={classes.action}
                 onClick={handleDone}
-                variant="outlined"
+                variant="contained"
                 color="primary">
                 Done
               </Button>
@@ -137,7 +137,7 @@ export default function EditorDrawer(props) {
                 className={classes.action}
                 onClick={handleClose}
                 variant="text"
-                color="primary">
+                color="secondary">
                 Cancel
               </Button>
             </>

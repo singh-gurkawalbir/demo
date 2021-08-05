@@ -40,7 +40,7 @@ export default function EditorModal(props) {
         <Button
           data-test="showEditor"
           onClick={handleClose}
-          variant="outlined"
+          variant="contained"
           color="primary">
           Done
         </Button>
