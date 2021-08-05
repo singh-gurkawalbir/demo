@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import PingMessageSnackbar from '../../../../../PingMessageSnackbar';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers/index';
@@ -50,11 +51,13 @@ export const PingMessage = props => {
 };
 
 export default function TestButton(props) {
-  const { resourceId, ssLinkedConnectionId } = props;
+  const { resourceId, ssLinkedConnectionId, formKey } = props;
   const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
   const handleTestConnection = useCallback(
-    values => {
+    () => {
       setIsTesting(true);
       dispatch(
         actions.suiteScript.resource.connections.test(
@@ -64,7 +67,7 @@ export default function TestButton(props) {
         )
       );
     },
-    [dispatch, resourceId, ssLinkedConnectionId]
+    [dispatch, resourceId, ssLinkedConnectionId, values]
   );
   const testConnectionCommState = useSelector(state =>
     selectors.suiteScriptTestConnectionCommState(
