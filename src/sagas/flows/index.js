@@ -49,7 +49,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
   }
 
   const additionalProps = {
-    _id: job._jobId,
+    _id: job?._jobId,
     _flowId: flowId,
     type: JOB_TYPES.FLOW,
     status: JOB_STATUS.QUEUED,

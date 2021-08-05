@@ -1368,7 +1368,7 @@ export default {
     'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
   'flow._runNextFlowIds':
     'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
-  'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier). It also runs the recovery procedure for certain error classifications, such as intermittent.',
+  'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'iclient._id':
     'System generated primary unique identifier for your iClient.  For API users, this value should be used for GET and PUT requests.',
   'iclient.lastModified':
@@ -2168,6 +2168,7 @@ export default {
   'users.actions': 'These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.',
   'accountdashboard.numRuns': 'The number of times the flow has completed for the selected date range.',
   'accountdashboard.avgRuntime': 'The average time the flow takes to complete running. The run time includes the time the flow is “Waiting in queue” status.',
+  'accountdashboard.numResolvedByAuto': 'The number of errors that were auto-resolved, based on a match to another error’s <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a> (unique field identifier).',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':

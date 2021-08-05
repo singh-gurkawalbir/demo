@@ -405,7 +405,7 @@ export default {
               applicationResource[connectionId][sObjectMetadataPath]) ||
             {};
 
-          if (childSObject && childSObject.fields.length) {
+          if (childSObject?.fields?.length) {
             childSObject.fields.forEach(field => {
               _data.push({
                 value: `${child.relationshipName}[*].${field.name}`,
