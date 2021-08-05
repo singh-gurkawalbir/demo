@@ -775,6 +775,8 @@ export default function FilterPanel({editorId}) {
 
       if (disabled) {
         setTimeout(() => {
+          if (!qbuilder.current) return;
+
           jQuery(`#${qbuilder.current.id} button[data-not!=group]`).hide();
           jQuery(`#${qbuilder.current.id} button[data-not=group]`).prop(
             'disabled',

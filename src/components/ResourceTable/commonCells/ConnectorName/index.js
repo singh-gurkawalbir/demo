@@ -4,7 +4,7 @@ import { getApp } from '../../../../constants/applications';
 import { getResourceSubType } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 
-export default function ConnectorName({resource}) {
+export default function ConnectorName({ resource }) {
   const { type, assistant, resourceType } = useMemo(() => getResourceSubType(resource), [resource]);
   const _connectionId = resource?._connectionId;
   const useRestForm = !!resource?.useTechAdaptorForm || !!resource?.http?.useRestForm;
@@ -38,5 +38,5 @@ export default function ConnectorName({resource}) {
     return 'RDBMS';
   }, [type, resourceType, rdbmsType, assistant, rdbmsConnType, useRestForm]);
 
-  return out;
+  return out || null;
 }

@@ -1023,11 +1023,12 @@ const integrationApp = {
   child: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, showForm) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        showForm,
       }),
     clearSteps: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),
@@ -1278,32 +1279,6 @@ const user = {
       action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
-const sampleData = {
-  request: (resourceId, resourceType, values, stage, options = {}) =>
-    action(actionTypes.SAMPLEDATA.REQUEST, {
-      resourceId,
-      resourceType,
-      values,
-      stage,
-      options,
-    }),
-  requestLookupPreview: (resourceId, flowId, formValues, options) =>
-    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
-      resourceId,
-      flowId,
-      formValues,
-      options,
-    }),
-  received: (resourceId, previewData) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
-  update: (resourceId, processedData, stage) =>
-    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
-  patch: (resourceId, patch) =>
-    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
-  receivedError: (resourceId, error, stage) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
-  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
-};
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
     action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, {
@@ -1389,6 +1364,19 @@ const flowData = {
       resourceIndex,
       responseMapping,
     }),
+};
+const resourceFormSampleData = {
+  request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
+  setStatus: (resourceId, status) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS, { resourceId, status }),
+  receivedPreviewStages: (resourceId, previewStagesData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES, { resourceId, previewStagesData }),
+  receivedPreviewError: (resourceId, previewError) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR, { resourceId, previewError }),
+  setParseData: (resourceId, parseData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PARSE_DATA, { resourceId, parseData }),
+  setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
+  setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
+  setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
+  clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
+  clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
@@ -2304,7 +2292,7 @@ export default {
   file,
   assistantMetadata,
   stack,
-  sampleData,
+  resourceFormSampleData,
   importSampleData,
   flowData,
   connection,

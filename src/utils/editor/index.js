@@ -73,6 +73,8 @@ export const getUniqueFieldId = (fieldId, resource) => {
 
       return 'http.relativeURI.1';
 
+    case 'http.auth.oauth.refreshBody':
+      return 'http.auth.token.refreshBody';
     default:
       return fieldId;
   }

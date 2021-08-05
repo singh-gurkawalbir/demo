@@ -37,8 +37,8 @@ export default {
   'connection.salesforce.info.email': 'Your Salesforce account email.',
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
-  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Omnisend account.<br>2. Navigate to <b>MyAccount > Store settings > Integrations & API > API Keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click to <b>Create APIKEY+</b> option and select appropriate permissions to create a new API key.). ',
-  'pagerduty.connection.http.auth.token.token': 'Enter the API key of your Pagerduty account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → API Access Keys</b>.<br>3. Copy the API key.(If none exists yet or you want to change the API key,click to <b>Create New API Key</b> option and select appropriate permissions to create a new API key.)',
+  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign into the Omnisend account.<br>2. From the account avatar at the top right, select <b>Store settings</b>. Navigate to <b>Integrations & API > API keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click <b>Create APIKEY+</b>, select its permissions, and click <b>Save</b>.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pagerduty.connection.http.auth.token.token': 'Enter the API key of your Pagerduty account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → API Access Keys</b>.<br>3. Copy the API key.(If none exists yet or you want to change the API key,click to <b>Create New API Key</b> option and select appropriate permissions to create a new API key.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pagerduty.connection.http.auth.type': 'Please select Authentication Type.',
   'pagerduty.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><b>Steps to get the client ID and client secret:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → Developer Mode</b>.<br> 3. Click on the App(under functionality) → Manage option for OAuth 2.0.<br> 4. Copy the Client ID and Client Secret.(If none exists yet,click to <b>Create New App</b> option to create a new pair.)',
   'sharepoint.connection.http.subDomain':
@@ -335,9 +335,7 @@ export default {
   'connection.http.freshdeskSubdomain':
     "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
   'freshdesk.connection.http.auth.basic.username':
-    'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
-  'freshdesk.connection.http.auth.basic.password':
-    'The password of your Freshdesk account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+    'Enter the API key of your Freshdesk account.<br><b>Steps to get the API key:</b><br>1. Sign into the Freshdesk account.<br>2. From the account avatar at the top right, select <b>Profile settings</b>.<br>3. Copy the <b>API key</b> present in the sidebar.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'avalara.connection.accType':
     'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
   'connection.http.acceloSubdomain':
@@ -374,7 +372,7 @@ export default {
   'pitneybowes.connection.http.sandbox':
     'Please select your environment here.',
   'pitneybowes.connection.http.unencrypted.apiKey':
-    'Please enter API Key of your Pitney Bowes Account.',
+    'Please enter API Key of your Pitney Bowes Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.encrypted.apiSecret':
     'Please enter API Secret of your Pitney Bowes Account. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.auth.token.token':
@@ -1310,6 +1308,7 @@ export default {
     "Use this field to specify a file name postfix that will be used to filter which files in the google drive folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
   'export.file.batchSize': 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
   'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
+  'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'export.s3.region':
     "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
   'export.webhook.provider':
@@ -1369,7 +1368,7 @@ export default {
     'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
   'flow._runNextFlowIds':
     'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
-  'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier). It also runs the recovery procedure for certain error classifications, such as intermittent.',
+  'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'iclient._id':
     'System generated primary unique identifier for your iClient.  For API users, this value should be used for GET and PUT requests.',
   'iclient.lastModified':
@@ -1585,9 +1584,9 @@ export default {
   'import.ftp.fileExtension':
     "This field can be used to include a specific file name extension to all files being generated and transferred to an FTP site.  For example, if you choose '.csv' then all files being transferred to the FTP site will include the extension '.csv' in their file name (i.e. FileXYZ-16-06-30.csv). Please note that this field is only relates to the file's name, and does not dictate the type of data being generated (which is set via a different field).  Saying this another way, although not recommended you could generate json files but use a '.csv' extension for the file names.",
   'import.file.fileName':
-    "Use this field to specify how the files being uploaded to the google drive site should be named.  You can type '{{{' to include a predefined timestamp template in your file name.  For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+    "Use this field to specify how the files being uploaded to the google drive site should be named. You can type '{{{' to include a predefined timestamp template in your file name. For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.ftp.fileName':
-    "Use this field to specify how the files being uploaded to the ftp site should be named. You can type '{' to include a predefined timestamp or unique file identifier in your file name. For example, 'FileXYZ-{{{timestamp(YY-MM-DD)}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt'. Or, 'FileXYZ-{UUID}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated",
+    "Use this field to specify how the files being uploaded to the ftp site should be named. You can type '{{{' to include a predefined timestamp or unique file identifier in your file name. For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time, Or, 'FileXYZ-{UUID}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.ftp.inProgressFileName':
     'If the destination folder where your file is being generated is also being watched by another service, it may be necessary to "hide" the file being generated by integrator.io until it completes.  This field is used to tell our platform to write the file under a temporary filename while the write opperation is in progress. Upon completion, integrator.io will rename this file to the intended filename defined by the "fileName" field.',
   'import.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
@@ -2169,6 +2168,7 @@ export default {
   'users.actions': 'These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.',
   'accountdashboard.numRuns': 'The number of times the flow has completed for the selected date range.',
   'accountdashboard.avgRuntime': 'The average time the flow takes to complete running. The run time includes the time the flow is “Waiting in queue” status.',
+  'accountdashboard.numResolvedByAuto': 'The number of errors that were auto-resolved, based on a match to another error’s <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a> (unique field identifier).',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':

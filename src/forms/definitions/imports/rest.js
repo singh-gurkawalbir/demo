@@ -1091,6 +1091,7 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
   },
   layout: {
     type: 'collapse',
@@ -1110,6 +1111,7 @@ export default {
           return 'How would you like the records imported?';
         },
         fields: [
+          'unencrypted.apiType',
           'http.method',
           'http.blobMethod',
           'http.compositeType',

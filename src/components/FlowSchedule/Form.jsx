@@ -36,7 +36,7 @@ export default function FlowScheduleForm({
   }, [status]);
   let resource = pg || flow;
   const schedule = pg?.schedule || flow?.schedule;
-  const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
+  const scheduleStartMinute = getScheduleStartMinute(exp || flow);
 
   const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';
 

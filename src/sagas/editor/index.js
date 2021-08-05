@@ -17,7 +17,7 @@ import { getResource, commitStagedChanges } from '../resources';
 import processorLogic, { featuresMap } from '../../reducers/session/editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
-import { requestExportSampleData } from '../sampleData/exports';
+import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
@@ -370,7 +370,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -434,7 +434,7 @@ export function* requestEditorSampleData({
   const needPreviewStagesData = resourceType === 'exports' && !!resource?.http?.paging?.method && previewDataDependentFieldIds.includes(fieldId);
 
   if (showPreviewStageData || needPreviewStagesData) {
-    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+    yield call(requestResourceFormSampleData, { formKey });
   }
 
   if (showPreviewStageData) {
@@ -496,12 +496,30 @@ export function* requestEditorSampleData({
     const flow = yield select(selectors.resource, 'flows', flowId);
 
     body.integrationId = flow?._integrationId;
-
-    body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     body.fieldPath = fieldId || filterPath;
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
+    }
+
+    if (resourceType === 'connections') {
+      const _userId = yield select(selectors.ownerUserId);
+
+      body.type = 'connection';
+      // _userId is required in BE to get integration settings
+      body.connection = {
+        _userId,
+        ...(resource || {}),
+      };
+
+      if (parentType) {
+        body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;
+      }
+
+      delete body.sampleData;
+      delete body.templateVersion;
+    } else {
+      body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     }
 
     const opts = {
@@ -633,7 +651,13 @@ export function* initEditor({ id, editorType, options }) {
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
-      formattedOptions = init({options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
+      formattedOptions = init({
+        options: formattedOptions,
+        resource,
+        formValues,
+        fieldState,
+        connection: resourceType === 'connections' ? resource : connection,
+        isPageGenerator});
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
       const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
