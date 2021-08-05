@@ -1,9 +1,8 @@
 /* global describe, test, expect */
 import reducer, { selectors, extractStages, getResourceSampleData } from '.';
-import actions from '../../../actions';
+import actions from '../../../../actions';
 
-describe('sampleData reducer', () => {
-  const resourceType = 'exports';
+describe('resourceFormSampleData reducer', () => {
   const resourceId = '123';
 
   test('should return previous state if action is not handled.', () => {
@@ -21,45 +20,69 @@ describe('sampleData reducer', () => {
     expect(currState).toEqual({});
   });
 
-  describe('REQUEST and LOOKUP_REQUEST action', () => {
+  describe('SET_STATUS action', () => {
     test('should update the state with status = requested', () => {
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
       };
       const expectedStateWithRequestAction = {
-        123: { status: 'requested' },
+        [resourceId]: { status: 'requested' },
         456: { status: 'received', data: {}},
         789: { status: 'received', data: {} },
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.request(resourceId, resourceType)
+        actions.resourceFormSampleData.setStatus(resourceId, 'requested')
       );
 
       expect(newState).toEqual(expectedStateWithRequestAction);
 
       const newState1 = reducer(
         newState,
-        actions.sampleData.requestLookupPreview('999')
+        actions.resourceFormSampleData.setStatus(resourceId, 'received')
       );
       const expectedStateWithLookupAction = {
         456: { status: 'received', data: {}},
         789: { status: 'received', data: {} },
-        123: { status: 'requested' },
-        999: { status: 'requested' },
+        [resourceId]: { status: 'received' },
       };
 
       expect(newState1).toEqual(expectedStateWithLookupAction);
     });
   });
 
-  describe('RECEIVED action', () => {
-    test('should add the resource state if doesnt exist already', () => {
-      const previewData = {
-        sku: 'abc',
-        price: 23,
-      };
+  describe('RECEIVED_PREVIEW_STAGES action', () => {
+    const previewData = {
+      stages: [
+        {
+          name: 'parse',
+          data: [{
+            name: 'Bob',
+            age: 23,
+          }],
+        },
+        {
+          name: 'request',
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            method: 'GET',
+          }],
+        },
+      ],
+    };
+    const expectedPreviewStagesData = {
+      parse: [{
+        name: 'Bob',
+        age: 23,
+      }],
+      request: [{
+        url: 'https://api.mocki.io/v1/awe',
+        method: 'GET',
+      }],
+    };
+
+    test('should add the resource state if doesn\'t exist already', () => {
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -67,156 +90,37 @@ describe('sampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        123: {
-          status: 'received',
-          data: {parse: previewData},
-        },
+        123: { status: 'received', data: expectedPreviewStagesData },
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.received(resourceId, previewData)
+        actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
       );
 
       expect(newState).toEqual(expectedState);
     });
-
-    test('should update the existing state with status and data', () => {
-      const previewData = {
-        sku: 'abc',
-        price: 23,
-      };
-      const initialState = {
-        123: {
-          status: 'requested',
-        },
+    test('should update existing resource state with received status and data as preview stages', () => {
+      const initialFilledState = {
+        123: { status: 'received', data: {} },
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
       };
-      const stateAfterRequest = reducer(
-        initialState,
-        actions.sampleData.request(resourceId, resourceType)
-      );
       const expectedState = {
-        123: {
-          status: 'received',
-          data: {parse: previewData},
-        },
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
+        123: { status: 'received', data: expectedPreviewStagesData },
       };
       const newState = reducer(
-        stateAfterRequest,
-        actions.sampleData.received(resourceId, previewData)
+        initialFilledState,
+        actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
       );
 
       expect(newState).toEqual(expectedState);
     });
   });
 
-  describe('UPDATE action', () => {
-    test('should add the resource state if doesnt exist already', () => {
-      const processedData = {
-        data: {
-          url: 'https://api.mocki.io/v1/awe',
-          method: 'GET',
-        },
-      };
-      const stage = 'preview';
-      const initialState = {
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
-      };
-      const expectedState = {
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
-        123: {
-          status: 'received',
-          data: {[stage]: processedData.data},
-        },
-      };
-      const newState = reducer(
-        initialState,
-        actions.sampleData.update(resourceId, processedData, stage)
-      );
-
-      expect(newState).toEqual(expectedState);
-    });
-    test('should update the existing state with status and stage data', () => {
-      const processedData = {
-        data: {
-          url: 'https://api.mocki.io/v1/awe',
-          method: 'GET',
-        },
-      };
-      const stage = 'preview';
-      const initialState = {
-        123: {
-          status: 'received',
-          data: {parse: [{
-            name: 'Bob',
-            age: 23,
-          }]},
-        },
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
-      };
-      const expectedState = {
-        123: {
-          status: 'received',
-          data: {
-            parse: [{
-              name: 'Bob',
-              age: 23,
-            }],
-            [stage]: processedData.data},
-        },
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
-      };
-      const newState = reducer(
-        initialState,
-        actions.sampleData.update(resourceId, processedData, stage)
-      );
-
-      expect(newState).toEqual(expectedState);
-    });
-    test('should not throw error and update state correctly if processedData is null', () => {
-      const stage = 'preview';
-      const initialState = {
-        123: {
-          status: 'received',
-          data: {parse: [{
-            name: 'Bob',
-            age: 23,
-          }]},
-        },
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
-      };
-      const expectedState = {
-        123: {
-          status: 'received',
-          data: {
-            parse: [{
-              name: 'Bob',
-              age: 23,
-            }],
-            [stage]: undefined},
-        },
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
-      };
-      const newState = reducer(
-        initialState,
-        actions.sampleData.update(resourceId, null, stage)
-      );
-
-      expect(newState).toEqual(expectedState);
-    });
-  });
-
-  describe('RECEIVED_ERROR action', () => {
-    test('should add the resource state with status = error if doesnt exist already', () => {
+  describe('RECEIVED_PREVIEW_ERROR action', () => {
+    test('should add the resource state with status = error if doesn\'t exist already', () => {
       const error = {
         errors: [{
           code: '401',
@@ -257,7 +161,7 @@ describe('sampleData reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, error)
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
       );
 
       expect(newState).toEqual(expectedState);
@@ -285,9 +189,7 @@ describe('sampleData reducer', () => {
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        123: {
-          status: 'requested',
-        },
+        123: { status: 'requested' },
       };
       const expectedState = {
         456: { status: 'received', data: {} },
@@ -307,7 +209,7 @@ describe('sampleData reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, error)
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
       );
 
       expect(newState).toEqual(expectedState);
@@ -342,7 +244,7 @@ describe('sampleData reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, error)
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
       );
 
       expect(newState).toEqual(expectedState);
@@ -367,14 +269,187 @@ describe('sampleData reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, null)
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, null)
       );
 
       expect(newState).toEqual(expectedState);
     });
   });
 
-  describe('RESET action', () => {
+  describe('SET_PARSE_DATA action', () => {
+    const initialState = {
+      456: { status: 'received', data: {} },
+      789: { status: 'received', data: {} },
+    };
+    const sampleParseData = {
+      name: 'user1',
+      id: '1',
+    };
+
+    test('should wrap parse data in an array and update parse stage for the passed resourceId ', () => {
+      const wrappedParseData = [sampleParseData];
+      const expectedState = {
+        456: { status: 'received', data: { parse: wrappedParseData}},
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setParseData('456', sampleParseData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should add new resource state with parse stage filled with parse data passed', () => {
+      const expectedState = {
+        123: { data: { parse: [sampleParseData]}},
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setParseData(resourceId, sampleParseData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update existing resource state with parse stage filled with parse data passed', () => {
+      const expectedState = {
+        456: { status: 'received', data: { parse: [sampleParseData]}},
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setParseData('456', sampleParseData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update parse stage as undefined if no parse data is passed ', () => {
+      const expectedState = {
+        456: { status: 'received', data: { parse: undefined}},
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setParseData('456')
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+  });
+  describe('SET_RAW_FILE_DATA action', () => {
+    const initialState = {
+      456: { status: 'received', data: { parse: { test: 5} } },
+      789: { status: 'received', data: {} },
+    };
+    const rawJSONData = {
+      id: '1',
+      name: 'user1',
+    };
+
+    test('should add new resource state with raw stage filled with raw data passed', () => {
+      const expectedState = {
+        123: { data: { raw: rawJSONData}},
+        456: { status: 'received', data: {parse: { test: 5}} },
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setRawData(resourceId, rawJSONData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update existing resource state with raw stage filled with raw data passed', () => {
+      const expectedState = {
+        456: { status: 'received', data: { parse: { test: 5}, raw: rawJSONData}},
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setRawData('456', rawJSONData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+  });
+  describe('SET_PREVIEW_DATA action', () => {
+    const initialState = {
+      456: { status: 'received', data: { parse: { test: 5} } },
+      789: { status: 'received', data: {} },
+    };
+    const previewData = [{
+      id: '1',
+      name: 'user1',
+    }, {
+      id: '2',
+      name: 'user2',
+    }, {
+      id: '3',
+      name: 'user3',
+    }];
+
+    test('should add new resource state with preview stage filled with preview data passed', () => {
+      const expectedState = {
+        123: { data: { preview: previewData}},
+        456: { status: 'received', data: {parse: { test: 5}} },
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setPreviewData(resourceId, previewData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update existing resource state with preview stage filled with preview data passed', () => {
+      const expectedState = {
+        456: { status: 'received', data: { parse: { test: 5}, preview: previewData}},
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setPreviewData('456', previewData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+  });
+  describe('SET_CSV_FILE_DATA action', () => {
+    const initialState = {
+      456: { status: 'received', data: { parse: { test: 5} } },
+      789: { status: 'received', data: {} },
+    };
+    const sampleCsvData = "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE\nC1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0\nC1000010839|Unitech|1400-900035G|1400-900035G|80.00|PA720/PA726 3.6V 3120mAH BATTERY -20C|43.53|0\nC1000010839|Magtek|21073131-NMI|21073131NMI|150.00|iDynamo 5 with NMI Encryption|89.29|0";
+
+    test('should add new resource state with csv stage filled with csv data passed', () => {
+      const expectedState = {
+        123: { data: { csv: sampleCsvData}},
+        456: { status: 'received', data: {parse: { test: 5}} },
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setCsvFileData(resourceId, sampleCsvData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update existing resource state with csv stage filled with csv data passed', () => {
+      const expectedState = {
+        456: { status: 'received', data: { parse: { test: 5}, csv: sampleCsvData}},
+        789: { status: 'received', data: {} },
+      };
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.setCsvFileData('456', sampleCsvData)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+  });
+
+  describe('CLEAR action', () => {
     test('should empty the existing state', () => {
       const initialState = {
         123: {
@@ -385,25 +460,99 @@ describe('sampleData reducer', () => {
         789: { status: 'received', data: {} },
       };
       const expectedState = {
-        123: {},
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
       };
 
       const newState = reducer(
         initialState,
-        actions.sampleData.reset(resourceId)
+        actions.resourceFormSampleData.clear(resourceId)
       );
 
       expect(newState).toEqual(expectedState);
     });
+    test('should retain the existing state if the resourceId does not exist', () => {
+      const initialState = {
+        123: {
+          status: 'received',
+          data: {parse: {name: 'Bob'}},
+        },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.clear('INVALID_RESOURCE_ID')
+      );
+
+      expect(newState).toEqual(initialState);
+    });
   });
 
-  describe('PATCH', () => {
-    test('should add the state with the patch provided if state doesnt exist', () => {
-      const patch = {
-        recordSize: 25,
+  describe('CLEAR_STAGES action', () => {
+    test('should empty the existing resource state\'s stages data', () => {
+      const initialState = {
+        123: {
+          status: 'received',
+          data: {parse: {name: 'Bob'}},
+        },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
       };
+      const expectedState = {
+        123: { status: 'received', data: {} },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+
+      const newState1 = reducer(
+        initialState,
+        actions.resourceFormSampleData.clearStages(resourceId)
+      );
+
+      expect(newState1).toEqual(expectedState);
+
+      const initialReqState = {
+        123: { status: 'requested' },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+      const expectedReceivedState = {
+        123: { status: 'received', data: {} },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+      const newState2 = reducer(
+        initialReqState,
+        actions.resourceFormSampleData.clearStages(resourceId)
+      );
+
+      expect(newState2).toEqual(expectedReceivedState);
+    });
+    test('should retain the existing state if the resourceId does not exist to clear data', () => {
+      const initialState = {
+        123: {
+          status: 'received',
+          data: {parse: {name: 'Bob'}},
+        },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.clearStages('INVALID_RESOURCE_ID')
+      );
+
+      expect(newState).toEqual(initialState);
+    });
+  });
+
+  describe('UPDATE_RECORD_SIZE action', () => {
+    test('should add the state with the recordSize provided if state doesn\'t exist', () => {
+      const recordSize = 25;
+
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -411,22 +560,18 @@ describe('sampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        123: {
-          recordSize: 25,
-        },
+        123: { recordSize },
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.patch(resourceId, patch)
+        actions.resourceFormSampleData.updateRecordSize(resourceId, recordSize)
       );
 
       expect(newState).toEqual(expectedState);
     });
 
-    test('should update the existing state with the  patch provided', () => {
-      const patch = {
-        recordSize: 25,
-      };
+    test('should update the existing state with the recordSize provided', () => {
+      const recordSize = 25;
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -449,12 +594,12 @@ describe('sampleData reducer', () => {
             age: 23,
           }],
           },
-          recordSize: 25,
+          recordSize,
         },
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.patch(resourceId, patch)
+        actions.resourceFormSampleData.updateRecordSize(resourceId, recordSize)
       );
 
       expect(newState).toEqual(expectedState);
@@ -476,27 +621,33 @@ describe('sampleData selectors', () => {
     });
 
     test('should return correct state when match is found.', () => {
-      const processedData = {
-        data: [{
-          url: 'https://api.mocki.io/v1/awe',
-          method: 'GET',
-        }],
-      };
-      const stage = 'request';
+      const parsedData = [{
+        users: [
+          {
+            name: 'user1',
+            id: '1',
+          },
+        ],
+      }];
+      const stage = 'parse';
 
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
       };
 
-      const expectedOutput = {data: processedData.data, error: undefined, status: 'received'};
+      const expectedOutput = {data: parsedData, error: undefined, status: 'received'};
 
-      const newState = reducer(
+      const parseState = reducer(
         initialState,
-        actions.sampleData.update(resourceId, processedData, stage)
+        actions.resourceFormSampleData.setParseData(resourceId, parsedData)
+      );
+      const receivedState = reducer(
+        parseState,
+        actions.resourceFormSampleData.setStatus(resourceId, 'received')
       );
 
-      expect(selectors.getResourceSampleDataWithStatus(newState, resourceId, stage)).toEqual(expectedOutput);
+      expect(selectors.getResourceSampleDataWithStatus(receivedState, resourceId, stage)).toEqual(expectedOutput);
     });
   });
 

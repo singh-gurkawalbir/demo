@@ -3579,10 +3579,13 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
  * User can select number of records in all cases except for realtime adaptors
  * No need to show when export preview is disabled
  */
-selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
-  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
+selectors.canSelectRecordsInPreviewPanel = (state, formKey) => {
+  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, formKey);
 
   if (isExportPreviewDisabled) return false;
+
+  const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+
   const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
   // it is realtime incase of new export for realtime adaptors
@@ -3651,7 +3654,7 @@ selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, o
 selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinkedConnectionId}) => {
   if (ssLinkedConnectionId) return selectors.suiteScriptFileExportSampleData(state, {resourceId, resourceType, ssLinkedConnectionId});
 
-  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const stage = fileType === 'xlsx' ? 'csv' : 'raw';
   const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
@@ -3666,7 +3669,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinke
     }
   }
 
-  return rawData?.body;
+  return rawData;
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
@@ -3811,7 +3814,14 @@ selectors.sampleDataWrapper = createSelector(
  * are disabled if their respective connections are offline
  * Any other criteria to disable preview panel can be added here
  */
-selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
+selectors.isExportPreviewDisabled = (state, formKey) => {
+  if (!formKey) {
+    return true;
+  }
+
+  const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+  const formValues = selectors.formState(state, formKey)?.value || {};
+
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
@@ -3831,8 +3841,10 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
     return false;
   }
 
+  const connectionId = formValues['/_connectionId'];
+
   // In all other cases, where preview depends on connection being online, return the same
-  return selectors.isConnectionOffline(state, resourceObj._connectionId);
+  return selectors.isConnectionOffline(state, connectionId);
 };
 
 // Gives back supported stages of data flow based on resource type
@@ -4533,11 +4545,10 @@ selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectio
   });
 };
 selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
-  // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
   const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
-    'rawFile',
+    'raw',
   );
 
   if (!rawData) {
@@ -4550,7 +4561,7 @@ selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, reso
     }
   }
 
-  return rawData?.body;
+  return rawData;
 };
 selectors.getSuitescriptMappingSubRecordList = createSelector([
   (state, {integrationId,
@@ -5359,6 +5370,28 @@ selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
     resourceType,
     resourceId
   );
+};
+
+/*
+ * Given flowId, exportId determines if the export is a standalone export
+ * i.e., not linked to any flow PG/PP
+ */
+selectors.isStandaloneExport = (state, flowId, exportId) => {
+  if (!exportId) {
+    return false;
+  }
+
+  if (!flowId || isNewId(flowId)) {
+    return true;
+  }
+
+  if (selectors.isPageGenerator(state, flowId, exportId, 'exports')) {
+    return false;
+  }
+
+  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+
+  return !flow.pageProcessors?.find(pp => pp._exportId === exportId);
 };
 
 /*

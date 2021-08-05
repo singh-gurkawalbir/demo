@@ -129,12 +129,11 @@ export default function DynaXmlParse_afe({
 
     const parsersValue = getParserValue(rule);
 
-    // console.log('handleSave: rule, parsed', rule, parsersValue);
-
     setForm(getForm(rule, resourceId));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsersValue);
-  }, [id, onFieldChange, resourceId]);
+    dispatch(actions.resourceFormSampleData.request(parentFormKey));
+  }, [id, onFieldChange, resourceId, parentFormKey, dispatch]);
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {

@@ -6,7 +6,6 @@ import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
-import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
@@ -41,39 +40,25 @@ export default function DynaFileDefinitionEditor_afe(props) {
     formKey,
     flowId,
   } = props;
-  const formContext = useFormContext(formKey);
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
 
-  const parserType = resourceType === 'imports' ? 'fileDefinitionGenerator' : 'fileDefinitionParser';
   const editorType = resourceType === 'imports' ? 'structuredFileGenerator' : 'structuredFileParser';
 
   const handleSave = useCallback(editorValues => {
-    const { data, rule } = editorValues;
+    const { rule } = editorValues;
 
     // todo: On change of rules, trigger sample data update
     // It calls processor on final rules to parse file
     // @raghu this would also need to be removed once auto sample data update changes are done
-    dispatch(
-      actions.sampleData.request(
-        resourceId,
-        resourceType,
-        {
-          type: parserType,
-          file: data,
-          editorValues,
-          formValues: formContext.value,
-        },
-        'file'
-      )
-    );
+    dispatch(actions.resourceFormSampleData.request(formKey));
 
     // update rules against this field each time it gets saved
     if (rule) {
       onFieldChange(id, rule);
     }
-  }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
+  }, [dispatch, formKey, onFieldChange, id]);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, editorType, {

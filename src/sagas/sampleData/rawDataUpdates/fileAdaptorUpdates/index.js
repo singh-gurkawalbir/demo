@@ -40,14 +40,14 @@ export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type
 
   if (resourceObj?.file?.type === 'filedefinition') {
     // For Imports File definitions, sample data is the json format of structured file parser data
-    const fileDefinitionData = rawData && rawData.body;
+    const fileDefinitionData = rawData;
 
     return type === 'imports'
       ? safeParse(fileDefinitionData)
       : fileDefinitionData;
   }
 
-  return stage === 'parse' ? rawData : rawData?.body;
+  return rawData;
 }
 
 export default function* saveRawDataForFileAdaptors({
