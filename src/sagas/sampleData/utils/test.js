@@ -2801,11 +2801,9 @@ describe('Flow sample data utility sagas', () => {
       test('should call parseFileData saga with the xml data from the resource and return the result', () => {
         const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
-        const sampleData = {
-          body: `<?xml version="1.0" encoding="UTF-8"?>
+        const sampleData = `<?xml version="1.0" encoding="UTF-8"?>
           <letter>
-          </letter>`,
-        };
+          </letter>`;
         const fileParserData = {mediaType: 'json', data: [{letter: {}}], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
@@ -2815,10 +2813,7 @@ describe('Flow sample data utility sagas', () => {
               newResourceId,
               'raw'
             ), { data: sampleData}],
-            [call(parseFileData, {
-              sampleData: sampleData.body,
-              resource,
-            }), fileParserData],
+            [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
           .returns(fileParserData.data[0])
           .run();
@@ -2826,9 +2821,7 @@ describe('Flow sample data utility sagas', () => {
       test('should call the parseFileData saga and return undefined if the call does not return data', () => {
         const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
-        const sampleData = {
-          body: '<?xml version="1.0" encoding="UTF-8"?>',
-        };
+        const sampleData = '<?xml version="1.0" encoding="UTF-8"?>';
         const fileParserData = {mediaType: 'json', data: [], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
@@ -2838,10 +2831,7 @@ describe('Flow sample data utility sagas', () => {
               newResourceId,
               'raw'
             ), { data: sampleData}],
-            [call(parseFileData, {
-              sampleData: sampleData.body,
-              resource,
-            }), fileParserData],
+            [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
           .returns(undefined)
           .run();
