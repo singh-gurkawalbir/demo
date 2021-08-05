@@ -20,7 +20,7 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
   return (
     <ActionGroup>
       <Button
-        variant="outlined"
+        variant="contained"
         data-test="save"
         disabled={disabled || !isDirty || inProgress}
         color="primary"
@@ -32,7 +32,7 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
         <Button
           variant="outlined"
           data-test="saveAndClose"
-          color="secondary"
+          color="primary"
           onClick={handleSaveAndCloseClick}>
           Save & close
         </Button>

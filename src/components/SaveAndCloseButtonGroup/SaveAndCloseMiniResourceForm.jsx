@@ -23,7 +23,7 @@ const MiniResourceForm = ({
 }) => (
   <ActionGroup>
     <Button
-      variant="outlined"
+      variant="contained"
       data-test="save"
       disabled={!isDirty || inProgress || disabled}
       color="primary"
@@ -34,7 +34,7 @@ const MiniResourceForm = ({
     {shouldNotShowCancelButton ? null : (
       <Button
         variant="text"
-        color="primary"
+        color="secondary"
         data-test="cancel"
         disabled={inProgress}
         className={className}
