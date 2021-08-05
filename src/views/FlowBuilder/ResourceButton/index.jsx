@@ -28,6 +28,8 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   blockButton: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: 0,
     marginRight: theme.spacing(2),
     textTransform: 'none',
@@ -51,11 +53,13 @@ export default function ResourceButton({ onClick, variant }) {
 
   return (
     <TextButton
-      className={classes.blockButton}
       data-test={block.label}
-      startIcon={<block.Icon className={classes.blockIcon} />}
       onClick={onClick}>
-      {block.label}
+      <div className={classes.blockButton}>
+        <block.Icon className={classes.blockIcon} />
+        {block.label}
+      </div>
+
     </TextButton>
   );
 }
