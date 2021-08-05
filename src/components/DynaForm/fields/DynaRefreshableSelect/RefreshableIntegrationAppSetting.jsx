@@ -19,14 +19,14 @@ export default function RefreshableIntegrationAppSetting(props) {
 
   const dispatch = useDispatch();
   const [autofill, setAutofill] = useState(false);
-  const handleFieldChange = useCallback((id, val) => {
+  const handleFieldChange = useCallback((id, val, skipFieldTouched) => {
     if (autoPostBack) {
       dispatch(
         actions.connectors.refreshMetadata(val, id, _integrationId, {key: 'fieldValue', autoPostBack: true})
       );
-      onFieldChange(id, val);
+      onFieldChange(id, val, skipFieldTouched);
     } else {
-      onFieldChange(id, val);
+      onFieldChange(id, val, skipFieldTouched);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_integrationId, autoPostBack, dispatch]);

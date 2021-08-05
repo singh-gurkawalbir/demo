@@ -169,6 +169,14 @@ const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter
   return acc;
 }, {});
 
+const isUnassigned = val => [undefined, null, '', false].includes(val);
+
+const objectHasAssignedProp = val => Object.values(val).some(v => {
+  if (!isUnassigned(v)) { return true; }
+
+  return false;
+});
+
 selectors.isFormDirty = (state, formKey) => {
   const form = selectors.formState(state, formKey);
 
@@ -189,11 +197,18 @@ selectors.isFormDirty = (state, formKey) => {
     const { op, value, path} = patch;
     const defaultValueOrig = getValueByPointer(defaultValueState, path);
 
-    if ([undefined, null, ''].includes(defaultValueOrig) && op === 'remove') {
+    if (isUnassigned(defaultValueOrig) && op === 'remove') {
       return false;
     }
     if (op === 'replace' || op === 'add') {
-      if ([undefined, null, ''].includes(defaultValueOrig) && (value === '' || (Array.isArray(value) && value.length === 0))) {
+      if (
+        isUnassigned(defaultValueOrig) &&
+      (isUnassigned(value) ||
+      // if empty array then its considered unchanged
+      (Array.isArray(value) && value.length === 0) ||
+      // if the shallow props are unassigned then the object is considered unchanged
+
+      (typeof value === 'object' && !objectHasAssignedProp(value)))) {
         return false;
       }
 

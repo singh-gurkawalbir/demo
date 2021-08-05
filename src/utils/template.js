@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import { some, reduce } from 'lodash';
+import { reduce } from 'lodash';
 import { applicationsList } from '../constants/applications';
 import {
   NETSUITE_BUNDLE_URL,
@@ -54,13 +54,13 @@ export default {
   },
   getInstallSteps: previewData => {
     const connectionMap = {};
+    const netsuiteBundleNeededForConnections = [];
+    const salesforceBundleNeededForConnections = [];
     const installSteps = [];
 
     if (!previewData || !previewData.objects) {
       return {connectionMap, installSteps};
     }
-    let netsuiteConnFound = false;
-    let salesforceConnFound = false;
     const {
       Connection: connections,
       Export: exportDocs,
@@ -94,21 +94,6 @@ export default {
 
     (connections || []).forEach(conn => {
       connectionMap[conn._id] = conn;
-
-      if (
-        (conn.type === 'netsuite' && netsuiteConnFound) ||
-        (conn.type === 'salesforce' && salesforceConnFound)
-      ) {
-        return;
-      }
-
-      if (conn.type === 'netsuite') {
-        netsuiteConnFound = true;
-      }
-
-      if (conn.type === 'salesforce') {
-        salesforceConnFound = true;
-      }
       const { name: connectionTypeName, id: connectionType} = getApplication(conn);
 
       installSteps.push({
@@ -122,52 +107,57 @@ export default {
         },
       });
     });
-    const netsuiteBundleNeeded =
-      some(exportDocs || [], exp => {
-        const conn = connections?.find(c => c._id === exp._connectionId);
-
-        return (
-          ((exp?.netsuite || {}).type === 'restlet' &&
-            exp?.netsuite?.restlet?.recordType) ||
-          (exp?.type === 'distributed' && conn?.type === 'netsuite')
-        );
-      }) ||
-      some(importDocs || [], imp => {
-        const conn = connections?.find(c => c._id === imp._connectionId);
-
-        return imp.distributed && conn?.type === 'netsuite';
-      });
-    const salesforceBundleNeeded = some(exportDocs || [], exp => {
+    (exportDocs || []).forEach(exp => {
       const conn = connections?.find(c => c._id === exp._connectionId);
 
-      return exp?.type === 'distributed' && conn?.type === 'salesforce';
+      if (
+        (((exp?.netsuite || {}).type === 'restlet' &&
+          exp?.netsuite?.restlet?.recordType) ||
+          (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
+          (!netsuiteBundleNeededForConnections.includes(conn))
+      ) {
+        netsuiteBundleNeededForConnections.push(conn);
+      }
+
+      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn)) {
+        salesforceBundleNeededForConnections.push(conn);
+      }
+    });
+    (importDocs || []).forEach(imp => {
+      const conn = connections?.find(c => c._id === imp._connectionId);
+
+      if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn))) {
+        netsuiteBundleNeededForConnections.push(conn);
+      }
     });
 
-    if (netsuiteBundleNeeded) {
-      installSteps.push({
-        installURL: NETSUITE_BUNDLE_URL,
-        imageURL: 'images/company-logos/netsuite.png',
-        completed: false,
-        description: 'Please install Integrator bundle in NetSuite account',
-        name: 'Integrator Bundle',
-        application: 'netsuite',
-        type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
-        options: {},
-      });
-    }
+    netsuiteBundleNeededForConnections.forEach((conn, index) => installSteps.push({
+      key: `NetSuite account ${index + 1}`,
+      installURL: NETSUITE_BUNDLE_URL,
+      imageURL: 'images/company-logos/netsuite.png',
+      completed: false,
+      description: `Please install Integrator bundle in ${
+        netsuiteBundleNeededForConnections.length > 1 ? conn.name : 'NetSuite'
+      } account`,
+      name: 'Integrator Bundle',
+      application: 'netsuite',
+      type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      options: {},
+    }));
 
-    if (salesforceBundleNeeded) {
-      installSteps.push({
-        imageURL: 'images/company-logos/salesforce.png',
-        installURL: SALESFORCE_DA_PACKAGE_URL,
-        completed: false,
-        application: 'salesforce',
-        description: 'Please install Integrator bundle in Salesforce account',
-        name: 'Integrator Adaptor Package',
-        type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
-        options: {},
-      });
-    }
+    salesforceBundleNeededForConnections.forEach((conn, index) => installSteps.push({
+      key: `Salesforce account ${index + 1}`,
+      imageURL: 'images/company-logos/salesforce.png',
+      installURL: SALESFORCE_DA_PACKAGE_URL,
+      completed: false,
+      application: 'salesforce',
+      description: `Please install Integrator bundle in ${
+        salesforceBundleNeededForConnections.length > 1 ? conn.name : 'Salesforce'
+      } account`,
+      name: 'Integrator Adaptor Package',
+      type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      options: {},
+    }));
 
     return {
       connectionMap,

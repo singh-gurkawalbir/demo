@@ -56,7 +56,7 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     return fieldDefinitions[fieldId];
   });
 }
-export function headerFieldsMeta({operationDetails, headers = []}) {
+export function headerFieldsMeta({ operationDetails, headers = [] }) {
   const editableHeaders = Object.keys(operationDetails?.headers || {})
     .filter(key => !operationDetails.headers[key]);
   const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
@@ -154,7 +154,7 @@ export function howToFindIdentifierFieldsMeta({
   const lookupTypeOptions = [];
   const fields = [];
 
-  if (operationDetails.howToFindIdentifier && !isEmpty(operationDetails.howToFindIdentifier)) {
+  if (operationDetails.howToFindIdentifier) {
     if (operationDetails.supportIgnoreExisting) {
       lookupTypeOptions.push({
         value: 'source',
@@ -200,11 +200,20 @@ export function howToFindIdentifierFieldsMeta({
       },
     ];
   }
+  if (operationDetails.supportIgnoreMissing) {
+    lookupTypeField.visibleWhen = [
+      {
+        field: 'assistantMetadata.ignoreMissing',
+        is: [true],
+      },
+    ];
+  }
+  const endPointHasQueryParams = operationDetails.url?.indexOf?.(':_') >= 0 || operationDetails.url?.[0]?.indexOf?.(':_') >= 0;
 
-  if (lookupTypeOptions.length > 0) {
+  if (operationDetails.supportIgnoreExisting || operationDetails.askForHowToGetIdentifier || endPointHasQueryParams) {
     fields.push(lookupTypeField);
 
-    if (lookupTypeOptions.find(opt => opt.value === 'source')) {
+    if (lookupTypeOptions.find(opt => opt.value === 'source') && operationDetails.parameters) {
       const identifierPathParam = operationDetails.parameters.find(
         p => !!p.isIdentifier
       );

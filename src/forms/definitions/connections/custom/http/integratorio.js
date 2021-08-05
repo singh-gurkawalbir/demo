@@ -9,6 +9,8 @@ export default {
     if (isProduction()) {
       if (retValues['/integrator/region'] === 'europe') {
         baseURI = 'https://api.eu.integrator.io';
+      } else if (retValues['/integrator/region'] === 'north_america') {
+        baseURI = 'https://api.integrator.io';
       }
     }
     delete retValues['/integrator/environment'];

@@ -47,7 +47,9 @@ export function* switchTab({index, tabType}) {
   });
 
   if (lastActiveTab.tabType === requestedTab.tabType) {
-    return;
+    if (!requestedTab.resourceId || (lastActiveTab.resourceId === requestedTab.resourceId)) {
+      return;
+    }
   }
 
   if (requestedTab.tabType === 'connectionLogs') {

@@ -1,4 +1,4 @@
-import { getMediaTypeForImport } from '../../../utils/resource';
+import { getMediaTypeForImport, isNewId } from '../../../utils/resource';
 import { isJsonString } from '../../../utils/string';
 
 function isValidArray(value) {
@@ -8,19 +8,252 @@ function isValidArray(value) {
 
   return false;
 }
+const restPreSave = formValues => {
+  const retValues = { ...formValues };
+  const restToHttpFieldMap = {
+    '/rest/lookups': '/http/lookups',
+    '/rest/existingDataId': '/http/existingDataId',
+    '/rest/update/existingDataId': '/http/update/existingDataId',
+    '/rest/method': '/http/method',
+    '/rest/blobMethod': '/http/blobMethod',
+    '/rest/successPath': '/http/response/successPath',
+    '/rest/successValues': '/http/response/successValues',
+    '/rest/compositeType': '/http/compositeType',
+    '/rest/relativeURI': '/http/relativeURI',
+    '/rest/relativeURIUpdate': '/http/relativeURIUpdate',
+    '/rest/relativeURICreate': '/http/relativeURICreate',
+    '/rest/requestType': '/http/requestType',
+    '/rest/compositeMethodUpdate': '/http/compositeMethodUpdate',
+    '/rest/compositeMethodCreate': '/http/compositeMethodCreate',
+    '/rest/ignoreLookupName': '/http/ignoreLookupName',
+    '/rest/ignoreExtract': '/http/ignoreExtract',
+    '/rest/responseIdPathCreate': '/http/responseIdPathCreate',
+    '/rest/responseIdPathUpdate': '/http/responseIdPathUpdate',
+    '/rest/responseIdPath': '/http/response/resourceIdPath',
+    '/rest/successPathUpdate': '/http/successPathUpdate',
+    '/rest/successPathCreate': '/http/successPathCreate',
+    '/rest/successValuesCreate': '/http/successValuesCreate',
+    '/rest/successValuesUpdate': '/http/successValuesUpdate',
+    '/rest/body': '/http/body',
+    '/rest/bodyUpdate': '/http/bodyUpdate',
+    '/rest/bodyCreate': '/http/bodyCreate',
+  };
+
+  Object.keys(restToHttpFieldMap).forEach(restField => {
+    const httpField = restToHttpFieldMap[restField];
+
+    if (retValues[httpField]) {
+      retValues[restField] = retValues[httpField];
+    } else {
+      retValues[restField] = undefined;
+    }
+    delete retValues[httpField];
+  });
+  const lookups = retValues['/rest/lookups'];
+  const lookup =
+    lookups &&
+    lookups.find(
+      l =>
+        `${l.name}` === retValues['/rest/existingDataId'] ||
+        `${l.name}` === retValues['/rest/update/existingDataId']
+    );
+  const sampleData = retValues['/sampleData'];
+
+  if (sampleData === '') {
+    retValues['/sampleData'] = undefined;
+  } else {
+    // Save sampleData in JSON format with a fail safe condition
+    retValues['/sampleData'] = isJsonString(sampleData)
+      ? JSON.parse(sampleData)
+      : undefined;
+  }
+
+  if (retValues['/inputMode'] === 'blob') {
+    retValues['/rest/method'] = retValues['/rest/blobMethod'];
+  } else if (retValues['/rest/method'] === 'COMPOSITE') {
+    retValues['/rest/successPath'] = undefined;
+    retValues['/rest/successValues'] = undefined;
+
+    if (retValues['/rest/compositeType'] === 'createandupdate') {
+      retValues['/rest/relativeURI'] = [
+        retValues['/rest/relativeURIUpdate'],
+        retValues['/rest/relativeURICreate'],
+      ];
+      retValues['/rest/requestType'] = [
+        'UPDATE',
+        'CREATE',
+      ];
+      retValues['/rest/method'] = [
+        retValues['/rest/compositeMethodUpdate'],
+        retValues['/rest/compositeMethodCreate'],
+      ];
+
+      retValues['/rest/ignoreLookupName'] = undefined;
+      retValues['/rest/ignoreExtract'] = undefined;
+
+      if (
+        retValues['/rest/responseIdPathCreate'] ||
+        retValues['/rest/responseIdPathUpdate']
+      ) {
+        retValues['/rest/responseIdPath'] = [
+          retValues['/rest/responseIdPathUpdate'],
+          retValues['/rest/responseIdPathCreate'],
+        ];
+      }
+
+      if (
+        retValues['/rest/successPathCreate'] ||
+        retValues['/rest/successPathUpdate']
+      ) {
+        retValues['/rest/successPath'] = [
+          retValues['/rest/successPathUpdate'],
+          retValues['/rest/successPathCreate'],
+        ];
+      }
+
+      if (
+        retValues['/rest/successValuesCreate'] ||
+        retValues['/rest/successValuesUpdate']
+      ) {
+        retValues['/rest/successValues'] = [
+          retValues['/rest/successValuesUpdate'],
+          retValues['/rest/successValuesCreate'],
+        ];
+      }
+
+      retValues['/rest/body'] = [
+        retValues['/rest/bodyUpdate'],
+        retValues['/rest/bodyCreate'],
+      ];
+
+      retValues['/ignoreExisting'] = false;
+      retValues['/ignoreMissing'] = false;
+    } else if (retValues['/rest/compositeType'] === 'createandignore') {
+      retValues['/rest/relativeURI'] = [retValues['/rest/relativeURICreate']];
+      retValues['/rest/method'] = [retValues['/rest/compositeMethodCreate']];
+
+      retValues['/rest/ignoreLookupName'] = undefined;
+      retValues['/rest/ignoreExtract'] = undefined;
+
+      if (retValues['/rest/responseIdPathCreate']) {
+        retValues['/rest/responseIdPath'] = [
+          retValues['/rest/responseIdPathCreate'],
+        ];
+      }
+
+      if (retValues['/rest/bodyCreate']) retValues['/rest/body'] = [retValues['/rest/bodyCreate']];
+      else {
+        delete retValues['/rest/body'];
+      }
+
+      retValues['/ignoreExisting'] = true;
+      retValues['/ignoreMissing'] = false;
+
+      if (lookup) {
+        retValues['/rest/ignoreLookupName'] =
+          retValues['/rest/existingDataId'];
+        retValues['/rest/ignoreExtract'] = null;
+      } else {
+        retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+        retValues['/rest/ignoreLookupName'] = null;
+      }
+
+      retValues['/rest/existingDataId'] = undefined;
+
+      if (retValues['/rest/successPathCreate']) {
+        retValues['/rest/successPath'] = [
+          retValues['/rest/successPathCreate'],
+        ];
+      }
+
+      if (retValues['/rest/successValuesCreate']) {
+        retValues['/rest/successValues'] = [
+          retValues['/rest/successValuesCreate'],
+        ];
+      }
+    } else if (retValues['/rest/compositeType'] === 'updateandignore') {
+      retValues['/rest/relativeURI'] = [retValues['/rest/relativeURIUpdate']];
+      retValues['/rest/method'] = [retValues['/rest/compositeMethodUpdate']];
+
+      retValues['/rest/ignoreLookupName'] = undefined;
+      retValues['/rest/ignoreExtract'] = undefined;
+
+      if (retValues['/rest/responseIdPathUpdate']) {
+        retValues['/rest/responseIdPath'] = [
+          retValues['/rest/responseIdPathUpdate'],
+        ];
+      }
+
+      if (retValues['/rest/successPathUpdate']) {
+        retValues['/rest/successPath'] = [
+          retValues['/rest/successPathUpdate'],
+        ];
+      }
+
+      if (retValues['/rest/successValuesUpdate']) {
+        retValues['/rest/successValues'] = [
+          retValues['/rest/successValuesUpdate'],
+        ];
+      }
+
+      retValues['/rest/body'] = [retValues['/rest/bodyUpdate']];
+
+      retValues['/ignoreExisting'] = false;
+      retValues['/ignoreMissing'] = true;
+
+      if (lookup) {
+        retValues['/rest/ignoreLookupName'] =
+          retValues['/rest/update/existingDataId'];
+        retValues['/rest/ignoreExtract'] = null;
+      } else {
+        retValues['/rest/ignoreExtract'] =
+          retValues['/rest/update/existingDataId'];
+        retValues['/rest/ignoreLookupName'] = null;
+      }
+
+      retValues['/rest/update/existingDataId'] = undefined;
+    }
+  } else {
+    retValues['/ignoreExisting'] = false;
+    retValues['/ignoreMissing'] = false;
+    retValues['/rest/body'] = retValues['/rest/body']
+      ? [retValues['/rest/body']]
+      : [];
+    retValues['/rest/ignoreLookupName'] = undefined;
+    retValues['/rest/ignoreExtract'] = undefined;
+    retValues['/rest/existingDataId'] = undefined;
+    retValues['/rest/update/existingDataId'] = undefined;
+  }
+
+  if (retValues['/inputMode'] !== 'blob') {
+    delete retValues['/blobKeyPath'];
+    delete retValues['/blob'];
+  } else {
+    retValues['/blob'] = true;
+  }
+
+  delete retValues['/inputMode'];
+
+  if (retValues['/oneToMany'] === 'false') {
+    retValues['/pathToMany'] = undefined;
+  }
+
+  retValues['/http'] = undefined;
+
+  return {
+    ...retValues,
+  };
+};
 
 export default {
-  preSave: (formValues, _, options = {}) => {
+  preSave: (formValues, resource, options = {}) => {
     const { connection } = options;
+
+    // For Edit cases, if resource was originally created as REST import or if connection has isHTTP as false, save it as REST import
+    if ((resource?.adaptorType === 'RESTImport' && resource._id && !isNewId(resource._id)) || connection?.isHTTP === false) {
+      return restPreSave(formValues);
+    }
     const retValues = { ...formValues };
-    const lookups = retValues['/http/lookups'];
-    const lookup =
-      lookups &&
-      lookups.find(
-        l =>
-          `${l.name}` === retValues['/http/existingDataId'] ||
-          `${l.name}` === retValues['/http/update/existingDataId']
-      );
     const sampleData = retValues['/sampleData'];
 
     if (sampleData === '') {
@@ -35,8 +268,8 @@ export default {
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
-      retValues['/http/successPath'] = undefined;
-      retValues['/http/successValues'] = undefined;
+      retValues['/http/response/successPath'] = undefined;
+      retValues['/http/response/successValues'] = undefined;
 
       if (retValues['/http/compositeType'] === 'createandupdate') {
         retValues['/http/relativeURI'] = [
@@ -113,13 +346,15 @@ export default {
         retValues['/ignoreExisting'] = true;
         retValues['/ignoreMissing'] = false;
 
-        if (lookup) {
-          retValues['/http/ignoreLookupName'] =
-            retValues['/http/existingDataId'];
-          retValues['/http/ignoreExtract'] = null;
+        if (retValues['/http/ignoreExistingLookupName']) {
+          retValues['/http/ignoreExtract'] = undefined;
+          retValues['/http/ignoreLookupName'] = retValues['/http/ignoreExistingLookupName'];
+        } else if (retValues['/http/ignoreExistingExtract']) {
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = retValues['/http/ignoreExistingExtract'];
         } else {
-          retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
-          retValues['/http/ignoreLookupName'] = null;
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = undefined;
         }
 
         retValues['/http/existingDataId'] = undefined;
@@ -165,14 +400,15 @@ export default {
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = true;
 
-        if (lookup) {
-          retValues['/http/ignoreLookupName'] =
-            retValues['/http/update/existingDataId'];
-          retValues['/http/ignoreExtract'] = null;
+        if (retValues['/http/ignoreNewLookupName']) {
+          retValues['/http/ignoreExtract'] = undefined;
+          retValues['/http/ignoreLookupName'] = retValues['/http/ignoreNewLookupName'];
+        } else if (retValues['/http/ignoreNewExtract']) {
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = retValues['/http/ignoreNewExtract'];
         } else {
-          retValues['/http/ignoreExtract'] =
-            retValues['/http/update/existingDataId'];
-          retValues['/http/ignoreLookupName'] = null;
+          retValues['/http/ignoreLookupName'] = undefined;
+          retValues['/http/ignoreExtract'] = undefined;
         }
 
         retValues['/http/update/existingDataId'] = undefined;
@@ -204,6 +440,12 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
+    delete retValues['/http/existingLookupType'];
+    delete retValues['/http/newLookupType'];
+    delete retValues['/http/ignoreExistingExtract'];
+    delete retValues['/http/ignoreNewExtract'];
+    delete retValues['/http/ignoreExistingLookupName'];
+    delete retValues['/http/ignoreNewLookupName'];
 
     // #region begin
     // Following modifications are done to replicate the backend resttoHttp conversion util
@@ -789,75 +1031,23 @@ export default {
         },
       ],
     },
-    'http.existingDataId': {
-      id: 'http.existingDataId',
-      type: 'textwithflowsuggestion',
-      showSuggestionsWithoutHandlebar: true,
-      label: 'Existing data id',
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http) {
-          return '';
-        }
-
-        if (r.http.ignoreLookupName) {
-          return r.http.ignoreLookupName;
-        }
-        if (r.http.ignoreExtract) {
-          return r.http.ignoreExtract;
-        }
-
-        return '';
-      },
+    'http.existingLookupType': {
+      fieldId: 'http.existingLookupType',
     },
-    'http.update.existingDataId': {
-      id: 'http.update.existingDataId',
-      type: 'textwithflowsuggestion',
-      showSuggestionsWithoutHandlebar: true,
-      label: 'Existing data id',
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http) {
-          return '';
-        }
-
-        if (r.http.ignoreLookupName) {
-          return r.http.ignoreLookupName;
-        }
-        if (r.http.ignoreExtract) {
-          return r.http.ignoreExtract;
-        }
-
-        return '';
-      },
+    'http.ignoreExistingExtract': {
+      fieldId: 'http.ignoreExistingExtract',
+    },
+    'http.ignoreExistingLookupName': {
+      fieldId: 'http.ignoreExistingLookupName',
+    },
+    'http.newLookupType': {
+      fieldId: 'http.newLookupType',
+    },
+    'http.ignoreNewExtract': {
+      fieldId: 'http.ignoreNewExtract',
+    },
+    'http.ignoreNewLookupName': {
+      fieldId: 'http.ignoreNewLookupName',
     },
     sampleDataTitle: {
       id: 'sampleDataTitle',
@@ -901,6 +1091,7 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
   },
   layout: {
     type: 'collapse',
@@ -920,6 +1111,7 @@ export default {
           return 'How would you like the records imported?';
         },
         fields: [
+          'unencrypted.apiType',
           'http.method',
           'http.blobMethod',
           'http.compositeType',
@@ -942,12 +1134,12 @@ export default {
           {
             collapsed: true,
             label: 'Ignore existing records',
-            fields: ['http.existingDataId'],
+            fields: ['http.existingLookupType', 'http.ignoreExistingExtract', 'http.ignoreExistingLookupName'],
           },
           {
             collapsed: true,
             label: 'Ignore new data',
-            fields: ['http.update.existingDataId'],
+            fields: ['http.newLookupType', 'http.ignoreNewExtract', 'http.ignoreNewLookupName'],
           },
           {
             collapsed: true,

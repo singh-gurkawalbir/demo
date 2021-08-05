@@ -74,7 +74,9 @@ export default {
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
-        if (importResource?.http?.type === 'file') { fieldMeta = ftpMappingSettings.getMetaData(params); } else {
+        if (importResource?.http?.type === 'file') {
+          fieldMeta = ftpMappingSettings.getMetaData(params);
+        } else {
           fieldMeta = restMappingSettings.getMetaData(params);
         }
         break;
@@ -124,7 +126,8 @@ export default {
     if (formVal.dataType === 'date') {
       settings.dataType = 'string';
     } else if ('dataType' in formVal) {
-      settings.dataType = formVal.dataType;
+      // for empty dataType, BE requires undefined to be sent
+      settings.dataType = formVal.dataType || undefined;
     }
 
     if ('isKey' in formVal) {

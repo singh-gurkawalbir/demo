@@ -49,7 +49,7 @@ export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
   {_id: JOB_STATUS.COMPLETED, name: JOB_UI_STATUS[JOB_STATUS.COMPLETED]},
   {_id: JOB_STATUS.FAILED, name: JOB_UI_STATUS[JOB_STATUS.FAILED]}];
 
-export function getTimeString(timeInMs, delim = ':') {
+export function getTimeString(timeInMs = 0, delim = ':') {
   const showWith0 = value => (value < 10 ? `0${value}` : value);
   const hours = showWith0(Math.floor((timeInMs / (1000 * 60 * 60)) % 60));
   const minutes = showWith0(Math.floor((timeInMs / (1000 * 60)) % 60));

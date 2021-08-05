@@ -410,6 +410,68 @@ describe('user selectors', () => {
       });
     });
   });
+  describe('Owner user selector', () => {
+    test('should return undefined if no state exists', () => {
+      expect(selectors.ownerUser(undefined)).toEqual(undefined);
+    });
+    test('should return correct owner user for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  _id: 'owner1',
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  _id: 'owner2',
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.ownerUser(state)).toEqual({
+        _id: 'owner1',
+        email: 'owner@test.com',
+        name: 'owner 1',
+      });
+    });
+    test('should return correct owner user id info for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.ownerUser(state)).toEqual({ email: 'something@test.com', name: 'First Last', _id: 'owner' });
+    });
+    test('should return correct owner user id info for an org owner when there are no preferences', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+        },
+        'some action'
+      );
+
+      expect(selectors.ownerUser(state)).toEqual({ email: 'something@test.com', name: 'First Last', _id: 'owner' });
+    });
+  });
+
   describe('Owner user id selector', () => {
     test('should return undefined if no state exists', () => {
       expect(selectors.ownerUserId(undefined)).toEqual(undefined);
@@ -716,7 +778,7 @@ describe('user selectors', () => {
             accounts: [
               {
                 accessLevel: 'monitor',
-                integrationAccessLevel: [{_integrationId: '123', accessLevel: 'manage'}, {_integrationId: '456', accessLevel: 'monitor'}],
+                integrationAccessLevel: [{ _integrationId: '123', accessLevel: 'manage' }, { _integrationId: '456', accessLevel: 'monitor' }],
                 _id: 'ashare1',
                 ownerUser: {
                   email: 'owner@test.com',

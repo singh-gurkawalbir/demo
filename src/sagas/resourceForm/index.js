@@ -15,7 +15,7 @@ import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/constants';
-import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
+import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
@@ -97,22 +97,21 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     return values;
   }
 
-  // 'rawFile' stage gives back the file content as well as file type
   const { data: rawData } = yield select(
     selectors.getResourceSampleDataWithStatus,
     resourceId,
-    'rawFile'
+    'raw'
   );
 
   if (!rawData) return values;
   // Gets application file type to be passed on file upload
-  const fileType = fileTypeToApplicationTypeMap[rawData.type];
+  const uploadedFileType = values['/file/type'];
+  const fileType = fileTypeToApplicationTypeMap[uploadedFileType];
   // Incase of JSON, we need to stringify the content to pass while uploading
-  const fileContent =
-    rawData.type === 'json' ? JSON.stringify(rawData.body) : rawData.body;
+  const fileContent = uploadedFileType === 'json' ? JSON.stringify(rawData) : rawData;
   const rawDataKey = yield call(uploadRawData, {
     file: fileContent,
-    fileName: `file.${rawData.type}`,
+    fileName: `file.${uploadedFileType}`,
     fileType,
   });
 
@@ -514,6 +513,7 @@ export function* touchFlow(flowId, resourceType, resourceId) {
       path: '/lastModified',
       value: r.lastModified,
     });
+    // TODO: remove the hack and use flowLastModifiedPatch
     // this is a hack, the backend will need to enhance the audit log generation
     // https://celigo.atlassian.net/browse/IO-15873
     // until then, without the hack, flow audit log will show the following paths being changed by mistake
@@ -546,7 +546,34 @@ export function* touchFlow(flowId, resourceType, resourceId) {
   return out;
 }
 
+function* updateIAFlowDoc({flow, resource }) {
+  if (!shouldUpdateLastModified(flow, resource)) return;
+  const patch = flowLastModifiedPatch(flow, resource);
+
+  yield put(actions.resource.patchStaged(flow._id, patch, SCOPES.VALUE));
+
+  yield call(commitStagedChanges, {
+    resourceType: 'flows',
+    id: flow._id,
+    scope: SCOPES.VALUE,
+  });
+}
+
 export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
+  const flow = (yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  ))?.merged || emptyObject;
+
+  if (isIntegrationApp(flow)) {
+    // update the last modified time
+    const resource = yield select(selectors.resource, resourceType, resourceId);
+
+    yield call(updateIAFlowDoc, {flow, resource});
+
+    return;
+  }
   const updatedResourceType = yield select(selectors.getResourceType, {resourceType, resourceId });
   let flowPatches = yield call(
     getFlowUpdatePatchesForNewPGorPP,
@@ -613,15 +640,6 @@ export function* submitResourceForm(params) {
 
   // if it fails return
   if (formSaveStatus === FORM_SAVE_STATUS.FAILED || !flowId) return;
-
-  const flow = (yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  ))?.merged || emptyObject;
-
-  // do not update the flow when its an IA
-  if (isIntegrationApp(flow)) return;
 
   // when there is nothing to commit there is no reason to update the flow doc..hence we return
   // however there is a use case where we create a resource from an existing resource and that
