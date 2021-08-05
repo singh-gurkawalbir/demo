@@ -27,7 +27,7 @@ export default function OAuthAndCancel({
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}
       handleCancel={onCancel}
-      skipDirtyCheck
+      forceIsDirty
     />
   );
 }

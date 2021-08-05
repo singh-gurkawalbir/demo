@@ -54,7 +54,7 @@ export default function SaveAndCloseMiniResourceForm({
   shouldNotShowCancelButton,
   disabled,
   className,
-  skipDirtyCheck = false, // if it is true, the form will always be dirty, used in 'Save & authorize' connection
+  forceIsDirty = false, // if it is true, the form will always be dirty, used in 'Save & authorize' connection
 }) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
@@ -69,7 +69,7 @@ export default function SaveAndCloseMiniResourceForm({
 
   return (
     <MiniResourceForm
-      isDirty={skipDirtyCheck || isDirty}
+      isDirty={forceIsDirty || isDirty}
       inProgress={inProgress}
       submitButtonLabel={submitButtonLabel}
       submitTransientLabel={submitTransientLabel}
