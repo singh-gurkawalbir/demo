@@ -7,7 +7,9 @@ import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers/index';
 import DynaAction from '../../../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../../../reducers/comms/ping';
-import { getParentResourceContext } from '../../../../DynaForm/fields/DynaHttpRequestBody_afe';
+import { getParentResourceContext } from '../../../../../utils/connections';
+
+const emptyObj = {};
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -41,12 +43,11 @@ export default function TestButton(props) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
-  const formParentContext = useSelector(
-    state => selectors.formParentContext(state, formKey),
+  const { flowId, integrationId } = useSelector(
+    state => selectors.formParentContext(state, formKey) || emptyObj,
     shallowEqual
   );
-  const { flowId, integrationId } = formParentContext || {};
-  const { parentType, parentId } = getParentResourceContext(match.url) || {};
+  const { parentType, parentId } = getParentResourceContext(match.url);
 
   const handleTestConnection = useCallback(
     () => {

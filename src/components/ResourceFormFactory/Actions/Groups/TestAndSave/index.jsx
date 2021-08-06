@@ -11,7 +11,9 @@ import TestButton, { PingMessage } from './TestButton';
 import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
-import { getParentResourceContext } from '../../../../DynaForm/fields/DynaHttpRequestBody_afe';
+import { getParentResourceContext } from '../../../../../utils/connections';
+
+const emptyObj = {};
 
 const ConfirmDialog = props => {
   const {
@@ -89,12 +91,11 @@ export default function TestSaveAndClose(props) {
   } = props;
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const formParentContext = useSelector(
-    state => selectors.formParentContext(state, formKey),
+  const { flowId, integrationId } = useSelector(
+    state => selectors.formParentContext(state, formKey) || emptyObj,
     shallowEqual
   );
-  const { flowId, integrationId } = formParentContext || {};
-  const { parentType, parentId } = getParentResourceContext(match.url) || {};
+  const { parentType, parentId } = getParentResourceContext(match.url);
 
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
