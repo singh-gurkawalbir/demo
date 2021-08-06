@@ -1,5 +1,8 @@
-import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+/* eslint-disable no-console */
+import React, {useState} from 'react';
+import {Tooltip, makeStyles, Typography } from '@material-ui/core';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 import AddIcon from '../../../components/icons/AddIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
@@ -315,19 +318,51 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     textAlign: 'center',
+    position: 'relative',
+  },
+  showPopper: {
+    background: 'gray',
+    color: 'white',
+    borderRadius: '4px',
+    padding: 4,
+    position: 'absolute',
+    top: -30,
   },
 }));
 
+const [isShowPopper, setisShowPopper] = useState.false;
+const handleCopy = () => {
+  console.log('Icon Copied', isShowPopper);
+};
 const IconTemplate = ({Icon, iconName, args}) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.iconContainer}>
-      <Icon {...args} />
-      <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
-    </div>
+    <CopyToClipboard
+      onCopy={handleCopy}
+      text={`<${iconName}/>`}
+      key={iconName}>
+
+      <div className={classes.iconContainer}>
+        {setisShowPopper && (
+        <Tooltip
+          data-public
+          title="Icon Copied"
+          placement="top">
+          <Icon {...args} />
+          <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
+        </Tooltip>
+        ) }
+
+        <Icon {...args} />
+        <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
+      </div>
+    </CopyToClipboard>
   );
 };
+
+// // eslint-disable-next-line no-console
+// console.log('checking what object keys do', Object.keys(icons));
 
 export function All(args) {
   const classes = useStyles();
@@ -335,12 +370,15 @@ export function All(args) {
   return (
     <div className={classes.allIconContainer}>
       {
+
         Object.keys(icons).map(iconName => (
+
           <IconTemplate
             key={iconName}
             Icon={icons[iconName]}
             iconName={iconName}
             args={args} />
+
         ))
       }
     </div>
