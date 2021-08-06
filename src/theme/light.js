@@ -182,6 +182,12 @@ export default {
           color: colors.celigoNeutral4,
         },
       },
+      textSecondary: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: colors.celigoAccent2,
+        },
+      },
     },
     MuiToolbar: {
       dense: {

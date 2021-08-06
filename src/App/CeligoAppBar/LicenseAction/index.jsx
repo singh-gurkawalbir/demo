@@ -8,11 +8,17 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import NotificationToaster from '../../../components/NotificationToaster';
 import { platformLicenseActionDetails } from '../../../utils/license';
-import PillButton from '../../../components/Buttons/PillButton';
 
 const useStyles = makeStyles(theme => ({
+  inTrial: {
+    marginTop: -2,
+    borderRadius: 17,
+    fontSize: 13,
+    padding: '4px 24px',
+  },
   titleStatusPanel: {
     fontSize: 15,
+    paddingTop: 3,
   },
   actionBtn: {
     color: theme.palette.primary.main,
@@ -118,12 +124,16 @@ function LicenseAction() {
 
         </NotificationToaster>
       ) : (
-        <PillButton
-          fill
+        <Button
+          variant="contained"
+          color="primary"
+          disableElevation
+          className={classes.inTrial}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
-        </PillButton>
+          30 days left
+        </Button>
       )}
     </>
   );
