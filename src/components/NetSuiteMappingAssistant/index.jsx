@@ -8,7 +8,7 @@ import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { OutlinedButton } from '../Buttons';
+import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -211,11 +211,9 @@ export default function NetSuiteMappingAssistant({
       {!isNSAssistantFormLoaded && (
         <>
           <div className={classes.NetsuiteRules}>
-            <OutlinedButton
-              onClick={handleLaunchAssistantClick}
-              >
+            <FilledButton onClick={handleLaunchAssistantClick}>
               Launch NetSuite assistant
-            </OutlinedButton>
+            </FilledButton>
             <ol data-public>
               <li>
                 Please make sure that you have &quot;Celigo integrator.io&quot;

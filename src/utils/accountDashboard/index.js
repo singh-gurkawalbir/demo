@@ -30,7 +30,6 @@ export const DEFAULTS_COMPLETED_JOBS_FILTER = {
 
 export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
   {id: 'today', label: 'Today'},
-  {id: 'yesterday', label: 'Yesterday'},
   {id: 'last24hours', label: 'Last 24 hours'},
   {id: 'last36hours', label: 'Last 36 hours'},
   {id: 'last7days', label: 'Last 7 Days'},
@@ -39,12 +38,12 @@ export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
   {id: 'custom', label: 'Custom'},
 ];
 
-export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
+export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
   {_id: JOB_STATUS.RUNNING, name: 'In progress'},
   {_id: JOB_STATUS.CANCELING, name: 'Canceling'},
   {_id: JOB_STATUS.QUEUED, name: 'Waiting in queue'}];
 
-export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All status'},
+export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
   {_id: JOB_STATUS.CANCELED, name: JOB_UI_STATUS[JOB_STATUS.CANCELED]},
   {_id: JOB_STATUS.COMPLETED, name: JOB_UI_STATUS[JOB_STATUS.COMPLETED]},
   {_id: JOB_STATUS.FAILED, name: JOB_UI_STATUS[JOB_STATUS.FAILED]}];

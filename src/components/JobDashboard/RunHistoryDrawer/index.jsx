@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -9,7 +10,7 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
-import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../../utils/accountDashboard';
+import {FILTER_KEYS_AD} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
@@ -62,7 +63,11 @@ export default function RunHistoryDrawer() {
       preset: filter.range.preset,
     };
   } else {
-    selectedDate = DEFAULT_RANGE;
+    selectedDate = {
+      preset: 'last24hours',
+      startDate: startOfDay(addDays(new Date(), -29)),
+      endDate: endOfDay(new Date()),
+    };
   }
 
   useEffect(() => {
@@ -73,6 +78,12 @@ export default function RunHistoryDrawer() {
       })
     );
   }, [dispatch, filter, selectedDate, flowId]);
+  useEffect(() =>
+    () => {
+      dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   return (
     <RightDrawer

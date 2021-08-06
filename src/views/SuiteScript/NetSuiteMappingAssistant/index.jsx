@@ -198,9 +198,7 @@ export default function NetSuiteMappingAssistant({
       {!showNetSuiteForm && (
         <>
           <div className={classes.NetsuiteRules}>
-            <FilledButton
-              onClick={handleLaunchAssistantClick}
-              >
+            <FilledButton onClick={handleLaunchAssistantClick}>
               Launch NetSuite assistant
             </FilledButton>
             <ol>

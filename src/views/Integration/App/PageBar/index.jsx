@@ -220,7 +220,9 @@ export default function PageBar() {
           onChange={handleTagChangeHandler}
           />
         )}
-      infoText={integration.description}>
+      infoText={integration.description}
+      disableHtmlInInfoText
+    >
       {isCloningSupported && integration && !supportsMultiStore && (
       <TextButton
         component={Link}

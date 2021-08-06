@@ -11,6 +11,7 @@ import {
   Typography,
   Link,
 } from '@material-ui/core';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -388,6 +389,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
       completed,
       url,
+      form,
     } = step;
 
     if (completed) {
@@ -480,12 +482,12 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (type === 'stack') {
       if (!stackId) setShowStackDialog(generateNewId());
-    } else if (type === INSTALL_STEP_TYPES.FORM) {
+    } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(
         integrationId,
         installerFunction,
         'inProgress',
-        step.form
+        form
       ));
     } else if (!step.isTriggered) {
       dispatch(

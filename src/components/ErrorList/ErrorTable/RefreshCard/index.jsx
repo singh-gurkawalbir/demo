@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
   refreshDisabled: {
     borderColor: 'inherit',
   },
-
 }));
 
 export default function RefreshCard(props) {

@@ -41,7 +41,7 @@ export default function FieldMessage({ description, errorMessages, warningMessag
       error={!isValid}
       className={clsx(classes.descriptionWrapper, className)}
       component="div">
-      {description && (
+      {description && isValid && (
       <div className={classes.description}>
         {description}
       </div>
