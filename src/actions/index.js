@@ -1024,11 +1024,12 @@ const integrationApp = {
   child: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, showForm) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        showForm,
       }),
     clearSteps: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),

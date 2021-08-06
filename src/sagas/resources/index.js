@@ -132,7 +132,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   }
 }
 
-export function* commitStagedChanges({resourceType, id, scope, options, context}) {
+export function* commitStagedChanges({ resourceType, id, scope, options, context }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -187,7 +187,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
     if (isTokenToBeRevoked) {
-      yield call(requestRevoke, {connectionId: master._id, hideNetWorkSnackbar: true});
+      yield call(requestRevoke, { connectionId: master._id, hideNetWorkSnackbar: true });
     }
   }
 
@@ -294,7 +294,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // Refetch the integration
   if (resourceType === 'connections' && merged.integrationId && isNew) {
     // eslint-disable-next-line no-use-before-define
-    yield call(getResource, {resourceType: 'integrations', id: merged.integrationId});
+    yield call(getResource, { resourceType: 'integrations', id: merged.integrationId });
   }
 
   /*
@@ -390,7 +390,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     );
   }
 }
-export function* commitStagedChangesWrapper({asyncKey, ...props}) {
+export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
   // if asyncKey is defined we should try tagging with async updates
   if (asyncKey) {
     yield put(actions.asyncTask.start(asyncKey));
@@ -591,7 +591,7 @@ export function* updateIntegrationSettings({
   }
 }
 
-export function* patchResource({ resourceType, id, patchSet, options = {}, asyncKey}) {
+export function* patchResource({ resourceType, id, patchSet, options = {}, asyncKey }) {
   const isNew = isNewId(id);
 
   if (!patchSet || isNew) return; // nothing to do.
@@ -676,12 +676,12 @@ export function* deleteResource({ resourceType, id }) {
   }
 }
 
-export function* deleteIntegration({integrationId}) {
+export function* deleteIntegration({ integrationId }) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
 
   if (integration?._connectorId) return;
 
-  yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
+  yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
   yield put(actions.resource.requestCollection('integrations', null, true));
   yield put(actions.resource.requestCollection('tiles', null, true));
@@ -689,7 +689,7 @@ export function* deleteIntegration({integrationId}) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh}) {
+export function* getResourceCollection({ resourceType, refresh }) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -763,7 +763,7 @@ export function* validateResource({ resourceType, resourceId }) {
 
   if (!isEmpty(resource) || !resourceType || !resourceId) return;
 
-  return yield call(getResource, {resourceType, id: resourceId, hidden: true});
+  return yield call(getResource, { resourceType, id: resourceId, hidden: true });
 }
 
 export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail, asyncKey }) {
@@ -940,7 +940,7 @@ export function* fetchUnloadedResources({ integrationId, resourceType }) {
   let resources = yield select(selectors.resources, resourceType);
 
   if (!resources || resources.length === 0) {
-    yield call(getResourceCollection, { resourceType }, true);
+    yield call(getResourceCollection, { resourceType, refresh: true });
     resources = yield select(selectors.resources, resourceType);
   }
   if (!integrationId || !resources || resources.length < GET_DOCS_MAX_LIMIT) {
@@ -962,7 +962,7 @@ export function* fetchUnloadedResources({ integrationId, resourceType }) {
 
 export function* fetchUnloadedIntegrationResources({ integrationId }) {
   yield all(
-    ['flows', 'exports', 'imports'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
+    ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
   );
 }
 
@@ -1056,7 +1056,7 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: {_connectionId, _newConnectionId},
+        body: { _connectionId, _newConnectionId },
         method: 'PUT',
       },
     });
@@ -1070,7 +1070,7 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
   yield put(actions.resource.requestCollection('imports', null, true));
 }
 
-export function* eventReportCancel({reportId}) {
+export function* eventReportCancel({ reportId }) {
   const path = `/eventreports/${reportId}/cancel`;
 
   try {
@@ -1087,7 +1087,7 @@ export function* eventReportCancel({reportId}) {
   yield put(actions.resource.request('eventreports', reportId));
 }
 
-export function* downloadReport({reportId}) {
+export function* downloadReport({ reportId }) {
   const path = `/eventreports/${reportId}/signedURL`;
 
   try {
@@ -1104,13 +1104,13 @@ export function* downloadReport({reportId}) {
 
 export function* pollForResourceCollection({ resourceType }) {
   while (true) {
-    yield call(getResourceCollection, {resourceType});
+    yield call(getResourceCollection, { resourceType });
     yield delay(STANDARD_DELAY_FOR_POLLING);
   }
 }
 export function* startPollingForResourceCollection({ resourceType }) {
   return yield race({
-    pollCollection: call(pollForResourceCollection, {resourceType}),
+    pollCollection: call(pollForResourceCollection, { resourceType }),
     cancelPoll: take(action => {
       if ([
         actionTypes.RESOURCE.STOP_COLLECTION_POLL,

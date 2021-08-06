@@ -169,13 +169,13 @@ const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter
   return acc;
 }, {});
 
-const isUnassigned = val => [undefined, null, ''].includes(val);
+const isUnassigned = val => [undefined, null, '', false].includes(val);
 
-const objectHasAssignedProp = val => Object.values(val)?.some(v => {
+const objectHasAssignedProp = val => Object.values(val).some(v => {
   if (!isUnassigned(v)) { return true; }
 
   return false;
-}) || false;
+});
 
 selectors.isFormDirty = (state, formKey) => {
   const form = selectors.formState(state, formKey);
@@ -208,7 +208,7 @@ selectors.isFormDirty = (state, formKey) => {
       (Array.isArray(value) && value.length === 0) ||
       // if the shallow props are unassigned then the object is considered unchanged
 
-       !objectHasAssignedProp(value))) {
+      (typeof value === 'object' && !objectHasAssignedProp(value)))) {
         return false;
       }
 
