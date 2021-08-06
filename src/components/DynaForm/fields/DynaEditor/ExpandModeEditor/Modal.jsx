@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
@@ -17,7 +17,13 @@ const useStyles = makeStyles(() => ({
 export default function EditorModal(props) {
   const { handleClose, label, editorProps } = props;
   const { id, value, mode, disabled, handleUpdate } = editorProps;
+  const [content, setContent] = useState(value);
   const classes = useStyles();
+
+  const handleSaveAndClose = useCallback(() => {
+    handleUpdate(content);
+    handleClose();
+  }, [content, handleClose, handleUpdate]);
 
   return (
     <ModalDialog
@@ -30,16 +36,16 @@ export default function EditorModal(props) {
       <div className={classes.editorContainer}>
         <CodeEditor
           name={id}
-          value={value}
+          value={content}
           mode={mode}
           readOnly={disabled}
-          onChange={handleUpdate}
+          onChange={setContent}
         />
       </div>
       <div>
         <Button
           data-test="showEditor"
-          onClick={handleClose}
+          onClick={handleSaveAndClose}
           variant="outlined"
           color="primary">
           Save & Close

@@ -70,7 +70,7 @@ export default function DynaEditor(props) {
     setShowEditor(!showEditor);
   }, [showEditor]);
   const handleUpdate = useCallback(
-    (editorVal, isTouched = false) => {
+    editorVal => {
       if (customHandleUpdate) {
         customHandleUpdate(editorVal);
 
@@ -88,7 +88,7 @@ export default function DynaEditor(props) {
       ) {
         // user trying to remove the json. Handle removing the value during presave
         if (editorVal === '') {
-          onFieldChange(id, '', isTouched);
+          onFieldChange(id, '', false);
 
           return;
         }
@@ -100,7 +100,7 @@ export default function DynaEditor(props) {
         }
       }
 
-      onFieldChange(id, sanitizedVal, isTouched);
+      onFieldChange(id, sanitizedVal, false);
     },
     [customHandleUpdate, saveMode, mode, value, skipJsonParse, onFieldChange, id]
   );
