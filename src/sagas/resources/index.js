@@ -10,6 +10,7 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
+import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
 import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
@@ -204,10 +205,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
   }
 
-  // For exports,imports delete rest subdoc when useTechAdaptorForm is set to true and it is not assistant.
-  // With new REST forms supporting http backend, we are not updating rest subdoc any more when user makes changes
-  if (['exports', 'imports'].includes(resourceType) && !merged.assistant && merged.useTechAdaptorForm && merged.rest && merged.http?.method) {
-    delete merged.rest;
+  // Forimports convert the lookup structure and rest placeholders to support http structure
+  if (!merged.assistant && merged.useTechAdaptorForm && merged.adaptorType === 'HTTPImport') {
+    merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
   }
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;

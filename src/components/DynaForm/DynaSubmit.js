@@ -10,6 +10,7 @@ export default function FormButton({
   id,
   className,
   color,
+  variant,
   skipDisableButtonForFormTouched = false,
   ...props
 }) {
@@ -47,7 +48,7 @@ export default function FormButton({
       data-test={
         id || (typeof children === 'string' && children) || 'saveButton'
       }
-      variant="outlined"
+      variant={variant || 'outlined'}
       color={color || 'primary'}
       className={className}
       disabled={buttonDisabled}

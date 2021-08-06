@@ -124,38 +124,39 @@ export default {
       },
       outlined: {
         borderRadius: '4px',
-        backgroundColor: colors.celigoWhite,
-        borderColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral3,
+        textTransform: 'none',
+        fontSize: '13px',
+        lineHeight: '15px',
+        padding: '6px 20px',
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,
+          background: colors.celigoNeutral2,
           borderColor: colors.celigoNeutral2,
         },
       },
       outlinedPrimary: {
+        backgroundColor: colors.celigoAccent2,
         borderColor: colors.celigoAccent2,
-        color: colors.celigoAccent2,
+        color: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
           borderColor: colors.celigoAccent3,
-          color: colors.celigoWhite,
         },
       },
       outlinedSecondary: {
-        borderColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral6,
+        backgroundColor: colors.celigoWhite,
+        borderColor: colors.celigoAccent2,
+        color: colors.celigoAccent2,
         '&:hover': {
           color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
         },
-        '&:disabled': {
-          color: colors.celigoNeutral4,
-          borderColor: colors.celigoNeutral2,
-        },
       },
       text: {
+        fontSize: '13px',
+        lineHeight: '15px',
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',
@@ -169,16 +170,22 @@ export default {
         },
       },
       textPrimary: {
-        color: colors.celigoAccent2,
+        color: colors.celigoNeutral8,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
         '&:hover': {
-          color: colors.celigoAccent1,
+          color: colors.celigoAccent2,
           backgroundColor: 'inherit',
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
+        },
+      },
+      textSecondary: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: colors.celigoAccent2,
         },
       },
     },
