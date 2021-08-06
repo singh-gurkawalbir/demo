@@ -5,7 +5,7 @@ import Icon from '../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   refresh: {
-    color: `${theme.palette.common.white} !important`,
+    color: theme.palette.primary.main,
     height: theme.spacing(4),
   },
   refreshDisabled: {

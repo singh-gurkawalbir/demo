@@ -1381,50 +1381,9 @@ describe('isFormDirty', () => {
         ],
       },
 
-      FIELD2: {
-        id: 'FIELD2',
-        type: 'text',
-        name: 'field2',
-        defaultValue: 'abc',
-        label: 'field2',
-      },
-      FIELD3: {
-        id: 'FIELD3',
-        type: 'text',
-        name: 'field3',
-        label: 'field3',
-      },
-      FIELD4: {
-        id: 'FIELD4',
-        type: 'text',
-        name: 'field4',
-        defaultValue: {a: '', b: ''},
-        label: 'field4',
-      },
-      FIELD5: {
-        id: 'FIELD5',
-        type: 'text',
-        name: 'field5/something',
-        defaultValue: [{a: '', b: ''}, {a: ''}],
-        label: 'field5',
-      },
-      FIELD6: {
-        id: 'FIELD6',
-        type: 'text',
-        name: 'field6/something/another',
-        defaultValue: '',
-        label: 'field6',
-      },
-      FIELD7: {
-        id: 'FIELD7',
-        type: 'text',
-        name: 'field7/something/another',
-        defaultValue: '',
-        label: 'field7',
-      },
     },
 
-    layout: { fields: ['FIELD1', 'FIELD2', 'FIELD3', 'FIELD4', 'FIELD5', 'FIELD6', 'FIELD7'] },
+    layout: { fields: ['FIELD1'] },
   };
   const formKey = '1-2';
   const formState = forms(
@@ -1440,72 +1399,14 @@ describe('isFormDirty', () => {
 
     expect(res).toBe(false);
   });
-  test('should be dirty after changing value', () => {
-    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD2', 'csd'));
+  test('should be enabled after any form touch event', () => {
+    const updatedFormState = forms(
+      formState,
+      actions.form.fieldChange(formKey)('FIELD1', 'fdfdf')
+
+    );
     const res = selectors.isFormDirty(updatedFormState, formKey);
 
     expect(res).toBe(true);
-  });
-
-  test('should not be dirty changing the value to empty string from undefined', () => {
-    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD3', ''));
-    const res = selectors.isFormDirty(updatedFormState, formKey);
-
-    expect(res).toBe(false);
-  });
-
-  test('should not be dirty replacing a default value with empty stings with undefined properties', () => {
-    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: ''}));
-    const res = selectors.isFormDirty(updatedFormState, formKey);
-
-    expect(res).toBe(false);
-  });
-  test('should be dirty when changing and property from its default value', () => {
-    const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD4', {a: 'dsdsd'}));
-    const res = selectors.isFormDirty(updatedFormState, formKey);
-
-    expect(res).toBe(true);
-  });
-  describe('collection field values', () => {
-    test('should not be dirty adding a new empty string property in an object belonging to a collection', () => {
-      const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: '', b: ''}]));
-      const res = selectors.isFormDirty(updatedFormState, formKey);
-
-      expect(res).toBe(false);
-    });
-    test('should be dirty after changing any property in an object belonging to a collection', () => {
-      const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD5', [{a: '', b: ''}, {a: 'dsds'}]));
-      const res = selectors.isFormDirty(updatedFormState, formKey);
-
-      expect(res).toBe(true);
-    });
-  });
-  describe('object field values', () => {
-    test('should not be dirty after if the object has unassigned props', () => {
-      const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD6', {a: '', b: ''}));
-      const res = selectors.isFormDirty(updatedFormState, formKey);
-
-      expect(res).toBe(false);
-    });
-    test('should be dirty after changing any property in the object', () => {
-      const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD6', {a: '', b: 'something'}));
-      const res = selectors.isFormDirty(updatedFormState, formKey);
-
-      expect(res).toBe(true);
-    });
-  });
-  describe('boolean values', () => {
-    test('if field default value is set to null or undefined and it is set to false should be considered not dirty', () => {
-      const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD7', false));
-      const res = selectors.isFormDirty(updatedFormState, formKey);
-
-      expect(res).toBe(false);
-    });
-    test('if field default value is set to null or undefined and it is set to true should be considered dirty', () => {
-      const updatedFormState = forms(formState, actions.form.fieldChange(formKey)('FIELD7', true));
-      const res = selectors.isFormDirty(updatedFormState, formKey);
-
-      expect(res).toBe(true);
-    });
   });
 });
