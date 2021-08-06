@@ -6,7 +6,7 @@ import actions from '../../actions';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import Help from '../Help';
-import { OutlinedButton } from '../Buttons';
+import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   spinner: {
@@ -62,7 +62,7 @@ export default function AutoMapperButton({disabled}) {
 
   return (
     <>
-      <OutlinedButton
+      <FilledButton
         data-test="auto-map"
         disabled={disabled || isFetchingAutoSuggestions}
         onClick={handleButtonClick}
@@ -73,7 +73,7 @@ export default function AutoMapperButton({disabled}) {
         <span className={classes.betaLabel}>
           BETA
         </span>
-      </OutlinedButton>
+      </FilledButton>
 
       <Help title="Auto-map fields" helpKey="autoMapFields" className={classes.helpTextButton} />
     </>

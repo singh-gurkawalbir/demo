@@ -12,7 +12,7 @@ import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../.
 import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
-import { OutlinedButton, TextButton} from '../../Buttons';
+import { FilledButton, TextButton} from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -132,32 +132,32 @@ export default function TileNotification({ content, expired, connectorId, licens
       </div>
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
         {single && !showTrialLicenseMessage && (
-          <OutlinedButton
+          <FilledButton
             disabled={upgradeRequested}
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivate"
            >
             {resumable ? 'Reactivate' : 'Renew'}
-          </OutlinedButton>
+          </FilledButton>
         )}
         {single && showTrialLicenseMessage && (
-          <OutlinedButton
+          <FilledButton
             disabled={upgradeRequested}
             onClick={onClickBuyButton}
             data-test="buy"
             >
             Buy
-          </OutlinedButton>
+          </FilledButton>
         )}
         {!single && (
         <ActionGroup>
-          <OutlinedButton
+          <FilledButton
             disabled={upgradeRequested}
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivateDouble"
            >
             {showTrialLicenseMessage ? 'Buy' : 'Renew'}
-          </OutlinedButton>
+          </FilledButton>
           <TextButton
             data-test="uninstall"
             onClick={handleUninstall}>
