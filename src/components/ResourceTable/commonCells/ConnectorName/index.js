@@ -7,7 +7,7 @@ import { selectors } from '../../../../reducers';
 export default function ConnectorName({ resource }) {
   const { type, assistant, resourceType } = useMemo(() => getResourceSubType(resource), [resource]);
   const _connectionId = resource?._connectionId;
-  const useRestForm = !!resource?.http?.formType === 'rest';
+  const useRestForm = resource?.http?.formType === 'rest';
   const rdbmsType = resource?.rdbms?.type;
   const rdbmsConnType = useSelector(state =>
     selectors.resource(state, 'connections', _connectionId)?.rdbms?.type
