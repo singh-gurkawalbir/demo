@@ -645,4 +645,18 @@ export default {
       },
     ],
   },
+  'unencrypted.apiType': {
+    type: 'selectAmazonSellerCentralAPIType',
+    label: 'API type',
+    skipDefault: true,
+    skipSort: true,
+    options: [
+      {
+        items: [
+          {label: 'Selling Partner API (SP-API)', value: 'Amazon-SP-API'},
+          {label: 'Marketplace Web Service API (MWS)', value: ''},
+        ],
+      },
+    ],
+  },
 };

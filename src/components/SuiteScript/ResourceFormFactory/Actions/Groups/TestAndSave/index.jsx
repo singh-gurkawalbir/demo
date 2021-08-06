@@ -226,6 +226,7 @@ export default function TestAndSave(props) {
         />
       <TestButton
         resourceId={resourceId}
+        ssLinkedConnectionId={ssLinkedConnectionId}
         formKey={formKey}
       />
     </>
