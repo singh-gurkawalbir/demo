@@ -2,8 +2,6 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
-import { get} from 'lodash';
-import { compare, getValueByPointer } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFields,
@@ -11,7 +9,7 @@ import {
   isVisible,
 } from '../../../utils/form';
 import fields from './fields';
-import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta, getInvalidFields} from '../../../forms/formFactory/utils';
+import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta, getInvalidFields, isFormTouched} from '../../../forms/formFactory/utils';
 import trim from '../../../utils/trim';
 
 function form(state = {}, action) {
@@ -160,23 +158,6 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
-const calculateAllFieldsValue = (form, key) => Object.values(form.fields).filter(f => f.visible).reduce((acc, field) => {
-  const {name} = field;
-  const val = field[key];
-
-  acc[name] = val;
-
-  return acc;
-}, {});
-
-const isUnassigned = val => [undefined, null, '', false].includes(val);
-
-const objectHasAssignedProp = val => Object.values(val).some(v => {
-  if (!isUnassigned(v)) { return true; }
-
-  return false;
-});
-
 selectors.isFormDirty = (state, formKey) => {
   const form = selectors.formState(state, formKey);
 
@@ -184,39 +165,7 @@ selectors.isFormDirty = (state, formKey) => {
     return false;
   }
 
-  const defaultValueState = calculateAllFieldsValue(form, 'defaultValue');
-  const value = calculateAllFieldsValue(form, 'value');
-
-  const diffAr = compare(defaultValueState, value);
-
-  if (!diffAr.length) {
-    return false;
-  }
-
-  return diffAr.some(patch => {
-    const { op, value, path} = patch;
-    const defaultValueOrig = getValueByPointer(defaultValueState, path);
-
-    if (isUnassigned(defaultValueOrig) && op === 'remove') {
-      return false;
-    }
-    if (op === 'replace' || op === 'add') {
-      if (
-        isUnassigned(defaultValueOrig) &&
-      (isUnassigned(value) ||
-      // if empty array then its considered unchanged
-      (Array.isArray(value) && value.length === 0) ||
-      // if the shallow props are unassigned then the object is considered unchanged
-
-      (typeof value === 'object' && !objectHasAssignedProp(value)))) {
-        return false;
-      }
-
-      return true;
-    }
-
-    return true;
-  });
+  return isFormTouched(Object.values(form?.fields)) || false;
 };
 
 selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
