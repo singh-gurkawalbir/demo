@@ -81,8 +81,8 @@ describe('connections utils test cases', () => {
 
   describe('getParentResourceContext util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(getParentResourceContext()).toBeUndefined();
-      expect(getParentResourceContext(null)).toBeUndefined();
+      expect(getParentResourceContext()).toEqual({});
+      expect(getParentResourceContext(null)).toEqual({});
     });
     test('should not return parent params if url does not match the provided path', () => {
       const url1 = '/connections/edit/connections/999';

@@ -123,7 +123,7 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
 // to identify the parent export/import type and id
 // This is used when a connection is opened inside a resource
 export const getParentResourceContext = url => {
-  if (!url) return;
+  if (!url) return {};
   const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
   const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
 
