@@ -1,5 +1,9 @@
 import produce from 'immer';
+import url from 'url';
+import qs from 'querystring';
+import invert from 'lodash/invert';
 import { keys, map, uniq } from 'lodash';
+import { deepClone } from 'fast-json-patch/lib/core';
 import mappingUtil from '../mapping';
 import {
   adaptorTypeMap,
@@ -7,7 +11,8 @@ import {
   isValidResourceReference,
   isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS } from '../constants';
+import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
 import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
 
@@ -384,11 +389,8 @@ export function isRunnable(flow, exports) {
 
   // For disabled flows
   if (flow.disabled) {
-    // All iA flows are not runnable if disabled
-    // For DIY flows, dataloader flows can be runnable
-    if (flow._connectorId || !isDataLoader) {
-      return false;
-    }
+    // All IA and DIY (including data loader) flows are not runnable if disabled
+    return false;
   }
 
   const flowHasExport =
@@ -878,6 +880,130 @@ export function getFlowReferencesForResource(
   return flowRefs;
 }
 
+export function populateRestSchema(exportDoc = {}) {
+  const {
+    http = {},
+    adaptorType,
+    rest = {},
+    assistant,
+    useTechAdaptorForm,
+  } = exportDoc;
+
+  if (adaptorType === 'RESTExport') {
+    exportDoc._rest = deepClone(exportDoc.rest);
+
+    return exportDoc;
+  }
+
+  if (assistant || !http.method || !useTechAdaptorForm || adaptorType !== 'HTTPExport') {
+    return exportDoc;
+  }
+  const restSubDoc = {...rest};
+
+  try {
+    restSubDoc.relativeURI = http.relativeURI;
+    if (!http.paging) {
+      http.paging = {};
+    }
+
+    if (http.paging.method || http.paging.maxPagePath || http.paging.maxCountPath || http.paging.lastPageStatusCode ||
+    http.paging.lastPagePath || http.paging.lastPageValues || http.paging.relativeURI || http.paging.page || http.paging.urlPath) {
+      if (http.paging.maxPagePath) { restSubDoc.maxPagePath = http.paging.maxPagePath; }
+      if (http.paging.maxCountPath) { restSubDoc.maxCountPath = http.paging.maxCountPath; }
+
+      restSubDoc.lastPageStatusCode = http.paging.lastPageStatusCode;
+      if (http.paging.lastPagePath) { restSubDoc.lastPagePath = http.paging.lastPagePath; }
+      if (http.paging.path) { restSubDoc.nextPagePath = http.paging.path; }
+      if (Array.isArray(http.paging.lastPageValues)) {
+        [restSubDoc.lastPageValue] = http.paging.lastPageValues;
+      }
+
+      const pagingMethodMap = {
+        url: 'nextpageurl',
+        page: 'pageargument',
+        relativeuri: 'relativeuri',
+        linkheader: 'linkheader',
+        skip: 'skipargument',
+        token: 'token',
+        body: 'postbody',
+      };
+
+      restSubDoc.pagingMethod = pagingMethodMap[http.paging.method];
+
+      if (restSubDoc.pagingMethod === 'relativeuri') {
+        restSubDoc.nextPageRelativeURI = http.paging.relativeURI;
+      } else if (restSubDoc.pagingMethod === 'token') {
+        const uriObj = url.parse(http.paging.relativeURI, true);
+
+        uriObj.search = null;
+        const paramValues = invert(uriObj.query);
+        const pageArgument = paramValues['{{export.http.paging.token}}'] || paramValues['{{{export.http.paging.token}}}'];
+
+        if (pageArgument) {
+          restSubDoc.pageArgument = pageArgument;
+        }
+      } else if (restSubDoc.pagingMethod === 'skipargument') {
+        if (http.relativeURI) {
+          const path = http.relativeURI.split('?')[0];
+          const uriObj = url.parse(http.paging.relativeURI, true);
+
+          uriObj.search = null;
+          const paramValues = invert(uriObj.query);
+          const skipArgument = paramValues['{{export.http.paging.skip}}'] || paramValues['{{{export.http.paging.skip}}}'];
+
+          if (skipArgument) {
+            restSubDoc.skipArgument = skipArgument;
+            uriObj.query[restSubDoc.skipArgument] = http.paging.skip;
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
+          } else {
+            const skipArgRegex = /\{\{#compare export.http.paging.skip.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.skip\}{2,3}\{\{\/compare\}\}/;
+            const path = http.relativeURI.replace(skipArgRegex, '');
+
+            if (skipArgRegex.test(http.relativeURI)) {
+              [,, restSubDoc.skipArgument] = skipArgRegex.exec(http.relativeURI);
+            }
+            restSubDoc.relativeURI = path;
+          }
+        }
+      } else if (restSubDoc.pagingMethod === 'pageargument') {
+        if (http.relativeURI) {
+          const uriObj = url.parse(http.paging.relativeURI, true);
+          const path = http.relativeURI.split('?')[0];
+
+          uriObj.search = null;
+          const paramValues = invert(uriObj.query);
+          const pageArgument = paramValues['{{export.http.paging.page}}'] || paramValues['{{{export.http.paging.page}}}'];
+
+          if (pageArgument) {
+            restSubDoc.pageArgument = pageArgument;
+            uriObj.query[restSubDoc.pageArgument] = http.paging.page;
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
+          } else {
+            const pagingArgRegex = /\{\{#compare export.http.paging.page.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.page\}{2,3}\{\{\/compare\}\}/;
+            const path = http.relativeURI.replace(pagingArgRegex, '');
+
+            if (pagingArgRegex.test(http.relativeURI)) {
+              [,, restSubDoc.pageArgument] = pagingArgRegex.exec(http.relativeURI);
+            }
+            restSubDoc.relativeURI = path;
+          }
+        }
+      } else if (restSubDoc.pagingMethod === 'linkheader' && http.paging.linkHeaderRelation) {
+        restSubDoc.linkHeaderRelation = http.paging.linkHeaderRelation;
+      } else if (restSubDoc.pagingMethod === 'postbody') {
+        restSubDoc.pagingPostBody = http.paging.body;
+      }
+    }
+
+    exportDoc._rest = restSubDoc;
+  } catch (e) {
+    console.warn('exception occured while forming REST document', e);
+    // TODO: should we remove useTechAdaptorForm flag when conversion fails, so the export can open in HTTP form?
+  }
+
+  return exportDoc;
+}
+
 export function convertOldFlowSchemaToNewOne(flow) {
   const {
     pageGenerators,
@@ -1006,4 +1132,65 @@ export function getScriptsReferencedInFlow(
   const filtered = scripts.filter(({_id}) => scriptIdsUsed.includes(_id));
 
   return filtered;
+}
+
+// this util adds properties to make the the flow lastExecutedAt sortable
+export function addLastExecutedAtSortableProp({
+  flows,
+  isUserInErrMgtTwoDotZero,
+  latestFlowJobs,
+  supportsMultiStore,
+  childId,
+  requiredFlows }) {
+  const jobStatusPriorityMap = {
+    // large dates
+    [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
+    [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
+    [JOB_STATUS.RUNNING]: '2300-04-17T16:51:35.209Z',
+  };
+
+  const updatedFlows = flows?.map((flow, i) => {
+    const toReturnFlow = (supportsMultiStore && !childId) ? ({...flow, ...requiredFlows[i]}) : flow;
+
+    const {_id: flowId} = toReturnFlow;
+    const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+    if (!job || !isUserInErrMgtTwoDotZero) {
+      return {...toReturnFlow, lastExecutedAtSort: toReturnFlow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+    }
+
+    if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+      return {...toReturnFlow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+    }
+
+    // queued running retrying are the other statuses
+    const isJobInQueuedStatus =
+    (job.status === JOB_STATUS.QUEUED ||
+      (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+    return {
+      ...toReturnFlow,
+      lastExecutedAtSort: jobStatusPriorityMap[job.status],
+      lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+      isJobInQueuedStatus,
+      lastExecutedAtSortType: 'status'};
+  });
+
+  return updatedFlows;
+}
+
+// this function determines if we need to update the last modified time of a flow
+export function shouldUpdateLastModified(flow, resource) {
+  return flow?.lastModified && resource?.lastModified && flow.lastModified < resource.lastModified;
+}
+
+// this function returns a patch used to 'patch and commit' the flow last modified time
+export function flowLastModifiedPatch(flow, resource) {
+  if (!shouldUpdateLastModified(flow, resource)) return [];
+
+  return [{
+    op: 'replace',
+    path: '/lastModified',
+    value: resource.lastModified,
+  }];
 }

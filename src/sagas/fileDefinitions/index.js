@@ -5,8 +5,10 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
 import { isNewId, generateNewId } from '../../utils/resource';
-import { commitStagedChanges } from '../resources';
+import { commitStagedChangesWrapper } from '../resources';
 import { selectors } from '../../reducers';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { safeParse } from '../../utils/string';
 
 /*
  * Fetches all Supported File Definitions
@@ -24,7 +26,7 @@ export function* getFileDefinitions() {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
+      const parsedError = safeParse(e.message);
 
       yield put(actions.fileDefinitions.preBuilt.receivedError(parsedError));
     }
@@ -65,10 +67,11 @@ export function* saveUserFileDefinition({ definitionRules, formValues, flowId, s
   const patchSet = jsonPatch.compare({}, fileDefinition);
 
   yield put(actions.resource.patchStaged(definitionId, patchSet, SCOPES.VALUE));
-  yield call(commitStagedChanges, {
+  yield call(commitStagedChangesWrapper, {
     resourceType: 'filedefinitions',
     id: definitionId,
     scope: SCOPES.VALUE,
+    asyncKey: getAsyncKey('connections', definitionId),
   });
 
   if (isNewId(definitionId)) {

@@ -352,6 +352,7 @@ export default {
       visibleWhenAll: [
         { field: 'type', is: ['once'] },
       ],
+      connectionId: r => r?._connectionId,
     },
     'http.paging.method': { fieldId: 'http.paging.method' },
     'http.paging.skip': { fieldId: 'http.paging.skip' },
@@ -424,6 +425,7 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
+    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
   },
 
   layout: {
@@ -443,6 +445,7 @@ export default {
           return 'What would you like to export?';
         },
         fields: [
+          'unencrypted.apiType',
           'http.method',
           'http.blobMethod',
           'http.relativeURI',

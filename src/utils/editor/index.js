@@ -1,3 +1,6 @@
+import { COMM_STATES } from '../../reducers/comms/networkComms';
+import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
+
 export const FLOW_STAGES = [
   'outputFilter',
   'exportFilter',
@@ -16,6 +19,21 @@ export const HOOK_STAGES = [
   'contentBasedFlowRouter',
   'handleRequest',
 ];
+
+export const getFormSaveStatusFromEditorStatus = saveStatus => {
+  switch (saveStatus) {
+    case AFE_SAVE_STATUS.SUCCESS: return FORM_SAVE_STATUS.COMPLETE;
+    case AFE_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
+    default: return FORM_SAVE_STATUS.FAILED;
+  }
+};
+export const getFormSaveStatusFromCommStatus = resourceCommStatus => {
+  switch (resourceCommStatus) {
+    case COMM_STATES.LOADING: return FORM_SAVE_STATUS.LOADING;
+    case COMM_STATES.ERROR: return FORM_SAVE_STATUS.FAILED;
+    default: return FORM_SAVE_STATUS.COMPLETE;
+  }
+};
 
 export function dataAsString(data) {
   return typeof data === 'string'
@@ -55,10 +73,24 @@ export const getUniqueFieldId = (fieldId, resource) => {
 
       return 'http.relativeURI.1';
 
+    case 'http.auth.oauth.refreshBody':
+      return 'http.auth.token.refreshBody';
     default:
       return fieldId;
   }
 };
+
+// fieldIds that show previewData when paging is configured
+export const previewDataDependentFieldIds = [
+  'http.paging.body',
+  'rest.pagingPostBody',
+  'rest.nextPageRelativeURI',
+  'http.paging.relativeURI',
+  'rest.relativeURI',
+  'http.relativeURI',
+  'rest.postBody',
+  'http.body',
+];
 
 // DO NOT DELETE below utils
 // This file is unused right now but we might need

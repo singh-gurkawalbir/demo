@@ -84,8 +84,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
-          helpText:
-            'Name of the lookups that will be exposed to the mapping to refer.',
+          helpKey: 'import.lookups.name',
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',
@@ -129,6 +128,7 @@ export default {
           type: 'text',
           label: 'Enter default value',
           defaultValue: lookup.default,
+          helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
           placeholder: 'Enter default value',
           visibleWhen: [
             {

@@ -3,24 +3,28 @@ import { FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ErrorIcon from '../../icons/ErrorIcon';
+import WarningIcon from '../../icons/WarningIcon';
 
 const useStyles = makeStyles(theme => ({
-  error: {
+  descriptionWrapper: {
     marginTop: theme.spacing(0.5),
-    display: 'flex',
-    alignItems: 'center',
-    color: theme.palette.error.main,
+    lineHeight: '20px',
     '&:empty': {
       display: 'none',
     },
   },
+  error: {
+    color: theme.palette.error.main,
+  },
+  warning: {
+    color: theme.palette.warning.main,
+  },
   icon: {
     marginRight: 3,
     fontSize: theme.spacing(2),
+    verticalAlign: 'text-bottom',
   },
   description: {
-    lineHeight: '20px',
-    display: 'block',
     color: theme.palette.text.hint,
     '& a': {
       marginLeft: theme.spacing(0.5),
@@ -29,15 +33,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FieldMessage({ description, errorMessages, isValid }) {
+export default function FieldMessage({ description, errorMessages, warningMessages, isValid, className }) {
   const classes = useStyles();
 
-  return description || errorMessages ? (
+  return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(classes.error, { [classes.description]: description })}>
-      {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
-      {isValid ? description : errorMessages}
+      className={clsx(classes.descriptionWrapper, className)}
+      component="div">
+      {description && isValid && (
+      <div className={classes.description}>
+        {description}
+      </div>
+      )}
+      {warningMessages && (
+      <div className={classes.warning}>
+        {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
+        {warningMessages}
+      </div>
+      )}
+      {errorMessages && (
+      <div className={classes.error}>
+        {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
+        {isValid ? description : errorMessages}
+      </div>
+      )}
     </FormHelperText>
   ) : null;
 }

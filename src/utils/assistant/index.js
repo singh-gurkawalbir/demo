@@ -219,6 +219,7 @@ export function populateDefaults({
   const childWithDefaults = { ...child };
 
   if (isArray(childWithDefaults.headers)) {
+    childWithDefaults.headersMetadata = childWithDefaults.headers;
     childWithDefaults.headers = childWithDefaults.headers.reduce(
       (obj, h) => ({ ...obj, [h.name]: h.value }),
       {}
@@ -233,6 +234,12 @@ export function populateDefaults({
             parent[prop],
             childWithDefaults[prop]
           );
+          if (Array.isArray(parent.headers)) {
+            if (!childWithDefaults.headersMetadata) {
+              childWithDefaults.headersMetadata = [];
+            }
+            childWithDefaults.headersMetadata = [...parent.headers, ...childWithDefaults.headersMetadata];
+          }
         } else if (prop === 'queryParameters') {
           childWithDefaults[prop] = mergeQueryParameters(
             parent[prop],
@@ -424,7 +431,7 @@ export function getResourceDetails({ version, resource, assistantData }) {
     }
   }
 
-  return { ...resourceDetails };
+  return { ...resourceDetails, headersMetadata: versionDetails.headersMetadata };
 }
 
 export function getExportOperationDetails({
@@ -461,11 +468,21 @@ export function getExportOperationDetails({
     }
   }
 
+  const headersMetadata = [];
+
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
+  }
+
   return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
+    headersMetadata,
   });
 }
 
@@ -562,11 +579,21 @@ export function getImportOperationDetails({
     }
   }
 
+  const headersMetadata = [];
+
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
+  }
+
   return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
+    headersMetadata,
   });
 }
 
@@ -923,7 +950,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   Object.keys(operationDetails.headers).forEach(headerName => {
     if (userHeaders.includes(headerName) && Array.isArray(headers)) {
-      const header = headers.find(header => header.name === headerName);
+      const header = headers.find(header => header.name === headerName && !!header.value);
 
       if (header) { exportDoc.headers.push(header); }
     } else if (operationDetails.headers[headerName] !== null) {
@@ -2011,8 +2038,8 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
 
     Object.keys(operationDetails.headers).forEach(h => {
-      if (userHeaders.includes(h)) {
-        importDoc.headers.push(headers.find(header => header.name === h));
+      if (userHeaders.includes(h) && Array.isArray(headers)) {
+        importDoc.headers.push(headers.find(header => header.name === h && !!header.value));
       } else if (operationDetails.headers[h] !== null) {
         const hv = operationDetails.headers[h].replace(
           /RECORD_IDENTIFIER/gi,

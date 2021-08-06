@@ -32,7 +32,10 @@ export const registerField = (field, formValue = {}) => {
   );
 
   adjustDefaultVisibleRequiredValue(field);
-  field.value = splitDelimitedValue(initialValue, valueDelimiter);
+  const finalDefaultValue = splitDelimitedValue(initialValue, valueDelimiter);
+
+  field.value = finalDefaultValue;
+  field.defaultValue = finalDefaultValue;
 };
 
 export const registerFields = (fieldMapToValidate, formValue = {}) =>
@@ -119,9 +122,6 @@ export const evaluateAllRules = ({
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
 
-      // eslint-disable-next-line no-console
-      console.error(`invalid rule properties ${rule} passed returning default result`);
-
       return defaultResult;
     });
   }
@@ -141,8 +141,6 @@ export const evaluateSomeRules = ({
       if (rule.field && fieldsById.hasOwnProperty(rule.field)) {
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
-      // eslint-disable-next-line no-console
-      console.error(`invalid rule properties ${rule} passed returning default result`);
 
       return defaultResult;
     });
@@ -280,7 +278,7 @@ export const processOptions = ({
     }
   });
 
-export const updateFieldValue = (field, value) => {
+export const updateFieldValue = (field, value, skipFieldTouched) => {
   const updateValue = typeof value !== 'undefined' && value;
 
   if (field.omitWhenHidden && !field.visible) {
@@ -288,6 +286,9 @@ export const updateFieldValue = (field, value) => {
     console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
+    if (skipFieldTouched && !field.touched) {
+      field.defaultValue = updateValue;
+    }
   }
 };
 
@@ -418,3 +419,29 @@ export const getNextStateFromFields = formState => {
 
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
+
+export function getFieldIdsInLayoutOrder(layout) {
+  const fields = [];
+
+  if (!layout) return fields;
+  if (layout.fields?.length) {
+    // add the fields in this layout to the list
+    fields.push(...layout.fields);
+  }
+  if (layout.containers?.length) {
+    // traverse through each container and fetch the fields
+    layout.containers.forEach(container => {
+      fields.push(...getFieldIdsInLayoutOrder(container));
+    });
+  }
+
+  return fields;
+}
+
+export function getFirstErroredFieldId(formState) {
+  const { fields, fieldMeta } = formState || {};
+
+  const orderedFieldIds = getFieldIdsInLayoutOrder(fieldMeta?.layout);
+
+  return orderedFieldIds.find(fieldId => fields[fieldId] && fields[fieldId].visible && !fields[fieldId].isValid);
+}

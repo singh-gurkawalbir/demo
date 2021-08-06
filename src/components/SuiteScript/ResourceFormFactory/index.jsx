@@ -17,10 +17,6 @@ export const ResourceFormFactory = props => {
   } = props;
   const dispatch = useDispatch();
   const handleInitForm = useCallback((
-    ssLinkedConnectionId,
-    resourceType,
-    resourceId,
-    flowId,
   ) => {
     dispatch(
       actions.suiteScript.resourceForm.init(
@@ -33,9 +29,9 @@ export const ResourceFormFactory = props => {
         undefined,
       )
     );
-  }, [dispatch]);
+  }, [dispatch, flowId, resourceId, resourceType, ssLinkedConnectionId]);
 
-  const handleClearResourceForm = useCallback((ssLinkedConnectionId, resourceType, resourceId) => {
+  const handleClearResourceForm = useCallback(() => {
     dispatch(
       actions.suiteScript.resourceForm.clear(
         ssLinkedConnectionId,
@@ -43,7 +39,7 @@ export const ResourceFormFactory = props => {
         resourceId,
       )
     );
-  }, [dispatch]);
+  }, [dispatch, resourceId, resourceType, ssLinkedConnectionId]);
 
   const formState = useSelector(state => selectors.suiteScriptResourceFormState(state, {
     resourceType,
@@ -62,24 +58,11 @@ export const ResourceFormFactory = props => {
   ));
 
   useEffect(() => {
-    handleInitForm(
-      ssLinkedConnectionId,
-      resourceType,
-      resourceId,
-      flowId,
-    );
+    handleInitForm();
 
     return () =>
-      handleClearResourceForm(ssLinkedConnectionId, resourceType, resourceId);
-  }, [
-    flowId,
-    handleClearResourceForm,
-    handleInitForm,
-    isNew,
-    resourceId,
-    resourceType,
-    ssLinkedConnectionId,
-  ]);
+      handleClearResourceForm();
+  }, [handleClearResourceForm, handleInitForm]);
 
   const { optionsHandler, validationHandler } = useMemo(
     () => {
@@ -107,6 +90,7 @@ export const ResourceFormFactory = props => {
   return (
     <FormStateManager
       {...props}
+      handleInitForm={handleInitForm}
       formState={formState}
       fieldMeta={fieldMeta}
       optionsHandler={optionsHandler}

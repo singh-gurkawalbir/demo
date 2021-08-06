@@ -133,6 +133,9 @@ import DynaSsoOrgId from './DynaSsoOrgId';
 import DynaSelectWithValidations from './select/DynaSelectWithValidations';
 import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
 import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
+import DynaDynamicSelect from './DynaDynamicSelect';
+import DynaSelectLookup from './DynaSelectLookup';
+import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -277,4 +280,7 @@ export default {
   selectwithvalidations: DynaSelectWithValidations,
   salesforcesortorderselect: Salesforce.DynaSortOrderSelect,
   nsauthtype: DynaNetsuiteAuthType,
+  dynamicselect: DynaDynamicSelect,
+  selectlookup: DynaSelectLookup,
+  selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
 };

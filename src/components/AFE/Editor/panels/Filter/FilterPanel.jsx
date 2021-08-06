@@ -584,15 +584,15 @@ export default function FilterPanel({editorId}) {
                   lhsValue === 'currentExportDateTime')
             ) {
               r.lhs.dataType = 'epochtime';
-            }
-
-            if (lhsValue?.endsWith('.length')) {
+            } else if (lhsValue?.endsWith('.length')) {
               const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
 
               if (fieldType === 'number') {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
+            } else {
+              r.lhs.dataType = 'string';
             }
           }
 
@@ -621,15 +621,15 @@ export default function FilterPanel({editorId}) {
                   rhsValue === 'currentExportDateTime')
             ) {
               r.rhs.dataType = 'epochtime';
-            }
-
-            if (rhsValue?.endsWith('.length')) {
+            } else if (rhsValue?.endsWith('.length')) {
               const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
 
               if (fieldType === 'number') {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
+            } else {
+              r.rhs.dataType = 'string';
             }
           }
 
@@ -664,15 +664,15 @@ export default function FilterPanel({editorId}) {
                     lhsValue === 'currentExportDateTime')
               ) {
                 r.lhs.dataType = 'epochtime';
-              }
-
-              if (lhsValue?.endsWith('.length')) {
+              } else if (lhsValue?.endsWith('.length')) {
                 const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
 
                 if (fieldType === 'number') {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
+              } else {
+                r.lhs.dataType = 'string';
               }
             }
 
@@ -697,15 +697,15 @@ export default function FilterPanel({editorId}) {
                     rhsValue === 'currentExportDateTime')
               ) {
                 r.rhs.dataType = 'epochtime';
-              }
-
-              if (rhsValue?.endsWith('.length')) {
+              } else if (rhsValue?.endsWith('.length')) {
                 const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
 
                 if (fieldType === 'number') {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
+              } else {
+                r.rhs.dataType = 'string';
               }
             }
 
@@ -775,6 +775,8 @@ export default function FilterPanel({editorId}) {
 
       if (disabled) {
         setTimeout(() => {
+          if (!qbuilder.current) return;
+
           jQuery(`#${qbuilder.current.id} button[data-not!=group]`).hide();
           jQuery(`#${qbuilder.current.id} button[data-not=group]`).prop(
             'disabled',

@@ -50,6 +50,7 @@ export default function DynaCsvParse_afe(props) {
     disabled,
     formKey: parentFormKey,
     flowId,
+    formKey,
   } = props;
   const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
@@ -95,21 +96,8 @@ export default function DynaCsvParse_afe(props) {
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
 
-    // todo: @raghu removing this dispatch action from here as it will be taken care
-    // by field change on the form itself. Please confirm and remove this comment
-    // dispatch(
-    //   actions.sampleData.request(
-    //     resourceId,
-    //     resourceType,
-    //     {
-    //       type: 'csv',
-    //       // file: csvData,
-    //       editorValues,
-    //     },
-    //     'file'
-    //   )
-    // );
-  }, [id, onFieldChange, resourceId, resourceType]);
+    dispatch(actions.resourceFormSampleData.request(formKey));
+  }, [id, onFieldChange, resourceId, resourceType, dispatch, formKey]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);

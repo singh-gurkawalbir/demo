@@ -1,10 +1,14 @@
 import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
 import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
+import ArrowUpIcon from '../icons/ArrowUpIcon';
+import ChildDetails from './ChildDetails';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '1fr',
   },
+  moreIcon: {
+    marginTop: -theme.spacing(1),
+  },
   heading: {
     fontWeight: 'bold',
     color: theme.palette.secondary.light,
@@ -30,6 +37,7 @@ const useStyles = makeStyles(theme => ({
   formGroup: {
     maxHeight: 380,
     overflowY: 'auto',
+    display: 'unset',
     '& > label': {
       width: '100%',
     },
@@ -76,14 +84,57 @@ const useStyles = makeStyles(theme => ({
   multiSelectFilterPopperArrow: {
     left: '150px !important',
   },
+  checkAction: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    display: 'flex',
+    // justifyContent: 'flex-start',
+    '& li:first-child': {
+      minWidth: 30,
+    },
+    '& li': {
+      maxWidth: 'calc(100% - 30px)',
+    },
+    '& li:only-child': {
+      maxWidth: '100%',
+    },
+  },
 }));
 
-export default function MultiSelectFilter(props) {
-  const { items = [], selected = [], onSave, Icon, onSelect } = props;
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+  const isChildExists = items?.find(i => i.children);
+
+  const initialExpandedState = useMemo(() => {
+    const initialState = {};
+    let nodeExpanded;
+
+    items.forEach(i => {
+      nodeExpanded = false;
+      if (i.children) {
+        i.children.forEach(c => {
+          if (selected.includes(c._id)) {
+            nodeExpanded = true;
+          }
+        });
+        initialState[i._id] = nodeExpanded;
+      }
+    });
+
+    return initialState;
+  }, [items, selected]);
+
+  const [expanded, setExpanded] = useState(initialExpandedState);
+
+  function handleExpandCollapseClick(newNode) {
+    const result = {...expanded, [newNode]: !expanded[newNode]};
+
+    setExpanded(result);
+  }
 
   const toggleClick = useCallback(event => {
     if (anchorEl) {
@@ -117,6 +168,38 @@ export default function MultiSelectFilter(props) {
       });
     }
   };
+  const handleChildSelect = useCallback((id, parentId) => event => {
+    event.stopPropagation();
+
+    setChecked(checked => {
+      if (checked.includes(id)) {
+        if (checked.includes(parentId)) {
+          return checked.filter(i => i !== id && i !== parentId);
+        }
+
+        return checked.filter(i => i !== id);
+      }
+      if (checked.includes(parentId)) {
+        return [...checked, id];
+      }
+      const parent = items.find(i => i._id === parentId);
+      let allChildsSelected = true;
+
+      parent?.children?.forEach(c => {
+        if (c._id !== id && !checked.includes(c._id)) { allChildsSelected = false; }
+      });
+
+      if (allChildsSelected && parent?.children) {
+        return [...checked, id, parentId].filter(c => c !== 'all');
+      }
+
+      return [...checked, id].filter(c => c !== 'all');
+    });
+  }, [items]);
+
+  function RowIcon({expanded, node}) {
+    return expanded[node] ? <ArrowUpIcon /> : <ArrowDownIcon />;
+  }
 
   return (
     <>
@@ -140,31 +223,53 @@ export default function MultiSelectFilter(props) {
                 <FormControl component="fieldset" className={classes.formControl}>
                   <FormGroup className={classes.formGroup}>
                     {items.map(m => (
-                      <FormControlLabel
-                        className={classes.selectResourceItem}
-                        control={(
-                          <Checkbox
-                            color="primary"
-                            checked={checked.includes(m._id)}
-                            onChange={handleSelect(m._id)}
-                            value="required"
-                            className={classes.selectResourceCheck}
-                            />
+                      <>
+                        <ul key={m._id} className={classes.checkAction}>
+                          {isChildExists && (
+                          <li>
+                            { m?.children?.length && (
+                            <IconButton
+                              data-test="toggleJobDetail"
+                              className={classes.moreIcon}
+                              size="small"
+                              onClick={() => { handleExpandCollapseClick(m._id); }}>
+                              <RowIcon expanded={expanded} node={m._id} />
+                            </IconButton>
                           )}
-                        label={m.name}
-                        key={m._id}
-                        />
-                    ))}
+                          </li>
+                          )}
+                          <li>
+                            <FormControlLabel
+                              className={classes.selectResourceItem}
+                              control={(
+                                <Checkbox
+                                  color="primary"
+                                  checked={checked.includes(m._id)}
+                                  onChange={handleSelect(m._id)}
+                                  value="required"
+                                  className={classes.selectResourceCheck} />
+                                  )}
+                              label={m.name}
+                              key={m._id} />
+                            {expanded[m._id] && m.children && m.children.map(c => (
+                              <ChildDetails
+                                key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                                checked={checked} />
+                            ))}
+                          </li>
+                        </ul>
 
+                      </>
+                    ))}
                   </FormGroup>
                 </FormControl>
               </div>
               <div className={classes.actions}>
                 <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={handleSave} disabled={isEqual(checked, selected)}>
+                  <Button variant="contained" color="primary" onClick={handleSave} disabled={isEqual(checked, selected)}>
                     Apply
                   </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  <Button variant="text" color="secondary" onClick={handleClose}>
                     Cancel
                   </Button>
                 </ButtonGroup>

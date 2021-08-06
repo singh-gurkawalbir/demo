@@ -131,6 +131,7 @@ export default {
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
     'azurestorageaccount',
+    'amazonmws',
     'squareup',
     'shipbob',
     'ebay',
@@ -205,6 +206,7 @@ export default {
     'mavenlink',
     'googleads',
     'pagerduty',
+    'pandadoc',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

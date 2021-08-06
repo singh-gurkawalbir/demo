@@ -164,6 +164,34 @@ export const getAllFormValuesAssociatedToMeta = (values, meta = {}) => {
     }, {});
 };
 
+export const getMetadatasForIndividualTabs = (meta = {}) => {
+  const { layout, fieldMap, actions } = meta;
+
+  const {containers} = layout;
+
+  if (!layout || !fieldMap || !containers) {
+    return null;
+  }
+
+  return containers.map(container => {
+    const containerSpecificFieldMap = Object.keys(fieldMap)
+      .filter(key => !!getFieldByIdFromLayout(container, fieldMap, key))
+      .reduce((acc, curr) => {
+        acc[curr] = fieldMap[curr];
+
+        return acc;
+      }, {});
+
+    return {
+      key: container.label,
+      fieldMeta: {
+        fieldMap: containerSpecificFieldMap,
+        layout: container,
+        actions,
+      },
+    };
+  });
+};
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
   const addMissing = missingPath => {
@@ -636,7 +664,7 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  if (!sections) finalData.actions = [{ id: 'saveintegrationsettings' }];
+  if (!sections || !isFlow) finalData.actions = [{ id: 'saveintegrationsettings' }];
   else finalData.actions = [];
 
   return finalData;
@@ -763,6 +791,12 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  azurestorageaccount: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
   as2: [
     {
       label: 'Transfer files out of source application',
@@ -820,6 +854,16 @@ export const destinationOptions = {
     },
   ],
   googledrive: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  azurestorageaccount: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',

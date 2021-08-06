@@ -139,8 +139,7 @@ const getLookupMetadata = ({
         required: true,
         defaultValue: lookup.name,
         placeholder: 'Alphanumeric characters only please',
-        helpText:
-          'Name of the lookups that will be exposed to the mapping to refer.',
+        helpKey: 'import.lookups.name',
         validWhen: {
           matchesRegEx: {
             pattern: '^[\\S]+$',
@@ -186,6 +185,7 @@ const getLookupMetadata = ({
         defaultValue: lookup.default,
         required: true,
         placeholder: 'Enter default value',
+        helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
         visibleWhen: [
           {
             field: '_failRecord',

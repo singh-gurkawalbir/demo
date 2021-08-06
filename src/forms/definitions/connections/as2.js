@@ -355,13 +355,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-    },
-    {
-      id: 'saveandclose',
-    },
-    {
-      id: 'cancel',
+      id: 'saveandclosegroup',
     },
   ],
 };

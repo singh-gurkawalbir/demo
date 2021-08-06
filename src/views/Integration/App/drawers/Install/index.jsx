@@ -11,6 +11,7 @@ import {
   Typography,
   Link,
 } from '@material-ui/core';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -69,6 +70,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }));
+
+const oAuthApplications = [
+  ...resourceConstants.OAUTH_APPLICATIONS,
+  'netsuite-oauth',
+  'shopify-oauth',
+  'acumatica-oauth',
+  'hubspot-oauth',
+];
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -205,17 +214,6 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
-  const oAuthApplications = useMemo(
-    () => [
-      ...resourceConstants.OAUTH_APPLICATIONS,
-      'netsuite-oauth',
-      'shopify-oauth',
-      'acumatica-oauth',
-      'hubspot-oauth',
-    ],
-    []
-  );
-
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
@@ -263,7 +261,6 @@ export default function ConnectorInstallation(props) {
       installSteps,
       integrationId,
       isFrameWork2,
-      oAuthApplications,
       selectedConnectionType,
     ]
   );
@@ -347,7 +344,7 @@ export default function ConnectorInstallation(props) {
 
             // for old cloned IAs, uninstall should happen the old way
             if (isFrameWork2 && !isCloned) {
-              const {url} = match;
+              const { url } = match;
               const urlExtractFields = url.split('/');
               const index = urlExtractFields.findIndex(
                 element => element === 'child'
@@ -392,6 +389,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
       completed,
       url,
+      form,
     } = step;
 
     if (completed) {
@@ -484,6 +482,13 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (type === 'stack') {
       if (!stackId) setShowStackDialog(generateNewId());
+    } else if (!isEmpty(form)) {
+      dispatch(actions.integrationApp.installer.updateStep(
+        integrationId,
+        installerFunction,
+        'inProgress',
+        form
+      ));
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -516,7 +521,7 @@ export default function ConnectorInstallation(props) {
 
   const handleHelpUrlClick = e => {
     e.preventDefault();
-    openExternalUrl({url: helpUrl});
+    openExternalUrl({ url: helpUrl });
   };
 
   return (
@@ -591,6 +596,7 @@ export default function ConnectorInstallation(props) {
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
+          installerFunction={currentStep.installerFunction}
           title={currentStep.name}
           index={currStepIndex + 1}
         />
@@ -600,6 +606,7 @@ export default function ConnectorInstallation(props) {
           {helpUrl ? (
             <RawHtml
               className={classes.message}
+              options={{ allowedHtmlTags: ['a', 'br'] }}
               html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (

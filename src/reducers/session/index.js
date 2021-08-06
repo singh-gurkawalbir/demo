@@ -12,7 +12,7 @@ import stackSystemTokens, { selectors as fromStackSystemTokens } from './stackSy
 import apiAccessTokens, { selectors as fromApiAccessTokens } from './apiAccessTokens';
 import connectionToken, { selectors as fromConnectionToken } from './connectionToken';
 import netsuiteUserRole, { selectors as fromNetsuiteUserRoles } from './netsuiteUserRoles';
-import sampleData, { selectors as fromSampleData } from './sampleData';
+import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/imports';
 import flowData, { selectors as fromFlowData } from './sampleData/flows';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
@@ -36,9 +36,11 @@ import logs, {selectors as fromLogs} from './logs';
 import sso, {selectors as fromSSO} from './sso';
 import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
 import integrations, {selectors as fromIntegrations} from './integrations';
+import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
 import { genSelectors } from '../util';
 
 export default combineReducers({
+  asyncTask,
   form,
   recycleBin,
   stage,
@@ -54,7 +56,6 @@ export default combineReducers({
   apiAccessTokens,
   resource,
   netsuiteUserRole,
-  sampleData,
   importSampleData,
   flowData,
   flowMetrics,
@@ -76,11 +77,13 @@ export default combineReducers({
   logs,
   sso,
   bottomDrawer,
+  resourceFormSampleData,
 });
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
 const subSelectors = {
+  asyncTask: fromAsyncTask,
   form: fromForm,
   stage: fromStage,
   filters: fromFilters,
@@ -94,7 +97,6 @@ const subSelectors = {
   apiAccessTokens: fromApiAccessTokens,
   connectionToken: fromConnectionToken,
   netsuiteUserRole: fromNetsuiteUserRoles,
-  sampleData: fromSampleData,
   importSampleData: fromImportSampleData,
   flowData: fromFlowData,
   integrationApps: fromIntegrationApps,
@@ -118,6 +120,7 @@ const subSelectors = {
   logs: fromLogs,
   sso: fromSSO,
   bottomDrawer: fromBottomDrawer,
+  resourceFormSampleData: fromResourceFormSampleData,
 };
 
 genSelectors(selectors, subSelectors);

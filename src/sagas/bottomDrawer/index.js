@@ -3,10 +3,12 @@ import moment from 'moment';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
+// eslint-disable-next-line no-unused-vars
+import { apiCallWithRetry } from '..';
 
 export function* bottomDrawerInit({flowId}) {
   const isUserInErrMgtTwoDotZero = yield select(selectors.isOwnerUserInErrMgtTwoDotZero);
-  const flowScripts = yield select(selectors.mkGetScriptsTiedToFlow(), flowId);
+  const flowScripts = yield select(selectors.getScriptsTiedToFlow, flowId);
   const tabs = [
     {label: isUserInErrMgtTwoDotZero ? 'Run console' : 'Dashboard', tabType: 'dashboard'},
   ];
@@ -45,7 +47,9 @@ export function* switchTab({index, tabType}) {
   });
 
   if (lastActiveTab.tabType === requestedTab.tabType) {
-    return;
+    if (!requestedTab.resourceId || (lastActiveTab.resourceId === requestedTab.resourceId)) {
+      return;
+    }
   }
 
   if (requestedTab.tabType === 'connectionLogs') {

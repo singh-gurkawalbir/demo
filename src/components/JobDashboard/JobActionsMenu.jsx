@@ -26,6 +26,7 @@ import CheckmarkIcon from '../icons/CheckmarkIcon';
 import CancelIcon from '../icons/CancelIcon';
 import DownloadIcon from '../icons/DownloadIcon';
 import useCommStatus from '../../hooks/useCommStatus';
+import {CANCEL_JOB} from '../../utils/messageStore';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -203,8 +204,7 @@ export default function JobActionsMenu({
     } else if (action === 'cancelJob') {
       confirmDialog({
         title: 'Confirm cancel',
-        message:
-          'Are you sure you want to cancel?  Please note that canceling this job will discard all associated data currently queued for processing.',
+        message: CANCEL_JOB,
         buttons: [
           {
             label: 'Yes, cancel',
@@ -233,7 +233,7 @@ export default function JobActionsMenu({
                     return false;
                   }
                 } else {
-                  const retryJob = job.retries.find(r =>
+                  const retryJob = job.retries?.find(r =>
                     [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
                   );
 

@@ -11,6 +11,9 @@ import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import FlowScheduleForm from '../../../../components/FlowSchedule/Form';
 import FlowScheduleButtons from '../../../../components/FlowSchedule/Buttons';
 import LoadResources from '../../../../components/LoadResources';
+import { useFormOnCancel } from '../../../../components/FormOnCancelContext';
+
+const formKey = 'flow-schedule';
 
 const useStyle = makeStyles(theme => ({
   scheduleContainer: {
@@ -37,8 +40,6 @@ function DrawerForm(props) {
     selectors.resource(state, 'flows', flowId)
   );
 
-  const formKey = 'flow-schedule';
-
   // TODO: Ashok: Connector specific things to be added for schedule drawer
   // incase of !isViewMode && isIntegrationApp
   return (
@@ -61,10 +62,12 @@ function DrawerForm(props) {
 }
 
 export default function ScheduleDrawer({flowId}) {
+  const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
+
   return (
     <RightDrawer path={[':flowId/schedule', 'schedule']}>
-      <DrawerHeader title="Flow schedule" />
-      <DrawerForm flowId={flowId} />
+      <DrawerHeader title="Flow schedule" disableClose={disabled} handleClose={setCancelTriggered} />
+      <DrawerForm flowId={flowId} formKey={formKey} />
     </RightDrawer>
   );
 }

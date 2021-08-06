@@ -1,66 +1,50 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@material-ui/core';
 import ActionGroup from '../ActionGroup';
-import useConfirmDialog from '../ConfirmDialog';
 import Spinner from '../Spinner';
+import { FORM_SAVE_STATUS } from '../../utils/constants';
 
-export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, onSave }) {
-  const { saveDiscardDialog } = useConfirmDialog();
-  const [closeTriggered, setCloseTriggered] = useState(false);
-  const isSuccess = status === 'success';
-  const inProgress = status === 'inProgress';
+export const CLOSE_AFTER_SAVE = true;
+export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, handleSave, handleSaveAndClose}) {
+  const inProgress = status === FORM_SAVE_STATUS.LOADING;
 
-  const handleSaveAndClose = useCallback(() => {
-    onSave();
-    setCloseTriggered(true);
-  }, [onSave]);
+  const handleSaveClick = useCallback(() => {
+    handleSave(!CLOSE_AFTER_SAVE);
+  }, [handleSave]);
 
-  const handleCancelClick = useCallback(() => {
-    if (!isDirty) return onClose();
-
-    // console.log('confirm dialog, isDirty:', isDirty);
-
-    saveDiscardDialog({
-      onSave: handleSaveAndClose,
-      onDiscard: onClose,
-    });
-  }, [saveDiscardDialog, handleSaveAndClose, isDirty, onClose]);
-
-  useEffect(() => {
-    if (closeTriggered && isSuccess) onClose();
-  }, [closeTriggered, onClose, isSuccess]);
-
-  // console.log('disabled, !isDirty, inProgress', disabled, isDirty, inProgress);
+  const handleSaveAndCloseClick = useCallback(() => {
+    handleSaveAndClose(CLOSE_AFTER_SAVE);
+  }, [handleSaveAndClose]);
 
   return (
     <ActionGroup>
       <Button
         variant="outlined"
-        data-test="saveEditor"
+        data-test="save"
         disabled={disabled || !isDirty || inProgress}
         color="primary"
-        onClick={onSave}>
+        onClick={handleSaveClick}>
         {inProgress ? <Spinner size="small">Saving...</Spinner> : 'Save'}
       </Button>
 
-      {(!disabled && isDirty && !inProgress) && (
-      <Button
-        variant="outlined"
-        data-test="saveAndCloseEditor"
-        color="secondary"
-        onClick={handleSaveAndClose}>
-        Save & close
-      </Button>
-      )}
+      {(!disabled && isDirty && !inProgress) ? (
+        <Button
+          variant="outlined"
+          data-test="saveAndClose"
+          color="secondary"
+          onClick={handleSaveAndCloseClick}>
+          Save & close
+        </Button>
+      ) : null}
 
       <Button
         variant="text"
-        color="primary"
-        data-test="closeEditor"
+        color="secondary"
+        data-test="cancel"
         disabled={inProgress}
-        onClick={handleCancelClick}>
-        Cancel
+        onClick={onClose}>
+        Close
       </Button>
     </ActionGroup>
   );
@@ -68,7 +52,8 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
 
 SaveAndCloseButtonGroup.propTypes = {
   onClose: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  handleSaveAndClose: PropTypes.func.isRequired,
   status: PropTypes.oneOf([undefined, 'success', 'inProgress', 'fail']),
   disabled: PropTypes.bool,
   isDirty: PropTypes.bool,
@@ -77,5 +62,6 @@ SaveAndCloseButtonGroup.propTypes = {
 SaveAndCloseButtonGroup.defaultProps = {
   disabled: false,
   isDirty: false,
+  disableOnCloseAfterSave: false,
 };
 

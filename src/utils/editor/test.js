@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { dataAsString, getUniqueFieldId } from './index';
+import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getFormSaveStatusFromEditorStatus } from './index';
 
 describe('editor utils test cases', () => {
   describe('dataAsString util', () => {
@@ -17,6 +17,32 @@ describe('editor utils test cases', () => {
 
       expect(dataAsString(data)).toEqual(expectedString);
       expect(dataAsString({})).toEqual('{}');
+    });
+  });
+  describe('getFormSaveStatusFromEditorStatus util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(getFormSaveStatusFromEditorStatus()).toEqual('failed');
+    });
+    test('should return complete if status is success', () => {
+      expect(getFormSaveStatusFromEditorStatus('success')).toEqual('complete');
+    });
+    test('should return loading if status is requested', () => {
+      expect(getFormSaveStatusFromEditorStatus('requested')).toEqual('loading');
+    });
+  });
+
+  describe('getFormSaveStatusFromCommStatus util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(getFormSaveStatusFromCommStatus()).toEqual('complete');
+    });
+    test('should return complete if commStatus is success', () => {
+      expect(getFormSaveStatusFromCommStatus('success')).toEqual('complete');
+    });
+    test('should return loading if commStatus is loading', () => {
+      expect(getFormSaveStatusFromCommStatus('loading')).toEqual('loading');
+    });
+    test('should return failed if commStatus is error', () => {
+      expect(getFormSaveStatusFromCommStatus('error')).toEqual('failed');
     });
   });
 

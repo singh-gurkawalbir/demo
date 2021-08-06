@@ -60,6 +60,7 @@ export const ConfirmDialog = (
     message,
     title = 'Confirm',
     isHtml = false,
+    allowedTags,
     onClose,
     maxWidth,
     buttons = [
@@ -89,7 +90,7 @@ export const ConfirmDialog = (
     <ModalDialog show onClose={handleClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
-        <RawHtml className={classes.message} html={message} />
+        <RawHtml className={classes.message} html={message} options={{allowedTags}} />
       ) : (
         <div className={classes.message}>{message}</div>
       )}
@@ -156,8 +157,8 @@ export default function useConfirmDialog() {
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',
         buttons: [
-          { label: 'Save Changes', variant: 'primary', onClick: onSave },
-          { label: 'Discard Changes', variant: 'secondary', onClick: onDiscard },
+          { label: 'Save changes', variant: 'primary', onClick: onSave },
+          { label: 'Discard changes', variant: 'secondary', onClick: onDiscard },
         ],
       });
     },

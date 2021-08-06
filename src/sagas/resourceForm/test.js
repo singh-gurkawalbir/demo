@@ -148,7 +148,7 @@ describe('resourceForm sagas', () => {
         [select(
           selectors.getResourceSampleDataWithStatus,
           resourceId,
-          'rawFile'
+          'raw'
         ), {}],
       ])
       .returns(values)
@@ -159,12 +159,12 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId
-        ), {merged: {_id: 'res-123', type: 'simple'}}],
+        ), {merged: {_id: 'res-123', type: 'simple', '/file/type': 'json'}}],
         [select(
           selectors.getResourceSampleDataWithStatus,
           resourceId,
-          'rawFile'
-        ), {data: {type: 'json', body: {}}}],
+          'raw'
+        ), {data: {}}],
         [matchers.call.fn(uploadRawData), 's3key'],
       ])
       .call(uploadRawData, {
@@ -953,23 +953,6 @@ describe('resourceForm sagas', () => {
           resourceType,
           resourceId
         ), {formSaveStatus: FORM_SAVE_STATUS.FAILED}],
-      ])
-      .not.call.fn(updateFlowDoc)
-      .returns(undefined)
-      .run()
-    );
-    test('should not call updateFlowDoc if its an integration app', () => expectSaga(submitResourceForm, {resourceId, resourceType, flowId})
-      .provide([
-        [select(
-          selectors.resourceFormState,
-          resourceType,
-          resourceId
-        ), {}],
-        [select(
-          selectors.resourceData,
-          'flows',
-          flowId
-        ), {merged: {_connectorId: '123'}}],
       ])
       .not.call.fn(updateFlowDoc)
       .returns(undefined)

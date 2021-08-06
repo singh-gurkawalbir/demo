@@ -407,4 +407,215 @@ export default {
       { field: 'http.configureAsyncHelper', is: [true] },
     ],
   },
+  'http.existingLookupType': {
+    id: 'http.existingLookupType',
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    defaultValue: r => {
+      if (r.http?.ignoreLookupName) {
+        return 'lookup';
+      }
+
+      return 'source';
+    },
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ignoreExistingExtract': {
+    id: 'http.ignoreExistingExtract',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.existingLookupType',
+        is: ['source'],
+      },
+    ],
+    defaultValue: r => r.http?.ignoreExtract,
+  },
+  'http.ignoreExistingLookupName': {
+    id: 'http.ignoreExistingLookupName',
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.lookup',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    defaultValue: r => r.http?.ignoreLookupName,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.existingLookupType',
+        is: ['lookup'],
+      },
+    ],
+  },
+  'http.newLookupType': {
+    id: 'http.newLookupType',
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    defaultValue: r => {
+      if (r.http?.ignoreLookupName) {
+        return 'lookup';
+      }
+
+      return 'source';
+    },
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['updateandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ignoreNewExtract': {
+    id: 'http.ignoreNewExtract',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['updateandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.newLookupType',
+        is: ['source'],
+      },
+    ],
+    defaultValue: r => r.http?.ignoreExtract,
+  },
+  'http.ignoreNewLookupName': {
+    id: 'http.ignoreNewLookupName',
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.lookup',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    defaultValue: r => r.http?.ignoreLookupName,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['updateandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.newLookupType',
+        is: ['lookup'],
+      },
+    ],
+  },
+  'unencrypted.apiType': {
+    type: 'selectAmazonSellerCentralAPIType',
+    label: 'API type',
+    helpKey: 'export.unencrypted.apiType',
+    skipDefault: true,
+    skipSort: true,
+    options: [
+      {
+        items: [
+          {label: 'Selling Partner API (SP-API)', value: 'Amazon-SP-API'},
+          {label: 'Marketplace Web Service API (MWS)', value: ''},
+        ],
+      },
+    ],
+  },
 };

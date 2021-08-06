@@ -574,6 +574,8 @@ selectors.mkGetScriptsTiedToFlow = () => createSelector(
     return getScriptsReferencedInFlow({scripts, flow, imports, exports});
   });
 
+selectors.getScriptsTiedToFlow = selectors.mkGetScriptsTiedToFlow();
+
 // #endregion script selectors
 
 // #region eventReports selectors
