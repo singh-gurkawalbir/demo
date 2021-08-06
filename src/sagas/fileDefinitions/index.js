@@ -8,6 +8,7 @@ import { isNewId, generateNewId } from '../../utils/resource';
 import { commitStagedChangesWrapper } from '../resources';
 import { selectors } from '../../reducers';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { safeParse } from '../../utils/string';
 
 /*
  * Fetches all Supported File Definitions
@@ -25,7 +26,7 @@ export function* getFileDefinitions() {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
+      const parsedError = safeParse(e.message);
 
       yield put(actions.fileDefinitions.preBuilt.receivedError(parsedError));
     }

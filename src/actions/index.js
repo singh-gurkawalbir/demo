@@ -358,10 +358,11 @@ const resource = {
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    test: (resourceId, values) =>
+    test: (resourceId, values, parentContext) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+        parentContext,
       }),
     requestStatusPoll: integrationId =>
       action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, { integrationId }),
