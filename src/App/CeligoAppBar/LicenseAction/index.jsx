@@ -132,7 +132,6 @@ function LicenseAction() {
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
-          30 days left
         </Button>
       )}
     </>
