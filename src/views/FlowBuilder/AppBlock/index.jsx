@@ -191,8 +191,7 @@ export default function AppBlock({
     if (blockType === 'dataLoader') return;
 
     if (!connectorType || !connectorType.toUpperCase().startsWith('RDBMS')) {
-      // TODO: useTechAdaptorForm is confusing here. we need to introduce new field useRestForm in backend.
-      if (connectorType && connectorType.toUpperCase().startsWith('HTTP') && resource?.useTechAdaptorForm) {
+      if (connectorType && connectorType.toUpperCase().startsWith('HTTP') && resource?.http?.formType === 'rest') {
         return connectorType.replace(/HTTP/, 'REST');
       }
 

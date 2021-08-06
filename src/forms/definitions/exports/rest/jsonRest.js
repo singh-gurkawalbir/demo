@@ -441,7 +441,7 @@ export default {
       }
     }
     retValues['/adaptorType'] = 'HTTPExport';
-    retValues['/useTechAdaptorForm'] = true;
+    retValues['/http/formType'] = 'rest';
     delete retValues['/rest'];
 
     return {

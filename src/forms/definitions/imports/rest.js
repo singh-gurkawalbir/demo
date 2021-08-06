@@ -459,8 +459,8 @@ export default {
     retValues['/http/errorMediaType'] = 'json';
     // #endregion
 
-    // set useTechAdaptorForm to true to identify that this http resource is created using REST form
-    retValues['/useTechAdaptorForm'] = true;
+    // set formType to rest to identify that this http resource is created using REST form
+    retValues['/http/formType'] = 'rest';
 
     return {
       ...retValues,
