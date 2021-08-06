@@ -8,7 +8,7 @@ import AfeIcon from '../../icons/AfeIcon';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
-import { getParentResourceContext } from './DynaHttpRequestBody_afe';
+import { getParentResourceContext } from '../../../utils/connections';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {
@@ -41,7 +41,7 @@ export default function DynaURI_afe(props) {
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
 
-  const {parentType, parentId} = getParentResourceContext(match.url) || {};
+  const {parentType, parentId} = getParentResourceContext(match.url);
 
   const handleSave = useCallback(editorValues => {
     onFieldChange(id, editorValues.rule);

@@ -7,6 +7,7 @@ import { selectors } from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
 import { getExtractPaths } from '../../../../utils/suiteScript/mapping';
+import { safeParse } from '../../../../utils/string';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const {refreshCache } = options;
@@ -97,7 +98,7 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
         return;
       }
       if (e.status >= 400 && e.status < 500) {
-        const parsedError = JSON.parse(e.message);
+        const parsedError = safeParse(e.message);
 
         return yield put(
           actions.suiteScript.sampleData.receivedError({ ssLinkedConnectionId, integrationId, flowId, error: parsedError})

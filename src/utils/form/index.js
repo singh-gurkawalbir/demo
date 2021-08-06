@@ -23,6 +23,7 @@ const adjustDefaultVisibleRequiredValue = field => {
     field.defaultRequired = field.required;
   }
 };
+
 export const registerField = (field, formValue = {}) => {
   const { defaultValue, name, value, valueDelimiter } = field;
   const initialValue = getFirstDefinedValue(
@@ -32,10 +33,7 @@ export const registerField = (field, formValue = {}) => {
   );
 
   adjustDefaultVisibleRequiredValue(field);
-  const finalDefaultValue = splitDelimitedValue(initialValue, valueDelimiter);
-
-  field.value = finalDefaultValue;
-  field.defaultValue = finalDefaultValue;
+  field.value = splitDelimitedValue(initialValue, valueDelimiter);
 };
 
 export const registerFields = (fieldMapToValidate, formValue = {}) =>
@@ -278,7 +276,7 @@ export const processOptions = ({
     }
   });
 
-export const updateFieldValue = (field, value, skipFieldTouched) => {
+export const updateFieldValue = (field, value) => {
   const updateValue = typeof value !== 'undefined' && value;
 
   if (field.omitWhenHidden && !field.visible) {
@@ -286,9 +284,6 @@ export const updateFieldValue = (field, value, skipFieldTouched) => {
     console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
-    if (skipFieldTouched && !field.touched) {
-      field.defaultValue = updateValue;
-    }
   }
 };
 

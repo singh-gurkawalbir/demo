@@ -1,10 +1,9 @@
 import shortid from 'shortid';
 import produce from 'immer';
 import { differenceWith, isEqual } from 'lodash';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import {isMappingEqual} from '../../../utils/mapping';
-
-const { deepClone } = require('fast-json-patch');
 
 const emptyObj = {};
 

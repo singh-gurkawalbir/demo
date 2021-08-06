@@ -23,7 +23,7 @@ import { commitStagedChangesWrapper } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
-import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
+import { emptyObject, REST_ASSISTANTS, STANDALONE_INTEGRATION } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
@@ -268,7 +268,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-export function* pingConnection({ resourceId, values }) {
+export function* pingConnection({ resourceId, values, parentContext }) {
   const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
@@ -278,13 +278,26 @@ export function* pingConnection({ resourceId, values }) {
     resourceId,
   });
 
+  const { flowId, integrationId, parentType, parentId } = parentContext || {};
+  const additionalReqBody = {
+    _flowId: flowId,
+    _integrationId: integrationId === STANDALONE_INTEGRATION.id ? undefined : integrationId,
+  };
+
+  if (parentType) {
+    additionalReqBody[parentType === 'exports' ? '_exportId' : '_importId'] = parentId;
+  }
+
   let resp;
 
   try {
     resp = yield call(apiCallWithRetry, {
       path: pingConnectionParams.path,
       opts: {
-        body: connectionPayload,
+        body: {
+          ...connectionPayload,
+          ...additionalReqBody,
+        },
         ...pingConnectionParams.opts,
       },
       hidden: true,

@@ -4735,7 +4735,7 @@ selectors.applicationType = (state, resourceType, id) => {
     );
   }
 
-  if (adaptorType === 'http' && resourceObj?.http?.useRestForm) {
+  if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
 
@@ -4754,7 +4754,7 @@ selectors.applicationType = (state, resourceType, id) => {
     return connection && connection.rdbms && connection.rdbms.type;
   }
 
-  if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.useTechAdaptorForm && !assistant) {
+  if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
     adaptorType = adaptorType.replace(/HTTP/, 'REST');
   }
 

@@ -1,9 +1,8 @@
 import produce from 'immer';
 import { isEqual } from 'lodash';
 import shortid from 'shortid';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
-
-const { deepClone } = require('fast-json-patch');
 
 const emptyObj = {};
 // TODO: Support error message display
