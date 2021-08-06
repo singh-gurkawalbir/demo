@@ -13,6 +13,8 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/ping/relativeURI': '/_api/sp.userprofiles.peoplemanager',
+    '/http/ping/method': 'GET',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

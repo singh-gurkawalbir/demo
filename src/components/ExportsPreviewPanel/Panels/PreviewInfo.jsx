@@ -147,7 +147,7 @@ export default function PreviewInfo(props) {
     },
     [fetchExportPreviewData, isValidRecordSize, enquesnackbar],
   );
-  const disablePreview = isPreviewDisabled || resourceSampleData.status === 'requested';
+  const disablePreview = isPreviewDisabled || (showPreviewData && resourceSampleData.status === 'requested');
 
   return (
     <div className={classes.previewContainer}>
@@ -157,7 +157,7 @@ export default function PreviewInfo(props) {
             color="secondary"
             className={classes.previewBtn}
             onClick={handlePreview}
-            disabled={showPreviewData && disablePreview}
+            disabled={disablePreview}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </OutlinedButton>

@@ -129,7 +129,7 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
-      if (integrationChildren.length > initialChildren.length) {
+      if (integrationChildren && initialChildren && integrationChildren.length > initialChildren.length) {
         const newChild = differenceBy(integrationChildren, initialChildren, 'value');
 
         childId = newChild?.length && newChild[0].value;
