@@ -453,6 +453,7 @@ describe('resourceForm sagas', () => {
           resourceType: 'connectors/999/licenses',
           id: resourceId,
           scope: SCOPES.VALUE,
+          parentContext: undefined,
         })
         .put(actions.resourceForm.submitComplete('connectorLicenses', resourceId, response.finalValues))
         .run();
@@ -486,6 +487,7 @@ describe('resourceForm sagas', () => {
           resourceType: 'integrations/new-int-id/accesstokens',
           id: resourceId,
           scope: SCOPES.VALUE,
+          parentContext: undefined,
         })
         .put(actions.resourceForm.submitComplete('accesstokens', resourceId, response.finalValues))
         .run();
@@ -514,6 +516,7 @@ describe('resourceForm sagas', () => {
           resourceType,
           id: resourceId,
           scope: SCOPES.VALUE,
+          parentContext: undefined,
         })
         .not.put.actionType('RESOURCE_FORM_SUBMIT_COMPLETE')
         .put(actions.resourceForm.submitFailed(resourceType, resourceId))

@@ -388,10 +388,11 @@ const resource = {
         resourceId,
         retainStatus,
       }),
-    saveAndAuthorize: (resourceId, values) =>
+    saveAndAuthorize: (resourceId, values, parentContext) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
         resourceId,
         values,
+        parentContext,
       }),
     authorized: connectionId =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
@@ -1539,7 +1540,8 @@ const resourceForm = {
     match,
     skipClose,
     isGenerate,
-    flowId
+    flowId,
+    parentContext
   ) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
@@ -1549,6 +1551,7 @@ const resourceForm = {
       skipClose,
       isGenerate,
       flowId,
+      parentContext,
     }),
   saveAndContinue: (resourceType, resourceId, values, match, skipClose, parentContext) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {

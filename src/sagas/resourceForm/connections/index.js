@@ -23,7 +23,7 @@ import { commitStagedChangesWrapper } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
-import { emptyObject, REST_ASSISTANTS, STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 import { pingConnectionParentContext } from '../../../utils/requestOptions';
@@ -279,16 +279,6 @@ export function* pingConnection({ resourceId, values, parentContext }) {
     resourceId,
   });
 
-  const { flowId, integrationId, parentType, parentId } = parentContext || {};
-  const additionalReqBody = {
-    _flowId: flowId,
-    _integrationId: integrationId === STANDALONE_INTEGRATION.id ? undefined : integrationId,
-  };
-
-  if (parentType) {
-    additionalReqBody[parentType === 'exports' ? '_exportId' : '_importId'] = parentId;
-  }
-
   let resp;
 
   try {
@@ -297,7 +287,7 @@ export function* pingConnection({ resourceId, values, parentContext }) {
       opts: {
         body: {
           ...connectionPayload,
-          ...additionalReqBody,
+          ...pingConnectionParentContext(parentContext),
         },
         ...pingConnectionParams.opts,
       },
@@ -382,12 +372,13 @@ export function* openOAuthWindowForConnection(resourceId) {
   win.focus();
 }
 
-export function* saveAndAuthorizeConnection({ resourceId, values }) {
+export function* saveAndAuthorizeConnection({ resourceId, values, parentContext }) {
   try {
     yield call(submitFormValues, {
       resourceType: 'connections',
       resourceId,
       values,
+      parentContext,
     });
   } catch (e) {
     // could not save the resource...lets just return

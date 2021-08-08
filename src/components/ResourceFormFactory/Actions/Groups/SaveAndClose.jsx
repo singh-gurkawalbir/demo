@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -15,9 +15,12 @@ export default function SaveAndClose(props) {
     resourceId,
     disabled = false,
     isGenerate = false,
-    flowId,
     onCancel,
     formKey,
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
   } = props;
 
   const { confirmDialog } = useConfirmDialog();
@@ -37,12 +40,20 @@ export default function SaveAndClose(props) {
     selectors.resourceFormState(state, resourceType, resourceId)?.formSaveStatus
   );
 
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
+
   const saveResource = useHandleSubmit({
     resourceType,
     resourceId,
     isGenerate,
     flowId,
     formKey,
+    parentContext,
   });
   const onSave = useCallback(
     closeAfterSave => {
