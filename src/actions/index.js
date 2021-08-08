@@ -352,8 +352,8 @@ const resource = {
       }),
   },
   connections: {
-    pingAndUpdate: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
+    pingAndUpdate: (connectionId, parentContext) =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId, parentContext }),
     updateStatus: collection =>
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
@@ -1550,13 +1550,14 @@ const resourceForm = {
       isGenerate,
       flowId,
     }),
-  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose, parentContext) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,
       match,
       skipClose,
+      parentContext,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
