@@ -421,7 +421,8 @@ export default function getRequestOptions(
 }
 
 export const pingConnectionParentContext = values => {
-  if (!values) return;
+  if (!values) return {};
+
   const { flowId, integrationId, parentType, parentId } = values;
   const context = {
     _flowId: flowId,
