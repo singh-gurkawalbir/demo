@@ -25,7 +25,7 @@ import {
   saveResourceWithDefinitionID,
   initFormValues,
 } from '.';
-import { createPayload } from './connections';
+import { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import actionTypes from '../../actions/types';
@@ -1082,7 +1082,7 @@ describe('resourceForm sagas', () => {
         hidden: true,
       })
       .run());
-    test('should call /ping api if response is a success', () => expectSaga(saveAndContinueResourceForm, { resourceId })
+    test('should callpingConnectionWithId if response is a success', () => expectSaga(saveAndContinueResourceForm, { resourceId })
       .provide([
         [select(
           selectors.resourceFormState,
@@ -1103,10 +1103,7 @@ describe('resourceForm sagas', () => {
           method: 'GET',
         },
       })
-      .call(apiCallWithRetry, {
-        path: `/connections/${resourceId}/ping`,
-        hidden: true,
-      })
+      .call(pingConnectionWithId, { connectionId: resourceId, parentContext: undefined })
       .run());
     test('should return error and not make /ping call if API throws error', () => expectSaga(saveAndContinueResourceForm, { resourceId })
       .provide([

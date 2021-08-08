@@ -26,6 +26,7 @@ import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { emptyObject, REST_ASSISTANTS, STANDALONE_INTEGRATION } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
+import { pingConnectionParentContext } from '../../../utils/requestOptions';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -497,12 +498,20 @@ export function* requestIClients({ connectionId }) {
   }
 }
 
-export function* pingAndUpdateConnection({ connectionId }) {
+export function* pingConnectionWithId({ connectionId, parentContext }) {
+  yield call(apiCallWithRetry, {
+    path: `/connections/${connectionId}/ping`,
+    hidden: true,
+    opts: {
+      body: pingConnectionParentContext(parentContext),
+      method: 'POST',
+    },
+  });
+}
+
+export function* pingAndUpdateConnection({ connectionId, parentContext }) {
   try {
-    yield call(apiCallWithRetry, {
-      path: `/connections/${connectionId}/ping`,
-      hidden: true,
-    });
+    yield call(pingConnectionWithId, { connectionId, parentContext });
 
     const connectionResource = yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}`,

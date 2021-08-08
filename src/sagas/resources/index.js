@@ -15,6 +15,7 @@ import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAG
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+import { pingConnectionWithId } from '../resourceForm/connections';
 
 const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
@@ -133,7 +134,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   }
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options, context }) {
+export function* commitStagedChanges({ resourceType, id, scope, options, context, parentContext }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -304,10 +305,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   */
   if (resourceType === 'connections' && updated?._id && isNew) {
     try {
-      yield call(apiCallWithRetry, {
-        path: `/connections/${updated._id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: updated._id, parentContext });
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
