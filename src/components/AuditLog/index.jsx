@@ -11,14 +11,10 @@ import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   root: {
     width: '100%',
     height: '100%',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
   },
   tableContainer: {
     height: 'calc(100% - 69px)',

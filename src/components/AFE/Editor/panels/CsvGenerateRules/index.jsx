@@ -35,12 +35,6 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     padding: theme.spacing(0.6, 1),
   },
-  menuItems: {
-    paddingRight: 0,
-    '&:before': {
-      display: 'none',
-    },
-  },
 }));
 
 export default function CsvGeneratePanel({ editorId }) {

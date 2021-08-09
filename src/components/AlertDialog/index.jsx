@@ -4,6 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import {makeStyles} from '@material-ui/core/styles';
 import SignInForm from '../../views/SignIn/SigninForm';
 import SignInSSOForm from '../../views/SignIn/SignInSSOForm';
 import { selectors } from '../../reducers';
@@ -13,12 +14,13 @@ import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
 
-const contentWrapper = {
-  minWidth: 432,
-  marginBottom: -104,
-  paddingTop: 24,
-
-};
+const useStyles = makeStyles({
+  contentWrapper: {
+    minWidth: 432,
+    marginBottom: -104,
+    paddingTop: 24,
+  },
+});
 
 const LoggedInWithADifferentAccount = () => (
   <ModalDialog show>
@@ -106,6 +108,7 @@ const WarningSessionContent = () => {
 
 const ExpiredSessionContent = () => {
   const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
+  const classes = useStyles();
 
   return (
     <ModalDialog show disableEnforceFocus>
@@ -114,7 +117,7 @@ const ExpiredSessionContent = () => {
         <br />
         <Typography>Please sign in again</Typography>
       </div>
-      <div style={contentWrapper}>
+      <div className={classes.contentWrapper}>
         {showSSOSignIn ? <SignInSSOForm /> : <SignInForm dialogOpen />}
       </div>
     </ModalDialog>
@@ -123,6 +126,8 @@ const ExpiredSessionContent = () => {
 
 export default function AlertDialog() {
   const dispatch = useDispatch();
+  const classes = useStyles();
+
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
   const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
@@ -177,7 +182,7 @@ export default function AlertDialog() {
   return (
     <LoadResources required resources={isAccountOwner ? 'ssoclients' : emptyList}>
       {showSessionStatus && (
-        <Dialog disableEnforceFocus open style={contentWrapper}>
+        <Dialog disableEnforceFocus open className={classes.contentWrapper}>
           {showSessionStatus === 'warning' ? (
             <WarningSessionContent />
           ) : (

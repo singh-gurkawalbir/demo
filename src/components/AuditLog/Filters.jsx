@@ -31,9 +31,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: theme.spacing(30),
     height: 36,
   },
-  filterWrapper: {
-    padding: 0,
-  },
   filterContainer: {
     padding: theme.spacing(2, 0),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
@@ -41,7 +38,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-
     '& > *': {
       marginRight: 10,
       '&:first-child': {
