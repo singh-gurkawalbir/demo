@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer } from '@material-ui/core';
+import { Button, Drawer } from '@material-ui/core';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import CodeEditor from '../../../../CodeEditor';
@@ -76,7 +76,8 @@ export default function EditorDrawer(props) {
   }, [content, handleUpdateOnDrawerSave]);
   const handleDone = useCallback(() => {
     handleUpdate(content);
-  }, [handleUpdate, content]);
+    handleClose();
+  }, [handleUpdate, content, handleClose]);
 
   const handleSaveClick = isNewResource ? handleDone : handleSave;
   const disableClose = resourceCommStatus === COMM_STATES.LOADING;
@@ -96,6 +97,7 @@ export default function EditorDrawer(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceCommStatus]);
   const {setCancelTriggered} = useFormOnCancelContext(id);
+  const onClose = isNewResource ? handleClose : setCancelTriggered;
 
   return (
     <Drawer
@@ -107,7 +109,7 @@ export default function EditorDrawer(props) {
           [classes.fullWidthDrawerOpen]: drawerOpened,
         }),
       }}>
-      <DrawerTitleBar disableClose={disableClose} backToParent onClose={setCancelTriggered} title={label} />
+      <DrawerTitleBar disableClose={disableClose} backToParent onClose={onClose} title={label} />
       <div className={classes.editorContainer}>
         <CodeEditor
           name={id}
@@ -118,14 +120,39 @@ export default function EditorDrawer(props) {
         />
       </div>
       <div className={classes.footer}>
-        <SaveAndCloseButtonGroupAuto
-          isDirty={isContentChanged}
-          status={getFormSaveStatusFromCommStatus(resourceCommStatus)}
-          onSave={handleSaveClick}
-          onClose={handleClose}
-          shouldHandleCancel
-          asyncKey={id}
-          />
+        {
+          isNewResource ? (
+            <>
+              <Button
+                data-test="saveContent"
+                disabled={!isContentChanged}
+                className={classes.action}
+                onClick={handleDone}
+                variant="contained"
+                color="primary">
+                Done
+              </Button>
+              <Button
+                data-test="closeContent"
+                className={classes.action}
+                onClick={handleClose}
+                variant="text"
+                color="secondary">
+                Cancel
+              </Button>
+            </>
+          )
+            : (
+              <SaveAndCloseButtonGroupAuto
+                isDirty={isContentChanged}
+                status={getFormSaveStatusFromCommStatus(resourceCommStatus)}
+                onSave={handleSaveClick}
+                onClose={handleClose}
+                shouldHandleCancel
+                asyncKey={id}
+              />
+            )
+        }
       </div>
     </Drawer>
   );

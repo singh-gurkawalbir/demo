@@ -1,19 +1,20 @@
 import React from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
-  INVITE_USER_DRAWER_FORM_KEY,
 } from '../../../../utils/constants';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';
+import ButtonGroup from '../../../ButtonGroup';
 import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
-import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -24,6 +25,7 @@ export default function UserForm({
   id,
   onSaveClick,
   onCancelClick,
+  disableSave,
   dataPublic,
 }) {
   const integrations = useSelectorMemo(
@@ -197,30 +199,32 @@ export default function UserForm({
       ],
     },
   };
-
-  useFormInitWithPermissions({ fieldMeta, formKey: INVITE_USER_DRAWER_FORM_KEY });
-  const formSaveStatus = useSelector(state =>
-    selectors.asyncTaskStatus(state, INVITE_USER_DRAWER_FORM_KEY)
-  );
-  const values = useSelector(state => selectors.formValueTrimmed(state, INVITE_USER_DRAWER_FORM_KEY), shallowEqual);
-  const handleSave = () => {
-    onSaveClick(values);
-  };
+  const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
     <LoadResources required resources="integrations,ssoclients">
       <DrawerContent>
         <DynaForm
           dataPublic={dataPublic}
-          formKey={INVITE_USER_DRAWER_FORM_KEY} />
+          formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <SaveAndCloseMiniResourceForm
-          formKey={INVITE_USER_DRAWER_FORM_KEY}
-          formSaveStatus={formSaveStatus}
-          handleSave={handleSave}
-          handleCancel={onCancelClick}
-        />
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            data-test="submitUserForm"
+            onClick={onSaveClick}>
+            {disableSave ? 'Saving...' : 'Save'}
+          </DynaSubmit>
+          <Button
+            data-test="cancelUserForm"
+            onClick={onCancelClick}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
       </DrawerFooter>
     </LoadResources>
   );

@@ -23,7 +23,7 @@ const MiniResourceForm = ({
 }) => (
   <ActionGroup>
     <Button
-      variant="outlined"
+      variant="contained"
       data-test="save"
       disabled={!isDirty || inProgress || disabled}
       color="primary"
@@ -34,7 +34,7 @@ const MiniResourceForm = ({
     {shouldNotShowCancelButton ? null : (
       <Button
         variant="text"
-        color="primary"
+        color="secondary"
         data-test="cancel"
         disabled={inProgress}
         className={className}
@@ -54,6 +54,7 @@ export default function SaveAndCloseMiniResourceForm({
   shouldNotShowCancelButton,
   disabled,
   className,
+  forceIsDirty = false, // if it is true, the form will always be dirty, used in 'Save & authorize' connection
 }) {
   const isDirty = useSelector(state => selectors.isFormDirty(state, formKey));
 
@@ -68,7 +69,7 @@ export default function SaveAndCloseMiniResourceForm({
 
   return (
     <MiniResourceForm
-      isDirty={isDirty}
+      isDirty={forceIsDirty || isDirty}
       inProgress={inProgress}
       submitButtonLabel={submitButtonLabel}
       submitTransientLabel={submitTransientLabel}
