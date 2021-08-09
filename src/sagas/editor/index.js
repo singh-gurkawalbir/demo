@@ -519,6 +519,11 @@ export function* requestEditorSampleData({
       delete body.sampleData;
       delete body.templateVersion;
     } else {
+      if (resource?.oneToMany) {
+        const oneToMany = resource.oneToMany === 'true';
+
+        resource = { ...resource, oneToMany };
+      }
       body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     }
 
