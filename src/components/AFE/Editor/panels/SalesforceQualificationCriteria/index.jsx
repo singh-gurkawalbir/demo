@@ -26,6 +26,7 @@ import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { ReferencedFieldsModal } from '../../../../DynaForm/fields/DynaSalesforceExportComponents/DynaTreeModal';
 import { selectors } from '../../../../../reducers';
+import { stringCompare } from '../../../../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -52,7 +53,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
   const [filtersMetadata, setFiltersMetadata] = useState();
   const dispatch = useDispatch();
   const rule = useSelector(state => selectors.editorRule(state, editorId));
-  const { filters, connectionId, sObjectType} = useSelector(state => {
+  const { filters: unsortedFilters, connectionId, sObjectType} = useSelector(state => {
     const e = selectors.editor(state, editorId);
 
     return {
@@ -61,6 +62,8 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
       sObjectType: e.customOptions?.sObjectType,
     };
   }, shallowEqual);
+
+  const filters = useMemo(() => unsortedFilters.sort(stringCompare('label')), [unsortedFilters]);
 
   const patchEditor = useCallback(
     value => {
