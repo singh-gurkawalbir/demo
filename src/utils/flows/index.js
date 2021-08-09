@@ -886,7 +886,6 @@ export function populateRestSchema(exportDoc = {}) {
     adaptorType,
     rest = {},
     assistant,
-    useTechAdaptorForm,
   } = exportDoc;
 
   if (adaptorType === 'RESTExport') {
@@ -895,7 +894,7 @@ export function populateRestSchema(exportDoc = {}) {
     return exportDoc;
   }
 
-  if (assistant || !http.method || !useTechAdaptorForm || adaptorType !== 'HTTPExport') {
+  if (assistant || !http.method || http.formType !== 'rest' || adaptorType !== 'HTTPExport') {
     return exportDoc;
   }
   const restSubDoc = {...rest};
@@ -998,7 +997,7 @@ export function populateRestSchema(exportDoc = {}) {
     exportDoc._rest = restSubDoc;
   } catch (e) {
     console.warn('exception occured while forming REST document', e);
-    // TODO: should we remove useTechAdaptorForm flag when conversion fails, so the export can open in HTTP form?
+    // TODO: should we change formType to http when conversion fails, so the export can open in HTTP form?
   }
 
   return exportDoc;

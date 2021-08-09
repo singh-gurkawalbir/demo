@@ -163,9 +163,9 @@ const restWithPagination = {
 
 const restWithUrlPagination = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   type: 'delta',
   http: {
+    formType: 'rest',
     relativeURI: '/users',
     method: 'GET',
     successMediaType: 'json',
@@ -184,9 +184,9 @@ const restWithUrlPagination = {
 
 const restWithCustomBodyPagination = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   type: 'delta',
   http: {
+    formType: 'rest',
     relativeURI: '/users',
     method: 'GET',
     successMediaType: 'json',
@@ -204,8 +204,8 @@ const restWithCustomBodyPagination = {
 };
 const restWithLinkHeaderRelation = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users',
     method: 'GET',
     successMediaType: 'json',
@@ -224,8 +224,8 @@ const restWithLinkHeaderRelation = {
 
 const restWithNextPageToken = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users',
     method: 'GET',
     successMediaType: 'json',
@@ -245,8 +245,8 @@ const restWithNextPageToken = {
 
 const restWithNextPageURL = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users',
     method: 'GET',
     successMediaType: 'json',
@@ -265,8 +265,8 @@ const restWithNextPageURL = {
 
 const restWithNextPageNumberParam1 = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users?id=123&other=param{{#compare export.http.paging.page "!=" "1"}}&pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
     method: 'GET',
     successMediaType: 'json',
@@ -287,8 +287,8 @@ const restWithNextPageNumberParam1 = {
 
 const restWithNextPageNumberParam2 = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users?id=123&pageNumberQueryParam={{{export.http.paging.page}}}',
     method: 'GET',
     successMediaType: 'json',
@@ -309,8 +309,8 @@ const restWithNextPageNumberParam2 = {
 
 const restWithNextPageNumberParam3 = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
     method: 'GET',
     successMediaType: 'json',
@@ -331,8 +331,8 @@ const restWithNextPageNumberParam3 = {
 
 const restWithSkipPageNumberParam1 = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users?id=123{{#compare export.http.paging.skip "!=" "0"}}&skipParam={{{export.http.paging.skip}}}{{/compare}}',
     method: 'GET',
     successMediaType: 'json',
@@ -351,8 +351,8 @@ const restWithSkipPageNumberParam1 = {
 };
 const restWithSkipPageNumberParam2 = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
     method: 'GET',
     successMediaType: 'json',
@@ -372,8 +372,8 @@ const restWithSkipPageNumberParam2 = {
 
 const restWithSkipPageNumberParam3 = {
   adaptorType: 'HTTPExport',
-  useTechAdaptorForm: true,
   http: {
+    formType: 'rest',
     relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
     method: 'GET',
     successMediaType: 'json',
@@ -873,7 +873,7 @@ describe('populateRestSchema', () => {
     expect(populateRestSchema(assistantExport)).toEqual(assistantExport);
   });
 
-  describe('should return correct _rest subdoc for HTTP exports with useTechAdaptorForm set to true', () => {
+  describe('should return correct _rest subdoc for HTTP exports with formType set to rest', () => {
     test('pagination URL parameter', () => {
       expect(populateRestSchema(restWithUrlPagination)).toEqual({
         _rest: {
@@ -886,6 +886,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -899,7 +900,6 @@ describe('populateRestSchema', () => {
           successMediaType: 'json',
         },
         type: 'delta',
-        useTechAdaptorForm: true,
       });
     });
     test('pagination custom body', () => {
@@ -914,6 +914,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -927,7 +928,6 @@ describe('populateRestSchema', () => {
           successMediaType: 'json',
         },
         type: 'delta',
-        useTechAdaptorForm: true,
       });
     });
 
@@ -943,6 +943,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -955,7 +956,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -972,6 +972,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -985,7 +986,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1001,6 +1001,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1013,7 +1014,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1030,6 +1030,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1044,7 +1045,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users?id=123&other=param{{#compare export.http.paging.page "!=" "1"}}&pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1061,6 +1061,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1075,7 +1076,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users?id=123&pageNumberQueryParam={{{export.http.paging.page}}}',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1092,6 +1092,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1106,7 +1107,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users/123{{{lastExportDateTime}}}{{#compare export.http.paging.page "!=" "1"}}?pageNumberQueryParam={{{export.http.paging.page}}}{{/compare}}',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1122,6 +1122,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1135,7 +1136,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users?id=123{{#compare export.http.paging.skip "!=" "0"}}&skipParam={{{export.http.paging.skip}}}{{/compare}}',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1151,6 +1151,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1164,7 +1165,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users?id=1234&skipParam={{{export.http.paging.skip}}}',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
 
@@ -1180,6 +1180,7 @@ describe('populateRestSchema', () => {
         },
         adaptorType: 'HTTPExport',
         http: {
+          formType: 'rest',
           errorMediaType: 'json',
           method: 'GET',
           paging: {
@@ -1193,7 +1194,6 @@ describe('populateRestSchema', () => {
           relativeURI: '/users{{#compare export.http.paging.skip "!=" "0"}}?skipParam={{{export.http.paging.skip}}}{{/compare}}',
           successMediaType: 'json',
         },
-        useTechAdaptorForm: true,
       });
     });
   });

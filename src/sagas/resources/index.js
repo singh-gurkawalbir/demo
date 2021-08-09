@@ -206,7 +206,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   }
 
   // Forimports convert the lookup structure and rest placeholders to support http structure
-  if (!merged.assistant && merged.useTechAdaptorForm && merged.adaptorType === 'HTTPImport') {
+  if (!merged.assistant && merged?.http?.formType === 'rest' && merged.adaptorType === 'HTTPImport') {
     merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
   }
   if (resourceType === 'exports' && merged._rest) {

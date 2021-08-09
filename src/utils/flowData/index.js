@@ -322,7 +322,7 @@ export const getFormattedResourceForPreview = (
     }
   }
 
-  if (resource.useTechAdaptorForm && !resource.assistant) {
+  if (resource.http?.formType === 'rest' && !resource.assistant) {
     delete resource.rest;
   }
 

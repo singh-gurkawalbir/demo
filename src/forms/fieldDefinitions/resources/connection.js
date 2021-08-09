@@ -19,8 +19,8 @@ export default {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
 
-        if (r?.http?.useRestForm || r.type === 'rest') {
-          expression.push({ $or: [{ 'http.useRestForm': true }, { type: 'rest' }] });
+        if (r?.http?.formType === 'rest' || r.type === 'rest') {
+          expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
         } else {
           expression.push({ type: destinationType });
         }
