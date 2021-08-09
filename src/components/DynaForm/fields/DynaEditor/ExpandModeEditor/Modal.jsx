@@ -45,10 +45,10 @@ export default function EditorModal(props) {
       <div>
         <Button
           data-test="showEditor"
+          variant="contained"
           onClick={handleSaveAndClose}
-          variant="outlined"
           color="primary">
-          Save & Close
+          Done
         </Button>
       </div>
     </ModalDialog>
