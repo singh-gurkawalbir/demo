@@ -30,9 +30,9 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
 
       {(!disabled && isDirty && !inProgress) ? (
         <Button
-          variant="contained"
+          variant="outlined"
           data-test="saveAndClose"
-          color="primary"
+          color="secondary"
           onClick={handleSaveAndCloseClick}>
           Save & close
         </Button>
