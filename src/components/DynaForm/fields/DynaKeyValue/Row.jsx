@@ -146,12 +146,13 @@ export default function KeyValueRow(props) {
           defaultValue={r[valueName]}
           variant="filled"
           fullWidth
+          className={clsx(classes.dynaField, classes.dynaValueField)}
           onChange={handleValueUpdate(r.key)}>
           <MenuItem key="ascending" value={false}>
-            ascending
+            Ascending
           </MenuItem>
           <MenuItem key="descending" value>
-            descending
+            Descending
           </MenuItem>
         </Select>
         )}

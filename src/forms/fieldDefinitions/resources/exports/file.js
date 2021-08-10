@@ -149,11 +149,11 @@ export default {
     showDelete: true,
     sampleData: r => r && r.sampleData,
     defaultValue: r => (r.file?.sortByFields) || '',
-    label: 'Sort records',
+    label: 'Sort records by fields',
   },
   'file.groupByFields': {
     type: 'sortandgroup',
-    label: 'Group records',
+    label: 'Group records by fields',
   },
   pgpdecrypt: {
     type: 'fileencryptdecrypt',

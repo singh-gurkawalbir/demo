@@ -128,6 +128,14 @@ export default {
       },
       {
         collapsed: true,
+        label: 'How would you like to group and sort records?',
+        fields: [
+          'file.sortByFields',
+          'file.groupByFields',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
         fields: [
           'fileAdvanced',

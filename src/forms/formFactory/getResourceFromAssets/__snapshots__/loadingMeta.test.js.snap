@@ -5390,6 +5390,14 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
                 "fileAdvanced",
                 "file.decompressFiles",
                 "file.compressionFormat",
