@@ -141,16 +141,18 @@ export default {
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
   'file.sortByFields': {
-    type: 'keyvalue',
+    type: 'sortandgroup',
     enableSorting: true,
-    keyName: 'name',
-    valueName: 'value',
+    keyName: 'field',
+    valueName: 'descending',
     valueType: 'keyvalue',
-    defaultValue: r => (r && r.http && r.http.headers) || '',
+    showDelete: true,
+    sampleData: r => r && r.sampleData,
+    defaultValue: r => (r.file?.sortByFields) || '',
     label: 'Sort records',
   },
   'file.groupByFields': {
-    type: 'filekeycolumn',
+    type: 'sortandgroup',
     label: 'Group records',
   },
   pgpdecrypt: {
@@ -335,6 +337,7 @@ export default {
   'file.xlsx.rowsPerRecord': {
     type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
+    defaultDisabled: true,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -350,6 +353,7 @@ export default {
   },
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
+    defaultDisabled: true,
     label: 'Key columns',
     hasHeaderRow: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),

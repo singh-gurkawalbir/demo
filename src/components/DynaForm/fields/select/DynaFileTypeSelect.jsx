@@ -1,11 +1,14 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import DynaSelect from '../DynaSelect';
 import LoadResources from '../../../LoadResources';
 import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
 
 const FileTypeSelect = props => {
-  const { userDefinitionId, onFieldChange, id } = props;
+  const { userDefinitionId, onFieldChange, id, formKey } = props;
+  const dispatch = useDispatch();
   const { value } = props;
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
   // Fetches the selected file definition format by userDefinitionId
@@ -16,6 +19,36 @@ const FileTypeSelect = props => {
       return definition && definition.format;
     }
   });
+  const fileFormValues = useSelector(state => {
+    const formValues = selectors.formState(state, formKey)?.value;
+    const fileType = formValues['/file/type'];
+    let filePropValues;
+
+    if (fileType === 'csv') {
+      filePropValues = formValues['/file/csv'];
+    } else if (fileType === 'json') {
+      filePropValues = formValues['/file/json/resourcePath'];
+    } else if (fileType === 'xlsx') {
+      filePropValues = `${formValues['/file/xlsx/hasHeaderRow']}${formValues['/file/xlsx/rowsPerRecord']}${formValues['/file/xlsx/keyColumns']}`;
+    } else if (fileType === 'xml') {
+      filePropValues = formValues['/parsers'];
+    } else if (fileType === 'filedefinition') {
+      filePropValues = `${formValues['/edix12/format']}${formValues['/file/filedefinition/rules']}`;
+    } else if (fileType === 'fixed') {
+      filePropValues = `${formValues['/fixed/format']}${formValues['/file/filedefinition/rules']}`;
+    } else if (fileType === 'delimited/edifact') {
+      filePropValues = `${formValues['/edifact/format']}${formValues['/file/filedefinition/rules']}`;
+    }
+
+    return filePropValues;
+  });
+
+  useEffect(() => {
+    if (!isEmpty(fileFormValues)) {
+      dispatch(actions.resourceFormSampleData.request(formKey));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileFormValues]);
 
   // Add logic to decide default value inside useEffect, so as to execute only on launch of ftp form
   useEffect(() => {

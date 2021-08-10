@@ -135,6 +135,7 @@ import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
 import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
 import DynaDynamicSelect from './DynaDynamicSelect';
 import DynaSelectLookup from './DynaSelectLookup';
+import DynaSortAndGroup from './DynaSortAndGroup';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -281,4 +282,5 @@ export default {
   nsauthtype: DynaNetsuiteAuthType,
   dynamicselect: DynaDynamicSelect,
   selectlookup: DynaSelectLookup,
+  sortandgroup: DynaSortAndGroup,
 };

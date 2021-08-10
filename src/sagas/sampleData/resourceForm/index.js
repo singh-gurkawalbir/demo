@@ -1,4 +1,4 @@
-import { select, takeLatest, call, put } from 'redux-saga/effects';
+import { select, takeLatest, call, put, delay } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -439,6 +439,7 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId || !VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA.includes(resourceType)) return;
+  yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {

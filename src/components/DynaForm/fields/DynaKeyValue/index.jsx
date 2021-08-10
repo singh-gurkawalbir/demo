@@ -64,6 +64,7 @@ export function KeyValueComponent(props) {
     showDelete,
     disabled,
     enableSorting = false,
+    selectView = false,
   } = props;
 
   const preUpdate = useCallback(val => val.filter(
@@ -220,6 +221,7 @@ export function KeyValueComponent(props) {
                   classes={classes}
                   r={r}
                   enableSorting={enableSorting}
+                  selectView={selectView}
               />
               )}
               />

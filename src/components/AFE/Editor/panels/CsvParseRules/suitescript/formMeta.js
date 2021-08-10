@@ -43,11 +43,13 @@ export default function getFormMetadata(options) {
         fieldsToReset: [{ id: 'keyColumns', value: [] }],
         defaultValue: !!(Array.isArray(options?.keyColumns) && options.keyColumns.length),
         required: true,
+        defaultDisabled: true,
       },
       keyColumns: {
         id: 'keyColumns',
         name: 'keyColumns',
         label: 'Key columns',
+        defaultDisabled: true,
         type: 'suitescriptfilekeycolumn',
         resourceId: options.resourceId,
         helpKey: 'export.file.csv.keyColumns',

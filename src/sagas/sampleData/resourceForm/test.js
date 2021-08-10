@@ -35,6 +35,7 @@ const integrationId = 'int-123';
 describe('resourceFormSampleData sagas', () => {
   describe('requestResourceFormSampleData saga', () => {
     test('should do nothing if there is no formKey', () => expectSaga(requestResourceFormSampleData, {})
+      .not.delay(500)
       .not.put(actions.resourceFormSampleData.setStatus(undefined, 'requested'))
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
@@ -43,6 +44,7 @@ describe('resourceFormSampleData sagas', () => {
       .provide([
         [call(_fetchResourceInfoFromFormKey, { formKey }), {}],
       ])
+      .not.delay(500)
       .not.put(actions.resourceFormSampleData.setStatus(undefined, 'requested'))
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
@@ -55,10 +57,11 @@ describe('resourceFormSampleData sagas', () => {
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'imports' }],
           [call(_requestImportSampleData, { formKey }), {}],
         ])
+        .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
         .call(_requestImportSampleData, { formKey })
-        .run();
+        .run(500);
     });
     test('should dispatch requested status and call _requestImportSampleData incase of imports resourceType ', () => {
       const refreshCache = true;
@@ -68,10 +71,11 @@ describe('resourceFormSampleData sagas', () => {
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
           [call(_requestExportSampleData, { formKey, refreshCache }), {}],
         ])
+        .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .call(_requestExportSampleData, { formKey, refreshCache })
         .not.call.fn(_requestImportSampleData)
-        .run();
+        .run(500);
     });
   });
   describe('_requestExportSampleData saga', () => {
