@@ -19,7 +19,7 @@ import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
-import { KBDocumentation } from '../../../../utils/connections';
+import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
 import IconTextButton from '../../../IconTextButton';
 import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
@@ -201,6 +201,7 @@ export default function Panel(props) {
   const applications = applicationsList();
 
   const { id, resourceType, operation } = match.params;
+  const { parentType, parentId } = getParentResourceContext(match.url);
   const formKey = getAsyncKey(resourceType, id);
 
   const isNew = operation === 'add';
@@ -389,6 +390,8 @@ export default function Panel(props) {
               resourceId={id}
               flowId={flowId}
               integrationId={integrationId}
+              parentType={parentType}
+              parentId={parentId}
               cancelButtonLabel="Cancel"
               submitButtonLabel={submitButtonLabel}
               submitButtonColor={submitButtonColor}

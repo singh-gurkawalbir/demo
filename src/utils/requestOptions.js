@@ -1,6 +1,6 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES, JOB_STATUS } from './constants';
+import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
 import { getStaticCodesList } from './listenerLogs';
 import { getSelectedRange } from './flowMetrics';
 
@@ -419,3 +419,19 @@ export default function getRequestOptions(
       return {};
   }
 }
+
+export const pingConnectionParentContext = values => {
+  if (!values) return {};
+
+  const { flowId, integrationId, parentType, parentId } = values;
+  const context = {
+    _flowId: flowId,
+    _integrationId: integrationId === STANDALONE_INTEGRATION.id ? undefined : integrationId,
+  };
+
+  if (parentType) {
+    context[parentType === 'exports' ? '_exportId' : '_importId'] = parentId;
+  }
+
+  return context;
+};
