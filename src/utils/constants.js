@@ -713,6 +713,7 @@ export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
 export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
 export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
 export const HOME_PAGE_PATH = '/home';
+export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
 
 export const MAPPING_SAVE_STATUS = {
   REQUESTED: 'requested',

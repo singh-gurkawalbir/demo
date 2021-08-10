@@ -62,7 +62,7 @@ export default {
       retValues['/http/successMediaType'] = 'json';
     }
 
-    retValues['/useTechAdaptorForm'] = true;
+    retValues['/http/formType'] = 'rest';
     retValues['/adaptorType'] = 'HTTPExport';
     delete retValues['/outputMode'];
     delete retValues['/uploadFile'];

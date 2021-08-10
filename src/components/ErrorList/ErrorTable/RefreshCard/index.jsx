@@ -5,13 +5,12 @@ import Icon from '../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   refresh: {
-    color: `${theme.palette.common.white} !important`,
+    color: theme.palette.primary.main,
     height: theme.spacing(4),
   },
   refreshDisabled: {
     borderColor: 'inherit',
   },
-
 }));
 
 export default function RefreshCard(props) {
@@ -23,9 +22,7 @@ export default function RefreshCard(props) {
 
   if (disabled) {
     return (
-      <div
-        className={classes.card}
-        title="New errors will take up to 30 seconds to display" >
+      <div title="New errors will take up to 30 seconds to display" >
         <IconTextButton
           onClick={handleClick} color="primary" variant="outlined"
           disabled className={classes.refreshDisabled}>
@@ -36,10 +33,8 @@ export default function RefreshCard(props) {
   }
 
   return (
-    <div className={classes.card}>
-      <IconTextButton onClick={handleClick} color="primary" variant="outlined" className={classes.refresh}>
-        <Icon /> Refresh errors
-      </IconTextButton>
-    </div>
+    <IconTextButton onClick={handleClick} color="primary" variant="outlined" className={classes.refresh}>
+      <Icon /> Refresh errors
+    </IconTextButton>
   );
 }

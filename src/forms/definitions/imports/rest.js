@@ -449,26 +449,18 @@ export default {
 
     // #region begin
     // Following modifications are done to replicate the backend resttoHttp conversion util
-    if (!retValues['/http/body'] || !Array.isArray(retValues['/http/body']) || !retValues['/http/body'].length) {
-      retValues['/http/sendPostMappedData'] = true;
-    }
-    retValues['/http/lookups'] = (retValues['/http/lookups'] || []).map(lookup => ({
-      ...lookup,
-      useImportHeaders: !!lookup.useImportHeaders,
-    }));
+
     if (retValues['/http/response'] && isValidArray(retValues['/http/response/successPath']) && !isValidArray(retValues['/http/response/successValues'])) {
       retValues['/http/response/allowArrayForSuccessPath'] = true;
     }
     retValues['/adaptorType'] = 'HTTPImport';
-    retValues['/http/strictHandlebarEvaluation'] = true;
-    retValues['/http/batchSize'] = 1;
     retValues['/http/requestMediaType'] = getMediaTypeForImport(connection, retValues['/http/headers']);
     retValues['/http/successMediaType'] = 'json';
     retValues['/http/errorMediaType'] = 'json';
     // #endregion
 
-    // set useTechAdaptorForm to true to identify that this http resource is created using REST form
-    retValues['/useTechAdaptorForm'] = true;
+    // set formType to rest to identify that this http resource is created using REST form
+    retValues['/http/formType'] = 'rest';
 
     return {
       ...retValues,
@@ -1091,6 +1083,7 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
   },
   layout: {
     type: 'collapse',
@@ -1110,6 +1103,7 @@ export default {
           return 'How would you like the records imported?';
         },
         fields: [
+          'unencrypted.apiType',
           'http.method',
           'http.blobMethod',
           'http.compositeType',

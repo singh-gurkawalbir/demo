@@ -358,10 +358,11 @@ const resource = {
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    test: (resourceId, values) =>
+    test: (resourceId, values, parentContext) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+        parentContext,
       }),
     requestStatusPoll: integrationId =>
       action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, { integrationId }),
@@ -1023,11 +1024,12 @@ const integrationApp = {
   child: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, showForm) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        showForm,
       }),
     clearSteps: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),

@@ -56,7 +56,7 @@ export function* _getProcessorOutput({ processorData }) {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
+      const parsedError = safeParse(e.message);
 
       return {error: parsedError};
     }
@@ -86,7 +86,7 @@ export function* _handlePreviewError({ e, resourceId }) {
   }
 
   if (e.status >= 400 && e.status < 500) {
-    const parsedError = JSON.parse(e.message);
+    const parsedError = safeParse(e.message);
 
     return yield put(
       actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedError)

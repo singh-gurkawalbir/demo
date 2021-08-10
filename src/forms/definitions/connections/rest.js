@@ -116,7 +116,7 @@ export default {
     }
     const newValues = { ...formValues };
 
-    newValues['/http/useRestForm'] = true;
+    newValues['/http/formType'] = 'rest';
     if (newValues['/mode'] === 'cloud') {
       newValues['/_agentId'] = undefined;
     }

@@ -202,6 +202,8 @@ export default function ManageLookup({
         formKey={formKey}
         disabled={disabled}
         data-test="saveLookupForm"
+        variant="contained"
+        color="primary"
         onClick={handleSubmit}>
         Save
       </DynaSubmit>
@@ -209,8 +211,8 @@ export default function ManageLookup({
         data-test="cancelLookupForm"
         onClick={onCancel}
         variant="text"
-        color="primary">
-        Cancel
+        color="secondary">
+        Close
       </Button>
     </div>
   );

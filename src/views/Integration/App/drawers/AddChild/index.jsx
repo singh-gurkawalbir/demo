@@ -3,12 +3,13 @@
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Link } from '@material-ui/core';
 import differenceBy from 'lodash/differenceBy';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
@@ -22,6 +23,7 @@ import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import IconTextButton from '../../../../../components/IconTextButton';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -89,6 +91,11 @@ export default function IntegrationAppAddNewChild(props) {
   const { steps: addNewChildSteps, error } = useSelector(state =>
     selectors.addNewChildSteps(state, integrationId)
   );
+  const currentStep = useMemo(() => (addNewChildSteps || []).find(s => s.isCurrentStep), [
+    addNewChildSteps,
+  ]);
+
+  const currStepIndex = addNewChildSteps?.indexOf(currentStep);
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
@@ -122,7 +129,7 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
-      if (integrationChildren.length > initialChildren.length) {
+      if (integrationChildren && initialChildren && integrationChildren.length > initialChildren.length) {
         const newChild = differenceBy(integrationChildren, initialChildren, 'value');
 
         childId = newChild?.length && newChild[0].value;
@@ -165,7 +172,7 @@ export default function IntegrationAppAddNewChild(props) {
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction } = step;
+    const { _connectionId, installURL, installerFunction, form } = step;
 
     // handle connection step click
     if (_connectionId) {
@@ -205,6 +212,13 @@ export default function IntegrationAppAddNewChild(props) {
         );
       }
       // handle Action step click
+    } else if (!isEmpty(form)) {
+      dispatch(actions.integrationApp.child.updateStep(
+        integrationId,
+        installerFunction,
+        'inProgress',
+        true
+      ));
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.child.updateStep(
@@ -289,6 +303,15 @@ export default function IntegrationAppAddNewChild(props) {
           resourceType="connections"
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
+        />
+      )}
+      {currentStep && currentStep.showForm && (
+        <FormStepDrawer
+          integrationId={integrationId}
+          formMeta={currentStep.form}
+          installerFunction={currentStep.installerFunction}
+          title={currentStep.name}
+          index={currStepIndex + 1}
         />
       )}
       <div className={classes.installIntegrationWrapper}>
