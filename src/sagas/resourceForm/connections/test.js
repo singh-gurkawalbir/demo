@@ -7,7 +7,7 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
-import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
+import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnectionWithId, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
@@ -23,13 +23,12 @@ describe('ping and update connection saga', () => {
   test('should be able to ping and update connection successfully', () => {
     const saga = pingAndUpdateConnection({ connectionId });
 
-    const pingPath = `/connections/${connectionId}/ping`;
     const connectionResourcePath = `/connections/${connectionId}`;
     const mockConnectionResource =
       { name: 'connection1', id: 1};
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path: pingPath, hidden: true })
+      call(pingConnectionWithId, { connectionId, parentContext: undefined })
     );
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, { path: connectionResourcePath, hidden: true })
@@ -44,11 +43,10 @@ describe('ping and update connection saga', () => {
   test('should handle api error properly', () => {
     const saga = pingAndUpdateConnection({ connectionId });
 
-    const pingPath = `/connections/${connectionId}/ping`;
     const connectionResourcePath = `/connections/${connectionId}`;
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path: pingPath, hidden: true })
+      call(pingConnectionWithId, { connectionId, parentContext: undefined })
     );
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, { path: connectionResourcePath, hidden: true })

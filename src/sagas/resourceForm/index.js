@@ -9,7 +9,7 @@ import {
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
 import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
-import connectionSagas, { createPayload } from './connections';
+import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
@@ -195,6 +195,7 @@ export function* submitFormValues({
   resourceId,
   values,
   match,
+  parentContext,
 }) {
   let formValues = { ...values };
   const isNewIAPayload = yield call(newIAFrameWorkPayload, {
@@ -327,6 +328,7 @@ export function* submitFormValues({
       id: resourceId,
       scope: SCOPES.VALUE,
       asyncKey: getAsyncKey(type, resourceId),
+      parentContext,
     });
 
     if (resp && (resp.error || resp.conflict)) {
@@ -664,7 +666,7 @@ export function* submitResourceForm(params) {
 }
 
 export function* saveAndContinueResourceForm(params) {
-  const { resourceId } = params;
+  const { resourceId, parentContext } = params;
   const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
@@ -704,10 +706,7 @@ export function* saveAndContinueResourceForm(params) {
         );
       }
 
-      yield call(apiCallWithRetry, {
-        path: `/connections/${id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: id, parentContext });
     } catch (error) {
       yield put(actions.asyncTask.failed(asyncKey));
 

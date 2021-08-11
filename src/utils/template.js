@@ -35,6 +35,10 @@ export const getApplication = conn => {
       return a.id === conn.rdbms.type;
     }
 
+    if (conn.type === 'http' && conn.http?.formType === 'rest') {
+      return a.id === 'rest';
+    }
+
     return a.id === conn.type;
   }) || {};
 

@@ -26,6 +26,7 @@ import {
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 
 const formKey = 'form-123';
 const resourceId = 'export-123';
@@ -211,6 +212,45 @@ describe('resourceFormSampleData sagas', () => {
       return expectSaga(_requestExportPreviewData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
+          [call(apiCallWithRetry, {
+            path: '/exports/preview',
+            opts: { method: 'POST', body },
+            hidden: true,
+          }), { test: 5 }],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/exports/preview',
+          opts: { method: 'POST', body },
+          hidden: true,
+        })
+        .run();
+    });
+    test('should ignore standalone integration Id while constructing body with needed props for making preview call', () => {
+      const resourceObj = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+      };
+      const flow = {
+        _id: flowId,
+        pageGenerators: [],
+        pageProcessors: [],
+        settings: {},
+      };
+
+      const body = {
+        ...resourceObj,
+        _flowId: flowId,
+        _integrationId: undefined,
+        test: {
+          limit: sampleDataRecordSize,
+        },
+      };
+
+      return expectSaga(_requestExportPreviewData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId: STANDALONE_INTEGRATION.id }],
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
           [call(apiCallWithRetry, {
