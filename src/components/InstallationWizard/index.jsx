@@ -69,6 +69,7 @@ export default function InstallationWizard(props) {
       'shopify-oauth',
       'acumatica-oauth',
       'hubspot-oauth',
+      'amazonmws-oauth',
     ],
     []
   );
