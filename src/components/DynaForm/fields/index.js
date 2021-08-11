@@ -9,6 +9,7 @@ import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
+import DynaUpdateOptions from './select/DynaUpdateOptions';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 import DynaRelativeUri_afe from './DynaRelativeUri_afe';
@@ -138,6 +139,7 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 
 export default {
+  updateoptions: DynaUpdateOptions,
   reportdaterange: DynaReportDateRange,
   flowstiedtointegrations: DynaFlowsTiedToIntegrations,
   allintegrations: DynaAllIntegrations,
