@@ -33,7 +33,7 @@ export default function RefreshCard(props) {
   }
 
   return (
-    <IconTextButton onClick={handleClick} color="primary" variant="outlined" className={classes.refresh}>
+    <IconTextButton onClick={handleClick} color="secondary" variant="outlined" className={classes.refresh}>
       <Icon /> Refresh errors
     </IconTextButton>
   );
