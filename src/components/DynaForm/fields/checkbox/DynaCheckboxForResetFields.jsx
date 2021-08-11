@@ -1,8 +1,29 @@
+import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
+import WarningIcon from '../../../icons/WarningIcon';
 import DynaCheckbox from './DynaCheckbox';
 
+const useStyles = makeStyles(theme => ({
+  warning: {
+    color: theme.palette.warning.main,
+    height: theme.spacing(2),
+  },
+  resetFields: {
+    display: 'flex',
+    '& .MuiFormControl-root': {
+    },
+  },
+  warningMessage: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+}));
+
 export default function DynaCheckboxForResetFields(props) {
-  const { fieldsToReset, onFieldChange, id, value } = props;
+  const classes = useStyles();
+
+  const { fieldsToReset, onFieldChange, id, value, showDeprecatedMessage } = props;
 
   const updatedOnFieldChange = (id, value) => {
     fieldsToReset.forEach(field => {
@@ -20,5 +41,10 @@ export default function DynaCheckboxForResetFields(props) {
     return null;
   }
 
-  return <DynaCheckbox {...props} onFieldChange={updatedOnFieldChange} />;
+  return (
+    <div className={classes.resetFields}>
+      <DynaCheckbox {...props} onFieldChange={updatedOnFieldChange} />
+      {showDeprecatedMessage ? <Typography component="div" variant="caption" className={classes.warningMessage}><WarningIcon className={classes.warning} /> Depricated option.</Typography> : ''}
+    </div>
+  );
 }

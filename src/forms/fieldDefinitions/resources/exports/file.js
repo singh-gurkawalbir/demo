@@ -154,6 +154,7 @@ export default {
   'file.groupByFields': {
     type: 'sortandgroup',
     label: 'Group records by fields',
+    defaultValue: r => r.file?.groupByFields || r.file?.csv?.keyColumns || r.file?.xlsx?.keyColumns,
   },
   pgpdecrypt: {
     type: 'fileencryptdecrypt',
@@ -337,6 +338,7 @@ export default {
   'file.xlsx.rowsPerRecord': {
     type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
+    showDeprecatedMessage: true,
     defaultDisabled: true,
     visibleWhenAll: [
       {

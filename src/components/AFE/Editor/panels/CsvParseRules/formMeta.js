@@ -61,6 +61,7 @@ export default function getForm(options) {
         defaultValue: !!(Array.isArray(options?.keyColumns) && options.keyColumns.length),
         required: true,
         defaultDisabled: true,
+        showDeprecatedMessage: true,
       },
       keyColumns: {
         id: 'keyColumns',
