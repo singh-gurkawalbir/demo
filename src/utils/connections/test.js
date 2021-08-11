@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { getReplaceConnectionExpression } from './index';
+import { getReplaceConnectionExpression, getParentResourceContext } from './index';
 
 describe('connections utils test cases', () => {
   describe('getReplaceConnectionExpression util', () => {
@@ -76,6 +76,37 @@ describe('connections utils test cases', () => {
       };
 
       expect(getReplaceConnectionExpression({_id: 'conn123', type: 'mysql'}, true, 'childId', 'int-123', null, true)).toEqual(output);
+    });
+  });
+
+  describe('getParentResourceContext util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(getParentResourceContext()).toEqual({});
+      expect(getParentResourceContext(null)).toEqual({});
+    });
+    test('should not return parent params if url does not match the provided path', () => {
+      const url1 = '/connections/edit/connections/999';
+      const url2 = 'integrations/123/connections/edit/connections/999';
+      const url3 = '/integrations/123/connections/sections/1/edit/connections/999';
+      const url4 = '/integrations/123/flowBuilder/456/edit/connections/999';
+
+      expect(getParentResourceContext(url1)).toEqual({});
+      expect(getParentResourceContext(url2)).toEqual({});
+      expect(getParentResourceContext(url3)).toEqual({});
+      expect(getParentResourceContext(url4)).toEqual({});
+    });
+    test('should correctly return the parent params if passed url contains parent context', () => {
+      const url = '/integrations/123/flowBuilder/456/edit/imports/789/edit/connections/999';
+      const returnValue = {
+        0: 'integrations/123/flowBuilder/456',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        parentId: '789',
+        parentType: 'imports',
+      };
+
+      expect(getParentResourceContext(url)).toEqual(returnValue);
     });
   });
 });

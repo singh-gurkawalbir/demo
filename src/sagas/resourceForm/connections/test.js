@@ -81,7 +81,41 @@ describe('ping connection saga', () => {
       )
       .run();
   });
+  test('should be able to call ping api with additional context', () => {
+    const connectionPayload = { name: 'new Connection' };
+    const parentContext = {flowId: 'flow-id', integrationId: 'int-id', parentType: 'imports', parentId: 'imp-id' };
+    const additionalReqBody = {
+      _flowId: 'flow-id',
+      _integrationId: 'int-id',
+      _importId: 'imp-id',
+    };
+    const response = {status: 'success'};
 
+    return expectSaga(pingConnection, { resourceId, values, parentContext})
+      .provide([
+        [matchers.call.fn(createPayload), connectionPayload],
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call.fn(createPayload)
+      .call(apiCallWithRetry, {
+        path: '/connections/ping',
+        opts: {
+          body: {
+            ...connectionPayload,
+            ...additionalReqBody,
+          },
+          method: 'POST',
+        },
+        hidden: true,
+      })
+      .put(
+        actions.resource.connections.testSuccessful(
+          resourceId,
+          'Connection is working fine!'
+        )
+      )
+      .run();
+  });
   test('should be able to throw error message if any', () => {
     const connectionPayload = { name: 'new Connection' };
     const resp = {errors: ['Errors']};

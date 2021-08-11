@@ -7,6 +7,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getNetSuiteSubrecordImports, isQueryBuilderSupported } from '../../../utils/resource';
 
 const emptyObject = {};
+const emptyArr = [];
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -39,7 +40,7 @@ export default function SelectImport() {
     flowId
   )?.merged || emptyObject;
   const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
-  const imports = useMemo(() => flowImports.filter(i => !i.blob), [flowImports]);
+  const imports = useMemo(() => flowImports?.filter(i => !i.blob) || emptyArr, [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = _impId => {

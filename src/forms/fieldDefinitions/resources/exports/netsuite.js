@@ -72,6 +72,7 @@ export default {
           { label: 'Web Services', value: 'webservices' },
           { label: 'Web Store', value: 'webstore' },
           { label: 'Workflow', value: 'workflow' },
+          { label: 'Web Application', value: 'webapplication' },
         ],
       },
     ],

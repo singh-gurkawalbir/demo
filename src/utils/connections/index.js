@@ -1,3 +1,4 @@
+import { matchPath } from 'react-router-dom';
 import { RDBMS_TYPES } from '../constants';
 
 export const getReplaceConnectionExpression = (connection, isFrameWork2, childId, integrationId, connectorId, hideOwnConnection) => {
@@ -116,4 +117,17 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
   china: 'https://mws.amazonservices.com.cn',
   japan: 'https://mws.amazonservices.jp',
   australia: 'https://mws.amazonservices.com.au',
+};
+
+// given a url, this util returns the path params
+// to identify the parent export/import type and id
+// This is used when a connection is opened inside a resource
+export const getParentResourceContext = url => {
+  if (!url) return {};
+  const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
+  const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
+
+  return matchPath(url, {
+    path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,
+    exact: true})?.params || {};
 };

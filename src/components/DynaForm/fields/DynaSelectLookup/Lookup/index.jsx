@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import ManageLookup from '../../../../Lookup/Manage';
+import EditorDrawer from '../../../../AFE/Drawer';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -34,17 +35,20 @@ export default function Lookup({onSave, disabled, importId, flowId, lookups, ...
   }
 
   return (
-    <ManageLookup
-      className={classes.wrapper}
-      onSave={handleSave}
-      value={value}
-      onCancel={handleClose}
-      disabled={disabled}
-      resourceId={importId}
-      resourceType="imports"
-      flowId={flowId}
-      {...props}
-      showDynamicLookupOnly
+    <>
+      <ManageLookup
+        className={classes.wrapper}
+        onSave={handleSave}
+        value={value}
+        onCancel={handleClose}
+        disabled={disabled}
+        resourceId={importId}
+        resourceType="imports"
+        flowId={flowId}
+        {...props}
+        showDynamicLookupOnly
       />
+      <EditorDrawer />
+    </>
   );
 }
