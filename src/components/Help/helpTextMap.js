@@ -1264,6 +1264,7 @@ export default {
     'The stack that contains your preSavePage hook code.',
   'export.hooks.preSavePage._scriptId':
     'The script record that contains your preSavePage hook function.',
+  'export.file.rowsPerRecord': 'This setting has been deprecated in favor of the more powerful options in the <b>Sorting and grouping</b> section.',
   'export.file.groupByFields': 'Enter one or more fields to use for grouping records together. For example, if the parsed output of a file is as follows, then you can enter bookType or channel.channelProperties to group records by those respective fields. <br>[{<br>sku: 117101,<br>bookType: \'Fiction\',<br>Title: \'This is a title\',<br>channel: {<br>channelProperties: \'eBay\',<br>\'Channel-sku-id\': 987<br>}}, ... ]',
   'export.file.sortByFields': 'Enter one or more fields to use for sorting records.',
   'export.file.filedefinition.rules':

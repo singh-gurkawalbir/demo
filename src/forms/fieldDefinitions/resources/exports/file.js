@@ -339,6 +339,7 @@ export default {
     type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
     showDeprecatedMessage: true,
+    helpKey: 'export.file.rowsPerRecord',
     defaultDisabled: true,
     visibleWhenAll: [
       {

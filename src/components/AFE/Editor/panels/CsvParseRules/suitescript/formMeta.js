@@ -40,6 +40,7 @@ export default function getFormMetadata(options) {
         name: 'rowsPerRecord',
         label: 'Multiple rows per record',
         type: 'checkboxforresetfields',
+        helpKey: 'export.file.rowsPerRecord',
         showDeprecatedMessage: true,
         fieldsToReset: [{ id: 'keyColumns', value: [] }],
         defaultValue: !!(Array.isArray(options?.keyColumns) && options.keyColumns.length),
