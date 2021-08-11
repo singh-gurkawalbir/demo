@@ -44,7 +44,7 @@ export default function DynaCheckboxForResetFields(props) {
   return (
     <div className={classes.resetFields}>
       <DynaCheckbox {...props} onFieldChange={updatedOnFieldChange} />
-      {showDeprecatedMessage ? <Typography component="div" variant="caption" className={classes.warningMessage}><WarningIcon className={classes.warning} /> Depricated option.</Typography> : ''}
+      {showDeprecatedMessage ? <Typography component="div" variant="caption" className={classes.warningMessage}><WarningIcon className={classes.warning} /> Deprecated option.</Typography> : ''}
     </div>
   );
 }

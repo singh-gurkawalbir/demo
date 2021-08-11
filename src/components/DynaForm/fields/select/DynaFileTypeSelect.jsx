@@ -29,7 +29,7 @@ const FileTypeSelect = props => {
     } else if (fileType === 'json') {
       filePropValues = formValues['/file/json/resourcePath'];
     } else if (fileType === 'xlsx') {
-      filePropValues = `${formValues['/file/xlsx/hasHeaderRow']}${formValues['/file/xlsx/rowsPerRecord']}${formValues['/file/xlsx/keyColumns']}`;
+      filePropValues = `${formValues['/file/xlsx/hasHeaderRow']}`;
     } else if (fileType === 'xml') {
       filePropValues = formValues['/parsers'];
     } else if (fileType === 'filedefinition') {

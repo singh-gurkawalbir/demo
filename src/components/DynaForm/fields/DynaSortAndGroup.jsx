@@ -34,6 +34,7 @@ export default function DynaSortAndGroup(props) {
     isValid,
     helpText,
     helpKey,
+    enableSorting,
   } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -76,39 +77,36 @@ export default function DynaSortAndGroup(props) {
     return [{ items: options }];
   }, [sampleData, value]);
 
-  return (
-    <>
-      {id === 'file.sortByFields' ? (
-        <DynaKeyValue
-          {...props}
-          suggestionConfig={suggestionConfig}
-          selectView
-          showHeaderLabels
-          keyLabel="Field"
-          valueLabel="Order"
-     />
-      )
-        : (
-          <FormControl
-            key={id}
-            disabled={disabled}
-            className={classes.keyColumnFormWrapper}>
-            <DynaMultiSelect
-              disabled={disabled}
-              id={id}
-              label={label}
-              value={value}
-              helpText={helpText}
-              helpKey={helpKey}
-              isValid={isValid}
-              name={name}
-              options={multiSelectOptions}
-              required={required}
-              onFieldChange={onFieldChange}
-    />
-          </FormControl>
-        )}
-    </>
+  if (enableSorting) {
+    return (
+      <DynaKeyValue
+        {...props}
+        suggestionConfig={suggestionConfig}
+        selectView
+        showHeaderLabels
+        keyLabel="Field"
+        valueLabel="Order" />
+    );
+  }
 
+  return (
+    <FormControl
+      key={id}
+      disabled={disabled}
+      className={classes.keyColumnFormWrapper}>
+      <DynaMultiSelect
+        disabled={disabled}
+        id={id}
+        label={label}
+        value={value}
+        helpText={helpText}
+        helpKey={helpKey}
+        isValid={isValid}
+        name={name}
+        options={multiSelectOptions}
+        required={required}
+        onFieldChange={onFieldChange}
+    />
+    </FormControl>
   );
 }

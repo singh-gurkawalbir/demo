@@ -23,15 +23,15 @@ export default function KeyColumnsDeprecationNotification({ resourceId}) {
     return !!(resourceData?.file?.xlsx?.keyColumns?.length || resourceData?.file?.csv?.keyColumns?.length);
   });
 
+  if (!isOldKeyColumnFeature) {
+    return null;
+  }
+
   return (
-    <>
-      {isOldKeyColumnFeature ? (
-        <NotificationToaster variant="warning" size="large">
-          <Typography variant="h6" className={classes.titleStatusPanel}>
-            You’re using a deprecated option “Key Columns” to group your records. Use the new and improved option in the “How would you like to sort and group records” section. Your group settings may be affected when you use the new sorting and grouping option.
-          </Typography>
-        </NotificationToaster>
-      ) : ''}
-    </>
+    <NotificationToaster variant="warning" size="large">
+      <Typography variant="h6" className={classes.titleStatusPanel}>
+        You’re using a deprecated option “Key Columns” to group your records. Use the new and improved option in the “How would you like to sort and group records” section. Your group settings may be affected when you use the new sorting and grouping option.
+      </Typography>
+    </NotificationToaster>
   );
 }
