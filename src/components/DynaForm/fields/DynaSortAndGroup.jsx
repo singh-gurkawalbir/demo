@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormControl, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
@@ -38,20 +38,19 @@ export default function DynaSortAndGroup(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const { data: sampleData = []} = useSelector(state =>
+  const { data = {}, status} = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse'),
   );
-  const [requested, setRequested] = useState(false);
+  const sampleData = Array.isArray(data) ? data[0] : data;
 
   useEffect(() => {
-    if (!requested && !sampleData?.length) {
-      setRequested(true);
+    if (!status) {
       dispatch(actions.resourceFormSampleData.request(formKey));
     }
-  }, [dispatch, formKey, requested, sampleData?.length]);
+  }, [dispatch, formKey, status]);
 
   const suggestionConfig = useMemo(() => {
-    let options = Object.keys(sampleData || []);
+    let options = Object.keys(sampleData);
 
     options = options.map(name => ({ id: name}));
 
@@ -62,7 +61,7 @@ export default function DynaSortAndGroup(props) {
     } };
   }, [sampleData]);
   const multiSelectOptions = useMemo(() => {
-    let options = Object.keys(sampleData || []);
+    let options = Object.keys(sampleData);
 
     options = options.map(name => ({ label: name, value: name}));
 
