@@ -149,12 +149,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ConnectionLoadingChip(props) {
-  const { connectionId } = props;
+  const { connectionId, flowId, integrationId, parentType, parentId} = props;
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
-  }, [connectionId, dispatch]);
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId, parentContext));
+  }, [connectionId, dispatch, parentContext]);
 
   const isConnectionOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
@@ -185,6 +192,7 @@ export default function DynaSelectResource(props) {
     skipPingConnection,
     integrationId,
     connectorId,
+    flowId,
   } = props;
   const {options} = props;
   const classes = useStyles();
@@ -371,7 +379,12 @@ export default function DynaSelectResource(props) {
               options={[{ items: truncatedItems(resourceItems || []) }]}
           />
             {resourceType === 'connections' && !!value && !skipPingConnection && (
-            <ConnectionLoadingChip connectionId={value} />
+            <ConnectionLoadingChip
+              connectionId={value}
+              flowId={flowId}
+              integrationId={integrationId || integrationIdFromUrl}
+              parentType={resourceContext.resourceType}
+              parentId={resourceContext.resourceId} />
             )}
           </div>
 
