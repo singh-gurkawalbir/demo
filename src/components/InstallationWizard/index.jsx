@@ -286,7 +286,10 @@ export default function InstallationWizard(props) {
           resource={connection.doc}
           resourceType="connections"
           environment={environment}
-          connectionType={connection.doc.type}
+          // eslint-disable-next-line no-nested-ternary
+          connectionType={connection.doc.type === 'http'
+            ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
+            : connection.doc.type}
           onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}
           addOrSelect
