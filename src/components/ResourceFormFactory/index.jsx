@@ -128,7 +128,7 @@ export const ResourceFormFactory = props => {
   const { fieldMeta } = formState;
 
   // do not reinitialize the form on submit if it is a multistep save resource
-  const skipInitFormOnSubmit = multiStepSaveResourceTypes.includes(resourceType);
+  const skipInitFormOnSubmit = isNew && multiStepSaveResourceTypes.includes(resourceType);
 
   return (
     <FormStateManager
