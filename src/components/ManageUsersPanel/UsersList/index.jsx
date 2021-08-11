@@ -1,51 +1,51 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
 import ViewNotificationsDrawer from '../Drawers/ViewNotifications';
 import ManageNotificationsDrawer from '../Drawers/ManageNotifications';
 import LoadResources from '../../LoadResources';
 
-export default function UsersList({ integrationId, storeId, className }) {
+export default function UsersList({ integrationId, childId, className }) {
   const dispatch = useDispatch();
-  const isAccountOwner = useSelector(state =>
-    selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-  );
-
+  const accessLevel = useSelector(state => selectors.resourcePermissions(state)?.accessLevel);
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const requestIntegrationAShares = useCallback(() => {
-    if (integrationId) {
-      if (!users) {
-        dispatch(
-          actions.resource.requestCollection(
-            ['integrations', integrationId, 'ashares'].join('/')
-          )
-        );
-      }
-    }
-  }, [dispatch, integrationId, users]);
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   useEffect(() => {
-    requestIntegrationAShares();
-  }, [requestIntegrationAShares]);
+    if (integrationId && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    }
+  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   const actionProps = useMemo(() => (
     {
       integrationId,
-      storeId,
+      childId,
+      accessLevel,
       isUserInErrMgtTwoDotZero,
-    }), [integrationId, storeId, isUserInErrMgtTwoDotZero]);
+      isSSOEnabled,
+    }), [integrationId, childId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled]);
+
+  const requiredResources = ['integrations', 'connections', 'notifications'];
+
+  if (isAccountOwner) {
+    requiredResources.push('ssoclients');
+  }
 
   return (
     <>
-      <LoadResources required resources="integrations, connections, notifications">
+      <LoadResources required resources={requiredResources}>
         <ResourceTable
           resources={users}
           className={className}
@@ -58,8 +58,8 @@ export default function UsersList({ integrationId, storeId, className }) {
       { integrationId
         ? (
           <>
-            <ViewNotificationsDrawer integrationId={integrationId} storeId={storeId} />
-            <ManageNotificationsDrawer integrationId={integrationId} storeId={storeId} />
+            <ViewNotificationsDrawer integrationId={integrationId} childId={childId} />
+            <ManageNotificationsDrawer integrationId={integrationId} childId={childId} />
           </>
         ) : null }
 

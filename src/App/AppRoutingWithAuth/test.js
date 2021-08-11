@@ -16,6 +16,7 @@ import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../../theme/themeProvider';
 import { PageContentComponents as AppRouting } from '..';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 // fireEvent
 // Ok, so here's what your tests might look like
@@ -91,7 +92,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
   });
 
   describe('clear app error message', () => {
-    test.skip('should clear the app error message on refresh', () => {
+    test('should clear the app error message on refresh', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
@@ -136,7 +137,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     });
   });
   describe('test attempted Route state behavior', () => {
-    test.skip('should save the location state when the app is initialized for the very first', () => {
+    test('should save the location state when the app is initialized for the very first', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
@@ -232,7 +233,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe(getRoutePath('/dashboard'));
+      expect(history.location.pathname).toBe(getRoutePath(HOME_PAGE_PATH));
       expect(history.location.state).toBe(undefined);
     });
   });
@@ -264,7 +265,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       })
     );
 
-    expect(history.location.pathname).toBe(getRoutePath('/dashboard'));
+    expect(history.location.pathname).toBe(getRoutePath(HOME_PAGE_PATH));
   });
 
   const loggedOut = {

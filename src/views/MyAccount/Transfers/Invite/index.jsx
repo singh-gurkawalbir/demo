@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
+import {makeStyles} from '@material-ui/core/styles';
 import CeligoTable from '../../../../components/CeligoTable';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -12,21 +13,35 @@ import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
+const useStyles = makeStyles(theme => ({
+  infoTransfers: {
+    margin: theme.spacing(1, 0),
+  },
+}));
 const integrationsFilterConfig = {
   type: 'integrations',
   ignoreEnvironmentFilter: true,
 };
 
 export default function Invite(props) {
+  const classes = useStyles();
   const { setShowInviteView } = props;
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
-  ).resources;
+  ).resources?.filter(res => !res._parentId); // filter the child integrations
   const clearPreview = useCallback(() => {
     dispatch(actions.transfer.clearPreview());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(actions.resource.startCollectionPoll('integrations'));
+
+    return (() => {
+      dispatch(actions.resource.stopCollectionPoll('integrations'));
+    });
   }, [dispatch]);
 
   useEffect(() => {
@@ -88,7 +103,7 @@ export default function Invite(props) {
 
   // TODO: Ashok, There is  no description in the new mock please check.
 
-  const formKey = useFormInitWithPermissions({ fieldMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta, remount: integrations.length });
 
   return (
     <>
@@ -98,7 +113,7 @@ export default function Invite(props) {
         color="secondary">
         <ArrowLeftIcon /> Back to transfers
       </IconTextButton>
-      <div>
+      <div className={classes.infoTransfers}>
         Important! As part of the transfer process, all your currently
         in-progress flows will be allowed to complete, and new flows will not be
         started. If there are any webhook based flows, then they will stop
@@ -110,7 +125,7 @@ export default function Invite(props) {
         flows manually, and then retry/resolve all open errors, and then
         initiate the transfer process again.
       </div>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
 
       {!!error && <> {error} </>}

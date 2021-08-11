@@ -19,12 +19,14 @@ import {
   joinDelimitedValue,
   getMissingItems,
   determineChangedValues,
+  getFirstErroredFieldId,
+  getFieldIdsInLayoutOrder,
 } from '.';
 import {
-  fieldDefIsValid,
   shouldOptionsBeRefreshed,
   getFirstDefinedValue,
   splitDelimitedValue,
+  fieldDefIsValidUpdated,
 } from './field';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -165,13 +167,13 @@ describe('registerFields', () => {
   });
 });
 
-describe('fieldDefIsValid', () => {
+describe('fieldDefIsValidUpdated', () => {
   test('field is valid when the form does not contain a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [])).toEqual(true);
+    expect(fieldDefIsValidUpdated(field1, {})).toEqual(true);
   });
 
   test('field is not valid when form already contains a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [field1])).toEqual(false);
+    expect(fieldDefIsValidUpdated(field1, {[field1.id]: field1})).toEqual(false);
   });
 });
 
@@ -280,6 +282,22 @@ describe('rule evaluation', () => {
   const fieldC = createField({ id: 'C', name: 'c', value: 'fail' });
 
   describe('evaluateAllRules', () => {
+    test('should default result(true) when there are rules of invalid signature', () => {
+      const rules = [{someUnknownProp: 'd'}];
+      const fieldsById = {};
+
+      expect(
+        evaluateAllRules({ rules, fieldsById })
+      ).toEqual(true);
+    });
+    test('should return default result when there are no rules provided', () => {
+      const rules = [];
+      const fieldsById = {};
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(false);
+    });
     test('passes when there are no rules provided', () => {
       const rules = [];
       const fieldsById = {};
@@ -317,6 +335,22 @@ describe('rule evaluation', () => {
   });
 
   describe('evaluateSomeRules', () => {
+    test('should default result(true) when there are rules of invalid signature', () => {
+      const rules = [{someUnknownProp: 'd'}];
+      const fieldsById = {};
+
+      expect(
+        evaluateSomeRules({ rules, fieldsById })
+      ).toEqual(true);
+    });
+    test('should return defaultResult when there are no rules provided', () => {
+      const rules = [];
+      const fieldsById = {};
+
+      expect(
+        evaluateSomeRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(false);
+    });
     test('passes when there are no rules provided', () => {
       const rules = [];
       const fieldsById = {};
@@ -325,7 +359,6 @@ describe('rule evaluation', () => {
         evaluateSomeRules({ rules, fieldsById, defaultResult: true })
       ).toEqual(true);
     });
-
     test('fails when all rules fail', () => {
       const rules = [cIs3];
       const fieldsById = {
@@ -399,6 +432,25 @@ describe('rule evaluation', () => {
 
       expect(isVisible(testField, fieldsById)).toBe(false);
     });
+
+    describe('should AND both the default rule and expression', () => {
+      const inputs = [
+        ['should return true when defaultVisible is true and expression rule is true',
+          {visibleWhenAll: [aIs1, bIs2], defaultVisible: true}, true],
+        ['should return false when defaultVisible is true and expression rule is false',
+          {visibleWhenAll: [aIs1, bIs2], defaultVisible: false}, false],
+        ['should return false when defaultVisible is false and when no expresssion is provided ',
+          {visibleWhenAll: [aIs1, bIs2], defaultVisible: false}, false],
+        ['should return the default result that visible is true when no expresssion is provided ',
+          {}, true],
+      ];
+
+      test.each(inputs)('%s', (testName, conditions, result) => {
+        const testField = { ...field, ...conditions};
+
+        expect(isVisible(testField, fieldsById)).toBe(result);
+      });
+    });
   });
 
   describe('isRequired', () => {
@@ -416,25 +468,43 @@ describe('rule evaluation', () => {
       c: fieldC,
     };
 
-    test('returns true when visibleWhen rule is true', () => {
+    test('returns true when requiredWhen rule is true', () => {
       const testField = { ...field, requiredWhen: [aIs1] };
 
       expect(isRequired(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhen rule is false', () => {
+    test('return false when requiredWhen rule is false', () => {
       const testField = { ...field, requiredWhen: [cIs3] };
 
       expect(isRequired(testField, fieldsById)).toBe(false);
     });
-    test('returns true when visibleWhenAll rule is true', () => {
+    test('returns true when requiredWhenAll rule is true', () => {
       const testField = { ...field, requiredWhenAll: [aIs1, bIs2] };
 
       expect(isRequired(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhenAll rule is false', () => {
+    test('return false when requiredWhenAll rule is false', () => {
       const testField = { ...field, requiredWhenAll: [aIs1, cIs3] };
 
       expect(isRequired(testField, fieldsById)).toBe(false);
+    });
+    describe('should AND both the default rule and expression', () => {
+      const inputs = [
+        ['should return true when defaultRequired is true and expression rule is true',
+          {requiredWhenAll: [aIs1, bIs2], defaultRequired: true}, true],
+        ['should return false when defaultRequired is true and expression rule is false',
+          {requiredWhenAll: [aIs1, bIs2], defaultRequired: false}, false],
+        ['should return false when defaultRequired is false and when no expresssion is provided ',
+          {requiredWhenAll: [aIs1, bIs2], defaultRequired: false}, false],
+        ['should return the default result that required is false when no expresssion is provided ',
+          {}, false],
+      ];
+
+      test.each(inputs)('%s', (testName, conditions, result) => {
+        const testField = { ...field, ...conditions};
+
+        expect(isRequired(testField, fieldsById)).toBe(result);
+      });
     });
   });
 
@@ -453,25 +523,43 @@ describe('rule evaluation', () => {
       c: fieldC,
     };
 
-    test('returns true when visibleWhen rule is true', () => {
+    test('returns true when disableWhen rule is true', () => {
       const testField = { ...field, disabledWhen: [aIs1] };
 
       expect(isDisabled(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhen rule is false', () => {
+    test('return false when disableWhen rule is false', () => {
       const testField = { ...field, disabledWhen: [cIs3] };
 
       expect(isDisabled(testField, fieldsById)).toBe(false);
     });
-    test('returns true when visibleWhenAll rule is true', () => {
+    test('returns true when disableWhenAll rule is true', () => {
       const testField = { ...field, disabledWhenAll: [aIs1, bIs2] };
 
       expect(isDisabled(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhenAll rule is false', () => {
+    test('return false when disableWhenAll rule is false', () => {
       const testField = { ...field, disabledWhenAll: [aIs1, cIs3] };
 
       expect(isDisabled(testField, fieldsById)).toBe(false);
+    });
+    describe('should AND both the default rule and expression', () => {
+      const inputs = [
+        ['should return true when defaultDisabled is true and expression rule is true',
+          {disabledWhenAll: [aIs1, bIs2], defaultDisabled: true}, true],
+        ['should return false when defaultDisabled is true and expression rule is false',
+          {disabledWhenAll: [aIs1, bIs2], defaultDisabled: false}, false],
+        ['should return false when defaultDisabled is false and when no expresssion is provided ',
+          {disabledWhenAll: [aIs1, bIs2], defaultDisabled: false}, false],
+        ['should return the default result that visible is true when no expresssion is provided ',
+          {}, false],
+      ];
+
+      test.each(inputs)('%s', (testName, conditions, result) => {
+        const testField = { ...field, ...conditions};
+
+        expect(isDisabled(testField, fieldsById)).toBe(result);
+      });
     });
   });
 });
@@ -1066,3 +1154,167 @@ describe('getTouchedStateForField', () => {
     expect(getTouchedStateForField(true, false)).toBe(true);
   });
 });
+
+describe('getFirstErroredFieldId', () => {
+  test('should return undefined incase of invalid form state', () => {
+    expect(getFirstErroredFieldId()).toBeUndefined();
+    expect(getFirstErroredFieldId(null)).toBeUndefined();
+    expect(getFirstErroredFieldId({ fieldMeta: {}})).toBeUndefined();
+  });
+  test('should return undefined if the form has no errored field', () => {
+    const field1 = createField({
+      id: 'a',
+      name: 'a',
+      type: 'text',
+    });
+    const field2 = createField({
+      id: 'b',
+      name: 'b',
+      type: 'text',
+    });
+    const field3 = createField({
+      id: 'c',
+      name: 'c',
+      type: 'text',
+    });
+    const state = {
+      fields: { a: field1, b: field2, c: field3 },
+      fieldMeta: {
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: true,
+              fields: ['a', 'b', 'c'],
+            },
+          ],
+        }},
+      isValid: true,
+      showValidationBeforeTouched: false,
+    };
+
+    expect(getFirstErroredFieldId(state)).toBeUndefined();
+  });
+  test('should return the first fieldId in layout order that is errored in the form state', () => {
+    const field1 = createField({
+      id: 'a',
+      name: 'a',
+      type: 'text',
+    });
+    const field2 = createField({
+      id: 'b',
+      name: 'b',
+      type: 'text',
+      isValid: false,
+    });
+    const field3 = createField({
+      id: 'c',
+      name: 'c',
+      type: 'text',
+      isValid: false,
+    });
+    const state = {
+      fields: { a: field1, b: field2, c: field3 },
+      fieldMeta: {
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: true,
+              fields: ['a', 'b', 'c'],
+            },
+          ],
+        }},
+      isValid: false,
+      showValidationBeforeTouched: true,
+    };
+
+    expect(getFirstErroredFieldId(state)).toBe('b');
+  });
+});
+
+describe('getFieldIdsInLayoutOrder', () => {
+  test('should return empty list incase of invalid layout ', () => {
+    expect(getFieldIdsInLayoutOrder()).toEqual([]);
+    expect(getFieldIdsInLayoutOrder({})).toEqual([]);
+    expect(getFieldIdsInLayoutOrder({ fields: [], containers: []})).toEqual([]);
+  });
+  test('should return fieldIds in order for the passed layout', () => {
+    const layout = {
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'label 1',
+          fields: [
+            'a', 'b', 'c', 'd',
+          ],
+        },
+        {
+          collapsed: true,
+          label: 'label 2',
+          fields: [
+            'e', 'f', 'g',
+          ],
+        },
+      ],
+    };
+    const expectedOrderedFieldIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+
+    expect(getFieldIdsInLayoutOrder(layout)).toEqual(expectedOrderedFieldIds);
+  });
+  test('should return fieldIds in proper visible order if the layout has nested containers', () => {
+    const layout = {
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'label 1',
+          fields: [
+            'a', 'b', 'c', 'd',
+          ],
+        },
+        {
+          collapsed: true,
+          label: 'label 2',
+          fields: [
+            'e', 'f', 'g',
+          ],
+        },
+        {
+          collapsed: true,
+          label: 'label 3',
+          fields: [
+            'h', 'i', 'j',
+          ],
+        },
+        {
+          collapsed: true,
+          label: 'label 4',
+          containers: [
+            {
+              fields: ['k'],
+            },
+            {
+              type: 'indent',
+              containers: [
+                {
+                  fields: [
+                    'l',
+                  ],
+                },
+              ],
+            },
+            {
+              fields: ['m', 'n', 'o'],
+            },
+          ],
+        },
+      ],
+    };
+    const expectedOrderedFieldIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'];
+
+    expect(getFieldIdsInLayoutOrder(layout)).toEqual(expectedOrderedFieldIds);
+  });
+});
+

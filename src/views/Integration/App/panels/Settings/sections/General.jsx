@@ -2,11 +2,12 @@ import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import { IAFormStateManager, useActiveTab } from '../../Flows';
+import { IAFormStateManager } from '../../Flows';
 import { SavingMask } from '../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -24,17 +25,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GeneralPanel({ integrationId, storeId }) {
+export default function GeneralPanel({ integrationId, childId, dataPublic }) {
   const classes = useStyles();
   // TODO: rethink our data-layer just as we would an API. Currently we
   // have selectors that do too much and as such, they are wasteful and
   // hard to understand and reuse. In this example, this component doesn't
   // need the flows returned by the selector.
   const generalSectionMetadata = useSelectorMemo(
-    selectors.mkIntegrationAppGeneralSettings, integrationId, storeId
+    selectors.mkIntegrationAppGeneralSettings, integrationId, childId
   );
   const hasGeneralSettings = useSelector(state =>
-    selectors.hasGeneralSettings(state, integrationId, storeId)
+    selectors.hasGeneralSettings(state, integrationId, childId)
   );
   const translatedMeta = useMemo(
     () =>
@@ -49,23 +50,22 @@ export default function GeneralPanel({ integrationId, storeId }) {
     state => selectors.integrationAppSettingsFormState(state, integrationId),
     shallowEqual
   );
-  const activeTabProps = useActiveTab();
 
   return (
     <div>
       <PanelHeader title="General" />
       {hasGeneralSettings && (
       <>
-        {formState?.saveStatus && <SavingMask />}
+        {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
 
         <IAFormStateManager
-          {...activeTabProps}
-          key={storeId}
+          dataPublic={dataPublic}
+          key={childId}
           fieldMeta={translatedMeta}
           integrationId={integrationId}
           isIAForm
           className={classes.configureform}
-          storeId={storeId}
+          childId={childId}
           formState={formState}
           orientation="horizontal"
           />

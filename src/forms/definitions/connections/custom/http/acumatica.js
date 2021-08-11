@@ -52,6 +52,9 @@ export default {
       delete retValues['/http/unencrypted/company'];
       retValues['/http/auth/cookie'] = undefined;
     }
+    if (retValues['/mode'] === 'cloud') {
+      retValues['/_agentId'] = undefined;
+    }
 
     return {
       ...retValues,
@@ -162,6 +165,7 @@ export default {
       type: 'text',
       inputType: 'password',
       label: 'Password',
+      defaultValue: '',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'acumatica.connection.http.encrypted.password',
@@ -209,13 +213,8 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['cookie'],
-        },
         {
           field: 'http.auth.type',
           is: [''],
@@ -223,21 +222,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['cookie'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -246,10 +231,7 @@ export default {
       ],
     },
     {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
+      id: 'testandsavegroup',
       mode: 'secondary',
       visibleWhen: [
         {

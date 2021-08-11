@@ -15,15 +15,16 @@ const useStyles = makeStyles(theme => ({
 export default function IconButtonWithTooltip({
   tooltipProps = {},
   children,
+  buttonSize,
   ...buttonProps
 }) {
   const classes = useStyles();
 
   return (
-    <Tooltip key={tooltipProps.title} {...tooltipProps}>
+    <Tooltip data-public key={tooltipProps.title} {...tooltipProps}>
       {/* Icon button also accepts disabled property. Tooltip expects its children to be in active state and listen to events.
       Hence wrapping it with div */}
-      <IconButton className={classes.actionButtonWithTooltip} {...buttonProps}>{children}</IconButton>
+      <IconButton className={classes.actionButtonWithTooltip} {...buttonProps} size={buttonSize?.size || 'medium'}>{children}</IconButton>
     </Tooltip>
   );
 }

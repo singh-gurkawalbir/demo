@@ -23,6 +23,9 @@ import SettingsPanel from './panels/Settings';
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(3),
+    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px + 96px))`,
+    overflowY: 'auto',
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     '& > [role = tabpanel]': {
       background: 'none',
       padding: 0,

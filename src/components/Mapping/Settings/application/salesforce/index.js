@@ -5,7 +5,7 @@ import {
   isProduction,
   conditionalLookupOptionsforSalesforce,
   conditionalLookupOptionsforSalesforceProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 export default {
@@ -89,7 +89,7 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
@@ -147,6 +147,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.sObjectType', isNot: [''] },
           ],
         },
         'lookup.mapList': {
@@ -155,9 +156,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field (Salesforce)',
+          valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -170,6 +171,26 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
           ],
+        },
+        'lookup.name': {
+          id: 'lookup.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpKey: 'import.lookups.name',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+          ],
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
         },
         functions: {
           id: 'functions',
@@ -417,6 +438,7 @@ export default {
           'lookup.whereClauseText',
           'lookup.resultField',
           'lookup.mapList',
+          'lookup.name',
           'functions',
           'extract',
           'expression',

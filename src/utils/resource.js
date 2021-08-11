@@ -1,14 +1,15 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
   asyncHelpers: 'Async helper',
   connections: 'Connection',
-  connectors: 'Integration App',
+  connectors: 'Integration app',
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
@@ -24,6 +25,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
+  eventreports: 'Event Report',
 });
 
 export const appTypeToAdaptorType = {
@@ -128,6 +130,27 @@ export function getResourceSubType(resource) {
   return out;
 }
 
+export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+  if (!Array.isArray(resources)) {
+    return emptyList;
+  }
+  const { sort = emptyObject, searchBy, keyword } = config || {};
+  const stringTest = r => {
+    if (!keyword) return true;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => r[key]).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
+
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+
+  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  return resources.filter(stringTest).sort(comparer(sort));
+}
+
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
   return {
     type: adaptorTypeMap[adaptorType],
@@ -152,7 +175,70 @@ export const getDomainUrl = () => {
   return `https://${domain}`;
 };
 
-export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
+export const getApiUrl = () => {
+  if (getDomain() === 'localhost.io' && process?.env?.API_ENDPOINT) {
+    return process.env.API_ENDPOINT.replace('://', '://api.');
+  }
+
+  return getDomainUrl().replace('://', '://api.');
+};
+
+export const getAS2Url = () => {
+  const apiUrl = getApiUrl();
+
+  return `${apiUrl.substr(apiUrl.indexOf('://'))}/v1/as2`;
+};
+
+const getMediaTypeFromContentTypeHeader = headersArray => {
+  let mediaType = null;
+
+  if (!Array.isArray(headersArray) || headersArray.length === 0) {
+    return mediaType;
+  }
+
+  const lcHeaderName = 'content-type';
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const headerObj of headersArray) {
+    const headerName = headerObj.name;
+    let headerValue = headerObj.value;
+
+    if (headerName && headerName.trim().toLowerCase() === lcHeaderName && headerValue) {
+      headerValue = headerValue.trim();
+      headerValue = headerValue.toLowerCase();
+      if (headerValue === 'application/json') {
+        mediaType = 'json';
+
+        return mediaType;
+      } if (headerValue === 'application/xml') {
+        mediaType = 'xml';
+
+        return mediaType;
+      } if (headerValue === 'application/x-www-form-urlencoded') {
+        mediaType = 'urlencoded';
+
+        return mediaType;
+      } if (headerValue === 'text/csv') {
+        mediaType = 'csv';
+
+        return mediaType;
+      }
+    }
+  }
+
+  return mediaType;
+};
+
+export const getMediaTypeForImport = (conn, headers = []) => {
+  let reqMediaType = getMediaTypeFromContentTypeHeader(headers);
+
+  if (!reqMediaType) {
+    reqMediaType = getMediaTypeFromContentTypeHeader(conn?.rest?.headers || []);
+    reqMediaType = reqMediaType || ((conn?.rest?.mediaType === 'urlencoded') ? 'urlencoded' : 'json');
+  }
+
+  return reqMediaType;
+};
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
@@ -244,10 +330,10 @@ export function isValidResourceReference(
   }
 }
 
-export function salesforceExportSelectOptions(data, fieldName) {
+export function salesforceExportSelectOptions(data, type) {
   let options;
 
-  switch (fieldName) {
+  switch (type) {
     case 'deltaExportDateFields':
       options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
       break;
@@ -258,13 +344,13 @@ export function salesforceExportSelectOptions(data, fieldName) {
       options = data.filter(f => f.externalId || f.name === 'Id');
       break;
     case 'referenceFields':
-      options = data.filter(f => f.referenceTo.length !== 0);
+      options = data.filter(f => f.referenceTo?.length > 0);
       break;
     default:
       options = data;
   }
 
-  return options.map(op => ({ label: op.label, value: op.value }));
+  return options?.map(op => ({ label: op.label, value: op.value }));
 }
 
 /*
@@ -278,7 +364,7 @@ export function isFileAdaptor(resource) {
 
   return (
     ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType]) ||
-      resource.type === 'simple'
+      resource.type === 'simple' || (adaptorTypeMap[resource.adaptorType] === 'http' && resource?.http?.type === 'file')
   );
 }
 
@@ -323,15 +409,15 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
-    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+      resource.blob) ||
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
@@ -339,9 +425,9 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
   return blockType;
 }
 
-// All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
+// All resources with type 'blob' is a Blob export and with blob as true are blob imports
 export const isBlobTypeResource = (resource = {}) =>
-  resource && (resource.type === 'blob' || !!resource.blobKeyPath);
+  resource?.type === 'blob' || resource?.blob;
 
 export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};
@@ -380,6 +466,7 @@ export const isFlowResource = (flow, resourceId, resourceType) => {
 
 export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
+
   let toReturn = false;
   let filteredConnectors = [];
   const supportBaseUrl = `${HELP_CENTER_BASE_URL}/hc/en-us/categories/`;
@@ -406,7 +493,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
       }
     }
   } else {
-    if (domain === 'staging.integrator.io') {
+    if (domain === 'staging.integrator.io' || domain === 'qa.staging.integrator.io') {
       connectorToCategoryMap = {
         '5656f5e3bebf89c03f5dd77e': '203963787',
         '5666865f67c1650309224904': '203958808',
@@ -507,6 +594,9 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 export const getUniversityUrl = '/litmos/sso';
 
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
+  if (!fieldId) {
+    return '';
+  }
   const subrecordLabelMap = {
     inventorydetail: 'Inventory Details',
     componentinventorydetail: 'Inventory Details',
@@ -723,19 +813,15 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 };
 
 export const isOauth = connectionDoc =>
-  connectionDoc &&
-  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
-    (connectionDoc.http &&
-      connectionDoc.http.auth &&
-      connectionDoc.http.auth.type === 'oauth') ||
-    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
-    (connectionDoc.netsuite &&
-      connectionDoc.netsuite.authType === 'token-auto'));
+    connectionDoc?.rest?.authType === 'oauth' ||
+    connectionDoc?.http?.auth?.type === 'oauth' ||
+    !!connectionDoc?.salesforce?.oauth2FlowType ||
+    connectionDoc?.netsuite?.authType === 'token-auto';
 
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
 
-  if (['acumatica', 'shopify'].includes(assistant)) {
+  if (['acumatica', 'shopify', 'hubspot'].includes(assistant)) {
     if (
       resource.http &&
       resource.http.auth &&
@@ -743,8 +829,6 @@ export function getConnectionType(resource) {
     ) {
       return `${assistant}-oauth`;
     }
-
-    return '';
   }
 
   if (assistant) return assistant;
@@ -757,13 +841,14 @@ export function getConnectionType(resource) {
 
   return type;
 }
-export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
+export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel} = {}) {
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
@@ -772,12 +857,12 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
     } else {
       enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
     }
-
-    return enabled;
   }
+
+  return enabled;
 }
 export function isNetSuiteBatchExport(exportRes) {
-  return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
+  return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }
 export const isQueryBuilderSupported = (importResource = {}) => {
   const {adaptorType} = importResource;
@@ -792,33 +877,42 @@ export const isQueryBuilderSupported = (importResource = {}) => {
   return false;
 };
 
-export const getUniqueFieldId = fieldId => {
-  if (!fieldId) { return ''; }
+// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
+export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 
-  // some field types have same field ids
-  switch (fieldId) {
-    case 'rdbms.queryInsert':
-      return 'rdbms.query.1';
-    case 'rdbms.queryUpdate':
-      return 'rdbms.query.0';
-    case 'http.bodyCreate':
-      return 'http.body.1';
-    case 'http.bodyUpdate':
-      return 'http.body.0';
-    case 'http.relativeURIUpdate':
-      return 'http.relativeURI.0';
-    case 'http.relativeURICreate':
-      return 'http.relativeURI.1';
-    case 'rest.relativeURIUpdate':
-      return 'rest.relativeURI.0';
-    case 'rest.relativeURICreate':
-      return 'rest.relativeURI.1';
-    case 'rest.bodyUpdate':
-      return 'rest.body.0';
-    case 'rest.bodyCreate':
-      return 'rest.body.1';
+export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
+  let accessLevelOnConnection;
 
-    default:
-      return fieldId;
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+      i?._registeredConnectionIds &&
+      i._registeredConnectionIds.includes(connectionId)
+    );
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        }
+      }
+    });
   }
+
+  return accessLevelOnConnection;
 };

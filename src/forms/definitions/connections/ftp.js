@@ -1,13 +1,23 @@
+import { updatePGPFormValues } from '../../metaDataUtils/fileUtil';
+
 export default {
   // TODO: options handler forces a values when text field is empty
   // it should only do that when the user selects another protocol type
   // as well
   // The optionsHandler handler runs for every field
   preSave: formValues => {
-    const newValues = formValues;
+    const newValues = updatePGPFormValues(formValues);
 
     if (newValues['/ftp/entryParser'] === '') {
       delete newValues['/ftp/entryParser'];
+    }
+    if (!newValues['/ftp/usePgp']) {
+      newValues['/ftp/pgpEncryptKey'] = undefined;
+      newValues['/ftp/pgpDecryptKey'] = undefined;
+      newValues['/ftp/pgpPassphrase'] = undefined;
+      newValues['/ftp/pgpKeyAlgorithm'] = undefined;
+    } else if (!newValues['/ftp/useCustomPGPEncryptionAlgorithm']) {
+      newValues['/ftp/pgpKeyAlgorithm'] = undefined;
     }
 
     return newValues;
@@ -67,36 +77,7 @@ export default {
       fieldId: 'ftp.requireSocketReUse',
       visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],
     },
-    'ftp.usePgp': { fieldId: 'ftp.usePgp' },
-    'ftp.pgpEncryptKey': {
-      fieldId: 'ftp.pgpEncryptKey',
-      omitWhenHidden: true,
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
-    'ftp.pgpDecryptKey': {
-      fieldId: 'ftp.pgpDecryptKey',
-      omitWhenHidden: true,
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
-    'ftp.pgpPassphrase': {
-      fieldId: 'ftp.pgpPassphrase',
-      omitWhenHidden: true,
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
-    'ftp.pgpKeyAlgorithm': {
-      fieldId: 'ftp.pgpKeyAlgorithm',
-      omitWhenHidden: true,
-      visibleWhen: [
-        { field: 'ftp.useCustomPGPEncryptionAlgorithm', is: [true] },
-      ],
-    },
-    'ftp.useCustomPGPEncryptionAlgorithm': {
-      id: 'ftp.useCustomPGPEncryptionAlgorithm',
-      label: 'Use custom PGP encryption algorithm',
-      type: 'checkbox',
-      defaultValue: r => !!(r && r.ftp && r.ftp.pgpKeyAlgorithm),
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
+    fileAdvanced: {formId: 'fileAdvanced'},
     application: {
       fieldId: 'application',
     },
@@ -133,12 +114,7 @@ export default {
           'ftp.userDirectoryIsRoot',
           'ftp.entryParser',
           'ftp.requireSocketReUse',
-          'ftp.usePgp',
-          'ftp.pgpEncryptKey',
-          'ftp.pgpDecryptKey',
-          'ftp.pgpPassphrase',
-          'ftp.useCustomPGPEncryptionAlgorithm',
-          'ftp.pgpKeyAlgorithm',
+          'fileAdvanced',
           'ftp.concurrencyLevel',
         ],
       },

@@ -12,18 +12,16 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     overflow: 'auto',
   },
-
   textField: {
     width: 'fit-content',
-    fontSize: 18,
-    padding: theme.spacing(2, 1, 2, 0),
+    padding: theme.spacing(1, 1, 1, 0),
   },
   label: {
     fontSize: 14,
   },
 }));
 
-function DynaLabel(props) {
+export default function DynaLabel(props) {
   const { label, helpKey, helpText, id, disablePopover = false } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
@@ -56,6 +54,7 @@ function DynaLabel(props) {
         data-test={id}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        variant="body2"
         className={classes.textField}>
         {label}
         <FieldHelp {...props} />
@@ -75,4 +74,3 @@ function DynaLabel(props) {
 //   </FieldWrapper>
 // );
 
-export default DynaLabel;

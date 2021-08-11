@@ -14,7 +14,7 @@ export function* initUninstall({ id }) {
       message: 'Init uninstall',
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'POST', error && error.message, false));
+    yield put(actions.api.failure(path, 'POST', error?.message, false));
     yield put(
       actions.integrationApp.uninstaller2.failed(
         id,
@@ -42,9 +42,9 @@ export function* uninstallStep({ id, formVal }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApp.uninstaller2.failed(
+      actions.integrationApp.uninstaller2.updateStep(
         id,
-        error.message || 'Failed to post steps'
+        'reset'
       )
     );
 
@@ -59,6 +59,7 @@ export function* uninstallStep({ id, formVal }) {
       )
     );
     yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('licenses'));
 
     // once all steps are done, mark state as complete
     return yield put(
@@ -87,7 +88,7 @@ export function* requestSteps({ id }) {
       message: 'Loading',
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'GET', error && error.message, false));
+    yield put(actions.api.failure(path, 'GET', error?.message, false));
     yield put(
       actions.integrationApp.uninstaller2.failed(
         id,

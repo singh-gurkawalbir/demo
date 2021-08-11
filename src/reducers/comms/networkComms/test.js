@@ -1,4 +1,4 @@
-// TODO: Figure out ho to configure the linter to ignore warnings about global
+// TODO: Figure out how to configure the linter to ignore warnings about global
 // references introduced by JEST. Witout the below exclusion in every test file,
 // the linter precommit step will fail. ...and the IDE doesnt like the globals
 // either.
@@ -153,6 +153,45 @@ describe('comms selectors', () => {
   const path = '/test/path';
   const method = 'GET';
   const commKey = commKeyGenerator(path, method);
+
+  describe('commStatusByKey', () => {
+    test('should return correct status', () => {
+      const state = reducer(
+        {
+          'GET:/test': { something: 'something' },
+        },
+
+        'some action'
+      );
+
+      expect(selectors.commStatusByKey(state, 'GET:/test')).toEqual({
+        something: 'something',
+      });
+    });
+    test('should return undefined if key not found', () => {
+      const state = reducer(
+        {
+          comms: {
+            networkComms: {
+              'GET:/test': { something: 'something' },
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
+        undefined
+      );
+    });
+    test('should return undefined if state is undefined', () => {
+      const state = reducer(undefined, 'some action');
+
+      expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
+        undefined
+      );
+    });
+  });
 
   describe('isLoading', () => {
     test('should be false on initial state', () => {

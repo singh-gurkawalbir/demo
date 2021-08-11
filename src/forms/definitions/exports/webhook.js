@@ -88,6 +88,9 @@ export default {
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
     skipRetries: { fieldId: 'skipRetries' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -119,7 +122,7 @@ export default {
         label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries'] },
+      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'traceKeyTemplate'] },
     ],
   },
 };

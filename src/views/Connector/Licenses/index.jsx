@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -17,6 +16,7 @@ import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { SCOPES } from '../../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { order: 'desc', orderBy: 'expires' },
   searchBy: [
     'user.email',
     '_integrationId',
@@ -45,21 +46,26 @@ export default function Licenses(props) {
   const classes = useStyles();
   const resourceStatus = useSelectorMemo(
     selectors.makeAllResourceStatusSelector,
-    ['connectorLicenses']
+    'connectorLicenses'
   );
-  const sortFilterKey = 'connectorLicenses';
+  const filterKey = 'connectorLicenses';
   const filter =
-    useSelector(state => selectors.filter(state, sortFilterKey)) ||
-    defaultFilter;
+    useSelector(state => selectors.filter(state, filterKey));
   const connectorLicensesFilterConfig = useMemo(
     () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter]
   );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch]);
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicensesFilterConfig
@@ -67,7 +73,6 @@ export default function Licenses(props) {
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const dispatch = useDispatch();
   const resourceLoaded = useMemo(() => resourceStatus && resourceStatus[0].isReady, [resourceStatus]);
 
   useEffect(() => {
@@ -79,6 +84,29 @@ export default function Licenses(props) {
       dispatch(actions.resource.clearCollection('connectorLicenses'));
   }, [connectorId, dispatch]);
 
+  const handleClick = useCallback(() => {
+    const newId = generateNewId();
+    const patchSet = [
+      {
+        op: 'add',
+        path: '/_connectorId',
+        value: connectorId,
+      },
+    ];
+
+    if (connector.framework === 'twoDotZero') {
+      patchSet.push({
+        op: 'add',
+        path: '/type',
+        value: 'integrationApp',
+      });
+    }
+
+    dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
+
+    history.push(`${location.pathname}/add/connectorLicenses/${newId}`);
+  }, [connectorId, connector, history, location, dispatch]);
+
   if (!connector) {
     return <LoadResources required resources="connectors" />;
   }
@@ -87,17 +115,15 @@ export default function Licenses(props) {
     <>
       {resourceLoaded && <ResourceDrawer {...props} />}
       <CeligoPageBar
-        history={history}
+        parentUrl="/connectors"
         title={`Licenses: ${connector.name}`}
         infoText={infoText.licenses}>
         <div className={classes.actions}>
           <KeywordSearch
-            filterKey="connectorLicenses"
-            defaultFilter={defaultFilter}
+            filterKey={filterKey}
           />
           <IconTextButton
-            component={Link}
-            to={`${location.pathname}/add/connectorLicenses/${generateNewId()}`}
+            onClick={handleClick}
             variant="text"
             color="primary">
             <AddIcon /> New license
@@ -105,25 +131,27 @@ export default function Licenses(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        {list.count === 0 ? (
-          <Typography>
-            {list.total === 0
-              ? 'You don\'t have any licenses.'
-              : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-          </Typography>
-        ) : (
-          <CeligoTable
-            data={list.resources}
-            {...metadata}
-            filterKey={sortFilterKey}
-            actionProps={{
-              resourceType: `connectors/${connectorId}/licenses`,
-            }}
+        <LoadResources required resources="integrations" >
+          {list.count === 0 ? (
+            <Typography>
+              {list.total === 0
+                ? 'You don\'t have any licenses.'
+                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+            </Typography>
+          ) : (
+            <CeligoTable
+              data={list.resources}
+              {...metadata}
+              filterKey={filterKey}
+              actionProps={{
+                resourceType: `connectors/${connectorId}/licenses`,
+              }}
           />
-        )}
+          )}
+        </LoadResources>
       </div>
       <ShowMoreDrawer
-        filterKey="connectorLicenses"
+        filterKey={filterKey}
         count={list.count}
         maxCount={list.filtered}
       />

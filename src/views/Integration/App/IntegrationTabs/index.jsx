@@ -71,6 +71,9 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(3),
+    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px + 96px))`,
+    overflowY: 'auto',
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     '& > [role = tabpanel]': {
       background: 'none',
       padding: 0,
@@ -99,8 +102,7 @@ export default function IntegrationTabsComponent() {
 
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const showAdminTab = getAdminLevelTabs({
     integrationId,

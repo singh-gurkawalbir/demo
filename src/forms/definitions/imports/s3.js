@@ -1,224 +1,49 @@
-import { isNewId } from '../../../utils/resource';
+import { getfileProviderImportsOptionsHandler, IMPORT_FILE_FIELD_MAP, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
-    const newValues = {
-      ...formValues,
-    };
+    const newValues = updateFileProviderFormValues(formValues);
 
-    if (newValues['/file/type'] === 'json') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/xml/body'];
-      delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/replaceNewlineWithSpace'];
-      delete newValues['/file/csv/replaceTabWithSpace'];
-      delete newValues['/file/csv/wrapWithQuotes'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xml') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/json'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/replaceNewlineWithSpace'];
-      delete newValues['/file/csv/replaceTabWithSpace'];
-      delete newValues['/file/csv/wrapWithQuotes'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xlsx') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/replaceNewlineWithSpace'];
-      delete newValues['/file/csv/replaceTabWithSpace'];
-      delete newValues['/file/csv/wrapWithQuotes'];
-      delete newValues['/file/xml/body'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'csv') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/fileDefinition/resourcePath'];
-      delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/xml/body'];
-    } else {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/xml/resourcePath'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-    }
     if (newValues['/file/compressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
     }
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
+    }
+
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
     }
 
     delete newValues['/file/compressFiles'];
+
+    // TODO Ashok, This code can be removed once all backend issues are resolved.
+
+    newValues['/s3/fileKey'] = undefined;
+    newValues['/s3/backupBucket'] = undefined;
+    if (!newValues['/file/encrypt']) {
+      newValues['/file/encrypt'] = undefined;
+    }
+    if (!newValues['/file/pgp/symmetricKeyAlgorithm']) {
+      newValues['/file/pgp/symmetricKeyAlgorithm'] = undefined;
+    }
+    if (!newValues['/file/pgp/hashAlgorithm']) {
+      newValues['/file/pgp/hashAlgorithm'] = undefined;
+    }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'uploadFile') {
-      const uploadFileField = fields.find(
-        field => field.fieldId === 'uploadFile'
-      );
-      // if there is a uploadFileField in the form meta
-      // then provide the file type if not return null
-      // then the prevalent mode value will take over
-      const fileType = fields.find(field => field.id === 'file.type');
-
-      if (fieldId === 'uploadFile') {
-        return fileType.value;
-      }
-
-      if (uploadFileField) {
-        const fileTypeField = fields.find(
-          field => field.fieldId === 'file.type'
-        );
-
-        return fileTypeField.value.toLowerCase();
-      }
-    }
-
-    return null;
-  },
-  fieldMap: {
-    common: {
-      formId: 'common',
-    },
-    inputMode: {
-      id: 'inputMode',
-      type: 'mode',
-      label: 'Generate files from records:',
-      helpKey: 'import.inputMode',
-      options: [
-        {
-          items: [
-            { label: 'Yes', value: 'records' },
-            { label: 'No', value: 'blob' },
-          ],
-        },
-      ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
-    },
-    's3.region': {
-      fieldId: 's3.region',
-    },
-    's3.bucket': {
-      fieldId: 's3.bucket',
-    },
-    fileType: {
-      formId: 'fileType',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    's3.fileKey': {
-      fieldId: 's3.fileKey',
-    },
-    's3.backupBucket': {
-      fieldId: 's3.backupBucket',
-    },
-    blobKeyPath: {
-      fieldId: 'blobKeyPath',
-    },
-    'file.xml.body': {
-      id: 'file.xml.body',
-      type: 'httprequestbody',
-      connectionId: r => r && r._connectionId,
-      label: 'Build XML document',
-      refreshOptionsOnChangesTo: ['file.type'],
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['xml'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    uploadFile: {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be generated)',
-      helpKey: 'import.uploadFile',
-    },
-    'file.csv': { fieldId: 'file.csv' },
-    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
-    dataMappings: {
-      formId: 'dataMappings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.lookups': {
-      fieldId: 'file.lookups',
-      visible: false,
-    },
-    deleteAfterImport: {
-      fieldId: 'deleteAfterImport',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['blob'],
-        },
-      ],
-    },
-    fileAdvancedSettings: {
-      formId: 'fileAdvancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    fileApiIdentifier: {
-      formId: 'fileApiIdentifier',
-    },
-  },
+  optionsHandler: getfileProviderImportsOptionsHandler,
+  fieldMap: {...IMPORT_FILE_FIELD_MAP},
   layout: {
     type: 'collapse',
     containers: [
@@ -242,8 +67,9 @@ export default {
         fields: [
           's3.region',
           's3.bucket',
-          's3.fileKey',
+          'file.fileName',
           'file.xml.body',
+          'file.json.body',
           'file.lookups',
         ],
       },
@@ -251,10 +77,13 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          's3.backupBucket',
+          'fileAdvanced',
+          'file.backupPath',
+          'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
+          'traceKeyTemplate',
           'fileApiIdentifier',
         ],
       },
@@ -262,16 +91,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'saveandclose',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'file.type',
@@ -281,26 +101,13 @@ export default {
     },
     {
       // Button that saves file defs and then submit resource
-      id: 'savedefinition',
+      id: 'savefiledefinitions',
       visibleWhen: [
         {
           field: 'file.type',
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
-    },
-    {
-      // Button that saves file defs and then submit resource
-      id: 'saveandclosedefinition',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
     },
   ],
 };

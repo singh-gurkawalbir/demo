@@ -7,11 +7,11 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import InstallationStep from '../../../../../components/InstallStep';
-import { UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import { HOME_PAGE_PATH, UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import Spinner from '../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
+import openExternalUrl from '../../../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -89,14 +89,42 @@ export default function Uninstaller2({ integration, integrationId }) {
           integrationId
         )
       );
-      history.replace(getRoutePath('dashboard'));
+      history.replace(getRoutePath(HOME_PAGE_PATH));
     }
   }, [dispatch, history, integrationId, isComplete]);
 
   const handleStepClick = useCallback(step => {
-    const { type, isTriggered, form } = step;
+    const { type, isTriggered, form, url, verifying } = step;
 
-    if (!isTriggered) {
+    if (type === UNINSTALL_STEP_TYPES.URL) {
+      if (!isTriggered) {
+        dispatch(
+          actions.integrationApp.uninstaller2.updateStep(
+            integrationId,
+            'inProgress',
+          )
+        );
+
+        openExternalUrl({ url });
+      } else {
+        if (verifying) {
+          return false;
+        }
+
+        dispatch(
+          actions.integrationApp.uninstaller2.updateStep(
+            integrationId,
+            'verify'
+          )
+        );
+
+        dispatch(
+          actions.integrationApp.uninstaller2.uninstallStep(
+            integrationId,
+          )
+        );
+      }
+    } else if (!isTriggered) {
       dispatch(
         actions.integrationApp.uninstaller2.updateStep(
           integrationId,
@@ -133,13 +161,11 @@ export default function Uninstaller2({ integration, integrationId }) {
   );
 
   if (error) {
-    return <Redirect push={false} to={getRoutePath('dashboard')} />;
+    return <Redirect push={false} to={getRoutePath(HOME_PAGE_PATH)} />;
   }
   if (!uninstallSteps || uninstallSteps.length === 0) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

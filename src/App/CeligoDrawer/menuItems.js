@@ -1,12 +1,12 @@
 import HomeIcon from '../../components/icons/HomeIcon';
+import DashboardIcon from '../../components/icons/DashboardIcon';
 import ToolsIcon from '../../components/icons/ToolsIcon';
 import ResourcesIcon from '../../components/icons/ResourcesIcon';
 import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
 import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
-// import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
-// import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
+import FileIcon from '../../components/icons/FileIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
@@ -18,7 +18,7 @@ import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
+import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL, HOME_PAGE_PATH} from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
@@ -30,25 +30,33 @@ export default function menuItems(
   userProfile,
   accessLevel,
   integrations,
-  marketplaceConnectors
+  canUserPublish,
+  marketplaceConnectors,
+  isUserInErrMgtTwoDotZero,
 ) {
   const isDeveloper = userProfile && userProfile.developer;
-  const canPublish = userProfile && userProfile.allowedToPublish;
   let items = [
     {
       label: 'Home',
       Icon: HomeIcon,
       path: '/',
       routeProps: {
-        path: [getRoutePath(''), getRoutePath('/dashboard')],
+        path: [getRoutePath(''), getRoutePath(HOME_PAGE_PATH)],
         exact: true,
       },
     },
+    ...(isUserInErrMgtTwoDotZero
+      ? [{ label: 'Dashboard',
+        Icon: DashboardIcon,
+        path: '/dashboard',
+        dataTest: 'account-dashboard' }]
+      : []),
     {
       label: 'Tools',
       routeProps: [
         getRoutePath('/integrations/:integrationId/flowBuilder'),
         getRoutePath('/integrations/:integrationId/dataLoader'),
+        getRoutePath('/eventreports'),
       ],
       Icon: ToolsIcon,
       children: [
@@ -65,9 +73,15 @@ export default function menuItems(
           routeProps: getRoutePath('/integrations/:integrationId/dataloader'),
         },
         {
+          label: 'Reports',
+          Icon: FileIcon,
+          path: '/reports',
+          routeProps: getRoutePath('/reports'),
+        },
+        {
           label: 'Dev playground',
           Icon: EditorsPlaygroundIcon,
-          path: '/editors',
+          path: '/playground',
         },
       ],
     },
@@ -97,7 +111,7 @@ export default function menuItems(
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors' },
+        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors' },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -110,6 +124,7 @@ export default function menuItems(
           Icon: HelpCenterIcon,
           component: 'a',
           href: getHelpUrl(integrations, marketplaceConnectors),
+          dataTest: 'help_center',
         },
         {
           label: "What's new",
@@ -130,6 +145,7 @@ export default function menuItems(
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
+      dataTest: 'celigo_university',
     },
     {
       label: 'Marketplace',
@@ -139,7 +155,10 @@ export default function menuItems(
   ];
 
   if (['monitor', 'tile'].includes(accessLevel)) {
-    items = items.filter(i => !['Resources', 'Tools'].includes(i.label));
+    items = items.filter(i => !['Resources'].includes(i.label));
+    const toolsSubSectIndex = items.findIndex(i => i.label === 'Tools');
+
+    items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => ['Reports', 'Dev playground'].includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
     const toolItems = items.find(i => i.label === 'Tools');
@@ -154,13 +173,13 @@ export default function menuItems(
       );
     }
 
-    if (!canPublish) {
+    if (!canUserPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
+        i => !(i.label === 'Templates' || i.label === 'Integration apps')
       );
     }
 
-    if (accessLevel !== 'owner') {
+    if (accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER && accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'API tokens' || i.label === 'My APIs')
       );

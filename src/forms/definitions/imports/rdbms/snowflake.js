@@ -18,6 +18,10 @@ export default {
 
     newValues['/rdbms/queryType'] = [newValues['/rdbms/queryType']];
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return newValues;
   },
   fieldMap: {
@@ -41,9 +45,16 @@ export default {
     'rdbms.query': {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
-      querySetPos: 0,
+      arrayIndex: 0,
       required: true,
-      label: 'Build SQL query',
+      label: 'SQL query',
+      defaultValue: r => {
+        if (!r?.rdbms?.query) {
+          return '';
+        }
+
+        return r.rdbms.query[0];
+      },
       visibleWhen: [
         {
           field: 'rdbms.queryType',
@@ -54,7 +65,7 @@ export default {
     'rdbms.bulkInsert.tableName': {
       fieldId: 'rdbms.bulkInsert.tableName',
     },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    advancedSettings: { formId: 'advancedSettings' },
     'rdbms.queryType': {
       id: 'rdbms.queryType',
       type: 'radiogroup',
@@ -96,7 +107,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['rdbms.bulkInsert.batchSize', 'apiIdentifier'],
+        fields: ['rdbms.bulkInsert.batchSize', 'advancedSettings'],
       },
     ],
   },

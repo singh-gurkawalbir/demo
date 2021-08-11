@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
-import { generateNewId,
-  isTradingPartnerSupported,
-} from '../../../../../utils/resource';
+import actions from '../../../../../actions';
+import { generateNewId, isTradingPartnerSupported } from '../../../../../utils/resource';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -15,7 +13,8 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
+import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,6 +34,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const filterKey = `${_integrationId}+connections`;
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId, childId, tableConfig)
@@ -73,6 +73,10 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, {sort: { order: 'asc', orderBy: 'name' }}));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
     if (permission.register && newResourceId && !isStandalone) {
       dispatch(
         actions.connection.requestRegister([newResourceId], _integrationId)
@@ -91,6 +95,49 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       clearInterval(interval);
     };
   }, [dispatch, _integrationId]);
+  const handleClick = useCallback(e => {
+    e.preventDefault();
+
+    const newId = generateNewId();
+
+    setTempId(newId);
+    history.push(`${location.pathname}/add/connections/${newId}`);
+
+    if (!isStandalone) {
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/_integrationId',
+          value: _integrationId,
+        },
+      ];
+
+      if (integration?._connectorId) {
+        patchSet.push({
+          op: 'add',
+          path: '/_connectorId',
+          value: integration._connectorId,
+        });
+        patchSet.push({
+          op: 'add',
+          path: '/newIA',
+          value: true,
+        });
+      }
+
+      if (childId) {
+        patchSet.push({
+          op: 'add',
+          path: '/applications',
+          value: applications,
+        });
+      }
+
+      dispatch(
+        actions.resource.patchStaged(newId, patchSet, 'value')
+      );
+    }
+  }, [_integrationId, applications, childId, dispatch, history, integration?._connectorId, isStandalone, location.pathname]);
 
   return (
     <div className={classes.root}>
@@ -105,34 +152,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         <>
           {permission.create && (
             <IconTextButton
-              onClick={() => {
-                const newId = generateNewId();
-
-                setTempId(newId);
-                history.push(`${location.pathname}/add/connections/${newId}`);
-
-                if (!isStandalone) {
-                  const patchSet = [
-                    {
-                      op: 'add',
-                      path: '/_integrationId',
-                      value: _integrationId,
-                    },
-                  ];
-
-                  if (childId) {
-                    patchSet.push({
-                      op: 'add',
-                      path: '/applications',
-                      value: applications,
-                    });
-                  }
-
-                  dispatch(
-                    actions.resource.patchStaged(newId, patchSet, 'value')
-                  );
-                }
-              }}>
+              onClick={handleClick}>
               <AddIcon /> Create connection
             </IconTextButton>
           )}
@@ -153,6 +173,8 @@ export default function ConnectionsPanel({ integrationId, childId }) {
           }}
         />
       </LoadResources>
+
+      <ConfigConnectionDebugger />
     </div>
   );
 }

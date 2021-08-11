@@ -13,6 +13,7 @@ import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../../utils/constants';
 
 export default function ManageLookup({
   onSave,
@@ -29,11 +30,11 @@ export default function ManageLookup({
 }) {
   const { extractFields, picklistOptions } = others;
 
-  const { merged: resource = {} } = useSelectorMemo(
+  const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
 
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
@@ -106,6 +107,7 @@ export default function ManageLookup({
         lookupObj.method = formVal._method;
         lookupObj.relativeURI = formVal._relativeURI;
         lookupObj.body = formVal._body;
+        lookupObj.postBody = formVal._body;
         lookupObj.extract = formVal._extract;
       }
 
@@ -142,6 +144,9 @@ export default function ManageLookup({
         connectionId,
         staticLookupCommMetaPath,
         extractFields,
+        resourceId,
+        resourceType,
+        flowId,
       });
     } if (resource.adaptorType === 'SalesforceImport') {
       return salesforceMetadata.getLookupMetadata({
@@ -149,6 +154,9 @@ export default function ManageLookup({
         connectionId,
         extractFields,
         picklistOptions,
+        resourceId,
+        resourceType,
+        flowId,
       });
     } if (resource.adaptorType === 'RDBMSImport') {
       return rdbmsMetadata.getLookupMetadata({
@@ -156,6 +164,9 @@ export default function ManageLookup({
         showDynamicLookupOnly,
         sampleData: formattedSampleData,
         connectionId,
+        resourceId,
+        resourceType,
+        flowId,
       });
     }
 
@@ -179,7 +190,6 @@ export default function ManageLookup({
     <div data-test="lookup-form">
       <DynaForm
         formKey={formKey}
-        fieldMeta={fieldMeta}
         />
       {error && (
         <div>
@@ -192,6 +202,8 @@ export default function ManageLookup({
         formKey={formKey}
         disabled={disabled}
         data-test="saveLookupForm"
+        variant="contained"
+        color="primary"
         onClick={handleSubmit}>
         Save
       </DynaSubmit>
@@ -199,8 +211,8 @@ export default function ManageLookup({
         data-test="cancelLookupForm"
         onClick={onCancel}
         variant="text"
-        color="primary">
-        Cancel
+        color="secondary">
+        Close
       </Button>
     </div>
   );

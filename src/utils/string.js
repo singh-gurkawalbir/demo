@@ -40,5 +40,8 @@ export const isJsonString = str => {
 
   return true;
 };
+export const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() + str.slice(1);
 
-export default { hashCode, isJsonString, safeParse };
+export default { hashCode, isJsonString, safeParse, capitalizeFirstLetter };
+export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
+

@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -7,15 +8,12 @@ import {
   Switch,
   useHistory,
   useRouteMatch,
-  matchPath,
 } from 'react-router-dom';
-import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
+import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import CloseIcon from '../../icons/CloseIcon';
-import BackArrowIcon from '../../icons/BackArrowIcon';
-import InfoIconButton from '../../InfoIconButton';
-import Help from '../../Help';
 import getRoutePath from '../../../utils/routePaths';
+import { DrawerProvider } from './DrawerContext';
+import {HOME_PAGE_PATH} from '../../../utils/constants';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -25,38 +23,11 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
-  drawerPaper_default: {
-    background: theme.palette.background.default,
-  },
-  titleBar: {
-    display: 'flex',
-    alignItems: 'center',
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2, 3),
-    background: theme.palette.common.white,
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(2),
-    },
-  },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.secondary.main,
-  },
   childrenWrapper: {
     display: 'flex',
     height: '100%',
     minHeight: '100%',
     flexDirection: 'column',
-  },
-  contentContainer: {
-    padding: theme.spacing(3),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    overflow: 'auto',
-  },
-  contentContainer_paper: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   small: {
     width: 475,
@@ -84,43 +55,23 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.appBarHeight,
   },
   short: {
-    marginTop: theme.appBarHeight + theme.pageBarHeight,
-    paddingBottom: theme.appBarHeight + theme.pageBarHeight,
+    marginTop: theme.appBarHeight + theme.pageBarHeight - 1,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight - 1,
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
     paddingBottom: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
   },
-  popperMaxWidthView: {
-    maxWidth: 250,
-    maxHeight: 300,
-    overflowY: 'auto',
-  },
-  helpTextButton: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& svg': {
-      fontSize: 20,
-    },
-  },
 }));
 
 export default function RightDrawer({
-  title,
   path,
-  width = 'default',
-  height = 'short',
-  type = 'legacy',
-  hideBackButton = false,
+  width,
+  height,
   children,
   onClose,
-  infoText,
-  actions,
-  variant = 'persistent',
-  helpTitle,
-  helpKey,
-  disableClose,
-  ...rest
+  variant,
+  ...muiDrawerProps
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -128,98 +79,53 @@ export default function RightDrawer({
   const location = useLocation();
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const showBanner = location.pathname.includes(getRoutePath('dashboard')) && bannerOpened;
-  const handleBack = useCallback(() => {
-    // else, just go back in browser history...
-    history.goBack();
-  }, [history]);
+  const showBanner = location.pathname.includes(getRoutePath(HOME_PAGE_PATH)) && bannerOpened;
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       return onClose();
     }
 
     // else, just go back in browser history...
-    handleBack();
-  }, [handleBack, onClose]);
+    history.goBack();
+  }, [history, onClose]);
 
   let fullPath;
+  const getFullPath = path => match.url === '/' ? path : `${match.url}/${path}`;
 
   if (typeof path === 'string' || typeof path === 'number') {
-    fullPath = `${match.url}/${path}`;
+    fullPath = getFullPath(path);
   } else if (Array.isArray(path)) {
-    fullPath = path.map(p => `${match.url}/${p}`);
+    fullPath = path.map(p => getFullPath(p));
   } else {
     // bad path datatype... don't know what do do.. render nothing.
     return null;
   }
 
-  const { isExact } = matchPath(location.pathname, fullPath) || {};
-  const showBackButton = !isExact && !hideBackButton;
-
   return (
     <Switch>
       <Route path={fullPath}>
         <Drawer
-          {...rest}
+          {...muiDrawerProps}
           variant={variant}
           anchor="right"
           open
           classes={{
             paper: clsx(
               classes.drawerPaper,
-              classes[`drawerPaper_${type}`],
               classes[height],
               {
-                [classes.banner]:
-                  bannerOpened && showBanner && height === 'short',
+                [classes.banner]: bannerOpened && showBanner && height === 'short',
                 [classes[width]]: width !== 'full',
-                [classes.fullWidthDrawerClose]:
-                  width === 'full' && !drawerOpened,
+                [classes.fullWidthDrawerClose]: width === 'full' && !drawerOpened,
                 [classes.fullWidthDrawerOpen]: width === 'full' && drawerOpened,
               }
             ),
           }}
           onClose={handleClose}>
           <div className={classes.childrenWrapper}>
-            <div data-public className={classes.titleBar}>
-              {showBackButton && (
-                <IconButton
-                  size="small"
-                  data-test="backRightDrawer"
-                  aria-label="Close"
-                  onClick={handleBack}>
-                  <BackArrowIcon />
-                </IconButton>
-              )}
-              <Typography variant="h4" className={classes.title}>
-                {title}
-                {helpKey && (
-                  <Help
-                    title={helpTitle}
-                    className={classes.helpTextButton}
-                    helpKey={helpKey}
-                    fieldId={helpKey}
-                />
-                )}
-                {infoText && <InfoIconButton info={infoText} />}
-              </Typography>
-              {actions}
-              <IconButton
-                size="small"
-                disabled={!!disableClose}
-                data-test="closeRightDrawer"
-                aria-label="Close"
-                onClick={handleClose}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-            <div
-              className={clsx(
-                classes.contentContainer,
-                classes[`contentContainer_${type}`]
-              )}>
+            <DrawerProvider height={height} fullPath={fullPath} onClose={handleClose}>
               {children}
-            </div>
+            </DrawerProvider>
           </div>
         </Drawer>
       </Route>
@@ -229,3 +135,14 @@ export default function RightDrawer({
     </Switch>
   );
 }
+
+RightDrawer.propTypes = {
+  height: PropTypes.oneOf(['tall', 'short']),
+  width: PropTypes.oneOf(['small', 'medium', 'large', 'default', 'xl', 'full']),
+  variant: PropTypes.oneOf(['permanent', 'temporary']),
+};
+RightDrawer.defaultProps = {
+  width: 'default',
+  height: 'short',
+  variant: 'permanent',
+};

@@ -27,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.primary,
     fontSize: '14px',
     lineHeight: '22px',
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',
@@ -44,16 +46,13 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   actionTitle: {
-    float: 'left',
-    width: '60%',
     paddingTop: 10,
+    width: '60%',
   },
   caption: {
     wordBreak: 'break-word',
   },
   actionButtons: {
-    float: 'right',
-    textAlign: 'right',
     paddingTop: '8px',
     '& Button': {
       borderColor: theme.palette.divider,
@@ -80,13 +79,23 @@ const useStyles = makeStyles(theme => ({
       '& > textarea': {
         padding: 12,
       },
+      '& > fieldset': {
+        borderColor: theme.palette.secondary.lightest,
+      },
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: theme.palette.primary.main,
+      },
+    },
+    '& > div.Mui-focused': {
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderWidth: '1px',
+      },
     },
   },
 }));
 
-function HelpContent(props) {
+export default function HelpContent({ children, title, caption, fieldId, resourceType }) {
   const classes = useStyles();
-  const { children, title, caption, fieldId, resourceType } = props;
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
@@ -167,5 +176,3 @@ function HelpContent(props) {
     </div>
   );
 }
-
-export default HelpContent;

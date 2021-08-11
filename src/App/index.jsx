@@ -1,8 +1,6 @@
 import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
@@ -27,6 +25,7 @@ import ErrorNotifications from './ErrorNotifications';
 import CeligoAppBar from './CeligoAppBar';
 import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
+import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -148,15 +147,12 @@ export default function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <CrashReporter>
-        {/* the provider has to be pushed out because of new instance html5 instance */}
-        <DndProvider backend={HTML5Backend}>
-          <Fragment key={reloadCount}>
-            <ConfirmDialogProvider>
+        <Fragment key={reloadCount}>
+          <ConfirmDialogProvider>
+            <FormOnCancelProvider>
               <SnackbarProvider
                 classes={snackbarClasses} maxSnack={3} ContentProps={{
-                  classes: {
-                    root: classes.root,
-                  },
+                  classes: { root: classes.root },
                 }}>
                 <FontStager />
                 <CssBaseline />
@@ -177,9 +173,9 @@ export default function App() {
                 </BrowserRouter>
                 <ConflictAlertDialog />
               </SnackbarProvider>
-            </ConfirmDialogProvider>
-          </Fragment>
-        </DndProvider>
+            </FormOnCancelProvider>
+          </ConfirmDialogProvider>
+        </Fragment>
       </CrashReporter>
     </MuiThemeProvider>
   );

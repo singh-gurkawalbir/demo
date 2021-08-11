@@ -27,6 +27,10 @@ export default {
         name: 'wm_qos.correlation_id',
         value: "{{{dateFormat 'X'}}}",
       },
+      {
+        name: 'WM_CONSUMER.CHANNEL.TYPE',
+        value: '511b6430-8bb3-475c-97e2-3bb5ed066780',
+      },
     ],
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
@@ -56,6 +60,10 @@ export default {
       {
         name: 'wm_qos.correlation_id',
         value: "{{{dateFormat 'X'}}}",
+      },
+      {
+        name: 'WM_CONSUMER.CHANNEL.TYPE',
+        value: '511b6430-8bb3-475c-97e2-3bb5ed066780',
       },
     ],
   }),
@@ -97,7 +105,7 @@ export default {
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
-      label: 'Client Secret',
+      label: 'Client secret',
       helpKey: 'walmart.connection.http.encrypted.clientSecret',
       required: true,
       inputType: 'password',

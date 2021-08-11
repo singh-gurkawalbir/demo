@@ -2,10 +2,6 @@ Icons Components
 ```js
 const colors = require('../../src/theme/colors.js').default;
 const AddIcon = require('../../src/components/icons/AddIcon').default;
-const HardCodedIcon = require('../../src/components/icons/HardCodedIcon').default;
-const LookupLetterIcon = require('../../src/components/icons/LookupLetterIcon').default;
-const MultiFieldIcon = require('../../src/components/icons/MultiFieldIcon').default;
-const ReplaceIcon = require('../../src/components/icons/ReplaceIcon').default;
 const AdjustInventoryIcon = require('../../src/components/icons/AdjustInventoryIcon').default;
 const AdminIcon = require('../../src/components/icons/AdminIcon').default;
 const AppBuilderIcon = require('../../src/components/icons/AppBuilderIcon').default;
@@ -15,6 +11,7 @@ const ArrowRightIcon = require('../../src/components/icons/ArrowRightIcon').defa
 const ArrowDownIcon = require('../../src/components/icons/ArrowDownIcon').default;
 const ArrowUpIcon = require('../../src/components/icons/ArrowUpIcon').default;
 const AuditLogIcon = require('../../src/components/icons/AuditLogIcon').default;
+const AfeIcon = require('../../src/components/icons/AfeIcon').default;
 const BackArrowIcon = require('../../src/components/icons/BackArrowIcon').default;
 const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CancelIcon = require('../../src/components/icons/CancelIcon').default;
@@ -57,6 +54,7 @@ const GroupOfUsersIcon = require('../../src/components/icons/GroupOfUsersIcon').
 const GraphIcon = require('../../src/components/icons/GraphIcon').default;
 const GripperIcon = require('../../src/components/icons/GripperIcon').default;
 const GeneralIcon = require('../../src/components/icons/GeneralIcon').default;
+const HardCodedIcon = require('../../src/components/icons/HardCodedIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
@@ -70,6 +68,7 @@ const IntegrationAppsIcon = require('../../src/components/icons/IntegrationAppsI
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
 const InputFilterIcon = require('../../src/components/icons/InputFilterIcon').default;
 const KnowledgeBaseIcon = require('../../src/components/icons/KnowledgeBaseIcon').default;
+const LookupLetterIcon = require('../../src/components/icons/LookupLetterIcon').default;
 const LayoutTriVerticalIcon = require('../../src/components/icons/LayoutTriVerticalIcon').default;
 const LayoutLgLeftSmrightIcon = require('../../src/components/icons/LayoutLgLeftSmrightIcon').default;
 const LayoutLgTopSmBottomIcon = require('../../src/components/icons/LayoutLgTopSmBottomIcon').default;
@@ -81,6 +80,7 @@ const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
 const MappingConnectorIcon = require('../../src/components/icons/MappingConnectorIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
 const MyAPIIcon = require('../../src/components/icons/MyAPIIcon').default;
+const MultiFieldIcon = require('../../src/components/icons/MultiFieldIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
 const OptionalIcon = require('../../src/components/icons/OptionalIcon').default;
@@ -102,6 +102,7 @@ const RestoreIcon = require('../../src/components/icons/RestoreIcon').default;
 const RevokeTokenIcon = require('../../src/components/icons/RevokeTokenIcon').default;
 const ReactivateTokenIcon = require('../../src/components/icons/ReactivateTokenIcon').default;
 const RequiredIcon = require('../../src/components/icons/RequiredIcon').default;
+const ReplaceIcon = require('../../src/components/icons/ReplaceIcon').default;
 const RunIcon = require('../../src/components/icons/RunIcon').default;
 const RecycleBinIcon = require('../../src/components/icons/RecycleBinIcon').default;
 const StacksIcon = require('../../src/components/icons/StacksIcon').default;
@@ -166,22 +167,6 @@ const icon = {
         <p>Add</p>
     </div>
     <div style={wrapper}>
-        <HardCodedIcon style={icon}/>
-        <p>HardCoded</p>
-    </div>
-    <div style={wrapper}>
-        <LookupLetterIcon style={icon}/>
-        <p>LookupLetter</p>
-    </div>
-    <div style={wrapper}>
-        <MultiFieldIcon style={icon}/>
-        <p>MultiField</p>
-    </div>
-    <div style={wrapper}>
-        <ReplaceIcon style={icon}/>
-        <p>Replace</p>
-    </div>
-    <div style={wrapper}>
       <AdjustInventoryIcon style={icon}/> 
       <p>AdjustInventory</p>
     </div>
@@ -216,6 +201,10 @@ const icon = {
     <div style={wrapper}>
       <AuditLogIcon style={icon}/>
       <p>AuditLog</p>
+    </div>
+     <div style={wrapper}>
+      <AfeIcon style={icon}/>
+      <p>AfeIcon</p>
     </div>
      <div style={wrapper}>
         <BackArrowIcon style={icon}/>
@@ -382,6 +371,10 @@ const icon = {
       <p>General</p>
     </div>
      <div style={wrapper}>
+        <HardCodedIcon style={icon}/>
+        <p>HardCoded</p>
+    </div>
+     <div style={wrapper}>
       <HelpIcon style={icon} />
       <p>Help</p>
     </div>
@@ -442,7 +435,10 @@ const icon = {
       <LicensesIcon style={icon} />
       <p> Licenses</p>
     </div>
-   
+    <div style={wrapper}>
+        <LookupLetterIcon style={icon}/>
+        <p>LookupLetter</p>
+    </div>
     <div style={wrapper}>
       <LayoutTriVerticalIcon style={icon} />
       <p>LayoutTriVertical</p>
@@ -478,6 +474,10 @@ const icon = {
     <div style={wrapper}>
       <MyAPIIcon style={icon} />
       <p>My API</p>
+    </div>
+       <div style={wrapper}>
+        <MultiFieldIcon style={icon}/>
+        <p>MultiField</p>
     </div>
     <div style={wrapper}>
       <NotificationsIcon style={icon} />
@@ -554,6 +554,10 @@ const icon = {
     <div style={wrapper}>
       <RequiredIcon style={icon} />
       <p> RequiredIcon</p>
+    </div>
+     <div style={wrapper}>
+        <ReplaceIcon style={icon}/>
+        <p>Replace</p>
     </div>
     <div style={wrapper}>
       <RefreshIcon style={icon} />

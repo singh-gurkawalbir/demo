@@ -1,43 +1,18 @@
 import React, { useMemo } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import JsonContent from '../../JsonContent';
 import { safeParse } from '../../../utils/string';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
+import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 
 const useStyles = makeStyles(theme => ({
-  sampleDataWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    background: theme.palette.background.paper,
-    padding: theme.spacing(1),
-  },
-  sampleDataWrapperAlign: {
-    marginTop: -18,
-  },
-  sampleDataContainer: {
-    minHeight: theme.spacing(20),
-    position: 'relative',
-    backgroundColor: 'white',
-    maxHeight: 400,
-    overflow: 'auto',
-    maxWidth: 680,
-    color: theme.palette.text.primary,
-    '& > div': {
-      wordBreak: 'break-word',
-    },
-  },
-  sampleDataContainerAlign: {
-    marginTop: theme.spacing(2),
-  },
   error: {
-    position: 'relative',
-    top: theme.spacing(2),
+    marginTop: theme.spacing(4),
     color: theme.palette.error.main,
   },
 }));
 
 const DEFAULT_ERROR = 'No data to show - application responded with an error';
+
 export default function ErrorPanel(props) {
   const { resourceSampleData, availablePreviewStages } = props;
   const classes = useStyles();
@@ -51,24 +26,9 @@ export default function ErrorPanel(props) {
     return errorObj;
   }, [resourceSampleData.error]);
 
-  return (
-    <div
-      className={clsx(
-        classes.sampleDataWrapper,
-        classes.sampleDataWrapperAlign
-      )}>
-      <div
-        className={clsx(
-          classes.sampleDataContainer,
-          classes.sampleDataContainerAlign
-        )}>
-        {
-          showDefaultErrorMessage
-            ? <span className={classes.error}> { DEFAULT_ERROR } </span>
-            : <JsonContent json={error} />
-        }
+  if (showDefaultErrorMessage) {
+    return <span className={classes.error}> { DEFAULT_ERROR } </span>;
+  }
 
-      </div>
-    </div>
-  );
+  return <DefaultPanel value={error} />;
 }

@@ -3,7 +3,6 @@ import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const emptyList = [];
-const emptyObj = {};
 
 export default (state = {}, action) => {
   const {
@@ -160,24 +159,8 @@ selectors.stagedIdState = (state, id) => {
 };
 
 // #region PUBLIC SELECTORS
-selectors.stagedResource = (state, id, scope) => {
-  if (!state || !id || !state[id]) {
-    return emptyObj;
-  }
 
-  let updatedPatches;
-
-  if (scope) {
-    updatedPatches =
-      state[id] &&
-      state[id].patch &&
-      state[id].patch.filter(patch => patch.scope === scope);
-  } else updatedPatches = state[id] && state[id].patch;
-
-  return { ...state[id], patch: updatedPatches };
-};
-
-selectors.transformStagedResource = (stagedIdState, scope) => {
+const transformStagedResource = (stagedIdState, scope) => {
   if (!stagedIdState) return null;
 
   let updatedPatches;
@@ -196,8 +179,35 @@ selectors.makeTransformStagedResource = () =>
   createSelector(
     selectors.stagedIdState,
     (_1, _2, scope) => scope,
-    (stagedIdState, scope) => selectors.transformStagedResource(stagedIdState, scope)
+    (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
   );
+selectors.stagedResource = selectors.makeTransformStagedResource();
+
+selectors.lookupProcessorResourceType = (state, resourceId) => {
+  const stagedProcessor = selectors.stagedResource(state, resourceId);
+
+  if (!stagedProcessor || !stagedProcessor.patch) {
+    // TODO: we need a better pattern for logging warnings. We need a common util method
+    // which logs these warning only if the build is dev... if build is prod, these
+    // console.warn/logs should not even be bundled by webpack...
+    // eslint-disable-next-line
+    /*
+     console.warn(
+      'No patch-set available to determine new Page Processor resourceType.'
+    );
+    */
+    return;
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = stagedProcessor?.patch?.find(
+    p => p.op === 'replace' && p.path === '/adaptorType'
+  );
+
+  // console.log(`adaptorType-${id}`, adaptorType);
+
+  return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
+};
 
 selectors.getAllResourceConflicts = createSelector(
   state => state,

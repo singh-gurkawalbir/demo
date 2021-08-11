@@ -7,6 +7,7 @@ import { selectors } from '../../reducers';
 import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../utils/constants';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
+import { SCOPES } from '../resourceForm';
 
 export function* run({ flowId, customStartDate, options = {} }) {
   // per PM request to track the run request
@@ -48,7 +49,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
   }
 
   const additionalProps = {
-    _id: job._jobId,
+    _id: job?._jobId,
     _flowId: flowId,
     type: JOB_TYPES.FLOW,
     status: JOB_STATUS.QUEUED,
@@ -65,7 +66,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
 export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
   const flow = yield select(selectors.resource, 'flows', flowId);
 
-  if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+  if (flow?.pageGenerators?.length) {
     const exportId = flow.pageGenerators[0]._exportId;
     const exp = yield select(selectors.resource, 'exports', exportId);
 
@@ -102,8 +103,8 @@ export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
           },
         ];
 
-        yield put(actions.resource.patchStaged(exportId, patchSet, 'value'));
-        yield put(actions.resource.commitStaged('exports', exportId, 'value'));
+        yield put(actions.resource.patchStaged(exportId, patchSet, SCOPES.VALUE));
+        yield put(actions.resource.commitStaged('exports', exportId, SCOPES.VALUE));
       }
     }
   }
@@ -111,24 +112,21 @@ export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
 
 export function* getLastExportDateTime({ flowId }) {
   const path = `/flows/${flowId}/lastExportDateTime`;
-  let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'GET',
       },
     });
+
+    if (response) {
+      yield put(actions.flow.receivedLastExportDateTime(flowId, response));
+    }
   } catch (error) {
-    yield put(actions.api.failure(path, 'GET', error && error.message, false));
+    yield put(actions.api.failure(path, 'GET', error?.message, false));
     yield put(actions.flow.receivedLastExportDateTime(flowId));
-
-    return undefined;
-  }
-
-  if (response) {
-    yield put(actions.flow.receivedLastExportDateTime(flowId, response));
   }
 }
 

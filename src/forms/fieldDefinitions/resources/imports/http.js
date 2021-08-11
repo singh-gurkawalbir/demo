@@ -40,6 +40,7 @@ export default {
   },
   'http.blobMethod': {
     type: 'select',
+    helpKey: 'import.http.method',
     label: 'HTTP method',
     required: true,
     visibleWhen: [
@@ -67,7 +68,8 @@ export default {
   },
   'http.requestMediaType': {
     type: 'selectrequestmediatype',
-    label: 'Request media type',
+    label: 'Override request media type',
+    placeholder: 'Do not override',
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
@@ -160,7 +162,6 @@ export default {
     type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
-
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
     visibleWhen: [
@@ -182,7 +183,7 @@ export default {
     arrayIndex: 0,
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
-    label: 'Build HTTP request body',
+    label: 'HTTP request body',
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
     visibleWhen: [
@@ -198,9 +199,8 @@ export default {
   },
   'http.response.successPath': {
     type: 'text',
-    label: 'Success path',
+    label: 'Path to success field in HTTP response body',
     delimiter: ',',
-
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -216,7 +216,6 @@ export default {
     type: 'text',
     label: 'Success values',
     delimiter: ',',
-
     // defaultValue: r =>
     //   r && r.http && r.http.response && r.http.response.successValues[0],
     visibleWhenAll: [
@@ -232,9 +231,13 @@ export default {
   },
   'http.response.resourceIdPath': {
     type: 'text',
-    label: 'Resource ID path',
-    delimiter: ',',
+    helpKey: r => {
+      if (r?.resourceType === 'transferFiles' || r?.blob) { return 'import.http.response.file.resourceIdPath'; }
 
+      return 'import.http.response.resourceIdPath';
+    },
+    label: 'Path to id field in HTTP response body',
+    delimiter: ',',
     visibleWhen: [
       {
         field: 'http.method',
@@ -248,7 +251,7 @@ export default {
   },
   'http.response.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to error field in HTTP response body',
     delimiter: ',',
     visibleWhenAll: [
       {
@@ -264,7 +267,7 @@ export default {
   'http.response.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Fail values',
+    label: 'Error values',
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -279,7 +282,7 @@ export default {
   'http.response.resourcePath': {
     type: 'text',
     delimiter: ',',
-    label: 'Response path',
+    label: 'Path to records in HTTP response body',
     visibleWhenAll: [
       {
         field: 'http.batchSize',
@@ -293,8 +296,7 @@ export default {
   },
   'http.response.errorPath': {
     type: 'text',
-    label: 'Error path',
-
+    label: 'Path to detailed error message field in HTTP response body',
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -308,7 +310,7 @@ export default {
   },
   'http.batchSize': {
     type: 'text',
-    label: 'Batch size limit',
+    label: 'Number of records per HTTP request',
     defaultValue: r => r?.http?.batchSize || 1,
     validWhen: {
       matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -326,7 +328,8 @@ export default {
   },
   'http.successMediaType': {
     type: 'select',
-    label: 'Override success media type',
+    label: 'Override media type for success responses',
+    placeholder: 'Do not override',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -344,7 +347,8 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Override error media type',
+    label: 'Override media type for error responses',
+    placeholder: 'Do not override',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -362,7 +366,7 @@ export default {
   },
   'http.ignoreEmptyNodes': {
     type: 'checkbox',
-    label: 'Ignore empty nodes',
+    label: 'Remove empty fields from HTTP request body',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -401,6 +405,217 @@ export default {
         is: ['records'],
       },
       { field: 'http.configureAsyncHelper', is: [true] },
+    ],
+  },
+  'http.existingLookupType': {
+    id: 'http.existingLookupType',
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    defaultValue: r => {
+      if (r.http?.ignoreLookupName) {
+        return 'lookup';
+      }
+
+      return 'source';
+    },
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ignoreExistingExtract': {
+    id: 'http.ignoreExistingExtract',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.existingLookupType',
+        is: ['source'],
+      },
+    ],
+    defaultValue: r => r.http?.ignoreExtract,
+  },
+  'http.ignoreExistingLookupName': {
+    id: 'http.ignoreExistingLookupName',
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.lookup',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    defaultValue: r => r.http?.ignoreLookupName,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.existingLookupType',
+        is: ['lookup'],
+      },
+    ],
+  },
+  'http.newLookupType': {
+    id: 'http.newLookupType',
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    defaultValue: r => {
+      if (r.http?.ignoreLookupName) {
+        return 'lookup';
+      }
+
+      return 'source';
+    },
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['updateandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ignoreNewExtract': {
+    id: 'http.ignoreNewExtract',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.ignoreExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['updateandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.newLookupType',
+        is: ['source'],
+      },
+    ],
+    defaultValue: r => r.http?.ignoreExtract,
+  },
+  'http.ignoreNewLookupName': {
+    id: 'http.ignoreNewLookupName',
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.lookup',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    defaultValue: r => r.http?.ignoreLookupName,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['updateandignore'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.newLookupType',
+        is: ['lookup'],
+      },
+    ],
+  },
+  'unencrypted.apiType': {
+    type: 'selectAmazonSellerCentralAPIType',
+    label: 'API type',
+    helpKey: 'export.unencrypted.apiType',
+    skipDefault: true,
+    skipSort: true,
+    options: [
+      {
+        items: [
+          {label: 'Selling Partner API (SP-API)', value: 'Amazon-SP-API'},
+          {label: 'Marketplace Web Service API (MWS)', value: ''},
+        ],
+      },
     ],
   },
 };

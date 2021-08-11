@@ -37,7 +37,8 @@ export function normalizeUrlAndOptions(path, opts) {
       path.includes('/netsuiteDA') ||
       /^\/connections.*distributed$/.test(path) ||
       path.includes('/mappingPreview') ||
-      path.includes('/unlink/google')
+      path.includes('/unlink/google') ||
+      path.includes('/reSigninWithSSO')
     ) {
       url = path;
     } else {
@@ -91,9 +92,8 @@ export function checkToThrowSessionValidationException(response) {
 
 export function isCsrfExpired(error) {
   return (
-    error.status === 403 &&
-    error.data &&
-    error.data.message === 'Bad_Request_CSRF'
+    error?.status === 403 &&
+    error?.data?.message === 'Bad_Request_CSRF'
   );
 }
 

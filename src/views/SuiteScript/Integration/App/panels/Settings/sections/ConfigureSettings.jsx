@@ -5,13 +5,14 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/formFactory/utils';
 import { selectors } from '../../../../../../../reducers';
 import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';
 import { ActionsPanel } from '../../../../../../Integration/App/panels/Flows';
 import { FormStateManager } from '../../../../../../../components/ResourceFormFactory';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { COMM_STATES } from '../../../../../../../reducers/comms/networkComms';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -41,8 +42,8 @@ const useStyles = makeStyles(theme => ({
 
 export const SavingMask = () => (
   <Loader open>
-    <Typography variant="h4">Saving...</Typography>
-    <Spinner color="primary" />
+    <Typography data-public variant="h4">Saving...</Typography>
+    <Spinner />
   </Loader>
 );
 
@@ -59,6 +60,7 @@ const SettingsForm = props => {
     </>
   );
 };
+
 export const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
@@ -72,22 +74,27 @@ export const SuiteScriptForm = props => {
     };
   }, [dispatch, integrationId, ssLinkedConnectionId]);
 
-  const {status} = useSelector(state => selectors.suiteScriptIAFormState(state, {
-    ssLinkedConnectionId,
-    integrationId,
-  }));
-
+  const formState = useSelector(
+    state =>
+      selectors.suiteScriptIAFormState(
+        state,
+        {integrationId, ssLinkedConnectionId}
+      ),
+    shallowEqual
+  );
+  const status = formState?.status;
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (status === 'success') setCount(count => count + 1);
+    if (status === COMM_STATES.SUCCESS) setCount(count => count + 1);
   }, [status]);
 
   return (
     <>
-      {status === 'saving' && <SavingMask />}
+      {status === COMM_STATES.LOADING && <SavingMask />}
       <SettingsForm
         key={count}
+        formState={formState}
         {...props}
     />
     </>
@@ -110,15 +117,6 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
     [id, integrationId, section, ssLinkedConnectionId]
   );
 
-  const formState = useSelector(
-    state =>
-      selectors.suiteScriptIAFormState(
-        state,
-        {integrationId, ssLinkedConnectionId}
-      ),
-    shallowEqual
-  );
-
   return (
     <LoadSuiteScriptResources
       required
@@ -130,7 +128,6 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         sectionId={id}
-        formState={formState}
         className={clsx(classes.configureDrawerform, {
           [classes.configureDrawerCamForm]: section.sections,
         })}

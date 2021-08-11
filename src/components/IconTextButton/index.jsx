@@ -8,6 +8,7 @@ const useStyles = makeStyles(theme => ({
   left: { marginRight: 8, marginLeft: -8 },
   right: { marginLeft: 8, marginRight: -8 },
   root: {
+    // Todo (Azhar): please check the impact of padding
     padding: '2px 20px',
     whiteSpace: 'nowrap',
     color: theme.palette.secondary.main,

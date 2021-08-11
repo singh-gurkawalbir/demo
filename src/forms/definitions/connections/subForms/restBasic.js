@@ -1,13 +1,13 @@
 export default {
   fieldMap: {
-    'rest.basicAuth.username': {
-      fieldId: 'rest.basicAuth.username',
+    'http.auth.basic.username': {
+      fieldId: 'http.auth.basic.username',
       required: true,
     },
-    'rest.basicAuth.password': {
-      fieldId: 'rest.basicAuth.password',
+    'http.auth.basic.password': {
+      fieldId: 'http.auth.basic.password',
       required: true,
     },
   },
-  layout: { fields: ['rest.basicAuth.username', 'rest.basicAuth.password'] },
+  layout: { fields: ['http.auth.basic.username', 'http.auth.basic.password'] },
 };

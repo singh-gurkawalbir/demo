@@ -36,7 +36,7 @@ export default function RefreshableHeading({label, resourceType}) {
     <span className={classes.status}>
       {label}
       {(refreshRequested && isResourceCollectionLoading)
-        ? <Spinner className={classes.statusSpinner} size={24} color="primary" />
+        ? <Spinner className={classes.statusSpinner} />
         : (
           <IconButton
             data-test="refreshStatus"

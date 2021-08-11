@@ -41,7 +41,7 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
-    runOffline,
+    // runOffline, Run offline is currently not supported for PPs
   });
 
   // Override the map with provided document for this _pageProcessorId
@@ -95,23 +95,23 @@ export function* pageProcessorPreview({
 
   const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
 
+  const isRunOfflineConfigured = runOffline && Object.values(pageGeneratorMap)
+    .some(
+      pgInfo => pgInfo?.options?.runOfflineOptions
+    );
+
   try {
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden,
+      hidden: isRunOfflineConfigured ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
-    const isRunOfflineConfigured = Object.values(pageGeneratorMap)
-      .some(
-        pgInfo => pgInfo?.options?.runOfflineOptions
-      );
-
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (runOffline && isRunOfflineConfigured) {
+    if (isRunOfflineConfigured) {
       return yield call(pageProcessorPreview, {
         flowId,
         _pageProcessorId,
@@ -136,11 +136,14 @@ export function* exportPreview({
   hidden = false,
   runOffline = false,
   throwOnError = false,
+  flowId,
 }) {
+  if (!resourceId) return;
   const { merged: resource } = yield select(
     selectors.resourceData,
     'exports',
-    resourceId
+    resourceId,
+    SCOPES.VALUE
   );
   let body = deepClone(resource);
 
@@ -164,19 +167,29 @@ export function* exportPreview({
   }
 
   const path = '/exports/preview';
+  const isRunOfflineConfigured = runOffline && hasValidRawDataKey;
 
+  // BE need flowId and integrationId in the preview call
+  // if in case integration settings were used in export
+  const flow = yield select(selectors.resource, 'flows', flowId);
+
+  if (!isNewId(flowId)) {
+    body._flowId = flowId;
+  }
+
+  body._integrationId = flow?._integrationId;
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden,
+      hidden: isRunOfflineConfigured ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (runOffline && hasValidRawDataKey) {
+    if (isRunOfflineConfigured) {
       return yield call(exportPreview, {
         resourceId,
         hidden,

@@ -7,9 +7,11 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getNetSuiteSubrecordImports, isQueryBuilderSupported } from '../../../utils/resource';
 
 const emptyObject = {};
+const emptyArr = [];
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
+    padding: theme.spacing(3),
   },
   button: {
     // color: theme.palette.primary.main,
@@ -32,13 +34,13 @@ export default function SelectImport() {
   const match = useRouteMatch();
   const { flowId, importId } = match.params;
   const classes = useStyles();
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
-  const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
+  const imports = useMemo(() => flowImports?.filter(i => !i.blob) || emptyArr, [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = _impId => {
@@ -77,9 +79,15 @@ export default function SelectImport() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const sortedImports = useMemo(() => [...imports].sort((i1, i2) => {
+    const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
+    const i2index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i2._id);
+
+    return i1index - i2index;
+  }), [flow.pageProcessors, imports]);
 
   if (!flow) {
-    return <Typography>No flow exists with id: {flowId}</Typography>;
+    return <Typography className={classes.root}>No flow exists with id: {flowId}</Typography>;
   }
 
   // If there is only one import then we can safely
@@ -87,17 +95,12 @@ export default function SelectImport() {
   if (selectedImportId) {
     return <Redirect push={false} to={getMappingUrl(selectedImportId)} />;
   }
-  imports.sort((i1, i2) => {
-    const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
-    const i2index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i2._id);
 
-    return i1index - i2index;
-  });
   const flowName = flow.name || flow._id;
 
-  if (imports.length === 0) {
+  if (sortedImports.length === 0) {
     // eslint-disable-next-line react/no-unescaped-entities
-    return <Typography>The flow "{flowName}", contains no imports.</Typography>;
+    return <Typography className={classes.root}>The flow "{flowName}", contains no imports.</Typography>;
   }
 
   // Finally, render a table of imports to choose from...
@@ -110,7 +113,7 @@ export default function SelectImport() {
         Step name
       </Typography>
 
-      {imports.map((i, index) => (
+      {sortedImports.map((i, index) => (
         <Fragment key={i._id}>
           <Button
             data-key="mapping"

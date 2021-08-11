@@ -1,8 +1,11 @@
+import { createSelector } from 'reselect';
+import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../../utils/constants';
+import { COMM_STATES as REINVITE_STATES } from '../../../comms/networkComms';
 
 export default (state = [], action) => {
   const { type, resourceType, collection, user, _id } = action;
@@ -16,38 +19,67 @@ export default (state = [], action) => {
       return state;
     case actionTypes.USER_CREATED:
       return [...state, user];
+    case actionTypes.USER_REINVITE:
+    {
+      const index = state.findIndex(u => u._id === _id);
+
+      if (index > -1) {
+        return produce(state, draft => {
+          draft[index].reinviteStatus = REINVITE_STATES.LOADING;
+        });
+      }
+
+      return state;
+    }
+
+    case actionTypes.USER_REINVITE_ERROR: {
+      const index = state.findIndex(u => u._id === _id);
+
+      if (index > -1) {
+        return produce(state, draft => {
+          draft[index].reinviteStatus = REINVITE_STATES.ERROR;
+        });
+      }
+
+      return state;
+    }
     case actionTypes.USER_UPDATED: {
       const index = state.findIndex(u => u._id === user._id);
 
       if (index === -1) {
         return [...state, user];
       }
+      if (index > -1) {
+        return produce(state, draft => {
+          draft[index] = {...draft[index], ...user};
+        });
+      }
 
-      return [
-        ...state.slice(0, index),
-        {
-          ...state[index],
-          ...user,
-        },
-        ...state.slice(index + 1),
-      ];
+      return state;
     }
 
     case actionTypes.USER_DISABLED: {
       const index = state.findIndex(u => u._id === _id);
 
-      if (index === -1) {
-        return state;
+      if (index > -1) {
+        return produce(state, draft => {
+          draft[index].disabled = !draft[index].disabled;
+        });
       }
 
-      return [
-        ...state.slice(0, index),
-        {
-          ...state[index],
-          disabled: !state[index].disabled,
-        },
-        ...state.slice(index + 1),
-      ];
+      return state;
+    }
+    case actionTypes.USER_REINVITED: {
+      const index = state.findIndex(u => u._id === _id);
+
+      if (index > -1) {
+        return produce(state, draft => {
+          draft[index].dismissed = false;
+          draft[index].reinviteStatus = REINVITE_STATES.SUCCESS;
+        });
+      }
+
+      return state;
     }
 
     case actionTypes.USER_DELETED: {
@@ -68,18 +100,20 @@ export default (state = [], action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.usersList = state => {
-  if (!state || !state.length) {
-    return [];
-  }
+selectors.usersList = createSelector(
+  state => state,
+  state => {
+    if (!state || !state.length) {
+      return [];
+    }
 
-  const aShares = state.map(share => ({
-    ...share,
-    accessLevel: share.accessLevel || USER_ACCESS_LEVELS.TILE,
-  }));
+    const aShares = state.map(share => ({
+      ...share,
+      accessLevel: share.accessLevel || USER_ACCESS_LEVELS.TILE,
+    }));
 
-  return aShares;
-};
+    return aShares;
+  });
 
 selectors.integrationUsersForOwner = (state, integrationId) => {
   if (!state || !state.length) {
@@ -91,7 +125,13 @@ selectors.integrationUsersForOwner = (state, integrationId) => {
   let integrationAccessLevel;
 
   aShares.forEach(u => {
-    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
+    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+      integrationUsers.push({
+        ...u,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+        integrationAccessLevel: undefined,
+      });
+    } else if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
       integrationUsers.push({
         ...u,
         accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
@@ -119,6 +159,14 @@ selectors.integrationUsersForOwner = (state, integrationId) => {
   });
 
   return integrationUsers;
+};
+selectors.userReinviteStatus = (state, _id) => {
+  if (!state || !state.length) {
+    return null;
+  }
+  const index = state.findIndex(u => u._id === _id);
+
+  return state[index]?.reinviteStatus;
 };
 
 // #endregion

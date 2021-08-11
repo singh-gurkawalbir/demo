@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -22,13 +23,20 @@ import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
+import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
+import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
   },
   resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
+    padding: theme.spacing(3, 3, 14, 3),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
+  },
+  noShowMoreContainer: {
+    paddingBottom: theme.spacing(3),
   },
 }));
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
@@ -64,14 +72,12 @@ export default function ResourceList(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const filter =
-    useSelector(state => selectors.filter(state, resourceType)) ||
-    defaultFilter;
+    useSelector(state => selectors.filter(state, resourceType));
   const filterConfig = useMemo(
     () => ({
       type: resourceType,
       filter: connectorFilter(resourceType),
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter, resourceType]
   );
@@ -92,6 +98,19 @@ export default function ResourceList(props) {
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   const createResourceLabel = createdResouceLabelFn(resourceType, resourceName);
+
+  useEffect(() => {
+    let filter = defaultFilter;
+
+    if (resourceType === 'connectors') {
+      filter = {...filter, sort: { orderBy: 'name', order: 'asc' }};
+    }
+    dispatch(actions.patchFilter(resourceType, filter));
+
+    // we clear the sort during unmounts this it to prevent the same filter state getting forwarded to the sandbox env
+    return () => dispatch(actions.clearFilter(resourceType));
+  },
+  [dispatch, resourceType]);
 
   useEffect(() => {
     let int;
@@ -127,17 +146,20 @@ export default function ResourceList(props) {
          PERMISSIONS[resourceType] &&
          PERMISSIONS[resourceType].view
        }>
-      {// This is where we will be adding all Right drawers to Celigo Table
-      resourceType === 'stacks' && <StackShareDrawer />
-      }
+
+      { /* This is where we will be adding all Right drawers to Celigo Table */}
+      { resourceType === 'stacks' && <StackShareDrawer />}
+      { resourceType === 'connections' && <ConfigConnectionDebugger />}
+
       <ResourceDrawer {...props} />
+      <ScriptLogsDrawerRoute />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={resourceType}
-            defaultFilter={defaultFilter}
           />
           <IconTextButton
             data-test="addNewResource"
@@ -149,7 +171,7 @@ export default function ResourceList(props) {
           </IconTextButton>
         </div>
       </CeligoPageBar>
-      <div className={classes.resultContainer}>
+      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count })}>
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <Typography>

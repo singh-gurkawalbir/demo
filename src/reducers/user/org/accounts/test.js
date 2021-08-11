@@ -6,6 +6,7 @@ import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  emptyList,
 } from '../../../../utils/constants';
 
 // this could be moved into some common place... just testing this now.
@@ -41,6 +42,118 @@ describe('account (ashares) reducers', () => {
     const newState = reducer(someState, 'someaction');
 
     expect(newState).toEqual(someState);
+  });
+  test('should be able to update all trial related properties when trialLicenseIssued event is triggered', () => {
+    const state = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        ownerUser: {
+          licenses: [
+            { license1: 'something 1', type: 'endpoint' },
+            { license2: 'something 2' },
+          ],
+        },
+      },
+    ];
+    const output = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        ownerUser: {
+          licenses: [
+            { license1: 'something 1', tier: 'free', type: 'endpoint', trialStarted: true, trialEndDate: expect.any(String),
+            },
+            { license2: 'something 2' },
+          ],
+        },
+      },
+    ];
+    const licenseTrailIssuedAction = actions.user.org.accounts.trialLicenseIssued({tier: 'free', trialEndDate: moment().add(30, 'days').toISOString(), type: 'LICENSE_TRIAL_ISSUED'}
+    );
+    const newState = reducer(state, licenseTrailIssuedAction);
+
+    expect(newState).toEqual(output);
+  });
+  test('should return default state when trialLicenseIssued event is triggered and initial state in empty', () => {
+    const trialLicenseIssuedAction = actions.user.org.accounts.trialLicenseIssued();
+    const newState = reducer(emptyList, trialLicenseIssuedAction);
+
+    expect(newState).toEqual(emptyList);
+  });
+  test('should return default state when trialLicenseIssued event is triggered and initial state does not contain endpoint or integrator license', () => {
+    const licenseTrailIssuedAction = actions.user.org.accounts.trialLicenseIssued({tier: 'free', trialEndDate: moment().add(30, 'days').toISOString(), type: 'LICENSE_TRIAL_ISSUED'}
+    );
+    const state = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        ownerUser: {
+          licenses: [
+            { license1: 'something 1' },
+            { license2: 'something 2' },
+          ],
+        },
+      },
+    ];
+    const newState = reducer(state, licenseTrailIssuedAction);
+
+    expect(newState).toEqual(state);
+  });
+
+  test('should be able to update upgradeRequested to true when licenseUpgradeRequestSubmitted event is triggered', () => {
+    const state = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        ownerUser: {
+          licenses: [
+            { license1: 'something 1', type: 'endpoint' },
+            { license2: 'something 2' },
+          ],
+        },
+      },
+    ];
+    const output = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        ownerUser: {
+          licenses: [
+            { license1: 'something 1', type: 'endpoint', upgradeRequested: true},
+            { license2: 'something 2' },
+          ],
+        },
+      },
+    ];
+    const licenseUpgradeRequestSubmittedAction = actions.user.org.accounts.licenseUpgradeRequestSubmitted();
+    const newState = reducer(state, licenseUpgradeRequestSubmittedAction);
+
+    expect(newState).toEqual(output);
+  });
+  test('should return default state when licenseUpgradeRequestSubmitted event is triggered and initial state in empty', () => {
+    const licenseUpgradeRequestSubmittedAction = actions.user.org.accounts.licenseUpgradeRequestSubmitted();
+    const newState = reducer(emptyList, licenseUpgradeRequestSubmittedAction);
+
+    expect(newState).toEqual(emptyList);
+  });
+  test('should return default state when licenseUpgradeRequestSubmitted event is triggered and initial state does not contain endpoint or integrator license', () => {
+    const licenseUpgradeRequestSubmittedAction = actions.user.org.accounts.licenseUpgradeRequestSubmitted();
+    const state = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        ownerUser: {
+          licenses: [
+            { license1: 'something 1' },
+            { license2: 'something 2' },
+          ],
+        },
+      },
+    ];
+    const newState = reducer(state, licenseUpgradeRequestSubmittedAction);
+
+    expect(newState).toEqual(state);
   });
 
   test('should receive the right collection for licenses resource type when initial state is empty', () => {
@@ -219,6 +332,12 @@ describe('account (ashares) reducers', () => {
     ];
 
     describe('sharedAccounts', () => {
+      test('should return empty array if received state is undefined', () => {
+        const state = reducer(undefined, 'some action');
+        const result = selectors.sharedAccounts(state);
+
+        expect(result).toEqual(emptyList);
+      });
       test('should return correct sandbox state if account supports sandbox.', () => {
         const state = reducer(
           undefined,
@@ -519,6 +638,12 @@ describe('account (ashares) reducers', () => {
 
         expect(result).toEqual(expectedResult);
       });
+      test('should return empty array if received state is undefined.', () => {
+        const state = reducer(undefined, 'some action');
+        const result = selectors.accountSummary(state);
+
+        expect(result).toEqual(emptyList);
+      });
 
       test('should return correct set of account options for own account.', () => {
         const state = reducer(
@@ -538,6 +663,12 @@ describe('account (ashares) reducers', () => {
       });
     });
     describe('notifications', () => {
+      test('should return empty array if received state is undefined', () => {
+        const state = reducer(undefined, 'some action');
+        const result = selectors.notifications(state);
+
+        expect(result).toEqual(emptyList);
+      });
       test('should return correct set of account options.', () => {
         const state = reducer(
           [],
@@ -641,6 +772,7 @@ describe('account (ashares) reducers', () => {
             purge: true,
           },
           scripts: { view: true, create: true, edit: true, delete: true },
+          eventreports: {view: true, create: true, edit: true, delete: true},
           stacks: { view: true, create: true, edit: true, delete: true },
           apis: {view: true, create: true, edit: true, delete: true},
           templates: {},
@@ -764,6 +896,7 @@ describe('account (ashares) reducers', () => {
           scripts: { view: true, create: true, edit: true, delete: true },
           stacks: { view: true, create: true, edit: true, delete: true },
           apis: {view: true, create: true, edit: true, delete: true },
+          eventreports: {view: true, create: true, edit: true, delete: true},
           templates: {},
           transfers: {},
           users: {},
@@ -811,6 +944,7 @@ describe('account (ashares) reducers', () => {
               connections: {},
             },
           },
+          eventreports: {},
           recyclebin: {},
           scripts: {},
           stacks: {},
@@ -880,6 +1014,7 @@ describe('account (ashares) reducers', () => {
           scripts: {},
           stacks: {},
           apis: {},
+          eventreports: {},
           templates: {},
           transfers: {},
           users: {},
@@ -994,6 +1129,88 @@ describe('account (ashares) reducers', () => {
           name: 'Owner Two',
         });
         expect(selectors.owner(state, 'invalid')).toEqual(undefined);
+      });
+    });
+    describe('isAccountSSORequired', () => {
+      test('should return false for invalid state or no accountId passed', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashare2',
+              ownerUser: { email: 'owner2@test.com', name: 'Owner Two' },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired()).toBeFalsy();
+        expect(selectors.isAccountSSORequired(state, 'invalid')).toBeFalsy();
+      });
+      test('should return false if the accountId passed does not match existing accounts', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashare2',
+              ownerUser: { email: 'owner2@test.com', name: 'Owner Two' },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired()).toBeFalsy();
+        expect(selectors.isAccountSSORequired(state, 'ashare3')).toBeFalsy();
+      });
+      test('should return false if the account for passed accountId has isAccountSSORequired false', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashareId123',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              accountSSORequired: false,
+              ownerUser: {
+                _id: 'ownerId',
+                _ssoClientId: 'clientId123',
+              },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired(state, 'ashareId123')).toBeFalsy();
+      });
+      test('should return true if the account for passed accountId has isAccountSSORequired true', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashareId123',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              accountSSORequired: true,
+              ownerUser: {
+                _id: 'ownerId',
+                _ssoClientId: 'clientId123',
+              },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired(state, 'ashareId123')).toBeTruthy();
       });
     });
   });

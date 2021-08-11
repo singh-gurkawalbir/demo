@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
   },
 }));
-
+const options = { ignoreUnusedConnections: true };
 export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -33,7 +33,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   const _integrationId = childId || integrationId;
   const notifications = useSelectorMemo(
     selectors.mkIntegrationNotificationResources,
-    _integrationId);
+    _integrationId, options);
 
   const { flowValues = [], connectionValues = [], flows, connections } = notifications;
 
@@ -102,7 +102,7 @@ export default function NotificationsSection({ integrationId, childId }) {
 
       <LoadResources required resources="notifications,flows,connections">
         <div className={classes.form}>
-          <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+          <DynaForm formKey={formKey} />
 
           <DynaSubmit formKey={formKey} onClick={handleSubmit}>
             Save

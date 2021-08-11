@@ -25,6 +25,51 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
+  'file.fileName': {
+    type: 'ftpfilenamewitheditor',
+    label: r => r?.adaptorType === 'S3Import' ? 'File key' : 'File name',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.fileKey';
+      }
+      if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.fileName';
+      }
+
+      return 'import.file.fileName';
+    },
+    required: true,
+    showAllSuggestions: true,
+    validWhen: {
+      someAreTrue: {
+        message:
+          'Please append date and time stamp, such as {{timestamp "YYYY-MM-DD hh:mm:ss" "America/Los_Angeles"}}.',
+        conditions: [
+          {
+            field: 'file.skipAggregation',
+            isNot: {
+              values: [true],
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
+            },
+          },
+        ],
+      },
+    },
+    visibleWhen: r => {
+      if (r?.adaptorType === 'FTPImport') {
+        return [{
+          field: 'inputMode',
+          is: ['records'],
+        }];
+      }
+
+      return [];
+    },
+  },
   'edix12.format': {
     type: 'filedefinitionselect',
     label: 'EDI x12 format',
@@ -64,7 +109,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File generator helper',
-    helpkey: 'import.file.filedefinition.rules',
+    helpKey: 'import.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -132,7 +177,70 @@ export default {
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression format',
-    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
+    options: [{ items: [{ label: 'gzip', value: 'gzip' }, { label: 'zip', value: 'zip' }] }],
+  },
+  pgpencrypt: {
+    type: 'fileencryptdecrypt',
+    label: 'Encrypt files',
+    defaultValue: r => !!(r?.file?.encrypt),
+    connectionId: r => r && r._connectionId,
+  },
+  'file.encrypt': {
+    type: 'select',
+    label: 'Encryption algorithm',
+    connectionId: r => r && r._connectionId,
+    defaultValue: 'pgp',
+    options: [{ items: [{ label: 'pgp', value: 'pgp' }] }],
+    omitWhenHidden: true,
+    visibleWhen: [{ field: 'pgpencrypt', is: [true] }],
+    requiredWhen: [{ field: 'pgpencrypt', is: [true] }],
+  },
+  'file.pgp.symmetricKeyAlgorithm': {
+    type: 'select',
+    label: 'Encryption symmetric key algorithm',
+    requiredWhenAll: [
+      {
+        field: 'file.encrypt',
+        isNot: [''],
+      },
+      { field: 'pgpencrypt', is: [true] },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'file.encrypt',
+        isNot: [''],
+      },
+      { field: 'pgpencrypt', is: [true] },
+    ],
+    defaultValue: r => r?.file?.pgp?.symmetricKeyAlgorithm || 'aes256',
+    options: [{ items: [{ label: 'twofish', value: 'twofish' }, { label: 'cast5', value: 'cast5' }, { label: '3des', value: '3des' }, { label: 'aes128', value: 'aes128' }, { label: 'aes192', value: 'aes192' }, { label: 'aes256', value: 'aes256' }] }],
+  },
+  'file.pgp.hashAlgorithm': {
+    type: 'hashalgorithm',
+    label: 'Signing hash algorithm',
+    connectionId: r => r && r._connectionId,
+    visibleWhenAll: [
+      {
+        field: 'file.encrypt',
+        isNot: [''],
+      },
+      { field: 'pgpencrypt', is: [true] },
+    ],
+    options: [{ items: [{ label: 'sha256', value: 'sha256' }, { label: 'sha384', value: 'sha384' }, { label: 'sha512', value: 'sha512' }, { label: 'sha224', value: 'sha224' }] }],
+  },
+  'file.backupPath': {
+    type: 'uri',
+    label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.backupDirectoryPath';
+      }
+
+      return 'import.file.backupPath';
+    },
+    showLookup: false,
   },
   'file.skipAggregation': {
     type: 'checkbox',

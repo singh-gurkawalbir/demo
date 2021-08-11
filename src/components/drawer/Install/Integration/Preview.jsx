@@ -1,5 +1,5 @@
 import React, { useEffect} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
@@ -8,6 +8,7 @@ import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import getRoutePath from '../../../../utils/routePaths';
+import messageStore from '../../../../constants/messages';
 
 const emptyObject = {};
 
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   preview: {
     marginTop: theme.spacing(2),
     overflowY: 'auto',
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 185}px)`,
+    maxHeight: `calc(100vh - ${theme.appBarHeight + 225}px)`,
   },
 }));
 
@@ -34,12 +35,12 @@ export default function IntegrationPreview() {
     state => selectors.templateSetup(state, templateId) || emptyObject
   );
   const { isCloned, integrationId} = useSelector(
-    state => selectors.integrationClonedDetails(state, templateId),
-    (left, right) =>
-      left &&
-      right &&
-      left.isCloned === right.isCloned &&
-      left.integrationId === right.integrationId
+    state => {
+      const { isCloned, integrationId} = selectors.integrationClonedDetails(state, templateId);
+
+      return { isCloned, integrationId};
+    },
+    shallowEqual
   );
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function IntegrationPreview() {
   const handleInstallIntegration = () => {
     confirmDialog({
       title: 'Disclaimer',
-      message: 'Please note that by default all integration flows will be disabled when first installed, and that you will need to explicitly enable each flow that you want to use. Please note also that you can modify, delete, or extend any of the components that get installed, and unlike Integration apps, updates to the master integration template will never be propagated automatically to your account. Lastly, please note that integration templates are not explicitly reviewed by Celigo, and please be sure to review all components in the integration before proceeding.',
+      message: messageStore('DIY_INSTALL_DISCLAIMER'),
       buttons: [
         {
           label: 'Proceed',
@@ -88,7 +89,7 @@ export default function IntegrationPreview() {
 
       <Button
         className={classes.installButton}
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={handleInstallIntegration}>
         Install integration

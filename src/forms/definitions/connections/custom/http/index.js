@@ -21,6 +21,7 @@ import okta from './okta';
 import myobaccountright from './myobaccountright';
 import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
+import azurestorageaccount from './azurestorageaccount';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
 import jira from './jira';
@@ -53,7 +54,7 @@ import accelo from './accelo';
 import acumatica from './acumatica';
 import tsheets from './tsheets';
 import etsy from './etsy';
-// import googledrive from './googledrive';
+import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
@@ -76,7 +77,6 @@ import box from './box';
 import sageone from './sageone';
 // import yahoo from './yahoo';
 // import hybris from './hybris';
-// import steelbrick from './steelbrick';
 import squareup from './squareup';
 // import surveymonkey from './surveymonkey';
 import stripe from './stripe';
@@ -130,7 +130,6 @@ import postmark from './postmark';
 import klaviyo from './klaviyo';
 import returnly from './returnly';
 import aptrinsic from './aptrinsic';
-// import cardknox from './cardknox';
 import coupa from './coupa';
 import microsoftdynamics365 from './microsoftdynamics365';
 import microsoftbusinesscentral from './microsoftbusinesscentral';
@@ -154,7 +153,6 @@ import drift from './drift';
 import vroozi from './vroozi';
 // import signnow from './signnow';
 import adp from './adp';
-// import clio from './clio';
 import constantcontactv3 from './constantcontactv3';
 import constantcontactv2 from './constantcontactv2';
 import faire from './faire';
@@ -192,6 +190,31 @@ import gainsight from './gainsight';
 import dotdigital from './dotdigital';
 import checkout from './checkout';
 import channelape from './channelape';
+import pricefx from './pricefx';
+import clover from './clover';
+import freshworks from './freshworks';
+import pipedrive from './pipedrive';
+import microsoftteams from './microsoftteams';
+import adobesign from './adobesign';
+import prestashop from './prestashop';
+import yotpo from './yotpo';
+import mavenlink from './mavenlink';
+import googleads from './googleads';
+import fulfilment from './fulfilment';
+import walmartmexico from './walmartmexico';
+import walmartcanada from './walmartcanada';
+import paylocity from './paylocity';
+import looker from './looker';
+import pandadoc from './pandadoc';
+import freshservice from './freshservice';
+import omnisend from './omnisend';
+import pagerduty from './pagerduty';
+import quickbase from './quickbase';
+import pagerdutyevents from './pagerdutyevents';
+import orangehrm from './orangehrm';
+import sapsuccessfactors from './sapsuccessfactors';
+import braintree from './braintree';
+import zenefits from './zenefits';
 
 export default {
   channelape,
@@ -221,6 +244,7 @@ export default {
   propack,
   solidcommerce,
   azureactivedirectory,
+  azurestorageaccount,
   parseur,
   paypal,
   returnly,
@@ -235,7 +259,6 @@ export default {
   tophatter,
   zohocrm,
   tsheets,
-  // steelbrick,
   squareup,
   postmark,
   zendesk,
@@ -254,7 +277,7 @@ export default {
   splunk,
   anaplan,
   etsy,
-  // googledrive,
+  googledrive,
   namely,
   newegg,
   asana,
@@ -356,7 +379,6 @@ export default {
   merchantesolutions,
   dunandbradstreet,
   adp,
-  // clio,
   constantcontactv3,
   constantcontactv2,
   faire,
@@ -387,4 +409,29 @@ export default {
   gainsight,
   dotdigital,
   checkout,
+  pricefx,
+  clover,
+  freshworks,
+  pipedrive,
+  microsoftteams,
+  adobesign,
+  prestashop,
+  yotpo,
+  mavenlink,
+  googleads,
+  'fulfilment.com': fulfilment,
+  walmartmexico,
+  walmartcanada,
+  paylocity,
+  looker,
+  pandadoc,
+  freshservice,
+  omnisend,
+  pagerduty,
+  quickbase,
+  pagerdutyevents,
+  orangehrm,
+  sapsuccessfactors,
+  braintree,
+  zenefits,
 };

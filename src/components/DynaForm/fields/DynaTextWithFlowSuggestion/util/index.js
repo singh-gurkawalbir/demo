@@ -1,4 +1,4 @@
-const getValueAfterInsert = (value, insertPosition, insertedVal) => {
+export default function getValueAfterInsert(value, insertPosition, insertedVal) {
   const getPreText = val => {
     const lastIndexOfOpenBraces = val.lastIndexOf('{{');
 
@@ -36,6 +36,4 @@ const getValueAfterInsert = (value, insertPosition, insertedVal) => {
   return `${getPreText(textBeforeInsert)}{{${insertedVal}}}${getPostText(
     textAfterInsert
   )}`;
-};
-
-export default getValueAfterInsert;
+}

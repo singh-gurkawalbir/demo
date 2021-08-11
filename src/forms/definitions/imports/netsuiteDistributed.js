@@ -8,8 +8,10 @@ export default {
       newValues['/netsuite/recordType'] = 'file';
       newValues['/distributed'] = false;
       newValues['/adaptorType'] = 'NetSuiteImport';
+      newValues['/blob'] = true;
     } else {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
     }
 
     if (newValues['/netsuite_da/operation'] === 'add' && !newValues['/ignoreExisting']) {
@@ -25,6 +27,13 @@ export default {
 
     if (subrecords) {
       mapping = updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecords);
+    }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
     }
 
     return {
@@ -50,7 +59,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
+        if (r.resourceType === 'transferFiles' || r.blob) return 'blob';
 
         return 'records';
       },
@@ -88,7 +97,7 @@ export default {
     ignoreMissing: {
       fieldId: 'ignoreMissing',
       visibleWhenAll: [
-        { field: 'netsuite_da.operation', is: ['update'] },
+        { field: 'netsuite_da.operation', is: ['update', 'delete'] },
         {
           field: 'inputMode',
           is: ['records'],
@@ -139,6 +148,7 @@ export default {
     'netsuite_da.useSS2Restlets': {
       fieldId: 'netsuite_da.useSS2Restlets',
     },
+    traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
   },
   layout: {
     type: 'collapse',
@@ -151,7 +161,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
+          if (r?.resourceType === 'transferFiles' || r?.blob) {
             return 'How would you like the files transferred?';
           }
 
@@ -177,7 +187,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
+          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },

@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../../reducers';
@@ -27,7 +26,7 @@ export default function ConditionalLookup({onSave, disabled, importId, flowId, .
     if (!lookupName) {
       return emptySet;
     }
-    const {lookups} = selectors.mapping(state);
+    const {lookups = []} = selectors.mapping(state);
 
     const val = lookups.find(({isConditionalLookup, name}) => isConditionalLookup && name === lookupName);
 

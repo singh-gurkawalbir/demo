@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
-import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
+import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -79,29 +79,32 @@ export default function PreviewInfo(props) {
     fetchExportPreviewData,
     resourceSampleData,
     previewStageDataList,
-    disabled,
     resourceId,
-    resourceType,
     showPreviewData,
+    formKey,
   } = props;
   const classes = useStyles(props);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
   const [enquesnackbar] = useEnqueueSnackbar();
   const canSelectRecords = useSelector(state =>
-    selectors.canSelectRecordsInPreviewPanel(state, resourceId, resourceType)
+    selectors.canSelectRecordsInPreviewPanel(state, formKey)
   );
+  const isPreviewDisabled = useSelector(state =>
+    selectors.isExportPreviewDisabled(state, formKey));
+
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
-    if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
+    if (status === 'requested') return <Typography data-public variant="body2"> Testing </Typography>;
 
-    if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
+    if (status === 'received') return <Typography data-public variant="body2"> Success! </Typography>;
 
     if (status === 'error') {
       const errorCount = error?.length || 0;
 
       return (
-        <ErroredMessageComponent
+        <FieldMessage
+          dataPublic
           errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
         />
       );
@@ -144,8 +147,7 @@ export default function PreviewInfo(props) {
     },
     [fetchExportPreviewData, isValidRecordSize, enquesnackbar],
   );
-  const disablePreview = showPreviewData &&
-    (disabled || resourceSampleData.status === 'requested');
+  const disablePreview = isPreviewDisabled || (showPreviewData && resourceSampleData.status === 'requested');
 
   return (
     <div className={classes.previewContainer}>

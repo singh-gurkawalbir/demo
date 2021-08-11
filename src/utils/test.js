@@ -7,6 +7,10 @@ import getRequestOptions from './requestOptions';
 import getRoutePath from './routePaths';
 import retry from './retry';
 import adjustTimezone from './adjustTimezone';
+import inferErrorMessages from './inferErrorMessages';
+import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
+import { MISCELLANEOUS_SECTION_ID } from './constants';
+import { getAsyncKey } from './saveAndCloseButtons';
 
 const uiRoutePathPrefix = '';
 
@@ -45,9 +49,11 @@ describe('Json paths util method', () => {
       },
     };
 
-    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true })).toEqual([
+    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true, includeArrayLength: true })).toEqual([
       { id: 'a.arr', type: 'array' },
+      { id: 'a.arr.length', type: 'number' },
       { id: 'a.arr2', type: 'array' },
+      { id: 'a.arr2.length', type: 'number' },
       { id: 'b.c', type: 'number' },
     ]);
   });
@@ -310,5 +316,198 @@ describe('adjustTimezone', () => {
     const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
 
     expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+  });
+});
+
+describe('inferErrorMessages expect errored api message in this format { message, errors } ', () => {
+  describe('invalid inputs', () => {
+    test('should return [] for null or undefined inputs', () => {
+      expect(inferErrorMessages(null)).toEqual([]);
+      expect(inferErrorMessages(undefined)).toEqual([]);
+    });
+
+    test('should return just the input in an array for non parsable input messages', () => {
+      expect(inferErrorMessages('some error')).toEqual(['some error']);
+    });
+    test('should return [] for parsable input messages with non message or errors properties', () => {
+      expect(inferErrorMessages({a: 'something', b: 'something1'})).toEqual([]);
+    });
+  });
+  describe('valid { message, errors }', () => {
+    test('should parse { message} in api message and just return it, this is seen in csrf api errored calls', () => {
+      expect(inferErrorMessages({message: 'csrf error'})).toEqual(['csrf error']);
+    });
+    test('should parse stringified input messages consisting of { message} and just return it, this is seen in csrf api errored calls', () => {
+      expect(inferErrorMessages(JSON.stringify({message: 'csrf error'}))).toEqual(['csrf error']);
+    });
+    test('should parse { errors } property in api message, and translate it to a collection of error messages', () => {
+      expect(inferErrorMessages({errors: ['api failure1', 'api failure2']})).toEqual(['api failure1', 'api failure2']);
+      expect(inferErrorMessages({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})).toEqual(['api failure1', 'api failure2']);
+    });
+
+    test('should be able to parse stringified inputs consisting of error property and return a collection of error messages', () => {
+      expect(inferErrorMessages(JSON.stringify({errors: ['api failure1', 'api failure2']}))).toEqual(['api failure1', 'api failure2']);
+      expect(inferErrorMessages(JSON.stringify({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})))
+        .toEqual(['api failure1', 'api failure2']);
+    });
+    test('should return {errors} value unit array if {errors} is not an array but a string', () => {
+      expect(inferErrorMessages({errors: 'api failure1'})).toEqual(['api failure1']);
+      expect(inferErrorMessages(JSON.stringify({errors: 'api failure1'}))).toEqual(['api failure1']);
+    });
+    test('should return stringified {errors} value unit array if {errors} is not an array but an object', () => {
+      expect(inferErrorMessages({errors: {e1: 'api failure1', e2: 'api failure2'}})).toEqual([JSON.stringify({e1: 'api failure1', e2: 'api failure2'})]);
+      expect(inferErrorMessages(JSON.stringify({errors: {e1: 'api failure1', e2: 'api failure2'}}))).toEqual([JSON.stringify({e1: 'api failure1', e2: 'api failure2'})]);
+    });
+  });
+});
+
+describe('flowgroupingsRedirectTo', () => {
+  const baseRoute = '/baseRoute';
+  const defaultSectionId = 'general';
+
+  test('should redirect the page to base route when attempting sectionId for an IA without flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+      },
+      url: `${baseRoute}/sections/someId`,
+    };
+
+    expect(flowgroupingsRedirectTo(match, null, defaultSectionId)).toEqual(baseRoute);
+  });
+  test('should redirect the page to the default section route when attempting an invalid sectionId for an IA with flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{ sectionId: defaultSectionId}];
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(`${baseRoute}/sections/general`);
+  });
+
+  test('should return null when attempting a valid sectionId for an IA with flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'validSectionId',
+      },
+      url: `${baseRoute}/sections/validSectionId`,
+    };
+    const flowGroupings = [{ sectionId: defaultSectionId}, { sectionId: 'validSectionId' }];
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(null);
+  });
+
+  test('should return default sectionId route when attempting a route without a sectionId but has flowGroupings', () => {
+    const match = {
+      path: baseRoute,
+      params: {
+      },
+      url: baseRoute,
+    };
+    const flowGroupings = [{ sectionId: defaultSectionId}];
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(`${baseRoute}/sections/general`);
+  });
+  test('should return null when attempting a route without flowGroupings', () => {
+    const match = {
+      path: baseRoute,
+      params: {
+      },
+      url: baseRoute,
+    };
+    const flowGroupings = null;
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(null);
+  });
+});
+
+describe('redirectFirstFlowGrouping', () => {
+  const baseRoute = '/baseRoute';
+
+  test('when attempting an invalid route with no flowGrouping redirect to baseRoute ', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = null;
+    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}`);
+  });
+
+  test('when attempting an invalid route with flows that are all categorized should return path to redirect to first flowgrouping', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}];
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+  });
+
+  test('when attempting an invalid route with uncategorized flows then should return path to redirect to first flowgrouping', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+  });
+  test('when attempting a miscellaneous section route with all uncateogrized flows then should return null since it is a valid route', () => {
+    // in this case we will have a misc section
+    /// the util fn will return null since we are attempting a valid route
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: MISCELLANEOUS_SECTION_ID,
+      },
+      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = [{id: 'someId'}, {id: 'someId2'}];
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(null);
+  });
+
+  test('when attempting a miscellaneous section route with no flows then should return firstFlowGroupId', () => {
+    // we will still have all flowGrouping sections
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: MISCELLANEOUS_SECTION_ID,
+      },
+      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = null;
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+  });
+});
+
+describe('saveAndCloseButtons tests', () => {
+  describe('getAsyncKey tests', () => {
+    test('should not throw errors on invalid props', () => {
+      expect(getAsyncKey()).toEqual('undefined-undefined');
+    });
+    test('should return resourceType-resourceId as a string on passing correct arguments', () => {
+      expect(getAsyncKey('exports', '324324')).toEqual('exports-324324');
+    });
   });
 });

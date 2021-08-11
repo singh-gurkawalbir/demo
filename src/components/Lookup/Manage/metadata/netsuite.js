@@ -85,12 +85,13 @@ export default {
           id: '_mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import field (NetSuite)',
+          valueLabel: 'Import field value',
           commMetaPath: staticLookupCommMetaPath,
           connectionId: staticLookupCommMetaPath && connectionId,
           label: '',
+          required: true,
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
           defaultValue:
             lookup.map &&
@@ -109,8 +110,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
-          helpText:
-            'Name of the lookups that will be exposed to the mapping to refer.',
+          helpKey: 'import.lookups.name',
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',

@@ -15,6 +15,9 @@ export default {
     ) {
       retValues['/mongodb/ignoreExtract'] = undefined;
     }
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...retValues,
@@ -24,7 +27,7 @@ export default {
     common: {
       formId: 'common',
     },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    advancedSettings: { formId: 'advancedSettings' },
     'mongodb.document': {
       fieldId: 'mongodb.document',
     },
@@ -92,7 +95,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['apiIdentifier'],
+        fields: ['advancedSettings'],
       },
     ],
   },

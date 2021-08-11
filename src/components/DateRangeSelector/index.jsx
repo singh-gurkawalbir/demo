@@ -3,7 +3,8 @@ import { Button, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
-import { DateRangePicker } from 'react-date-range';
+import clsx from 'clsx';
+import { DateRangePicker, Calendar } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import startOfDay from 'date-fns/startOfDay';
@@ -11,6 +12,8 @@ import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ButtonGroup from '../ButtonGroup';
+import ActionButton from '../ActionButton';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -65,6 +68,12 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
+    padding: [[0, 12]],
+    lineHeight: 2,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
+    },
   },
   parentPicker: {
     display: 'flex',
@@ -82,19 +91,19 @@ const useStyles = makeStyles(theme => ({
       textAlign: 'center',
     },
     '&.Mui-selected': {
-      background: theme.palette.primary.light,
-      borderColor: theme.palette.primary.light,
+      background: theme.palette.primary.dark,
+      borderColor: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
         color: theme.palette.common.white,
       },
       '&:hover': {
-        background: theme.palette.primary.light,
-        borderColor: theme.palette.primary.light,
+        background: theme.palette.primary.dark,
+        borderColor: theme.palette.primary.dark,
       },
     },
     '&:hover': {
-      borderColor: theme.palette.primary.light,
-      background: theme.palette.primary.light,
+      borderColor: theme.palette.primary.dark,
+      background: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
         color: theme.palette.common.white,
       },
@@ -103,18 +112,76 @@ const useStyles = makeStyles(theme => ({
   rightCalendar: {
     marginLeft: theme.spacing(2),
   },
+  dateRangePopperBtnFull: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    padding: [[6, 12]],
+    '& > .MuiButton-label': {
+      justifyContent: 'space-between',
+    },
+    '&:hover': {
+      color: theme.palette.secondary.main,
+    },
+  },
 }));
+const DateRange = props => {
+  const { isCalendar, setSelectedRange, ranges } = props;
+  const handleDateRangeSelection = useCallback(({ selection: range }) => {
+    let { startDate, endDate } = range;
+
+    if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
+    setSelectedRange({ preset: 'custom', startDate, endDate });
+  }, [setSelectedRange]);
+  const handleCalendardateSelection = useCallback(endDate => {
+    setSelectedRange({ preset: 'custom', endDate: endOfDay(endDate)});
+  }, [setSelectedRange]);
+
+  if (isCalendar) {
+    return (
+      <Calendar
+        {...props}
+        date={ranges[0].endDate} // ranges[0].endate consists the selected date
+        onChange={handleCalendardateSelection}
+        months={1}
+     />
+    );
+  }
+
+  return (
+    <DateRangePicker
+      {...props}
+      onChange={handleDateRangeSelection}
+      months={2}
+  />
+  );
+};
 
 export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
+  classProps = {},
   customPresets = [],
   showTime = true,
   clearable = false,
   clearValue,
+  placement,
+  Icon,
+  disabled,
+  fullWidthBtn,
+  placeholder = 'Select range',
+  defaultPreset = {preset: 'last30days'},
+  selectedRangeConstraint,
+  CustomTextFields,
+  toDate,
+  // default Date display to be shown in all cases
+  showDateDisplay = true,
+  isCalendar,
 }) {
-  const defaultValue = getSelectedRange({preset: 'last30days'});
+  const defaultValue = getSelectedRange(defaultPreset);
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
   const [initalValue, setInitialValue] = useState(
     {
@@ -123,19 +190,29 @@ export default function DateRangeSelector({
       preset,
     },
   );
+  const [reset, setReset] = useState(false);
+
   const [selectedRange, setSelectedRange] = useState(initalValue);
+
+  const setSelectedRangeWithConstraint = useCallback(selected => {
+    const {startDate, endDate} = selected;
+
+    if (selectedRangeConstraint && !selectedRangeConstraint(startDate, endDate)) { return; }
+    setSelectedRange(selected);
+    setReset(state => !state);
+  }, [selectedRangeConstraint]);
   const handleListItemClick = (event, id) => {
-    setSelectedRange(state => ({...state, preset: id}));
+    setSelectedRangeWithConstraint(state => ({...state, preset: id}));
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const presets = useMemo(() => customPresets.length ? customPresets : defaultPresets, [customPresets]);
   const toggleClick = useCallback(event => {
     if (anchorEl) {
-      setSelectedRange(initalValue);
+      setSelectedRangeWithConstraint(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, [anchorEl, initalValue]);
+  }, [anchorEl, setSelectedRangeWithConstraint, initalValue]);
 
   const handleSave = useCallback(() => {
     if (selectedRange.preset === 'lastrun') {
@@ -151,39 +228,48 @@ export default function DateRangeSelector({
   }, [customPresets, onSave, selectedRange]);
 
   const handleClose = useCallback(() => {
-    setSelectedRange(initalValue);
+    setSelectedRangeWithConstraint(initalValue);
     setAnchorEl(null);
-  }, [initalValue]);
+  }, [initalValue, setSelectedRangeWithConstraint]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
-    onSave && onSave(selectedRange);
+    setSelectedRangeWithConstraint(() => {
+      const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
+
+      onSave && onSave(clearRangeValue);
+
+      return clearRangeValue;
+    });
     setAnchorEl(null);
-  }, [onSave, selectedRange, clearValue]);
-
-  const handleDateRangeSelection = useCallback(range => {
-    let { startDate, endDate } = range;
-
-    if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
-      startDate = startOfDay(startDate);
-      endDate = endOfDay(endDate);
-    }
-    setSelectedRange({ preset: 'custom', startDate, endDate });
-  }, []);
+  }, [setSelectedRangeWithConstraint, clearValue, onSave]);
 
   return (
     <>
-      <Button
-        onClick={toggleClick}
-        variant="outlined"
-        color="secondary"
-        className={classes.dateRangePopperBtn}>
-        {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}
-      </Button>
+      {
+        Icon ? (
+          <ActionButton disabled={!!disabled} onClick={toggleClick}>
+            <Icon />
+          </ActionButton>
+        ) : (
+          <Button
+            disabled={!!disabled}
+            onClick={toggleClick}
+            variant="outlined"
+            color="secondary"
+            className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
+          </Button>
+        )
+      }
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        placement="bottom-end"
+        classes={{
+          popper: clsx(classProps.filterTimeStampPopper, {[classProps.filterTimeStampPopperExpand]: selectedRange.preset === 'custom' }),
+          arrow: clsx(classProps.filterTimeStampPopperArrow, {[classProps.filterTimeStampArrowPopperExpand]: selectedRange.preset === 'custom'}),
+        }}
+        restrictToParent={false}
+        placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
@@ -205,22 +291,30 @@ export default function DateRangeSelector({
                   ))}
 
                 </List>
+                {selectedRange.preset === 'custom' &&
+                CustomTextFields && (
+                <CustomTextFields
+                  reset={reset}
+                  setReset={setReset} selectedRange={selectedRange}
+                  setSelectedRange={setSelectedRange} />
+                )}
               </div>
               {selectedRange.preset === 'custom' && (
               <div className={classes.rightCalendar}>
-                <DateRangePicker
+                <DateRange
+                  isCalendar={isCalendar}
+                  setSelectedRange={setSelectedRangeWithConstraint}
                   staticRanges={[]}
                   showSelectionPreview
-                  onChange={item => handleDateRangeSelection(item.selection)}
+                  showDateDisplay={showDateDisplay}
                   moveRangeOnFirstSelection={false}
-                  months={2}
                   showMonthAndYearPickers={false}
                   editableDateInputs={false}
                   className={classes.child}
                   ranges={[{...selectedRange, key: 'selection'}]}
                   direction="horizontal"
                   showTime={showTime}
-                  maxDate={new Date()}
+                  maxDate={toDate || new Date()}
                   minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}
@@ -230,15 +324,15 @@ export default function DateRangeSelector({
             </div>
             <div className={classes.actions}>
               <ButtonGroup>
-                <Button variant="outlined" color="primary" onClick={handleSave}>
+                <Button variant="contained" color="primary" onClick={handleSave}>
                   Apply
                 </Button>
                 {clearable && (
-                <Button variant="text" color="primary" onClick={handleClear}>
+                <Button variant="text" color="secondary" onClick={handleClear}>
                   Clear
                 </Button>
                 )}
-                <Button variant="text" color="primary" onClick={handleClose}>
+                <Button variant="text" color="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
               </ButtonGroup>

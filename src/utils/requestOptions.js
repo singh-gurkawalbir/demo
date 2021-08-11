@@ -1,5 +1,8 @@
+import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES } from './constants';
+import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
+import { getStaticCodesList } from './listenerLogs';
+import { getSelectedRange } from './flowMetrics';
 
 let path;
 
@@ -16,7 +19,10 @@ export default function getRequestOptions(
     connectorId,
     licenseId,
     flowId,
+    exportId,
     isResolved,
+    nextPageURL,
+    loadMore,
   } = {}
 ) {
   switch (action) {
@@ -46,6 +52,11 @@ export default function getRequestOptions(
         path: `/ashares/${resourceId}/disable`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.USER_REINVITE:
+      return {
+        path: `/ashares/${resourceId}/reinvite`,
+        opts: { method: 'PUT' },
+      };
     case actionTypes.USER_MAKE_OWNER:
       return { path: '/transfers/invite', opts: { method: 'POST' } };
     case actionTypes.LICENSE_TRIAL_REQUEST:
@@ -67,6 +78,10 @@ export default function getRequestOptions(
         path = '/licenses/upgradeRequest';
       } else if (actionType === 'connectorRenewal') {
         path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
+      } else if (actionType === 'ioRenewal') {
+        path = '/licenses/renewRequest';
+      } else if (actionType === 'ioResume') {
+        return {path: '/resume', opts: {method: 'PUT'}};
       }
 
       return {
@@ -159,7 +174,7 @@ export default function getRequestOptions(
     case actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL:
       return {
         path: `/jobs/${resourceId}/files/signedURL`,
-        opts: { method: 'GET' },
+        opts: { method: 'POST' },
       };
     case actionTypes.JOB.CANCEL:
       return {
@@ -230,6 +245,11 @@ export default function getRequestOptions(
       return {
         path: `/retries/${resourceId}/data`,
         opts: { method: 'PUT' },
+      };
+    case actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA:
+      return {
+        path: `/retries/${resourceId}/signedURL`,
+        opts: { method: 'GET' },
       };
     case actionTypes.FLOW.RUN:
       return {
@@ -311,7 +331,107 @@ export default function getRequestOptions(
       };
     }
 
+    case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST: {
+      let path = nextPageURL
+        ? nextPageURL.replace('/api', '')
+        : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
+      const queryParams = [];
+
+      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
+
+      if (!sources.includes('all')) {
+        sources.forEach(source => queryParams.push(`source=${source}`));
+      }
+      if (!classifications.includes('all')) {
+        classifications.forEach(classification => queryParams.push(`classification=${classification}`));
+      }
+      if (occuredAt?.startDate && occuredAt?.endDate) {
+        queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
+        queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
+      }
+      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+        queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+        queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
+      path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
+      let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
+      const { range, status } = filters || {};
+      const queryParams = [];
+      const statusFilter = status?.length ? status : [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const {startDate, endDate} = getSelectedRange(range) || {};
+
+      statusFilter.forEach(status => queryParams.push(`status=${status}`));
+
+      if (startDate && endDate) {
+        queryParams.push(`createdAt_gte=${moment(startDate).toISOString()}`);
+        queryParams.push(`createdAt_lte=${moment(endDate).toISOString()}`);
+      }
+      path += `&${queryParams.join('&')}`;
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.LOGS.LISTENER.REQUEST: {
+      let path;
+
+      if (loadMore && nextPageURL) {
+        path = nextPageURL.replace('/api', '');
+      } else {
+        path = `/flows/${flowId}/${exportId}/requests`;
+        const queryParams = [];
+        const { codes = [], time } = filters;
+
+        const codesList = getStaticCodesList(codes);
+
+        if (!codesList.includes('all')) {
+          codesList.forEach(c => queryParams.push(`statusCode=${c}`));
+        }
+        if (time?.startDate) {
+          queryParams.push(`time_gt=${time.startDate.getTime()}`);
+        }
+        if (time?.endDate) {
+          queryParams.push(`time_lte=${time.endDate.getTime()}`);
+        }
+
+        if (queryParams.length !== 0) {
+          path += `?${queryParams.join('&')}`;
+        }
+      }
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
     default:
       return {};
   }
 }
+
+export const pingConnectionParentContext = values => {
+  if (!values) return {};
+
+  const { flowId, integrationId, parentType, parentId } = values;
+  const context = {
+    _flowId: flowId,
+    _integrationId: integrationId === STANDALONE_INTEGRATION.id ? undefined : integrationId,
+  };
+
+  if (parentType) {
+    context[parentType === 'exports' ? '_exportId' : '_importId'] = parentId;
+  }
+
+  return context;
+};

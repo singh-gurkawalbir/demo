@@ -9,7 +9,7 @@ import { apiCallWithRetry } from '../index';
 import { getPackageURLs, verifySSConnection, verifyConnectorBundle, checkNetSuiteDABundle, verifyPackage, isConnectionOnline, postInstallComplete } from './installer';
 
 describe('suiteScript sagas', () => {
-  describe('installer saga', () => {
+  describe('installer sagas', () => {
     const ssLinkedConnectionId = '123';
     const connectorId = 'sf-ns';
     const error = { code: 422, message: 'unprocessable entity' };
@@ -302,6 +302,30 @@ describe('suiteScript sagas', () => {
               connectorId
             )
           )
+          .run();
+      });
+    });
+
+    describe('isConnectionOnline generator', () => {
+      test('should return false in case of error', () => expectSaga(isConnectionOnline, { ssLinkedConnectionId, ssConnId: 'NETSUITE_CONNECTION'})
+        .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+        .call.fn(apiCallWithRetry)
+        .returns(false)
+        .run());
+
+      test('should return false in case of no response', () => expectSaga(isConnectionOnline, { ssLinkedConnectionId, ssConnId: 'NETSUITE_CONNECTION'})
+        .provide([[matchers.call.fn(apiCallWithRetry)]])
+        .call.fn(apiCallWithRetry)
+        .returns(false)
+        .run());
+
+      test('should return true when response is a success', () => {
+        const expectedOut = { code: 200};
+
+        return expectSaga(isConnectionOnline, { ssLinkedConnectionId, ssConnId: 'NETSUITE_CONNECTION' })
+          .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
+          .call.fn(apiCallWithRetry)
+          .returns(true)
           .run();
       });
     });

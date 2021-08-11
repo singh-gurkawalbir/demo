@@ -1,17 +1,18 @@
-import Button from '@material-ui/core/Button';
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import { selectors } from '../../../../reducers';
+import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import useHandleCancel from '../../../../components/SaveAndCloseButtonGroup/hooks/useHandleCancel';
 
 const emptyObject = {};
+
+const formKey = 'proceedOnFailure';
 
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
@@ -23,11 +24,11 @@ function ProceedOnFailureDialog(props) {
     isViewMode,
     resourceType,
   } = props;
-  const { merged: flow = emptyObject } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
 
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(
@@ -66,7 +67,9 @@ function ProceedOnFailureDialog(props) {
       fields: ['proceedOnFailure'],
     },
   };
-  const saveFormValues = useCallback(formValues => {
+
+  const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const saveFormValues = useCallback(() => {
     const { proceedOnFailure } = formValues;
     const patchSet = [
       {
@@ -77,50 +80,44 @@ function ProceedOnFailureDialog(props) {
     ];
 
     dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-  }, [dispatch, flowId, resourceIndex]);
+    dispatch(actions.resource.commitStaged('flows', flowId, 'value', null, null, formKey));
+  }, [dispatch, flowId, formValues, resourceIndex]);
 
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: `/flows/${flowId}`,
-      disabled: isViewMode,
-      onSave: saveFormValues,
-      onClose,
-    }
-  );
+  const [count, setCount] = useState(0);
 
-  const formKey = useFormInitWithPermissions({
+  const remountAfterSaveFn = useCallback(() => {
+    setCount(count => count + 1);
+  }, []);
+
+  useFormInitWithPermissions({
     fieldMeta,
     disabled: isViewMode,
+    formKey,
+    remount: count,
   });
 
+  const isSaving = useSelector(state => selectors.isAsyncTaskLoading(state, formKey));
+
+  const onCloseWithDirtyChangesDialog = useHandleCancel({formKey, onClose, handleSave: saveFormValues});
+
   return (
-    <ModalDialog show={open} onClose={onClose}>
+    <ModalDialog show={open} onClose={onCloseWithDirtyChangesDialog} disableClose={isSaving}>
       <div>
         {title}
       </div>
       <div>
         <DynaForm
+          formKey={formKey} />
+      </div>
+      <div>
+        <SaveAndCloseButtonGroupForm
           formKey={formKey}
-          fieldMeta={fieldMeta} />
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test="saveProceedOnFailure"
-          onClick={submitHandler()}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test="saveAndCloseProceedOnFailure"
-          color="secondary"
-          onClick={submitHandler(true)}>
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button data-test="cancelProceedOnFailure" onClick={onClose}>
-          Cancel
-        </Button>
+          disabled={isViewMode}
+          onClose={onClose}
+          remountAfterSaveFn={remountAfterSaveFn}
+          onSave={saveFormValues}
+
+       />
       </div>
     </ModalDialog>
   );

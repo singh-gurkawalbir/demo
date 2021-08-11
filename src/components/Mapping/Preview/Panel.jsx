@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import {selectors} from '../../../reducers';
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
-import HttpMappingAssistant from './HttpMappingAssistant';
+import HttpMappingAssistant from './HttpMappingAssistant_afe';
 
 const useStyles = makeStyles(theme => ({
   assistantContainer: {
@@ -40,9 +40,6 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
   });
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)
-  );
-  const httpAssistantPreviewObj = useSelector(state =>
-    selectors.mappingHttpAssistantPreviewData(state, importId)
   );
   const salesforceNetsuitePreviewData = useMemo(() => {
     if (['salesforce', 'netsuite'].includes(mappingPreviewType)) {
@@ -112,9 +109,7 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
         )}
         {mappingPreviewType === 'http' && (
         <HttpMappingAssistant
-          editorId="httpPreview"
-          rule={httpAssistantPreviewObj.rule}
-          data={httpAssistantPreviewObj.data}
+          importId={importId}
              />
         )}
       </div>

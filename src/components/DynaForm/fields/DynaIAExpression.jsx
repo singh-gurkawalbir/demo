@@ -2,10 +2,10 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../reducers';
-import DynaNetSuiteLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteQualifier';
-import DynaSFLookup from './DynaSalesforceLookup';
-import DynaSFQualifier from './DynaSalesforceQualifier';
+import DynaNetSuiteLookup from './DynaNetSuiteLookup_afe';
+import DynaNSQualifier from './DynaNetSuiteQualifier_afe';
+import DynaSFLookup from './DynaSalesforceLookup_afe';
+import DynaSFQualifier from './DynaSalesforceQualifier_afe';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function DynaIAExpression(props) {
@@ -95,7 +95,7 @@ export default function DynaIAExpression(props) {
     commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${recordType}/searchFilters?includeJoinFilters=true`;
   }
 
-  const options = { commMetaPath, disableFetch: false, sObjectType: resource?.salesforce?.sObjectType };
+  const options = { commMetaPath, disableFetch: false, sObjectType: resource?.salesforce?.sObjectType, hasSObjectType: !!resource?.salesforce?.sObjectType };
 
   switch (filterType) {
     case 'netsuiteImportLookup':
@@ -122,6 +122,7 @@ export default function DynaIAExpression(props) {
       options={options}
       resourceId={resource?._id}
       connectionId={connection._id}
+      resourceType={type === 'export' ? 'exports' : 'imports'}
     />
   );
 }

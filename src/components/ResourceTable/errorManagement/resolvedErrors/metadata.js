@@ -1,55 +1,108 @@
 import React from 'react';
 import Retry from '../actions/Retry';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
+import ViewHttpRequest from '../actions/ViewHttpRequest';
+import ViewHttpResponse from '../actions/ViewHttpResponse';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import OverflowWrapper from '../cells/OverflowWrapper';
+import TextOverflowCell from '../../../TextOverflowCell';
+import SelectSource from '../cells/SelectSource';
+import SelectClassification from '../cells/SelectClassification';
+import SelectDate from '../cells/SelectDate';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import EditRetryData from '../actions/EditRetry';
 
+const options = {allowedTags: ['a']};
 export default {
-  columns: [
+  rowKey: 'errorId',
+  useColumns: () => [
     {
-      headerValue: function SelectAll(r, actionProps) {
-        return <SelectAllErrors {...actionProps} />;
+      key: 'selectAll',
+      width: 24,
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectAllErrors {...tableContext} />;
       },
       heading: 'Select All',
-      value: function Select(error, actionProps) {
-        return <SelectError error={error} {...actionProps} />;
+      Value: ({rowData: error}) => {
+        const tableContext = useGetTableContext();
+
+        return <SelectError error={error} {...tableContext} />;
       },
     },
     {
+      key: 'message',
       heading: 'Message',
-      width: '30%',
-      value: r => <OverflowWrapper message={r.message} containsHtml />,
+      width: '25%',
+      Value: ({rowData: r}) => <TextOverflowCell message={r.message} rawHtmlOptions={options} containsHtml />,
     },
     {
+      key: 'code',
       heading: 'Code',
-      width: '20%',
-      value: r => <OverflowWrapper message={r.code} />,
+      width: '18%',
+      Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
-      heading: 'Source',
+      key: 'selectResource',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectSource {...tableContext} />;
+      },
       width: '10%',
-      value: r => <OverflowWrapper message={r.source} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
     },
     {
-      heading: 'Timestamp',
+      key: 'selectResolvedClassification',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectClassification {...tableContext} />;
+      },
+      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
       width: '10%',
-      value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
+      key: 'selectDate',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectDate {...tableContext} />;
+      },
+      width: '12%',
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
+    },
+    {
+      key: 'resolvedBy',
       heading: 'Resolved by',
-      width: '15%',
-      value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
+      width: '12%',
+      Value: ({rowData: r}) => {
+        const {flowId} = useGetTableContext();
+
+        return <UserName userId={r.resolvedBy} flowId={flowId} />;
+      },
     },
     {
-      heading: 'Resolved at',
-      width: '10%',
-      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
+      key: 'resolvedAt',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return (
+          <SelectDate
+            {...tableContext}
+            title="Resolved at"
+            filterBy="resolvedAt" />
+        );
+      },
+      width: '12%',
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
-  rowActions: ({ retryDataKey }, { actionInProgress }) => {
+  useRowActions: ({ retryDataKey, reqAndResKey }) => {
+    const {actionInProgress} = useGetTableContext();
     const actions = [];
 
     if (actionInProgress) return actions;
@@ -58,6 +111,12 @@ export default {
       actions.push(Retry);
     }
     actions.push(ViewErrorDetails);
+    if (retryDataKey) {
+      actions.push(EditRetryData);
+    }
+    if (reqAndResKey) {
+      actions.push(ViewHttpRequest, ViewHttpResponse);
+    }
 
     return actions;
   },

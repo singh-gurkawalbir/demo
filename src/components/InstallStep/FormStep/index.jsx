@@ -9,30 +9,43 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: 660,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
+  formStep: {
+    padding: 24,
+  },
 }));
 
-export default function FormStep({ integrationId, formMeta, title, formSubmitHandler, formCloseHandler }) {
+export default function FormStep({ integrationId, installerFunction, formMeta, title, formSubmitHandler, formCloseHandler }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
     formVal => {
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(
-          integrationId,
-          '',
-          '',
-          formVal
+      installerFunction
+        ? dispatch(
+          actions.integrationApp.installer.installStep(
+            integrationId,
+            installerFunction,
+            undefined,
+            undefined,
+            formVal
+          )
         )
-      );
+        : dispatch(
+          actions.integrationApp.installer.scriptInstallStep(
+            integrationId,
+            '',
+            '',
+            formVal
+          )
+        );
     },
-    [dispatch, integrationId]
+    [dispatch, installerFunction, integrationId]
   );
   const onClose = useCallback(() => {
     dispatch(
@@ -40,7 +53,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
     );
   }, [dispatch, integrationId]);
 
-  const formKey = useFormInitWithPermissions({fieldMeta: formMeta});
+  const formKey = useFormInitWithPermissions({ fieldMeta: formMeta });
 
   return (
   // TODO: @ashu, this needs to be reverted to use RightDrawer,
@@ -55,7 +68,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
   //   <DynaForm fieldMeta={formMeta} formState={formState}>
   //     <DynaSubmit
   //       onClick={formSubmitHandler || handleSubmit}
-  //       showCustomFormValidations={showCustomFormValidations}>
+  //      >
   //       Submit
   //     </DynaSubmit>
   //   </DynaForm>
@@ -69,12 +82,15 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
       }}
       >
       <DrawerTitleBar title={title} onClose={formCloseHandler || onClose} />
-      <DynaForm fieldMeta={formMeta} formKey={formKey} />
-      <DynaSubmit
-        formKey={formKey}
-        onClick={formSubmitHandler || handleSubmit}>
-        Submit
-      </DynaSubmit>
+      <div className={classes.formStep} >
+
+        <DynaForm formKey={formKey} />
+        <DynaSubmit
+          formKey={formKey}
+          onClick={formSubmitHandler || handleSubmit}>
+          Submit
+        </DynaSubmit>
+      </div>
     </Drawer>
   );
 }

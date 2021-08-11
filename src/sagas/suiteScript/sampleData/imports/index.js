@@ -14,6 +14,10 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       flowId,
     }
   );
+
+  if (!flow) {
+    return;
+  }
   const { import: importConfig} = flow;
   const {type: importType, _connectionId, netsuite, salesforce} = importConfig;
 
@@ -78,6 +82,9 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       return yield put(
         actions.suiteScript.importSampleData.received({ ssLinkedConnectionId, integrationId, flowId, data: previewData}));
     }
+
+    return yield put(
+      actions.suiteScript.importSampleData.receivedError({ ssLinkedConnectionId, integrationId, flowId}));
   }
 }
 export const importSampleDataSagas = [

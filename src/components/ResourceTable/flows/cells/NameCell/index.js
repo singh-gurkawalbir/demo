@@ -1,10 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { makeStyles, Chip } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
 import InfoIconButton from '../../../../InfoIconButton';
-import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
@@ -34,19 +31,18 @@ export default function NameCell({
   isIntegrationApp,
   integrationId,
   childId,
+  actionProps,
 }) {
   const classes = useStyles();
-  const isDataLoader = useSelector(state => selectors.isDataLoader(state, flowId));
-  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-
+  const isDataLoader = !!actionProps?.flowAttributes[flowId]?.isDataLoader;
   const flowName = name || `Unnamed (id: ${flowId})`;
-  const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {childId, isIntegrationApp, appName, isDataLoader});
+  const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {childId, isIntegrationApp, appName: actionProps?.appName, isDataLoader});
 
   return (
     <div className={classes.root}>
       <Link to={flowBuilderTo}>{flowName}</Link>
 
-      <InfoIconButton info={description} size="xs" />
+      <InfoIconButton info={description} disableHtml size="xs" />
 
       {isFree && (
         <Chip

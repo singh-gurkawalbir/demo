@@ -32,7 +32,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           required: true,
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
@@ -89,9 +89,10 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field (Salesforce)',
+          required: true,
+          valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -111,8 +112,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
-          helpText:
-            'Name of the lookups that will be exposed to the mapping to refer.',
+          helpKey: 'import.lookups.name',
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',

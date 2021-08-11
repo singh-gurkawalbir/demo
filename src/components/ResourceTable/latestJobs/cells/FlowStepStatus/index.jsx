@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { JOB_STATUS } from '../../../../../utils/constants';
 import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';
-import { JOB_UI_STATUS } from '../../../../JobDashboard/util';
+import { JOB_UI_STATUS } from '../../../../../utils/jobdashboard';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -24,7 +24,7 @@ export default function FlowStepStatus({ job }) {
     return (
       <div className={classes.flexContainer}>
         <div className={classes.spinnerWrapper}>
-          <Spinner size={18} color="primary" />
+          <Spinner size={18} />
         </div>
         {JOB_UI_STATUS[job.status]}
       </div>

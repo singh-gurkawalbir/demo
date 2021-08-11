@@ -5,9 +5,10 @@ import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
   auditLog: {
+    marginTop: -1,
     '& > div': {
       '&:first-child': {
-        padding: theme.spacing(2),
+        backgroundColor: theme.palette.common.white,
       },
     },
   },
@@ -17,12 +18,10 @@ export default function AuditPanel({ flowId }) {
   const classes = useStyles();
 
   return (
-    <div>
-      <AuditLog
-        resourceType="flows"
-        resourceId={flowId}
-        className={classes.auditLog}
+    <AuditLog
+      resourceType="flows"
+      resourceId={flowId}
+      className={classes.auditLog}
       />
-    </div>
   );
 }

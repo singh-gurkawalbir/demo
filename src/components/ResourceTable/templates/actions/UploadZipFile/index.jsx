@@ -1,12 +1,15 @@
 import React, { useState, useCallback } from 'react';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import UploadIcon from '../../../../icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
 
 export default {
-  label: 'Upload file',
+  key: 'uploadTemplateZip',
+  useLabel: () => 'Upload template zip',
   icon: UploadIcon,
-  component: function UploadZipFile({ resourceType, rowData = {} }) {
+  Component: ({rowData}) => {
     const { _id: resourceId } = rowData;
+    const {resourceType} = useGetTableContext();
     const [showDialog, setShowDialog] = useState(true);
     const toggleDialog = useCallback(() => {
       setShowDialog(!showDialog);

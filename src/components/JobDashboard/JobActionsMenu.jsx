@@ -10,9 +10,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import useConfirmDialog from '../ConfirmDialog';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { UNDO_TIME } from './util';
+import { UNDO_TIME } from '../../utils/jobdashboard';
 import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
@@ -26,6 +25,8 @@ import DownloadIntegrationIcon from '../icons/DownloadIntegrationIcon';
 import CheckmarkIcon from '../icons/CheckmarkIcon';
 import CancelIcon from '../icons/CancelIcon';
 import DownloadIcon from '../icons/DownloadIcon';
+import useCommStatus from '../../hooks/useCommStatus';
+import {CANCEL_JOB} from '../../utils/messageStore';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -203,8 +204,7 @@ export default function JobActionsMenu({
     } else if (action === 'cancelJob') {
       confirmDialog({
         title: 'Confirm cancel',
-        message:
-          'Are you sure you want to cancel?  Please note that canceling this job will discard all associated data currently queued for processing.',
+        message: CANCEL_JOB,
         buttons: [
           {
             label: 'Yes, cancel',
@@ -233,7 +233,7 @@ export default function JobActionsMenu({
                     return false;
                   }
                 } else {
-                  const retryJob = job.retries.find(r =>
+                  const retryJob = job.retries?.find(r =>
                     [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
                   );
 
@@ -359,6 +359,11 @@ export default function JobActionsMenu({
   function handleJobFilesDownloadDialogCloseClick() {
     setShowFilesDownloadDialog(false);
   }
+  useCommStatus({
+    actionsToMonitor,
+    autoClearOnComplete: true,
+    commStatusHandler: handleCommsStatus,
+  });
 
   return (
     <>
@@ -376,11 +381,7 @@ export default function JobActionsMenu({
           integrationName={integrationName}
         />
       )}
-      <CommStatus
-        actionsToMonitor={actionsToMonitor}
-        autoClearOnComplete
-        commStatusHandler={handleCommsStatus}
-      />
+
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

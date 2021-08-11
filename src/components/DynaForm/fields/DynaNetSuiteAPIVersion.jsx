@@ -6,7 +6,7 @@ import actions from '../../../actions';
 import DynaRadio from './radiogroup/DynaRadioGroup';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   refreshLoader: {
@@ -106,7 +106,7 @@ export default function DynaNetSuiteAPIVersion(props) {
       {(isLoading && isNew && !errorMessage) ? (
         <span
           className={classes.refreshLoader}>
-          <Spinner size={24} />
+          <Spinner />
         </span>
       )
         : (
@@ -116,7 +116,7 @@ export default function DynaNetSuiteAPIVersion(props) {
               ...(isNew && !isInitValueChanged) && {value: initValueForField}}
             } />
         )}
-      <ErroredMessageComponent errorMessages={errorMessage} />
+      <FieldMessage errorMessages={errorMessage} />
     </>
   );
 }

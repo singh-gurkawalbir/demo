@@ -1,33 +1,47 @@
 import React, { useCallback } from 'react';
 import { makeStyles, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
-import MappingSaveButton from './SaveButton';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import { MAPPINGS_FORM_KEY } from '../../utils/constants';
+import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import mappingUtil from '../../utils/mapping';
 
-const useStyles = makeStyles(theme => ({
-  importMappingButtonGroup: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    width: '100%',
-    padding: theme.spacing(2, 1, 0, 0),
-    display: 'block',
-    marginLeft: theme.spacing(3),
-  },
+const useStyles = makeStyles({
   previewButton: {
     float: 'right',
   },
-}));
-export default function ButtonPanel({flowId, importId, disabled, onClose}) {
+});
+
+export default function ButtonPanel({importId, disabled, onClose}) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const saveInProgress = useSelector(
-    state => selectors.mappingSaveStatus(state).saveInProgress
+  const { validationErrMsg, saveStatus } = useSelector(
+    state => selectors.mapping(state)
   );
   const isNSAssistantFormLoaded = useSelector(state => selectors.mapping(state).isNSAssistantFormLoaded);
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)
   );
+  const mappingsChanged = useSelector(state => selectors.mappingChanged(state));
+
+  const handleSaveClick = useCallback(() => {
+    if (validationErrMsg) {
+      enqueueSnackbar({
+        message: validationErrMsg,
+        variant: 'error',
+      });
+
+      return;
+    }
+
+    dispatch(actions.mapping.save({ match }));
+  }, [dispatch, enqueueSnackbar, match, validationErrMsg]);
 
   const handlePreviewClick = useCallback(() => {
     dispatch(actions.mapping.requestPreview());
@@ -36,41 +50,27 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
     ? isNSAssistantFormLoaded
     : mappingPreviewType);
 
+  const formStatus = mappingUtil.getFormStatusFromMappingSaveStatus(saveStatus);
+
   return (
     <>
-      <ButtonGroup
-        className={classes.importMappingButtonGroup}>
-        <MappingSaveButton
-          disabled={!!(disabled || saveInProgress)}
-          color="primary"
-          dataTest="saveImportMapping"
-          submitButtonLabel="Save"
-          flowId={flowId}
-          />
-        <MappingSaveButton
-          variant="outlined"
-          color="secondary"
-          dataTest="saveAndCloseImportMapping"
+      <ButtonGroup>
+        <SaveAndCloseButtonGroupAuto
+          isDirty={mappingsChanged}
+          disabled={disabled}
+          status={formStatus}
+          onSave={handleSaveClick}
           onClose={onClose}
-          disabled={!!(disabled || saveInProgress)}
-          submitButtonLabel="Save & close"
-          flowId={flowId}
-          />
-        <Button
-          variant="text"
-          data-test="saveImportMapping"
-          disabled={!!saveInProgress}
-          onClick={onClose}>
-          Cancel
-        </Button>
-
+          asyncKey={MAPPINGS_FORM_KEY}
+          shouldHandleCancel
+        />
         {showPreviewButton && (
         <Button
           variant="outlined"
           color="primary"
           data-test="preview"
           className={classes.previewButton}
-          disabled={!!(disabled || saveInProgress)}
+          disabled={disabled || saveStatus === 'inProgress'}
           onClick={handlePreviewClick}>
           Preview
         </Button>

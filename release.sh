@@ -1,23 +1,67 @@
 #!/bin/zsh
 set -e
 
-[[ -n $1 ]] || (echo "missing release version!\nUsage: release.sh <release version> <logrocket env file name>" && exit 1)
-[[ -n $2 ]] || (echo "missing logrocket env file!\nUsage: release.sh <release version> <logrocket env file name>" && exit 1)
-[[ -f $2 ]] || (echo "logrocket env file invalid $2" && exit 1)
-echo "building version $1 ..."
-export RELEASE_VERSION="$1"
-. $2
-NODE_ENV=production webpack --mode=production
-echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER ..."
-URL_PREFIX="~/react/$1/"
-logrocket release $1 --apikey=$LOGROCKET_API_KEY
-logrocket upload build/ --release=$1 --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
-if [[ $LOGROCKET_IDENTIFIER_EU != $LOGROCKET_IDENTIFIER ]]; then
-    echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER_EU ..."
-    logrocket release $1 --apikey=$LOGROCKET_API_KEY_EU
-    logrocket upload build/ --release=$1 --apikey=$LOGROCKET_API_KEY_EU --url-prefix=$URL_PREFIX
+env_vars=$1
+[[ -f $env_vars ]] || (echo "env file $env_vars invalid" && exit 1)
+echo $env_vars
+. $env_vars
+
+REQUIRED_ENV_VARS=(S3_BUCKET ACCESS_KEY_ID SECRET_ACCESS_KEY)
+
+if [ "$skipBuildAndCopyIndexFileForEUDeployment" != true ] ; then
+  REQUIRED_ENV_VARS+=(LOGROCKET_IDENTIFIER LOGROCKET_API_KEY CDN_BASE_URI GA_KEY_1 GA_KEY_2)
+
+  # if production env
+  if [ $S3_BUCKET = "integrator-ui-resources" ]; then
+    REQUIRED_ENV_VARS+=(LOGROCKET_IDENTIFIER_EU LOGROCKET_API_KEY_EU GA_KEY_1_EU GA_KEY_2_EU)
+  fi
 fi
+
+for eVar in ${REQUIRED_ENV_VARS[@]}
+do
+  val=$(eval echo "\$$eVar")
+  if [ -z "$val" ]; then
+    echo "${eVar} variable undefined"
+    exit 1
+  fi
+done
+
+if [ "$skipBuildAndCopyIndexFileForEUDeployment" = true ] ; then
+    echo 'copying NA build index file to EU eu-index file ...'
+    aws configure set aws_access_key_id $ACCESS_KEY_ID
+    aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
+    aws s3 cp s3://$S3_BUCKET/react/index.html s3://$S3_BUCKET/react/eu_index.html --acl public-read
+    aws configure set aws_access_key_id ''
+    aws configure set aws_secret_access_key ''
+    exit
+fi
+
+version=`python -c 'import version; print version.get_version_number()'`
+echo "building version $version ..."
+export RELEASE_VERSION="$version"
+
+URL_PREFIX="~/react/$version/"
+echo "LogRocket URL prefix $URL_PREFIX ..."
+echo "S3 bucket name $S3_BUCKET ..."
+yarn install
+NODE_ENV=production webpack --mode=production
+
+echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER ..."
+logrocket release $version --apikey=$LOGROCKET_API_KEY
+logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
+
+if [ ! -z "$LOGROCKET_IDENTIFIER_EU" ]; then
+  echo "creating logrocket release (for EU) and uploading source maps for $LOGROCKET_IDENTIFIER_EU ..."
+  logrocket release $version --apikey=$LOGROCKET_API_KEY_EU
+  logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY_EU --url-prefix=$URL_PREFIX
+fi
+
 # move the source map files into a separate folder
 mkdir -p build/sourcemaps && mv build/*.js.map build/sourcemaps/
-aws s3 cp build/ s3://integrator-staging-ui-resources/react/$1/ --recursive --acl public-read
-aws s3 cp build/index.html s3://integrator-staging-ui-resources/react/index.html --acl public-read
+# upload the build files to s3 bucket
+aws configure set aws_access_key_id $ACCESS_KEY_ID
+aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
+aws s3 cp build/ s3://$S3_BUCKET/react/$version/ --recursive --acl public-read
+aws s3 cp build/index.html s3://$S3_BUCKET/react/index.html --acl public-read
+aws configure set aws_access_key_id ''
+aws configure set aws_secret_access_key ''

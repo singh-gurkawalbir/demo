@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
+import SecurityIcon from '../../components/icons/SecurityIcon';
 import SingleUserIcon from '../../components/icons/SingleUserIcon';
 import UsersIcon from '../../components/icons/GroupOfUsersIcon';
 import UsersPanel from '../../components/ManageUsersPanel';
@@ -27,6 +28,10 @@ const Audit = loadable(() =>
 const Transfers = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index'))
 );
+const Security = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'MyAccount.Security' */ './Security/index'))
+);
+
 const tabs = [
   {
     path: 'profile',
@@ -53,6 +58,12 @@ const tabs = [
     Icon: TransfersIcon,
     Panel: Transfers,
   },
+  {
+    path: 'security',
+    label: 'Security',
+    Icon: SecurityIcon,
+    Panel: Security,
+  },
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -65,12 +76,18 @@ const useStyles = makeStyles(theme => ({
   },
   tabsAccount: {
     padding: theme.spacing(3),
+    '& > [role = tabpanel]': {
+      background: 'none',
+      padding: 0,
+      border: 'none',
+    },
   },
 }));
 
 export default function MyAccount({ match }) {
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
   return (
     <>
@@ -81,7 +98,7 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+      {!isAccountOwnerOrAdmin ? (
         <div className={classes.wrapperProfile}>
           <Profile />
         </div>

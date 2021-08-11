@@ -1,22 +1,33 @@
-import produce from 'immer';
-import { deepClone } from 'fast-json-patch';
+/* eslint-disable camelcase */
+import { original, produce } from 'immer';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
-import processorPatchSet from './processorPatchSet';
+import { toggleData } from './processorLogic/settingsForm';
 
 const emptyObj = {};
 
 export default function reducer(state = {}, action) {
   const {
     type,
-    processor,
     id,
     options,
-    patch,
+    featuresPatch,
+    rulePatch,
+    dataPatch,
     result,
     error,
     helperFunctions,
     violations,
+    version,
+    sampleData,
+    templateVersion,
+    autoPreview,
+    sampleDataError,
+    newLayout,
+    saveMessage,
+    fileKeyPatchType,
+    fileKeyPatch,
   } = action;
 
   return produce(state, draft => {
@@ -24,46 +35,15 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS:
         draft.helperFunctions = helperFunctions;
         break;
-      case actionTypes.EDITOR.INIT: {
-        const initChangeIdentifier =
-          (draft[id] && draft[id].initChangeIdentifier) || 0;
-        const saveStatus = draft[id] && draft[id].saveStatus;
-        const init = processorLogic.init(processor);
-        const {autoEvaluate: autoEvaluateProp, ...rest} = options || {};
-        const optionsCopy = deepClone(rest);
-        const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
-        const autoEvaluate = (draft[id] && 'autoEvaluate' in draft[id])
-          ? draft[id].autoEvaluate : autoEvaluateProp;
 
-        draft[id] = {
-          processor,
-          defaultOptions: formattedInitOptions,
-          ...deepClone(formattedInitOptions),
-          lastChange: Date.now(),
-          initChangeIdentifier: initChangeIdentifier + 1,
-          saveStatus,
-          autoEvaluate,
-        };
+      case actionTypes.EDITOR.INIT_COMPLETE: {
+        draft[id] = options;
         break;
       }
 
       case actionTypes.EDITOR.CHANGE_LAYOUT: {
         if (!draft[id]) break;
-        const initChangeIdentifier =
-          draft[id].initChangeIdentifier || 0;
-
-        draft[id].initChangeIdentifier = initChangeIdentifier + 1;
-        break;
-      }
-
-      case actionTypes.EDITOR.RESET: {
-        Object.assign(draft[id], draft[id].defaultOptions);
-        draft[id].lastChange = Date.now();
-        delete draft[id].violations;
-        delete draft[id].error;
-        delete draft[id].errorLine;
-        delete draft[id].result;
-
+        draft[id].layout = newLayout;
         break;
       }
 
@@ -73,18 +53,150 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.EDITOR.PATCH: {
+      case actionTypes.EDITOR.SAMPLEDATA.RECEIVED: {
         if (!draft[id]) break;
-        Object.assign(draft[id], deepClone(patch));
-        draft[id].lastChange = Date.now();
-        draft[id].status = 'requested';
+        const buildData = processorLogic.buildData(draft[id].editorType);
+
+        if (buildData) {
+          if (draft[id].editorType === 'sql' || draft[id].editorType === 'databaseMapping') {
+            const {data, defaultData} = buildData(original(draft[id]), sampleData);
+
+            draft[id].data = data;
+            draft[id].defaultData = defaultData || '';
+            draft[id].originalDefaultData = defaultData || '';
+          } else {
+            draft[id].data = buildData(original(draft[id]), sampleData);
+          }
+        } else {
+          draft[id].data = sampleData;
+        }
+        draft[id].dataVersion = templateVersion;
+        draft[id].sampleDataStatus = 'received';
+        // store lastValidData in case user updates data as invalid json. As we still want to show the dropdown data values in
+        // the rule or handlebars panel
+        draft[id].lastValidData = sampleData;
         break;
       }
 
-      case actionTypes.EDITOR.EVALUATE_RESPONSE: {
+      case actionTypes.EDITOR.SAMPLEDATA.FAILED: {
+        if (!draft[id]) break;
+        draft[id].sampleDataStatus = 'error';
+        draft[id].initError = sampleDataError;
+        break;
+      }
+
+      case actionTypes.EDITOR.TOGGLE_VERSION: {
+        if (!draft[id]) break;
+        draft[id].sampleDataStatus = 'requested';
+        draft[id].dataVersion = version;
+        draft[id].result = '';
+        if (version === 2) {
+          draft[id].rule = draft[id].v2Rule || '';
+        } else if (version === 1) {
+          draft[id].rule = draft[id].v1Rule || '';
+        }
+        break;
+      }
+
+      case actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW: {
+        if (!draft[id]) break;
+        // TODO: change evaluate to preview
+        draft[id].autoEvaluate = autoPreview ?? !draft[id].autoEvaluate;
+        if (draft[id].autoEvaluate) {
+          draft[id].previewStatus = 'requested';
+        }
+        break;
+      }
+
+      case actionTypes.EDITOR.PATCH.RULE: {
+        if (!draft[id]) break;
+        const ap = draft[id].activeProcessor;
+        const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
+        const shouldReplace =
+          !rulePatch ||
+          typeof rulePatch === 'string' ||
+          Array.isArray(rulePatch) ||
+          draftRule === undefined;
+
+        if (!shouldReplace) {
+          Object.assign(draftRule, deepClone(rulePatch));
+        } else if (ap) {
+          draft[id].rule[ap] = rulePatch;
+        } else {
+          draft[id].rule = rulePatch;
+        }
+
+        // this logic is only applicable for handlebars editor and right now
+        // the dual processor editors do not support handlebars. If they do in future, then
+        // below logic would have to be updated accordingly
+        if (draft[id].dataVersion === 2) {
+          draft[id].v2Rule = rulePatch;
+        } else if (draft[id].dataVersion === 1) {
+          draft[id].v1Rule = rulePatch;
+        }
+        if (draft[id].autoEvaluate) {
+          draft[id].previewStatus = 'requested';
+        }
+        break;
+      }
+
+      case actionTypes.EDITOR.PATCH.DATA: {
+        if (!draft[id]) break;
+        // Object.assign(draft[id].data, deepClone(dataPatch));
+        const mode = draft[id].activeProcessor;
+
+        if (mode) {
+          draft[id].data[mode] = dataPatch;
+        } else {
+          draft[id].data = dataPatch;
+        }
+        draft[id].lastValidData = draft[id].data;
+        if (draft[id].autoEvaluate) {
+          draft[id].previewStatus = 'requested';
+        }
+        break;
+      }
+
+      case actionTypes.EDITOR.PATCH.FEATURES: {
+        if (!draft[id]) break;
+        Object.assign(draft[id], featuresPatch);
+        const mode = featuresPatch?.activeProcessor;
+
+        // toggle form definition data when view is changed
+        if (draft[id].editorType === 'settingsForm') {
+          // if view was toggled, update form definition
+          if (mode) {
+            const formData = toggleData(draft[id].data, mode, draft[id].flowGrouping, draft[id].resourceDocs);
+
+            draft[id].data = formData;
+            draft[id].layout = `${mode}FormBuilder`;
+          } else if (featuresPatch?.data) {
+            // if metadata is updated, reset form output
+            delete draft[id].formOutput;
+          }
+        }
+        break;
+      }
+
+      case actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN: {
+        // this action is specific to DynaFileKeyColumn component
+        if (!draft[id]) break;
+        if (fileKeyPatchType === 'data') {
+          draft[id].data = fileKeyPatch;
+        } else if (fileKeyPatchType === 'rule') {
+          Object.assign(draft[id].rule, deepClone(fileKeyPatch));
+        }
+
+        if (draft[id].autoEvaluate) {
+          draft[id].previewStatus = 'requested';
+        }
+        break;
+      }
+
+      case actionTypes.EDITOR.PREVIEW.RESPONSE: {
         if (!draft[id]) break;
         draft[id].result = result;
-        draft[id].status = 'received';
+        draft[id].previewStatus = 'received';
         delete draft[id].error;
         delete draft[id].errorLine;
         delete draft[id].violations;
@@ -94,40 +206,68 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.VALIDATE_FAILURE: {
         if (!draft[id]) break;
         draft[id].violations = violations;
-        draft[id].status = 'error';
+        draft[id].previewStatus = 'error';
         break;
       }
 
-      case actionTypes.EDITOR.EVALUATE_FAILURE: {
+      case actionTypes.EDITOR.PREVIEW.FAILED: {
         if (!draft[id]) break;
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
-        draft[id].status = 'error';
+        draft[id].previewStatus = 'error';
         break;
       }
 
-      case actionTypes.EDITOR.SAVE: {
+      case actionTypes.EDITOR.SAVE.REQUEST: {
+        if (!draft[id]) break;
         draft[id].saveStatus = 'requested';
         break;
       }
 
-      case actionTypes.EDITOR.SAVE_FAILED: {
+      case actionTypes.EDITOR.SAVE.FAILED: {
+        if (!draft[id]) break;
         draft[id].saveStatus = 'failed';
+        draft[id].saveMessage = saveMessage;
         break;
       }
 
-      case actionTypes.EDITOR.SAVE_COMPLETE: {
+      case actionTypes.EDITOR.SAVE.COMPLETE: {
+        if (!draft[id]) break;
         const editor = draft[id];
 
-        editor.saveStatus = 'completed';
+        editor.saveStatus = 'success';
+        const ap = editor.activeProcessor;
 
-        const initKeys = Object.keys(editor).filter(key => key.indexOf('_init_') !== -1);
+        // to handle javascript dirty logic
+        // reset the _init_code
+        if (ap && editor.rule?.[ap] && editor.rule[ap]._init_code) {
+          editor.rule[ap]._init_code = editor.rule[ap].code;
+        } else if (editor.rule?._init_code) {
+          editor.rule._init_code = editor.rule.code;
+        }
 
-        initKeys.forEach(initKey => {
-          const key = initKey.replace('_init_', '');
+        let originalRule = editor.rule;
 
-          editor[`_init_${key}`] = editor[key];
-        });
+        if (typeof originalRule === 'object') {
+          originalRule = deepClone(editor.rule);
+        }
+        editor.originalRule = originalRule;
+
+        // reset originalData also if already exists in state
+        if (editor.originalData) {
+          let originalData = editor.data;
+
+          if (typeof originalData === 'object') {
+            originalData = deepClone(editor.data);
+          }
+          editor.originalData = originalData;
+        }
+
+        // reset originalDefaultData also if already exists in state (for dirty check)
+        if (editor.originalDefaultData) {
+          editor.originalDefaultData = editor.defaultData;
+        }
+
         break;
       }
 
@@ -144,62 +284,76 @@ selectors.editor = (state, id) => {
 
   const editor = state[id];
 
-  if (!editor) return emptyObj;
-
   return editor || emptyObj;
 };
 
-selectors.editorViolations = (state, id) => {
+selectors.editorData = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
 
   if (!editor) return;
+  const mode = editor.activeProcessor;
 
-  return processorLogic.validate(editor);
-};
-
-selectors.isEditorDirty = (state, id) => {
-  if (!state) return;
-
-  const editor = state[id];
-
-  if (!editor) return;
-
-  return processorLogic.isDirty(editor);
-};
-
-selectors.editorPatchSet = (state, id) => {
-  if (!state) return;
-
-  const editor = state[id];
-
-  if (!editor) return;
-
-  return processorPatchSet.getPatchSet(editor);
-};
-
-selectors.editorPatchStatus = (state, id) => {
-  if (!state || !state[id]) {
-    return emptyObj;
+  if (mode) {
+    return editor.data?.[mode];
   }
 
-  const { saveStatus } = state[id];
+  return editor.data;
+};
+
+selectors.editorResult = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
+
+  return editor?.result || emptyObj;
+};
+
+selectors.editorRule = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
+
+  if (!editor) return emptyObj;
+  const mode = editor.activeProcessor;
+
+  if (mode) {
+    return editor.rule?.[mode];
+  }
+
+  return editor.rule;
+};
+
+selectors.editorPreviewError = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
 
   return {
-    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
-    saveCompleted: saveStatus === 'completed',
-    saveInProgress: saveStatus === 'requested',
+    error: editor?.error,
+    errorLine: editor?.errorLine,
   };
 };
 
-selectors.processorRequestOptions = (state, id) => {
-  if (!state || !state[id]) {
-    return emptyObj;
-  }
+selectors.editorDataVersion = (state, id) => {
+  if (!state) return;
 
   const editor = state[id];
 
-  return processorLogic.requestOptions(editor);
+  return editor?.dataVersion;
 };
+
+selectors.editorLayout = (state, id) => {
+  if (!state) return;
+
+  const editor = state[id];
+
+  return editor?.layout;
+};
+
+selectors.editorViolations = (state, id) => processorLogic.validate(state?.[id]);
+
+selectors.isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
+
 // #endregion

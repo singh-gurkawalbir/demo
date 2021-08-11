@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
@@ -8,31 +7,15 @@ import { selectors } from '../../../../reducers';
 import util from '../../../../utils/array';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import FlowCharts from '../../../../components/LineGraph/Flow';
 import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
-import { getSelectedRange } from '../../../../utils/flowMetrics';
-
-const useStyles = makeStyles(theme => ({
-  scheduleContainer: {
-    width: '100%',
-    overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
-  },
-}));
-
-const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
-  const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
-
-  return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
-};
+import { getRoundedDate, getSelectedRange } from '../../../../utils/flowMetrics';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -57,7 +40,6 @@ const defaultRange = {
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
   const { integrationId } = match.params;
-  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const latestJobDetails = useSelector(state => selectors.latestJobMap(state, integrationId));
@@ -66,7 +48,7 @@ export default function LineGraphDrawer({ flowId }) {
       return latestJobDetails.data.find(job => job._flowId === flowId);
     }
   }, [flowId, latestJobDetails]);
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
   const { rangePreference, resourcePreference } = useMemo(() => {
     const preference = preferences[flowId] || {};
@@ -159,12 +141,16 @@ export default function LineGraphDrawer({ flowId }) {
         );
       }
     },
-    [dispatch, flowId, integrationId, preferences, range, selectedResources]
+    [dispatch, flowId, preferences, range, selectedResources]
   );
 
-  const action = useMemo(
-    () => (
-      <>
+  return (
+    <RightDrawer
+      height="short"
+      width="full"
+      onClose={handleClose}
+      path="charts">
+      <DrawerHeader title="Dashboard">
         <IconTextButton onClick={handleRefresh}>
           <RefreshIcon /> Refresh
         </IconTextButton>
@@ -182,27 +168,15 @@ export default function LineGraphDrawer({ flowId }) {
           isFlow
           onSave={handleResourcesChange}
         />
-      </>
-    ),
-    [handleRefresh, handleDateRangeChange, customPresets, rangePreference.startDate, rangePreference.endDate, rangePreference.preset, selectedResources, flowResources, handleResourcesChange]
-  );
+      </DrawerHeader>
 
-  return (
-    <RightDrawer
-      anchor="right"
-      title="Dashboard"
-      height="short"
-      width="full"
-      actions={action}
-      variant="permanent"
-      onClose={handleClose}
-      path="charts">
-      <FlowCharts
-        flowId={flowId}
-        selectedResources={selectedResources}
-        range={range}
-        className={classes.scheduleContainer}
-      />
+      <DrawerContent>
+        <FlowCharts
+          flowId={flowId}
+          integrationId={integrationId}
+          selectedResources={selectedResources}
+          range={range} />
+      </DrawerContent>
     </RightDrawer>
   );
 }

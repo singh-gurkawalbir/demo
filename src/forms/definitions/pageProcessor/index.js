@@ -1,6 +1,6 @@
-import {applicationsList} from '../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
-import { RDBMS_TYPES } from '../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 export default {
   init: meta => meta,
@@ -42,15 +42,16 @@ export default {
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
-    // If there is no assistant for the import, we need to show generic adaptor form
-    // we are patching useTechAdaptorForm field to not to show default assistant form
-    if ((!app.import || !app.export) && app.assistant) {
-      newValues['/useTechAdaptorForm'] = true;
-    }
 
     // On creation of a new page processor lookup,  isLookup is set true
     if (['lookupRecords', 'lookupFiles'].indexOf(resourceType) >= 0) {
       newValues['/isLookup'] = true;
+    }
+
+    // If there is no assistant for the import, we need to show generic adaptor form
+    // we are patching useTechAdaptorForm field to not to show default assistant form
+    if (app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
+      if ((newValues['/isLookup'] && !app.export) || (!newValues['/isLookup'] && !app.import)) { newValues['/useTechAdaptorForm'] = true; }
     }
 
     return newValues;
@@ -74,8 +75,7 @@ export default {
       type: 'selectapplication',
       label: 'Application',
       refreshOptionsOnChangesTo: ['resourceType'],
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: r => {
         if (!r) return '';
 
@@ -181,6 +181,11 @@ export default {
 
       if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
+      } else if (app.type === 'rest') {
+        expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+      } else if (app.type === 'http') {
+        expression.push({ 'http.formType': { $ne: 'rest' } });
+        expression.push({ type: app.type });
       } else {
         expression.push({ type: app.type });
       }
@@ -213,13 +218,13 @@ export default {
 
       if (['rest', 'http', 'salesforce', 'netsuite'].indexOf(app.type) >= 0) {
         if (resourceTypeField.value === 'importRecords') {
-          expression.push({ blobKeyPath: { $exists: false } });
+          expression.push({ blob: { $exists: false } });
 
           if (adaptorType === 'NetSuiteImport') {
             adaptorType = 'NetSuiteDistributedImport';
           }
         } else if (resourceTypeField.value === 'transferFiles') {
-          expression.push({ blobKeyPath: { $exists: true } });
+          expression.push({ blob: { $exists: true } });
         } else if (resourceTypeField.value === 'lookupRecords') {
           expression.push({ type: { $ne: 'blob' } });
         } else if (resourceTypeField.value === 'lookupFiles') {

@@ -1,28 +1,30 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import UserForm from './UserForm';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  INVITE_USER_DRAWER_FORM_KEY,
 } from '../../../utils/constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import CommStatus from '../../CommStatus';
+import useCommStatus from '../../../hooks/useCommStatus';
 
-export default function UserFormWrapper({ userId }) {
+export default function UserFormWrapper({ userId, dataPublic }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [actionsToClear, setActionsToClear] = useState();
   const [disableSave, setDisableSave] = useState(false);
   const handleSaveClick = useCallback(
-    ({ email, accessLevel, integrationsToMonitor, integrationsToManage }) => {
+    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired }) => {
       const aShareData = {
         _id: userId,
         email,
         accessLevel,
         integrationAccessLevel: [],
+        accountSSORequired,
       };
 
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
@@ -51,9 +53,9 @@ export default function UserFormWrapper({ userId }) {
       }
 
       if (aShareData._id) {
-        dispatch(actions.user.org.users.update(aShareData._id, aShareData));
+        dispatch(actions.user.org.users.update(aShareData._id, aShareData, INVITE_USER_DRAWER_FORM_KEY));
       } else {
-        dispatch(actions.user.org.users.create(aShareData));
+        dispatch(actions.user.org.users.create(aShareData, INVITE_USER_DRAWER_FORM_KEY));
       }
       setDisableSave(true);
     },
@@ -79,24 +81,21 @@ export default function UserFormWrapper({ userId }) {
     [handleClose, disableSave]
   );
 
+  const actionsToMonitor = useMemo(() => ({
+    createOrUpdate: {
+      action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
+      resourceId: userId,
+    },
+  }), [userId]);
+
+  useCommStatus({actionsToClear, actionsToMonitor, commStatusHandler});
+
   return (
-    <>
-      <CommStatus
-        actionsToMonitor={{
-          createOrUpdate: {
-            action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
-            resourceId: userId,
-          },
-        }}
-        actionsToClear={actionsToClear}
-        commStatusHandler={commStatusHandler}
-      />
-      <UserForm
-        id={userId}
-        disableSave={disableSave}
-        onSaveClick={handleSaveClick}
-        onCancelClick={handleClose}
+    <UserForm
+      id={userId}
+      dataPublic={dataPublic}
+      onSaveClick={handleSaveClick}
+      onCancelClick={handleClose}
     />
-    </>
   );
 }

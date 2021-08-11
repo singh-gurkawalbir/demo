@@ -121,13 +121,21 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   try {
     response = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts,
     });
   } catch (error) {
     return yield put(actions.api.failure(path, 'POST', error, false));
   }
-
-  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  if (actionType === 'ioResume') {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('flows'));
+    yield put(actions.resource.requestCollection('exports'));
+    yield put(actions.resource.requestCollection('imports'));
+    yield put(actions.resource.requestCollection('licenses'));
+  } else {
+    yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  }
 }
 
 export function* updateProfile() {
@@ -192,26 +200,8 @@ export function* changeEmail({ updatedEmail }) {
         'Verification link sent to new email address.'
       )
     );
+  // eslint-disable-next-line no-empty
   } catch (e) {
-    if (e.status === 403) {
-      yield put(
-        actions.api.failure(
-          changeEmailParams.path,
-          changeEmailParams.opts.method,
-          'Existing email provided, Please try again.',
-          true
-        )
-      );
-    }
-
-    yield put(
-      actions.api.failure(
-        changeEmailParams.path,
-        changeEmailParams.opts.method,
-        'Cannot change user Email , Please try again.',
-        true
-      )
-    );
   }
 }
 
@@ -258,10 +248,11 @@ export function* leaveAccount({ id }) {
   }
 }
 
-export function* createUser({ user }) {
+export function* createUser({ user, asyncKey }) {
   const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
   const { path, opts } = requestOptions;
 
+  yield put(actions.asyncTask.start(asyncKey));
   opts.body = user;
   let response;
 
@@ -272,13 +263,17 @@ export function* createUser({ user }) {
       message: 'Inviting User',
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return true;
   }
-
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(actions.user.org.users.created(response));
 }
 
-export function* updateUser({ _id, user }) {
+export function* updateUser({ _id, user, asyncKey }) {
+  yield put(actions.asyncTask.start(asyncKey));
+
   const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
     resourceId: _id,
   });
@@ -293,9 +288,11 @@ export function* updateUser({ _id, user }) {
       message: 'Updating User',
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return true;
   }
-
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(actions.user.org.users.updated({ ...user, _id }));
 }
 
@@ -336,6 +333,26 @@ export function* disableUser({ _id, disabled }) {
   }
 
   yield put(actions.user.org.users.disabled(_id));
+}
+export function* reinviteUser({ _id }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Reinviting User',
+    });
+  } catch (e) {
+    yield put(actions.user.org.users.reinviteError(_id));
+
+    return true;
+  }
+
+  yield put(actions.user.org.users.reinvited(_id));
 }
 
 export function* makeOwner({ email }) {
@@ -570,4 +587,5 @@ export const userSagas = [
     actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
     deleteSuiteScriptLinkedConnection
   ),
+  takeLatest(actionTypes.USER_REINVITE, reinviteUser),
 ];

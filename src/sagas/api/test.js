@@ -12,6 +12,7 @@ import {
   APIException,
   throwExceptionUsingTheResponse,
   checkToThrowSessionValidationException,
+  isCsrfExpired,
 } from './index';
 import * as apiConsts from './apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
@@ -99,7 +100,7 @@ describe('request interceptors...testing the various stages of an api request on
       // and comm activity not hidden
       // method is defaulted to get as well
       expect(saga.next({ retryCount: 0 }).value).toEqual(
-        put(actions.api.request(path, 'GET', path, false))
+        put(actions.api.request(path, 'GET', path, false, false))
       );
     });
 
@@ -115,7 +116,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, method));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
-        put(actions.api.request(path, 'GET', path, false))
+        put(actions.api.request(path, 'GET', path, false, false))
       );
       expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
     });
@@ -148,7 +149,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, 'POST'));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
-        put(actions.api.request(path, 'POST', path, false))
+        put(actions.api.request(path, 'POST', path, false, false))
       );
       expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
 
@@ -189,7 +190,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, 'POST'));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
-        put(actions.api.request(path, 'POST', path, false))
+        put(actions.api.request(path, 'POST', path, false, false))
       );
 
       expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
@@ -249,6 +250,18 @@ describe('request interceptors...testing the various stages of an api request on
           ...sessionError200Response,
           status: 201,
         });
+      });
+    });
+
+    describe('isCsrfExpired', () => {
+      test('should return true for a valid CSRF message body', () => {
+        expect(isCsrfExpired(some403Response)).toEqual(true);
+      });
+
+      test('should return false for a invalid CSRF message body', () => {
+        expect(isCsrfExpired(null)).toEqual(false);
+        expect(isCsrfExpired({})).toEqual(false);
+        expect(isCsrfExpired(some400Response)).toEqual(false);
       });
     });
 

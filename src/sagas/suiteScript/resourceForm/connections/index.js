@@ -15,7 +15,7 @@ import { apiCallWithRetry } from '../../../index';
 import {
   createFormValuesPatchSet /* submitFormValues, SCOPES */,
 } from '../index';
-import inferErrorMessage from '../../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../../utils/inferErrorMessages';
 
 function getPingConnectionParams(ssLinkedConnectionId) {
   return {
@@ -78,7 +78,7 @@ function* pingConnection({ resourceId, values, ssLinkedConnectionId }) {
     return yield put(
       actions.suiteScript.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(e.message),
+        inferErrorMessages(e.message),
         ssLinkedConnectionId
       )
     );
@@ -88,7 +88,7 @@ function* pingConnection({ resourceId, values, ssLinkedConnectionId }) {
     return yield put(
       actions.suiteScript.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(resp),
+        inferErrorMessages(resp),
         ssLinkedConnectionId
       )
     );
@@ -97,14 +97,13 @@ function* pingConnection({ resourceId, values, ssLinkedConnectionId }) {
   yield put(
     actions.suiteScript.resource.connections.testSuccessful(
       resourceId,
-      'Connection is working fine!',
       ssLinkedConnectionId
     )
   );
 }
 
 export function* pingConnectionWithAbort(params) {
-  const { resourceId } = params;
+  const { resourceId, ssLinkedConnectionId } = params;
   const { abortPing } = yield race({
     testConn: call(pingConnection, params),
     abortPing: take(
@@ -119,7 +118,8 @@ export function* pingConnectionWithAbort(params) {
     yield put(
       actions.suiteScript.resource.connections.testCancelled(
         resourceId,
-        'Request Cancelled'
+        'Request Cancelled',
+        ssLinkedConnectionId
       )
     );
   }

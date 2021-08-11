@@ -1,12 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  Route,
-  Switch,
   NavLink,
   useRouteMatch,
-  Redirect,
+  useHistory,
 } from 'react-router-dom';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -16,17 +15,18 @@ import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
+import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
+import EditorDrawer from '../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
-
   },
   container: {
     display: 'flex',
+    paddingTop: theme.spacing(1),
   },
   subNav: {
     minWidth: 200,
@@ -51,22 +51,62 @@ const useStyles = makeStyles(theme => ({
     marginTop: '10px',
     marginBottom: '10px',
   },
+  emptyMessageWrapper: {
+    padding: theme.spacing(1, 2),
+  },
 }));
+
+function FlowSettingsPanel({availableSections, integrationId, childId, sectionProps}) {
+  const match = useRouteMatch();
+
+  const {sectionId} = match.params;
+
+  if (!sectionId || !availableSections) { return null; }
+  const sectionPanelProps = availableSections.find(({path}) => sectionId === path);
+
+  if (!sectionPanelProps) return null;
+  const { path, Section, label } = sectionPanelProps;
+
+  if (Section === 'FlowsConfiguration') {
+    return (
+      <>
+        <PanelHeader title={`Configure all ${label} flows`} />
+        <ConfigureSettings
+          integrationId={integrationId}
+          childId={childId}
+          sectionId={path}
+              />
+      </>
+    );
+  }
+
+  return (
+
+    <Section
+      dataPublic
+      integrationId={integrationId}
+      childId={childId}
+      {...sectionProps}
+          />
+
+  );
+}
 
 export default function SettingsPanel({
   integrationId,
-  storeId,
+  childId,
   ...sectionProps
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const history = useHistory();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = isParentViewSelected(integration, storeId);
+  const isParentView = isParentViewSelected(integration, childId);
   const hideGeneralTab = useSelector(
-    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+    state => !selectors.hasGeneralSettings(state, integrationId, childId)
   );
 
-  const sections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const sections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
 
   const filterTabs = useMemo(() => hideGeneralTab ? ['common'] : [], [hideGeneralTab]);
   const availableSections = useMemo(() => {
@@ -96,6 +136,13 @@ export default function SettingsPanel({
     );
   }, [filterTabs, sections]);
 
+  useEffect(() => {
+    if (match.isExact && availableSections && availableSections.length) {
+      const redirectTo = flowgroupingsRedirectTo(match, availableSections.map(({id}) => ({sectionId: id})), availableSections[0].id);
+
+      if (redirectTo) { history.replace(redirectTo); }
+    }
+  }, [availableSections, history, match]);
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because some users have different sets of available
@@ -104,7 +151,7 @@ export default function SettingsPanel({
     // no section provided.
     if (availableSections.length === 0 || isParentView) {
       return (
-        <div className={classes.root}>
+        <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
           <div className={classes.container}>
             <Typography variant="h4">
               Settings
@@ -125,10 +172,6 @@ export default function SettingsPanel({
         </div>
       );
     }
-
-    return (
-      <Redirect push={false} to={`${match.url}/${availableSections[0].path}`} />
-    );
   }
 
   return (
@@ -142,7 +185,8 @@ export default function SettingsPanel({
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
                   to={path}
-                  data-test={id}>
+                  data-test={id}
+                  data-public>
                   {label}
                 </NavLink>
               </ListItem>
@@ -150,31 +194,16 @@ export default function SettingsPanel({
           </List>
         </div>
         <div className={classes.content}>
-          <Switch>
-            {availableSections.map(({ path, Section, label }) => (
-              <Route key={path} path={`${match.url}/${path}`}>
-                {Section === 'FlowsConfiguration' ? (
-                  <>
-                    <PanelHeader title={`Configure all ${label} flows`} />
-                    <ConfigureSettings
-                      integrationId={integrationId}
-                      storeId={storeId}
-                      sectionId={path}
-                      />
-                  </>
-                ) : (
-                  <Section
-                    integrationId={integrationId}
-                    storeId={storeId}
-                    {...sectionProps}
-                />
-                )}
-
-              </Route>
-            ))}
-          </Switch>
+          <FlowSettingsPanel
+            availableSections={availableSections}
+            integrationId={integrationId}
+            childId={childId}
+            sectionProps={sectionProps}
+          />
+          <EditorDrawer />
         </div>
       </div>
     </div>
   );
 }
+

@@ -4,7 +4,7 @@ import actions from '../../actions';
 import { uploadRawData } from '../uploadFile';
 import { apiCallWithRetry } from '../index';
 
-function* requestJobErrorPreview({ jobId, errorFile }) {
+export function* requestJobErrorPreview({ jobId, errorFile }) {
   // fetches s3 run key for the error file once stored
   const errorFileId = yield call(uploadRawData, {
     file: errorFile,

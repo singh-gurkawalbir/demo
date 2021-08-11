@@ -11,7 +11,7 @@ import RemoveMargin from '../RemoveMargin';
 
 const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   spinnerOnOff: {
     marginLeft: 12,
@@ -29,7 +29,8 @@ export default function OnOffCell({
   disabled,
   isFree,
   isIntegrationApp,
-  storeId,
+  childId,
+  actionProps,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -40,22 +41,12 @@ export default function OnOffCell({
   const onOffInProgress = useSelector(
     state => selectors.isOnOffInProgress(state, flowId).onOffInProgress
   );
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
-  const istwoDotZeroFrameWork = integration && integration.installSteps &&
-  integration.installSteps.length;
-
-  const isDataLoader = useSelector(state =>
-    selectors.isDataLoader(state, flowId)
-  );
-  const isFlowEnableLocked = useSelector(state =>
-    selectors.isFlowEnableLocked(state, flowId)
-  );
+  const istwoDotZeroFrameWork = actionProps.integration?.installSteps?.length;
+  const isDataLoader = !!actionProps.flowAttributes[flowId]?.isDataLoader;
+  const isFlowEnableLocked = !!actionProps.flowAttributes[flowId]?.isFlowEnableLocked;
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const isLicenseValidToEnableFlow = useSelector(
     state => selectors.isLicenseValidToEnableFlow(state),
@@ -90,7 +81,7 @@ export default function OnOffCell({
                 actions.integrationApp.settings.update(
                   integrationId,
                   flowId,
-                  storeId,
+                  childId,
                   null,
                   {
                     '/flowId': flowId,
@@ -100,7 +91,7 @@ export default function OnOffCell({
                 )
               );
             } else {
-              if (disabled && !isFree && !isDataLoader) {
+              if (disabled && !isFree && !isDataLoader && !istwoDotZeroFrameWork) {
                 if (!isLicenseValidToEnableFlow.enable) {
                   return enqueueSnackbar({
                     message: isLicenseValidToEnableFlow.message,
@@ -134,7 +125,7 @@ export default function OnOffCell({
     isLicenseValidToEnableFlow.enable,
     isLicenseValidToEnableFlow.message,
     patchFlow,
-    storeId,
+    childId,
     istwoDotZeroFrameWork,
   ]);
 
@@ -145,7 +136,7 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner size={24} className={classes.spinnerOnOff} />;
+    return <Spinner className={classes.spinnerOnOff} />;
   }
 
   if (!isFlowEnableLocked) {

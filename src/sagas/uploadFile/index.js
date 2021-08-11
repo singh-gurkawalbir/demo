@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../index';
 import {
   getFileReaderOptions,
   getCsvFromXlsx,
-  getJSONContent,
+  getJSONContentFromString,
   getUploadedFileStatus,
 } from '../../utils/file';
 
@@ -81,7 +81,7 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
 }
 
 // TODO @Raghu - Check for other file reader apis which suites better if any
-function configureFileReader(file, fileType) {
+export function configureFileReader(file, fileType) {
   const fileReaderOptions = getFileReaderOptions(fileType);
 
   // wrapped inside promise to handle the file content returned after onload callback
@@ -105,7 +105,7 @@ function configureFileReader(file, fileType) {
  * For JSON file, content should be parsed from String to JSON
  * @param fileProps contains any additional properties needed to be passed related to the uploaded file
  */
-function* processFile({ fileId, file, fileType, fileProps = {} }) {
+export function* processFile({ fileId, file, fileType, fileProps = {} }) {
   const { error } = getUploadedFileStatus(file, fileType, fileProps);
   const { name, size } = file;
 
@@ -119,7 +119,7 @@ function* processFile({ fileId, file, fileType, fileProps = {} }) {
     let out;
 
     if (fileType === 'json') {
-      out = getJSONContent(fileContent);
+      out = getJSONContentFromString(fileContent);
     } else {
       out = yield call(getCsvFromXlsx, fileContent);
     }

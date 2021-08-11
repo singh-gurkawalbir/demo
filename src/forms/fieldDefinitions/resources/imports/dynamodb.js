@@ -61,9 +61,8 @@ export default {
   },
   'dynamodb.itemDocument': {
     type: 'sqlquerybuilder',
-    querySetPos: 0,
-    hideDefaultData: true,
-    label: 'Build DynamoDB query',
+    arrayIndex: 0,
+    label: 'DynamoDB query',
     visibleWhen: [
       {
         field: 'dynamodb.method',
@@ -105,12 +104,9 @@ export default {
     ],
   },
   'dynamodb.expressionAttributeValues': {
-    type: 'editor',
+    type: 'sqlquerybuilder',
     label: 'Expression attribute values',
-    mode: 'json',
-    defaultValue: r =>
-      (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
-      '{ ":p1":"A",":p2":"1"}',
+    defaultValue: r => r?.dynamodb?.expressionAttributeValues,
     requiredWhen: [
       {
         field: 'dynamodb.conditionExpression',

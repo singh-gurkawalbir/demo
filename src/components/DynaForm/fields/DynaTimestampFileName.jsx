@@ -6,7 +6,7 @@ import timeStamps from '../../../utils/timeStamps';
 import getJSONPaths from '../../../utils/jsonPaths';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
@@ -50,6 +50,7 @@ export default function DynaTimestampFileName(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const userTimezone = useSelector(state => selectors.userTimezone(state));
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,
@@ -161,11 +162,10 @@ export default function DynaTimestampFileName(props) {
       const startIndexOfBraces = inpValue.lastIndexOf('{{');
       const inpValue2 = inpValue.substring(startIndexOfBraces + 2);
       const formattedTimeStamps = timeStamps.map(timeStamp => ({
-        label: `timestamp(${timeStamp.name})`,
-        value: `timestamp(${timeStamp._id})`,
+        label: `timestamp "${timeStamp.name}" ${userTimezone ? `"${userTimezone}"` : ''}`,
+        value: `timestamp "${timeStamp._id}" ${userTimezone ? `"${userTimezone}"` : ''}`,
       }));
 
-      formattedTimeStamps.push({ label: 'timestamp', value: 'timestamp' });
       // Suggests list includes both sample data fields and timeStamp fields
       const suggestionsList = [...sampleDataFields, ...formattedTimeStamps];
       const _filteredSuggestions = suggestionsList.filter(
@@ -223,7 +223,7 @@ export default function DynaTimestampFileName(props) {
         value={value}
         variant="filled"
       />
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description={description}
         errorMessages={errorMessages}

@@ -1,13 +1,10 @@
-import React, { useCallback, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
+import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
-import EditDrawer from '../AFE/SettingsFormEditor/Drawer';
-import usePushRightDrawer from '../../hooks/usePushRightDrawer';
-
-const emptyObj = {};
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -17,16 +14,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormBuilderButton({resourceId, resourceType, integrationId}) {
+export default function FormBuilderButton({resourceId, resourceType, integrationId, sectionId}) {
   const classes = useStyles();
   const history = useHistory();
-  const handleOpenDrawer = usePushRightDrawer();
-  const [drawerKey, setDrawerKey] = useState(0);
-  const settingsForm = useSelector(state => {
-    const resource = selectors.resource(state, resourceType, resourceId);
+  const match = useRouteMatch();
+  const dispatch = useDispatch();
+  const editorId = `settings-${resourceId}-${sectionId || 'general'}`;
 
-    return (resource && resource.settingsForm) || emptyObj;
-  });
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -34,10 +28,17 @@ export default function FormBuilderButton({resourceId, resourceType, integration
   const toggleEditMode = useCallback(
     e => {
       e.stopPropagation();
-      setDrawerKey(drawerKey => drawerKey + 1);
-      handleOpenDrawer('editSettings');
+      dispatch(
+        actions.editor.init(editorId, 'settingsForm', {
+          integrationId,
+          resourceId,
+          resourceType,
+          sectionId,
+        })
+      );
+      history.push(`${match.url}/editor/${editorId}`);
     },
-    [handleOpenDrawer]
+    [dispatch, editorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
   );
 
   if (!allowFormEdit) return null;
@@ -57,15 +58,6 @@ export default function FormBuilderButton({resourceId, resourceType, integration
         label="Settings form builder"
         noApi
       />
-      <EditDrawer
-        key={drawerKey}
-        editorId={`settings-${resourceId}`}
-        resourceId={resourceId}
-        resourceType={resourceType}
-        settingsForm={settingsForm}
-        // eslint-disable-next-line react/jsx-handler-names
-        onClose={history.goBack}
-        />
     </div>
   );
 }

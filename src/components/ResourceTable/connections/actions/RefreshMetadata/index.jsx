@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import RefreshIcon from '../../../../icons/RefreshIcon';
@@ -6,9 +6,10 @@ import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 export default {
-  label: 'Refresh metadata',
+  key: 'refreshMetadata',
+  useLabel: () => 'Refresh metadata',
   icon: RefreshIcon,
-  component: function RefreshMetadata({ rowData = {} }) {
+  useOnClick: rowData => {
     const { type: resourceType, _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const refreshMetadata = useCallback(() => {
@@ -58,7 +59,7 @@ export default {
     );
     const [enqueueSnackbar] = useEnqueueSnackbar();
 
-    useEffect(() => {
+    return useCallback(() => {
       if (!isConnectionOffline) refreshMetadata();
       else {
         enqueueSnackbar({
@@ -67,7 +68,5 @@ export default {
         });
       }
     }, [enqueueSnackbar, isConnectionOffline, refreshMetadata]);
-
-    return null;
   },
 };

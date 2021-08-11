@@ -23,12 +23,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function extractValues(value) {
+  if (!value) return [];
   // Specific case in handling referencedFields
   if (value && value.length === 1 && typeof value[0] === 'string') {
     return value[0].split(',');
   }
+  if (typeof value === 'string') {
+    return value.split(',');
+  }
 
-  return value || [];
+  return value;
 }
 
 export const ReferencedFieldsModal = props => {

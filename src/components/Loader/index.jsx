@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Loader({ className, children, hideBackDrop, ...props }) {
+export default function Loader({ className, children, hideBackDrop, ...props }) {
   const classes = useStyles();
 
   return (
@@ -43,12 +43,10 @@ function Loader({ className, children, hideBackDrop, ...props }) {
         hideBackdrop={hideBackDrop}
         className={clsx(classes.modal, className)}
         {...props}>
-        <Paper className={classes.paper} elevation={4}>
+        <Paper data-public className={classes.paper} elevation={4}>
           {children}
         </Paper>
       </Modal>
     </div>
   );
 }
-
-export default Loader;

@@ -3,38 +3,60 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import { updateRetryData } from '../retryData';
+import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
+import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../utils/errorManagement';
 
-function* requestErrorDetails({
+export function* _formatErrors({ errors = [], resourceId }) {
+  const application = yield select(selectors.applicationName, resourceId);
+
+  const formattedErrors = errors.map(e => ({
+    ...e,
+    source: (e.source === 'application' && application) ? application : e.source,
+    // TODO: Remove this once actual API is updated to get reqAndResKey
+    // reqAndResKey: (index % 2 === 0) ? index : undefined,
+  }));
+
+  return formattedErrors;
+}
+export function* requestErrorDetails({
   flowId,
   resourceId,
   loadMore = false,
   isResolved = false,
 }) {
   try {
-    let path = `/flows/${flowId}/${resourceId}/${
-      isResolved ? 'resolved' : 'errors'
-    }`;
+    const errorType = isResolved ? 'resolvedErrors' : 'openErrors';
+    const filters = yield select(selectors.filter, errorType);
+
+    let nextPageURL;
 
     if (loadMore) {
-      const { nextPageURL } = yield select(selectors.resourceErrors, {
+      const errorDetails = yield select(selectors.allResourceErrorDetails, {
         flowId,
         resourceId,
-        options: { isResolved },
+        isResolved,
       });
 
+      nextPageURL = errorDetails?.nextPageURL;
       if (!nextPageURL) return;
-      path = nextPageURL.replace('/api', '');
     }
 
-    const errorDetails = yield apiCallWithRetry({
+    const requestOptions = getRequestOptions(
+      actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
+      { flowId, resourceId, isResolved, filters, nextPageURL }
+    );
+    const { path, opts } = requestOptions;
+
+    const errorDetails = yield call(apiCallWithRetry, {
       path,
-      opts: {
-        method: 'GET',
-      },
+      opts,
     });
+
+    const errorKey = isResolved ? 'resolved' : 'errors';
+
+    errorDetails[errorKey] = yield call(_formatErrors, { resourceId, errors: errorDetails[errorKey] });
 
     yield put(
       actions.errorManager.flowErrorDetails.received({
@@ -46,21 +68,15 @@ function* requestErrorDetails({
       })
     );
   } catch (error) {
-    actions.errorManager.flowErrorDetails.error({
-      flowId,
-      error,
-      isResolved,
-    });
+    // handle errors
   }
 }
 
-function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
-  const { filterKey, defaultFilter, isResolved } = options || {};
-  const errorFilter = yield select(selectors.filter, filterKey) || defaultFilter;
-  const { errors = [] } = yield select(selectors.resourceErrors, {
+export function* selectAllErrorDetailsInCurrPage({ flowId, resourceId, checked, isResolved = false }) {
+  const errors = yield select(selectors.resourceFilteredErrorsInCurrPage, {
     flowId,
     resourceId,
-    options: { ...errorFilter, isResolved },
+    isResolved,
   });
   const errorIds = errors.map(error => error.errorId);
 
@@ -75,30 +91,62 @@ function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
   );
 }
 
-function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
+export function* deselectAllErrors({ flowId, resourceId, isResolved = false }) {
+  const errorIds = yield select(selectors.selectedErrorIds, {
+    flowId,
+    resourceId,
+    isResolved,
+  });
+
+  yield put(
+    actions.errorManager.flowErrorDetails.selectErrors({
+      flowId,
+      resourceId,
+      errorIds,
+      checked: false,
+      isResolved,
+    })
+  );
+}
+
+export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) {
   let retryDataKeys = retryIds;
 
   if (!retryIds.length) {
-    const retryIdList = yield select(selectors.selectedRetryIds, {
-      flowId,
-      resourceId,
-      options: { isResolved },
-    });
+    if (retryAll) {
+      const { errors: allFilteredErrors = [] } = yield select(selectors.resourceFilteredErrorDetails, {
+        flowId,
+        resourceId,
+        isResolved,
+      });
 
-    retryDataKeys = retryIdList;
+      retryDataKeys = allFilteredErrors
+        .filter(error => !!error.retryDataKey)
+        .map(error => error.retryDataKey)
+        .slice(0, MAX_ERRORS_TO_RETRY_OR_RESOLVE);
+    } else {
+      const retryIdList = yield select(selectors.selectedRetryIds, {
+        flowId,
+        resourceId,
+        isResolved,
+      });
+
+      retryDataKeys = retryIdList;
+    }
   }
 
-  const { errors } = yield select(selectors.resourceErrors, {
+  const { errors: allErrors = [] } = yield select(selectors.allResourceErrorDetails, {
     flowId,
     resourceId,
-    options: { isResolved },
+    isResolved,
   });
-  const errorIds = errors
+
+  const errorIds = allErrors
     .filter(error => retryDataKeys.includes(error.retryDataKey))
     .map(error => error.errorId);
 
   try {
-    const response = yield apiCallWithRetry({
+    yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/${resourceId}/retry`,
       opts: {
         method: 'POST',
@@ -113,11 +161,26 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
       actions.errorManager.flowErrorDetails.retryReceived({
         flowId,
         resourceId,
-        response,
         retryCount: retryDataKeys.length,
       })
     );
 
+    // start polling for retry status
+    if (retryDataKeys.length) {
+      yield put(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId }));
+    }
+
+    if (isResolved) {
+      return yield put(
+        actions.errorManager.flowErrorDetails.selectErrors({
+          flowId,
+          resourceId,
+          errorIds,
+          checked: false,
+          isResolved,
+        })
+      );
+    }
     yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
@@ -131,20 +194,23 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
   }
 }
 
-function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
+export function* resolveErrors({ flowId, resourceId, errorIds = [], resolveAll = false }) {
   let errors = errorIds;
 
   if (!errorIds.length) {
-    const errorIdList = yield select(selectors.selectedErrorIds, {
-      flowId,
-      resourceId,
-    });
+    if (resolveAll) {
+      const { errors: allFilteredErrors = [] } = yield select(selectors.resourceFilteredErrorDetails, { flowId, resourceId });
 
-    errors = errorIdList;
+      errors = allFilteredErrors.map(error => error.errorId).slice(0, MAX_ERRORS_TO_RETRY_OR_RESOLVE);
+    } else {
+      const errorIdList = yield select(selectors.selectedErrorIds, { flowId, resourceId });
+
+      errors = errorIdList;
+    }
   }
 
   try {
-    yield apiCallWithRetry({
+    yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/${resourceId}/resolved`,
       opts: {
         method: 'PUT',
@@ -173,7 +239,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
   }
 }
 
-function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
+export function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
   try {
     yield call(updateRetryData, { flowId, resourceId, retryId, retryData });
     yield put(actions.errorManager.flowErrorDetails.retry({ flowId, resourceId, retryIds: [retryId]}));
@@ -182,7 +248,7 @@ function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
   }
 }
 
-function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
+export function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
   const requestOptions = getRequestOptions(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST,
     { flowId, resourceId, isResolved, filters }
@@ -211,8 +277,12 @@ export default [
     requestErrorDetails
   ),
   takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS,
-    selectAllErrorDetails
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DESELECT_ALL_ERRORS,
+    deselectAllErrors
+  ),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS_IN_CURR_PAGE,
+    selectAllErrorDetailsInCurrPage
   ),
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,

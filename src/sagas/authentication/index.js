@@ -19,10 +19,11 @@ import {
   removeCSRFToken,
 } from '../../utils/session';
 import { selectors } from '../../reducers';
-import { initializationResources } from '../../reducers/data/resources';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
+import inferErrorMessages from '../../utils/inferErrorMessages';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -70,7 +71,6 @@ export function* retrievingAssistantDetails() {
     'parseur',
     'postmark',
     'recurly',
-    'intercom',
     'segment',
     'shipwire',
     'integratorio',
@@ -79,6 +79,7 @@ export function* retrievingAssistantDetails() {
     'stripe',
     'travis',
     'surveymonkey',
+    'pagerduty',
   ];
 
   if (
@@ -94,7 +95,9 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
-        webhook: webhookAssistants.indexOf(asst._id) >= 0,
+        helpURL: asst.helpURL,
+        webhook: webhookAssistants.some(assistantId => assistantId === asst._id),
+        group: asst.group,
       });
     });
     collection.rest.applications.forEach(asst => {
@@ -105,7 +108,9 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
-        webhook: webhookAssistants.indexOf(asst._id) >= 0,
+        helpURL: asst.helpURL,
+        webhook: webhookAssistants.some(assistantId => assistantId === asst._id),
+        group: asst.group,
       });
     });
     assistantConnectors.push({
@@ -117,7 +122,6 @@ export function* retrievingAssistantDetails() {
       import: true,
     });
   }
-
   localStorage.setItem('assistants', JSON.stringify(assistantConnectors));
 }
 
@@ -152,9 +156,9 @@ export function* fetchUIVersion() {
 }
 
 export function* retrieveAppInitializationResources() {
+  yield call(retrievingUserDetails);
   yield all([
     call(retrievingOrgDetails),
-    call(retrievingUserDetails),
     call(retrievingAssistantDetails),
   ]);
 
@@ -183,13 +187,12 @@ export function* retrieveAppInitializationResources() {
 
   yield put(actions.auth.defaultAccountSet());
 }
-
 const getLogrocketId = () =>
   // LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
   // eslint-disable-next-line no-undef
   (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
 
-function* identifyLogRocketSession() {
+export function* identifyLogRocketSession() {
   const p = yield select(selectors.userProfile);
 
   // identify user with LogRocket
@@ -255,7 +258,7 @@ export function* initializeApp(opts) {
     // note the current saga `initializeApp` is killed as well
     // so that it needs to be called again after logrocket is initialized and sagas restarted
     // that happens in sagas/index.js
-    return yield put(actions.auth.abortAllSagasAndInitLR({opts}));
+    return yield put(actions.auth.abortAllSagasAndInitLR(opts));
   }
 
   // delete data state when reloading app...
@@ -319,9 +322,14 @@ export function* auth({ email, password }) {
     // Important: Do not start off any async saga actions(esp those making network calls)
     // before logrocket initialization
     yield call(initializeApp, { reload: isExpired });
-    // Important: intializeApp should be the last thing to happen in this function
+    // Important: initializeApp should be the last thing to happen in this function
   } catch (error) {
-    yield put(actions.auth.failure('Authentication Failure'));
+    let authError = inferErrorMessages(error?.message)?.[0];
+
+    if (typeof authError !== 'string') {
+      authError = AUTH_FAILURE_MESSAGE;
+    }
+    yield put(actions.auth.failure(authError));
     yield put(actions.user.profile.delete());
   }
 }
@@ -408,9 +416,25 @@ export function* reSignInWithGoogle({ email }) {
   form.submit();
   document.body.removeChild(form);
 }
+export function* reSignInWithSSO() {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const ssoClientId = yield select(selectors.userLinkedSSOClientId);
+  const form = document.createElement('form');
+
+  form.id = 'reSigninWithSSO';
+  form.method = 'POST';
+  form.action = `/reSigninWithSSO/${ssoClientId}`;
+  form.target = '_blank';
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
 
 export function* linkWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
+
   const form = document.createElement('form');
 
   form.id = 'linkWithGoogle';
@@ -420,6 +444,7 @@ export function* linkWithGoogle({ returnTo }) {
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
   form.submit();
+
   document.body.removeChild(form);
 }
 
@@ -430,5 +455,6 @@ export const authenticationSagas = [
   takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
 ];

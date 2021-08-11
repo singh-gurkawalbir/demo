@@ -1,14 +1,12 @@
-import React, { useRef, useCallback, useState } from 'react';
-import { Tooltip } from '@material-ui/core';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Tooltip, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
-import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
 import LookupIcon from '../icons/LookupLetterIcon';
 import MultiFieldIcon from '../icons/MultiFieldIcon';
@@ -16,6 +14,7 @@ import HardCodedIcon from '../icons/HardCodedIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
+import SortableHandle from '../Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -29,20 +28,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(1),
     alignItems: 'center',
-  },
-  dragRow: {
-    '& > div[class*="dragIcon"]': {
-      visibility: 'hidden',
-    },
-    '&:hover': {
-      '& > div[class*="dragIcon"]': {
-        visibility: 'visible',
-      },
-    },
-  },
-  dragIcon: {
-    cursor: 'move',
-    background: 'none',
   },
   mapField: {
     display: 'flex',
@@ -92,7 +77,17 @@ const useStyles = makeStyles(theme => ({
   deleteMappingRow: {
     width: theme.spacing(4),
     marginRight: theme.spacing(1),
-
+  },
+  autoMapDivider: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: theme.spacing(1.5, 2),
+  },
+  autoMapDividerLine: {
+    borderTop: `1px dashed ${theme.palette.secondary.light}`,
+    margin: theme.spacing(0, 1.25),
+    height: 1,
+    flexGrow: 1,
   },
   rowContainer: {
     '&:hover': {
@@ -101,16 +96,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const emptyObject = {};
+
 export default function MappingRow({
   disabled,
-  onMove,
   index,
   importId,
   flowId,
   mappingKey,
   subRecordMappingId,
-  isDraggable = false,
+  isDragInProgress = false,
+  isRowDragged = false,
 }) {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const [showGripper, setShowGripper] = useState(false);
+
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
     const mapping = mappings.find(({key}) => key === mappingKey);
@@ -127,48 +127,18 @@ export default function MappingRow({
     hardCodedValue,
     lookupName,
   } = mapping;
-  const dispatch = useDispatch();
-  const classes = useStyles();
-  const [isActive, setIsActive] = useState(false);
-  const ref = useRef(null);
+
   const generateFields = useSelector(state =>
     selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
+  const isAutoSuggestionStartRow = useSelector(state => {
+    const {startKey} = selectors.autoMapper(state);
+
+    return !!(startKey && startKey === mappingKey);
+  });
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-
-  const [, drop] = useDrop({
-    accept: 'MAPPING',
-    hover(item) {
-      if (!ref.current || !isDraggable) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: 'MAPPING', index, key: mappingKey },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: isDraggable,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-
-  drop(preview(ref));
-
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
     if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
@@ -192,6 +162,7 @@ export default function MappingRow({
 
   const RightIcon = ({title, Icon, className}) => (
     <Tooltip
+      data-public
       title={title}
       placement="bottom">
       <span className={clsx(classes.lockIcon, className)}>
@@ -217,11 +188,19 @@ export default function MappingRow({
   }, [dispatch, mappingKey]);
 
   const handleOnMouseEnter = useCallback(() => {
-    setIsActive(true);
-  }, []);
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  }, [isDragInProgress]);
   const handleOnMouseLeave = useCallback(() => {
-    setIsActive(false);
+    setShowGripper(false);
   }, []);
+
+  useEffect(() => {
+    if (isRowDragged) {
+      setShowGripper(true);
+    }
+  }, [isRowDragged]);
 
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const isLookup = !!lookupName;
@@ -229,62 +208,69 @@ export default function MappingRow({
   const isHardCodedValue = !!hardCodedValue;
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const disableDelete = !mappingKey || isRequired || isNotEditable || disabled;
+  const showAutoMapDivider = isAutoSuggestionStartRow && !isDragInProgress;
 
   return (
-    <div
-      ref={ref}
-      onMouseEnter={handleOnMouseEnter}
-      onMouseLeave={handleOnMouseLeave}
-      style={{ opacity }}
-      className={classes.rowContainer}>
-      <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-        <div className={classes.dragIcon} ref={drag}>
-          <GripperIcon />
+    <>
+      { showAutoMapDivider && (
+        <div className={classes.autoMapDivider}>
+          <div className={classes.autoMapDividerLine} />
+          <Typography variant="caption">New mappings</Typography>
+          <div className={classes.autoMapDividerLine} />
         </div>
-        <div
-          className={clsx(classes.childHeader, classes.mapField, {
-            [classes.disableChildRow]:
+      )}
+      <div
+        onMouseEnter={handleOnMouseEnter}
+        onMouseLeave={handleOnMouseLeave}
+        className={classes.rowContainer}>
+        <div className={classes.innerRow}>
+          <SortableHandle isVisible={showGripper} />
+          <div
+            data-public
+            className={clsx(classes.childHeader, classes.mapField, {
+              [classes.disableChildRow]:
               isSubRecordMapping || isNotEditable || disabled,
-          })}>
-          <DynaTypeableSelect
-            key={extractValue}
-            id={`fieldMappingExtract-${index}`}
-            labelName="name"
-            valueName="id"
-            value={extractValue}
-            options={extractFields}
-            disabled={isSubRecordMapping || isNotEditable || disabled}
-            onBlur={handleExtractBlur}
-            onTouch={handleFieldTouch}
+            })}>
+            <DynaTypeableSelect
+              key={extractValue}
+              id={`fieldMappingExtract-${index}`}
+              labelName="name"
+              valueName="id"
+              value={extractValue}
+              options={extractFields}
+              disabled={isSubRecordMapping || isNotEditable || disabled}
+              onBlur={handleExtractBlur}
+              onTouch={handleFieldTouch}
           />
 
-          {(isSubRecordMapping || isNotEditable) && (
+            {(isSubRecordMapping || isNotEditable) && (
             <span className={classes.lockIcon}>
               <LockIcon />
             </span>
-          )}
-        </div>
-        <span className={classes.mappingIcon} />
-        <div
-          className={clsx(classes.childHeader, classes.mapField, {
-            [classes.disableChildRow]:
+            )}
+          </div>
+          <span className={classes.mappingIcon} />
+          <div
+            data-public
+            className={clsx(classes.childHeader, classes.mapField, {
+              [classes.disableChildRow]:
               isSubRecordMapping || isRequired || disabled,
-          })}>
-          <DynaTypeableSelect
-            key={generate}
-            id={`fieldMappingGenerate-${index}`}
-            value={generate}
-            labelName="name"
-            valueName="id"
-            options={generateFields}
-            disabled={isSubRecordMapping || isRequired || disabled}
-            onBlur={handleGenerateBlur}
-            onTouch={handleFieldTouch}
+            })}>
+            <DynaTypeableSelect
+              key={generate}
+              id={`fieldMappingGenerate-${index}`}
+              value={generate}
+              labelName="name"
+              valueName="id"
+              options={generateFields}
+              disabled={isSubRecordMapping || isRequired || disabled}
+              onBlur={handleGenerateBlur}
+              onTouch={handleFieldTouch}
           />
-          {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
-          {isMultiField && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
-          {isHardCodedValue && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
-          {(isSubRecordMapping || isRequired) && (
+            {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
+            {isMultiField && !isLookup && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
+            {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
+            {(isSubRecordMapping || isRequired) && (
             <RightIcon
               title={`${
                 isSubRecordMapping
@@ -292,40 +278,41 @@ export default function MappingRow({
                   : 'This field is required by the application you are importing into'
               }`}
               Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isMultiField || isHardCodedValue})} />
-          )}
-        </div>
-        <div className={classes.actionsMapping}>
-          <div
-            className={clsx({
-              [classes.disableChildRow]: isSubRecordMapping,
-            })}>
-            <MappingSettingsButton
-              dataTest={`fieldMappingSettings-${index}`}
-              mappingKey={mappingKey}
-              disabled={disabled}
-              subRecordMappingId={subRecordMappingId}
-              importId={importId}
-              flowId={flowId}
-          />
+            )}
           </div>
-          <div
-            key="delete_button"
-            className={clsx(classes.deleteMappingRow, {
-              [classes.disableChildRow]: isSubRecordMapping,
-            })}>
-            <ActionButton
-              data-test={`fieldMappingRemove-${index}`}
-              aria-label="delete"
-              disabled={disableDelete}
-              onClick={handleDeleteClick}
-              className={clsx(classes.deleteBtn, {
-                [classes.hide]: !isActive,
+          <div className={classes.actionsMapping}>
+            <div
+              className={clsx({
+                [classes.disableChildRow]: isSubRecordMapping,
               })}>
-              <TrashIcon />
-            </ActionButton>
+              <MappingSettingsButton
+                dataTest={`fieldMappingSettings-${index}`}
+                mappingKey={mappingKey}
+                disabled={disabled}
+                subRecordMappingId={subRecordMappingId}
+                importId={importId}
+                flowId={flowId}
+          />
+            </div>
+            <div
+              key="delete_button"
+              className={clsx(classes.deleteMappingRow, {
+                [classes.disableChildRow]: isSubRecordMapping,
+              })}>
+              <ActionButton
+                data-test={`fieldMappingRemove-${index}`}
+                aria-label="delete"
+                disabled={disableDelete}
+                onClick={handleDeleteClick}
+                className={clsx(classes.deleteBtn, {
+                  [classes.hide]: !showGripper,
+                })}>
+                <TrashIcon />
+              </ActionButton>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

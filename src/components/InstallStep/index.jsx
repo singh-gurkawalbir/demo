@@ -228,7 +228,7 @@ export default function InstallationStep(props) {
               type={
                 step?.options?.connectionType?.toLowerCase() || step?.sourceConnection?.type || ''
               }
-              assistant={step?.sourceConnection?.assistant}
+              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type}
             />
             )}
           </div>
@@ -242,13 +242,13 @@ export default function InstallationStep(props) {
               color="primary"
               className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
               >
-              {showSpinner && <Spinner color="primary" size={16} />} {stepText}
+              {showSpinner && <Spinner size="small" />} {stepText}
             </IconTextButton>
             )}
             {step.completed && (
             <>
               <Typography onClick={onStepClick} className={classes.completedText}>
-                {showSpinner && <Spinner color="primary" size={16} />}  {stepText}
+                {showSpinner && <Spinner size="small" />}  {stepText}
               </Typography>
             </>
             )}

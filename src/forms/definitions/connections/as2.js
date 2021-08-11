@@ -4,18 +4,30 @@ import { HELP_CENTER_BASE_URL } from '../../../utils/constants';
 
 export default {
   preSave: formValues => {
-    const newValues = formValues;
+    const newValues = { ...formValues };
 
     if (newValues['/ftp/entryParser'] === '') {
       delete newValues['/ftp/entryParser'];
     }
 
     if (newValues['/as2/partnerStationInfo/auth/type'] === 'basic') {
-      newValues['/as2/partnerStationInfo/auth/token'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/token'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/location'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/headerName'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/scheme'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/paramName'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshMethod'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshRelativeURI'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshBody'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshTokenPath'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshMediaType'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshHeaders'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/token/refreshToken'] = undefined;
     } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'token') {
-      newValues['/as2/partnerStationInfo/auth/basic'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/basic/username'] = undefined;
+      newValues['/as2/partnerStationInfo/auth/basic/password'] = undefined;
     } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'none') {
-      delete newValues['/as2/partnerStationInfo/auth/type'];
+      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
     }
 
     if (
@@ -343,13 +355,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-    },
-    {
-      id: 'saveandclose',
-    },
-    {
-      id: 'cancel',
+      id: 'saveandclosegroup',
     },
   ],
 };

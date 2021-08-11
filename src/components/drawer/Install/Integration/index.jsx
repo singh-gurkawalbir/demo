@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import RightDrawer from '../../Right';
+import DrawerHeader from '../../Right/DrawerHeader';
+import DrawerContent from '../../Right/DrawerContent';
 import UploadFile from './UploadFile';
 import Preview from './Preview';
 import Setup from '../common/Setup';
@@ -22,21 +24,25 @@ export default function InstallIntegrationDrawer() {
     <RightDrawer
       onClose={handleClose}
       path={rootPath}
-      type="default"
-      title="Install integration"
-      height="tall"
-      >
-      <Switch>
-        <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
-          <Preview />
-        </Route>
-        <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-          <Setup handleClose={handleClose} />
-        </Route>
-        <Route path={`${match.url}/${rootPath}`}>
-          <UploadFile />
-        </Route>
-      </Switch>
+      height="tall">
+
+      <DrawerHeader title="Install integration" />
+
+      <DrawerContent>
+        <Switch>
+          <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
+            <Preview />
+          </Route>
+          <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
+            <Setup data-public handleClose={handleClose} />
+          </Route>
+          <Route path={`${match.url}/${rootPath}`}>
+            <span data-public>
+              <UploadFile />
+            </span>
+          </Route>
+        </Switch>
+      </DrawerContent>
     </RightDrawer>
   );
 }

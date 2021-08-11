@@ -14,7 +14,7 @@ const getLookupMetadata = ({
         id: '_mode',
         name: '_mode',
         type: 'radiogroup',
-        label: 'Select',
+        label: 'Lookup type',
         required: true,
         helpKey: 'mapping.lookup.mode',
         defaultValue: lookup?.map ? 'static' : 'dynamic',
@@ -31,7 +31,6 @@ const getLookupMetadata = ({
         id: '_relativeURI',
         name: '_relativeURI',
         type: 'relativeuri',
-        disableEditorV2: true,
         showLookup: false,
         label: 'Relative URI',
         connectionId,
@@ -81,14 +80,12 @@ const getLookupMetadata = ({
         name: '_body',
         type: 'httprequestbody',
         required: true,
-        disableEditorV2: true,
-        supportLookup: false,
         connectionId,
         resourceId,
         resourceType,
         flowId,
-        label: 'Build HTTP request body',
-        defaultValue: lookup.body,
+        label: 'HTTP request body',
+        defaultValue: lookup.body || lookup.postBody,
         visibleWhenAll: [
           {
             field: '_mode',
@@ -123,9 +120,9 @@ const getLookupMetadata = ({
         label: '',
         required: true,
         keyName: 'export',
-        keyLabel: 'Export field',
+        keyLabel: 'Export field value',
         valueName: 'import',
-        valueLabel: 'Import field (HTTP)',
+        valueLabel: 'Import field value',
         map: lookup && lookup.map,
         visibleWhen: [
           {
@@ -142,8 +139,7 @@ const getLookupMetadata = ({
         required: true,
         defaultValue: lookup.name,
         placeholder: 'Alphanumeric characters only please',
-        helpText:
-          'Name of the lookups that will be exposed to the mapping to refer.',
+        helpKey: 'import.lookups.name',
         validWhen: {
           matchesRegEx: {
             pattern: '^[\\S]+$',
@@ -189,6 +185,7 @@ const getLookupMetadata = ({
         defaultValue: lookup.default,
         required: true,
         placeholder: 'Enter default value',
+        helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
         visibleWhen: [
           {
             field: '_failRecord',

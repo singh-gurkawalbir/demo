@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
-function TooltipContent({ children, className }) {
+export default function TooltipContent({ children, className, disableHtml }) {
   const classes = useStyles();
 
   return (
@@ -24,7 +24,7 @@ function TooltipContent({ children, className }) {
       className={clsx(classes.root, className)}
       component="div"
       variant="body2">
-      {/<\/?[a-z][\s\S]*>/i.test(children) ? (
+      {/<\/?[a-z][\s\S]*>/i.test(children) && !disableHtml ? (
         <RawHtml html={children} options={{allowedTags: ['a']}} />
       ) : (
         children
@@ -32,5 +32,3 @@ function TooltipContent({ children, className }) {
     </Typography>
   );
 }
-
-export default TooltipContent;

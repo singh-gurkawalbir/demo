@@ -5,15 +5,14 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: [[0, 5]],
     background: theme.palette.background.default,
     borderRadius: '50%',
     display: 'inline-block',
     marginRight: '5px',
   },
   large: {
-    width: 24,
-    height: 24,
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   small: {
     width: 12,
@@ -37,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function StatusCircle({ variant, size = 'large', className }) {
+export default function StatusCircle({ variant, size = 'large', className }) {
   const classes = useStyles();
 
   return (
@@ -51,5 +50,3 @@ StatusCircle.propTypes = {
   variant: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
   size: PropTypes.oneOf(['mini', 'small', 'large']),
 };
-
-export default StatusCircle;

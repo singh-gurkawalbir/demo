@@ -2,17 +2,15 @@ import { takeLatest, select, call, put, all } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
-import { convertFromImport, convertToExport } from '../../../utils/assistant';
+import { convertFromImport } from '../../../utils/assistant';
 import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
 
-function* fetchAssistantSampleData({ resource }) {
+export function* _fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
-  let sampleDataWrapper;
   let assistantMetadata;
-  const previewPath = '/exports/preview';
 
   yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(selectors.assistantData, {
@@ -27,99 +25,101 @@ function* fetchAssistantSampleData({ resource }) {
     });
   }
 
-  // TODO: (Sravan) move this preview config logic to assistants Util.
-
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,
     adaptorType: resource.type,
   });
   const importEndpoint = assistantConfig.operationDetails;
-  const exportConfig = {};
 
-  if (importEndpoint && importEndpoint.sampleData) {
+  if (importEndpoint?.sampleData) {
     yield put(
       actions.metadata.receivedAssistantImportPreview(
         resource._id,
         importEndpoint.sampleData
       )
     );
-  } else if (importEndpoint && importEndpoint.previewConfig) {
-    if (
-      importEndpoint.howToFindIdentifier &&
-      importEndpoint.howToFindIdentifier.lookupOperationDetails &&
-      importEndpoint.howToFindIdentifier.lookupOperationDetails.url
-    ) {
-      exportConfig.endpoint =
-        importEndpoint.howToFindIdentifier.lookupOperationDetails.url;
-      ({
-        sampleDataWrapper,
-      } = importEndpoint.howToFindIdentifier.lookupOperationDetails);
-    } else if (importEndpoint.previewConfig) {
-      exportConfig.endpoint = importEndpoint.previewConfig.url;
-      exportConfig.lookupConfig = {
-        url: assistantConfig.endpoint,
-        parameterValues: importEndpoint.previewConfig.parameterValues,
-      };
-      ({ sampleDataWrapper } = importEndpoint.previewConfig);
-    }
 
-    if (!exportConfig.queryParams) {
-      exportConfig.queryParams = {};
-    }
+    /* assistants team is not using 'previewConfig' and they are always populating 'sampleData'.
+        Do not delete this logic below in case we need to use it in future */
 
-    if (exportConfig.lookupConfig) {
-      exportConfig.lookupConfig.parameterValues = {}; // should not send these for preview call
-    }
+    // } else if (importEndpoint && importEndpoint.previewConfig) {
+    //   if (
+    //     importEndpoint.howToFindIdentifier &&
+    //     importEndpoint.howToFindIdentifier.lookupOperationDetails &&
+    //     importEndpoint.howToFindIdentifier.lookupOperationDetails.url
+    //   ) {
+    //     exportConfig.endpoint =
+    //       importEndpoint.howToFindIdentifier.lookupOperationDetails.url;
+    //     ({
+    //       sampleDataWrapper,
+    //     } = importEndpoint.howToFindIdentifier.lookupOperationDetails);
+    //   } else if (importEndpoint.previewConfig) {
+    //     exportConfig.endpoint = importEndpoint.previewConfig.url;
+    //     exportConfig.lookupConfig = {
+    //       url: assistantConfig.endpoint,
+    //       parameterValues: importEndpoint.previewConfig.parameterValues,
+    //     };
+    //     ({ sampleDataWrapper } = importEndpoint.previewConfig);
+    //   }
 
-    if (
-      exportConfig.lookupConfig &&
-      exportConfig.lookupConfig.parameterValues
-    ) {
-      exportConfig.queryParams = {
-        ...assistantConfig.queryParams,
-        ...assistantConfig.lookupConfig.parameterValues,
-      };
-    }
+    //   if (!exportConfig.queryParams) {
+    //     exportConfig.queryParams = {};
+    //   }
 
-    if (!exportConfig || exportConfig.endpoint) {
-      return false;
-    }
+    //   if (exportConfig.lookupConfig) {
+    //     exportConfig.lookupConfig.parameterValues = {}; // should not send these for preview call
+    //   }
 
-    exportConfig.forPreview = true;
-    const exportConfiguration = convertToExport({
-      assistantData: assistantMetadata,
-      assistantConfig: exportConfig,
-    });
+    //   if (
+    //     exportConfig.lookupConfig &&
+    //     exportConfig.lookupConfig.parameterValues
+    //   ) {
+    //     exportConfig.queryParams = {
+    //       ...assistantConfig.queryParams,
+    //       ...assistantConfig.lookupConfig.parameterValues,
+    //     };
+    //   }
 
-    exportConfiguration._connectionId = resource._connectionId;
-    const opts = {
-      method: 'POST',
-      body: {},
-    };
+    //   if (!exportConfig || exportConfig.endpoint) {
+    //     return false;
+    //   }
 
-    try {
-      const previewData = yield call(apiCallWithRetry, {
-        previewPath,
-        opts,
-        hidden: true,
-      });
+    //   exportConfig.forPreview = true;
+    //   const exportConfiguration = convertToExport({
+    //     assistantData: assistantMetadata,
+    //     assistantConfig: exportConfig,
+    //   });
 
-      yield put(
-        actions.metadata.receivedAssistantImportPreview(
-          resource._id,
-          sampleDataWrapper ? { sampleDataWrapper: previewData } : previewData
-        )
-      );
-    } catch (e) {
-      // Handle Errors
-    }
+    //   exportConfiguration._connectionId = resource._connectionId;
+    //   const opts = {
+    //     method: 'POST',
+    //     body: {},
+    //   };
+
+    //   try {
+    //     const previewData = yield call(apiCallWithRetry, {
+    //       previewPath,
+    //       opts,
+    //       hidden: true,
+    //     });
+
+  //     yield put(
+  //       actions.metadata.receivedAssistantImportPreview(
+  //         resource._id,
+  //         sampleDataWrapper ? { sampleDataWrapper: previewData } : previewData
+  //       )
+  //     );
+  //   } catch (e) {
+  //     // Handle Errors
+  //   }
+  // }
   } else {
     yield put(actions.metadata.failedAssistantImportPreview(resource._id));
   }
 }
 
-function* fetchIAMetaData({
+export function* _fetchIAMetaData({
   _importId,
   _integrationId,
   refreshMetadata,
@@ -130,8 +130,10 @@ function* fetchIAMetaData({
 
   // makes refreshMetadata call incase of 'refresh' else updates with resource's sampleData
   try {
-    const iaMetadata = refreshMetadata
-      ? yield call(apiCallWithRetry, {
+    let iaMetadata;
+
+    if (refreshMetadata) {
+      const refreshMetadataResponse = yield call(apiCallWithRetry, {
         path: `/integrations/${_integrationId}/settings/refreshMetadata`,
         opts: {
           method: 'PUT',
@@ -140,8 +142,17 @@ function* fetchIAMetaData({
           },
         },
         hidden: true,
-      })
-      : sampleData;
+      });
+
+      if (!refreshMetadataResponse || refreshMetadataResponse?.errors?.length) {
+        return yield put(
+          actions.importSampleData.iaMetadataFailed({_importId})
+        );
+      }
+      iaMetadata = refreshMetadataResponse;
+    } else {
+      iaMetadata = sampleData;
+    }
 
     yield put(
       actions.importSampleData.iaMetadataReceived({
@@ -155,9 +166,8 @@ function* fetchIAMetaData({
     // on receiving error , update with resource's sampleData
     // TODO @Raghu: revisit once BE implementation done to support specific IAs
     yield put(
-      actions.importSampleData.iaMetadataReceived({
+      actions.importSampleData.iaMetadataFailed({
         _importId,
-        metadata: sampleData,
       })
     );
   }
@@ -170,10 +180,12 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
     resourceId,
     SCOPES.VALUE
   );
+
+  if (!resource) return;
   const { adaptorType, assistant, _integrationId, sampleData } = resource;
 
   if (assistant) {
-    yield call(fetchAssistantSampleData, { resource });
+    return yield call(_fetchAssistantSampleData, { resource });
   }
 
   if (adaptorType) {
@@ -218,7 +230,7 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
 
   // Fetches metadata to populate incase of imports in IAs (other than NS/SF)
   if (isIntegrationApp(resource)) {
-    return yield call(fetchIAMetaData, {
+    return yield call(_fetchIAMetaData, {
       _importId: resourceId,
       _integrationId,
       refreshMetadata: refreshCache,

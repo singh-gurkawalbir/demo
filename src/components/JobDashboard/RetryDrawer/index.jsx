@@ -1,38 +1,33 @@
+/* eslint-disable react/jsx-handler-names */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
+import isEqual from 'lodash/isEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
-import ButtonGroup from '../../ButtonGroup';
+import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { useFormOnCancel } from '../../FormOnCancelContext';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 
 const useStyles = makeStyles(theme => ({
-  root: {
+  errorText: {
+    margin: theme.spacing(1),
+  },
+  content: {
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'stretch',
-    height: '100%',
-  },
-  actions: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    // height: theme.spacing(10),
-    marginTop: theme.spacing(1),
-    padding: theme.spacing(2, 0, 1, 0),
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  spinner: {
-    marginRight: theme.spacing(1),
-  },
-  errorText: {
-    marginTop: theme.spacing(1),
   },
 }));
 
-function DrawerContent({jobId, flowJobId}) {
+function RetryForm({jobId, flowJobId, asyncKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -41,7 +36,7 @@ function DrawerContent({jobId, flowJobId}) {
 
   const [error, setError] = useState();
   const [touched, setTouched] = useState(false);
-
+  const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
   const retryData = useSelector(state => {
     if (!retryId) return undefined;
 
@@ -51,6 +46,7 @@ function DrawerContent({jobId, flowJobId}) {
   });
 
   const [data, setData] = useState(retryData?.data);
+  const isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
@@ -60,15 +56,11 @@ function DrawerContent({jobId, flowJobId}) {
       actions.job.updateRetryData({
         retryId,
         retryData: { ...retryData, data: parsedData },
+        asyncKey,
       })
     );
     setTouched(false);
-  }, [dispatch, retryData, retryId, data]);
-
-  const handleSaveAndClose = useCallback(() => {
-    handleSave();
-    history.goBack();
-  }, [handleSave, history]);
+  }, [dispatch, retryData, retryId, data, asyncKey]);
 
   const handleChange = useCallback(value => {
     try {
@@ -106,42 +98,45 @@ function DrawerContent({jobId, flowJobId}) {
   }, [retryData]);
 
   if (!retryData) {
-    return <Spinner className={classes.spinner} />;
+    return <Spinner centerAll />;
   }
 
-  const disabled = !!error || !touched;
-
   return (
-    <div className={classes.root}>
-      <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
+    <>
+      <DrawerContent noPadding>
+        <div className={classes.content}>
+          <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
+          {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}
+        </div>
+      </DrawerContent>
 
-      {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}
-
-      <div className={classes.actions}>
-        <ButtonGroup>
-          <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
-          <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save & close</Button>
-          <Button
-            variant="text"
-            // eslint-disable-next-line react/jsx-handler-names
-            onClick={history.goBack}>Cancel
-          </Button>
-        </ButtonGroup>
+      <DrawerFooter>
+        <SaveAndCloseButtonGroupAuto
+          asyncKey={asyncKey}
+          isDirty={isDirty}
+          status={status}
+          onClose={history.goBack}
+          onSave={handleSave}
+          shouldHandleCancel
+          />
         <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
-      </div>
-    </div>
+      </DrawerFooter>
+    </>
   );
 }
 
 export default function RetryDrawer({height, jobId, flowJobId}) {
+  const asyncKey = getAsyncKey(`retryDrawer-${jobId}`, flowJobId); // added retryDrawer to make it unique
+  const {setCancelTriggered, disabled} = useFormOnCancel(asyncKey);
+
   return (
     <RightDrawer
       path="editRetry/:retryId"
       height={height}
       width="large"
-      title="Edit retry data"
       variant="permanent">
-      <DrawerContent jobId={jobId} flowJobId={flowJobId} />
+      <DrawerHeader handleClose={setCancelTriggered} disableClose={disabled} title="Edit retry data" />
+      <RetryForm asyncKey={asyncKey} jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>
   );
 }

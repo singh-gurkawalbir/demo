@@ -1,55 +1,32 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { useDrag, useDrop } from 'react-dnd-cjs';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-
-import {
+import {isFileAdaptor,
   getResourceSubType,
   generateNewId,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
-import transformationAction from './actions/transformation';
+import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
-import exportFilterAction from './actions/exportFilter';
+import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
 
-/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
-   We use the block const across several components and thus is a maintenance issue to
-   manage as we enhance the FB layout. */
-const blockHeight = 200;
-const lineHeightOffset = 85;
-const lineWidth = 160;
 const emptyObj = {};
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   pgContainer: {
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  line: {
-    borderBottom: `3px dotted ${theme.palette.divider}`,
-    width: lineWidth,
-    marginTop: 85,
-  },
-  firstLine: {
-    position: 'relative',
-  },
-  connectingLine: {
-    marginTop: -blockHeight,
-    height: blockHeight + lineHeightOffset,
-    borderRight: `3px dotted ${theme.palette.divider}`,
-  },
-}));
+});
 const PageGenerator = ({
   history,
   match,
@@ -59,7 +36,6 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
-  onMove,
   openErrorCount,
   ...pg
 }) => {
@@ -114,53 +90,7 @@ const PageGenerator = ({
         ),
       shallowEqual
     ) || {};
-  // console.log(pg, usedActions, createdGeneratorId);
-  const ref = useRef(null);
-  const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_GENERATOR, index },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: !isViewMode,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-  // #region Drag and Drop handlers
-  const [, drop] = useDrop({
-    accept: itemTypes.PAGE_GENERATOR,
 
-    hover(item, monitor) {
-      if (!ref.current) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      const clientOffset = monitor.getClientOffset();
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-
-  drag(drop(ref));
-  // #endregion
   const handleBlockClick = useCallback(() => {
     let newId = generateNewId();
 
@@ -264,7 +194,7 @@ const PageGenerator = ({
         ? 'listener'
         : 'export';
 
-      if (['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0) {
+      if (isFileAdaptor(resource) && resource.adaptorType.includes('Export')) {
         blockType = 'exportTransfer';
       }
 
@@ -298,8 +228,6 @@ const PageGenerator = ({
     ? 'Pending configuration'
     : resource.name || resource.id;
   const { connectorType, assistant, blockType } = getApplication();
-
-  drag(ref);
 
   // #region Configure available generator actions
 
@@ -361,23 +289,16 @@ const PageGenerator = ({
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
         assistant={assistant}
-        ref={ref} /* ref is for drag and drop binding */
         blockType={blockType}
-        opacity={opacity}
         actions={generatorActions}
         flowId={flowId}
         resource={resource}
+        resourceId={resourceId}
+        resourceType="exports"
         index={index}
         schedule={schedule}
         openErrorCount={openErrorCount}
         isPageGenerator
-      />
-      <div
-        /* -- connecting line */
-        className={clsx({
-          [classes.line]: !pending,
-          [classes.connectingLine]: index > 0 && !pending,
-        })}
       />
     </div>
   );

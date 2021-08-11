@@ -2,11 +2,6 @@ import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { getApp } from '../../../constants/applications';
-import formFactory from '../../../forms/formFactory';
-import {
-  defaultPatchSetConverter,
-  sanitizePatchSet,
-} from '../../../forms/utils';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -14,6 +9,8 @@ import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 
 const emptyObj = {};
 const isParent = true;
@@ -35,7 +32,9 @@ export function FormView(props) {
   );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: staggedResource.adaptorType,
+      adaptorType: ['RESTExport', 'RESTImport'].includes(staggedResource?.adaptorType)
+        ? 'rest'
+        : 'http',
       assistant: staggedResource.assistant,
     })
   );
@@ -81,7 +80,7 @@ export function FormView(props) {
       return acc;
     }, {});
     // use this function to get the corresponding preSave function for this current form
-    const { preSave } = formFactory.getResourceFormAssets({
+    const { preSave } = getResourceFormAssets({
       resourceType,
       resource: staggedResource,
       isNew: false,

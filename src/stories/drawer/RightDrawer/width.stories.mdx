@@ -1,0 +1,43 @@
+import { Checkbox, Button } from '@material-ui/core';
+import { MemoryRouter } from 'react-router-dom';
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
+import RightDrawer from '../../../components/drawer/Right';
+import ActionGroup from '../../../components/ActionGroup';
+import MockAppBar from '../../mocks/AppBar';
+import MockPageBar from '../../mocks/PageBar';
+import Template from './Template';
+
+<Meta 
+  title="Components/Right Drawer/Drawer/Width" 
+  component={RightDrawer}
+  parameters={{ previewTabs: { 'storybook/docs/panel': { hidden: true } } }}
+/>
+
+<Story name="Small" args={{ width: 'small' }}>
+  {Template.bind({})}
+</Story>
+
+<Story name="Medium" args={{ width: 'medium' }}>
+  {Template.bind({})}
+</Story>
+
+<Story name="Default" args={{ width: 'default' }}>
+  {Template.bind({})}
+</Story>
+
+<Story name="Large" args={{ width: 'large' }}>
+  {Template.bind({})}
+</Story>
+
+<Story name="XL" args={{ width: 'xl' }}>
+  {Template.bind({})}
+</Story>
+
+<Story name="Full" args={{ width: 'full' }}>
+  {Template.bind({})}
+</Story>
+

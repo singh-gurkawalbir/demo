@@ -69,7 +69,6 @@ export default function fields(state = {}, action) {
 
         // update the last modified field id in the form state
         draft[formKey].lastFieldUpdated = id;
-
         updateFieldValue(fieldsRef[id], value);
 
         getNextStateFromFields(draft[formKey]);
@@ -92,15 +91,26 @@ export default function fields(state = {}, action) {
 
             fieldsRef[id][key] = fieldStateProps[key];
 
-            if (key === 'isValid' && fieldStateProps[key] === false) {
-              fieldsRef[id].errorMessages = errorMessages;
+            if (key === 'isValid' && typeof fieldStateProps[key] === 'boolean') {
+              if (fieldStateProps[key]) {
+                delete fieldsRef[id].forcedErrorMessages;
+              } else {
+                fieldsRef[id].forcedErrorMessages = errorMessages;
+              }
+              fieldsRef[id].forcedIsValid = fieldStateProps[key];
             }
 
             if (!fieldsRef[id].forceComputation) { fieldsRef[id].forceComputation = []; }
-            fieldsRef[id].forceComputation.push(key);
+            if (!fieldsRef[id].forceComputation.includes(key)) {
+              fieldsRef[id].forceComputation.push(key);
+            }
           });
 
-        // no need to generate next state...
+        // This is necessary to update other non forcestate computation..the only issue there could be the way
+        // optionshandler could modify the forceState properties..but this was still a concern when subsequent actions
+        // causes a generateNextState
+
+        getNextStateFromFields(draft[formKey]);
         break;
 
       case actionTypes.FORM.FIELD.CLEAR_FORCE_STATE:
@@ -109,6 +119,9 @@ export default function fields(state = {}, action) {
           return console.warn('Field ID not there', id);
         }
         delete fieldsRef[id].forceComputation;
+        delete fieldsRef[id].forcedErrorMessages;
+        delete fieldsRef[id].forcedIsValid;
+
         getNextStateFromFields(draft[formKey]);
 
         break;

@@ -1,8 +1,8 @@
 import React, { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaSelect from '../DynaSelect';
-import { sourceOptions, destinationOptions } from '../../../../forms/utils';
 import { selectors } from '../../../../reducers';
+import { destinationOptions, sourceOptions } from '../../../../forms/formFactory/utils';
 
 const webhookOnlyOptions = [
   {
@@ -21,12 +21,6 @@ const webhookAssistantOptions = [
     value: 'webhook',
   },
 ];
-const lookupOption = [
-  {
-    label: 'Lookup addition records (per record)',
-    value: 'lookupRecords',
-  },
-];
 const importOption = [
   {
     label: 'Import records into destination application',
@@ -41,7 +35,7 @@ const importOption = [
  * This function handles what to show as resource type options based on application
  */
 function getAvailableResourceTypeOptions(application, mode, isDataloader) {
-  const { type, assistant, webhook, webhookOnly, export: _export, import: _import } =
+  const { type, assistant, webhook, webhookOnly } =
     application || {};
 
   // Defensive code to avoid unknown issues
@@ -62,13 +56,6 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
   // Incase of a webhook assistant
   if (mode === 'source' && assistant && webhook) {
     return webhookAssistantOptions;
-  }
-
-  // If either of export or import are present for a pp assistant, show only one lookup/import option
-  if (mode === 'destination' && assistant) {
-    if (_export && !_import) return lookupOption;
-
-    if (!_export && _import) return importOption;
   }
 
   // If it passes none of the above cases, show common options

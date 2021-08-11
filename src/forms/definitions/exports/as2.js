@@ -1,8 +1,9 @@
-import { alterFileDefinitionRulesVisibility } from '../../utils';
+import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
+import { updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
-    const newValues = { ...formValues };
+    const newValues = updateFileProviderFormValues(formValues);
 
     newValues['/type'] = 'webhook';
 
@@ -14,65 +15,6 @@ export default {
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
-    }
-
-    if (newValues['/file/type'] === 'json') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/file/xml/resourcePath'];
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xml') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/json'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xlsx') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/xml/resourcePath'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'csv') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/xml/resourcePath'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
     }
 
     return {
@@ -184,16 +126,7 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'saveandclose',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'file.type',
@@ -203,26 +136,13 @@ export default {
     },
     {
       // Button that saves file defs and then submit resource
-      id: 'savedefinition',
+      id: 'savefiledefinitions',
       visibleWhen: [
         {
           field: 'file.type',
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
-    },
-    {
-      // Button that saves file defs and then submit resource
-      id: 'saveandclosedefinition',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
     },
   ],
 };

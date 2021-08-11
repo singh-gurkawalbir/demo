@@ -99,6 +99,12 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
             type: 'array',
           });
         }
+        if (options.includeArrayLength) {
+          paths.push({
+            id: prefix ? [prefix, k, 'length'].join('.') : `${k}.length`,
+            type: 'number',
+          });
+        }
       } else if (type === '[object Boolean]') {
         paths.push({
           id: prefix ? [prefix, k].join('.') : k,
@@ -228,6 +234,10 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
   let paths = [];
   let type;
 
+  if (!sampleData || typeof sampleData !== 'object') {
+    return paths;
+  }
+
   Object.keys(sampleData).forEach(property => {
     if (property in sampleData) {
       // do stuff
@@ -301,6 +311,10 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
  * ]
  */
 export function wrapSpecialChars(item = {}) {
+  if (typeof item !== 'object' || item === null) {
+    return item;
+  }
+
   let { id } = item;
 
   if (/\W/.test(id)) {
@@ -308,13 +322,20 @@ export function wrapSpecialChars(item = {}) {
     // Split by sublist character so sublist options wont be wrapped
     // then, split by a 'dot' character
     // wrap remaining string in [ and ] if contains any special characters and escape closing brace ']' if id has it.
+    //
+    // If a string is starts with *. , it relates to grouped item and we shoud not split it. It is used inside netsuite lookup filter in case of grouped flow sample data.
+    // Example: var a = '*.abc';
+    // a.replace(/^\*\./, ‘CELIGO_GROUPED_ITEM’) => 'CELIGO_GROUPED_ITEMabc' and again replace CELIGO_GROUPED_ITEM with *. after join.
+    // var b = ‘asf*.abz’
+    // b.replace(/^\*\./, ‘CELIGO’) => 'asf*.abz'
+
     id = id
       .split('[*].')
-      .map(el =>
-        el
-          .split('.')
-          .map(el => (/\W/.test(el) ? `[${el.replace(/\]/g, '\\]')}]` : el))
-          .join('.')
+      .map(el => el.replace(/^\*\./, 'CELIGO_GROUPED_ITEM')
+        .split('.')
+        .map(el => (/\W/.test(el) ? `[${el.replace(/\]/g, '\\]')}]` : el))
+        .join('.')
+        .replace('CELIGO_GROUPED_ITEM', '*.')
       )
       .join('[*].');
   }

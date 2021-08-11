@@ -57,6 +57,7 @@ export default {
           { label: 'Add or update', value: 'addupdate' },
           { label: 'Attach', value: 'attach' },
           { label: 'Detach', value: 'detach' },
+          { label: 'Delete', value: 'delete'},
         ],
       },
     ],
@@ -77,7 +78,6 @@ export default {
           { label: 'Add', value: 'add' },
           { label: 'Update', value: 'update' },
           { label: 'Add or update', value: 'addupdate' },
-          { label: 'Delete', value: 'delete' },
         ],
       },
     ],
@@ -104,6 +104,12 @@ export default {
       return false;
     },
     isNew: r => isNewId(r._id),
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     connectionId: r => r?._connectionId,
     resourceType: 'imports',
     resourceId: r => r?._id,
@@ -119,7 +125,7 @@ export default {
       },
       {
         field: 'netsuite_da.operation',
-        is: ['update', 'addupdate'],
+        is: ['update', 'addupdate', 'delete'],
       },
     ],
   },
@@ -179,8 +185,10 @@ export default {
     ],
   },
   'netsuite.file.name': {
-    type: 'text',
+    type: 'uri',
     label: 'Name',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -193,8 +201,10 @@ export default {
     ],
   },
   'netsuite.file.fileType': {
-    type: 'text',
+    type: 'uri',
     label: 'File type',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -207,8 +217,10 @@ export default {
     ],
   },
   'netsuite.file.folder': {
-    type: 'text',
+    type: 'uri',
     label: 'Folder',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -221,12 +233,14 @@ export default {
     ],
   },
   'netsuite.file.internalId': {
-    type: 'text',
+    type: 'uri',
     label: 'File internal ID',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
-        is: ['update', 'delete'],
+        is: ['update'],
       },
       {
         field: 'inputMode',

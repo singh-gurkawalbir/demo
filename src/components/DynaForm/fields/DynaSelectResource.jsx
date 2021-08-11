@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -12,14 +13,12 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
-import {
-  defaultPatchSetConverter,
-  getMissingPatchSet,
-} from '../../../forms/utils';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import StatusCircle from '../../StatusCircle';
+import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
+import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
+import OnlineStatus from '../../OnlineStatus';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -34,6 +33,9 @@ const handleAddNewResource = args => {
     statusExport,
     assistant,
     integrationId,
+    connectorId,
+    isFrameWork2,
+    email,
   } = args;
 
   if (
@@ -45,6 +47,7 @@ const handleAddNewResource = args => {
       'pageGenerator',
       'asyncHelpers',
       'iClients',
+      'connectorLicenses',
     ].includes(resourceType)
   ) {
     let values;
@@ -58,6 +61,19 @@ const handleAddNewResource = args => {
         ...values,
         '/assistant': assistant,
       };
+    } else if (['connectorLicenses'].includes(resourceType)) {
+      values = {
+        ...values,
+        '/_connectorId': connectorId,
+        '/trialLicenseTemplate': true,
+        '/email': email,
+      };
+      if (isFrameWork2) {
+        values = {
+          ...values,
+          '/type': 'integrationApp',
+        };
+      }
     } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
@@ -103,10 +119,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  connectionStatusWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -118,39 +130,49 @@ const useStyles = makeStyles(theme => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
   },
+  dynaSelectWrapper: {
+    width: '100%',
+  },
+  dynaSelectWithStatusWrapper: {
+    maxWidth: '95%',
+    position: 'relative',
+    overflow: 'hidden',
+    '& > div:last-child': {
+      position: 'absolute',
+      right: '50px',
+      top: theme.spacing(4),
+    },
+    '& >* .MuiSelect-selectMenu': {
+      paddingRight: 140,
+    },
+  },
 }));
 
 function ConnectionLoadingChip(props) {
-  const classes = useStyles();
-  const { connectionId } = props;
+  const { connectionId, flowId, integrationId, parentType, parentId} = props;
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
-  }, [connectionId, dispatch]);
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId, parentContext));
+  }, [connectionId, dispatch, parentContext]);
 
   const isConnectionOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (isConnectionOffline === undefined) {
-    return null;
-  }
-
-  return isConnectionOffline ? (
-    <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="error" />
-      offline
-    </div>
-  ) : (
-    <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="success" />
-      online
-    </div>
+  return (
+    <OnlineStatus offline={isConnectionOffline} />
   );
 }
 
-function DynaSelectResource(props) {
+export default function DynaSelectResource(props) {
   const {
     disabled,
     id,
@@ -169,10 +191,13 @@ function DynaSelectResource(props) {
     resourceContext,
     skipPingConnection,
     integrationId,
+    connectorId,
+    flowId,
   } = props;
   const {options} = props;
   const classes = useStyles();
   const location = useLocation();
+  const integrationIdFromUrl = useIntegration(resourceType, id);
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
@@ -188,6 +213,12 @@ function DynaSelectResource(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
+  const isFrameWork2 = useSelector(state =>
+    selectors.resource(state, 'connectors', connectorId)?.framework === 'twoDotZero'
+  );
+  const preferences = useSelector(state =>
+    selectors.userProfilePreferencesProps(state)
+  );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
@@ -202,7 +233,7 @@ function DynaSelectResource(props) {
 
   useEffect(() => {
     if (createdId) {
-      onFieldChange(id, createdId, true);
+      onFieldChange(id, createdId, false);
       // in case someone clicks + again to add another resource...
       setNewResourceId(generateNewId());
     }
@@ -231,7 +262,7 @@ function DynaSelectResource(props) {
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
-  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations, resourceType]);
+  }, [resources, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
@@ -257,20 +288,12 @@ function DynaSelectResource(props) {
         statusExport,
         expConnId,
         assistant,
-        integrationId,
+        integrationId: integrationId || integrationIdFromUrl,
+        connectorId,
+        isFrameWork2,
+        email: preferences?.email,
       }),
-    [
-      dispatch,
-      history,
-      location,
-      resourceType,
-      options,
-      newResourceId,
-      statusExport,
-      expConnId,
-      assistant,
-      integrationId,
-    ]
+    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email]
   );
   const handleEditResource = useCallback(() => {
     if (
@@ -296,17 +319,33 @@ function DynaSelectResource(props) {
       // this not an actual value we would like to commit...this is just to load the right form
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
+    if (resourceType === 'connectorLicenses') {
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/_connectorId',
+          value: connectorId,
+        },
+        {
+          op: 'add',
+          path: '/trialLicenseTemplate',
+          value: true,
+        },
+      ];
+
+      if (isFrameWork2) {
+        patchSet.push({
+          op: 'add',
+          path: '/type',
+          value: 'integrationApp',
+        });
+      }
+
+      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+    }
 
     history.push(`${location.pathname}/edit/${resourceType}/${value}`);
-  }, [
-    dispatch,
-    expConnId,
-    history,
-    location.pathname,
-    resourceType,
-    statusExport,
-    value,
-  ]);
+  }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
       label: (
@@ -318,15 +357,13 @@ function DynaSelectResource(props) {
       value: i.value,
     }));
 
-  // console.log(truncatedItems(resourceItems || []));
-
   if (!resourceItems.length && hideOnEmptyList) {
     return null;
   }
 
   return (
     <div className={classes.root}>
-      <LoadResources required resources={resourceType}>
+      <LoadResources required resources={resourceType !== 'connectorLicenses' ? resourceType : []}>
         {multiselect ? (
           <DynaMultiSelect
             {...props}
@@ -334,12 +371,23 @@ function DynaSelectResource(props) {
             options={[{ items: resourceItems || [] }]}
           />
         ) : (
-          <DynaSelect
-            {...props}
-            disabled={disableSelect}
-            removeHelperText={isAddingANewResource}
-            options={[{ items: truncatedItems(resourceItems || []) }]}
+          <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
+            <DynaSelect
+              {...props}
+              disabled={disableSelect}
+              removeHelperText={isAddingANewResource}
+              options={[{ items: truncatedItems(resourceItems || []) }]}
           />
+            {resourceType === 'connections' && !!value && !skipPingConnection && (
+            <ConnectionLoadingChip
+              connectionId={value}
+              flowId={flowId}
+              integrationId={integrationId || integrationIdFromUrl}
+              parentType={resourceContext.resourceType}
+              parentId={resourceContext.resourceId} />
+            )}
+          </div>
+
         )}
       </LoadResources>
       <div className={classes.dynaSelectMultiSelectActions}>
@@ -360,12 +408,8 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' && !!value && !skipPingConnection && (
-          <ConnectionLoadingChip connectionId={value} />
-        )}
+
       </div>
     </div>
   );
 }
-
-export default DynaSelectResource;

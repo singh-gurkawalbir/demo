@@ -1,34 +1,72 @@
 import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
+import shortid from 'shortid';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import responseMappingUtil from '../../utils/responseMapping';
+import { emptyObject } from '../../utils/constants';
 
-export function* getResponseMappingFromFlow({ id, value }) {
-  const { resourceIndex, flowId } = value;
-  const { merged: flow = {} } = yield select(
+export function* responseMappingInit({ flowId, resourceId }) {
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId
-  );
-  const pageProcessor = flow.pageProcessors[resourceIndex];
-  const { responseMapping } = pageProcessor || {};
-  const formattedResponseMapping = responseMappingUtil.getFieldsAndListMappings(
-    responseMapping
-  );
+  ))?.merged || emptyObject;
+  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!pageProcessor) {
+    return yield put(actions.responseMapping.initFailed());
+  }
+  const isImport = pageProcessor.type === 'import';
+
+  if (isImport) {
+    // check if responseMappingExtract is loaded
+    const {data: extractFields} = yield select(selectors.getSampleDataContext, {
+      flowId,
+      resourceId,
+      stage: 'responseMappingExtract',
+      resourceType: 'imports',
+    });
+
+    if (!extractFields) {
+      // fetch can be made in parallel without masking response mapping
+      yield put(actions.flowData.requestSampleData(
+        flowId,
+        resourceId,
+        'imports',
+        'responseMappingExtract',
+      ));
+    }
+  }
+  const mappings = responseMappingUtil.getFieldsAndListMappings(pageProcessor.responseMapping);
 
   yield put(
-    actions.responseMapping.setFormattedMapping(id, formattedResponseMapping)
+    actions.responseMapping.initComplete({
+      mappings: mappings.map(m => ({
+        ...m,
+        key: shortid.generate(),
+      })),
+      flowId,
+      resourceId,
+      resourceType: isImport ? 'imports' : 'exports',
+    })
   );
 }
 
-export function* saveResponseMapping({ id }) {
-  const { resourceIndex, flowId, mappings } = yield select(
-    selectors.responseMappings,
-    id
-  );
+export function* responseMappingSave() {
+  const { mappings, flowId, resourceId } = yield select(selectors.responseMapping);
+  const flow = (yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  ))?.merged || emptyObject;
+  const pageProcessorIndex = flow?.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!flow?.pageProcessors || pageProcessorIndex === -1) {
+    return yield put(actions.responseMapping.saveFailed());
+  }
   const patchSet = [];
   const mappingsWithListsAndFields = responseMappingUtil.generateMappingFieldsAndList(
     mappings
@@ -36,7 +74,7 @@ export function* saveResponseMapping({ id }) {
 
   patchSet.push({
     op: 'replace',
-    path: `/pageProcessors/${resourceIndex}/responseMapping`,
+    path: `/pageProcessors/${pageProcessorIndex}/responseMapping`,
     value: mappingsWithListsAndFields,
   });
 
@@ -48,14 +86,16 @@ export function* saveResponseMapping({ id }) {
   });
 
   // trigger save failed in case of error
-  // TODO check error format and save it
-  if (error) yield put(actions.responseMapping.saveFailed(id));
+  if (error) {
+    return yield put(actions.responseMapping.saveFailed());
+  }
 
   // trigger save complete in case of success
-  yield put(actions.responseMapping.saveComplete(id));
+  yield put(actions.responseMapping.saveComplete());
 }
 
 export const responseMappingSagas = [
-  takeEvery(actionTypes.RESPONSE_MAPPING.SAVE, saveResponseMapping),
-  takeLatest(actionTypes.RESPONSE_MAPPING.INIT, getResponseMappingFromFlow),
+  takeLatest(actionTypes.RESPONSE_MAPPING.INIT, responseMappingInit),
+  takeEvery(actionTypes.RESPONSE_MAPPING.SAVE, responseMappingSave),
+
 ];

@@ -3,7 +3,7 @@ import { FormControl, Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles({
@@ -125,7 +125,7 @@ export default function DynaSelectScopesDialog(props) {
           {label}
         </Button>
 
-        <ErroredMessageComponent {...props} />
+        <FieldMessage {...props} />
       </FormControl>
     </>
   );

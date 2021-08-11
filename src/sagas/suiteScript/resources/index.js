@@ -116,6 +116,26 @@ export function* commitStagedChanges({
   );
 }
 
+export function* commitStagedChangesWrapper({asyncKey, ...props}) {
+  // if asyncKey is defined we should try tagging with async updates
+  if (asyncKey) {
+    yield put(actions.asyncTask.start(asyncKey));
+    const resp = yield call(commitStagedChanges, props);
+
+    if (resp?.error) {
+    // save error message
+      yield put(actions.asyncTask.failed(asyncKey));
+
+      return resp;
+    }
+    yield put(actions.asyncTask.success(asyncKey));
+
+    return resp;
+  }
+
+  return yield call(commitStagedChanges, props);
+}
+
 export function* requestSuiteScriptMetadata({
   resourceType,
   ssLinkedConnectionId,
@@ -139,7 +159,7 @@ export function* requestSuiteScriptMetadata({
   return true;
 }
 
-function* featureCheck({
+export function* featureCheck({
   ssLinkedConnectionId,
   integrationId,
   featureName,

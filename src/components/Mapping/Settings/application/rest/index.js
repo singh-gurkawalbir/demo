@@ -1,11 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import mappingUtil from '../../../../../utils/mapping';
+import mappingUtil, { wrapTextForSpecialChars } from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 import {
   isProduction,
   conditionalLookupOptionsforRest,
   conditionalLookupOptionsforRestProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 export default {
@@ -34,6 +34,16 @@ export default {
       );
     }
 
+    const extractfieldsOpts = [];
+
+    if (extractFields) {
+      if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
+        extractFields.forEach(({name, id}) => {
+          extractfieldsOpts.push({name: `*.${name}`, id: `*.${id}`});
+        });
+      }
+      extractfieldsOpts.push(...extractFields);
+    }
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -75,9 +85,13 @@ export default {
         useFirstRow: {
           id: 'useFirstRow',
           name: 'useFirstRow',
+          helpKey: 'mapping.useFirstRow',
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -161,9 +175,12 @@ export default {
           name: '_body',
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
-          defaultValue: lookup.body || '',
+          resourceId,
+          flowId,
+          resourceType: 'imports',
+          defaultValue: lookup.body || lookup.postBody || '',
           required: true,
-          label: 'Build HTTP request body',
+          label: 'HTTP request body',
           // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -191,9 +208,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field (REST)',
+          valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -207,6 +224,26 @@ export default {
             { field: 'lookup.mode', is: ['static'] },
           ],
         },
+        'lookup.name': {
+          id: 'lookup.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpKey: 'import.lookups.name',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+          ],
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
+        },
         functions: {
           id: 'functions',
           name: 'functions',
@@ -215,7 +252,6 @@ export default {
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        // TODO (Aditya) : resetting Field after selection
         extract: {
           id: 'extract',
           name: 'extract',
@@ -224,11 +260,10 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
-                    label: field.name,
-                    value: field.id,
-                  }))) ||
+                (extractfieldsOpts?.map(field => ({
+                  label: field.name,
+                  value: field.id,
+                }))) ||
                 [],
             },
           ],
@@ -406,7 +441,7 @@ export default {
                 [],
             },
           ],
-          helpkey: 'mapping.extractDateTimezone',
+          helpKey: 'mapping.extractDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -492,6 +527,7 @@ export default {
           'lookup.body',
           'lookup.extract',
           'lookup.mapList',
+          'lookup.name',
           'functions',
           'extract',
           'expression',
@@ -527,12 +563,10 @@ export default {
           if (expressionField.value) expressionValue = expressionField.value;
 
           if (extractField.value) {
-            const extractValue = extractField.value;
+            const isGroupedField = extractField.value.indexOf('*.') === 0;
+            const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
 
-            expressionValue +=
-              extractValue.indexOf(' ') > -1
-                ? `{{[${extractValue}]}}`
-                : `{{${extractValue}}}`;
+            expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
             extractField.value = '';
           } else if (functionsField.value) {
             expressionValue += functionsField.value;

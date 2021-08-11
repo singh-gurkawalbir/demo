@@ -15,7 +15,7 @@ import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
-  tablePaginationRoot: { float: 'right' },
+  tablePaginationRoot: { float: 'right'},
   fileInput: { display: 'none' },
   spinner: {
     left: '0px',
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
+      color: theme.palette.background.paper,
     },
   },
   btnsWrappper: {
@@ -77,9 +77,33 @@ const useStyles = makeStyles(theme => ({
   darkGray: {
     color: theme.palette.text.secondary,
   },
+  errorMessageTable: {
+    width: '100%',
+  },
 }));
 
-function JobErrorTable({
+const useColumns = () => [
+  {
+    key: 'message',
+    heading: 'Message',
+    // eslint-disable-next-line react/display-name
+    Value: ({rowData: r}) => (
+      <JobErrorMessage
+        type={r.type}
+        message={r.message}
+        recordLink={r.recordLink}
+      />
+    ),
+  },
+  {
+    key: 'time',
+    heading: 'Time',
+    // eslint-disable-next-line react/display-name
+    Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
+  },
+];
+
+export default function JobErrorTable({
   rowsPerPage = 10,
   jobErrors,
   job,
@@ -262,24 +286,8 @@ function JobErrorTable({
               selectableRows={hasUnresolvedErrorsInCurrentPage}
               isSelectableRow={r => !r.resolved}
               onSelectChange={handleJobErrorSelectChange}
-              columns={[
-                {
-                  heading: 'Message',
-                  // eslint-disable-next-line react/display-name
-                  value: r => (
-                    <JobErrorMessage
-                      type={r.type}
-                      message={r.message}
-                      recordLink={r.recordLink}
-                    />
-                  ),
-                },
-                {
-                  heading: 'Time',
-                  // eslint-disable-next-line react/display-name
-                  value: r => <DateTimeDisplay dateTime={r.createdAt} />,
-                },
-              ]}
+              useColumns={useColumns}
+              className={classes.errorMessageTable}
             />
           </>
         </>
@@ -288,4 +296,3 @@ function JobErrorTable({
   );
 }
 
-export default JobErrorTable;

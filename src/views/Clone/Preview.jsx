@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -19,8 +19,9 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import InfoIconButton from '../../components/InfoIconButton';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import { hashCode } from '../../utils/string';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,7 +75,20 @@ const integrationsFilterConfig = {
     _connectorId: { $exists: false },
   },
 };
-
+const useColumns = () => [
+  {
+    key: 'name',
+    heading: 'Name',
+    width: '40%',
+    Value: ({rowData: r}) => r?.doc?.name || r?.doc?._id,
+  },
+  {
+    key: 'description',
+    heading: 'Description',
+    width: '60%',
+    Value: ({rowData: r}) => r.doc?.description,
+  },
+];
 export default function ClonePreview(props) {
   const classes = useStyles(props);
   const cloningDescription = `
@@ -94,7 +108,7 @@ export default function ClonePreview(props) {
     !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
-      selectors.cloneData(state, resourceType, resourceId)
+      selectors.template(state, `${resourceType}-${resourceId}`)
     ) || {};
   const { isCloned, integrationId, sandbox } = useSelector(
     state => selectors.integrationClonedDetails(state, resource._id),
@@ -118,23 +132,10 @@ export default function ClonePreview(props) {
     return selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox;
   });
   const { components } = useSelector(state =>
-    selectors.clonePreview(state, resourceType, resourceId)
+    selectors.previewTemplate(state, `${resourceType}-${resourceId}`)
   );
-  const columns = [
-    {
-      heading: 'Name',
-      value: function NameWithInfoicon(r) {
-        return (
-          <>
-            {r && (r.doc.name || r.doc._id)}
-            <InfoIconButton info={r.doc.description} size="xs" />
-          </>
-        );
-      },
-      orderBy: 'name',
-    },
-    { heading: 'Type', value: r => r.model },
-  ];
+
+  const remountKey = useMemo(() => hashCode(components), [components]);
 
   useEffect(() => {
     if (resourceType === 'integrations') {
@@ -142,7 +143,7 @@ export default function ClonePreview(props) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
             title: 'Confirm switch',
-            message: `Your integration app has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
             buttons: [
               {
                 label: 'Yes, switch',
@@ -219,7 +220,7 @@ export default function ClonePreview(props) {
             getRoutePath(`/integrations/${integration._id}/flows`)
           );
         } else {
-          props.history.push(getRoutePath('dashboard'));
+          props.history.push(getRoutePath(HOME_PAGE_PATH));
         }
       } else {
         props.history.push(getRoutePath(`/${resourceType}`));
@@ -277,12 +278,13 @@ export default function ClonePreview(props) {
       components: {
         id: 'components',
         name: 'components',
-        type: 'celigotable',
+        type: 'previewcomponentstable',
         data: objects.map((obj, index) => ({
           ...obj,
           _id: index,
         })),
-        columns,
+        resourceType,
+        useColumns,
       },
     },
     layout: {
@@ -356,14 +358,14 @@ export default function ClonePreview(props) {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
-    remount: components,
+    remount: remountKey,
   });
 
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
+        <Typography data-public variant="h4">Loading</Typography>
+        <Spinner />
       </Loader>
     );
   }
@@ -371,8 +373,8 @@ export default function ClonePreview(props) {
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
-        <Spinner color="primary" />
+        <Typography data-public variant="h4">Loading Clone Preview</Typography>
+        <Spinner />
       </Loader>
     );
   }
@@ -442,8 +444,8 @@ export default function ClonePreview(props) {
   if (cloneRequested) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
+        <Typography data-public variant="h4">Loading</Typography>
+        <Spinner />
       </Loader>
     );
   }
@@ -455,8 +457,7 @@ export default function ClonePreview(props) {
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
-              formKey={formKey}
-              fieldMeta={fieldMeta} />
+              formKey={formKey} />
             <DynaSubmit
               formKey={formKey}
               ignoreFormTouchedCheck

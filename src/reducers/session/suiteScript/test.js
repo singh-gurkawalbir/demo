@@ -14,7 +14,7 @@ describe('suiteScript reducers test cases', () => {
       iaForm: {},
       installer: {},
       account: {},
-      mappings: {},
+      mapping: {},
       flowSampleData: {},
       importSampleData: {},
     });
@@ -374,7 +374,7 @@ describe('suiteScript reducers test cases', () => {
 
 describe('suiteScript selectors test cases', () => {
   describe('suiteScript installer selectors', () => {
-    describe('installerData', () => {
+    describe('suiteScriptIntegrationAppInstallerData', () => {
       test('should return empty state when no match found.', () => {
         expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, 'dummy')).toEqual(
           {}

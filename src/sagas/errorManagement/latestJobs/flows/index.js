@@ -76,9 +76,9 @@ export function* startPollingForInProgressJobs({ flowId }) {
   yield cancel(watcher);
 }
 
-function* requestLatestJobs({ flowId }) {
+export function* requestLatestJobs({ flowId }) {
   try {
-    const latestFlowJobs = yield apiCallWithRetry({
+    const latestFlowJobs = yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/jobs/latest`,
       opts: {
         method: 'GET',
@@ -118,7 +118,7 @@ export function* cancelJob({ jobId }) {
   }
 }
 
-function* cancelLatestJobs({ flowId, jobIds = [] }) {
+export function* cancelLatestJobs({ flowId, jobIds = [] }) {
   yield all(jobIds.map(jobId => call(cancelJob, { jobId })));
   yield put(actions.errorManager.latestFlowJobs.request({ flowId }));
 }

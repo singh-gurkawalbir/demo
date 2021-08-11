@@ -4,7 +4,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { getResource } from '../resources';
 
-export function* preUninstall({ storeId, id }) {
+export function* preUninstall({ childId, id }) {
   const path = `/integrations/${id}/uninstaller/preUninstallFunction`;
   let uninstallSteps;
 
@@ -12,11 +12,11 @@ export function* preUninstall({ storeId, id }) {
     uninstallSteps = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId }, method: 'PUT' },
+      opts: { body: { storeId: childId }, method: 'PUT' },
       message: 'Loading',
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(actions.api.failure(path, 'PUT', error?.message, false));
     yield put(
       actions.integrationApp.uninstaller.failedUninstallSteps(
         id,
@@ -24,20 +24,19 @@ export function* preUninstall({ storeId, id }) {
       )
     );
 
-    return undefined;
+    return;
   }
 
   yield call(getResource, { resourceType: 'integrations', id });
   yield put(
     actions.integrationApp.uninstaller.receivedUninstallSteps(
       uninstallSteps,
-      storeId,
       id
     )
   );
 }
 
-export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
+export function* uninstallStep({ childId, id, uninstallerFunction, addOnId }) {
   const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
   let stepCompleteResponse;
 
@@ -45,7 +44,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId, addOnId }, method: 'PUT' },
+      opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
       message: 'Uninstalling',
     }) || {};
   } catch (error) {
@@ -63,10 +62,10 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
       )
     );
 
-    return undefined;
+    return;
   }
 
-  if (stepCompleteResponse && stepCompleteResponse.success) {
+  if (stepCompleteResponse?.success) {
     // After successful completion of step IA could update integration in the BE. Need to get updated doc.
     yield call(getResource, {
       resourceType: 'integrations',
@@ -102,7 +101,7 @@ export function* uninstallIntegration({ integrationId }) {
       message: 'Uninstalling',
     });
   } catch (error) {
-    return undefined;
+    return;
   }
 
   yield put(actions.resource.requestCollection('integrations'));

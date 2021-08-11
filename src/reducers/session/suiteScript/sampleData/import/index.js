@@ -30,10 +30,10 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED_ERROR: {
-        const {error} = action;
-
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].status = 'error';
-        draft[id].data = error;
         break;
       }
 

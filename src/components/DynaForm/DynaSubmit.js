@@ -4,23 +4,24 @@ import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedFo
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
 
-function FormButton({
+export default function FormButton({
   onClick,
   children,
   id,
   className,
   color,
+  variant,
   skipDisableButtonForFormTouched = false,
   ...props
 }) {
   const {
     fields,
-    isValid: formInValid,
+    isValid: formIsValid,
     disabled: formDisabled,
     value: formValue,
   } = useFormContext(props.formKey) || {};
   const {
-    isValid = formInValid,
+    isValid = formIsValid,
     disabled = formDisabled,
     value = formValue,
   } = props;
@@ -47,7 +48,7 @@ function FormButton({
       data-test={
         id || (typeof children === 'string' && children) || 'saveButton'
       }
-      variant="outlined"
+      variant={variant || 'outlined'}
       color={color || 'primary'}
       className={className}
       disabled={buttonDisabled}
@@ -56,5 +57,3 @@ function FormButton({
     </Button>
   );
 }
-
-export default FormButton;

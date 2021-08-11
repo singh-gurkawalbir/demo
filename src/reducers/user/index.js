@@ -7,7 +7,7 @@ import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
 import debug, { selectors as fromDebug } from './debug';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { genSelectors } from '../util';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -76,7 +76,7 @@ selectors.userPreferences = createSelector(
   }
 );
 
-selectors.ownerUserId = createSelector(
+selectors.ownerUser = createSelector(
   state => fromPreferences.userOwnPreferences(state && state.preferences),
   state => state && state.org,
   state => state && state.profile,
@@ -84,11 +84,11 @@ selectors.ownerUserId = createSelector(
     const { defaultAShareId } = preferences;
 
     if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-      return profile._id;
+      return profile;
     }
 
     if (!org || !org.accounts || !org.accounts.length) {
-      return profile._id;
+      return profile;
     }
 
     const { accounts: orgAccounts = {} } = org;
@@ -97,11 +97,16 @@ selectors.ownerUserId = createSelector(
     );
 
     if (currentAccount && currentAccount.ownerUser) {
-      return currentAccount.ownerUser._id;
+      return currentAccount.ownerUser;
     }
 
-    return profile._id;
+    return profile;
   }
+);
+
+selectors.ownerUserId = createSelector(
+  state => selectors.ownerUser(state),
+  ownerUser => ownerUser?._id
 );
 
 selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
@@ -112,11 +117,11 @@ selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
     const { defaultAShareId } = preferences;
 
     if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-      return !!profile.useErrMgtTwoDotZero;
+      return !!profile?.useErrMgtTwoDotZero;
     }
 
     if (!org || !org.accounts || !org.accounts.length) {
-      return !!profile.useErrMgtTwoDotZero;
+      return !!profile?.useErrMgtTwoDotZero;
     }
 
     /* When the user belongs to an org, we need to return the isErrMgtTwoDotZero from org owner profile. */
@@ -224,17 +229,25 @@ selectors.accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-selectors.userPermissions = state => {
-  const { defaultAShareId } = selectors.userPreferences(state);
-  const allowedToPublish =
-    state && state.profile && state.profile.allowedToPublish;
-  const permissions = fromAccounts.permissions(
-    state && state.org && state.org.accounts,
-    defaultAShareId,
-    { allowedToPublish }
-  );
+selectors.hasManageIntegrationAccess = (state, integrationId) => {
+  const userPermissions = selectors.userPermissions(state);
+  const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userPermissions.accessLevel);
 
-  return permissions;
+  if (isAccountOwner) {
+    return true;
+  }
+  const manageIntegrationAccessLevels = [
+    INTEGRATION_ACCESS_LEVELS.OWNER,
+    INTEGRATION_ACCESS_LEVELS.MANAGE,
+  ];
+
+  const integrationPermissions = userPermissions.integrations;
+
+  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
+    return true;
+  }
+
+  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
 };
 
 selectors.accountOwner = createSelector(
@@ -244,9 +257,9 @@ selectors.accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email } = profile || {};
+      const { name, email, timezone, _id } = profile || {};
 
-      return { name, email };
+      return { name, email, timezone, _id };
     }
 
     if (preferences) {
@@ -261,6 +274,30 @@ selectors.accountOwner = createSelector(
   }
 );
 
+selectors.userTimezone = createSelector(
+  state => state && state.profile,
+  selectors.accountOwner,
+  (profile, accountOwner) => profile?.timezone || accountOwner?.timezone
+);
+
+selectors.canUserPublish = createSelector(
+  state => state && state.profile,
+  selectors.userPreferences,
+  selectors.accountOwner,
+  selectors.userAccessLevel,
+  (profile, preferences = emptyObj, accountOwner, accessLevel) => {
+    const { defaultAShareId } = preferences;
+
+    if (defaultAShareId === ACCOUNT_IDS.OWN) {
+      return !!profile?.allowedToPublish;
+    } if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+      return !!accountOwner?.allowedToPublish;
+    }
+
+    return false;
+  }
+);
+
 selectors.licenses = createSelector(
   selectors.userPreferences,
   state => state && state.org && state.org.accounts,
@@ -270,4 +307,12 @@ selectors.licenses = createSelector(
     return fromAccounts.licenses(accounts, defaultAShareId);
   }
 );
+
+selectors.userPermissions = createSelector(
+  state => selectors.userPreferences(state)?.defaultAShareId,
+  selectors.canUserPublish,
+  state => state?.org?.accounts,
+  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
+);
+
 // #endregion PUBLIC USER SELECTORS

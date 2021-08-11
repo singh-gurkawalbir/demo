@@ -41,10 +41,10 @@ export default {
       options: [
         {
           items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
+            { label: 'All – always export all data', value: 'all' },
+            { label: 'Delta – export only modified data', value: 'delta' },
+            { label: 'Once – export records only once', value: 'once' },
+            { label: 'Test – export only 1 record', value: 'test' },
           ],
         },
       ],
@@ -53,11 +53,8 @@ export default {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    pageSize: { fieldId: 'pageSize' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
-    skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
     type: 'collapse',
@@ -76,7 +73,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier'],
+        fields: ['advancedSettings'],
       },
     ],
   },

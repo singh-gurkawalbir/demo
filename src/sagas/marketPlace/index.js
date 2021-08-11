@@ -51,8 +51,7 @@ export function* installConnector({ connectorId, sandbox, tag }) {
       path,
       opts: {
         method: 'POST',
-        body: { sandbox, tag },
-        newTemplateInstaller: connector?.framework === 'twoDotZero',
+        body: { sandbox, tag, newTemplateInstaller: connector?.framework === 'twoDotZero' },
       },
     });
   } catch (e) {
@@ -62,6 +61,7 @@ export function* installConnector({ connectorId, sandbox, tag }) {
   yield put(actions.resource.requestCollection('integrations'));
   yield put(actions.resource.requestCollection('tiles'));
   yield put(actions.resource.requestCollection('connections'));
+  yield put(actions.resource.requestCollection('licenses'));
 }
 
 export function* contactSales({ connectorName, _connectorId }) {

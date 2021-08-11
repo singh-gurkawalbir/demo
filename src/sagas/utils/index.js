@@ -1,5 +1,8 @@
-import jsonPatch, { applyPatch } from 'fast-json-patch';
+import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
+import { select, call } from 'redux-saga/effects';
 import util from '../../utils/array';
+import { selectors } from '../../reducers';
+import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 
 const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
@@ -53,8 +56,41 @@ export function resourceConflictResolution({ merged, master, origin }) {
   // resolution required
   // apply the staged patches over origin
   // mutate document set to false
-  const updatedMerged = applyPatch(origin, masterVsMerged, false, false)
-    .newDocument;
+  let updatedMerged;
+
+  try {
+    updatedMerged = applyPatch(origin, masterVsMerged, false, false)
+      .newDocument;
+  } catch (e) {
+    updatedMerged = {};
+  }
 
   return { conflict: null, merged: updatedMerged };
+}
+
+export function* constructResourceFromFormValues({
+  formValues = {},
+  resourceId,
+  resourceType,
+}) {
+  const { patchSet } = yield call(createFormValuesPatchSet, {
+    resourceType,
+    resourceId,
+    values: formValues,
+    scope: SCOPES.VALUE,
+  });
+
+  const { merged } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId,
+    SCOPES.VALUE
+  );
+
+  try {
+    return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
+      .newDocument;
+  } catch (e) {
+    return {};
+  }
 }

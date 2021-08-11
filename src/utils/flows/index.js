@@ -1,5 +1,9 @@
 import produce from 'immer';
-import { keys } from 'lodash';
+import url from 'url';
+import qs from 'querystring';
+import invert from 'lodash/invert';
+import { keys, map, uniq } from 'lodash';
+import { deepClone } from 'fast-json-patch/lib/core';
 import mappingUtil from '../mapping';
 import {
   adaptorTypeMap,
@@ -7,8 +11,10 @@ import {
   isValidResourceReference,
   isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS } from '../constants';
+import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
+import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -45,7 +51,9 @@ const importActions = [
   actionsMap.postResponseMap,
   actionsMap.proceedOnFailure,
 ];
-const isActionUsed = (resource, resourceType, flowNode, action) => {
+export const defaultIA2Flow = {showMapping: true, showStartDateDialog: true, showSchedule: true};
+
+export const isActionUsed = (resource, resourceType, flowNode, action) => {
   const {
     inputFilter = {},
     filter = {},
@@ -236,7 +244,7 @@ export const isLookupResource = (flow = {}, resource = {}) => {
   if (resource.isLookup) return true;
   const { pageProcessors = [] } = flow;
 
-  return !!pageProcessors.find(pp => pp._exportId === resource._id);
+  return !!pageProcessors.find(pp => pp._exportId && pp._exportId === resource._id);
 };
 
 /*
@@ -247,9 +255,9 @@ export const isOldFlowSchema = ({
   _exportId,
   pageProcessors,
   _importId,
-}) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);
+}) => !!((!pageGenerators && _exportId) || (!pageProcessors && _importId));
 
-export function getFirstExportFromFlow(flow, exports = []) {
+export function getFirstExportFromFlow(flow = {}, exports = []) {
   const exportId =
     flow.pageGenerators && flow.pageGenerators.length
       ? flow.pageGenerators[0]._exportId
@@ -274,21 +282,25 @@ export function isRealtimeExport(exp) {
   return false;
 }
 
-export function isRealtimeFlow(flow, exports) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function isRealtimeFlow(flow, exports, flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   return isRealtimeExport(exp);
 }
 
-export function hasBatchExport(flow, exports = []) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function hasBatchExport(flow, exports = [], flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   if (isOldFlowSchema(flow)) {
     return !isRealtimeExport(exp);
   }
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
-    return flow.pageGenerators.some(pg => {
+    if (flowExports?.length) {
+      return !!flowExports.some(exp => !isRealtimeExport(exp));
+    }
+
+    return !!flow.pageGenerators.some(pg => {
       const exp = exports.find(exp => exp._id === pg._exportId);
 
       return !isRealtimeExport(exp);
@@ -298,10 +310,10 @@ export function hasBatchExport(flow, exports = []) {
   return false;
 }
 
-export function isSimpleImportFlow(flow, exports) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function isSimpleImportFlow(flow, exports, flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
-  return exp && exp.type === 'simple';
+  return !!(exp && exp.type === 'simple');
 }
 
 export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
@@ -322,10 +334,49 @@ export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationAp
   return flowBuilderTo;
 }
 
-export function showScheduleIcon(flow, exports) {
-  if (isSimpleImportFlow(flow, exports)) return false;
+export function showScheduleIcon(flow, exports, flowExports) {
+  if (isSimpleImportFlow(flow, exports, flowExports)) return false;
 
-  return hasBatchExport(flow, exports);
+  return hasBatchExport(flow, exports, flowExports);
+}
+
+export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports, childId) {
+  if (!flow) return false;
+  const isApp = flow._connectorId;
+  const canSchedule = showScheduleIcon(flow, allExports, flowExports);
+
+  // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
+  if (!isApp || isAppVersion2) return canSchedule;
+  // eslint-disable-next-line no-use-before-define
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
+
+  return canSchedule && !!flowSettings.showSchedule;
+}
+
+export function getFlowType(flow, exports, flowExports) {
+  if (!flow) return '';
+  if (!exports && !flowExports) return '';
+  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data Loader';
+  if (isRealtimeFlow(flow, exports, flowExports)) return 'Realtime';
+
+  // TODO: further refine this logic to differentiate between 'Scheduled'
+  // and 'mixed'. Note that mixed is the case where some exports are scheduled
+  // and others are not.
+  return 'Scheduled';
+}
+
+export function flowSupportsSettings(flow, integration, childId) {
+  if (!flow) return false;
+  const isApp = flow._connectorId;
+
+  if (!isApp) return false;
+  // eslint-disable-next-line no-use-before-define
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
+
+  return !!(
+    (flowSettings?.settings && flowSettings.settings.length) ||
+    (flowSettings?.sections && flowSettings.sections.length)
+  );
 }
 
 export function isRunnable(flow, exports) {
@@ -338,11 +389,8 @@ export function isRunnable(flow, exports) {
 
   // For disabled flows
   if (flow.disabled) {
-    // All iA flows are not runnable if disabled
-    // For DIY flows, dataloader flows can be runnable
-    if (flow._connectorId || !isDataLoader) {
-      return false;
-    }
+    // All IA and DIY (including data loader) flows are not runnable if disabled
+    return false;
   }
 
   const flowHasExport =
@@ -514,7 +562,7 @@ export function getFlowListWithMetadata(flows = [], exports = []) {
   return { resources: flows };
 }
 
-export function getNextDataFlows(flows, flow) {
+export function getNextDataFlows(flows = emptyList, flow = emptyObject) {
   const { _integrationId } = flow;
   // Incase of standalone Integrations, _integrationId is undefined for flow resources
   const flowIntegrationId =
@@ -531,7 +579,106 @@ export function getNextDataFlows(flows, flow) {
   );
 }
 
-export function getIAFlowSettings(integration, flowId) {
+export function getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports, options = {}) {
+  const exportIds = getExportIdsFromFlow(flow);
+  const importIds = getImportIdsFromFlow(flow);
+  const connectionIds = [];
+
+  if (!flow) {
+    return [];
+  }
+
+  const attachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const attachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  attachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  attachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+
+  const attachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  if (!options.ignoreBorrowedConnections) {
+    attachedConnections.forEach(conn => {
+      if (conn && conn._borrowConcurrencyFromConnectionId) {
+        connectionIds.push(conn._borrowConcurrencyFromConnectionId);
+      }
+    });
+  }
+
+  return uniq(connectionIds);
+}
+
+export function getIAResources(integrationResource = {}, allFlows, allConnections, allExports, allImports, options = {}) {
+  const { supportsMultiStore, sections } = integrationResource?.settings || {};
+  const { integrationId, childId, ignoreUnusedConnections } = options;
+  const integrationConnections = allConnections.filter(c => c._integrationId === integrationId);
+  const integrationFlows = allFlows.filter(f => f._integrationId === integrationId);
+
+  if (!supportsMultiStore || !childId) {
+    return {
+      connections: integrationConnections,
+      flows: integrationFlows,
+    };
+  }
+
+  const flows = [];
+  const flowIds = [];
+  const allFlowIds = [];
+  const connections = [];
+  const flowConnections = [];
+  const exports = [];
+  const imports = [];
+  const selectedChild = (sections || []).find(s => s.id === childId) || {};
+
+  (selectedChild.sections || []).forEach(sec => {
+    flowIds.push(...map(sec.flows, '_id'));
+  });
+  (sections || []).forEach(child => {
+    (child.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = integrationFlows.find(f => f._id === fid) || {};
+
+    flowConnections.push(...getAllConnectionIdsUsedInTheFlow(flow, allConnections, allExports, allImports, options));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
+
+  flowIds.forEach(fid => {
+    const flow = integrationFlows.find(f => f._id === fid);
+
+    if (flow) {
+      flows.push({_id: flow._id, name: flow.name});
+      connections.push(...getAllConnectionIdsUsedInTheFlow(flow, allConnections, allExports, allImports, options));
+      exports.push(...getExportIdsFromFlow(flow));
+      imports.push(...getImportIdsFromFlow(flow));
+    }
+  });
+
+  const usedConnections = integrationConnections.filter(c => connections.includes(c._id));
+  const connectionList = ignoreUnusedConnections ? usedConnections : [...usedConnections, ...unUsedConnections];
+
+  return {
+    connections: connectionList,
+    flows,
+    exports,
+    imports,
+  };
+}
+
+export function getIAFlowSettings(integration, flowId, childId) {
   const allFlows = [];
 
   // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
@@ -540,13 +687,18 @@ export function getIAFlowSettings(integration, flowId) {
     !integration._connectorId ||
     (integration.installSteps && integration.installSteps.length)
   ) {
-    // return empty object for DIY integrations.
+    if (integration?._connectorId) {
+      return defaultIA2Flow;
+    }
+
     return emptyObject;
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
-      if (!section.sections) {
+    if (childId) {
+      const section = integration.settings.sections.find(sec => sec.id === childId);
+
+      if (!section || !section.sections) {
         return;
       }
 
@@ -555,7 +707,19 @@ export function getIAFlowSettings(integration, flowId) {
       }));
 
       allFlows.push(...(flows || []));
-    });
+    } else {
+      integration.settings.sections.forEach(section => {
+        if (!section.sections) {
+          return;
+        }
+
+        const { flows } = section.sections.reduce((a, b) => ({
+          flows: [...a.flows, ...b.flows],
+        }));
+
+        allFlows.push(...(flows || []));
+      });
+    }
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
@@ -629,7 +793,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
 // yet its impossible to know which works for each flow type. For example,
 // showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
 // Maybe its best to only hav common props here and remove all IA props to a separate selector.
-export function getFlowDetails(flow, integration, exports) {
+export function getFlowDetails(flow, integration, exports, childId) {
   if (!flow) return emptyObject;
 
   return produce(flow, draft => {
@@ -638,9 +802,9 @@ export function getFlowDetails(flow, integration, exports) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
-    const flowSettings = getIAFlowSettings(integration, flow._id);
+    const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-    draft.showMapping = flowSettings.showMapping;
+    draft.showMapping = !!flowSettings.showMapping;
     draft.hasSettings = !!(
       (flowSettings.settings && flowSettings.settings.length) ||
       (flowSettings.sections && flowSettings.sections.length)
@@ -648,9 +812,10 @@ export function getFlowDetails(flow, integration, exports) {
     draft.showSchedule = flow._connectorId
       ? draft.canSchedule && !!flowSettings.showSchedule
       : draft.canSchedule;
-    draft.showStartDateDialog = flowSettings.showStartDateDialog;
-    draft.disableSlider = flowSettings.disableSlider;
-    draft.showUtilityMapping = flowSettings.showUtilityMapping;
+    draft.showStartDateDialog = !!flowSettings.showStartDateDialog;
+    draft.disableSlider = !!flowSettings.disableSlider;
+    draft.disableRunFlow = !!flowSettings.disableRunFlow;
+    draft.showUtilityMapping = !!flowSettings.showUtilityMapping;
   });
 }
 
@@ -715,6 +880,129 @@ export function getFlowReferencesForResource(
   return flowRefs;
 }
 
+export function populateRestSchema(exportDoc = {}) {
+  const {
+    http = {},
+    adaptorType,
+    rest = {},
+    assistant,
+  } = exportDoc;
+
+  if (adaptorType === 'RESTExport') {
+    exportDoc._rest = deepClone(exportDoc.rest);
+
+    return exportDoc;
+  }
+
+  if (assistant || !http.method || http.formType !== 'rest' || adaptorType !== 'HTTPExport') {
+    return exportDoc;
+  }
+  const restSubDoc = {...rest};
+
+  try {
+    restSubDoc.relativeURI = http.relativeURI;
+    if (!http.paging) {
+      http.paging = {};
+    }
+
+    if (http.paging.method || http.paging.maxPagePath || http.paging.maxCountPath || http.paging.lastPageStatusCode ||
+    http.paging.lastPagePath || http.paging.lastPageValues || http.paging.relativeURI || http.paging.page || http.paging.urlPath) {
+      if (http.paging.maxPagePath) { restSubDoc.maxPagePath = http.paging.maxPagePath; }
+      if (http.paging.maxCountPath) { restSubDoc.maxCountPath = http.paging.maxCountPath; }
+
+      restSubDoc.lastPageStatusCode = http.paging.lastPageStatusCode;
+      if (http.paging.lastPagePath) { restSubDoc.lastPagePath = http.paging.lastPagePath; }
+      if (http.paging.path) { restSubDoc.nextPagePath = http.paging.path; }
+      if (Array.isArray(http.paging.lastPageValues)) {
+        [restSubDoc.lastPageValue] = http.paging.lastPageValues;
+      }
+
+      const pagingMethodMap = {
+        url: 'nextpageurl',
+        page: 'pageargument',
+        relativeuri: 'relativeuri',
+        linkheader: 'linkheader',
+        skip: 'skipargument',
+        token: 'token',
+        body: 'postbody',
+      };
+
+      restSubDoc.pagingMethod = pagingMethodMap[http.paging.method];
+
+      if (restSubDoc.pagingMethod === 'relativeuri') {
+        restSubDoc.nextPageRelativeURI = http.paging.relativeURI;
+      } else if (restSubDoc.pagingMethod === 'token') {
+        const uriObj = url.parse(http.paging.relativeURI, true);
+
+        uriObj.search = null;
+        const paramValues = invert(uriObj.query);
+        const pageArgument = paramValues['{{export.http.paging.token}}'] || paramValues['{{{export.http.paging.token}}}'];
+
+        if (pageArgument) {
+          restSubDoc.pageArgument = pageArgument;
+        }
+      } else if (restSubDoc.pagingMethod === 'skipargument') {
+        if (http.relativeURI) {
+          const path = http.relativeURI.split('?')[0];
+          const uriObj = url.parse(http.paging.relativeURI, true);
+
+          uriObj.search = null;
+          const paramValues = invert(uriObj.query);
+          const skipArgument = paramValues['{{export.http.paging.skip}}'] || paramValues['{{{export.http.paging.skip}}}'];
+
+          if (skipArgument) {
+            restSubDoc.skipArgument = skipArgument;
+            uriObj.query[restSubDoc.skipArgument] = http.paging.skip;
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
+          } else {
+            const skipArgRegex = /\{\{#compare export.http.paging.skip.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.skip\}{2,3}\{\{\/compare\}\}/;
+            const path = http.relativeURI.replace(skipArgRegex, '');
+
+            if (skipArgRegex.test(http.relativeURI)) {
+              [,, restSubDoc.skipArgument] = skipArgRegex.exec(http.relativeURI);
+            }
+            restSubDoc.relativeURI = path;
+          }
+        }
+      } else if (restSubDoc.pagingMethod === 'pageargument') {
+        if (http.relativeURI) {
+          const uriObj = url.parse(http.paging.relativeURI, true);
+          const path = http.relativeURI.split('?')[0];
+
+          uriObj.search = null;
+          const paramValues = invert(uriObj.query);
+          const pageArgument = paramValues['{{export.http.paging.page}}'] || paramValues['{{{export.http.paging.page}}}'];
+
+          if (pageArgument) {
+            restSubDoc.pageArgument = pageArgument;
+            uriObj.query[restSubDoc.pageArgument] = http.paging.page;
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
+          } else {
+            const pagingArgRegex = /\{\{#compare export.http.paging.page.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.page\}{2,3}\{\{\/compare\}\}/;
+            const path = http.relativeURI.replace(pagingArgRegex, '');
+
+            if (pagingArgRegex.test(http.relativeURI)) {
+              [,, restSubDoc.pageArgument] = pagingArgRegex.exec(http.relativeURI);
+            }
+            restSubDoc.relativeURI = path;
+          }
+        }
+      } else if (restSubDoc.pagingMethod === 'linkheader' && http.paging.linkHeaderRelation) {
+        restSubDoc.linkHeaderRelation = http.paging.linkHeaderRelation;
+      } else if (restSubDoc.pagingMethod === 'postbody') {
+        restSubDoc.pagingPostBody = http.paging.body;
+      }
+    }
+
+    exportDoc._rest = restSubDoc;
+  } catch (e) {
+    console.warn('exception occured while forming REST document', e);
+    // TODO: should we change formType to http when conversion fails, so the export can open in HTTP form?
+  }
+
+  return exportDoc;
+}
+
 export function convertOldFlowSchemaToNewOne(flow) {
   const {
     pageGenerators,
@@ -759,9 +1047,149 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
   (flow.pageGenerators &&
      flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
     (
       flow.pageProcessors &&
-    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));
+    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
+
+export function getScriptsReferencedInFlow(
+  {
+    flow = {},
+    exports = [],
+    imports = [],
+    scripts = [],
+  }
+) {
+  const scriptIdsUsed = [];
+  const checkForHookScripts = hooks => {
+    if (!hooks) {
+      return;
+    }
+    Object.keys(hooks).forEach(hookName => {
+      if (HOOKS_IN_IMPORT_EXPORT_RESOURCE.includes(hookName)) {
+        if (hooks[hookName]?._scriptId && scriptIdsUsed.indexOf(hooks[hookName]._scriptId) === -1) {
+          scriptIdsUsed.push(hooks[hookName]._scriptId);
+        }
+      }
+    });
+  };
+
+  flow?.pageGenerators?.forEach(({_exportId}) => {
+    const _export = exports?.find(({_id}) => _id === _exportId);
+
+    if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.filter.script._scriptId);
+    }
+    if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+    }
+    if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+    }
+    if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.transform.script._scriptId);
+    }
+
+    checkForHookScripts(_export?.hooks);
+  });
+  flow?.pageProcessors?.forEach(({hooks, type, _importId, _exportId}) => {
+    if (hooks?.postResponseMap?._scriptId && scriptIdsUsed.indexOf(hooks.postResponseMap._scriptId) === -1) {
+      scriptIdsUsed.push(hooks.postResponseMap._scriptId);
+    }
+    if (type === 'import') {
+      const _import = imports?.find(({_id}) => _id === _importId);
+
+      // todo: check if we need to check for filter.type ==='script'?
+      if (_import?.filter?.type === 'script' && _import?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_import.filter.script._scriptId);
+      }
+      if (_import?.responseTransform?.type === 'script' && _import?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_import.responseTransform.script._scriptId);
+      }
+      checkForHookScripts(_import?.hooks);
+    } else if (type === 'export') {
+      const _export = exports.find(({_id}) => _id === _exportId);
+
+      if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.filter.script._scriptId);
+      }
+      if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+      }
+      if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+      }
+      if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.transform.script._scriptId);
+      }
+      checkForHookScripts(_export?.hooks);
+    }
+  });
+
+  const filtered = scripts.filter(({_id}) => scriptIdsUsed.includes(_id));
+
+  return filtered;
+}
+
+// this util adds properties to make the the flow lastExecutedAt sortable
+export function addLastExecutedAtSortableProp({
+  flows,
+  isUserInErrMgtTwoDotZero,
+  latestFlowJobs,
+  supportsMultiStore,
+  childId,
+  requiredFlows }) {
+  const jobStatusPriorityMap = {
+    // large dates
+    [JOB_STATUS.QUEUED]: '2300-06-17T16:51:35.209Z',
+    [JOB_STATUS.RETRYING]: '2300-05-17T16:51:35.209Z',
+    [JOB_STATUS.RUNNING]: '2300-04-17T16:51:35.209Z',
+  };
+
+  const updatedFlows = flows?.map((flow, i) => {
+    const toReturnFlow = (supportsMultiStore && !childId) ? ({...flow, ...requiredFlows[i]}) : flow;
+
+    const {_id: flowId} = toReturnFlow;
+    const job = latestFlowJobs?.find(job => job._flowId === flowId);
+
+    if (!job || !isUserInErrMgtTwoDotZero) {
+      return {...toReturnFlow, lastExecutedAtSort: toReturnFlow.lastExecutedAt, lastExecutedAtSortType: 'date' };
+    }
+
+    if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(job.status)) {
+      return {...toReturnFlow, lastExecutedAtSort: job.lastExecutedAt, lastExecutedAtSortType: 'date' };
+    }
+
+    // queued running retrying are the other statuses
+    const isJobInQueuedStatus =
+    (job.status === JOB_STATUS.QUEUED ||
+      (job.status === JOB_STATUS.RUNNING && !job.doneExporting));
+
+    return {
+      ...toReturnFlow,
+      lastExecutedAtSort: jobStatusPriorityMap[job.status],
+      lastExecutedAtSortJobStatus: JOB_UI_STATUS[job.status],
+      isJobInQueuedStatus,
+      lastExecutedAtSortType: 'status'};
+  });
+
+  return updatedFlows;
+}
+
+// this function determines if we need to update the last modified time of a flow
+export function shouldUpdateLastModified(flow, resource) {
+  return flow?.lastModified && resource?.lastModified && flow.lastModified < resource.lastModified;
+}
+
+// this function returns a patch used to 'patch and commit' the flow last modified time
+export function flowLastModifiedPatch(flow, resource) {
+  if (!shouldUpdateLastModified(flow, resource)) return [];
+
+  return [{
+    op: 'replace',
+    path: '/lastModified',
+    value: resource.lastModified,
+  }];
+}

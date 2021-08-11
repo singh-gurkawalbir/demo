@@ -18,18 +18,18 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSelector({
   integrationId,
-  storeId,
+  childId,
   value = '',
   onChange,
 }) {
   const classes = useStyles();
-  const storeFlows = useSelector(
+  const childFlows = useSelector(
     state => {
-      if (!storeId) {
+      if (!childId) {
         return [];
       }
 
-      return selectors.integrationAppFlowIds(state, integrationId, storeId);
+      return selectors.integrationAppFlowIds(state, integrationId, childId);
     },
     (left, right) => left.length === right.length
   );
@@ -43,9 +43,9 @@ export default function FlowSelector({
             return !this._integrationId; // standalone integration flows
           }
 
-          if (storeId) {
+          if (childId) {
             // eslint-disable-next-line react/no-this-in-sfc
-            return storeFlows.includes(this._id);
+            return childFlows.includes(this._id);
           }
 
           // eslint-disable-next-line react/no-this-in-sfc
@@ -53,7 +53,7 @@ export default function FlowSelector({
         },
       },
     }),
-    [integrationId, storeFlows, storeId]
+    [integrationId, childFlows, childId]
   );
   const filteredFlows = useSelectorMemo(
     selectors.makeResourceListSelector,

@@ -157,7 +157,6 @@ export function ResourceIdFilter(props) {
     <FormControl className={classes.formControl}>
       <CeligoSelect
         inputProps={resourceIdInput}
-        variant="filled"
         className={classes.select}
         value={filters._resourceId}
         onChange={onChange}>

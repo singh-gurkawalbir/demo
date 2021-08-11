@@ -1,25 +1,26 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';
 import { flowbuilderUrl } from '../../../../utils/flows';
-import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
-import OverflowWrapper from '../../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
+import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
+import { emptyObject } from '../../../../utils/constants';
+import StatusCircle from '../../../../components/StatusCircle';
+import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-  },
   button: {
     color: theme.palette.primary.main,
     width: '100%',
@@ -29,26 +30,41 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const metadata = {
-  columns: [
+  rowKey: 'id',
+  useColumns: () => [
     {
+      key: 'application',
       heading: 'Application',
-      value: function Application({ type, id }) {
+      Value: ({rowData}) => {
+        const { type, id } = rowData;
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
+        const isDataLoader = useSelector(state => selectors.isDataLoaderExport(state, id));
+        const assistantType = useSelector(state => {
+          const { _connectionId} = selectors.resource(state, type, id) || {};
+          const {assistant} = selectors.resource(state, 'connections', _connectionId) || {};
+
+          return assistant || '';
+        });
+
+        if (isDataLoader) {
+          return 'Data loader';
+        }
 
         return (
           <ApplicationImg
-            size="small"
             type={applicationType}
-            alt={applicationType || 'Application image'}
+            assistant={assistantType}
       />
         );
       },
     },
     {
+      key: 'type',
       heading: 'Type',
-      value: function Application(r) {
-        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, r.type, r.id);
-        const category = resourceCategory(doc, r.isLookup, r.type === 'imports');
+      Value: ({rowData}) => {
+        const { type, id, isLookup } = rowData;
+        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
+        const category = resourceCategory(doc, isLookup, type === 'imports');
         const handleClick = useCallback(() => {}, []);
 
         return (
@@ -60,23 +76,26 @@ const metadata = {
       },
     },
     {
+      key: 'flowStepName',
       heading: 'Flow step name',
-      value: r => <OverflowWrapper message={r.name} />,
-      width: '35%',
+      width: '25%',
+      Value: ({rowData: r}) => <TextOverflowCell message={r.name} />,
     },
     {
+      key: 'errors',
       heading: 'Errors',
-      value: function Errors({flowId, integrationId, childId, id, count}) {
+      Value: ({rowData}) => {
+        const { flowId, integrationId, childId, id, count } = rowData;
         const classes = useStyles();
         const history = useHistory();
         const isDataLoader = useSelector(state =>
           selectors.isDataLoader(state, flowId)
         );
-        const { merged: integration = {} } = useSelectorMemo(
+        const integration = useSelectorMemo(
           selectors.makeResourceDataSelector,
           'integrations',
           integrationId
-        );
+        )?.merged || emptyObject;
         const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
         const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {
           isIntegrationApp: !!integration._connectorId,
@@ -94,42 +113,38 @@ const metadata = {
         }
 
         return (
-          <div className={classes.button} onClick={handleErrorClick}>{count > 9999 ? '9999+' : count} errors</div >
+          <div className={classes.button} onClick={handleErrorClick}>
+            <StatusCircle variant="error" size="mini" />
+            {count > 9999 ? '9999+' : count} errors
+          </div >
         );
       },
+    },
+    {
+      key: 'lastErrorAt',
+      heading: 'Last open error',
+      Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
+      orderBy: 'lastErrorAt',
     },
   ],
 };
 
+const FILTER_KEY = 'errorsList';
+
 const ErrorsList = ({integrationId, childId}) => {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-
   const { flowId } = match.params;
-  const classes = useStyles();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
-  const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
-
-  const resources = useMemo(() => flowResources
-    .filter(r => r._id !== flowId)
-    .map(r => ({
-      id: r._id,
-      name: r.name || r._id,
-      count: errorMap && errorMap[r._id],
-      flowId,
-      type: r.type,
-      isLookup: r.isLookup,
-      childId,
-      integrationId,
-    })), [flowResources, flowId, errorMap, integrationId, childId]);
+  )?.merged || emptyObject;
+  const resources = useSelectorMemo(selectors.mkFlowStepsErrorInfo, flowId, integrationId, childId, FILTER_KEY);
+  const status = useSelector(state => selectors.openErrorsStatus(state, flowId));
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -149,13 +164,11 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <SpinnerWrapper><Spinner /></SpinnerWrapper>;
+    return <Spinner centerAll />;
   }
 
   return (
-    <div className={classes.root}>
-      <CeligoTable data={resources} {...metadata} />
-    </div>
+    <CeligoTable data={resources} filterKey={FILTER_KEY} {...metadata} />
   );
 };
 
@@ -164,11 +177,11 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const history = useHistory();
   const location = useLocation();
   const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [match.url, history]);
@@ -178,18 +191,16 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
       required="true"
       resources="imports, exports, connections">
       <RightDrawer
-        hideBackButton
-        path={[
-          ':flowId/errorsList',
-        ]}
+        path=":flowId/errorsList"
         height="tall"
-        width="default"
         onClose={handleClose}
-        title={`Flow: ${flow.name || flowId}`}
-        variant="temporary"
-      >
+        variant="temporary">
 
-        <ErrorsList integrationId={integrationId} childId={childId} />
+        <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
+
+        <DrawerContent>
+          <ErrorsList integrationId={integrationId || flow._integrationId} childId={childId} />
+        </DrawerContent>
       </RightDrawer>
     </LoadResources>
   );

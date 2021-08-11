@@ -10,15 +10,35 @@ import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
-export function* installStep({ id, installerFunction, storeId, addOnId }) {
+export function* initInstall({ id }) {
+  const path = `/integrations/${id}/installSteps`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: { method: 'GET' },
+      message: 'Init install',
+    });
+  } catch (error) {
+    return;
+  }
+
+  // once init is complete, BE will update the hidden step (if any) with completed true
+  // so need to get updated doc
+  yield put(actions.resource.request('integrations', id));
+}
+
+export function* installStep({ id, installerFunction, childId, addOnId, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
+  const body = { storeId: childId, addOnId, ...(formVal && { formVal }) };
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId, addOnId }, method: 'PUT' },
+      opts: { body, method: 'PUT' },
       hidden: true,
     }) || {};
   } catch (error) {
@@ -54,10 +74,10 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
       yield put(actions.resource.request('integrations', id));
-      yield put(actions.resource.requestCollection('flows'));
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('imports'));
-      yield put(actions.resource.requestCollection('connections'));
+      yield put(actions.resource.requestCollection('flows', null, true));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('imports', null, true));
+      yield put(actions.resource.requestCollection('connections', null, true));
       yield put(
         actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
@@ -77,7 +97,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
     );
   }
 }
-export function* installInitChild({id}) {
+export function* installInitChild({ id }) {
   const path = `/integrations/${id}/initChild`;
 
   try {
@@ -111,12 +131,12 @@ export function* installScriptStep({
 }) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
-  // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
+  // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connection doc to backend to
   // create a connection If step doesn't contain a connection Id.
   let body = {};
 
   if (stackId) {
-    body = {_stackId: stackId};
+    body = { _stackId: stackId };
   } else {
     body = formSubmission ||
     (connectionId
@@ -166,7 +186,7 @@ export function* installScriptStep({
       integration.initChild &&
       integration.initChild.function
     ) {
-      yield call(installInitChild, {id});
+      yield call(installInitChild, { id });
     }
 
     // to clear session state
@@ -180,10 +200,6 @@ export function* installScriptStep({
     return yield put(actions.resource.request('integrations', id));
   }
 
-  if (!isEmpty(connectionDoc)) {
-    yield put(actions.resource.requestCollection('connections'));
-  }
-
   const currentConnectionStep =
     stepCompleteResponse &&
     Array.isArray(stepCompleteResponse) &&
@@ -192,6 +208,10 @@ export function* installScriptStep({
         temp.completed === false &&
         temp._connectionId
     );
+
+  if (!isEmpty(connectionDoc)) {
+    yield put(actions.resource.request('connections', currentConnectionStep?._connectionId));
+  }
 
   if (currentConnectionStep && isOauth(connectionDoc)) {
     yield put(actions.integrationApp.installer.setOauthConnectionMode(currentConnectionStep._connectionId, true, id));
@@ -213,7 +233,7 @@ export function* installScriptStep({
   );
 }
 
-export function* installStoreStep({ id, installerFunction }) {
+export function* installChildStep({ id, installerFunction }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
 
@@ -227,7 +247,7 @@ export function* installStoreStep({ id, installerFunction }) {
     }) || {};
   } catch (error) {
     yield put(
-      actions.integrationApp.store.updateStep(id, installerFunction, 'failed')
+      actions.integrationApp.child.updateStep(id, installerFunction, 'failed')
     );
     yield put(actions.api.failure(path, 'PUT', error, false));
 
@@ -236,8 +256,12 @@ export function* installStoreStep({ id, installerFunction }) {
 
   if (stepCompleteResponse && stepCompleteResponse.success) {
     yield call(getResource, { resourceType: 'integrations', id });
+
     yield put(
-      actions.integrationApp.store.completedStepInstall(
+      actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+    );
+    yield put(
+      actions.integrationApp.child.completedStepInstall(
         id,
         installerFunction,
         stepCompleteResponse.stepsToUpdate
@@ -259,7 +283,7 @@ export function* installStoreStep({ id, installerFunction }) {
   }
 }
 
-export function* addNewStore({ id }) {
+export function* addNewChild({ id }) {
   const path = `/integrations/${id}/installer/addNewStore`;
   let steps;
 
@@ -273,7 +297,7 @@ export function* addNewStore({ id }) {
   } catch (error) {
     yield put(actions.api.failure(path, 'PUT', error && error.message, false));
     yield put(
-      actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+      actions.integrationApp.child.failedNewChildSteps(id, error.message)
     );
 
     return undefined;
@@ -281,7 +305,7 @@ export function* addNewStore({ id }) {
 
   if (steps) {
     yield put(actions.resource.requestCollection('connections'));
-    yield put(actions.integrationApp.store.receivedNewStoreSteps(id, steps));
+    yield put(actions.integrationApp.child.receivedNewChildSteps(id, steps));
   }
 }
 
@@ -346,7 +370,8 @@ export default [
     actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP,
     getCurrentStep
   ),
-  takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
-  takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
+  takeLatest(actionTypes.INTEGRATION_APPS.CHILD.ADD, addNewChild),
+  takeLatest(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, installChildStep),
   takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild),
+  takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, initInstall),
 ];

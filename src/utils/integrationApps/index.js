@@ -1,4 +1,4 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
 
 export const getIntegrationAppUrlName = integrationAppName => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
@@ -6,6 +6,26 @@ export const getIntegrationAppUrlName = integrationAppName => {
   }
 
   return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
+};
+
+export const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
+  if (!integration) return false;
+  let isCloned = false;
+
+  if (!skipCloneCheck) {
+    isCloned =
+    integration.install &&
+    integration.install.find(step => step.isClone);
+  }
+  const isFrameWork2 =
+    !!((
+      integration.installSteps &&
+      integration.installSteps.length) || (
+      integration.uninstallSteps &&
+        integration.uninstallSteps.length)) ||
+    !!isCloned;
+
+  return isFrameWork2;
 };
 
 export const getEmptyMessage = (storeLabel = '', action) => {
@@ -58,7 +78,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
   );
 };
 
-export const isParentViewSelected = (integration, storeId) => !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId);
+export const isParentViewSelected = (integration, childId) => !!(integration?.settings?.supportsMultiStore && !childId);
 
 export const getTopLevelTabs = (options = {}) => {
   const {
@@ -96,8 +116,9 @@ export const getTopLevelTabs = (options = {}) => {
   return allTabs.filter(tab => !excludeTabs.includes(tab.path));
 };
 
-const getIntegrationApp = ({ _connectorId, name }) => {
+export const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');
+
   const integrationAppId = {
     'staging.integrator.io': {
       '5666865f67c1650309224904': 'zendesk',
@@ -145,6 +166,10 @@ const getIntegrationApp = ({ _connectorId, name }) => {
       '5e8d6ca02387e356b6769bb8': 'shopify',
       '5e7d921e2387e356b67669ce': 'sfnsio',
       '5f1ad76d288b074c1a73fadd': 'zendesk',
+      '601c0115ec36e31f12bec565': 'magento2',
+      '601c018dec36e31f12bec575': 'eBay',
+      '601c01f51cad372eabaaafdf': 'bigcommerce',
+      '601c00abec36e31f12bec551': 'walmart',
     },
     'localhost.io': {
       'Zendesk - NetSuite Connector': 'zendesk',
@@ -164,10 +189,12 @@ const getIntegrationApp = ({ _connectorId, name }) => {
       'Salesforce - NetSuite Connector': 'sfnsio',
     },
   };
+
+  integrationAppId['qa.staging.integrator.io'] = integrationAppId['staging.integrator.io'];
   let integrationApp;
 
-  if (domain === 'localhost.io') {
-    integrationApp = integrationAppId[domain][name];
+  if (domain.indexOf('localhost') > -1) {
+    integrationApp = integrationAppId['localhost.io'][name];
   } else {
     integrationApp = integrationAppId[domain][_connectorId];
   }
@@ -262,3 +289,11 @@ export default {
 };
 
 export const getTitleIdFromSection = sec => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';
+
+export const getFormStatusFromCategoryMappingStatus = mappingSaveStatus => {
+  switch (mappingSaveStatus) {
+    case CATEGORY_MAPPING_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
+    case CATEGORY_MAPPING_SAVE_STATUS.SAVED: return FORM_SAVE_STATUS.COMPLETE;
+    default: return FORM_SAVE_STATUS.FAILED;
+  }
+};

@@ -1,13 +1,15 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import AddIcon from '../icons/AddIcon';
-import RightDrawer from '../drawer/Right';
-import SharedUserList from './SharedUserList';
-import IconTextButton from '../IconTextButton';
-import RefreshIcon from '../icons/RefreshIcon';
 import actions from '../../actions';
+import AddIcon from '../icons/AddIcon';
+import RefreshIcon from '../icons/RefreshIcon';
+import RightDrawer from '../drawer/Right';
+import DrawerHeader from '../drawer/Right/DrawerHeader';
+import DrawerContent from '../drawer/Right/DrawerContent';
+import IconTextButton from '../IconTextButton';
 import InviteUser from './InviteUser';
+import SharedUserList from './SharedUserList';
 
 const rootPath = 'share/stacks/:stackId';
 
@@ -22,29 +24,7 @@ export default function StackShareDrawer() {
   const handleInviteClick = useCallback(() => {
     history.push(`${history.location.pathname}/invite`);
   }, [history]);
-  const action = useMemo(
-    () => (
-      <>
-        <IconTextButton
-          data-test="retrieveStackShares"
-          variant="text"
-          color="primary"
-          onClick={handleRefreshClick}>
-          <RefreshIcon />
-          Refresh
-        </IconTextButton>
-        <IconTextButton
-          data-test="inviteUserAccessToStack"
-          variant="text"
-          color="primary"
-          onClick={handleInviteClick}>
-          <AddIcon />
-          Invite user
-        </IconTextButton>
-      </>
-    ),
-    [handleInviteClick, handleRefreshClick]
-  );
+
   const isInviteUser = history.location.pathname.includes('/invite');
 
   return (
@@ -52,18 +32,42 @@ export default function StackShareDrawer() {
       path={rootPath}
       height="tall"
       width="large"
-      title={isInviteUser ? 'Invite user' : 'Stack sharing'}
       variant="temporary"
-      actions={!isInviteUser && action}
       helpKey={!isInviteUser && 'stack.sharing'}
       helpTitle={!isInviteUser && 'Stack sharing'}
       hideBackButton={!isInviteUser}>
+      <DrawerHeader title={isInviteUser ? 'Invite user' : 'Stack sharing'}>
+        {!isInviteUser && (
+        <>
+          <IconTextButton
+            data-test="retrieveStackShares"
+            variant="text"
+            color="primary"
+            onClick={handleRefreshClick}>
+            <RefreshIcon />
+            Refresh
+          </IconTextButton>
+          <IconTextButton
+            data-test="inviteUserAccessToStack"
+            variant="text"
+            color="primary"
+            onClick={handleInviteClick}>
+            <AddIcon />
+            Invite user
+          </IconTextButton>
+        </>
+
+        )}
+      </DrawerHeader>
+
       <Switch>
         <Route path={`${match.url}/${rootPath}/invite`}>
           <InviteUser />
         </Route>
         <Route path={`${match.url}/${rootPath}`}>
-          <SharedUserList />
+          <DrawerContent>
+            <SharedUserList />
+          </DrawerContent>
         </Route>
       </Switch>
     </RightDrawer>
