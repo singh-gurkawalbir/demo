@@ -39,7 +39,7 @@ export default function DynaSortAndGroup(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const { data = {}, status} = useSelector(state =>
+  const { data, status} = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse'),
   );
   const sampleData = Array.isArray(data) ? data[0] : data;
@@ -51,7 +51,7 @@ export default function DynaSortAndGroup(props) {
   }, [dispatch, formKey, status]);
 
   const suggestionConfig = useMemo(() => {
-    let options = Object.keys(sampleData);
+    let options = Object.keys(sampleData || {});
 
     options = options.map(name => ({ id: name}));
 
@@ -62,7 +62,7 @@ export default function DynaSortAndGroup(props) {
     } };
   }, [sampleData]);
   const multiSelectOptions = useMemo(() => {
-    let options = Object.keys(sampleData);
+    let options = Object.keys(sampleData || {});
 
     options = options.map(name => ({ label: name, value: name}));
 

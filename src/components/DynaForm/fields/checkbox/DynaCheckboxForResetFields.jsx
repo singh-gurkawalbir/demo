@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaCheckboxForResetFields(props) {
   const classes = useStyles();
 
-  const { fieldsToReset, onFieldChange, id, value, showDeprecatedMessage } = props;
+  const { fieldsToReset, onFieldChange, value, showDeprecatedMessage } = props;
 
   const updatedOnFieldChange = (id, value) => {
     fieldsToReset.forEach(field => {
@@ -37,7 +37,7 @@ export default function DynaCheckboxForResetFields(props) {
     onFieldChange(id, value);
   };
 
-  if (['rowsPerRecord', 'file.xlsx.rowsPerRecord'].includes(id) && !value) {
+  if (showDeprecatedMessage && !value) {
     return null;
   }
 
