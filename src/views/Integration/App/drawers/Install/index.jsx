@@ -577,7 +577,10 @@ export default function ConnectorInstallation(props) {
             resourceId={connection.newId}
             resource={connection.doc}
             resourceType="connections"
-            connectionType={connection.doc.type}
+            // eslint-disable-next-line no-nested-ternary
+            connectionType={connection.doc.type === 'http'
+              ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
+              : connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
             addOrSelect={!_connectorId}

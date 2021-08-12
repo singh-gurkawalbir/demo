@@ -11,6 +11,7 @@ export default function useHandleSubmit({
   isGenerate,
   flowId,
   formKey,
+  parentContext,
 }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -32,8 +33,9 @@ export default function useHandleSubmit({
           match,
           !closeAfterSave,
           isGenerate,
-          flowId
+          flowId,
+          parentContext
         )
       );
-    }, [dispatch, flowId, isGenerate, match, resourceId, resourceType, values]);
+    }, [dispatch, flowId, isGenerate, match, resourceId, resourceType, values, parentContext]);
 }
