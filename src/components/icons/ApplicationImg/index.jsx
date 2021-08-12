@@ -78,16 +78,16 @@ export default function ApplicationImg({
 
   if (!assistant) {
     if (dbConnectors.includes(iconMap(type)) && markOnly) {
-      path += `marketplace/small/${iconMap(type)}.png`;
+      path += `react/application-logos/small/${iconMap(type)}.png`;
     } else {
-      path += `flow-builder/company-logos/integration-icon-${iconMap(
+      path += `react/application-logos/large/${iconMap(
         type
       )}.png`;
     }
   } else if (markOnly) {
-    path += `marketplace/small/${imageName(assistant)}.png`;
+    path += `react/application-logos/small/${imageName(assistant)}.png`;
   } else {
-    path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
+    path += `react/application-logos/large/${assistant}.png`;
   }
 
   return (
