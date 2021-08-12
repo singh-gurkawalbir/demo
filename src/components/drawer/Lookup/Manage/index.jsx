@@ -23,6 +23,7 @@ export default function ManageLookup({
   flowId,
   className,
   showDynamicLookupOnly = false,
+  remountCount = 0,
   ...others
 }) {
   const { extractFields, picklistOptions } = others;
@@ -78,6 +79,7 @@ export default function ManageLookup({
     disabled,
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    remount: remountCount,
   });
 
   return (
