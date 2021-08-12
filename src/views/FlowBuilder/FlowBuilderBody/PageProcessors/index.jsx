@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 450,
   },
   dottedLine: {
-    width: '100%',
+    width: '92%',
     borderBottom: `3px dotted ${theme.palette.divider}`,
     top: 86,
     position: 'relative',
