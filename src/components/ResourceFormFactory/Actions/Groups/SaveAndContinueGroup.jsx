@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
@@ -15,15 +15,25 @@ export default function SaveAndContinueGroup(props) {
     resourceId,
     onCancel,
     formKey,
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
   } = props;
 
   const match = useRouteMatch();
-
   const dispatch = useDispatch();
   const formSaveStatus = useSelector(state =>
     selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
   );
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
 
   const handleSaveAndContinue = useCallback(
     () => {
@@ -39,11 +49,12 @@ export default function SaveAndContinueGroup(props) {
           resourceId,
           newValues,
           match,
-          false
+          false,
+          parentContext
         )
       );
     },
-    [dispatch, match, resourceId, resourceType, values]
+    [dispatch, match, resourceId, resourceType, values, parentContext]
   );
 
   return (

@@ -12,6 +12,7 @@ import {
   isAS2Resource,
 } from '../../../utils/resource';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
 import { generateFileParserOptionsFromResource } from '../utils/fileParserUtils';
@@ -114,7 +115,7 @@ export function* _requestExportPreviewData({ formKey }) {
   // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
   // refer IO-21519
   body._flowId = flow?._id;
-  body._integrationId = integrationId;
+  body._integrationId = integrationId !== STANDALONE_INTEGRATION.id ? integrationId : undefined;
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 

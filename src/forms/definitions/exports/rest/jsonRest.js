@@ -299,6 +299,7 @@ export default {
       retValues['/rest/linkHeaderRelation'] = undefined;
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/http/paging/path'] = retValues['/rest/nextPageTokenPath'];
+      delete retValues['/rest/nextPageTokenPath'];
     } else if (retValues['/http/paging/method'] === 'body') {
       retValues['/rest/linkHeaderRelation'] = undefined;
       retValues['/rest/nextPageTokenPath'] = undefined;
@@ -325,6 +326,7 @@ export default {
     }
     if (retValues['/rest/lastPageValue']) {
       retValues['/http/paging/lastPageValues'] = [retValues['/rest/lastPageValue']];
+      delete retValues['/rest/lastPageValue'];
     } else {
       retValues['/http/paging/lastPageValues'] = undefined;
     }
@@ -333,6 +335,7 @@ export default {
 
     if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/relativeURI'] = retValues['/rest/nextPageRelativeURI'] || retValues['/http/relativeURI'];
+      delete retValues['/rest/nextPageRelativeURI'];
     } else if (retValues['/http/paging/method'] === 'token') {
       const path = retValues['/http/relativeURI'].split('?')[0];
       const uriObj = url.parse(retValues['/http/relativeURI'], true);
@@ -344,6 +347,7 @@ export default {
       const tp = qs.stringify(uriObj.query, { encode: false });
 
       retValues['/http/paging/relativeURI'] = `${path}?${tp}`; // url.format(uriObj) will encode the handlebar expression if present on relativeURI
+      delete retValues['/rest/tokenPageArgument'];
     } else if (retValues['/http/paging/method'] === 'skip') {
       if (retValues['/http/relativeURI']) {
         const path = retValues['/http/relativeURI'].split('?')[0];
@@ -373,6 +377,7 @@ export default {
 
         retValues['/http/relativeURI'] = retValues['/http/paging/relativeURI'];
       }
+      delete retValues['/rest/skipArgument'];
     } else if (retValues['/http/paging/method'] === 'page') {
       if (retValues['/http/relativeURI']) {
         const path = retValues['/http/relativeURI'].split('?')[0];
@@ -401,10 +406,13 @@ export default {
 
         retValues['/http/relativeURI'] = retValues['/http/paging/relativeURI'];
       }
+      delete retValues['/rest/pageArgument'];
     } else if (retValues['/http/paging/method'] === 'linkheader' && retValues['/rest/linkHeaderRelation']) {
       retValues['/http/paging/linkHeaderRelation'] = retValues['/rest/linkHeaderRelation'];
+      delete retValues['/rest/linkHeaderRelation'];
     } else if (retValues['/http/paging/method'] === 'body') {
       retValues['/http/paging/body'] = (typeof retValues['/rest/pagingPostBody'] === 'string') ? retValues['/rest/pagingPostBody'] : JSON.stringify(retValues['/rest/pagingPostBody']);
+      delete retValues['/rest/pagingPostBody'];
     }
 
     try {
