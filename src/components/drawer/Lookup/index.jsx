@@ -10,7 +10,6 @@ import {
   TableBody,
   TableHead,
 } from '@material-ui/core';
-import { filter } from 'lodash';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';
@@ -20,6 +19,8 @@ import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
 import IconTextButton from '../../IconTextButton';
 import AddIcon from '../../icons/AddIcon';
+import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
+import useFormOnCancelContext from '../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
   listing: {
@@ -52,7 +53,12 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
   const location = useLocation();
   const [error, setError] = useState();
   const [value, setValue] = useState(lookups || []);
-  const [selectedLookup, setSelectedLookup] = useState({});
+
+  // used to remount the form on save
+  const [remountCount, setRemountCount] = useState(0);
+
+  // index of the currently selected lookup
+  const [lookupIndex, setLookupIndex] = useState(0);
 
   const fullPath = `${match.url}/${rootPath}`;
   const { isExact } = matchPath(location.pathname, fullPath) || {};
@@ -67,32 +73,31 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
     drawerTitle = 'Manage lookups';
   }
 
-  const handleDelete = useCallback(
-    lookupObj => {
-      if (lookupObj && lookupObj.name) {
-        const modifiedLookups = filter(
-          value,
-          obj => obj.name !== lookupObj.name
-        );
+  const handleDelete = useCallback(index => () => {
+    if (index >= 0 && index < value.length) {
+      const modifiedLookups = [...value];
 
-        // updating local state
-        setValue(modifiedLookups);
+      modifiedLookups.splice(index, 1);
+      // updating local state
+      setValue(modifiedLookups);
 
-        onSave(modifiedLookups);
-      }
-    },
-    [onSave, value]
+      onSave(modifiedLookups);
+    }
+  },
+  [onSave, value]
   );
-  const handleEdit = useCallback(val => {
-    setSelectedLookup(val);
+  const handleEdit = useCallback(index => () => {
+    // set the lookupIndex to currently selected lookup
+    setLookupIndex(index);
     history.push(`${location.pathname}/edit`);
   }, [history, location.pathname]);
 
   const handleAdd = useCallback(() => {
     setError();
-    setSelectedLookup({});
+    // set the lookupIndex to add new lookup to value array at the end
+    setLookupIndex(value.length);
     history.push(`${location.pathname}/add`);
-  }, [history, location.pathname]);
+  }, [history, location.pathname, value]);
 
   const handleSubmit = useCallback(
     (isEdit, val, shouldClose) => {
@@ -109,22 +114,23 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
 
           return;
         }
-      } else if (selectedLookup) {
+      } else if (lookupIndex >= 0 && lookupIndex < value.length) {
         setError();
-        const index = lookupsTmp.findIndex(
-          ele => ele.name === selectedLookup.name
-        );
-
-        lookupsTmp[index] = val;
+        lookupsTmp[lookupIndex] = val;
 
         onSave(lookupsTmp);
       }
 
       setValue(lookupsTmp);
       if (shouldClose) { history.goBack(); }
+      // remount the form on save
+      setRemountCount(remountCount => remountCount + 1);
     },
-    [history, onSave, selectedLookup, value]
+    [history, lookupIndex, onSave, value]
   );
+  const selectedLookup = (lookupIndex >= 0 && lookupIndex < value.length) ? value[lookupIndex] : {};
+  const {setCancelTriggered} = useFormOnCancelContext(LOOKUP_DRAWER_FORM_KEY);
+  const handleClose = isExact ? history.goBack : setCancelTriggered;
 
   return (
     <RightDrawer
@@ -133,7 +139,11 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       width="default"
       variant="temporary"
       onClose={history.goBack}>
-      <DrawerHeader title={drawerTitle} hideBackButton={!value.length} />
+      <DrawerHeader
+        title={drawerTitle}
+        hideBackButton={!value.length}
+        handleClose={handleClose}
+      />
       <DrawerContent>
         <Switch>
           <Route path={[`${match.url}/${rootPath}/add`, `${match.url}/${rootPath}/edit`]}>
@@ -142,10 +152,12 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
               error={error}
               options={options}
               disabled={disabled}
-              formKey={`lookup-${resourceId}`}
+              formKey={LOOKUP_DRAWER_FORM_KEY}
               resourceId={resourceId}
               resourceType={resourceType}
-              flowId={flowId} />
+              flowId={flowId}
+              remountCount={remountCount}
+            />
           </Route>
           <Route path={`${match.url}/${rootPath}`}>
             <>
@@ -170,14 +182,14 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {value.map(r => (
+                    {value.map((r, index) => (
                       <LookupListRow
                         classes={classes}
                         value={r}
                         key={r.name}
                         disabled={disabled}
-                        onDelete={handleDelete}
-                        onEdit={handleEdit} />
+                        onDelete={handleDelete(index)}
+                        onEdit={handleEdit(index)} />
                     ))}
                   </TableBody>
                 </Table>
@@ -199,7 +211,7 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
           <SaveButtonGroup
             value={selectedLookup}
             parentOnSave={handleSubmit}
-            formKey={`lookup-${resourceId}`}
+            formKey={LOOKUP_DRAWER_FORM_KEY}
             onCancel={history.goBack}
             disabled={disabled}
             resourceType={resourceType}

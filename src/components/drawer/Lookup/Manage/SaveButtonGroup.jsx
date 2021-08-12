@@ -1,13 +1,12 @@
 import React, { useCallback } from 'react';
 import shortid from 'shortid';
-import { Button } from '@material-ui/core';
-import ButtonGroup from '../../../ButtonGroup';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import { shallowEqual, useSelector } from 'react-redux';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject, FORM_SAVE_STATUS } from '../../../../utils/constants';
+import SaveAndCloseResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
-export default function SaveButtonGroup({ value, formKey, disabled, onCancel, resourceType, resourceId, parentOnSave }) {
+export default function SaveButtonGroup({ value, formKey, onCancel, resourceType, resourceId, parentOnSave }) {
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -91,44 +90,20 @@ export default function SaveButtonGroup({ value, formKey, disabled, onCancel, re
 
     return lookupObj;
   }, [isEdit, resource.adaptorType, value.name]);
-
-  const handleSubmitAndClose = useCallback(formVal => {
-    const lookupObj = submitHandler(formVal);
-
-    parentOnSave(isEdit, lookupObj, true);
-  }, [isEdit, parentOnSave, submitHandler]);
-  const handleSubmit = useCallback(formVal => {
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleSubmit = useCallback(() => {
     const lookupObj = submitHandler(formVal);
 
     parentOnSave(isEdit, lookupObj);
-  }, [isEdit, parentOnSave, submitHandler]);
+  }, [isEdit, parentOnSave, submitHandler, formVal]);
 
   return (
-    <ButtonGroup>
-      <DynaSubmit
-        formKey={formKey}
-        disabled={disabled}
-        data-test="saveLookupForm"
-        onClick={handleSubmit}
-        color="primary" >
-        Save
-      </DynaSubmit>
-      <DynaSubmit
-        formKey={formKey}
-        data-test="saveAndCloseLookupForm"
-        color="secondary"
-        onClick={handleSubmitAndClose}
-        disabled={disabled} >
-        Save & close
-      </DynaSubmit>
-      <Button
-        data-test="cancelLookupForm"
-        onClick={onCancel}
-        variant="text"
-        color="primary">
-        Cancel
-      </Button>
-    </ButtonGroup>
+    <SaveAndCloseResourceForm
+      formKey={formKey}
+      onClose={onCancel}
+      onSave={handleSubmit}
+      status={FORM_SAVE_STATUS.COMPLETE}
+    />
   );
 }
 
