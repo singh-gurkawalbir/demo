@@ -62,34 +62,34 @@ const useStyles = makeStyles(theme => ({
 
 export default function ResourceFilter({openByDefault = false}) {
   const classes = useStyles();
-  const { filter, setFilter } = useGlobalSearchContext();
+  const { type, setType } = useGlobalSearchContext();
   const [open, setOpen] = useState(openByDefault);
 
   const handleArrowClick = () => setOpen(o => !o);
 
   const FilterLabel = () => {
-    if (filter?.length === 0) {
+    if (type?.length === 0) {
       return 'All';
     }
 
     return (
-      <Tooltip title={filter.join(', ')} placement="bottom" aria-label="Filters">
-        <span>{filter.length.toString()}</span>
+      <Tooltip title={type.join(', ')} placement="bottom" aria-label="Filters">
+        <span>{type.length}</span>
       </Tooltip>
     );
   };
 
   const MenuItem = ({ name, label }) => {
-    const isChecked = filter.includes(name) || (name === 'all' && !filter?.length);
+    const isChecked = type.includes(name) || (name === 'all' && !type?.length);
 
     const handleMenuItemClick = name => {
       if (name === 'all') {
-        setFilter([]);
-      } else if (filter?.includes(name)) {
-        setFilter(filter.filter(i => i !== name));
+        setType([]);
+      } else if (type?.includes(name)) {
+        setType(type.filter(i => i !== name));
       } else {
-      // last case is filter not present, so add it.
-        setFilter([...filter, name]);
+      // last case is type not present, so add it.
+        setType([...type, name]);
       }
     };
 
@@ -109,6 +109,7 @@ export default function ResourceFilter({openByDefault = false}) {
         <Typography variant="h6" color="inherit" className={classes.filterLabel}>
           <FilterLabel />
         </Typography>
+
         <IconButton
           size="small"
           color="inherit"

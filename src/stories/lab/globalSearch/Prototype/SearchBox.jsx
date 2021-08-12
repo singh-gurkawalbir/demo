@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles, Paper, InputBase } from '@material-ui/core';
 import SearchIcon from '../../../../components/icons/SearchIcon';
 import FloatingPaper from './FloatingPaper';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,9 +38,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function SearchBox() {
   const classes = useStyles();
-  const [searchTerm, setSearchTerm] = useState('');
-  const showResults = searchTerm.length >= 2;
-  const handleChange = e => setSearchTerm(e.target.value);
+  const { keyword, setKeyword } = useGlobalSearchContext();
+  const showResults = keyword?.length >= 2;
+  const handleChange = e => setKeyword(e.target.value);
 
   return (
     <div className={classes.root}>
@@ -47,7 +48,7 @@ export default function SearchBox() {
         <SearchIcon fontSize="small" />
 
         <InputBase
-          value={searchTerm}
+          value={keyword}
           classes={{input: classes.inputBase}}
           className={classes.input}
           placeholder="Search integrator.io"
