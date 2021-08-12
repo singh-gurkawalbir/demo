@@ -5,7 +5,8 @@ import { makeStyles,
   Typography,
   Checkbox,
   Divider,
-  FormControlLabel } from '@material-ui/core';
+  FormControlLabel,
+  Tooltip} from '@material-ui/core';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.primary.main,
   },
   iconButton: {
-    margin: theme.spacing(0, 1),
+    // margin: theme.spacing(0, 1),
   },
   menu: {
     marginRight: 2,
@@ -55,6 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
   filterLabel: {
     width: 18,
+    textAlign: 'center',
   },
 }));
 
@@ -65,7 +67,17 @@ export default function ResourceFilter({openByDefault = false}) {
 
   const handleArrowClick = () => setOpen(o => !o);
 
-  const filterLabel = filter?.length === 0 ? 'All' : filter.length.toString();
+  const FilterLabel = () => {
+    if (filter?.length === 0) {
+      return 'All';
+    }
+
+    return (
+      <Tooltip title={filter.join(', ')} placement="bottom" aria-label="Filters">
+        <span>{filter.length.toString()}</span>
+      </Tooltip>
+    );
+  };
 
   const MenuItem = ({ name, label }) => {
     const isChecked = filter.includes(name) || (name === 'all' && !filter?.length);
@@ -94,7 +106,9 @@ export default function ResourceFilter({openByDefault = false}) {
   return (
     <div className={classes.root}>
       <div className={classes.arrowContainer}>
-        <Typography variant="h6" color="inherit" className={classes.filterLabel}>{filterLabel}</Typography>
+        <Typography variant="h6" color="inherit" className={classes.filterLabel}>
+          <FilterLabel />
+        </Typography>
         <IconButton
           size="small"
           color="inherit"
@@ -115,15 +129,15 @@ export default function ResourceFilter({openByDefault = false}) {
           </div>
 
           <Divider orientation="horizontal" className={classes.divider} />
-          <Typography variant="subheading1" color="textSecondary" gutterBottom component="div">Filter by category:</Typography>
-          <Typography variant="subheading2" gutterBottom component="div">RESOURCES:</Typography>
+          <Typography variant="caption" color="textSecondary" gutterBottom component="div">Filter by category:</Typography>
+          <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
 
           {resources.map(r => (
             <MenuItem key={r} name={r} label={r} />
           ))}
 
           <Divider orientation="horizontal" className={classes.divider} />
-          <Typography variant="subheading2" gutterBottom component="div">MARKETPLACE:</Typography>
+          <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>
 
           <MenuItem name="ia" label="Integration App" />
           <MenuItem name="template" label="Template" />
