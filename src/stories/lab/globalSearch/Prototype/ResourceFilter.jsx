@@ -5,11 +5,12 @@ import { makeStyles,
   Typography,
   Checkbox,
   Divider,
-  MenuItem,
   FormControlLabel } from '@material-ui/core';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
+import CloseIcon from '../../../../components/icons/CloseIcon';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
 
 const resources = [
   'Connections',
@@ -47,18 +48,53 @@ const useStyles = makeStyles(theme => ({
   divider: {
     margin: theme.spacing(1, 0),
   },
+  allContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  filterLabel: {
+    width: 18,
+  },
 }));
 
 export default function ResourceFilter({openByDefault = false}) {
   const classes = useStyles();
+  const { filter, setFilter } = useGlobalSearchContext();
   const [open, setOpen] = useState(openByDefault);
 
   const handleArrowClick = () => setOpen(o => !o);
 
+  const filterLabel = filter?.length === 0 ? 'All' : filter.length.toString();
+
+  const MenuItem = ({ name, label }) => {
+    const isChecked = filter.includes(name) || (name === 'all' && !filter?.length);
+
+    const handleMenuItemClick = name => {
+      if (name === 'all') {
+        setFilter([]);
+      } else if (filter?.includes(name)) {
+        setFilter(filter.filter(i => i !== name));
+      } else {
+      // last case is filter not present, so add it.
+        setFilter([...filter, name]);
+      }
+    };
+
+    return (
+      <div>
+        <FormControlLabel
+          onClick={() => handleMenuItemClick(name)}
+          control={<Checkbox checked={isChecked} name={name} color="primary" />}
+          label={label} />
+      </div>
+    );
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.arrowContainer}>
-        <Typography variant="h6" color="inherit">All</Typography>
+        <Typography variant="h6" color="inherit" className={classes.filterLabel}>{filterLabel}</Typography>
         <IconButton
           size="small"
           color="inherit"
@@ -71,23 +107,26 @@ export default function ResourceFilter({openByDefault = false}) {
 
       {open && (
         <FloatingPaper className={classes.menu}>
-          <MenuItem>
-            <FormControlLabel
-              control={<Checkbox name="All" color="primary" />}
-              label="All item types" />
-          </MenuItem>
+          <div className={classes.allContainer}>
+            <MenuItem name="all" label="All" />
+            <IconButton size="small" onClick={handleArrowClick}>
+              <CloseIcon />
+            </IconButton>
+          </div>
 
           <Divider orientation="horizontal" className={classes.divider} />
-
-          <Typography variant="subheading2" gutterBottom component="div">Search only:</Typography>
+          <Typography variant="subheading1" color="textSecondary" gutterBottom component="div">Filter by category:</Typography>
+          <Typography variant="subheading2" gutterBottom component="div">RESOURCES:</Typography>
 
           {resources.map(r => (
-            <MenuItem key={r}>
-              <FormControlLabel
-                control={<Checkbox name={r} color="primary" />}
-                label={r} />
-            </MenuItem>
+            <MenuItem key={r} name={r} label={r} />
           ))}
+
+          <Divider orientation="horizontal" className={classes.divider} />
+          <Typography variant="subheading2" gutterBottom component="div">MARKETPLACE:</Typography>
+
+          <MenuItem name="ia" label="Integration App" />
+          <MenuItem name="template" label="Template" />
         </FloatingPaper>
       )}
     </div>

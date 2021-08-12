@@ -6,6 +6,7 @@ import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
 import SearchBox from './SearchBox';
 import TooltipTitle from './TooltipTitle';
+import { GlobalSearchProvider } from '../GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,12 +52,14 @@ export default function GlobalSearchProto() {
       )}
 
       <div className={clsx(classes.root, {[classes.closed]: !open})}>
-        {open && (
-          <>
-            <ResourceFilter />
-            <SearchBox />
-          </>
-        )}
+        <GlobalSearchProvider>
+          {open && (
+            <>
+              <ResourceFilter />
+              <SearchBox />
+            </>
+          )}
+        </GlobalSearchProvider>
       </div>
     </>
   );
