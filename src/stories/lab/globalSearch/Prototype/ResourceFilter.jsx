@@ -6,12 +6,14 @@ import { makeStyles,
   Checkbox,
   Divider,
   FormControlLabel,
-  Tooltip} from '@material-ui/core';
+  Tooltip,
+  Badge} from '@material-ui/core';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
+import FilterIcon from '../../../../components/icons/FilterIcon';
 
 const resources = [
   'Connections',
@@ -55,8 +57,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   filterLabel: {
-    width: 18,
+    width: 22,
     textAlign: 'center',
+  },
+  badge: {
+    backgroundColor: theme.palette.primary.light,
   },
 }));
 
@@ -74,7 +79,9 @@ export default function ResourceFilter({openByDefault = false}) {
 
     return (
       <Tooltip title={type.join(', ')} placement="bottom" aria-label="Filters">
-        <span>{type.length}</span>
+        <Badge classes={{badge: classes.badge}} overlap="circle" variant="dot" badgeContent={type.length}>
+          <FilterIcon fontSize="small" />
+        </Badge>
       </Tooltip>
     );
   };

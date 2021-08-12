@@ -11,7 +11,7 @@ import { GlobalSearchProvider, useGlobalSearchContext } from '../GlobalSearchCon
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    width: 500,
+    width: 400,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.easeIn,
       duration: theme.transitions.duration.enteringScreen,
