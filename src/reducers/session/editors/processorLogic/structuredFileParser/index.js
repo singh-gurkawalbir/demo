@@ -20,10 +20,17 @@ export default {
 
     return false;
   },
-  requestBody: editor => ({
-    rules: JSON.parse(editor.rule),
-    data: editor.data,
-  }),
+  requestBody: editor => {
+    const rules = {
+      groupByFields: editor.groupByFields,
+      sortByFields: editor.sortByFields,
+      ...JSON.parse(editor.rule)};
+
+    return {
+      rules,
+      data: editor.data,
+    };
+  },
   validate: editor => ({
     ruleError: util.validateJsonString(editor.rule),
     dataError:

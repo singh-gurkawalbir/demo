@@ -48,6 +48,8 @@ const requestBody = ({ data, rule = {} }) => {
 
   const rules = {
     resourcePath: rule.resourcePath,
+    groupByFields: rule.groupByFields,
+    sortByFields: rule.sortByFields,
     doc: {
       parsers: [
         {

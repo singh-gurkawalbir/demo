@@ -14,7 +14,7 @@ import {
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
-import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
+import { processJsonSampleData } from '../../../utils/sampleData';
 import { generateFileParserOptionsFromResource } from '../utils/fileParserUtils';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
@@ -33,6 +33,7 @@ const PARSERS = {
   csv: 'csvParser',
   xlsx: 'csvParser',
   xml: 'xmlParser',
+  json: 'jsonParser',
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
@@ -159,7 +160,7 @@ export function* _hasSampleDataOnResource({ formKey }) {
   return bodyFileType === resourceFileType;
 }
 
-export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceId, fileContent, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
@@ -167,11 +168,24 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
   }
   switch (fileType) {
     case 'json': {
-      const processedJsonData = processJsonPreviewData(fileContent, fileProps);
-      const parseData = processJsonSampleData(fileContent, fileProps);
+      const processorData = {
+        rule: parserOptions,
+        data: fileContent,
+        editorType: PARSERS[fileType],
+      };
+      const processorOutput = yield call(_getProcessorOutput, { processorData });
 
-      yield put(actions.resourceFormSampleData.setParseData(resourceId, parseData));
-      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(processedJsonData, recordSize)));
+      if (processorOutput?.data) {
+        const previewData = processorOutput.data.data;
+
+        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
+      }
+      if (processorOutput?.error) {
+        return yield put(
+          actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
+        );
+      }
       break;
     }
     case 'csv':
