@@ -630,6 +630,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
   ],
   flows: [
     '_runNextFlowIds',
+    'autoResolveMatchingTraceKeys',
     'disabled',
     'schedule',
     'timeZone',

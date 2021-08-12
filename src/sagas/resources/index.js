@@ -7,7 +7,7 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
-import getRequestOptions from '../../utils/requestOptions';
+import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
@@ -15,6 +15,7 @@ import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAG
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+import { pingConnectionWithId } from '../resourceForm/connections';
 
 const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
@@ -133,7 +134,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   }
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options, context }) {
+export function* commitStagedChanges({ resourceType, id, scope, options, context, parentContext }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -182,14 +183,21 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
 
   let updated;
 
-  // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
-  // number of active tokens on netsuite, revoking token when user updates token-auto connection.
-  if (resourceType === 'connections' && !isNew && merged.type === 'netsuite') {
-    const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
+  if (resourceType === 'connections' && !isNew) {
+    // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
+    // number of active tokens on netsuite, revoking token when user updates token-auto connection.
+    if (merged.type === 'netsuite') {
+      const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
-    if (isTokenToBeRevoked) {
-      yield call(requestRevoke, { connectionId: master._id, hideNetWorkSnackbar: true });
+      if (isTokenToBeRevoked) {
+        yield call(requestRevoke, { connectionId: master._id, hideNetWorkSnackbar: true });
+      }
     }
+    // add parentContext to merged for only put connection calls
+    merged = {
+      ...merged,
+      ...pingConnectionParentContext(parentContext),
+    };
   }
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
@@ -304,10 +312,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   */
   if (resourceType === 'connections' && updated?._id && isNew) {
     try {
-      yield call(apiCallWithRetry, {
-        path: `/connections/${updated._id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: updated._id, parentContext });
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
