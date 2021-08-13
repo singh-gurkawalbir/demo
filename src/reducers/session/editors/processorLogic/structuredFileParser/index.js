@@ -2,7 +2,7 @@ import isEqual from 'lodash/isEqual';
 import util from '../../../../../utils/json';
 
 export default {
-  init: ({options, fieldState, fileDefinitionData}) => {
+  init: ({options, fieldState, fileDefinitionData, resource}) => {
     const {sampleData, rule} = fileDefinitionData || {};
     const data = sampleData || fieldState?.sampleData;
 
@@ -11,6 +11,8 @@ export default {
       rule: fieldState?.value || rule,
       data,
       originalData: data,
+      groupByFields: resource?.file?.groupByFields || [],
+      sortByFields: resource?.file?.sortByFields || [],
     };
   },
   dirty: editor => {

@@ -14,7 +14,8 @@ const requestBody = ({ rule, data }) => {
   };
 };
 
-const init = ({options, fieldState}) => {
+const init = props => {
+  const {options, fieldState, resource} = props;
   const value = fieldState?.value || {};
   let rule = value;
 
@@ -23,6 +24,9 @@ const init = ({options, fieldState}) => {
   }
 
   rule.multipleRowsPerRecord = !!rule.keyColumns?.length;
+  rule.groupByFields = resource?.file?.groupByFields || [];
+
+  rule.sortByFields = resource?.file?.sortByFields || [];
 
   return {
     ...options,

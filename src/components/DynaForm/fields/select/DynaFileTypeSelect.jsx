@@ -25,19 +25,15 @@ const FileTypeSelect = props => {
     let filePropValues;
 
     if (fileType === 'csv') {
-      filePropValues = formValues['/file/csv'];
+      filePropValues = `${formValues['/file/groupByFields']}${formValues['/file/csv']}`;
     } else if (fileType === 'json') {
-      filePropValues = formValues['/file/json/resourcePath'];
+      filePropValues = `${formValues['/file/groupByFields']}${formValues['/file/json/resourcePath']}`;
     } else if (fileType === 'xlsx') {
-      filePropValues = `${formValues['/file/xlsx/hasHeaderRow']}`;
+      filePropValues = `${formValues['/file/groupByFields']}${formValues['/file/xlsx/hasHeaderRow']}`;
     } else if (fileType === 'xml') {
-      filePropValues = formValues['/parsers'];
-    } else if (fileType === 'filedefinition') {
-      filePropValues = `${formValues['/edix12/format']}${formValues['/file/filedefinition/rules']}`;
-    } else if (fileType === 'fixed') {
-      filePropValues = `${formValues['/fixed/format']}${formValues['/file/filedefinition/rules']}`;
-    } else if (fileType === 'delimited/edifact') {
-      filePropValues = `${formValues['/edifact/format']}${formValues['/file/filedefinition/rules']}`;
+      filePropValues = `${formValues['/parsers']}${formValues['/file/groupByFields']}`;
+    } else {
+      filePropValues = `${formValues['/file/groupByFields']}`;
     }
 
     return filePropValues;

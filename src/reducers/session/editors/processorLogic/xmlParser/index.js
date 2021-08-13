@@ -21,6 +21,8 @@ const init = ({resource, fieldState, options}) => {
       listNodes: rule.listNodes,
       includeNodes: rule.includeNodes,
       excludeNodes: rule.excludeNodes,
+      groupByFields: resource?.file?.groupByFields || [],
+      sortByFields: resource?.file?.sortByFields || [],
     },
   };
 };
