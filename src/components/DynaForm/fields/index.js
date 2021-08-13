@@ -137,6 +137,7 @@ import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
 import DynaDynamicSelect from './DynaDynamicSelect';
 import DynaSelectLookup from './DynaSelectLookup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
+import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -183,6 +184,7 @@ export default {
   csvgenerate: DynaCsvGenerate_afe,
   xmlparse: DynaXmlParse_afe,
   refreshableselect: DynaRefreshableSelect,
+  netsuiterecordtype: DynaNetSuiteRecordType,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,

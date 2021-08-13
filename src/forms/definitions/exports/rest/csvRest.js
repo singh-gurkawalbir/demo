@@ -53,6 +53,7 @@ export default {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
     retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
+    delete retValues['/rest/relativeURI'];
 
     // set the successMediaType on Export according to the connection
     // the request media-type is always json/urlencoded for REST, others are not supported in REST

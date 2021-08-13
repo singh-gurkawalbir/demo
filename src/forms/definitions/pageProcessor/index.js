@@ -232,9 +232,25 @@ export default {
         }
       }
 
-      expression.push({
-        adaptorType,
-      });
+      if (app.type === 'rest') {
+        expression.push({
+          $or: [
+            { adaptorType: `REST${adaptorTypeSuffix}` },
+            { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'rest' }] },
+          ],
+        });
+      } else if (app.type === 'http') {
+        expression.push({
+          adaptorType,
+        });
+        expression.push({
+          'http.formType': { $ne: 'rest' },
+        });
+      } else {
+        expression.push({
+          adaptorType,
+        });
+      }
 
       if (connectionField.value) {
         expression.push({ _connectionId: connectionField.value });
