@@ -374,6 +374,7 @@ describe('resourceFormSampleData sagas', () => {
             resourceId,
             fileContent: fileDefinitionSampleData,
             parserOptions: rule,
+            fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
             fileType: 'fileDefinitionParser',
           }), {}],
         ])
@@ -382,6 +383,7 @@ describe('resourceFormSampleData sagas', () => {
           fileContent: fileDefinitionSampleData,
           parserOptions: rule,
           fileType: 'fileDefinitionParser',
+          fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
         })
         .not.put(actions.resourceFormSampleData.clearStages(resourceId))
         .run();
@@ -398,8 +400,8 @@ describe('resourceFormSampleData sagas', () => {
         columnDelimiter: '|',
         hasHeaderRow: true,
         rowDelimiter: undefined,
-        multipleRowsPerRecord: undefined,
-        keyColumns: undefined,
+        sortByFields: [],
+        groupByFields: [],
       };
       const ftpResource = {
         _id: 'export-123',
@@ -449,8 +451,8 @@ describe('resourceFormSampleData sagas', () => {
         columnDelimiter: '|',
         hasHeaderRow: true,
         rowDelimiter: undefined,
-        multipleRowsPerRecord: undefined,
-        keyColumns: undefined,
+        sortByFields: [],
+        groupByFields: [],
       };
       const ftpResource = {
         _id: 'export-123',

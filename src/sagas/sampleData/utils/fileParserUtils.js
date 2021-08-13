@@ -22,7 +22,7 @@ const PARSERS = {
 export const generateFileParserOptionsFromResource = (resource = {}) => {
   const fileType = resource?.file?.type;
   const fields = resource?.file?.[fileType] || {};
-  const {sortByFields, groupByFields} = resource?.file || {};
+  const {sortByFields = [], groupByFields = []} = resource?.file || {};
 
   if (!fileType) {
     return;
