@@ -1,6 +1,6 @@
 export default function getFormFieldMetadata(
   recordLabel,
-  subrecords,
+  subrecords = [],
   subrecordFields,
   fieldId,
   flowId,

@@ -1,9 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import useConfirmDialog from '../../../ConfirmDialog';
+import { isNestedDrawer } from '../../../drawer/Resource/Panel';
 import SaveAndCloseResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import useHandleSubmit from './hooks/useHandleSubmit';
 
@@ -17,12 +19,16 @@ export default function SaveAndClose(props) {
     isGenerate = false,
     onCancel,
     formKey,
-    flowId,
     integrationId,
     parentType,
     parentId,
   } = props;
 
+  const location = useLocation();
+  // User can edit an existing resource via `Would you like to use an existing transfer?` field, while a creating one.
+  // Avoid passing flowId to resource being edited in this case.
+  // If flowId is passed, the resource gets linked to the flow.
+  const flowId = isNestedDrawer(location.pathname) ? undefined : props.flowId;
   const { confirmDialog } = useConfirmDialog();
   const values = useSelector(state => selectors.formState(state, formKey)?.value, shallowEqual);
   const flow =
