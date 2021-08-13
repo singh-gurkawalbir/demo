@@ -4,7 +4,7 @@ export default {
   'netsuite_da.recordType': {
     label: 'Record type',
     required: true,
-    type: 'refreshableselect',
+    type: 'netsuiterecordtype',
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
       r &&
