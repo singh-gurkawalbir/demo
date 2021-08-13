@@ -26,7 +26,6 @@ export default {
     'namely',
     'zuora',
     'shipwire',
-
     'chargebee',
     'postgresql',
     'mysql',
@@ -131,7 +130,6 @@ export default {
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
     'azurestorageaccount',
-    'amazonmws',
     'squareup',
     'shipbob',
     'ebay',
