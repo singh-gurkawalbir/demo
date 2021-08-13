@@ -685,12 +685,31 @@ describe('resourceFormSampleData sagas', () => {
         adaptorType: 'FTPExport',
       };
       const fileContent = { users: { test: 5 }};
-      const parseData = fileContent.users;
+      const parserOptions = {
+        resourcePath: 'users',
+      };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions: {}, isNewSampleData: true, fileType: 'json' })
+      const processorData = {
+        rule: parserOptions,
+        data: fileContent,
+        editorType: 'jsonParser',
+      };
+      const processorResponse = {
+        data: {
+          data: {
+            users: { test: 5 },
+          },
+        },
+      };
+
+      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+        .provide([
+          [call(_getProcessorOutput, { processorData }), processorResponse],
+        ])
         .put(actions.resourceFormSampleData.setRawData(resourceId, fileContent))
-        .put(actions.resourceFormSampleData.setParseData(resourceId, parseData))
-        .put(actions.resourceFormSampleData.setPreviewData(resourceId, parseData))
+        .call.fn(_getProcessorOutput)
+        .put(actions.resourceFormSampleData.setParseData(resourceId))
+        .put(actions.resourceFormSampleData.setPreviewData(resourceId))
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
         .run();
     });

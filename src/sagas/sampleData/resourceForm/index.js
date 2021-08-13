@@ -160,7 +160,7 @@ export function* _hasSampleDataOnResource({ formKey }) {
   return bodyFileType === resourceFileType;
 }
 
-export function* _parseFileData({ resourceId, fileContent, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceId, fileContent, fileProps, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
@@ -243,10 +243,14 @@ export function* _parseFileData({ resourceId, fileContent, fileType, parserOptio
       break;
     }
     case 'fileDefinitionParser': {
+      const {groupByFields, sortByFields} = fileProps;
+
       const processorData = {
         rule: parserOptions,
         data: fileContent,
         editorType: PARSERS.fileDefinitionParser,
+        groupByFields,
+        sortByFields,
       };
 
       const processorOutput = yield call(_getProcessorOutput, { processorData });
@@ -304,6 +308,7 @@ export function* _requestFileSampleData({ formKey }) {
       fileContent: fileDefinitionData?.sampleData || resourceObj.sampleData,
       parserOptions: fieldValue || fileDefinitionData?.rule,
       fileType: 'fileDefinitionParser',
+      fileProps: parserOptions,
     });
   } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
