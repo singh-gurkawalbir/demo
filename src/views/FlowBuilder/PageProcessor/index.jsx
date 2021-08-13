@@ -19,7 +19,7 @@ import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   ppContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -29,8 +29,6 @@ const useStyles = makeStyles(theme => ({
   },
   lineLeft: {
     minWidth: 50,
-    borderBottom: `3px dotted ${theme.palette.divider}`,
-
   },
   dottedLine: {
     alignSelf: 'start',
@@ -39,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   pending: {
     minWidth: 50,
   },
-}));
+});
 const PageProcessor = ({
   match,
   location,
