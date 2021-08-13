@@ -82,7 +82,7 @@ export default function DynaSortAndGroup(props) {
       <DynaKeyValue
         {...props}
         suggestionConfig={suggestionConfig}
-        selectView
+        showSortOrder
         showHeaderLabels
         keyLabel="Field"
         valueLabel="Order" />

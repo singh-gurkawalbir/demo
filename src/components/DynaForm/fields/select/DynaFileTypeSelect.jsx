@@ -25,16 +25,15 @@ const FileTypeSelect = props => {
     let filePropValues;
 
     if (fileType === 'csv') {
-      filePropValues = `${formValues['/file/groupByFields']}${formValues['/file/csv']}`;
+      filePropValues = JSON.stringify(formValues['/file/csv']);
     } else if (fileType === 'json') {
-      filePropValues = `${formValues['/file/groupByFields']}${formValues['/file/json/resourcePath']}`;
+      filePropValues = JSON.stringify(formValues['/file/json/resourcePath']);
     } else if (fileType === 'xlsx') {
-      filePropValues = `${formValues['/file/groupByFields']}${formValues['/file/xlsx/hasHeaderRow']}`;
+      filePropValues = formValues['/file/xlsx/hasHeaderRow'];
     } else if (fileType === 'xml') {
-      filePropValues = `${formValues['/parsers']}${formValues['/file/groupByFields']}`;
-    } else {
-      filePropValues = `${formValues['/file/groupByFields']}`;
+      filePropValues = JSON.stringify(formValues['/parsers']);
     }
+    filePropValues = `${filePropValues}${formValues['/file/groupByFields']}`;
 
     return filePropValues;
   });

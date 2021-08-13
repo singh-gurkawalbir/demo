@@ -72,7 +72,7 @@ export function KeyValueComponent(props) {
     showDelete,
     disabled,
     enableSorting = false,
-    selectView = false,
+    showSortOrder = false,
     showHeaderLabels = false,
     keyLabel,
     valueLabel,
@@ -238,7 +238,7 @@ export function KeyValueComponent(props) {
                   classes={classes}
                   r={r}
                   enableSorting={enableSorting}
-                  selectView={selectView}
+                  showSortOrder={showSortOrder}
               />
               )}
               />

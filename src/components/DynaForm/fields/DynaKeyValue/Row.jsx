@@ -36,7 +36,7 @@ export default function KeyValueRow(props) {
     r,
     classes,
     enableSorting,
-    selectView,
+    showSortOrder,
   } = props;
 
   const {
@@ -107,7 +107,7 @@ export default function KeyValueRow(props) {
               />
         )}
 
-        {suggestValueConfig && !selectView && (
+        {suggestValueConfig && !showSortOrder && (
         <AutoSuggest
           disabled={disabled}
           value={r[valueName]}
@@ -124,7 +124,7 @@ export default function KeyValueRow(props) {
           fullWidth
               />
         )}
-        {!suggestValueConfig && !selectView && (
+        {!suggestValueConfig && !showSortOrder && (
         <TextField
           disabled={disabled}
           autoFocus={index === rowInd && !isKey}
@@ -138,7 +138,7 @@ export default function KeyValueRow(props) {
           className={clsx(classes.dynaField, classes.dynaValueField)}
               />
         )}
-        {selectView && (
+        {showSortOrder && (
         <Select
           disabled={disabled}
           id={`${valueName}-${index}`}

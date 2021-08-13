@@ -160,34 +160,14 @@ export function* _hasSampleDataOnResource({ formKey }) {
   return bodyFileType === resourceFileType;
 }
 
-export function* _parseFileData({ resourceId, fileContent, fileProps, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
     yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
   }
   switch (fileType) {
-    case 'json': {
-      const processorData = {
-        rule: parserOptions,
-        data: fileContent,
-        editorType: PARSERS[fileType],
-      };
-      const processorOutput = yield call(_getProcessorOutput, { processorData });
-
-      if (processorOutput?.data) {
-        const previewData = processorOutput.data.data;
-
-        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
-      }
-      if (processorOutput?.error) {
-        return yield put(
-          actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
-        );
-      }
-      break;
-    }
+    case 'json':
     case 'csv':
     case 'xml': {
       const processorData = {
