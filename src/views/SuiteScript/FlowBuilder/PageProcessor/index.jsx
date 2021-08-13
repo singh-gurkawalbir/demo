@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../../reducers';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   ppContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -16,15 +16,16 @@ const useStyles = makeStyles({
   },
   lineLeft: {
     minWidth: 50,
+    borderBottom: `3px dotted ${theme.palette.divider}`,
   },
   dottedLine: {
     alignSelf: 'start',
-    marginTop: 84,
+    marginTop: 86,
   },
   pending: {
     minWidth: 50,
   },
-});
+}));
 const PageProcessor = ({ history, match }) => {
   const { flowId, ssLinkedConnectionId } = match.params;
   const classes = useStyles();
