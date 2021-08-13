@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
   dottedLine: {
     alignSelf: 'start',
-    marginTop: 85,
+    marginTop: 84,
   },
   pending: {
     minWidth: 50,
