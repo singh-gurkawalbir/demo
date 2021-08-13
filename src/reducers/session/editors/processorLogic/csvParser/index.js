@@ -25,7 +25,6 @@ const init = props => {
 
   rule.multipleRowsPerRecord = !!rule.keyColumns?.length;
   rule.groupByFields = resource?.file?.groupByFields || [];
-
   rule.sortByFields = resource?.file?.sortByFields || [];
 
   return {

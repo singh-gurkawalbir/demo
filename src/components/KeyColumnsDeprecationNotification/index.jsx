@@ -1,11 +1,8 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
-
 import { selectors } from '../../reducers';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import NotificationToaster from '../NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
@@ -18,9 +15,9 @@ const useStyles = makeStyles(theme => ({
 export default function KeyColumnsDeprecationNotification({ resourceId}) {
   const classes = useStyles();
   const isOldKeyColumnFeature = useSelector(state => {
-    const { merged: resourceData} = selectors.resourceData(state, 'exports', resourceId);
+    const resource = selectors.resource(state, 'exports', resourceId);
 
-    return !!(resourceData?.file?.xlsx?.keyColumns?.length || resourceData?.file?.csv?.keyColumns?.length);
+    return !!(resource?.file?.xlsx?.keyColumns?.length || resource?.file?.csv?.keyColumns?.length);
   });
 
   if (!isOldKeyColumnFeature) {

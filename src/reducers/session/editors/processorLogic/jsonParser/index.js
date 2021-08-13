@@ -1,4 +1,3 @@
-
 import { wrapExportFileSampleData } from '../../../../../utils/sampleData';
 
 const requestBody = ({ rule, data }) => {
@@ -23,7 +22,6 @@ const processResult = ({ isSuiteScriptData }, result) => {
 
   return {...result, data: formattedData, columnsData: result?.data};
 };
-
 export default {
   validate,
   requestBody,

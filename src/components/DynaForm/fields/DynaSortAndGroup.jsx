@@ -26,14 +26,7 @@ export default function DynaSortAndGroup(props) {
     formKey,
     id,
     disabled,
-    name,
-    onFieldChange,
     value = emptySet,
-    label,
-    required,
-    isValid,
-    helpText,
-    helpKey,
     enableSorting,
   } = props;
   const dispatch = useDispatch();
@@ -95,17 +88,8 @@ export default function DynaSortAndGroup(props) {
       disabled={disabled}
       className={classes.keyColumnFormWrapper}>
       <DynaMultiSelect
-        disabled={disabled}
-        id={id}
-        label={label}
-        value={value}
-        helpText={helpText}
-        helpKey={helpKey}
-        isValid={isValid}
-        name={name}
+        {...props}
         options={multiSelectOptions}
-        required={required}
-        onFieldChange={onFieldChange}
     />
     </FormControl>
   );
