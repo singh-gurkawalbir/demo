@@ -16,7 +16,6 @@ const useStyles = makeStyles(theme => ({
   },
   lastSeperator: {
     borderRight: '0 !important',
-    height: 0,
   },
 
 }));
