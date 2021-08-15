@@ -401,9 +401,6 @@ export const updateFileProviderFormValues = formValues => {
     delete newValues['/file/fileDefinition/resourcePath'];
     newValues['/file/xml/resourcePath'] = newValues['/parsers']?.resourcePath;
   } else if (newValues['/file/type'] === 'xlsx') {
-    if (newValues['/file/sortByFields'] || newValues['/file/groupByFields']) {
-      newValues['/file/xlsx/keyColumns'] = undefined;
-    }
     newValues['/file/json'] = undefined;
     newValues['/file/xml'] = undefined;
     newValues['/file/fileDefinition'] = undefined;
@@ -418,9 +415,6 @@ export const updateFileProviderFormValues = formValues => {
     delete newValues['/parsers'];
     delete newValues['/file/fileDefinition/resourcePath'];
   } else if (newValues['/file/type'] === 'csv') {
-    if (newValues['/file/sortByFields'] || newValues['/file/groupByFields']) {
-      newValues['/file/csv'].keyColumns = undefined;
-    }
     newValues['/file/json'] = undefined;
     newValues['/file/xlsx'] = undefined;
     newValues['/file/xml'] = undefined;

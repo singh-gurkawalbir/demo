@@ -4,6 +4,7 @@ import { wrapExportFileSampleData } from '../../../../../utils/sampleData';
 const requestBody = ({ rule, data }) => {
   const rules = {
     ...rule,
+    keyColumns: undefined,
     rowsToSkip: Number.isInteger(rule.rowsToSkip) ? rule.rowsToSkip : 0,
   };
 
