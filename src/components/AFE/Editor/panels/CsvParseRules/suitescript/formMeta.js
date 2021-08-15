@@ -45,7 +45,6 @@ export default function getFormMetadata(options) {
         fieldsToReset: [{ id: 'keyColumns', value: [] }],
         defaultValue: !!(Array.isArray(options?.keyColumns) && options.keyColumns.length),
         required: true,
-        defaultDisabled: true,
       },
       keyColumns: {
         id: 'keyColumns',
