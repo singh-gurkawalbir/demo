@@ -203,7 +203,9 @@ export function howToFindIdentifierFieldsMeta({
   const endPointHasQueryParams = operationDetails.url?.indexOf?.(':_') >= 0 || operationDetails.url?.[0]?.indexOf?.(':_') >= 0;
 
   if (operationDetails.supportIgnoreExisting || operationDetails.askForHowToGetIdentifier || endPointHasQueryParams) {
-    fields.push(lookupTypeField);
+    if (lookupTypeOptions.length) {
+      fields.push(lookupTypeField);
+    }
 
     if (lookupTypeOptions.find(opt => opt.value === 'source') && operationDetails.parameters) {
       const identifierPathParam = operationDetails.parameters.find(
