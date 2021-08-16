@@ -1,5 +1,4 @@
 import { addDays, startOfDay } from 'date-fns';
-
 import { JOB_STATUS } from '../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
 
