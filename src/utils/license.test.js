@@ -313,7 +313,8 @@ describe('platformLicenseActionDetails function test', () => {
     const expected = {
       action: 'upgrade',
       expiresSoon: false,
-      label: 'Upgrade now - 10 days left',
+      label: 'Upgrade now -',
+      daysLeft: '10 days left',
     };
     const license = selectors.platformLicense(state);
 

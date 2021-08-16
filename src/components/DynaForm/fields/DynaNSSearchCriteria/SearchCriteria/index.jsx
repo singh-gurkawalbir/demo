@@ -192,7 +192,10 @@ export default function SearchCriteriaEditor(props) {
 
   const handleDelete = useCallback(row => {
     dispatch(actions.searchCriteria.delete(editorId, row));
-  }, [dispatch, editorId]);
+
+    // if any row is deleted, enable the save button
+    setDisableSave && setDisableSave(false);
+  }, [dispatch, editorId, setDisableSave]);
 
   const handleRefresh = useCallback(() => {
     if (onRefresh) {

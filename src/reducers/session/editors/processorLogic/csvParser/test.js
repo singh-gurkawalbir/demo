@@ -69,9 +69,11 @@ describe('csvParser processor logic', () => {
         resourceId: 'res-123',
         resourceType: 'exports',
         rule: {
+          groupByFields: [],
           columnDelimiter: '\n',
           includeHeader: true,
           multipleRowsPerRecord: true,
+          sortByFields: [],
           trimSpaces: true,
           keyColumns: ['name'],
         },

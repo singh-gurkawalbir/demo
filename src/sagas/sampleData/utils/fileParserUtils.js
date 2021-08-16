@@ -11,6 +11,7 @@ const PARSERS = {
   csv: 'csvParser',
   xlsx: 'csvParser',
   xml: 'xmlParser',
+  json: 'jsonParser',
 };
 
 /**
@@ -21,6 +22,7 @@ const PARSERS = {
 export const generateFileParserOptionsFromResource = (resource = {}) => {
   const fileType = resource?.file?.type;
   const fields = resource?.file?.[fileType] || {};
+  const {sortByFields = [], groupByFields = []} = resource?.file || {};
 
   if (!fileType) {
     return;
@@ -35,11 +37,8 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       columnDelimiter: fields.columnDelimiter,
       hasHeaderRow: fields.hasHeaderRow,
       rowDelimiter: fields.rowDelimiter,
-      multipleRowsPerRecord:
-        fields.keyColumns &&
-        Array.isArray(fields.keyColumns) &&
-        fields.keyColumns.length,
-      keyColumns: fields.keyColumns,
+      sortByFields,
+      groupByFields,
     };
   }
 
@@ -53,18 +52,26 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       listNodes,
       includeNodes,
       excludeNodes,
+      sortByFields,
+      groupByFields,
     };
   }
 
   // no additional props for json - Add in future if updated
   if (fileType === 'json') {
-    return {};
+    return {
+      resourcePath: fields.resourcePath,
+      sortByFields,
+      groupByFields,
+    };
   }
   // If not the above ones, it is of type file definition
   const fileDefinitionRules = resource.file?.filedefinition?.rules;
 
   return {
     rule: fileDefinitionRules,
+    sortByFields,
+    groupByFields,
   };
 };
 

@@ -1,4 +1,4 @@
-import { select, takeLatest, call, put } from 'redux-saga/effects';
+import { select, takeLatest, call, put, delay } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -14,7 +14,7 @@ import {
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
-import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
+import { processJsonSampleData } from '../../../utils/sampleData';
 import { generateFileParserOptionsFromResource } from '../utils/fileParserUtils';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
@@ -33,6 +33,7 @@ const PARSERS = {
   csv: 'csvParser',
   xlsx: 'csvParser',
   xml: 'xmlParser',
+  json: 'jsonParser',
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
@@ -166,14 +167,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
     yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
   }
   switch (fileType) {
-    case 'json': {
-      const processedJsonData = processJsonPreviewData(fileContent, fileProps);
-      const parseData = processJsonSampleData(fileContent, fileProps);
-
-      yield put(actions.resourceFormSampleData.setParseData(resourceId, parseData));
-      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(processedJsonData, recordSize)));
-      break;
-    }
+    case 'json':
     case 'csv':
     case 'xml': {
       const processorData = {
@@ -229,10 +223,14 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
       break;
     }
     case 'fileDefinitionParser': {
+      const {groupByFields, sortByFields} = fileProps;
+
       const processorData = {
         rule: parserOptions,
         data: fileContent,
         editorType: PARSERS.fileDefinitionParser,
+        groupByFields,
+        sortByFields,
       };
 
       const processorOutput = yield call(_getProcessorOutput, { processorData });
@@ -290,6 +288,7 @@ export function* _requestFileSampleData({ formKey }) {
       fileContent: fileDefinitionData?.sampleData || resourceObj.sampleData,
       parserOptions: fieldValue || fileDefinitionData?.rule,
       fileType: 'fileDefinitionParser',
+      fileProps: parserOptions,
     });
   } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
@@ -440,6 +439,7 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId || !VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA.includes(resourceType)) return;
+  yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {
