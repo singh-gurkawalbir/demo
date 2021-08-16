@@ -70,11 +70,11 @@ describe('Flow sample data utility sagas', () => {
         const expectedOptions = {
           columnDelimiter: ',',
           hasHeaderRow: false,
-          keyColumns: undefined,
-          multipleRowsPerRecord: undefined,
           rowDelimiter: ' ',
           rowsToSkip: 0,
           trimSpaces: true,
+          sortByFields: [],
+          groupByFields: [],
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
@@ -121,22 +121,34 @@ describe('Flow sample data utility sagas', () => {
           stripNewLineChars: true,
           textNodeName: 'locations',
           trimSpaces: true,
+          sortByFields: [],
+          groupByFields: [],
         };
 
         expect(generateFileParserOptionsFromResource(ftpXmlResource)).toEqual(expectedOptions);
       });
-      test('should return empty object incase of json as there are no parse rules', () => {
+      test('should return options incase of json with expected json related parse options', () => {
         const ftpJsonResource = {
           _id: 'export-123',
           name: 'FTP export',
           file: {
             type: 'json',
+            json: {
+              resourcePath: 'test',
+            },
+            sortByFields: ['users'],
+            groupByFields: ['users'],
           },
           adaptorType: 'FTPExport',
           sampleData: { test: 5 },
         };
+        const expectedOptions = {
+          resourcePath: 'test',
+          sortByFields: ['users'],
+          groupByFields: ['users'],
+        };
 
-        expect(generateFileParserOptionsFromResource(ftpJsonResource)).toEqual({});
+        expect(generateFileParserOptionsFromResource(ftpJsonResource)).toEqual(expectedOptions);
       });
       test('should return file definition rules if existed on resource for file definition type', () => {
         const ftpFileDefResource = {
@@ -193,7 +205,7 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
-        const expectedOptions = { rule: ftpFileDefResource.file.filedefinition.rules };
+        const expectedOptions = { rule: ftpFileDefResource.file.filedefinition.rules, groupByFields: [], sortByFields: [] };
 
         expect(generateFileParserOptionsFromResource(ftpFileDefResource)).toEqual(expectedOptions);
       });
