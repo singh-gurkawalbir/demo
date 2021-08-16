@@ -18,11 +18,6 @@ const formKey = 'flow-schedule';
 const useStyle = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
-    // overflowX: 'hidden',
-    '& > div:first-child': {
-      marginLeft: theme.spacing(-1),
-      paddingRight: 0,
-    },
   },
   paperDefault: {
     padding: theme.spacing(2),
