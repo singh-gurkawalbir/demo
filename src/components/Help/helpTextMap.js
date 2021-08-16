@@ -1264,6 +1264,9 @@ export default {
     'The stack that contains your preSavePage hook code.',
   'export.hooks.preSavePage._scriptId':
     'The script record that contains your preSavePage hook function.',
+  'export.file.rowsPerRecord': 'This setting has been deprecated in favor of the more powerful options in the <b>Sorting and grouping</b> section.',
+  'export.file.groupByFields': 'Enter one or more fields to use for grouping records together. For example, if the parsed output of a file is as follows, then you can enter bookType or channel.channelProperties to group records by those respective fields. <br>[{<br>sku: 117101,<br>bookType: \'Fiction\',<br>Title: \'This is a title\',<br>channel: {<br>channelProperties: \'eBay\',<br>\'Channel-sku-id\': 987<br>}}, ... ]',
+  'export.file.sortByFields': 'Enter one or more fields to use for sorting records.',
   'export.file.filedefinition.rules':
     'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
   'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected the parse file option. If it is unchecked, then decryption will not be performed when files are parsed.',
