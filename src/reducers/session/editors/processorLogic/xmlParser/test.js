@@ -55,6 +55,8 @@ describe('xmlParser processor logic', () => {
           trimSpaces: true,
           V0_json: true,
           listNodes: ['a', 'b'],
+          groupByFields: [],
+          sortByFields: [],
         },
       };
 

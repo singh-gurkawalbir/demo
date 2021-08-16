@@ -1271,10 +1271,14 @@ describe('editor sagas', () => {
         rule: {
           multipleRowsPerRecord: false,
           trimSpaces: true,
+          groupByFields: [],
+          sortByFields: [],
         },
         originalRule: {
           multipleRowsPerRecord: false,
           trimSpaces: true,
+          groupByFields: [],
+          sortByFields: [],
         },
       };
 
@@ -1644,6 +1648,8 @@ describe('editor sagas', () => {
         rule: 'some rule',
         originalRule: 'some rule',
         sampleDataStatus: 'requested',
+        groupByFields: [],
+        sortByFields: [],
       };
 
       return expectSaga(initEditor, { id, editorType: 'structuredFileParser', options })

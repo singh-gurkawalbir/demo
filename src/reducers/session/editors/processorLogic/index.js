@@ -1,6 +1,7 @@
 import isEqual from 'lodash/isEqual';
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
+import jsonParser from './jsonParser';
 import csvGenerator from './csvGenerator';
 import transform from './transform';
 import handlebars from './handlebars';
@@ -29,6 +30,7 @@ const logicMap = {
   javascript,
   csvParser,
   xmlParser,
+  jsonParser,
   sql,
   settingsForm,
   transform,
