@@ -37,11 +37,8 @@ export default function DynaSelectLookup(props) {
   const { id, value, importId, flowId, disabled, onFieldChange, adaptorType, formKey} = props;
   const formContext = useFormContext(formKey);
 
-  let lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
+  const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const dynamicLookups = lookups.filter(lookup => !lookup.map);
-
-  lookups = lookups?.filter(lookup => !lookup.map);
-
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
