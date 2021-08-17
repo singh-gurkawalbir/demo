@@ -93,8 +93,8 @@ export default {
   'bamboohr.connection.http.bamboohrSubdomain':
     'Enter the unique portion of the bamboohr.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.bamboohr.com, then enter personnel for the subdomain.',
   'bamboohr.connection.http.encrypted.apiKey': 'Please enter your API key here. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.http.oktaSubdomain':
-    'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
+  'connection.http.unencrypted.oktaDomain':
+    'Enter the domain of your Okta account.<br><b> Steps to find your Okta domain:</b><br>1. Sign in to your Okta organization with your administrator account.<br>2. Look for the Okta domain in the global header located in the upper-right corner of the dashboard.<br>3.Your Okta domain looks like:<br> <b>  example.oktapreview.com,<br> example.okta.com,<br> example.okta-emea.com</b>.<br>See <a href="https://developer.okta.com/docs/concepts/okta-organizations/">Okta Organizations</a> for more information on the types of Okta orgs.',
   'okta.connection.http.auth.token.token': 'Please enter your Token here. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pipedrive.connection.http.auth.type': 'Please select Authentication Type.',
   'pipedrive.connection.http.subdomain': 'Please enter the unique portion of the pipedrive.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.pipedrive.com, then enter personnel for the subdomain.',
@@ -1264,6 +1264,9 @@ export default {
     'The stack that contains your preSavePage hook code.',
   'export.hooks.preSavePage._scriptId':
     'The script record that contains your preSavePage hook function.',
+  'export.file.rowsPerRecord': 'This setting has been deprecated in favor of the more powerful options in the <b>Sorting and grouping</b> section.',
+  'export.file.groupByFields': 'Enter one or more fields to use for grouping records together. For example, if the parsed output of a file is as follows, then you can enter bookType or channel.channelProperties to group records by those respective fields. <br>[{<br>sku: 117101,<br>bookType: \'Fiction\',<br>Title: \'This is a title\',<br>channel: {<br>channelProperties: \'eBay\',<br>\'Channel-sku-id\': 987<br>}}, ... ]',
+  'export.file.sortByFields': 'Enter one or more fields to use for sorting records.',
   'export.file.filedefinition.rules':
     'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
   'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected the parse file option. If it is unchecked, then decryption will not be performed when files are parsed.',

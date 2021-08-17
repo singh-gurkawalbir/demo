@@ -36,6 +36,7 @@ const integrationId = 'int-123';
 describe('resourceFormSampleData sagas', () => {
   describe('requestResourceFormSampleData saga', () => {
     test('should do nothing if there is no formKey', () => expectSaga(requestResourceFormSampleData, {})
+      .not.delay(500)
       .not.put(actions.resourceFormSampleData.setStatus(undefined, 'requested'))
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
@@ -44,6 +45,7 @@ describe('resourceFormSampleData sagas', () => {
       .provide([
         [call(_fetchResourceInfoFromFormKey, { formKey }), {}],
       ])
+      .not.delay(500)
       .not.put(actions.resourceFormSampleData.setStatus(undefined, 'requested'))
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
@@ -56,10 +58,11 @@ describe('resourceFormSampleData sagas', () => {
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'imports' }],
           [call(_requestImportSampleData, { formKey }), {}],
         ])
+        .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
         .call(_requestImportSampleData, { formKey })
-        .run();
+        .run(500);
     });
     test('should dispatch requested status and call _requestImportSampleData incase of imports resourceType ', () => {
       const refreshCache = true;
@@ -69,10 +72,11 @@ describe('resourceFormSampleData sagas', () => {
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
           [call(_requestExportSampleData, { formKey, refreshCache }), {}],
         ])
+        .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .call(_requestExportSampleData, { formKey, refreshCache })
         .not.call.fn(_requestImportSampleData)
-        .run();
+        .run(500);
     });
   });
   describe('_requestExportSampleData saga', () => {
@@ -370,6 +374,7 @@ describe('resourceFormSampleData sagas', () => {
             resourceId,
             fileContent: fileDefinitionSampleData,
             parserOptions: rule,
+            fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
             fileType: 'fileDefinitionParser',
           }), {}],
         ])
@@ -378,6 +383,7 @@ describe('resourceFormSampleData sagas', () => {
           fileContent: fileDefinitionSampleData,
           parserOptions: rule,
           fileType: 'fileDefinitionParser',
+          fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
         })
         .not.put(actions.resourceFormSampleData.clearStages(resourceId))
         .run();
@@ -394,8 +400,8 @@ describe('resourceFormSampleData sagas', () => {
         columnDelimiter: '|',
         hasHeaderRow: true,
         rowDelimiter: undefined,
-        multipleRowsPerRecord: undefined,
-        keyColumns: undefined,
+        sortByFields: [],
+        groupByFields: [],
       };
       const ftpResource = {
         _id: 'export-123',
@@ -445,8 +451,8 @@ describe('resourceFormSampleData sagas', () => {
         columnDelimiter: '|',
         hasHeaderRow: true,
         rowDelimiter: undefined,
-        multipleRowsPerRecord: undefined,
-        keyColumns: undefined,
+        sortByFields: [],
+        groupByFields: [],
       };
       const ftpResource = {
         _id: 'export-123',
@@ -681,12 +687,31 @@ describe('resourceFormSampleData sagas', () => {
         adaptorType: 'FTPExport',
       };
       const fileContent = { users: { test: 5 }};
-      const parseData = fileContent.users;
+      const parserOptions = {
+        resourcePath: 'users',
+      };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions: {}, isNewSampleData: true, fileType: 'json' })
+      const processorData = {
+        rule: parserOptions,
+        data: fileContent,
+        editorType: 'jsonParser',
+      };
+      const processorResponse = {
+        data: {
+          data: {
+            users: { test: 5 },
+          },
+        },
+      };
+
+      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+        .provide([
+          [call(_getProcessorOutput, { processorData }), processorResponse],
+        ])
         .put(actions.resourceFormSampleData.setRawData(resourceId, fileContent))
-        .put(actions.resourceFormSampleData.setParseData(resourceId, parseData))
-        .put(actions.resourceFormSampleData.setPreviewData(resourceId, parseData))
+        .call.fn(_getProcessorOutput)
+        .put(actions.resourceFormSampleData.setParseData(resourceId))
+        .put(actions.resourceFormSampleData.setPreviewData(resourceId))
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
         .run();
     });

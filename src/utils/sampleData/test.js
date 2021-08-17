@@ -986,54 +986,6 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
-  test('should include paging details in returned object if stage is flowInput and http/rest resource has paging set', () => {
-    const stage = 'flowInput';
-
-    resource.adaptorType = 'RESTExport';
-    connection.isHTTP = true;
-    resource.http = {
-      paging: {
-        method: 'token',
-        path: '/p1',
-        relativeURI: '/catalog/search/123?1={{{export.http.paging.token}}}',
-        lastPageStatusCode: 404,
-      },
-    };
-
-    const sampleData = {
-      status: 'received',
-      data: {
-        record: {
-          CONTRACT_PRICE: '89',
-          CUSTOMER_NUMBER: 'C1234',
-        },
-      },
-      templateVersion: 2,
-    };
-
-    const expectedData = {
-      data: {
-        record: {
-          CONTRACT_PRICE: '89',
-          CUSTOMER_NUMBER: 'C1234',
-        },
-        export: {
-          http: {
-            paging: {
-              method: 'token',
-              path: '/p1',
-              relativeURI: '/catalog/search/123?1={{{export.http.paging.token}}}',
-              lastPageStatusCode: 404,
-            },
-          },
-        },
-      },
-      status: 'received',
-      templateVersion: 2,
-    };
-
-    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
-  });
   test('should return original data if field type is idLockTemplate', () => {
     const stage = 'flowInput';
 

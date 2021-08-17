@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 
 const rootPath = 'lookup';
 
-export default function LookupDrawer({lookups, onSave, options, disabled, resourceId, resourceType, flowId }) {
+export default function LookupDrawer({lookups, onSave, options, disabled, resourceId, resourceType, flowId, hideBackButton = true }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -141,7 +141,7 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       onClose={history.goBack}>
       <DrawerHeader
         title={drawerTitle}
-        hideBackButton={!value.length}
+        hideBackButton={hideBackButton && !value.length}
         handleClose={handleClose}
       />
       <DrawerContent>

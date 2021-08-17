@@ -3018,8 +3018,14 @@ Object {
         ],
         "required": true,
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "fieldId": "file.type",
@@ -3086,6 +3092,14 @@ Object {
               ],
               "label": "How would you like to parse files?",
               "type": "indent",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
@@ -3477,11 +3491,17 @@ Object {
         ],
         "required": true,
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
       },
       "file.skipDelete": Object {
         "fieldId": "file.skipDelete",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "fieldId": "file.type",
@@ -3656,6 +3676,14 @@ Object {
                 "ftp.fileNameEndsWith",
               ],
               "label": "Where would you like to transfer from?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
@@ -5190,11 +5218,17 @@ Object {
         ],
         "required": true,
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
       },
       "file.skipDelete": Object {
         "fieldId": "file.skipDelete",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "fieldId": "file.type",
@@ -5370,6 +5404,14 @@ Object {
                 "s3.keyEndsWith",
               ],
               "label": "Where would you like to transfer from?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
@@ -5747,8 +5789,14 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "defaultValue": [Function],
@@ -5872,6 +5920,14 @@ Object {
               ],
               "label": "How would you like to parse the file?",
               "type": "indent",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
