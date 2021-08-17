@@ -1,5 +1,6 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import SortableList from '../../../../components/Sortable/SortableList';
@@ -40,6 +41,9 @@ const useStyles = makeStyles(theme => ({
     top: 86,
     position: 'relative',
   },
+  noDottedLine: {
+    display: 'none',
+  },
 }));
 
 export default function PageProcessors({integrationId, flowId}) {
@@ -70,7 +74,7 @@ export default function PageProcessors({integrationId, flowId}) {
 
   return (
     <div className={classes.processorContainer}>
-      <div className={classes.dottedLine} />
+      <div className={clsx(classes.dottedLine, {[classes.noDottedLine]: !pageProcessors.length})} />
       <SortableList
         onSortEnd={handleSortEnd}
         distance={20}
