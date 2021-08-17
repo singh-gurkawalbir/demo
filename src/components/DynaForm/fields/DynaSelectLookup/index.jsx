@@ -38,13 +38,14 @@ export default function DynaSelectLookup(props) {
   const formContext = useFormContext(formKey);
 
   let lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
+  const dynamicLookups = lookups.filter(lookup => !lookup.map);
 
   lookups = lookups?.filter(lookup => !lookup.map);
 
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const lookupOptions = useMemo(() => [{ items: lookups.map(l => ({ label: l.name, value: l.name })) }], [lookups]);
+  const lookupOptions = useMemo(() => [{ items: dynamicLookups.map(l => ({ label: l.name, value: l.name })) }], [dynamicLookups]);
 
   const handleAddLookupClick = useCallback(
     () => {
@@ -125,6 +126,7 @@ export default function DynaSelectLookup(props) {
         resourceId={importId}
         resourceType="imports"
         flowId={flowId}
+        hideBackButton={false}
         onSave={handleManageLookupsSave} />
 
       <LookupDrawer
