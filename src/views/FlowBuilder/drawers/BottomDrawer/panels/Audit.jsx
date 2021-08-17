@@ -22,6 +22,7 @@ export default function AuditPanel({ flowId }) {
       resourceType="flows"
       resourceId={flowId}
       className={classes.auditLog}
+      isFixed={false}
       />
   );
 }

@@ -5689,7 +5689,17 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || {};
+selectors.editorHelperFunctions = state => {
+  const functions = state?.session?.editors?.helperFunctions || {};
+  const userTimezone = selectors.userTimezone(state);
+  const timestampFunc = functions.timestamp;
+
+  if (timestampFunc && userTimezone) {
+    functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+  }
+
+  return functions;
+};
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {

@@ -96,6 +96,7 @@ export default function TestButton(props) {
         disabled={pingLoading}
         onClick={handleTestConnection}
         size="small"
+        dataTest="test"
         variant="outlined"
         color="secondary">
         {isTesting ? 'Testing' : 'Test connection'}
