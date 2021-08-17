@@ -11,7 +11,6 @@ export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-
   // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
 
   useEffect(() => {
