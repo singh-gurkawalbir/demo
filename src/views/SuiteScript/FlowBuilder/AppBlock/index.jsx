@@ -87,16 +87,16 @@ const useStyles = makeStyles(theme => ({
     fill: 'white',
   },
   appLogoContainer: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
     textAlign: 'center',
     // width: 101,
-    height: 49,
+    height: 41,
   },
   appLogo: {
     position: 'relative',
     alignSelf: 'center',
     maxWidth: 101,
-    maxHeight: 49,
+    maxHeight: theme.spacing(4),
   },
   addButton: {
     // padding: theme.spacing(2),
@@ -187,7 +187,6 @@ export default function AppBlock({
         <div className={classes.appLogoContainer}>
           <ApplicationImg
             className={classes.appLogo}
-            size="large"
             type="export"
             assistant={application}
           />
