@@ -1,5 +1,7 @@
+import React from 'react';
 import { get, sortBy } from 'lodash';
 import moment from 'moment';
+import StatusTag from '../../components/StatusTag';
 
 export const MAX_ERRORS_TO_RETRY_OR_RESOLVE = 1000;
 
@@ -194,9 +196,9 @@ export function getJobDuration(job) {
 export function getJobStatus(job) {
   const jobStatus = job?.status;
   const statusMap = {
-    completed: 'Completed',
-    canceled: 'Canceled',
-    failed: 'Failed',
+    completed: <StatusTag variant="success" label="Completed" />,
+    canceled: <StatusTag variant="warning" label="Canceled" />,
+    failed: <StatusTag variant="error" label="Failed" />,
   };
 
   return statusMap[jobStatus] || jobStatus;
