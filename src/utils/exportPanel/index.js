@@ -4,7 +4,7 @@
 import { FILE_PROVIDER_ASSISTANTS } from '../constants';
 import { adaptorTypeMap } from '../resource';
 
-export const DEFAULT_RECORD_SIZE = 1;
+export const DEFAULT_RECORD_SIZE = 10;
 
 // Applications list which include Preview panel as part of the resource drawer
 
