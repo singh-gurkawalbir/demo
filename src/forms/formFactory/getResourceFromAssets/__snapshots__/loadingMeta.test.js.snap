@@ -5789,8 +5789,14 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "defaultValue": [Function],
@@ -5914,6 +5920,14 @@ Object {
               ],
               "label": "How would you like to parse the file?",
               "type": "indent",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
