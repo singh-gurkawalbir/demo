@@ -136,6 +136,7 @@ import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
 import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
 import DynaDynamicSelect from './DynaDynamicSelect';
 import DynaSelectLookup from './DynaSelectLookup';
+import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 
@@ -286,5 +287,6 @@ export default {
   nsauthtype: DynaNetsuiteAuthType,
   dynamicselect: DynaDynamicSelect,
   selectlookup: DynaSelectLookup,
+  sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
 };

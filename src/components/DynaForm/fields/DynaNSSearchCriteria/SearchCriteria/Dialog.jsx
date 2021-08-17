@@ -161,6 +161,7 @@ export default function SearchCriteriaDialog(props) {
           onClose={onClose}
           status={saveStatus}
           shouldHandleCancel
+          asyncKey={id}
         />
       </DialogActions>
     </Dialog>
