@@ -68,7 +68,7 @@ export default function ShowMoreDrawer(props) {
       elevation={0}
       className={clsx(classes.pagingBar, {
         [classes.pagingBarShift]: drawerOpened,
-      }, {[classes.pagingDown]: isFixed === false})}>
+      }, {[classes.pagingDown]: !isFixed})}>
       <Typography variant="body2">
         Viewing first {count} of {maxCount}
       </Typography>
