@@ -17,13 +17,11 @@ export default function Dashboard() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const filters = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
 
   useEffect(
     () => () => {
       dispatch(
         actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
-          ...filters,
           range: DEFAULT_RANGE,
         })
       );
