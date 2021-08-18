@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 136,
     '& > img': {
       maxWidth: '100%',
-      maxHeight: '44px',
+      maxHeight: theme.spacing(3),
     },
   },
   installIntegrationStepWrapper: {

@@ -293,7 +293,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
   if (data.status === COMM_STATES.LOADING) {
     return (
 
-      <Spinner centerAll />
+      <Spinner size="large" loading />
 
     );
   }

@@ -7,7 +7,7 @@ import { getDatabaseConnectors } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   small: {
-    maxHeight: theme.spacing(4),
+    maxHeight: '26px',
   },
   medium: {
     maxHeight: theme.spacing(7),
