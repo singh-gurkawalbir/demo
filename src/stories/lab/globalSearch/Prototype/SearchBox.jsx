@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { makeStyles, Paper, InputBase } from '@material-ui/core';
+import React from 'react';
+import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
 import SearchIcon from '../../../../components/icons/SearchIcon';
 import FloatingPaper from './FloatingPaper';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    flexDirection: 'column',
+    // display: 'flex',
+    // alignItems: 'flex-start',
+    // flexDirection: 'column',
+    width: '100%',
   },
   searchBox: {
     width: '100%',
@@ -29,17 +31,38 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   resultsPaper: {
-    width: 400,
+    width: 500,
     minHeight: 300,
     maxHeight: 500,
   },
+  tabPanel: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(1),
+  },
 }));
+
+function TabPanel({ children, value, index}) {
+  const classes = useStyles();
+
+  return (
+    <div role="tabpanel" className={classes.tabPanel} hidden={value !== index}>
+      {value === index && (
+        <div>{children}</div>
+      )}
+    </div>
+  );
+}
 
 export default function SearchBox() {
   const classes = useStyles();
-  const [searchTerm, setSearchTerm] = useState('');
-  const showResults = searchTerm.length >= 2;
-  const handleChange = e => setSearchTerm(e.target.value);
+  const [activeTab, setActiveTab] = React.useState(0);
+  const { keyword, setKeyword } = useGlobalSearchContext();
+  const showResults = keyword?.length >= 2;
+  const handleKeywordChange = e => setKeyword(e.target.value);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <div className={classes.root}>
@@ -47,17 +70,35 @@ export default function SearchBox() {
         <SearchIcon fontSize="small" />
 
         <InputBase
-          value={searchTerm}
+          value={keyword}
           classes={{input: classes.inputBase}}
           className={classes.input}
           placeholder="Search integrator.io"
           inputProps={{ 'aria-label': 'Search integrator.io' }}
-          onChange={handleChange}
+          onChange={handleKeywordChange}
       />
       </Paper>
       {showResults && (
         <FloatingPaper className={classes.resultsPaper}>
-          Search Results.!
+
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            aria-label="Global search results"
+            variant="fullWidth"
+            indicatorColor="primary"
+          >
+            <Tab label="Resources (0)" />
+            <Tab label="Marketplace (0)" />
+          </Tabs>
+
+          <TabPanel value={activeTab} index={0}>
+            No resource search results. Try another term or adjust your filter.
+          </TabPanel>
+
+          <TabPanel value={activeTab} index={1}>
+            No marketplace search results. Try another term or adjust your filter.
+          </TabPanel>
         </FloatingPaper>
       )}
     </div>

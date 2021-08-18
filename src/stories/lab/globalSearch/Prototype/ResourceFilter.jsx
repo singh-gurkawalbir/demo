@@ -4,12 +4,17 @@ import { makeStyles,
   IconButton,
   Typography,
   Checkbox,
+  Button,
   Divider,
-  MenuItem,
-  FormControlLabel } from '@material-ui/core';
+  FormControlLabel,
+  Tooltip,
+  Badge} from '@material-ui/core';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
+import CloseIcon from '../../../../components/icons/CloseIcon';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
+import FilterIcon from '../../../../components/icons/FilterIcon';
 
 const resources = [
   'Connections',
@@ -39,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.primary.main,
   },
   iconButton: {
-    margin: theme.spacing(0, 1),
+    // margin: theme.spacing(0, 1),
   },
   menu: {
     marginRight: 2,
@@ -47,47 +52,108 @@ const useStyles = makeStyles(theme => ({
   divider: {
     margin: theme.spacing(1, 0),
   },
+  allContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  filterLabel: {
+    width: 22,
+    textAlign: 'center',
+  },
+  typeButton: {
+    color: theme.palette.common.white,
+    padding: 5,
+  },
+  badge: {
+    backgroundColor: theme.palette.primary.light,
+  },
 }));
 
 export default function ResourceFilter({openByDefault = false}) {
   const classes = useStyles();
+  const { type, setType } = useGlobalSearchContext();
   const [open, setOpen] = useState(openByDefault);
 
   const handleArrowClick = () => setOpen(o => !o);
 
+  const FilterLabel = () => {
+    if (type?.length === 0) {
+      return (
+        <Typography variant="h6" color="inherit" className={classes.filterLabel}>
+          All
+        </Typography>
+      );
+    }
+
+    return (
+      <Tooltip title={`Search only: ${type.join(', ')}`} placement="bottom" aria-label="Filters">
+        <Badge classes={{badge: classes.badge}} overlap="circle" variant="dot" badgeContent={type.length}>
+          <FilterIcon fontSize="small" />
+        </Badge>
+      </Tooltip>
+    );
+  };
+
+  const MenuItem = ({ name, label }) => {
+    const isChecked = type.includes(name) || (name === 'all' && !type?.length);
+
+    const handleMenuItemClick = name => {
+      if (name === 'all') {
+        setType([]);
+      } else if (type?.includes(name)) {
+        setType(type.filter(i => i !== name));
+      } else {
+      // last case is type not present, so add it.
+        setType([...type, name]);
+      }
+    };
+
+    return (
+      <div>
+        <FormControlLabel
+          onClick={() => handleMenuItemClick(name)}
+          control={<Checkbox checked={isChecked} name={name} color="primary" />}
+          label={label} />
+      </div>
+    );
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.arrowContainer}>
-        <Typography variant="h6" color="inherit">All</Typography>
-        <IconButton
-          size="small"
-          color="inherit"
-          className={classes.iconButton}
+        <Button
+          disableRipple
+          className={classes.typeButton}
           onClick={handleArrowClick}
+          endIcon={open ? <ArrowUpIcon /> : <ArrowDownIcon />}
         >
-          {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
-        </IconButton>
+          <FilterLabel />
+        </Button>
       </div>
 
       {open && (
         <FloatingPaper className={classes.menu}>
-          <MenuItem>
-            <FormControlLabel
-              control={<Checkbox name="All" color="primary" />}
-              label="All item types" />
-          </MenuItem>
+          <div className={classes.allContainer}>
+            <MenuItem name="all" label="All" />
+            <IconButton size="small" onClick={handleArrowClick}>
+              <CloseIcon />
+            </IconButton>
+          </div>
 
           <Divider orientation="horizontal" className={classes.divider} />
-
-          <Typography variant="subheading2" gutterBottom component="div">Search only:</Typography>
+          <Typography variant="caption" color="textSecondary" gutterBottom component="div">Filter by category:</Typography>
+          <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
 
           {resources.map(r => (
-            <MenuItem key={r}>
-              <FormControlLabel
-                control={<Checkbox name={r} color="primary" />}
-                label={r} />
-            </MenuItem>
+            <MenuItem key={r} name={r} label={r} />
           ))}
+
+          <Divider orientation="horizontal" className={classes.divider} />
+          <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>
+
+          <MenuItem name="ia" label="Integration App" />
+          <MenuItem name="template" label="Template" />
         </FloatingPaper>
       )}
     </div>
