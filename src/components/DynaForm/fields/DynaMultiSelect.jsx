@@ -231,7 +231,7 @@ export default function DynaMultiSelect(props) {
                     return (fieldProps
                       ? (
                         <SelectedValueChip
-                          key={fieldProps.label}
+                          key={value}
                           {...fieldProps} />
                       ) : null
                     );

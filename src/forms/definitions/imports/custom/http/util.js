@@ -200,14 +200,6 @@ export function howToFindIdentifierFieldsMeta({
       },
     ];
   }
-  if (operationDetails.supportIgnoreMissing) {
-    lookupTypeField.visibleWhen = [
-      {
-        field: 'assistantMetadata.ignoreMissing',
-        is: [true],
-      },
-    ];
-  }
   const endPointHasQueryParams = operationDetails.url?.indexOf?.(':_') >= 0 || operationDetails.url?.[0]?.indexOf?.(':_') >= 0;
 
   if (operationDetails.supportIgnoreExisting || operationDetails.askForHowToGetIdentifier || endPointHasQueryParams) {

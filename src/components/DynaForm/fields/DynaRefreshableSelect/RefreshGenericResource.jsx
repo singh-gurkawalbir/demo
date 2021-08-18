@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
   refreshRoot: {
-    width: '100%',
+    width: `calc(100% - ${theme.spacing(4)}px)`,
   },
 }));
 
