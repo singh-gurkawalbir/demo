@@ -62,7 +62,9 @@ export function resourceConflictResolution({ merged, master, origin }) {
     updatedMerged = applyPatch(origin, masterVsMerged, false, false)
       .newDocument;
   } catch (e) {
-    updatedMerged = {};
+    console.warn('cannot apply resolution patches doc = ', origin, 'patches = ', masterVsMerged);
+
+    return { conflict: masterVsMerged, merged: null };
   }
 
   return { conflict: null, merged: updatedMerged };

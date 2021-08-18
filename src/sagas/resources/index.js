@@ -183,16 +183,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
 
   let updated;
 
-  // IO-22897: In some rare cases, when user enables/disables flow empty payload is being sent in flow put call
-  // resulting in deleting all flow properties
-  if (resourceType === 'flows' && !isNew) {
-    if (!merged || isEmpty(merged)) {
-      console.warn('Trying to send PUT request to flow with empty payload', merged);
-
-      return { error: 'Unable to complete the operation' };
-    }
-  }
-
   if (resourceType === 'connections' && !isNew) {
     // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
     // number of active tokens on netsuite, revoking token when user updates token-auto connection.
