@@ -1078,6 +1078,14 @@ describe('wrapSampleDataWithContext util', () => {
           id: 333,
           phone: '1234',
         }],
+        files: [
+          {
+            fileMeta:
+              {
+                fileName: 'sampleFileName',
+              },
+          },
+        ],
         errors: [],
         _exportId: 'some resource id',
         _connectionId: 'some connection id',
