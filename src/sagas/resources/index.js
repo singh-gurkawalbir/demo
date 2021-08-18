@@ -185,9 +185,8 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
 
   // IO-22897: In some rare cases, when user enables/disables flow empty payload is being sent in flow put call
   // resulting in deleting all flow properties
-  if (resourceType === 'flows' && !isNew && options?.action === 'flowEnableDisable') {
+  if (resourceType === 'flows' && !isNew) {
     if (!merged || isEmpty(merged)) {
-      yield put(actions.flow.isOnOffActionInprogress(false, id));
       console.warn('Trying to send PUT request to flow with empty payload', merged);
 
       return { error: 'Unable to complete the operation' };

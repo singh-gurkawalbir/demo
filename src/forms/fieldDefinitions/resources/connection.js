@@ -74,7 +74,11 @@ export default {
         return r.application;
       }
       const applications = applicationsList();
-      const application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      let application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+
+      if (r.type === 'http' && r.http?.formType === 'rest') {
+        application = 'rest';
+      }
       const app = applications.find(a => a.id === application) || {};
 
       return app.name;
