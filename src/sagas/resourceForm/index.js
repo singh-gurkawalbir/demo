@@ -127,8 +127,10 @@ export function* deleteUISpecificValues({ values, resourceId }) {
   });
 
   // TO DO: This logic should be revisited
-  if (valuesCopy['/file/csv']?.keyColumns) {
-    valuesCopy['/file/csv'].keyColumns = undefined;
+  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+    if (valuesCopy['/file/csv']?.keyColumns) {
+      valuesCopy['/file/csv'].keyColumns = undefined;
+    }
   }
   if (valuesCopy['/file/xlsx/keyColumns']) {
     valuesCopy['/file/xlsx/keyColumns'] = undefined;

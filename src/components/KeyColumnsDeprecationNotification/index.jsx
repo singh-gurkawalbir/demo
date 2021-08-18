@@ -19,8 +19,9 @@ export default function KeyColumnsDeprecationNotification({ resourceId}) {
 
     return !!(resource?.file?.xlsx?.keyColumns?.length || resource?.file?.csv?.keyColumns?.length);
   });
+  const isRestCsvExport = useSelector(state => selectors.isRestCsvMediaTypeExport(state, resourceId));
 
-  if (!isOldKeyColumnFeature) {
+  if (!isOldKeyColumnFeature || isRestCsvExport) {
     return null;
   }
 
