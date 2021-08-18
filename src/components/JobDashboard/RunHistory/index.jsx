@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoPagination from '../../CeligoPagination';
@@ -39,6 +40,12 @@ const useStyles = makeStyles(theme => ({
   },
   rangeFilter: {
     padding: 5,
+  },
+  wrapper: {
+    position: 'relative',
+  },
+  hideWrapper: {
+    display: 'none',
   },
 }));
 
@@ -126,7 +133,7 @@ export default function RunHistory({ flowId, className }) {
   );
 
   return (
-    <div className={className}>
+    <div className={clsx(classes.wrapper, className)}>
       <div className={classes.filterContainerRunHistory}>
         <>
           <div className={classes.rangeFilter}>
@@ -156,13 +163,13 @@ export default function RunHistory({ flowId, className }) {
           </div>
         </>
       </div>
-      { isLoadingHistory && <Spinner centerAll />}
+      {isLoadingHistory && <Spinner centerAll />}
 
       <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
 
-      { !hasFlowRunHistory &&
+      {!hasFlowRunHistory &&
         (
-        <MessageWrapper>
+        <MessageWrapper className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
           You don&apos;t have any run history.
         </MessageWrapper>
         )}
