@@ -7,11 +7,12 @@ import RemoveMargin from '../../../flows/cells/RemoveMargin';
 
 const useStyles = makeStyles(theme => ({
   img: {
-    maxWidth: '100%',
+    maxWidth: '70px',
     padding: theme.spacing(0, 1),
+    verticalAlign: 'middle',
   },
   optionImg: {
-    display: 'flex',
+    verticalAlign: 'middle',
   },
   toggleImgs: {
     border: '1px solid',

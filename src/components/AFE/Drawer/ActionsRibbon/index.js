@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import editorMetadata from '../../metadata';
 import PreviewButtonGroup from '../actions/PreviewButtonGroup';
-import HelpIconButton from '../actions/HelpIconButton';
 import ToggleLayout from '../actions/ToggleLayout';
 import ActionGroup from '../../../ActionGroup';
 
@@ -44,8 +43,6 @@ export default function ActionsRibbon({ editorId, className }) {
         <PreviewButtonGroup editorId={editorId} />}
 
         { showLayoutToggle && <ToggleLayout editorId={editorId} /> }
-
-        <HelpIconButton editorId={editorId} />
       </ActionGroup>
     </div>
   );
