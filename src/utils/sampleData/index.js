@@ -629,6 +629,14 @@ export const wrapSampleDataWithContext = ({
         status,
         data: {
           data: data ? [data] : [],
+          files: [
+            {
+              fileMeta:
+                {
+                  fileName: 'sampleFileName',
+                },
+            },
+          ],
           errors: [],
           ...resourceIds,
           ...contextFields,
