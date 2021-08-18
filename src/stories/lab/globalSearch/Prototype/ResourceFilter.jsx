@@ -4,6 +4,7 @@ import { makeStyles,
   IconButton,
   Typography,
   Checkbox,
+  Button,
   Divider,
   FormControlLabel,
   Tooltip,
@@ -60,6 +61,10 @@ const useStyles = makeStyles(theme => ({
     width: 22,
     textAlign: 'center',
   },
+  typeButton: {
+    color: theme.palette.common.white,
+    padding: 5,
+  },
   badge: {
     backgroundColor: theme.palette.primary.light,
   },
@@ -74,11 +79,15 @@ export default function ResourceFilter({openByDefault = false}) {
 
   const FilterLabel = () => {
     if (type?.length === 0) {
-      return 'All';
+      return (
+        <Typography variant="h6" color="inherit" className={classes.filterLabel}>
+          All
+        </Typography>
+      );
     }
 
     return (
-      <Tooltip title={type.join(', ')} placement="bottom" aria-label="Filters">
+      <Tooltip title={`Search only: ${type.join(', ')}`} placement="bottom" aria-label="Filters">
         <Badge classes={{badge: classes.badge}} overlap="circle" variant="dot" badgeContent={type.length}>
           <FilterIcon fontSize="small" />
         </Badge>
@@ -113,18 +122,14 @@ export default function ResourceFilter({openByDefault = false}) {
   return (
     <div className={classes.root}>
       <div className={classes.arrowContainer}>
-        <Typography variant="h6" color="inherit" className={classes.filterLabel}>
-          <FilterLabel />
-        </Typography>
-
-        <IconButton
-          size="small"
-          color="inherit"
-          className={classes.iconButton}
+        <Button
+          disableRipple
+          className={classes.typeButton}
           onClick={handleArrowClick}
+          endIcon={open ? <ArrowUpIcon /> : <ArrowDownIcon />}
         >
-          {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
-        </IconButton>
+          <FilterLabel />
+        </Button>
       </div>
 
       {open && (

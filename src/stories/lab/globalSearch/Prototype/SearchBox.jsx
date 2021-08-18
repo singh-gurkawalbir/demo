@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   resultsPaper: {
-    width: 400,
+    width: 500,
     minHeight: 300,
     maxHeight: 500,
   },
