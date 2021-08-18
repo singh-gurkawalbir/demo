@@ -3,6 +3,7 @@ import actionTypes from '../actions/types';
 import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
 import { getStaticCodesList } from './listenerLogs';
 import { getSelectedRange } from './flowMetrics';
+import { isNewId } from './resource';
 
 let path;
 
@@ -425,12 +426,16 @@ export const pingConnectionParentContext = values => {
 
   const { flowId, integrationId, parentType, parentId } = values;
   const context = {
-    _flowId: flowId,
-    _integrationId: integrationId === STANDALONE_INTEGRATION.id ? undefined : integrationId,
+    _flowId: isNewId(flowId) ? undefined : flowId,
+    _integrationId: (isNewId(integrationId) || integrationId === STANDALONE_INTEGRATION.id) ? undefined : integrationId,
   };
 
-  if (parentType) {
-    context[parentType === 'exports' ? '_exportId' : '_importId'] = parentId;
+  if (parentType && !isNewId(parentId)) {
+    if (parentType === 'exports') {
+      context._exportId = parentId;
+    } else if (parentType === 'imports') {
+      context._importId = parentId;
+    }
   }
 
   return context;
