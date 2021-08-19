@@ -843,9 +843,9 @@ export default {
     label: 'Refresh token',
   },
   'http.auth.cookie.uri': {
-    type: 'uri',
-    showLookup: false,
-    showExtract: false,
+    type: 'text',
+    // showLookup: false,
+    // showExtract: false,
     label: 'Absolute URL',
   },
   'http.auth.cookie.body': {
