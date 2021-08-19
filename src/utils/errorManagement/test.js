@@ -1,6 +1,6 @@
 /* global expect, describe, test */
 import moment from 'moment';
-import { getFilteredErrors, getErrorMapWithTotal, getOpenErrorDetailsMap, getErrorCountDiffMap, getSourceOptions, getJobStatus, getJobDuration } from '.';
+import { getFilteredErrors, getErrorMapWithTotal, getOpenErrorDetailsMap, getErrorCountDiffMap, getSourceOptions, getJobDuration } from '.';
 
 describe('getFilteredErrors util', () => {
   test('should return empty list when no errors or empty errors are passed', () => {
@@ -255,17 +255,3 @@ describe('getJobDuration util', () => {
     expect(getJobDuration(job3)).toBe('59:59:59');
   });
 });
-describe('getJobStatus util', () => {
-  test('should return undefined incase of invalid job or job with no status', () => {
-    expect(getJobStatus()).toBeUndefined();
-    expect(getJobStatus({})).toBeUndefined();
-  });
-  test('should return mapped status name if the status is valid else return the passed job status', () => {
-    const jobWithValidStatus = { _id: 'job123', status: 'completed' };
-    const jobWithInValidStatus = { _id: 'job123', status: 'INVALID' };
-
-    expect(getJobStatus(jobWithValidStatus)).toBe('Completed');
-    expect(getJobStatus(jobWithInValidStatus)).toBe('INVALID');
-  });
-});
-

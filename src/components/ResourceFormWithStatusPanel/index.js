@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   },
   notification: {
     paddingBottom: theme.spacing(2),
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 

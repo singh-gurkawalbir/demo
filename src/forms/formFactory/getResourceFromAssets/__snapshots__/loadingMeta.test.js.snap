@@ -3752,6 +3752,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "file.csvParse",
         "id": "file.csv",
+        "ignoreSortAndGroup": true,
         "label": "CSV parser helper",
         "type": "csvparse",
         "visibleWhenAll": Array [
@@ -6227,6 +6228,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "file.csvParse",
         "id": "file.csv",
+        "ignoreSortAndGroup": true,
         "label": "CSV parser helper",
         "type": "csvparse",
         "visibleWhen": Array [

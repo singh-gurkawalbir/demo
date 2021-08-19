@@ -31,6 +31,21 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
   if (['csv', 'xlsx'].includes(fileType)) {
+    if (fields?.ignoreSortAndGroup) {
+      return {
+        rowsToSkip: fields.rowsToSkip,
+        trimSpaces: fields.trimSpaces,
+        columnDelimiter: fields.columnDelimiter,
+        hasHeaderRow: fields.hasHeaderRow,
+        rowDelimiter: fields.rowDelimiter,
+        multipleRowsPerRecord:
+        fields.keyColumns &&
+        Array.isArray(fields.keyColumns) &&
+        fields.keyColumns.length,
+        keyColumns: fields.keyColumns,
+      };
+    }
+
     return {
       rowsToSkip: fields.rowsToSkip,
       trimSpaces: fields.trimSpaces,

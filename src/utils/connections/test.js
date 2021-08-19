@@ -28,16 +28,17 @@ describe('connections utils test cases', () => {
       const output = {
         appType: 'http',
         filter: {
-          $and: [
-            {
-              type: 'http',
+          $and: [{
+            'http.formType': {
+              $ne: 'rest',
             },
-            {
-              _connectorId: {
-                $exists: false,
-              },
+          }, {
+            type: 'http',
+          }, {
+            _connectorId: {
+              $exists: false,
             },
-          ],
+          }],
         },
       };
 
@@ -47,13 +48,25 @@ describe('connections utils test cases', () => {
       const output = {
         appType: 'shopify',
         filter: {
-          $and: [
-            {type: 'rest'},
-            {_connectorId: 'connectorId'},
-            {$or: [{_integrationId: 'int-123'}, {_integrationId: 'childId'}]},
-            {assistant: 'shopify'},
-          ],
-        }};
+          $and: [{
+            $or: [{
+              'http.formType': 'rest',
+            }, {
+              type: 'rest',
+            }],
+          }, {
+            _connectorId: 'connectorId',
+          }, {
+            $or: [{
+              _integrationId: 'int-123',
+            }, {
+              _integrationId: 'childId',
+            }],
+          }, {
+            assistant: 'shopify',
+          }],
+        },
+      };
 
       expect(getReplaceConnectionExpression({_id: 'conn123', type: 'rest', assistant: 'shopify'}, true, 'childId', 'int-123', 'connectorId')).toEqual(output);
     });
