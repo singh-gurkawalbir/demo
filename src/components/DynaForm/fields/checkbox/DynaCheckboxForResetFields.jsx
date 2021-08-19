@@ -23,8 +23,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaCheckboxForResetFields(props) {
   const classes = useStyles();
 
-  const { fieldsToReset, onFieldChange, value, showDeprecatedMessage } = props;
-
+  const { fieldsToReset, onFieldChange, value, showDeprecatedMessage, ignoreSortAndGroup } = props;
   const updatedOnFieldChange = (id, value) => {
     fieldsToReset.forEach(field => {
       const { type, id: _id, value } = field;
@@ -37,7 +36,7 @@ export default function DynaCheckboxForResetFields(props) {
     onFieldChange(id, value);
   };
 
-  if (showDeprecatedMessage && !value) {
+  if (showDeprecatedMessage && !value && !ignoreSortAndGroup) {
     return null;
   }
 

@@ -385,6 +385,7 @@ export default {
       type: 'csvparse',
       label: 'CSV parser helper',
       helpKey: 'file.csvParse',
+      ignoreSortAndGroup: true,
       defaultValue: r => r?.file?.csv || {
         columnDelimiter: ',',
         rowDelimiter: '\n',

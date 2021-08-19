@@ -5497,17 +5497,18 @@ selectors.transferListWithMetadata = state => {
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RESTExport') {
-    return false;
-  }
+  const { _connectionId: connectionId } = resourceObj || {};
 
   const connection = selectors.resource(state, 'connections', connectionId);
 
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
+  // This change is because of recent rest to http migration.
+  // In case of old connections, connection.type will come as a rest
+  // In all other cases, "connection?.http?.formType" should be used to find whether it is rest or http.
+  if (connection?.type === 'rest') {
+    return connection.rest?.mediaType === 'csv';
+  }
+
+  return connection?.http?.formType === 'rest' && connection?.http?.successMediaType === 'csv';
 };
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
