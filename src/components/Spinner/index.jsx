@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
     bottom: 0,
     left: 0,
     margin: 'auto',
+    zIndex: theme.zIndex.appBar + 1,
     '& >.MuiCircularProgress-root': {
       width: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
       height: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
