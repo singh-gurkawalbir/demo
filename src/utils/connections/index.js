@@ -11,6 +11,11 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   if (RDBMS_TYPES.includes(type)) {
     expression.push({ 'rdbms.type': type });
+  } else if (type === 'rest') {
+    expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+  } else if (type === 'http') {
+    expression.push({ 'http.formType': { $ne: 'rest' } });
+    expression.push({ type });
   } else {
     expression.push({ type });
   }

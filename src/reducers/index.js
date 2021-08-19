@@ -561,14 +561,14 @@ selectors.mkTileApplications = () => createSelector(
         const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
         integrationConnections.forEach(c => {
-          applications.push(c.assistant || c.rdbms?.type || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
         });
       });
 
       const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
       parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.rdbms?.type || c.type);
+        applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
       });
       applications = uniq(applications);
     }
@@ -1500,6 +1500,23 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (connection.rdbms?.type) {
           return (
             this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+
+        if (connection.type === 'http') {
+          return (
+            this.http?.formType !== 'rest' &&
+            this.type === 'http' &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+
+        if (connection.type === 'rest') {
+          return (
+            (this.http?.formType === 'rest' || this.type === 'rest') &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
@@ -5868,7 +5885,7 @@ selectors.applicationName = (state, _expOrImpId) => {
   } else {
     const connection = selectors.resource(state, 'connections', _connectionId) || {};
 
-    appType = connection.assistant || connection.rdbms?.type || connection.type;
+    appType = connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type;
   }
 
   return getApp(appType)?.name;
