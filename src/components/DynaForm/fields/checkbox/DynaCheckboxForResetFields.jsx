@@ -44,7 +44,7 @@ export default function DynaCheckboxForResetFields(props) {
   return (
     <div className={classes.resetFields}>
       <DynaCheckbox {...props} onFieldChange={updatedOnFieldChange} />
-      {showDeprecatedMessage ? <Typography component="div" variant="caption" className={classes.warningMessage}><WarningIcon className={classes.warning} /> Deprecated option.</Typography> : ''}
+      {showDeprecatedMessage ? <Typography component="div" variant="caption" className={classes.warningMessage}><WarningIcon className={classes.warning} /> Deprecated option. <a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers"> Learn more</a>. </Typography> : ''}
     </div>
   );
 }
