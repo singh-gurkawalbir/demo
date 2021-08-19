@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import React, {useState} from 'react';
-import {Tooltip, makeStyles, Typography } from '@material-ui/core';
+import React, {useCallback} from 'react';
+import {makeStyles, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
@@ -319,6 +319,11 @@ const useStyles = makeStyles(theme => ({
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     textAlign: 'center',
     position: 'relative',
+    borderRadius: 4,
+    cursor: 'pointer',
+    '&:hover': {
+      borderColor: theme.palette.primary.light,
+    },
   },
   showPopper: {
     background: 'gray',
@@ -330,12 +335,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const [isShowPopper, setisShowPopper] = useState.false;
-const handleCopy = () => {
-  console.log('Icon Copied', isShowPopper);
-};
 const IconTemplate = ({Icon, iconName, args}) => {
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
+
+  const handleCopy = useCallback(() =>
+    enquesnackbar({ message: 'Icon copied to clipboard' }), [enquesnackbar]);
 
   return (
     <CopyToClipboard
@@ -344,16 +349,6 @@ const IconTemplate = ({Icon, iconName, args}) => {
       key={iconName}>
 
       <div className={classes.iconContainer}>
-        {setisShowPopper && (
-        <Tooltip
-          data-public
-          title="Icon Copied"
-          placement="top">
-          <Icon {...args} />
-          <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
-        </Tooltip>
-        ) }
-
         <Icon {...args} />
         <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
       </div>
@@ -361,24 +356,18 @@ const IconTemplate = ({Icon, iconName, args}) => {
   );
 };
 
-// // eslint-disable-next-line no-console
-// console.log('checking what object keys do', Object.keys(icons));
-
 export function All(args) {
   const classes = useStyles();
 
   return (
     <div className={classes.allIconContainer}>
       {
-
         Object.keys(icons).map(iconName => (
-
           <IconTemplate
             key={iconName}
             Icon={icons[iconName]}
             iconName={iconName}
             args={args} />
-
         ))
       }
     </div>

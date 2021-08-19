@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import { SnackbarProvider } from 'notistack';
+import {useSnackbarStyles} from '../src/App';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from '@material-ui/core/styles';
 import themeProvider from '../src/theme/themeProvider';
@@ -34,8 +35,9 @@ export const globalTypes = {
 };
 
 const withSnackbarProvider = (Story, context) => {
+  const classes = useSnackbarStyles();
   return (
-    <SnackbarProvider>
+    <SnackbarProvider classes={classes}>
       <Story {...context} />
     </SnackbarProvider>
   )

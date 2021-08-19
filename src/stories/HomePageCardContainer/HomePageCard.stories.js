@@ -23,6 +23,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import StatusCircle from '../../components/StatusCircle/index';
+import withBoundingBox from './withBoundingBox';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,7 +72,8 @@ const options = ['view errors', 'settings', 'dashboard', 'generate zip', 'add fl
 export default {
   title: 'Components / HomePageCardsContainer',
   component: HomePageCardsContainer,
-  decorators: [withDesign, jsxDecorator],
+  subcomponents: {Header, CardTitle, ApplicationImg},
+  decorators: [withDesign, jsxDecorator, withBoundingBox],
 };
 
 const designParameters = {

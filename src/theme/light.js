@@ -731,6 +731,8 @@ export default {
         color: colors.celigoNeutral8,
       },
       message: {
+        overflow: 'auto',
+        maxHeight: 300,
         color: colors.celigoNeutral8,
         '& svg': {
           fontSize: '32px !important',
