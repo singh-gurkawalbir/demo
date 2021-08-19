@@ -183,11 +183,6 @@ export default {
         },
       },
       textSecondary: {
-<<<<<<< HEAD
-        '&:hover': {
-          backgroundColor: 'transparent',
-          color: colors.celigoAccent2,
-=======
         color: colors.celigoNeutral8,
         '&:focus': {
           color: colors.celigoNeutral8,
@@ -198,7 +193,6 @@ export default {
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
->>>>>>> 09c69b6840d4482c3fbee6f984be59eb43f70ead
         },
       },
     },
