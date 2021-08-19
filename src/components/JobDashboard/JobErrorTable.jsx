@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useRouteMatch} from 'react-router-dom';
-import {makeStyles, TablePagination, Button, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
+import {makeStyles, TablePagination, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -13,21 +13,19 @@ import ExpandMore from '../icons/ArrowDownIcon';
 import Spinner from '../Spinner';
 import CeligoTable from '../CeligoTable';
 import DateTimeDisplay from '../DateTimeDisplay';
-import ButtonsGroup from '../ButtonGroup';
 import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
 import { UNDO_TIME } from '../../utils/jobdashboard';
 import DownloadIcon from '../icons/DownloadIcon';
+import ActionGroup from '../ActionGroup';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
   fileInput: { display: 'none' },
   btnsWrappper: {
     marginTop: theme.spacing(1),
-    '& button': {
-      marginRight: theme.spacing(2),
-    },
   },
   statusWrapper: {
     display: 'flex',
@@ -53,16 +51,6 @@ const useStyles = makeStyles(theme => ({
   },
   downloadOnlyDivider: {
     margin: theme.spacing(2),
-  },
-  // TODO (Azhar):  we need to keep a variant for this button
-  btnErrorTable: {
-    borderColor: theme.palette.secondary.lightest,
-    color: theme.palette.secondary.light,
-    fontFamily: 'Roboto400',
-    '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
-    },
   },
   celigoTableWrapper: {
     overflowX: 'auto',
@@ -436,7 +424,7 @@ export default function JobErrorTable({
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
       <Spinner centerAll>
-        <Typography>Uploading...</Typography>
+        Uploading...
       </Spinner>
       )}
       <ul data-public className={classes.statusWrapper}>
@@ -465,28 +453,24 @@ export default function JobErrorTable({
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
         <Spinner centerAll>
-          <Typography>Loading job errors</Typography>
+          Loading job errors
         </Spinner>
 
       ) : (
         <>
-          <ButtonsGroup className={classes.btnsWrappper}>
-            <Button
+          <ActionGroup className={classes.btnsWrappper}>
+            <OutlinedButton
               data-test="retryErroredJobs"
-              variant="outlined"
               color="secondary"
-              className={classes.btnErrorTable}
               onClick={handleRetryClick}
               disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
               { !job.flowDisabled && numSelectedRetriableErrors > 0
                 ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
-            </Button>
-            <Button
+            </OutlinedButton>
+            <OutlinedButton
               data-test="markResolvedJobs"
-              variant="outlined"
               color="secondary"
-              className={classes.btnErrorTable}
               onClick={handleResolveClick}
               disabled={isJobInProgress || !hasUnresolvedErrors}>
               {numSelectedResolvableErrors > 1
@@ -496,25 +480,21 @@ export default function JobErrorTable({
                     ? `Mark resolved ${numSelectedResolvableErrors} error`
                     : 'Mark resolved'
                 }`}
-            </Button>
-            <Button
+            </OutlinedButton>
+            <OutlinedButton
               data-test="downloadAllErrors"
-              variant="outlined"
               color="secondary"
-              className={classes.btnErrorTable}
               onClick={handleDownloadAllErrorsClick}
               disabled={isJobInProgress}>
               Download all errors
-            </Button>
-            <Button
+            </OutlinedButton>
+            <OutlinedButton
               data-test="uploadProcessedErrors"
-              variant="outlined"
               color="secondary"
-              className={classes.btnErrorTable}
               disabled={isJobInProgress}
               onClick={handleUploadProcessedErrors}>
               Upload processed errors
-            </Button>
+            </OutlinedButton>
             <input
               data-test="uploadFile"
               id="fileUpload"
@@ -523,7 +503,7 @@ export default function JobErrorTable({
               className={classes.fileInput}
               onChange={handleFileChosen}
             />
-          </ButtonsGroup>
+          </ActionGroup>
 
           {jobErrorsInCurrentPage.length === 0 ? (
             <>

@@ -1,4 +1,3 @@
-import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import React, {useCallback, useEffect} from 'react';
@@ -8,11 +7,12 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import { getReplaceConnectionExpression } from '../../../../utils/connections';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import ButtonGroup from '../../../../components/ButtonGroup';
 import ResourceDrawer from '../../../../components/drawer/Resource';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
+import { TextButton } from '../../../../components/Buttons';
+import ActionGroup from '../../../../components/ActionGroup';
 
 const emptyObj = {};
 
@@ -85,7 +85,7 @@ export default function ReplaceConnection(props) {
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
             onClick={replace}
@@ -94,10 +94,10 @@ export default function ReplaceConnection(props) {
             data-test="replaceConnection">
             Replace
           </DynaSubmit>
-          <Button onClick={onClose} variant="text" color="primary">
+          <TextButton onClick={onClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
       <ResourceDrawer />
     </>

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import Editor from '../../components/AFE/Editor';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
@@ -11,6 +11,7 @@ import EditorDrawer from '../../components/AFE/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ExportExampleButton from './ExportExampleButton';
 import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
+import { TextButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -92,7 +93,7 @@ export default function Editors() {
 
               <Editor editorId={editorId} />
               <div>
-                <Button onClick={handleCancelEditorClick}>Cancel</Button>
+                <TextButton onClick={handleCancelEditorClick}>Cancel</TextButton>
               </div>
             </>
           ) : (

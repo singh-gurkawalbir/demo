@@ -1,27 +1,21 @@
 import React, { useCallback, useEffect, Fragment, useState, useMemo } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import NotificationToaster from '../../../components/NotificationToaster';
 import { platformLicenseActionDetails } from '../../../utils/license';
+import {PillButton, TextButton} from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
-    borderRadius: 17,
-    fontSize: 13,
-    padding: '4px 24px',
   },
   titleStatusPanel: {
     fontSize: 15,
     paddingTop: 3,
-  },
-  actionBtn: {
-    color: theme.palette.primary.main,
   },
   licenseActionDetailsWrapper: {
     background: 'none',
@@ -113,26 +107,24 @@ function LicenseAction() {
           <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
             {licenseActionDetails.action === 'expired' ? 'Your subscription has expired.' : 'Your subscription was renewed.'}
           </Typography>
-          <Button
-            variant="text"
+          <TextButton
             disabled={upgradeRequested}
             data-test="renewOrResumeNow"
-            className={classes.actionBtn}
+            color="primary"
             onClick={handleClick}>
             {licenseActionDetails.action === 'expired' ? 'Renew now.' : 'Reactivate.'}
-          </Button>
+          </TextButton>
 
         </NotificationToaster>
       ) : (
-        <Button
-          variant="contained"
-          color="primary"
+        <PillButton
+          fill
           disableElevation
           className={classes.inTrial}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
-        </Button>
+        </PillButton>
       )}
     </>
   );

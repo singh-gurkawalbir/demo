@@ -9,13 +9,13 @@ import ChipInput from '../../../../components/ChipInput';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
-import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
 import { USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { TextButton } from '../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -224,24 +224,23 @@ export default function PageBar() {
       disableHtmlInInfoText
     >
       {isCloningSupported && integration && !supportsMultiStore && (
-      <IconTextButton
+      <TextButton
         component={Link}
         to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
-        variant="text"
+        startIcon={<CopyIcon />}
         data-test="cloneIntegrationApp">
-        <CopyIcon /> Clone integration
-      </IconTextButton>
+        Clone integration
+      </TextButton>
       )}
       {supportsMultiStore && (
       <div className={classes.actions}>
         {([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)) && (
-        <IconTextButton
-          variant="text"
-          color="primary"
+        <TextButton
           data-test={`add${storeLabel}`}
-          onClick={handleAddNewChildClick}>
-          <AddIcon /> Add {storeLabel}
-        </IconTextButton>
+          onClick={handleAddNewChildClick}
+          startIcon={<AddIcon />}>
+          Add {storeLabel}
+        </TextButton>
         )}
         <Select
           data-public

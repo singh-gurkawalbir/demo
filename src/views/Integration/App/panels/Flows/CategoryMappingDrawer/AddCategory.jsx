@@ -1,4 +1,4 @@
-import { Button, Drawer, makeStyles } from '@material-ui/core';
+import { Drawer, makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,6 +14,7 @@ import LoadResources from '../../../../../../components/LoadResources';
 import Spinner from '../../../../../../components/Spinner';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import DrawerTitleBar from './TitleBar';
+import { TextButton } from '../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -233,9 +234,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
               onClick={handleSave}>
               Add Category
             </DynaSubmit>
-            <Button variant="text" color="primary" onClick={handleClose}>
+            <TextButton onClick={handleClose}>
               Cancel
-            </Button>
+            </TextButton>
           </div>
         </>
       ) : (

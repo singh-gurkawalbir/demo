@@ -2,7 +2,6 @@
 import React, { useState, useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import {
-  Button,
   makeStyles,
   TableCell,
   TableRow,
@@ -18,8 +17,8 @@ import DrawerFooter from '../Right/DrawerFooter';
 import AddEditLookup from './Manage';
 import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
-import IconTextButton from '../../IconTextButton';
 import AddIcon from '../../icons/AddIcon';
+import { OutlinedButton, TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   listing: {
@@ -149,15 +148,13 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
           </Route>
           <Route path={`${match.url}/${rootPath}`}>
             <>
-              <IconTextButton
-                variant="text"
-                color="primary"
+              <TextButton
                 className={classes.actionButton}
                 onClick={handleAdd}
+                startIcon={<AddIcon />}
                 data-test="Create lookup">
-                <AddIcon />
                 Create lookup
-              </IconTextButton>
+              </TextButton>
               <div className={classes.listing}>
                 <Table
                   classes={{
@@ -188,13 +185,11 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       </DrawerContent>
       <DrawerFooter>
         {isExact ? (
-          <Button
+          <OutlinedButton
             data-test="closeLookupListing"
-            variant="outlined"
-            color="primary"
             onClick={history.goBack}>
             Close
-          </Button>
+          </OutlinedButton>
         ) : (
           <SaveButtonGroup
             value={selectedLookup}

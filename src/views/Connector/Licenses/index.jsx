@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
-import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
@@ -17,6 +16,7 @@ import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { SCOPES } from '../../../sagas/resourceForm';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -122,12 +122,11 @@ export default function Licenses(props) {
           <KeywordSearch
             filterKey={filterKey}
           />
-          <IconTextButton
+          <TextButton
             onClick={handleClick}
-            variant="text"
-            color="primary">
-            <AddIcon /> New license
-          </IconTextButton>
+            startIcon={<AddIcon />}>
+            New license
+          </TextButton>
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
