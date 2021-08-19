@@ -19,12 +19,7 @@ export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onC
 
   return (
     <ActionGroup>
-<<<<<<< HEAD
-      <Button
-        variant="contained"
-=======
       <FilledButton
->>>>>>> 09c69b6840d4482c3fbee6f984be59eb43f70ead
         data-test="save"
         disabled={disabled || !isDirty || inProgress}
         onClick={handleSaveClick}>
