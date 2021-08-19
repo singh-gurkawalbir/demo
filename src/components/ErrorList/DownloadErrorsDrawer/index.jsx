@@ -1,18 +1,18 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@material-ui/core';
 import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
-import ButtonGroup from '../../ButtonGroup';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
+import {OutlinedButton, TextButton} from '../../Buttons';
+import ActionGroup from '../../ActionGroup';
 
 const fieldMeta = {
   fieldMap: {
@@ -94,19 +94,17 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <Button
-            variant="outlined"
-            color="primary"
+        <ActionGroup>
+          <OutlinedButton
             data-test="downloadErrors"
             disabled={!isValidForm}
             onClick={handleDownload}>
             Download
-          </Button>
-          <Button data-test="cancelDownload" onClick={onClose}>
+          </OutlinedButton>
+          <TextButton data-test="cancelDownload" onClick={onClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </>
   );

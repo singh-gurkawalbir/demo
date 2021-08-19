@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import IconTextButton from '../../../IconTextButton';
 import Icon from '../../../icons/RefreshIcon';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refresh: {
-    color: theme.palette.primary.main,
     height: theme.spacing(4),
   },
   refreshDisabled: {
@@ -22,19 +21,27 @@ export default function RefreshCard(props) {
 
   if (disabled) {
     return (
-      <div title="New errors will take up to 30 seconds to display" >
-        <IconTextButton
-          onClick={handleClick} color="primary" variant="outlined"
-          disabled className={classes.refreshDisabled}>
-          <Icon /> Refresh errors
-        </IconTextButton>
+      <div
+        className={classes.card}
+        title="New errors will take up to 30 seconds to display" >
+        <TextButton
+          startIcon={<Icon />}
+          onClick={handleClick}
+          disabled>
+          Refresh errors
+        </TextButton>
       </div>
     );
   }
 
   return (
-    <IconTextButton onClick={handleClick} color="secondary" variant="outlined" className={classes.refresh}>
-      <Icon /> Refresh errors
-    </IconTextButton>
+    <div className={classes.card}>
+      <TextButton
+        startIcon={<Icon />}
+        onClick={handleClick}
+        className={classes.refresh}>
+        Refresh errors
+      </TextButton>
+    </div>
   );
 }

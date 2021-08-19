@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
@@ -14,6 +13,7 @@ import LogsTable from './LogsTable';
 import Help from '../../Help';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
+import { OutlinedButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -63,13 +63,11 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
 
       <DrawerFooter>
         <ActionGroup>
-          <Button
-            color="primary"
-            variant="outlined"
+          <OutlinedButton
             data-test="closeLogs"
             onClick={handleClose}>
             Close
-          </Button>
+          </OutlinedButton>
         </ActionGroup>
       </DrawerFooter>
     </>

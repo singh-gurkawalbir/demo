@@ -183,9 +183,22 @@ export default {
         },
       },
       textSecondary: {
+<<<<<<< HEAD
         '&:hover': {
           backgroundColor: 'transparent',
           color: colors.celigoAccent2,
+=======
+        color: colors.celigoNeutral8,
+        '&:focus': {
+          color: colors.celigoNeutral8,
+        },
+        '&:hover': {
+          color: colors.celigoAccent2,
+          backgroundColor: 'inherit',
+        },
+        '&:disabled': {
+          color: colors.celigoNeutral4,
+>>>>>>> 09c69b6840d4482c3fbee6f984be59eb43f70ead
         },
       },
     },
@@ -575,6 +588,7 @@ export default {
         fontSize: '15px',
         '&$disabled': {
           backgroundColor: colors.celigoNeutral2,
+          borderColor: `${colors.celigoNeutral3} !important`,
           color: fade(colors.celigoNeutral6, 0.8),
           '& >.MuiSelect-icon': {
             display: 'none',
@@ -823,6 +837,7 @@ export default {
     },
     MuiButton: {
       'data-public': true,
+      disableElevation: true,
     },
     MuiFormLabel: {
       'data-public': true,

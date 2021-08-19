@@ -9,7 +9,6 @@ import CeligoSelect from '../../components/CeligoSelect';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
-import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import CeligoPagination from '../../components/CeligoPagination';
 import ResourceTable from '../../components/ResourceTable';
@@ -21,6 +20,7 @@ import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import Spinner from '../../components/Spinner';
+import { TextButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   emptySpace: {
@@ -147,18 +147,17 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         data-test="refreshReports"
-        color="secondary"
-        variant="text"
+        startIcon={<RefreshIcon />}
         disabled={isRefreshedByUser}
         onClick={() => {
           setIsRefreshedByUser(true);
           dispatch(actions.resource.requestCollection(resourceType, null));
         }}
     >
-        <RefreshIcon />Refresh
-      </IconTextButton>
+        Refresh
+      </TextButton>
 
       {isRefreshedByUser ? <div className={classes.tablePaginationRoot} />
         : <Pagination filterKey={resourceType} />}
@@ -268,14 +267,13 @@ export default function Reports() {
             </Typography>
             <div className={classes.emptySpace} />
 
-            <IconTextButton
+            <TextButton
               data-test="addNewResource"
               component={Link}
               to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
-              variant="text"
-              color="primary">
-              <AddIcon /> Run report
-            </IconTextButton>
+              startIcon={<AddIcon />}>
+              Run report
+            </TextButton>
             <RefreshPaginationComponent
               isLoadingResource={isLoadingResource}
               resourceType={resourceType} />

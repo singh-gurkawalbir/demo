@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react';
 import shortid from 'shortid';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
-import { Button } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
@@ -14,6 +13,7 @@ import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
+import { TextButton } from '../../Buttons';
 
 export default function ManageLookup({
   onSave,
@@ -207,13 +207,11 @@ export default function ManageLookup({
         onClick={handleSubmit}>
         Save
       </DynaSubmit>
-      <Button
+      <TextButton
         data-test="cancelLookupForm"
-        onClick={onCancel}
-        variant="text"
-        color="secondary">
-        Close
-      </Button>
+        onClick={onCancel}>
+        Cancel
+      </TextButton>
     </div>
   );
 }

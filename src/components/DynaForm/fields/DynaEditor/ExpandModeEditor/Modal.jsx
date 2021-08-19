@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import ModalDialog from '../../../../ModalDialog';
+import { OutlinedButton } from '../../../../Buttons';
 
 const useStyles = makeStyles(() => ({
   editorContainer: {
@@ -43,13 +43,13 @@ export default function EditorModal(props) {
         />
       </div>
       <div>
-        <Button
+        <OutlinedButton
           data-test="showEditor"
           variant="contained"
           onClick={handleSaveAndClose}
           color="primary">
           Done
-        </Button>
+        </OutlinedButton>
       </div>
     </ModalDialog>
   );

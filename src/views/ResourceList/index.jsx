@@ -10,7 +10,6 @@ import { MODEL_PLURAL_TO_LABEL, generateNewId,
   isTradingPartnerSupported,
 } from '../../utils/resource';
 import infoText from './infoText';
-import IconTextButton from '../../components/IconTextButton';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
@@ -25,6 +24,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
+import { TextButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -161,14 +161,13 @@ export default function ResourceList(props) {
           <KeywordSearch
             filterKey={resourceType}
           />
-          <IconTextButton
+          <TextButton
             data-test="addNewResource"
             component={Link}
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> Create {createResourceLabel}
-          </IconTextButton>
+            startIcon={<AddIcon />}>
+            Create {createResourceLabel}
+          </TextButton>
         </div>
       </CeligoPageBar>
       <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count })}>

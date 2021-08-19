@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {makeStyles, Button } from '@material-ui/core';
+import {makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import FilledButton from '../../../Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   linkWrapper: {
@@ -64,13 +65,11 @@ export default function SuiteScriptIASettingsSaveButton(props) {
     <>
       {/* SiliconValleyDashboardLink renders a hyperlink and it should be above the general settings save button  */}
       <SiliconValleyDashboardLink {...props} />
-      <Button
-        variant="outlined"
-        color="primary"
+      <FilledButton
         disabled={disabled || !isDirty || saving}
         onClick={onSave}>
         {saving ? 'Saving...' : 'Save'}
-      </Button>
+      </FilledButton>
     </>
   );
 }
