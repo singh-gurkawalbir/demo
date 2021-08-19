@@ -5484,7 +5484,9 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 
   const connection = selectors.resource(state, 'connections', connectionId);
 
-  // Check for media type 'csv' from connection object
+  // This change is because of recent rest to http migration.
+  // In case of old connections, connection.type will come as a rest
+  // In all other cases, "connection?.http?.formType" should be used to find whether it is rest or http.
   if (connection?.type === 'rest') {
     return connection.rest?.mediaType === 'csv';
   }
