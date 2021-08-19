@@ -14,13 +14,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function KeyColumnsDeprecationNotification({ resourceId}) {
   const classes = useStyles();
-  const isOldKeyColumnFeature = useSelector(state => {
+  const hideNotification = useSelector(state => {
     const resource = selectors.resource(state, 'exports', resourceId);
+    const hasKeyColumns = !!(resource?.file?.xlsx?.keyColumns?.length || resource?.file?.csv?.keyColumns?.length);
+    const isRestCsvExport = selectors.isRestCsvMediaTypeExport(state, resourceId);
 
-    return !!(resource?.file?.xlsx?.keyColumns?.length || resource?.file?.csv?.keyColumns?.length);
+    return !hasKeyColumns || isRestCsvExport;
   });
 
-  if (!isOldKeyColumnFeature) {
+  if (hideNotification) {
     return null;
   }
 

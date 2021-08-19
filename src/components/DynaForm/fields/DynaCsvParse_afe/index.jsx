@@ -51,6 +51,7 @@ export default function DynaCsvParse_afe(props) {
     formKey: parentFormKey,
     flowId,
     formKey,
+    ignoreSortAndGroup = false,
   } = props;
   const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
@@ -71,7 +72,7 @@ export default function DynaCsvParse_afe(props) {
     [],
   );
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType}));
+  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType, ignoreSortAndGroup}));
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
@@ -92,12 +93,12 @@ export default function DynaCsvParse_afe(props) {
     const { rule } = editorValues;
     const parsedVal = getParserValue(rule);
 
-    setForm(getForm({...rule, resourceId, resourceType}));
+    setForm(getForm({...rule, resourceId, resourceType, ignoreSortAndGroup}));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
 
     dispatch(actions.resourceFormSampleData.request(formKey));
-  }, [id, onFieldChange, resourceId, resourceType, dispatch, formKey]);
+  }, [resourceId, resourceType, ignoreSortAndGroup, onFieldChange, id, dispatch, formKey]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);

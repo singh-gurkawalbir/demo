@@ -48,8 +48,7 @@ const useStyles = makeStyles(theme => ({
     position: 'static',
   },
   img: {
-    maxWidth: '100%',
-    padding: '0px 16px',
+    maxWidth: '80px',
   },
   selectedContainer: {
     display: 'flex',

@@ -73,6 +73,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: `${theme.palette.secondary.lightest} !important`,
     borderRadius: 0,
   },
+  img: {
+    maxWidth: '70px',
+  },
 }));
 
 const chipUseStyles = makeStyles(theme => ({
