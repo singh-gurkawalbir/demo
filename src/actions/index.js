@@ -2037,6 +2037,11 @@ const flow = {
       fileName,
     }),
   runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
+  runActionStatus: (runStatus, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS, {
+      runStatus,
+      flowId,
+    }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,
