@@ -611,6 +611,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.type',
     '_connectionId',
     'settings',
+    'salesforce.distributed.qualifier',
   ],
   imports: [
     '_connectionId',
