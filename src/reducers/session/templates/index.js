@@ -219,6 +219,23 @@ selectors.connectionMap = (state, templateId) => {
 
   return state[templateId].connectionMap;
 };
+selectors.isPreviewStatusFailed = state => {
+  let id;
+  let previewFailedStatus = false;
+
+  if (!state) {
+    return { previewFailedStatus, id };
+  }
+
+  Object.keys(state).forEach(key => {
+    if (state[key].preview?.status === 'failure') {
+      previewFailedStatus = true;
+      id = key;
+    }
+  });
+
+  return {previewFailedStatus, id };
+};
 
 selectors.templatePublishStatus = (state, templateId) => state?.[templateId]?.publishStatus || 'failed';
 // #endregion
