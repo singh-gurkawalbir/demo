@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { call, select } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -56,6 +56,7 @@ describe('run saga', () => {
           },
         })
       )
+      .put(actions.flow.runActionStatus('Started', flowId))
       .put(actions.job.requestInProgressJobStatus())
       .run();
   });
@@ -75,7 +76,8 @@ describe('run saga', () => {
     expect(saga.next(flowResource).value).toEqual(
       call(apiCallWithRetry, { path, opts })
     );
-    expect(saga.throw(new Error()).value).toEqual(true);
+    expect(saga.throw(new Error()).value).toEqual(put(actions.flow.runActionStatus('Started', flowId)));
+    expect(saga.next().value).toEqual(true);
     expect(saga.next().done).toEqual(true);
   });
 });
