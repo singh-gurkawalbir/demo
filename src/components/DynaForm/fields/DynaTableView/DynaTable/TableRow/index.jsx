@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../../DynaSelect';
@@ -108,6 +108,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   const onNumberChange = useCallback(evt => {
     handleUpdate(evt.target.value);
   }, [handleUpdate]);
+
   const basicProps = useMemo(() => ({
     isValid,
     id: fieldTestAttr,
@@ -172,12 +173,29 @@ export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}
   return !required || (required && fieldValue);
 };
 
-const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+const RowCellSetSize = ({ setSize, colIndex, ...props }) => {
+  const rowRef = React.useRef();
+  const {rowIndex} = props;
+  const heightOfCell = rowRef?.current?.getBoundingClientRect().height;
+
+  console.log('hello ', rowRef);
+  useEffect(() => {
+    setSize(rowIndex, colIndex, heightOfCell);
+  }, [colIndex, rowIndex, heightOfCell, setSize]);
+
+  return (
+    <div ref={rowRef}>
+      <RowCell {...props} />
+    </div>
+  );
+};
+const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
+  setSize, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
-    <RowCell
+    <RowCellSetSize
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
@@ -185,8 +203,10 @@ const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize,
       rowIndex={rowIndex}
       setTableState={setTableState}
       onRowChange={onRowChange}
+      colIndex={colIndex}
+      setSize={setSize}
   />
-  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setSize, setTableState]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -213,6 +233,7 @@ export default function TableRow({
   onRowChange,
   ignoreEmptyRow,
   disableDeleteRows,
+  setSize,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -226,11 +247,13 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
+              setSize={setSize}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
               touched={touched}
               rowIndex={rowIndex}
+              colIndex={index}
               tableSize={tableSize}
               setTableState={setTableState}
               onRowChange={onRowChange}

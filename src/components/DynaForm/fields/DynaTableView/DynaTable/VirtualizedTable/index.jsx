@@ -1,11 +1,12 @@
 import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+
 import { VariableSizeList } from 'react-window';
 import Spinner from '../../../../../Spinner';
 import TableRow, { isCellValid } from '../TableRow';
 
 const ITEM_SIZE = 46;
-const INVALID_ITEM_SIZE = 55;
+// const INVALID_ITEM_SIZE = 55;
 const NO_OF_ROWS = 10;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
@@ -17,6 +18,7 @@ const VirtualizedListRow = ({index, style, data}) => {
     setTableState,
     onRowChange,
     disableDeleteRows,
+    setSize,
   } = data;
 
   const { value, key } = items[index];
@@ -27,6 +29,8 @@ const VirtualizedListRow = ({index, style, data}) => {
     >
       <TableRow
         isVirtualizedTable
+        index={index}
+        setSize={setSize}
         rowValue={value}
         rowIndex={index}
         tableSize={items.length}
@@ -94,15 +98,38 @@ const VirtualizedTable = ({
     ? TABLE_VIEW_PORT_HEIGHT
     : ITEM_SIZE * items.length;
 
+  const sizeMap = useRef({});
+
+  const setSize = useCallback((rowIndex, colIndex, size) => {
+    const row = {...(sizeMap.current?.[rowIndex] || {}), [colIndex]: size};
+
+    sizeMap.current = { ...sizeMap.current, [rowIndex]: row };
+    console.log('should trigger ', row);
+
+    listRef.current.resetAfterIndex(rowIndex);
+  }, [listRef]);
+  const getSize = useCallback(rowIndex => Object.values(sizeMap.current?.[rowIndex] || {}).reduce((acc, curr) => {
+    if (curr > acc) {
+      return curr;
+    }
+
+    return acc;
+  }, -1) || 50, []);
+
+  console.log(' here ', sizeMap);
   useResetErroredRowHeights(listRef, items, optionsMapFinal, touched);
   const getItemSize = useCallback(rowIndex => {
     const rowValue = items[rowIndex];
     const rowValid = isRowValid(optionsMapFinal, rowValue, rowIndex, items, touched);
 
-    if (!rowValid) return INVALID_ITEM_SIZE;
+    const rowHeight = getSize(rowIndex);
 
-    return ITEM_SIZE;
-  }, [items, optionsMapFinal, touched]);
+    console.log('hi ', rowHeight, rowIndex);
+    if (!rowValid) return rowHeight + 9;
+
+    return rowHeight;
+  }, [items, optionsMapFinal, getSize, touched]);
+
   const rowProps = useMemo(() => ({
     items,
     optionsMapFinal,
@@ -111,7 +138,9 @@ const VirtualizedTable = ({
     setTableState,
     onRowChange,
     disableDeleteRows,
-  }), [disableDeleteRows, items, onRowChange, optionsMapFinal, setTableState, touched, ignoreEmptyRow]);
+    listRef,
+    setSize,
+  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, listRef, setSize]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders
