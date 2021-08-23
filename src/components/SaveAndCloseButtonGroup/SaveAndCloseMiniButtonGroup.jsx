@@ -23,14 +23,17 @@ export default function SaveAndCloseMiniButtonGroup({
 
   const handleCancel = useHandleCancelBasic({isDirty, onClose: handleClose, handleSave});
 
-  useTriggerCancelFromContext(asyncKey, handleCancel);
+  // if the form is disabled we should not show the confirm dialog
+  const handleCancelClick = disabled ? handleClose : handleCancel;
+
+  useTriggerCancelFromContext(asyncKey, handleCancelClick);
 
   return (
     <SaveAndCloseMiniButtons
       isDirty={isDirty}
       inProgress={inProgress}
       handleSave={handleSave}
-      handleCancel={handleCancel}
+      handleCancel={handleCancelClick}
       submitTransientLabel={submitTransientLabel}
       submitButtonLabel={submitButtonLabel}
       shouldNotShowCancelButton={shouldNotShowCancelButton}

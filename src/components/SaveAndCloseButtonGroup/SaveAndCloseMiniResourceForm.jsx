@@ -56,7 +56,10 @@ export default function SaveAndCloseMiniResourceForm({
 
   const handleCancelWithWarning = useHandleCancel({formKey, onClose: handleCancel, handleSave: handleSaveWhenValid});
 
-  useTriggerCancelFromContext(formKey, handleCancelWithWarning);
+  // if the form is disabled we should not show the confirm dialog
+  const handleCancelClick = disabled ? handleCancel : handleCancelWithWarning;
+
+  useTriggerCancelFromContext(formKey, handleCancelClick);
 
   return (
     <MiniResourceForm
@@ -65,7 +68,7 @@ export default function SaveAndCloseMiniResourceForm({
       submitButtonLabel={submitButtonLabel}
       submitTransientLabel={submitTransientLabel}
       handleSave={handleSaveWhenValid}
-      handleCancel={handleCancelWithWarning}
+      handleCancel={handleCancelClick}
       shouldNotShowCancelButton={shouldNotShowCancelButton}
       className={className}
       disabled={disabled}

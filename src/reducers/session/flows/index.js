@@ -3,7 +3,7 @@ import { COMM_STATES } from '../../comms/networkComms';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, response, flowId, onOffInProgress } = action;
+  const { type, response, flowId, onOffInProgress, runStatus } = action;
 
   if (!flowId) return state;
 
@@ -20,6 +20,10 @@ export default (state = {}, action) => {
         break;
       case actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS:
         draft[flowId] = { onOffInProgress };
+        break;
+
+      case actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS:
+        draft[flowId] = { runStatus };
         break;
 
       default:
@@ -44,3 +48,5 @@ selectors.isOnOffInProgress = (state, flowId) => {
 
   return { onOffInProgress: state[flowId].onOffInProgress || false };
 };
+
+selectors.flowRunStatus = (state, flowId) => ({ runStatus: state?.[flowId]?.runStatus || '' });
