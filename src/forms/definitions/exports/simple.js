@@ -118,7 +118,7 @@ export default {
     'file.type': {
       id: 'file.type',
       name: '/file/type',
-      type: 'select',
+      type: 'filetypeselect',
       label: 'File type',
       required: true,
       defaultValue: r => (r && r.file && r.file.type) || '',
