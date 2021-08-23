@@ -5827,7 +5827,7 @@ Object {
           },
         ],
         "required": true,
-        "type": "select",
+        "type": "filetypeselect",
       },
       "file.xlsx.hasHeaderRow": Object {
         "fieldId": "file.xlsx.hasHeaderRow",
