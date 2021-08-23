@@ -8,14 +8,6 @@ import ActionGroup from '../../../components/ActionGroup';
 import {FilledButton, TextButton} from '../../../components/Buttons/index.js';
 import withRouterAndDrawer from '../withRouterAndDrawer';
 
-<!--- 
-Note that the div below: <div style={{marginBottom: 38}}/>
-is a hack to make the drawer footer render properly in the 
-Storybook iframe. Possibly we can refactor the drawer to work
-here and in the UI. For now, just using this div to not cut off the
-footer, as it gets partially hidden otherwise.
--->
-
 <Meta 
   title="Components/Right Drawer/Footer" 
   component={DrawerFooter} 
@@ -32,8 +24,6 @@ footer, as it gets partially hidden otherwise.
   </DrawerContent>
   <DrawerFooter>
   </DrawerFooter>
-            
-  <div style={{marginBottom: 38}}/>
 </Story>
 
 <Story name="With left actions">
@@ -48,9 +38,7 @@ footer, as it gets partially hidden otherwise.
       <TextButton> Cancel </TextButton>
     </ActionGroup>
   </DrawerFooter>
-  
-  <div style={{marginBottom: 38}}/>
-</Story>
+  </Story>
 
 <Story name="With right actions">
   <DrawerHeader title="Right action" />
@@ -61,9 +49,7 @@ footer, as it gets partially hidden otherwise.
   <DrawerFooter>
     <ActionGroup position="right">
       <Checkbox />
-      <FilledButton> Preview </Button>
+      <FilledButton> Preview </FilledButton>
     </ActionGroup>
   </DrawerFooter>
-  
-  <div style={{marginBottom: 38}}/>
 </Story>
