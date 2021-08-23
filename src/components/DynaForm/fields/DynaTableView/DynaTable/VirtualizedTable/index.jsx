@@ -6,7 +6,8 @@ import Spinner from '../../../../../Spinner';
 import TableRow, { isCellValid } from '../TableRow';
 
 const ITEM_SIZE = 46;
-// const INVALID_ITEM_SIZE = 55;
+const PADDING = 5;
+const INVALID_ITEM_SIZE_EXTRA_SPACE = 9;
 const NO_OF_ROWS = 10;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
@@ -94,27 +95,32 @@ const VirtualizedTable = ({
 
   const [, setItemCount] = useState(items.length);
   const [scrollIndex, setScrollIndex] = useState(0);
-  const maxHeightOfSelect = items.length > NO_OF_ROWS
-    ? TABLE_VIEW_PORT_HEIGHT
-    : ITEM_SIZE * items.length;
 
-  const sizeMap = useRef({});
-
-  const setSize = useCallback((rowIndex, colIndex, size) => {
-    const row = {...(sizeMap.current?.[rowIndex] || {}), [colIndex]: size};
-
-    sizeMap.current = { ...sizeMap.current, [rowIndex]: row };
-    console.log('should trigger ', row);
-
-    listRef.current.resetAfterIndex(rowIndex);
-  }, [listRef]);
-  const getSize = useCallback(rowIndex => Object.values(sizeMap.current?.[rowIndex] || {}).reduce((acc, curr) => {
+  const [sizeMap, setSizeMap] = useState({});
+  const getSize = useCallback(rowIndex => Object.values(sizeMap?.[rowIndex] || {}).reduce((acc, curr) => {
     if (curr > acc) {
       return curr;
     }
 
     return acc;
-  }, -1) || 50, []);
+  }, -1) || ITEM_SIZE, [sizeMap]);
+
+  const heightOfAllRows = Object.values(sizeMap).reduce((acc, curr, index) =>
+    acc + getSize(index), 0);
+  const maxHeightOfSelect = items.length > NO_OF_ROWS
+    ? TABLE_VIEW_PORT_HEIGHT
+    : heightOfAllRows;
+
+  console.log('check here ', maxHeightOfSelect);
+  const setSize = useCallback((rowIndex, colIndex, size) => {
+    setSizeMap(sizeMap => {
+      const row = {...(sizeMap?.[rowIndex] || {}), [colIndex]: size + PADDING};
+
+      return { ...sizeMap, [rowIndex]: row };
+    });
+
+    listRef.current.resetAfterIndex(rowIndex);
+  }, [listRef]);
 
   console.log(' here ', sizeMap);
   useResetErroredRowHeights(listRef, items, optionsMapFinal, touched);
@@ -125,7 +131,7 @@ const VirtualizedTable = ({
     const rowHeight = getSize(rowIndex);
 
     console.log('hi ', rowHeight, rowIndex);
-    if (!rowValid) return rowHeight + 9;
+    if (!rowValid) return rowHeight + INVALID_ITEM_SIZE_EXTRA_SPACE;
 
     return rowHeight;
   }, [items, optionsMapFinal, getSize, touched]);

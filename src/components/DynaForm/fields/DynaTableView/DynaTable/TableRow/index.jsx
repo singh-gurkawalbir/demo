@@ -181,7 +181,8 @@ const RowCellSetSize = ({ setSize, colIndex, ...props }) => {
   console.log('hello ', rowRef);
   useEffect(() => {
     setSize(rowIndex, colIndex, heightOfCell);
-  }, [colIndex, rowIndex, heightOfCell, setSize]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [colIndex, rowIndex, heightOfCell]);
 
   return (
     <div ref={rowRef}>
@@ -224,6 +225,7 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes})
     </ActionButton>
   ), [classes.margin, disableDeleteRows, rowIndex, setTableState]);
 export default function TableRow({
+  isVirtualizedTable,
   rowValue,
   rowIndex,
   tableSize,
@@ -247,6 +249,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
+              isVirtualizedTable={isVirtualizedTable}
               setSize={setSize}
               optionsMap={optionsMap}
               op={op}
