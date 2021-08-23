@@ -171,7 +171,15 @@ export function searchParameterFieldsMeta({
 
   parameters.forEach(p => {
     if (Object.prototype.hasOwnProperty.call(p, 'defaultValue')) {
-      defaultValue[p.id] = p.defaultValue;
+      if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
+        try {
+          defaultValue[p.id] = JSON.parse(p.defaultValue);
+        } catch (e) {
+          defaultValue[p.id] = [];
+        }
+      } else {
+        defaultValue[p.id] = p.defaultValue;
+      }
     }
   });
 
