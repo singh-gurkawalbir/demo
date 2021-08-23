@@ -1,45 +1,64 @@
 import React, { useRef, useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-// import { Typography } from '@material-ui/core';
+import flowSchema from './metadata/flowSchema';
+
+const pageProcessors = {};
+const pageGenerators = {};
+// const delta = 0;
+
+function getAppBlock(x, y) {
+  const block = new PIXI.Graphics();
+
+  block.beginFill(0xff0000);
+  block.drawRect(0, 0, 200, 100);
+  block.x = x;
+  block.y = y;
+  block.interactive = true;
+  block.buttonMode = true;
+  block.on('mouseover', () => { block.alpha = 0.5; });
+  block.on('mouseout', () => { block.alpha = 1; });
+
+  return block;
+}
 
 const app = new PIXI.Application({
-  // resolution: window.devicePixelRatio,
-  // autoDensity: true,
+  resolution: window.devicePixelRatio,
+  autoDensity: true,
 });
 
-// Create a Graphics object, set a fill color, draw a rectangle
-const obj = new PIXI.Graphics();
+// PAGE GENERATORS
+for (let i = 0; i < flowSchema.pg.length; i += 1) {
+  const pg = flowSchema.pg[i];
+  const appBlock = getAppBlock(25, 25 + i * 125);
 
-obj.beginFill(0xff0000);
-obj.drawRect(0, 0, 200, 100);
+  // Add the appBlock to the scene we are building.
+  app.stage.addChild(appBlock);
+  pageGenerators[pg.id] = appBlock;
+}
 
-// Rotate around the center
-obj.pivot.x = 100;
-obj.pivot.y = 50;
+// PAGE PROCESSORS
+for (let i = 0; i < flowSchema.pp.length; i += 1) {
+  const pp = flowSchema.pp[i];
+  const appBlock = getAppBlock(325 + i * 225, 25);
 
-// Add the obj to the scene we are building.
-app.stage.addChild(obj);
+  // Add the appBlock to the scene we are building.
+  app.stage.addChild(appBlock);
+  pageProcessors[pp.id] = appBlock;
+}
 
 // Listen for frame updates
-app.ticker.add(() => {
-  // Setup the position (note use rendered.screen.width vs renderer.width
-  // to support both retina and desktop display.)
-  obj.x = app.renderer.screen.width / 2;
-  obj.y = app.renderer.screen.height / 2;
-
-  // each frame we spin the obj around a bit
-  obj.rotation += 0.01;
-});
+// app.ticker.add(handleTick);
 
 export default function Proto() {
   const canvasRef = useRef();
 
   useEffect(() => {
-    console.log('init pixi app');
-
     const canvasNode = canvasRef.current;
 
     canvasNode.appendChild(app.view);
+    // the resizeTo helper prop lets us tell Pixi to track the size of a DOM node and
+    // set its canvas sie to match. This facilitates the use-case where a user resizes
+    // the browser, or expands/collapses the Celigo Menu.
     app.resizeTo = canvasNode;
     app.start();
 

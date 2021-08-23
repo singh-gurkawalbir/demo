@@ -2,12 +2,12 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import Proto from '../Prototype';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     height: '100vh',
     width: '100vw',
   },
-}));
+});
 
 export default function Template(args) {
   const classes = useStyles();
