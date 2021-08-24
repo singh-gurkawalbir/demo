@@ -184,6 +184,12 @@ export default {
     label: 'Encrypt files',
     defaultValue: r => !!(r?.file?.encrypt),
     connectionId: r => r && r._connectionId,
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'file.encrypt': {
     type: 'select',
