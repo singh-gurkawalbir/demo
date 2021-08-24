@@ -15,8 +15,8 @@ function getAppBlock(resource, x, y) {
 
   container.addChild(block);
 
-  block.lineStyle(2, 0xFFFFFF, 1);
-  block.beginFill(0xDDDDDD);
+  block.lineStyle(2, 0xD6E4ED, 1);
+  block.beginFill(0xFFFFFF);
   block.drawRoundedRect(0, 0, 250, 150, 20);
   block.pivot.x = 125;
   block.pivot.y = 75;
@@ -25,18 +25,18 @@ function getAppBlock(resource, x, y) {
   block.skew.x = 3;
   block.interactive = true;
   block.buttonMode = true;
-  block.on('mouseover', () => { block.alpha = 0.5; });
-  block.on('mouseout', () => { block.alpha = 1; });
+  block.on('mouseover', () => { block.tint = 0xF0F5F9; });
+  block.on('mouseout', () => { block.tint = 0xFFFFFF; });
 
+  // see: https://pixijs.download/v4.7.3/docs/PIXI.TextStyle.html#TextStyle
+  // for full spec of font control.
   const style = new PIXI.TextStyle({
     fontFamily: 'Arial',
     fontSize: 18,
+    fill: 0x333D47, // font color
     // fontWeight: 'bold',
-    // stroke: '#4a1850',
-    strokeThickness: 0.8,
     wordWrap: true,
     wordWrapWidth: 200,
-    // lineJoin: 'round',
   });
 
   const title = new PIXI.Text(resource.name, style);
@@ -52,6 +52,7 @@ function getAppBlock(resource, x, y) {
 const app = new PIXI.Application({
   resolution: window.devicePixelRatio,
   autoDensity: true,
+  backgroundColor: 0xFFFFFF,
 });
 
 // create viewport
@@ -72,7 +73,7 @@ viewport
 // PAGE GENERATORS
 for (let i = 0; i < flowSchema.pg.length; i += 1) {
   const pg = flowSchema.pg[i];
-  const appBlock = getAppBlock(pg, 25, 25 + i * 175);
+  const appBlock = getAppBlock(pg, 25, 25 + i * 200);
 
   // Add the appBlock to the scene we are building.
   viewport.addChild(appBlock);
@@ -82,7 +83,7 @@ for (let i = 0; i < flowSchema.pg.length; i += 1) {
 // PAGE PROCESSORS
 for (let i = 0; i < flowSchema.pp.length; i += 1) {
   const pp = flowSchema.pp[i];
-  const appBlock = getAppBlock(pp, 425 + i * 300, 25);
+  const appBlock = getAppBlock(pp, 425 + i * 350, 25);
 
   // Add the appBlock to the scene we are building.
   viewport.addChild(appBlock);
