@@ -55,7 +55,6 @@ const restPreSave = formValues => {
     }
     delete retValues[httpField];
   });
-
   const sampleData = retValues['/sampleData'];
 
   if (sampleData === '') {
@@ -92,7 +91,7 @@ const restPreSave = formValues => {
 
       if (
         retValues['/rest/responseIdPathCreate'] ||
-        retValues['/rest/responseIdPathUpdate']
+          retValues['/rest/responseIdPathUpdate']
       ) {
         retValues['/rest/responseIdPath'] = [
           retValues['/rest/responseIdPathUpdate'],
@@ -102,7 +101,7 @@ const restPreSave = formValues => {
 
       if (
         retValues['/rest/successPathCreate'] ||
-        retValues['/rest/successPathUpdate']
+          retValues['/rest/successPathUpdate']
       ) {
         retValues['/rest/successPath'] = [
           retValues['/rest/successPathUpdate'],
@@ -112,7 +111,7 @@ const restPreSave = formValues => {
 
       if (
         retValues['/rest/successValuesCreate'] ||
-        retValues['/rest/successValuesUpdate']
+          retValues['/rest/successValuesUpdate']
       ) {
         retValues['/rest/successValues'] = [
           retValues['/rest/successValuesUpdate'],

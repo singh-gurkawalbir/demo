@@ -19,6 +19,7 @@ import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
+import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId } from '../../utils/resource';
@@ -36,6 +37,13 @@ export function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
+}
+
+// Deals with any modification related to the sample data being passed to getContext API
+function* formatEditorSampleDataForGetContextBE({ sampleData, resourceId, resourceType }) {
+  const savedResourceObj = yield select(selectors.resource, resourceType, resourceId);
+
+  return extractRawSampleDataFromOneToManySampleData(sampleData, savedResourceObj);
 }
 
 export function* invokeProcessor({ editorId, processor, body }) {
@@ -485,6 +493,8 @@ export function* requestEditorSampleData({
   } else {
     const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
     const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
+
+    sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
     const body = {
       sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
@@ -520,7 +530,7 @@ export function* requestEditorSampleData({
       delete body.templateVersion;
     } else {
       if (resource?.oneToMany) {
-        const oneToMany = resource.oneToMany === 'true';
+        const oneToMany = resource.oneToMany === true || resource.oneToMany === 'true';
 
         resource = { ...resource, oneToMany };
       }

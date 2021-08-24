@@ -5,13 +5,13 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   let options = {};
   const expression = [];
   const integratorExpression = [];
-  const { _id, type, assistant} = connection || {};
+  const { _id, type, assistant } = connection || {};
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
 
   if (RDBMS_TYPES.includes(type)) {
     expression.push({ 'rdbms.type': type });
-  } else if (type === 'rest') {
+  } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'http') {
     expression.push({ 'http.formType': { $ne: 'rest' } });
