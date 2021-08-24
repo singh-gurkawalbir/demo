@@ -65,6 +65,9 @@ export default (state = {}, action) => {
             step.isTriggered = false;
             step.verifying = false;
             step.completed = true;
+          } else if (update === 'reset') {
+            step.isTriggered = false;
+            step.showForm = false;
           }
         }
 
