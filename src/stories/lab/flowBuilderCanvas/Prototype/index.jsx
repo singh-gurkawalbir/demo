@@ -1,10 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import * as PIXI from 'pixi.js';
+import { Viewport } from 'pixi-viewport';
 import flowSchema from './metadata/flowSchema';
 
 const pageProcessors = {};
 const pageGenerators = {};
-// const delta = 0;
 
 function getAppBlock(resource, x, y) {
   const container = new PIXI.Container();
@@ -30,7 +30,7 @@ function getAppBlock(resource, x, y) {
 
   const style = new PIXI.TextStyle({
     fontFamily: 'Arial',
-    fontSize: 16,
+    fontSize: 18,
     // fontWeight: 'bold',
     // stroke: '#4a1850',
     strokeThickness: 0.8,
@@ -41,17 +41,33 @@ function getAppBlock(resource, x, y) {
 
   const title = new PIXI.Text(resource.name, style);
 
-  title.position.set(25, 25);
+  title.position.set(25, 15);
 
   container.addChild(title);
 
   return container;
 }
 
+// PIXI APP INIT
 const app = new PIXI.Application({
   resolution: window.devicePixelRatio,
   autoDensity: true,
 });
+
+// create viewport
+const viewport = new Viewport({
+  // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
+  interaction: app.renderer.plugins.interaction,
+});
+
+app.stage.addChild(viewport);
+
+// activate plugins
+viewport
+  .drag()
+  .pinch()
+  .wheel()
+  .decelerate();
 
 // PAGE GENERATORS
 for (let i = 0; i < flowSchema.pg.length; i += 1) {
@@ -59,7 +75,7 @@ for (let i = 0; i < flowSchema.pg.length; i += 1) {
   const appBlock = getAppBlock(pg, 25, 25 + i * 175);
 
   // Add the appBlock to the scene we are building.
-  app.stage.addChild(appBlock);
+  viewport.addChild(appBlock);
   pageGenerators[pg.id] = appBlock;
 }
 
@@ -69,7 +85,7 @@ for (let i = 0; i < flowSchema.pp.length; i += 1) {
   const appBlock = getAppBlock(pp, 425 + i * 300, 25);
 
   // Add the appBlock to the scene we are building.
-  app.stage.addChild(appBlock);
+  viewport.addChild(appBlock);
   pageProcessors[pp.id] = appBlock;
 }
 
@@ -77,11 +93,28 @@ for (let i = 0; i < flowSchema.pp.length; i += 1) {
 app.ticker.maxFPS = 30;
 // app.ticker.add(handleTick);
 
+const handleWheelEvent = e => { e.preventDefault(); };
+
 export default function Proto() {
   const canvasRef = useRef();
 
   useEffect(() => {
+    // if we do not disable the 'wheel' event, then the browser will
+    // scale on track pad (and touchscreen) pinch.
+    window.addEventListener('wheel', handleWheelEvent, {passive: false});
+
     const canvasNode = canvasRef.current;
+    const {height: worldHeight, width: worldWidth} = viewport.parent;
+
+    // The bounce feature of the viewport will prevent panning of the canvas
+    // past the "world" boundaries...
+    const bouncePadding = 50;
+
+    viewport.screenWidth = canvasNode.offsetWidth;
+    viewport.screenHeight = canvasNode.offsetHeight;
+    viewport.worldWidth = Math.ceil(worldWidth) + bouncePadding;
+    viewport.worldHeight = Math.ceil(worldHeight) + bouncePadding;
+    viewport.bounce();
 
     canvasNode.appendChild(app.view);
     // the resizeTo helper prop lets us tell Pixi to track the size of a DOM node and
@@ -91,6 +124,8 @@ export default function Proto() {
     app.start();
 
     return () => {
+      window.removeEventListener('wheel', handleWheelEvent, { passive: false });
+
       // On unload completely destroy the application and all of it's children
       app.stop();
       // app.destroy(false, true);

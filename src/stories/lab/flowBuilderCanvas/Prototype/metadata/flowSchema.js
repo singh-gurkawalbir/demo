@@ -8,6 +8,11 @@ export default {
       id: '2',
       name: 'Amazon orders',
     },
+    {
+      id: '2.5',
+      name: 'Shopify Orders',
+    },
+
   ],
   pp: [
     {
@@ -21,6 +26,14 @@ export default {
     {
       id: '5',
       name: 'Update inventory count',
+    },
+    {
+      id: '6',
+      name: 'New App bubble',
+    },
+    {
+      id: '7',
+      name: 'New App bubble',
     },
   ],
 };
