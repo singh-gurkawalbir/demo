@@ -79,6 +79,60 @@ describe('Flow sample data utility sagas', () => {
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
       });
+      test('should return csv parse rules object incase of csv rest resource', () => {
+        const restCsvResource = {
+          _id: 'export-123',
+          name: 'Rest export',
+          adaptorType: 'RESTExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          ignoreSortAndGroup: true,
+        };
+
+        expect(generateFileParserOptionsFromResource(restCsvResource)).toEqual(expectedOptions);
+      });
+      test('should return csv parse rules object incase of csv http resource', () => {
+        const httpCsvResource = {
+          _id: 'export-123',
+          name: 'Rest export',
+          adaptorType: 'HTTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          ignoreSortAndGroup: true,
+        };
+
+        expect(generateFileParserOptionsFromResource(httpCsvResource)).toEqual(expectedOptions);
+      });
       test('should return xml parse rules object incase of xml file resource', () => {
         const ftpXmlResource = {
           _id: 'export-123',
