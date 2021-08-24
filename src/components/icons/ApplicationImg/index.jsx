@@ -23,8 +23,6 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('http')) return 'http';
 
-  if (type.toLowerCase().includes('rest')) return 'rest';
-
   if (type.toLowerCase().includes('mysql')) return 'mysql';
 
   if (type.toLowerCase().includes('microsoftsql')) return 'mssql';
@@ -47,6 +45,7 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('rdbms')) return 'rdbms';
 
+  if (['restexport', 'restimport'].includes(type.toLocaleLowerCase())) return 'rest';
   // 's3' are too few words that it could be contained in lot more words. In current list of applications, it matches with 'msdynamics360'.
   // Hence expilicity check for S3Export and S3Import for S3 type.
   if (['s3export', 's3import'].includes(type.toLowerCase())) return 's3';
