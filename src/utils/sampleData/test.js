@@ -13,6 +13,7 @@ import getFormattedSampleData, {
   generateTransformationRulesOnXMLData,
   isValidPathToMany,
   processOneToManySampleData,
+  extractRawSampleDataFromOneToManySampleData,
   wrapExportFileSampleData,
   wrapSampleDataWithContext,
 } from '.';
@@ -711,7 +712,7 @@ describe('processOneToManySampleData util', () => {
     expect(processOneToManySampleData(sampleData, null)).toBe(sampleData);
     expect(processOneToManySampleData(sampleData, resource)).toBe(sampleData);
   });
-  test('should return original sample data if resource has invalid pathToMany field', () => {
+  test('should return original sample data wrapped in _PARENT object if resource has invalid pathToMany field', () => {
     const sampleData = {
       a: 5,
       c: { d: 7 },
@@ -724,7 +725,11 @@ describe('processOneToManySampleData util', () => {
       pathToMany: 'c.d',
     };
 
-    expect(processOneToManySampleData(sampleData, resource)).toBe(sampleData);
+    const expectedData = {
+      _PARENT: {...sampleData},
+    };
+
+    expect(processOneToManySampleData(sampleData, resource)).toEqual(expectedData);
   });
   test('should return the correct extracted sample data at target path if resource has correct pathToMany field', () => {
     const sampleData = {
@@ -766,6 +771,104 @@ describe('processOneToManySampleData util', () => {
     };
 
     expect(processOneToManySampleData(sampleData, resource)).toEqual(expectedData);
+  });
+});
+
+describe('extractRawSampleDataFromOneToManySampleData util', () => {
+  test('should return original sample data if sample data or resource or path segments are empty', () => {
+    const sampleData = {
+      key: 'value',
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+    };
+
+    expect(extractRawSampleDataFromOneToManySampleData(null, resource)).toBeNull();
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData)).toBe(sampleData);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData, null)).toBe(sampleData);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
+  });
+  test('should return the original sample data if the sample data does not contain _PARENT key', () => {
+    const sampleData = {
+      key: 'value',
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+    };
+
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
+  });
+  test('should return the original sample data if the pathToMany provided is not a valid one', () => {
+    const sampleData = {
+      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+      a: 1,
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      oneToMany: true,
+      pathToMany: 'check.f',
+    };
+
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
+  });
+  test('should return the actual sample data before oneToMany path is processed when the resource has valid pathToMany', () => {
+    const sampleData1 = {
+      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+      a: 1,
+    };
+    const sampleData2 = {
+      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+    };
+    const sampleData3 = {
+      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+      a: 6,
+      b: 6,
+      c: 7,
+      d: 11,
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      oneToMany: true,
+      pathToMany: 'e.check.f',
+    };
+    const expectedSampleData1 = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: [{ a: 1}]} },
+    };
+    const expectedSampleData2 = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: []} },
+    };
+    const expectedSampleData3 = {
+      a: 5,
+      c: { d: 7 },
+      e: {
+        check: {
+          f: [
+            {
+              a: 6,
+              b: 6,
+              c: 7,
+              d: 11,
+            },
+          ],
+        },
+      },
+    };
+
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData1, resource)).toEqual(expectedSampleData1);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData2, resource)).toEqual(expectedSampleData2);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData3, resource)).toEqual(expectedSampleData3);
   });
 });
 
