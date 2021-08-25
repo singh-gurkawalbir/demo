@@ -2,7 +2,9 @@ import React, { useRef, useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import flowSchema from './metadata/flowSchema';
-import {path as resetZoomIconPath} from '../../../../components/icons/FullScreenCloseIcon';
+import {path as zoomResetIconPath} from '../../../../components/icons/FullScreenCloseIcon';
+import {path as zoomUpIconPath} from '../../../../components/icons/AddIcon';
+import {path as zoomDownIconPath} from '../../../../components/icons/SubtractIcon';
 
 let app;
 const pageProcessors = {};
@@ -65,7 +67,9 @@ function makeSvgTexture(path) {
   return texture;
 }
 
-function makeIconButton(texture) {
+function makeIconButton(svgPath, onClick) {
+  const texture = makeSvgTexture(svgPath);
+
   const btnContainer = new PIXI.Container();
   const btn = new PIXI.Sprite(texture);
 
@@ -73,6 +77,7 @@ function makeIconButton(texture) {
   btn.buttonMode = true;
   btn.on('mouseover', () => { btn.alpha = 0.5; });
   btn.on('mouseout', () => { btn.alpha = 1; });
+  btn.on('click', onClick);
 
   const hitBox = new PIXI.Graphics();
 
@@ -87,14 +92,29 @@ function makeIconButton(texture) {
   return btnContainer;
 }
 
-function buildViewportControls() {
-  const zoomResetTexture = makeSvgTexture(resetZoomIconPath);
-  const zoomResetButton = makeIconButton(zoomResetTexture);
+function buildViewportControls(viewport) {
+  const buttonSpacing = 40;
+  const handleZoomUp = () => viewport.zoomPercent(0.1);
+  const handleZoomDown = () => viewport.zoomPercent(-0.1);
+  const handleZoomReset = () => viewport.setZoom(1);
 
-  zoomResetButton.position.set(app.screen.width + 50, 25);
+  const container = new PIXI.Container();
+
+  container.position.set(app.screen.width + 50, 25);
   // controls.anchor.x = 1;
 
-  return zoomResetButton;
+  const zoomResetButton = makeIconButton(zoomResetIconPath, handleZoomReset);
+  const zoomUpButton = makeIconButton(zoomUpIconPath, handleZoomUp);
+  const zoomDownButton = makeIconButton(zoomDownIconPath, handleZoomDown);
+
+  zoomDownButton.x = buttonSpacing;
+  zoomResetButton.x = buttonSpacing * 2;
+
+  container.addChild(zoomUpButton);
+  container.addChild(zoomDownButton);
+  container.addChild(zoomResetButton);
+
+  return container;
 }
 
 function buildFlow(viewport, flowSchema) {
@@ -145,7 +165,7 @@ function initializeFbCanvas(canvasNode) {
   app.stage.addChild(viewport);
   // add all DisplayObjects that should not be part of the viewport.
   // any of these objects should NOT zoom and pan with the flow.
-  app.stage.addChild(buildViewportControls());
+  app.stage.addChild(buildViewportControls(viewport));
 
   // This function adds all DisplayObjects that make-up a flow's current state.
   buildFlow(viewport, flowSchema);
