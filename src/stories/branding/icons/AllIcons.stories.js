@@ -319,7 +319,11 @@ const useStyles = makeStyles(theme => ({
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     textAlign: 'center',
     position: 'relative',
+    borderRadius: 4,
     cursor: 'pointer',
+    '&:hover': {
+      borderColor: theme.palette.primary.light,
+    },
   },
 }));
 
@@ -344,9 +348,6 @@ const IconTemplate = ({Icon, iconName, args}) => {
     </CopyToClipboard>
   );
 };
-
-// eslint-disable-next-line no-console
-// console.log('checking what object keys do', Object.keys(icons));
 
 export function All(args) {
   const classes = useStyles();
