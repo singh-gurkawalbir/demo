@@ -553,7 +553,7 @@ export default {
     if ('hardCodedValue' in value) {
       return 'hardCoded';
     }
-    if (value.extract?.indexOf('{{') !== -1) {
+    if (value.extract && value.extract.indexOf('{{') !== -1) {
       return 'multifield';
     }
 
@@ -823,7 +823,7 @@ export default {
       case adaptorTypeMap.SalesforceImport:
         return 'Salesforce';
       case adaptorTypeMap.HTTPImport:
-        if (resource?.useTechAdaptorForm) {
+        if (resource?.http?.formType === 'rest') {
           return 'REST API';
         }
 

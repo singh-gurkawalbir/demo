@@ -9,7 +9,7 @@ import {
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
 import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
-import connectionSagas, { createPayload } from './connections';
+import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
@@ -97,22 +97,21 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     return values;
   }
 
-  // 'rawFile' stage gives back the file content as well as file type
   const { data: rawData } = yield select(
     selectors.getResourceSampleDataWithStatus,
     resourceId,
-    'rawFile'
+    'raw'
   );
 
   if (!rawData) return values;
   // Gets application file type to be passed on file upload
-  const fileType = fileTypeToApplicationTypeMap[rawData.type];
+  const uploadedFileType = values['/file/type'];
+  const fileType = fileTypeToApplicationTypeMap[uploadedFileType];
   // Incase of JSON, we need to stringify the content to pass while uploading
-  const fileContent =
-    rawData.type === 'json' ? JSON.stringify(rawData.body) : rawData.body;
+  const fileContent = uploadedFileType === 'json' ? JSON.stringify(rawData) : rawData;
   const rawDataKey = yield call(uploadRawData, {
     file: fileContent,
-    fileName: `file.${rawData.type}`,
+    fileName: `file.${uploadedFileType}`,
     fileType,
   });
 
@@ -126,6 +125,16 @@ export function* deleteUISpecificValues({ values, resourceId }) {
     // remove ui field value from the form value payload
     delete valuesCopy[id];
   });
+
+  // TO DO: This logic should be revisited
+  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+    if (valuesCopy['/file/csv']?.keyColumns) {
+      valuesCopy['/file/csv'].keyColumns = undefined;
+    }
+  }
+  if (valuesCopy['/file/xlsx/keyColumns']) {
+    valuesCopy['/file/xlsx/keyColumns'] = undefined;
+  }
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);
@@ -196,6 +205,7 @@ export function* submitFormValues({
   resourceId,
   values,
   match,
+  parentContext,
 }) {
   let formValues = { ...values };
   const isNewIAPayload = yield call(newIAFrameWorkPayload, {
@@ -328,6 +338,7 @@ export function* submitFormValues({
       id: resourceId,
       scope: SCOPES.VALUE,
       asyncKey: getAsyncKey(type, resourceId),
+      parentContext,
     });
 
     if (resp && (resp.error || resp.conflict)) {
@@ -665,7 +676,7 @@ export function* submitResourceForm(params) {
 }
 
 export function* saveAndContinueResourceForm(params) {
-  const { resourceId } = params;
+  const { resourceId, parentContext } = params;
   const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
@@ -705,10 +716,7 @@ export function* saveAndContinueResourceForm(params) {
         );
       }
 
-      yield call(apiCallWithRetry, {
-        path: `/connections/${id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: id, parentContext });
     } catch (error) {
       yield put(actions.asyncTask.failed(asyncKey));
 

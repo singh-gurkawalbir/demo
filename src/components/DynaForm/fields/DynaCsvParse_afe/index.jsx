@@ -50,6 +50,8 @@ export default function DynaCsvParse_afe(props) {
     disabled,
     formKey: parentFormKey,
     flowId,
+    formKey,
+    ignoreSortAndGroup = false,
   } = props;
   const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
@@ -70,7 +72,7 @@ export default function DynaCsvParse_afe(props) {
     [],
   );
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType}));
+  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType, ignoreSortAndGroup}));
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
@@ -91,25 +93,12 @@ export default function DynaCsvParse_afe(props) {
     const { rule } = editorValues;
     const parsedVal = getParserValue(rule);
 
-    setForm(getForm({...rule, resourceId, resourceType}));
+    setForm(getForm({...rule, resourceId, resourceType, ignoreSortAndGroup}));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
 
-    // todo: @raghu removing this dispatch action from here as it will be taken care
-    // by field change on the form itself. Please confirm and remove this comment
-    // dispatch(
-    //   actions.sampleData.request(
-    //     resourceId,
-    //     resourceType,
-    //     {
-    //       type: 'csv',
-    //       // file: csvData,
-    //       editorValues,
-    //     },
-    //     'file'
-    //   )
-    // );
-  }, [id, onFieldChange, resourceId, resourceType]);
+    dispatch(actions.resourceFormSampleData.request(formKey));
+  }, [resourceId, resourceType, ignoreSortAndGroup, onFieldChange, id, dispatch, formKey]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);

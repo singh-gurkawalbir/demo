@@ -20,16 +20,13 @@ export default function FlowScheduleButtons({
   index,
 }) {
   const dispatch = useDispatch();
-  const preferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const exp = useSelector(state =>
     selectors.resource(state, 'exports', pg && pg._exportId)
   );
   let resource = pg || flow;
   const schedule = pg?.schedule || flow?.schedule;
-  const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
+  const scheduleStartMinute = getScheduleStartMinute(exp || flow);
 
   const onSave = useCallback(formVal => {
     const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);

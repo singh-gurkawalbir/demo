@@ -3018,8 +3018,14 @@ Object {
         ],
         "required": true,
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "fieldId": "file.type",
@@ -3086,6 +3092,14 @@ Object {
               ],
               "label": "How would you like to parse files?",
               "type": "indent",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
@@ -3477,11 +3491,17 @@ Object {
         ],
         "required": true,
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
       },
       "file.skipDelete": Object {
         "fieldId": "file.skipDelete",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "fieldId": "file.type",
@@ -3660,6 +3680,14 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
                 "fileAdvanced",
                 "file.decompressFiles",
                 "file.compressionFormat",
@@ -3724,6 +3752,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "file.csvParse",
         "id": "file.csv",
+        "ignoreSortAndGroup": true,
         "label": "CSV parser helper",
         "type": "csvparse",
         "visibleWhenAll": Array [
@@ -3943,6 +3972,9 @@ Object {
           },
         ],
       },
+      "unencrypted.apiType": Object {
+        "fieldId": "unencrypted.apiType",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -3962,6 +3994,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.relativeURI",
@@ -5186,11 +5219,17 @@ Object {
         ],
         "required": true,
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
       },
       "file.skipDelete": Object {
         "fieldId": "file.skipDelete",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "fieldId": "file.type",
@@ -5366,6 +5405,14 @@ Object {
                 "s3.keyEndsWith",
               ],
               "label": "Where would you like to transfer from?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
@@ -5743,8 +5790,14 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.groupByFields": Object {
+        "fieldId": "file.groupByFields",
+      },
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
+      },
+      "file.sortByFields": Object {
+        "fieldId": "file.sortByFields",
       },
       "file.type": Object {
         "defaultValue": [Function],
@@ -5774,7 +5827,7 @@ Object {
           },
         ],
         "required": true,
-        "type": "select",
+        "type": "filetypeselect",
       },
       "file.xlsx.hasHeaderRow": Object {
         "fieldId": "file.xlsx.hasHeaderRow",
@@ -5868,6 +5921,14 @@ Object {
               ],
               "label": "How would you like to parse the file?",
               "type": "indent",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "file.sortByFields",
+                "file.groupByFields",
+              ],
+              "label": "How would you like to group and sort records?",
             },
             Object {
               "collapsed": true,
@@ -6167,6 +6228,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "file.csvParse",
         "id": "file.csv",
+        "ignoreSortAndGroup": true,
         "label": "CSV parser helper",
         "type": "csvparse",
         "visibleWhen": Array [
@@ -9950,6 +10012,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "unencrypted.apiType": Object {
+        "fieldId": "unencrypted.apiType",
+      },
       "upateExistingData": Object {
         "id": "upateExistingData",
         "label": "Upate existing data",
@@ -10038,6 +10103,7 @@ Object {
                 },
               ],
               "fields": Array [
+                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.compositeType",

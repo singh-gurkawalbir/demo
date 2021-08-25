@@ -26,6 +26,7 @@ import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
+import { pingConnectionParentContext } from '../../../utils/requestOptions';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -268,7 +269,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-export function* pingConnection({ resourceId, values }) {
+export function* pingConnection({ resourceId, values, parentContext }) {
   const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
@@ -284,7 +285,10 @@ export function* pingConnection({ resourceId, values }) {
     resp = yield call(apiCallWithRetry, {
       path: pingConnectionParams.path,
       opts: {
-        body: connectionPayload,
+        body: {
+          ...connectionPayload,
+          ...pingConnectionParentContext(parentContext),
+        },
         ...pingConnectionParams.opts,
       },
       hidden: true,
@@ -368,12 +372,13 @@ export function* openOAuthWindowForConnection(resourceId) {
   win.focus();
 }
 
-export function* saveAndAuthorizeConnection({ resourceId, values }) {
+export function* saveAndAuthorizeConnection({ resourceId, values, parentContext }) {
   try {
     yield call(submitFormValues, {
       resourceType: 'connections',
       resourceId,
       values,
+      parentContext,
     });
   } catch (e) {
     // could not save the resource...lets just return
@@ -484,12 +489,20 @@ export function* requestIClients({ connectionId }) {
   }
 }
 
-export function* pingAndUpdateConnection({ connectionId }) {
+export function* pingConnectionWithId({ connectionId, parentContext }) {
+  yield call(apiCallWithRetry, {
+    path: `/connections/${connectionId}/ping`,
+    hidden: true,
+    opts: {
+      body: pingConnectionParentContext(parentContext),
+      method: 'POST',
+    },
+  });
+}
+
+export function* pingAndUpdateConnection({ connectionId, parentContext }) {
   try {
-    yield call(apiCallWithRetry, {
-      path: `/connections/${connectionId}/ping`,
-      hidden: true,
-    });
+    yield call(pingConnectionWithId, { connectionId, parentContext });
 
     const connectionResource = yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}`,

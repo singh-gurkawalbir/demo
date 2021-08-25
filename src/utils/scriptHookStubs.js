@@ -23,6 +23,7 @@ const preSavePageFunctionStub = `
 *
 * The function will be passed one 'options' argument that has the following fields:
 *   'data' - an array of records representing one page of data. A record can be an object {} or array [] depending on the data source.
+*   'files' - file exports only. files[i] contains source file metadata for data[i]. i.e. files[i].fileMeta.fileName.
 *   'errors' - an array of errors where each error has the structure {code: '', message: '', source: '', retryDataKey: ''}.
 *   'retryData' - a dictionary object containing the retry data for all errors: {retryDataKey: { data: <record>, stage: '', traceKey: ''}}.
 *   '_exportId' - the _exportId currently running.

@@ -167,9 +167,9 @@ export default {
       if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
       } else if (app.type === 'rest') {
-        expression.push({ $or: [{ 'http.useRestForm': true }, { type: 'rest' }] });
+        expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (app.type === 'http') {
-        expression.push({ 'http.useRestForm': { $ne: true } });
+        expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {
         expression.push({ type: app.type });
@@ -206,7 +206,7 @@ export default {
       // Lookups are not shown in PG suggestions
       const expression = [{ isLookup: { $exists: false } }];
 
-      if (!adaptorTypePrefix) return { filter: {$and: expression}};
+      if (!adaptorTypePrefix) return { filter: { $and: expression }};
 
       if (isWebhook) {
         expression.push({
@@ -214,9 +214,25 @@ export default {
             appField.value === 'webhook' ? 'custom' : appField.value,
         });
       } else {
-        expression.push({
-          adaptorType: `${adaptorTypePrefix}Export`,
-        });
+        if (app.type === 'rest') {
+          expression.push({
+            $or: [
+              { adaptorType: 'RESTExport' },
+              { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'rest' }] },
+            ],
+          });
+        } else if (app.type === 'http') {
+          expression.push({
+            adaptorType: `${adaptorTypePrefix}Export`,
+          });
+          expression.push({
+            'http.formType': { $ne: 'rest' },
+          });
+        } else {
+          expression.push({
+            adaptorType: `${adaptorTypePrefix}Export`,
+          });
+        }
 
         if (app.assistant) {
           expression.push({ assistant: app.assistant });

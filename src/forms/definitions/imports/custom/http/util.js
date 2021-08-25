@@ -56,7 +56,7 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     return fieldDefinitions[fieldId];
   });
 }
-export function headerFieldsMeta({operationDetails, headers = []}) {
+export function headerFieldsMeta({ operationDetails, headers = [] }) {
   const editableHeaders = Object.keys(operationDetails?.headers || {})
     .filter(key => !operationDetails.headers[key]);
   const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
@@ -154,7 +154,7 @@ export function howToFindIdentifierFieldsMeta({
   const lookupTypeOptions = [];
   const fields = [];
 
-  if (operationDetails.howToFindIdentifier && !isEmpty(operationDetails.howToFindIdentifier)) {
+  if (operationDetails.howToFindIdentifier) {
     if (operationDetails.supportIgnoreExisting) {
       lookupTypeOptions.push({
         value: 'source',
@@ -200,16 +200,19 @@ export function howToFindIdentifierFieldsMeta({
       },
     ];
   }
+  const endPointHasQueryParams = operationDetails.url?.indexOf?.(':_') >= 0 || operationDetails.url?.[0]?.indexOf?.(':_') >= 0;
 
-  if (lookupTypeOptions.length > 0) {
-    fields.push(lookupTypeField);
+  if (operationDetails.supportIgnoreExisting || operationDetails.askForHowToGetIdentifier || endPointHasQueryParams) {
+    if (lookupTypeOptions.length) {
+      fields.push(lookupTypeField);
+    }
 
-    if (lookupTypeOptions.find(opt => opt.value === 'source')) {
+    if (lookupTypeOptions.find(opt => opt.value === 'source') && operationDetails.parameters) {
       const identifierPathParam = operationDetails.parameters.find(
         p => !!p.isIdentifier
       );
       const identifierField = {
-        id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
+        id: `assistantMetadata.pathParams.${identifierPathParam?.id}`,
         label: 'Which field?',
         type: 'textwithflowsuggestion',
         showSuggestionsWithoutHandlebar: true,
@@ -217,7 +220,7 @@ export function howToFindIdentifierFieldsMeta({
         required: true,
         helpText: `Specify the field – or field path for nested fields – in your exported data that contains the information necessary to identify which records in the destination application will be ignored when importing data. integrator.io will check each exported record to see whether the field is populated. If so, the record will be ignored; otherwise, it will be imported. For example, if you specify the field customerID, then integrator.io will check the destination app for the value of the customerID field of each exported record before importing (field does not have a value) or ignoring (field has a value). <br/>
         If a field contains special characters, enclose it in square brackets: [field-name]. Brackets can also indicate an array item, such as items[*].id.`,
-        value: pathParameterValues[identifierPathParam.id],
+        value: pathParameterValues[identifierPathParam?.id],
         visibleWhenAll: [
           {
             field: 'assistantMetadata.lookupType',
@@ -234,7 +237,7 @@ export function howToFindIdentifierFieldsMeta({
         });
       }
 
-      fields.push(identifierField);
+      if (identifierField) { fields.push(identifierField); }
     }
 
     if (lookupTypeOptions.find(opt => opt.value === 'lookup')) {

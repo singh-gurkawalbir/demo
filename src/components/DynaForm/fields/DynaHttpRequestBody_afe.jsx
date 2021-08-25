@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { getParentResourceContext } from '../../../utils/connections';
 import DynaHandlebarPreview from './DynaHandlebarPreview';
 
 export default function DynaHttpRequestBody_afe(props) {
@@ -21,6 +22,8 @@ export default function DynaHttpRequestBody_afe(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
+
+  const {parentType, parentId} = getParentResourceContext(match.url);
 
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
@@ -47,10 +50,12 @@ export default function DynaHttpRequestBody_afe(props) {
       fieldId: id,
       stage: 'flowInput',
       onSave: handleSave,
+      parentType,
+      parentId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
 
   return (
     <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />

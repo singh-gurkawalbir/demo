@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,6 +13,8 @@ import { selectors } from '../../../../../reducers';
 import SearchCriteriaEditor from '.';
 import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../../../icons/FullScreenCloseIcon';
+import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
+import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -71,6 +72,9 @@ export default function SearchCriteriaDialog(props) {
     selectors.searchCriteria(state, id)
   );
 
+  // when search criteria dialog is opened, save button should be disabled
+  const [disableSave, setDisableSave] = useState(true);
+  const [saveStatus, setSaveStatus] = useState();
   const invalidFields = useMemo(() => {
     const result = {};
 
@@ -103,13 +107,11 @@ export default function SearchCriteriaDialog(props) {
 
         onSave(true, _criteria);
       } else onSave(true, []);
+      // When save completes, disable the save button
+      setDisableSave(true);
+      setSaveStatus(FORM_SAVE_STATUS.COMPLETE);
     }
   }, [onSave, searchCriteria]);
-
-  const handleSaveAndClose = useCallback(() => {
-    handleSave();
-    onClose();
-  }, [handleSave, onClose]);
 
   const size = fullScreen ? { height } : { height, width };
   const handleFullScreenClick = () => setFullScreeen(!fullScreen);
@@ -149,32 +151,18 @@ export default function SearchCriteriaDialog(props) {
           commMetaPath={commMetaPath}
           filterKey={filterKey}
           invalidFields={invalidFields}
+          setDisableSave={setDisableSave}
         />
       </DialogContent>
       <DialogActions className={classes.actions}>
-        <Button
-          variant="outlined"
-          data-test="saveEditor"
-          disabled={disabled || !isEmpty(invalidFields)}
-          color="primary"
-          onClick={handleSave}>
-          Save
-        </Button>
-        <Button
-          variant="outlined"
-          data-test="saveEditor"
-          disabled={disabled || !isEmpty(invalidFields)}
-          color="secondary"
-          onClick={handleSaveAndClose}>
-          Save & close
-        </Button>
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          onClick={onClose}>
-          Cancel
-        </Button>
+        <SaveAndCloseButtonGroupAuto
+          isDirty={!disableSave && isEmpty(invalidFields)}
+          onSave={handleSave}
+          onClose={onClose}
+          status={saveStatus}
+          shouldHandleCancel
+          asyncKey={id}
+        />
       </DialogActions>
     </Dialog>
   );

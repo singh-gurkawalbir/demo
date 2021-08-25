@@ -45,7 +45,7 @@ export function* requestRetryData({ flowId, resourceId, retryId }) {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const error = JSON.parse(e.message);
+      const error = safeParse(e.message);
 
       yield put(
         actions.errorManager.retryData.receivedError({
@@ -83,7 +83,7 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const error = JSON.parse(e.message);
+      const error = safeParse(e.message);
 
       yield put(
         actions.errorManager.retryData.receivedError({

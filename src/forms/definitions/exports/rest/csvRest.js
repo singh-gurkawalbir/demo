@@ -53,6 +53,7 @@ export default {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
     retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
+    delete retValues['/rest/relativeURI'];
 
     // set the successMediaType on Export according to the connection
     // the request media-type is always json/urlencoded for REST, others are not supported in REST
@@ -62,7 +63,7 @@ export default {
       retValues['/http/successMediaType'] = 'json';
     }
 
-    retValues['/useTechAdaptorForm'] = true;
+    retValues['/http/formType'] = 'rest';
     retValues['/adaptorType'] = 'HTTPExport';
     delete retValues['/outputMode'];
     delete retValues['/uploadFile'];
@@ -137,6 +138,7 @@ export default {
       type: 'csvparse',
       label: 'CSV parser helper',
       helpKey: 'file.csvParse',
+      ignoreSortAndGroup: true,
       defaultValue: r => r?.file?.csv || {
         columnDelimiter: ',',
         rowDelimiter: '\n',

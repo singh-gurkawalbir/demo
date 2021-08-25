@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    padding: theme.spacing(2, 0),
   },
 }));
 
@@ -46,7 +47,7 @@ export default function ConnectorTemplateContent({ resource, application }) {
         <div className={classes.imgChip}>
           <ApplicationImg
             assistant={assistant}
-            size="medium"
+            size="small"
         />
           {free && (
           <Chip

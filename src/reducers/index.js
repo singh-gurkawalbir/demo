@@ -561,14 +561,14 @@ selectors.mkTileApplications = () => createSelector(
         const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
         integrationConnections.forEach(c => {
-          applications.push(c.assistant || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
         });
       });
 
       const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
       parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.type);
+        applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
       });
       applications = uniq(applications);
     }
@@ -1500,6 +1500,23 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (connection.rdbms?.type) {
           return (
             this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+
+        if (connection.type === 'http') {
+          return (
+            this.http?.formType !== 'rest' &&
+            this.type === 'http' &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+
+        if (connection.type === 'rest') {
+          return (
+            (this.http?.formType === 'rest' || this.type === 'rest') &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
@@ -3579,10 +3596,13 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
  * User can select number of records in all cases except for realtime adaptors
  * No need to show when export preview is disabled
  */
-selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
-  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
+selectors.canSelectRecordsInPreviewPanel = (state, formKey) => {
+  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, formKey);
 
   if (isExportPreviewDisabled) return false;
+
+  const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+
   const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
   // it is realtime incase of new export for realtime adaptors
@@ -3651,7 +3671,7 @@ selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, o
 selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinkedConnectionId}) => {
   if (ssLinkedConnectionId) return selectors.suiteScriptFileExportSampleData(state, {resourceId, resourceType, ssLinkedConnectionId});
 
-  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const stage = fileType === 'xlsx' ? 'csv' : 'raw';
   const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
@@ -3666,7 +3686,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinke
     }
   }
 
-  return rawData?.body;
+  return rawData;
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
@@ -3811,7 +3831,14 @@ selectors.sampleDataWrapper = createSelector(
  * are disabled if their respective connections are offline
  * Any other criteria to disable preview panel can be added here
  */
-selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
+selectors.isExportPreviewDisabled = (state, formKey) => {
+  if (!formKey) {
+    return true;
+  }
+
+  const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+  const formValues = selectors.formState(state, formKey)?.value || {};
+
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
@@ -3831,8 +3858,10 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
     return false;
   }
 
+  const connectionId = formValues['/_connectionId'];
+
   // In all other cases, where preview depends on connection being online, return the same
-  return selectors.isConnectionOffline(state, resourceObj._connectionId);
+  return selectors.isConnectionOffline(state, connectionId);
 };
 
 // Gives back supported stages of data flow based on resource type
@@ -4533,11 +4562,10 @@ selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectio
   });
 };
 selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
-  // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
   const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
-    'rawFile',
+    'raw',
   );
 
   if (!rawData) {
@@ -4550,7 +4578,7 @@ selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, reso
     }
   }
 
-  return rawData?.body;
+  return rawData;
 };
 selectors.getSuitescriptMappingSubRecordList = createSelector([
   (state, {integrationId,
@@ -4724,7 +4752,7 @@ selectors.applicationType = (state, resourceType, id) => {
     );
   }
 
-  if (adaptorType === 'http' && resourceObj?.http?.useRestForm) {
+  if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
 
@@ -4743,7 +4771,7 @@ selectors.applicationType = (state, resourceType, id) => {
     return connection && connection.rdbms && connection.rdbms.type;
   }
 
-  if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.useTechAdaptorForm && !assistant) {
+  if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
     adaptorType = adaptorType.replace(/HTTP/, 'REST');
   }
 
@@ -5362,6 +5390,28 @@ selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
 };
 
 /*
+ * Given flowId, exportId determines if the export is a standalone export
+ * i.e., not linked to any flow PG/PP
+ */
+selectors.isStandaloneExport = (state, flowId, exportId) => {
+  if (!exportId) {
+    return false;
+  }
+
+  if (!flowId || isNewId(flowId)) {
+    return true;
+  }
+
+  if (selectors.isPageGenerator(state, flowId, exportId, 'exports')) {
+    return false;
+  }
+
+  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+
+  return !flow.pageProcessors?.find(pp => pp._exportId === exportId);
+};
+
+/*
  * Given flowId, resourceId determines whether resource is a pg/pp
  */
 selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
@@ -5447,17 +5497,18 @@ selectors.transferListWithMetadata = state => {
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RESTExport') {
-    return false;
-  }
+  const { _connectionId: connectionId } = resourceObj || {};
 
   const connection = selectors.resource(state, 'connections', connectionId);
 
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
+  // This change is because of recent rest to http migration.
+  // In case of old connections, connection.type will come as a rest
+  // In all other cases, "connection?.http?.formType" should be used to find whether it is rest or http.
+  if (connection?.type === 'rest') {
+    return connection.rest?.mediaType === 'csv';
+  }
+
+  return connection?.http?.formType === 'rest' && connection?.http?.successMediaType === 'csv';
 };
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
@@ -5656,7 +5707,17 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || {};
+selectors.editorHelperFunctions = state => {
+  const functions = state?.session?.editors?.helperFunctions || {};
+  const userTimezone = selectors.userTimezone(state);
+  const timestampFunc = functions.timestamp;
+
+  if (timestampFunc && userTimezone) {
+    functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+  }
+
+  return functions;
+};
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
@@ -5825,7 +5886,7 @@ selectors.applicationName = (state, _expOrImpId) => {
   } else {
     const connection = selectors.resource(state, 'connections', _connectionId) || {};
 
-    appType = connection.assistant || connection.rdbms?.type || connection.type;
+    appType = connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type;
   }
 
   return getApp(appType)?.name;

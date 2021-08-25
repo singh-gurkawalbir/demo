@@ -552,7 +552,7 @@ export default function FilterPanel({editorId}) {
 
           return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
         },
-        valueGetter(rule) {
+        valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
           const r = rulesState[ruleId].data;
           let lhsValue = rule.$el
@@ -591,8 +591,6 @@ export default function FilterPanel({editorId}) {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
-            } else {
-              r.lhs.dataType = 'string';
             }
           }
 
@@ -628,13 +626,19 @@ export default function FilterPanel({editorId}) {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
-            } else {
-              r.rhs.dataType = 'string';
             }
           }
 
           if (!r.rhs.dataType) {
             r.rhs.dataType = 'string';
+          }
+
+          // if the rule input is updated, reset the data type
+          if (isTouched) {
+            if (lhsValue !== r.lhs[r.lhs.type || 'field']) {
+              r.lhs.dataType = 'string';
+              r.rhs.dataType = 'string';
+            }
           }
 
           r.lhs[r.lhs.type || 'field'] = lhsValue;
@@ -671,8 +675,6 @@ export default function FilterPanel({editorId}) {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
-              } else {
-                r.lhs.dataType = 'string';
               }
             }
 
@@ -704,8 +706,6 @@ export default function FilterPanel({editorId}) {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
-              } else {
-                r.rhs.dataType = 'string';
               }
             }
 
@@ -766,6 +766,11 @@ export default function FilterPanel({editorId}) {
         });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
 
+      // don't change the sequence of these events
+      qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
+        rule.filter.valueGetter(rule, true);
+      });
+
       // eslint-disable-next-line no-restricted-syntax
       for (const ruleId in rulesState) {
         if (Object.hasOwnProperty.call(rulesState, ruleId) && rulesState[ruleId]?.rule) {
@@ -775,6 +780,8 @@ export default function FilterPanel({editorId}) {
 
       if (disabled) {
         setTimeout(() => {
+          if (!qbuilder.current) return;
+
           jQuery(`#${qbuilder.current.id} button[data-not!=group]`).hide();
           jQuery(`#${qbuilder.current.id} button[data-not=group]`).prop(
             'disabled',

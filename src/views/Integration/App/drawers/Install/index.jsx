@@ -11,6 +11,7 @@ import {
   Typography,
   Link,
 } from '@material-ui/core';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -76,6 +77,7 @@ const oAuthApplications = [
   'shopify-oauth',
   'acumatica-oauth',
   'hubspot-oauth',
+  'amazonmws-oauth',
 ];
 
 export default function ConnectorInstallation(props) {
@@ -388,6 +390,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
       completed,
       url,
+      form,
     } = step;
 
     if (completed) {
@@ -480,12 +483,12 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (type === 'stack') {
       if (!stackId) setShowStackDialog(generateNewId());
-    } else if (type === INSTALL_STEP_TYPES.FORM) {
+    } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(
         integrationId,
         installerFunction,
         'inProgress',
-        step.form
+        form
       ));
     } else if (!step.isTriggered) {
       dispatch(
@@ -575,7 +578,10 @@ export default function ConnectorInstallation(props) {
             resourceId={connection.newId}
             resource={connection.doc}
             resourceType="connections"
-            connectionType={connection.doc.type}
+            // eslint-disable-next-line no-nested-ternary
+            connectionType={connection.doc.type === 'http'
+              ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
+              : connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
             addOrSelect={!_connectorId}

@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 450,
   },
   dottedLine: {
-    width: '100%',
+    width: 'calc(100% - 50px)',
     borderBottom: `3px dotted ${theme.palette.divider}`,
     top: 86,
     position: 'relative',
@@ -111,7 +111,7 @@ export default function PageProcessors({integrationId, flowId}) {
         isViewMode={isViewMode || isFreeFlow}
         onBlockClick={handleAddProcessor}
         blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
-                    />
+        />
       )}
       {!showAddPageProcessor &&
                     isDataLoaderFlow &&

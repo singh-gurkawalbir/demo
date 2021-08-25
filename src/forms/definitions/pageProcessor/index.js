@@ -182,9 +182,9 @@ export default {
       if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
       } else if (app.type === 'rest') {
-        expression.push({ $or: [{ 'http.useRestForm': true }, { type: 'rest' }] });
+        expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (app.type === 'http') {
-        expression.push({ 'http.useRestForm': { $ne: true } });
+        expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {
         expression.push({ type: app.type });
@@ -232,9 +232,25 @@ export default {
         }
       }
 
-      expression.push({
-        adaptorType,
-      });
+      if (app.type === 'rest') {
+        expression.push({
+          $or: [
+            { adaptorType: `REST${adaptorTypeSuffix}` },
+            { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'rest' }] },
+          ],
+        });
+      } else if (app.type === 'http') {
+        expression.push({
+          adaptorType,
+        });
+        expression.push({
+          'http.formType': { $ne: 'rest' },
+        });
+      } else {
+        expression.push({
+          adaptorType,
+        });
+      }
 
       if (connectionField.value) {
         expression.push({ _connectionId: connectionField.value });

@@ -1,5 +1,6 @@
 import moment from 'moment';
 import produce from 'immer';
+import { cloneDeep } from 'lodash';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
@@ -110,8 +111,7 @@ export default (state = [], action) => {
   }
 };
 
-export const remainingDays = date =>
-  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+export const remainingDays = date => Math.ceil((moment(date).milliseconds(0) - moment().milliseconds(0)) / 1000 / 60 / 60 / 24);
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
@@ -127,9 +127,9 @@ selectors.platformLicense = (state, accountId) => {
     return null;
   }
 
-  const ioLicense = account.ownerUser.licenses.find(
+  const ioLicense = cloneDeep(account.ownerUser.licenses.find(
     l => (['integrator', 'endpoint', 'diy'].includes(l.type))
-  );
+  ));
 
   if (!ioLicense) {
     return null;

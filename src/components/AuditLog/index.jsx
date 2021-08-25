@@ -28,6 +28,7 @@ export default function AuditLog({
   resourceType,
   resourceId,
   onClick,
+  isFixed,
   childId,
 }) {
   const classes = useStyles();
@@ -75,6 +76,7 @@ export default function AuditLog({
                 filters={filters}
                 childId={childId}
                 onClick={onClick}
+                isFixed={isFixed}
                 className={classes.tableContainer}
             />
             </div>

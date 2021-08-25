@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
 import shortid from 'shortid';
 import { isEqual } from 'lodash';
+import clsx from 'clsx';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import KeyValueRow from './Row';
@@ -30,12 +31,19 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
   dynaValueField: {
-    marginLeft: theme.spacing(0.5),
+    marginLeft: theme.spacing(1),
+    '& > div': {
+      lineHeight: '36px',
+    },
   },
   dynaKeyValueLabelWrapper: {
     flexDirection: 'row',
     display: 'flex',
     alignItems: 'flex-start',
+  },
+  dynaValueTitle: {
+    paddingLeft: '28px',
+    width: `calc(100% - ${theme.spacing(2)}px)`,
   },
 }));
 
@@ -64,6 +72,10 @@ export function KeyValueComponent(props) {
     showDelete,
     disabled,
     enableSorting = false,
+    showSortOrder = false,
+    showHeaderLabels = false,
+    keyLabel,
+    valueLabel,
   } = props;
 
   const preUpdate = useCallback(val => val.filter(
@@ -189,6 +201,12 @@ export function KeyValueComponent(props) {
         <FormLabel className={classes.label}>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
+      {showHeaderLabels && (
+      <div className={clsx(classes.rowContainer, classes.dynaValueTitle)}>
+        <FormLabel className={classes.label}>{keyLabel}</FormLabel>
+        <FormLabel className={classes.label}>{valueLabel}</FormLabel>
+      </div>
+      )}
       <>
         <SortableList
           onSortEnd={handleSortEnd}
@@ -220,6 +238,7 @@ export function KeyValueComponent(props) {
                   classes={classes}
                   r={r}
                   enableSorting={enableSorting}
+                  showSortOrder={showSortOrder}
               />
               )}
               />

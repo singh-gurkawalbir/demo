@@ -1,10 +1,11 @@
 import React from 'react';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
-import { getJobDuration, getJobStatus, FILTER_KEYS } from '../../../utils/errorManagement';
+import { getJobDuration, FILTER_KEYS } from '../../../utils/errorManagement';
 import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {COMPLETED_STATUS_OPTIONS} from '../../../utils/accountDashboard';
+import JobStatusWithTag from './JobStatusWithTag';
 
 export default {
   useColumns: () => [
@@ -20,7 +21,7 @@ export default {
             options={COMPLETED_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
         );
       },
-      Value: ({rowData: r}) => getJobStatus(r),
+      Value: ({rowData: r}) => <JobStatusWithTag job={r} />,
       width: '10%',
     },
     {

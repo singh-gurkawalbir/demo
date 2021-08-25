@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import PingMessageSnackbar from '../../../../PingMessageSnackbar';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers/index';
 import DynaAction from '../../../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../../../reducers/comms/ping';
+import { getParentResourceContext } from '../../../../../utils/connections';
+
+const emptyObj = {};
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -36,8 +40,14 @@ export const PingMessage = props => {
 export default function TestButton(props) {
   const { resourceId, formKey, disabled } = props;
   const [isTesting, setIsTesting] = useState(false);
+  const match = useRouteMatch();
   const dispatch = useDispatch();
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const { flowId, integrationId } = useSelector(
+    state => selectors.formParentContext(state, formKey) || emptyObj,
+    shallowEqual
+  );
+  const { parentType, parentId } = getParentResourceContext(match.url);
 
   const handleTestConnection = useCallback(
     () => {
@@ -47,9 +57,9 @@ export default function TestButton(props) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
       }
       setIsTesting(true);
-      dispatch(actions.resource.connections.test(resourceId, newValues));
+      dispatch(actions.resource.connections.test(resourceId, newValues, { flowId, integrationId, parentType, parentId }));
     },
-    [dispatch, resourceId, values]
+    [dispatch, flowId, integrationId, parentType, parentId, resourceId, values]
   );
   const testConnectionCommState = useSelector(state =>
     selectors.testConnectionCommState(state, resourceId)
@@ -70,6 +80,7 @@ export default function TestButton(props) {
         disabled={disabled || pingLoading}
         onClick={handleTestConnection}
         size="small"
+        dataTest="test"
         variant="outlined"
         color="secondary">
         {isTesting ? 'Testing' : 'Test connection'}

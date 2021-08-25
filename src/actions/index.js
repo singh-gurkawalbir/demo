@@ -352,16 +352,17 @@ const resource = {
       }),
   },
   connections: {
-    pingAndUpdate: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
+    pingAndUpdate: (connectionId, parentContext) =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId, parentContext }),
     updateStatus: collection =>
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    test: (resourceId, values) =>
+    test: (resourceId, values, parentContext) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+        parentContext,
       }),
     requestStatusPoll: integrationId =>
       action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, { integrationId }),
@@ -387,10 +388,11 @@ const resource = {
         resourceId,
         retainStatus,
       }),
-    saveAndAuthorize: (resourceId, values) =>
+    saveAndAuthorize: (resourceId, values, parentContext) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
         resourceId,
         values,
+        parentContext,
       }),
     authorized: connectionId =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
@@ -1023,11 +1025,12 @@ const integrationApp = {
   child: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, showForm) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        showForm,
       }),
     clearSteps: integrationId =>
       action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),
@@ -1278,32 +1281,6 @@ const user = {
       action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
-const sampleData = {
-  request: (resourceId, resourceType, values, stage, options = {}) =>
-    action(actionTypes.SAMPLEDATA.REQUEST, {
-      resourceId,
-      resourceType,
-      values,
-      stage,
-      options,
-    }),
-  requestLookupPreview: (resourceId, flowId, formValues, options) =>
-    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
-      resourceId,
-      flowId,
-      formValues,
-      options,
-    }),
-  received: (resourceId, previewData) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
-  update: (resourceId, processedData, stage) =>
-    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
-  patch: (resourceId, patch) =>
-    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
-  receivedError: (resourceId, error, stage) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
-  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
-};
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
     action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, {
@@ -1389,6 +1366,19 @@ const flowData = {
       resourceIndex,
       responseMapping,
     }),
+};
+const resourceFormSampleData = {
+  request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
+  setStatus: (resourceId, status) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS, { resourceId, status }),
+  receivedPreviewStages: (resourceId, previewStagesData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES, { resourceId, previewStagesData }),
+  receivedPreviewError: (resourceId, previewError) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR, { resourceId, previewError }),
+  setParseData: (resourceId, parseData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PARSE_DATA, { resourceId, parseData }),
+  setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
+  setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
+  setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
+  clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
+  clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
@@ -1550,7 +1540,8 @@ const resourceForm = {
     match,
     skipClose,
     isGenerate,
-    flowId
+    flowId,
+    parentContext
   ) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
@@ -1560,14 +1551,16 @@ const resourceForm = {
       skipClose,
       isGenerate,
       flowId,
+      parentContext,
     }),
-  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose, parentContext) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,
       match,
       skipClose,
+      parentContext,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
@@ -2044,6 +2037,11 @@ const flow = {
       fileName,
     }),
   runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
+  runActionStatus: (runStatus, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS, {
+      runStatus,
+      flowId,
+    }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,
@@ -2304,7 +2302,7 @@ export default {
   file,
   assistantMetadata,
   stack,
-  sampleData,
+  resourceFormSampleData,
   importSampleData,
   flowData,
   connection,

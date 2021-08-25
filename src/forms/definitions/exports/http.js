@@ -385,6 +385,7 @@ export default {
       type: 'csvparse',
       label: 'CSV parser helper',
       helpKey: 'file.csvParse',
+      ignoreSortAndGroup: true,
       defaultValue: r => r?.file?.csv || {
         columnDelimiter: ',',
         rowDelimiter: '\n',
@@ -425,6 +426,7 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
+    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
   },
 
   layout: {
@@ -444,6 +446,7 @@ export default {
           return 'What would you like to export?';
         },
         fields: [
+          'unencrypted.apiType',
           'http.method',
           'http.blobMethod',
           'http.relativeURI',

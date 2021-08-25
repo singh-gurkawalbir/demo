@@ -9,7 +9,7 @@ import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { emptyObject } from '../../../../../utils/constants';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 
-export default function useHandleSaveAndAuth({formKey, resourceType, resourceId}) {
+export default function useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext}) {
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -49,7 +49,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId}
       }
 
       dispatch(
-        actions.resource.connections.saveAndAuthorize(resourceId, newValues)
+        actions.resource.connections.saveAndAuthorize(resourceId, newValues, parentContext)
       );
     },
     [
@@ -60,6 +60,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId}
       resource.type,
       resource.newIA,
       resourceId,
+      parentContext,
     ]
   );
 

@@ -23,7 +23,7 @@ import {
   initEditor,
   toggleEditorVersion,
 } from '.';
-import { requestExportSampleData } from '../sampleData/exports';
+import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
@@ -781,7 +781,7 @@ describe('editor sagas', () => {
         .returns({})
         .run();
     });
-    test('should call requestExportSampleData and get preview stage data for dataURITemplate field', () => {
+    test('should call requestResourceFormSampleData and get preview stage data for dataURITemplate field', () => {
       const editor = {
         id: 'dataURITemplate',
         editorType: 'handlebars',
@@ -796,15 +796,15 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'dataURITemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestExportSampleData)],
+          [matchers.call.fn(requestResourceFormSampleData)],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    test('should call requestExportSampleData and get preview stage data for traceKeyTemplate field', () => {
+    test('should call requestResourceFormSampleData and get preview stage data for traceKeyTemplate field', () => {
       const editor = {
         id: 'traceKeyTemplate',
         editorType: 'handlebars',
@@ -819,15 +819,15 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'traceKeyTemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestExportSampleData)],
+          [matchers.call.fn(requestResourceFormSampleData)],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined, options: {flowId} })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    test('should call requestExportSampleData incase of http/rest resource when paging is configured', () => {
+    test('should call requestResourceFormSampleData incase of http/rest resource when paging is configured', () => {
       const editor = {
         id: 'restrelativeuri',
         editorType: 'handlebars',
@@ -853,11 +853,11 @@ describe('editor sagas', () => {
           [select(selectors.editor, 'restrelativeuri'), editor],
           [select(selectors.formState, 'new-123'), { value: formValues}],
           [matchers.call.fn(constructResourceFromFormValues), resource],
-          [matchers.call.fn(requestExportSampleData), {}],
+          [matchers.call.fn(requestResourceFormSampleData), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: formValues, options: {flowId} })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
@@ -953,7 +953,7 @@ describe('editor sagas', () => {
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
         .run();
     });
-    test('should make /getContext api call call with flow and integration id', () => {
+    test('should make /getContext api call with flow and integration id', () => {
       const editor = {
         id: 'eFilter',
         editorType: 'exportFilter',
@@ -1064,6 +1064,82 @@ describe('editor sagas', () => {
         .not.call.fn(apiCallWithRetry)
         .select.selector(selectors.sampleDataWrapper)
         .returns({ data: { record: { id: 999 }, lastExportDateTime: 1089 }, templateVersion: undefined })
+        .run();
+    });
+    test('should make /getContext api call correctly for connection type when it has no flow context', () => {
+      const editor = {
+        id: 'httppingbody',
+        editorType: 'handlebars',
+        resourceType: 'connections',
+        resourceId,
+        stage: 'flowInput',
+        fieldId: 'http.ping.body',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
+        .provide([
+          [select(selectors.editor, 'httppingbody'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {connection: {name: 'HTTP connection'}}}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              flowId: undefined,
+              integrationId: undefined,
+              type: 'connection',
+              connection: {_userId: undefined},
+              fieldPath: 'http.ping.body',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
+        .run();
+    });
+    test('should make /getContext api call correctly for connection type when it has flow context', () => {
+      const editor = {
+        id: 'httppingbody',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'connections',
+        resourceId,
+        stage: 'flowInput',
+        fieldId: 'http.ping.body',
+        parentId: '789',
+        parentType: 'exports',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
+        .provide([
+          [select(selectors.editor, 'httppingbody'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {connection: {name: 'HTTP connection'}}}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'integration-1234'}],
+          [select(selectors.ownerUserId), 'userId-999'],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              flowId,
+              integrationId: 'integration-1234',
+              exportId: '789',
+              type: 'connection',
+              connection: {_userId: 'userId-999'},
+              fieldPath: 'http.ping.body',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
         .run();
     });
   });
@@ -1195,10 +1271,14 @@ describe('editor sagas', () => {
         rule: {
           multipleRowsPerRecord: false,
           trimSpaces: true,
+          groupByFields: [],
+          sortByFields: [],
         },
         originalRule: {
           multipleRowsPerRecord: false,
           trimSpaces: true,
+          groupByFields: [],
+          sortByFields: [],
         },
       };
 
@@ -1568,6 +1648,8 @@ describe('editor sagas', () => {
         rule: 'some rule',
         originalRule: 'some rule',
         sampleDataStatus: 'requested',
+        groupByFields: [],
+        sortByFields: [],
       };
 
       return expectSaga(initEditor, { id, editorType: 'structuredFileParser', options })

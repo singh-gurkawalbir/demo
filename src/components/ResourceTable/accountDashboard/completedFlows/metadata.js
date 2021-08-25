@@ -127,7 +127,7 @@ export default {
     },
     {
       key: 'numResolvedByAuto',
-      heading: 'Auto-resolved',
+      HeaderValue: () => <HeaderWithHelpText title="Auto-resolved" helpKey="accountdashboard.numResolvedByAuto" />,
       Value: ({rowData: r}) => r.numResolvedByAuto,
       orderBy: 'numResolvedByAuto',
     },

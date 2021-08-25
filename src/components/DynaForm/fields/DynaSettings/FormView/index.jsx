@@ -15,14 +15,13 @@ const useStyles = makeStyles({
   },
 });
 
-export const settingsFormKey = 'settingsForm';
-
 export default function FormView({
   resourceId,
   resourceType,
   sectionId,
   disabled,
 }) {
+  const settingsFormKey = `settingsForm-${resourceId}`;
   const classes = useStyles();
   const dispatch = useDispatch();
   const settingsFormState = useSelector(state =>

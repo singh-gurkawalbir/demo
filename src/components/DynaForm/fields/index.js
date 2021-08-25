@@ -9,6 +9,7 @@ import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
+import DynaUpdateOptions from './select/DynaUpdateOptions';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 import DynaRelativeUri_afe from './DynaRelativeUri_afe';
@@ -135,8 +136,12 @@ import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
 import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
 import DynaDynamicSelect from './DynaDynamicSelect';
 import DynaSelectLookup from './DynaSelectLookup';
+import DynaSortAndGroup from './DynaSortAndGroup';
+import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
+import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 
 export default {
+  updateoptions: DynaUpdateOptions,
   reportdaterange: DynaReportDateRange,
   flowstiedtointegrations: DynaFlowsTiedToIntegrations,
   allintegrations: DynaAllIntegrations,
@@ -180,6 +185,7 @@ export default {
   csvgenerate: DynaCsvGenerate_afe,
   xmlparse: DynaXmlParse_afe,
   refreshableselect: DynaRefreshableSelect,
+  netsuiterecordtype: DynaNetSuiteRecordType,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
@@ -281,4 +287,6 @@ export default {
   nsauthtype: DynaNetsuiteAuthType,
   dynamicselect: DynaDynamicSelect,
   selectlookup: DynaSelectLookup,
+  sortandgroup: DynaSortAndGroup,
+  selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
 };

@@ -1661,6 +1661,13 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreLookupName;
           }
         }
+        /*
+        Fix for https://celigo.atlassian.net/browse/IO-22027
+        If ignoreExtract has url parameter delimiters(? and /) in them, it will not be extracted from url
+        */
+        if (importAdaptorSubSchema.ignoreExtract && /(\?|\/)/.test(importAdaptorSubSchema.ignoreExtract)) {
+          pathParams[p.id] = importAdaptorSubSchema.ignoreExtract;
+        }
       }
 
       if (p.isIdentifier && pathParams[p.id]) {

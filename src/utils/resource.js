@@ -821,7 +821,7 @@ export const isOauth = connectionDoc =>
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
 
-  if (['acumatica', 'shopify', 'hubspot'].includes(assistant)) {
+  if (['acumatica', 'shopify', 'hubspot', 'amazonmws'].includes(assistant)) {
     if (
       resource.http &&
       resource.http.auth &&

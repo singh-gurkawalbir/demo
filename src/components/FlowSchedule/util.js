@@ -794,7 +794,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   }
 
   if (
-    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '10') &&
+    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '5' || cronArr[MINUTES] === '10') &&
     cronArr[HOURS].indexOf('*') === -1 &&
     cronArr[HOURS].indexOf('?') === -1
   ) {
@@ -833,7 +833,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   }
 
   if (
-    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '10') &&
+    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '5' || cronArr[MINUTES] === '10') &&
     cronArr[HOURS] &&
     cronArr[HOURS].split(',').length === 1
   ) {
@@ -868,19 +868,26 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   return resource;
 };
 
-export const getScheduleStartMinute = (resource = {}, preferences) => {
+export const getScheduleStartMinute = (resource = {}) => {
   let scheduleStartMinute = 0;
 
-  if (preferences && preferences.scheduleShiftForFlowsCreatedAfter) {
-    const changeStartMinuteForFlowsCreatedAfter = moment(
-      preferences.scheduleShiftForFlowsCreatedAfter
-    );
+  const changeStartMinuteForFlowsCreatedAfter = moment(
+    process.env.SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+  );
+  const secondChangeStartMinuteForFlowsCreatedAfter = moment(
+    process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+  );
 
+  if (resource) {
     if (
-      resource && (
-        !resource.createdAt ||
+      !resource.createdAt ||
+      secondChangeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
+    ) {
+      scheduleStartMinute = 5;
+    } else if (
+      !resource.createdAt ||
       changeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
-      )) {
+    ) {
       scheduleStartMinute = 10;
     }
   }
