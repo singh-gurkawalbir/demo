@@ -77,7 +77,7 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     lastExportDateTime: getLastExportDateTime(resource),
     currentExportDateTime: getCurrentExportDateTime(resource),
   };
-  const files = isFileMetaExpectedForResource(resource, connection)
+  const files = isFileMetaExpectedForResource(resource)
     ? getSampleFileMeta()
     : undefined;
   const { type, rawData } = resource || {};

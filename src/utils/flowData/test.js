@@ -860,25 +860,10 @@ describe('isFileMetaExpectedForResource util', () => {
   test('should return false in case of invalid arguments', () => {
     expect(isFileMetaExpectedForResource()).toBeFalsy();
   });
-  test('should return true in case of Data loader', () => {
-    const resource = {type: 'simple'};
-
-    expect(isFileMetaExpectedForResource(resource)).toBeTruthy();
-  });
   test('should return true in case of file adaptor', () => {
     const resource = {adaptorType: 'FTPExport'};
 
     expect(isFileMetaExpectedForResource(resource)).toBeTruthy();
-  });
-  test('should return true in case of Rest - Csv Media Type Export', () => {
-    const resource = {adaptorType: 'RESTExport'};
-    const connection = {
-      rest: {
-        mediaType: 'csv',
-      },
-    };
-
-    expect(isFileMetaExpectedForResource(resource, connection)).toBeTruthy();
   });
 });
 describe('shouldUpdateResourceSampleData util', () => {

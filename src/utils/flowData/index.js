@@ -244,12 +244,7 @@ export const isUIDataExpectedForResource = (resource, connection) =>
   isBlobTypeResource(resource) ||
   isIntegrationApp(resource); // Need to do
 
-export const isFileMetaExpectedForResource = (resource, connection) => {
-  const { type } = resource || {};
-  const isDataLoader = type === 'simple';
-
-  return isRestCsvMediaTypeExport(resource, connection) || isDataLoader || isFileAdaptor(resource);
-};
+export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 // Gives sample file data
 export const getSampleFileMeta = () => [
   {
