@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import React, {useCallback} from 'react';
-import {makeStyles, Typography } from '@material-ui/core';
+import React from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -325,22 +325,15 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.primary.light,
     },
   },
-  showPopper: {
-    background: 'gray',
-    color: 'white',
-    borderRadius: '4px',
-    padding: 4,
-    position: 'absolute',
-    top: -30,
-  },
 }));
 
 const IconTemplate = ({Icon, iconName, args}) => {
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
 
-  const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Icon copied to clipboard' }), [enquesnackbar]);
+  const handleCopy = copiedText => {
+    enquesnackbar({ message: `${copiedText} copied!` });
+  };
 
   return (
     <CopyToClipboard
