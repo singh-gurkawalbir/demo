@@ -10,6 +10,8 @@ import {
   getCurrentExportDateTime,
   isUIDataExpectedForResource,
   getBlobResourceSampleData,
+  getSampleFileMeta,
+  isFileMetaExpectedForResource,
 } from '../../../../utils/flowData';
 import requestRealTimeMetadata from '../../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../../sampleDataGenerator/fileAdaptorSampleData';
@@ -75,6 +77,9 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     lastExportDateTime: getLastExportDateTime(resource),
     currentExportDateTime: getCurrentExportDateTime(resource),
   };
+  const files = isFileMetaExpectedForResource(resource, connection)
+    ? getSampleFileMeta()
+    : undefined;
   const { type, rawData } = resource || {};
 
   // check for raw data on resource
@@ -86,6 +91,9 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     };
 
     return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
+  }
+  if (files) {
+    return { uiData, files };
   }
 
   return type === 'delta' ? { uiData, postData } : { uiData };
