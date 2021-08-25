@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import flowSchema from './metadata/flowSchema';
+import {path as resetZoomIconPath} from '../../../../components/icons/FullScreenCloseIcon';
 
 let app;
 const pageProcessors = {};
@@ -49,27 +50,51 @@ function getAppBlock(resource, x, y) {
   return container;
 }
 
+function makeSvgTexture(path) {
+  // This solution found here:
+  // https://www.html5gamedevs.com/topic/42416-generate-texture-from-svg-content-instead-of-svg-path/
+  const svgObject = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+    <path d="${path}"/>
+  </svg>`;
+
+  const blob = new Blob([svgObject], {type: 'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const texture = PIXI.Texture.from(url);
+
+  return texture;
+}
+
+function makeIconButton(texture) {
+  const btnContainer = new PIXI.Container();
+  const btn = new PIXI.Sprite(texture);
+
+  btn.interactive = true;
+  btn.buttonMode = true;
+  btn.on('mouseover', () => { btn.alpha = 0.5; });
+  btn.on('mouseout', () => { btn.alpha = 1; });
+
+  const hitBox = new PIXI.Graphics();
+
+  // hitBox.lineStyle(1);
+  hitBox.beginFill(0xFFFFFF);
+  hitBox.drawCircle(12, 12, 16);
+  hitBox.alpha = 0.7;
+
+  btnContainer.addChild(hitBox);
+  btnContainer.addChild(btn);
+
+  return btnContainer;
+}
+
 function buildViewportControls() {
-  const gr = new PIXI.Graphics();
+  const zoomResetTexture = makeSvgTexture(resetZoomIconPath);
+  const zoomResetButton = makeIconButton(zoomResetTexture);
 
-  gr.beginFill(0x1D76C7);
-  gr.lineStyle(1);
-  gr.drawCircle(0, 0, 20);
-  gr.endFill();
-
-  const texture = app.renderer.generateTexture(gr);
-
-  const controls = new PIXI.Sprite(texture);
-
-  controls.interactive = true;
-  controls.buttonMode = true;
-  controls.on('mouseover', () => { controls.alpha = 0.5; });
-  controls.on('mouseout', () => { controls.alpha = 1; });
-
-  controls.position.set(app.screen.width, 25);
+  zoomResetButton.position.set(app.screen.width + 50, 25);
   // controls.anchor.x = 1;
 
-  return controls;
+  return zoomResetButton;
 }
 
 function buildFlow(viewport, flowSchema) {
