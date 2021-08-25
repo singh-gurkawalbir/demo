@@ -3,8 +3,13 @@ import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import flowSchema from './metadata/flowSchema';
 import {path as zoomResetIconPath} from '../../../../components/icons/FullScreenCloseIcon';
+import {path as zoomFitIconPath} from '../../../../components/icons/FullScreenOpenIcon';
 import {path as zoomUpIconPath} from '../../../../components/icons/AddIcon';
 import {path as zoomDownIconPath} from '../../../../components/icons/SubtractIcon';
+
+PIXI.WebGLRenderer = PIXI.Renderer;
+window.__PIXI_INSPECTOR_GLOBAL_HOOK__ &&
+    window.__PIXI_INSPECTOR_GLOBAL_HOOK__.register({ PIXI });
 
 let app;
 const pageProcessors = {};
@@ -97,21 +102,25 @@ function buildViewportControls(viewport) {
   const handleZoomUp = () => viewport.zoomPercent(0.1);
   const handleZoomDown = () => viewport.zoomPercent(-0.1);
   const handleZoomReset = () => viewport.setZoom(1);
+  const handleZoomFit = () => viewport.fitWorld();
 
   const container = new PIXI.Container();
 
   container.position.set(app.screen.width + 50, 25);
   // controls.anchor.x = 1;
 
-  const zoomResetButton = makeIconButton(zoomResetIconPath, handleZoomReset);
   const zoomUpButton = makeIconButton(zoomUpIconPath, handleZoomUp);
   const zoomDownButton = makeIconButton(zoomDownIconPath, handleZoomDown);
+  const zoomFitButton = makeIconButton(zoomFitIconPath, handleZoomFit);
+  const zoomResetButton = makeIconButton(zoomResetIconPath, handleZoomReset);
 
   zoomDownButton.x = buttonSpacing;
-  zoomResetButton.x = buttonSpacing * 2;
+  zoomFitButton.x = buttonSpacing * 2;
+  zoomResetButton.x = buttonSpacing * 3;
 
   container.addChild(zoomUpButton);
   container.addChild(zoomDownButton);
+  container.addChild(zoomFitButton);
   container.addChild(zoomResetButton);
 
   return container;
