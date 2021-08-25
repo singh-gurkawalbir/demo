@@ -74,7 +74,11 @@ export default {
         return r.application;
       }
       const applications = applicationsList();
-      const application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      let application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+
+      if (r.type === 'http' && r.http?.formType === 'rest') {
+        application = 'rest';
+      }
       const app = applications.find(a => a.id === application) || {};
 
       return app.name;
@@ -843,9 +847,9 @@ export default {
     label: 'Refresh token',
   },
   'http.auth.cookie.uri': {
-    type: 'uri',
-    showLookup: false,
-    showExtract: false,
+    type: 'text',
+    // showLookup: false,
+    // showExtract: false,
     label: 'Absolute URL',
   },
   'http.auth.cookie.body': {

@@ -3,8 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-
-import DynaSelect from '../DynaSelect';
+import DynaMultiSelect from '../DynaMultiSelect';
 
 export default function DynaUpdateOptions(props) {
   const { optionsMap, onFieldChange, id, listeningFieldId, formKey} = props;
@@ -18,5 +17,5 @@ export default function DynaUpdateOptions(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listenerFieldValue]);
 
-  return <DynaSelect {...props} options={finalOptions} />;
+  return <DynaMultiSelect {...props} options={finalOptions} />;
 }

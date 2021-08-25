@@ -25,7 +25,10 @@ export default function SaveAndCloseButtonGroupForm({formKey, onClose, onSave, d
       remountAfterSaveFn();
     }
   }, [remountAfterSaveFn, status]);
-  const handleCancelClick = useHandleCancel({formKey, isDirty, onClose, handleSave: handleSaveAndClose});
+  const handleCancelConfirm = useHandleCancel({formKey, isDirty, onClose, handleSave: handleSaveAndClose});
+
+  // if the form is disabled we should not show the confirm dialog
+  const handleCancelClick = disabled ? onClose : handleCancelConfirm;
 
   useTriggerCancelFromContext(formKey, handleCancelClick);
 

@@ -125,6 +125,16 @@ export function* deleteUISpecificValues({ values, resourceId }) {
     // remove ui field value from the form value payload
     delete valuesCopy[id];
   });
+
+  // TO DO: This logic should be revisited
+  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+    if (valuesCopy['/file/csv']?.keyColumns) {
+      valuesCopy['/file/csv'].keyColumns = undefined;
+    }
+  }
+  if (valuesCopy['/file/xlsx/keyColumns']) {
+    valuesCopy['/file/xlsx/keyColumns'] = undefined;
+  }
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);

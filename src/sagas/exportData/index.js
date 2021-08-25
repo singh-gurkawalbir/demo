@@ -64,13 +64,12 @@ function* getData({ kind, identifier: id, resource }) {
 
     yield put(actions.exportData.receive(kind, id, data));
   } catch (e) {
-    if (e.status === 403 || e.status === 401) return;
-
     if (e.status >= 400 && e.status < 500) {
       let parsedError;
 
       try {
         parsedError = JSON.parse(e.message);
+        parsedError = parsedError?.errors?.[0]?.message || parsedError;
       } catch (ex) {
         parsedError = String(e.message);
       }

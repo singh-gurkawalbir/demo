@@ -8,9 +8,7 @@ function findRowDelimiter(sampleData) {
   let rowDelimiter;
 
   if (sampleData && typeof sampleData === 'string') {
-    if (sampleData.indexOf('\n\r') > -1) {
-      rowDelimiter = '\n\r';
-    } else if (sampleData.indexOf('\r\n') > -1) {
+    if (sampleData.indexOf('\r\n') > -1) {
       rowDelimiter = '\r\n';
     } else if (sampleData.indexOf('\r') > -1) {
       rowDelimiter = '\r';

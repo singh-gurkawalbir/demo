@@ -1,3 +1,4 @@
+import { addDays, startOfDay } from 'date-fns';
 import { JOB_STATUS } from '../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
 
@@ -10,6 +11,8 @@ export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
 export const DEFAULT_RANGE = {
+  startDate: startOfDay(addDays(new Date(), -1)),
+  endDate: new Date(),
   preset: 'last24hours',
 };
 

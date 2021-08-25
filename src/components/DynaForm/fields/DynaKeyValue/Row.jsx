@@ -1,4 +1,4 @@
-import { makeStyles, TextField } from '@material-ui/core';
+import { makeStyles, TextField, Select, MenuItem } from '@material-ui/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import TrashIcon from '../../../icons/TrashIcon';
@@ -36,11 +36,14 @@ export default function KeyValueRow(props) {
     r,
     classes,
     enableSorting,
+    showSortOrder,
   } = props;
+
   const {
     keyConfig: suggestKeyConfig,
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
+
   const compClasses = useStyles();
   const [showGripper, setShowGripper] = useState(false);
   const handleOnMouseEnter = useCallback(() => {
@@ -104,7 +107,7 @@ export default function KeyValueRow(props) {
               />
         )}
 
-        {suggestValueConfig && (
+        {suggestValueConfig && !showSortOrder && (
         <AutoSuggest
           disabled={disabled}
           value={r[valueName]}
@@ -121,7 +124,7 @@ export default function KeyValueRow(props) {
           fullWidth
               />
         )}
-        {!suggestValueConfig && (
+        {!suggestValueConfig && !showSortOrder && (
         <TextField
           disabled={disabled}
           autoFocus={index === rowInd && !isKey}
@@ -134,6 +137,24 @@ export default function KeyValueRow(props) {
           onChange={handleValueUpdate(r.key)}
           className={clsx(classes.dynaField, classes.dynaValueField)}
               />
+        )}
+        {showSortOrder && (
+        <Select
+          disabled={disabled}
+          id={`${valueName}-${index}`}
+          data-test={`${valueName}-${index}`}
+          defaultValue={r[valueName]}
+          variant="filled"
+          fullWidth
+          className={clsx(classes.dynaField, classes.dynaValueField)}
+          onChange={handleValueUpdate(r.key)}>
+          <MenuItem key="ascending" value={false}>
+            Ascending
+          </MenuItem>
+          <MenuItem key="descending" value>
+            Descending
+          </MenuItem>
+        </Select>
         )}
 
         {showDelete && (

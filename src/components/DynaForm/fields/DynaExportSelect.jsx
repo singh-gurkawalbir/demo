@@ -12,7 +12,7 @@ export default function DynaExportSelect(props) {
   const resourceId = resourceContext?.resourceId;
   const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
   const { kind, key, exportResource } = makeExportResource(resource, resConnectionId, resConnectorId);
-  const { status, data, errorMessage } = useSelector(state =>
+  const { status, data, error: errorMessage } = useSelector(state =>
     selectors.exportData(state, key)
   );
   const dispatch = useDispatch();

@@ -190,18 +190,6 @@ export function getJobDuration(job) {
 
   return undefined;
 }
-
-export function getJobStatus(job) {
-  const jobStatus = job?.status;
-  const statusMap = {
-    completed: 'Completed',
-    canceled: 'Canceled',
-    failed: 'Failed',
-  };
-
-  return statusMap[jobStatus] || jobStatus;
-}
-
 export function getMockHttpErrorDoc() {
   const MOCK_HTTP_BLOB_DOC = {
     headers: { 'content-type': 'application/json' },

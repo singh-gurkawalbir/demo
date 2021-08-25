@@ -82,6 +82,26 @@ describe('session.flows reducers', () => {
 
     expect(newState).toEqual(expectedState);
   });
+
+  test('should set runStatus property correctly', () => {
+    const oldState = { };
+    let expectedState = {
+      [flowId]: {runStatus: 'Started'},
+    };
+    let newState = reducer(oldState,
+      actions.flow.runActionStatus('Started', flowId)
+    );
+
+    expect(newState).toEqual(expectedState);
+    expectedState = {
+      [flowId]: {runStatus: 'Done'},
+    };
+    newState = reducer(oldState,
+      actions.flow.runActionStatus('Done', flowId)
+    );
+
+    expect(newState).toEqual(expectedState);
+  });
 });
 
 describe('session.flows selectors', () => {
@@ -142,6 +162,30 @@ describe('session.flows selectors', () => {
       expected = {onOffInProgress: false };
 
       expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(expected);
+    });
+  });
+  describe('flowRunStatus', () => {
+    const defaultObject = { runStatus: '' };
+
+    test('should return defaultObject when state is undefined.', () => {
+      expect(selectors.flowRunStatus(undefined, flowId)).toEqual(defaultObject);
+    });
+
+    test('should return correct runStatus flag', () => {
+      const oldState = { };
+
+      let newState = reducer(oldState,
+        actions.flow.runActionStatus('Started', flowId)
+      );
+      let expected = {runStatus: 'Started' };
+
+      expect(selectors.flowRunStatus(newState, flowId)).toEqual(expected);
+      newState = reducer(oldState,
+        actions.flow.runActionStatus('Done', flowId)
+      );
+      expected = {runStatus: 'Done' };
+
+      expect(selectors.flowRunStatus(newState, flowId)).toEqual(expected);
     });
   });
 });
