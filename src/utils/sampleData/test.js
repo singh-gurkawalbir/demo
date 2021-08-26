@@ -802,10 +802,9 @@ describe('extractRawSampleDataFromOneToManySampleData util', () => {
 
     expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
   });
-  test('should return the original sample data if the pathToMany provided is not a valid one', () => {
+  test('should return the passed parent sample data if the pathToMany provided is not a valid one', () => {
     const sampleData = {
       _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
-      a: 1,
     };
     const resource = {
       _id: '999',
@@ -815,7 +814,7 @@ describe('extractRawSampleDataFromOneToManySampleData util', () => {
       pathToMany: 'check.f',
     };
 
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toEqual(sampleData._PARENT);
   });
   test('should return the actual sample data before oneToMany path is processed when the resource has valid pathToMany', () => {
     const sampleData1 = {
@@ -832,12 +831,25 @@ describe('extractRawSampleDataFromOneToManySampleData util', () => {
       c: 7,
       d: 11,
     };
-    const resource = {
+    const sampleData4 = {
+      _PARENT: [
+        { a: 5 },
+        { b: 10},
+      ],
+    };
+    const resource1 = {
       _id: '999',
       name: 'dummy resource',
       adaptorType: 'HTTPImport',
       oneToMany: true,
       pathToMany: 'e.check.f',
+    };
+    const resource2 = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      oneToMany: true,
+      pathToMany: 'e',
     };
     const expectedSampleData1 = {
       a: 5,
@@ -865,10 +877,15 @@ describe('extractRawSampleDataFromOneToManySampleData util', () => {
         },
       },
     };
+    const expectedSampleData4 = [
+      { a: 5 },
+      { b: 10},
+    ];
 
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData1, resource)).toEqual(expectedSampleData1);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData2, resource)).toEqual(expectedSampleData2);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData3, resource)).toEqual(expectedSampleData3);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData1, resource1)).toEqual(expectedSampleData1);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData2, resource1)).toEqual(expectedSampleData2);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData3, resource1)).toEqual(expectedSampleData3);
+    expect(extractRawSampleDataFromOneToManySampleData(sampleData4, resource2)).toEqual(expectedSampleData4);
   });
 });
 
