@@ -1139,8 +1139,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const resourceType = 'exports';
         const flowResourcesMap = {
-          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined }},
-          'export-456': {doc: pg2, options: { uiData: undefined }},
+          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined, files: undefined }},
+          'export-456': {doc: pg2, options: { uiData: undefined, files: undefined }},
         };
 
         return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })

@@ -1331,6 +1331,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
         pageProcessors: [],
       };
       const uiData = { test: 5 };
+      const files = undefined;
 
       return expectSaga(getPreviewOptionsForResource, { resource: iaResource, flow})
         .provide([
@@ -1344,7 +1345,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
             uiData,
           ],
         ])
-        .returns({ uiData })
+        .returns({ uiData, files })
         .run();
     });
   });
