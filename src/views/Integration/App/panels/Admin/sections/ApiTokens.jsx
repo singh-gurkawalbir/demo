@@ -17,6 +17,10 @@ const useStyles = makeStyles(theme => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
+  noTokenMessage: {
+    margin: theme.spacing(-3, 0, 0, -3),
+    paddingLeft: theme.spacing(2),
+  },
 }));
 
 export default function ApiTokenSection({ integrationId }) {
@@ -73,7 +77,7 @@ export default function ApiTokenSection({ integrationId }) {
               resources={list.resources}
             />
           ) : (
-            <Typography>
+            <Typography className={classes.noTokenMessage}>
               No API tokens yet exist for this integration.
             </Typography>
           )}

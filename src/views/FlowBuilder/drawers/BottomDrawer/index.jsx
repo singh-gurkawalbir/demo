@@ -297,6 +297,7 @@ export default function BottomDrawer({
         classes={drawerClasses}
         PaperProps={drawerPaperProps}
         variant="persistent"
+        BackdropProps={{ invisible: true }}
         anchor="bottom">
         <div
           className={classes.tabBar}
