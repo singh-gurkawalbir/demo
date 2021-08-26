@@ -114,8 +114,6 @@ export function getResourceSubType(resource) {
 
   if (type === 'simple') {
     resourceType = type;
-  } else if (adaptorType?.startsWith('HTTP') || type === 'http') {
-    resourceType = resource.http?.formType === 'rest' ? 'rest' : 'http';
   } else {
     resourceType = adaptorTypeMap[adaptorType] || type;
   }
