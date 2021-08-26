@@ -49,7 +49,6 @@ export default function getFormMetadata(options) {
         id: 'keyColumns',
         name: 'keyColumns',
         label: 'Key columns',
-        defaultDisabled: true,
         type: 'suitescriptfilekeycolumn',
         resourceId: options.resourceId,
         helpKey: 'export.file.csv.keyColumns',
