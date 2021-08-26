@@ -14,13 +14,13 @@ export function* _fetchAssistantSampleData({ resource }) {
 
   yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(selectors.assistantData, {
-    adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
+    adaptorType: (resource.adaptorType === 'HTTPImport' && resource.http?.formType !== 'rest') ? 'http' : 'rest',
     assistant: resource.assistant,
   });
 
   if (!assistantMetadata) {
     assistantMetadata = yield call(requestAssistantMetadata, {
-      adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
+      adaptorType: (resource.adaptorType === 'HTTPImport' && resource.http?.formType !== 'rest') ? 'http' : 'rest',
       assistant: resource.assistant,
     });
   }

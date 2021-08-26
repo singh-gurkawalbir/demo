@@ -226,7 +226,7 @@ export function fieldMeta({ resource, assistantData }) {
   let { adaptorType } = resource;
   let headers;
 
-  if (adaptorType === 'RESTExport') {
+  if (adaptorType === 'RESTExport' || resource?.http?.formType === 'rest') {
     adaptorType = 'rest';
     headers = resource.rest?.headers || [];
   } else {
