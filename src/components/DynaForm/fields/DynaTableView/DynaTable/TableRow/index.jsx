@@ -181,9 +181,11 @@ const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
   const rowRef = React.useRef();
   const heightOfCell = rowRef?.current?.getBoundingClientRect().height;
 
+  // we have to maintain in the height of each cell so that the virtualized row can be updated with the same
   useEffect(() => {
     setTableState({type: actionTypes.UPDATE_CELL_HEIGHT, rowIndex, colIndex, heightOfCell});
   }, [colIndex, rowIndex, heightOfCell, setTableState]);
+  // this function is need for react virtualized list to reset that row computation
   useEffect(() => {
     listRef?.current?.resetAfterIndex(rowIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
