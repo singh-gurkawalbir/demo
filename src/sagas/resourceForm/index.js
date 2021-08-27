@@ -787,7 +787,7 @@ export function* initFormValues({
     return; // nothing to do.
   }
   const { assistant, assistantMetadata, _connectionId } = resource;
-  const adaptorType = ['RESTExport', 'RESTImport'].includes(resource.adaptorType) ? 'rest' : 'http';
+  const adaptorType = (['RESTExport', 'RESTImport'].includes(resource.adaptorType) || resource.http?.formType === 'rest') ? 'rest' : 'http';
 
   let assistantData;
 
