@@ -1,5 +1,5 @@
 import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { VariableSizeList } from 'react-window';
 import Spinner from '../../../../../Spinner';
@@ -8,7 +8,6 @@ import TableRow, { isCellValid } from '../TableRow';
 const ITEM_SIZE = 46;
 const PADDING = 5;
 const INVALID_ITEM_SIZE_EXTRA_SPACE = 9;
-const NO_OF_ROWS = 10;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
   const {
@@ -19,19 +18,19 @@ const VirtualizedListRow = ({index, style, data}) => {
     setTableState,
     onRowChange,
     disableDeleteRows,
-    setSize,
+    listRef,
   } = data;
 
-  const { value, key } = items[index];
+  const { value, sizeMap, key } = items[index];
 
   return (
     <div
       style={style} key={key}
     >
       <TableRow
-        isVirtualizedTable
+        listRef={listRef}
         index={index}
-        setSize={setSize}
+        rowSizeMap={sizeMap}
         rowValue={value}
         rowIndex={index}
         tableSize={items.length}
@@ -82,6 +81,7 @@ const useResetErroredRowHeights = (listRef, items, optionsMap, touched) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 };
+
 const VirtualizedTable = ({
   items,
   optionsMapFinal,
@@ -89,6 +89,7 @@ const VirtualizedTable = ({
   ignoreEmptyRow,
   isAnyColumnFetching,
   setTableState,
+  tableState,
   onRowChange,
   disableDeleteRows }) => {
   const listRef = React.createRef();
@@ -96,41 +97,30 @@ const VirtualizedTable = ({
   const [, setItemCount] = useState(items.length);
   const [scrollIndex, setScrollIndex] = useState(0);
 
-  const [sizeMap, setSizeMap] = useState({});
-  const getSize = useCallback(rowIndex => Object.values(sizeMap?.[rowIndex] || {}).reduce((acc, curr) => {
-    if (curr > acc) {
-      return curr;
-    }
+  const getSize = useCallback(rowIndex => {
+    const {sizeMap } = tableState.tableStateValue?.[rowIndex] || {};
 
-    return acc;
-  }, -1) || ITEM_SIZE, [sizeMap]);
+    return Object.values(sizeMap || {}).reduce((acc, curr) => {
+      if (curr > acc) {
+        return curr;
+      }
 
-  const heightOfAllRows = Object.values(sizeMap).reduce((acc, curr, index) =>
-    acc + getSize(index), 0);
-  const maxHeightOfSelect = items.length > NO_OF_ROWS
-    ? TABLE_VIEW_PORT_HEIGHT
-    : heightOfAllRows;
+      return acc;
+    }, ITEM_SIZE) + PADDING;
+  }, [tableState]);
 
-  console.log('check here ', maxHeightOfSelect);
-  const setSize = useCallback((rowIndex, colIndex, size) => {
-    setSizeMap(sizeMap => {
-      const row = {...(sizeMap?.[rowIndex] || {}), [colIndex]: size + PADDING};
+  const heightOfAllRows = (tableState?.tableStateValue || {}).reduce((acc, curr, index) => acc + getSize(index), 0);
 
-      return { ...sizeMap, [rowIndex]: row };
-    });
+  const maxHeightOfSelect = TABLE_VIEW_PORT_HEIGHT < heightOfAllRows ? TABLE_VIEW_PORT_HEIGHT : heightOfAllRows;
 
-    listRef.current.resetAfterIndex(rowIndex);
-  }, [listRef]);
-
-  console.log(' here ', sizeMap);
   useResetErroredRowHeights(listRef, items, optionsMapFinal, touched);
+
   const getItemSize = useCallback(rowIndex => {
     const rowValue = items[rowIndex];
     const rowValid = isRowValid(optionsMapFinal, rowValue, rowIndex, items, touched);
 
     const rowHeight = getSize(rowIndex);
 
-    console.log('hi ', rowHeight, rowIndex);
     if (!rowValid) return rowHeight + INVALID_ITEM_SIZE_EXTRA_SPACE;
 
     return rowHeight;
@@ -145,8 +135,7 @@ const VirtualizedTable = ({
     onRowChange,
     disableDeleteRows,
     listRef,
-    setSize,
-  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, listRef, setSize]);
+  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, listRef]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders

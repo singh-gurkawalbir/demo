@@ -78,7 +78,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   const handleUpdate = useCallback(value => {
     setTableState({
       type: actionTypes.UPDATE_TABLE_ROW,
-      index: rowIndex,
+      rowIndex,
       field: id,
       value,
       optionsMap,
@@ -173,41 +173,46 @@ export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}
   return !required || (required && fieldValue);
 };
 
-const RowCellSetSize = ({ setSize, colIndex, ...props }) => {
-  const rowRef = React.useRef();
-  const {rowIndex} = props;
-  const heightOfCell = rowRef?.current?.getBoundingClientRect().height;
-
-  console.log('hello ', rowRef);
-  useEffect(() => {
-    setSize(rowIndex, colIndex, heightOfCell);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [colIndex, rowIndex, heightOfCell]);
-
-  return (
-    <div ref={rowRef}>
-      <RowCell {...props} />
-    </div>
-  );
-};
 const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
-  setSize, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+  op, touched, rowIndex, tableSize, setTableState, onRowChange, fieldHeight, listRef}) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
-  return useMemo(() => (
-    <RowCellSetSize
-      optionsMap={optionsMap}
-      fieldValue={fieldValue}
-      op={op}
-      isValid={isValid}
-      rowIndex={rowIndex}
-      setTableState={setTableState}
-      onRowChange={onRowChange}
-      colIndex={colIndex}
-      setSize={setSize}
+  const rowRef = React.useRef();
+  const heightOfCell = rowRef?.current?.getBoundingClientRect().height;
+
+  if (rowIndex === 0) {
+    console.log('check heightOfCell', heightOfCell, fieldHeight);
+  }
+  useEffect(() => {
+    setTableState({type: actionTypes.UPDATE_CELL_HEIGHT, rowIndex, colIndex, heightOfCell});
+    console.log('hello ', rowIndex);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [colIndex, rowIndex, heightOfCell]);
+  useEffect(() => {
+    listRef.current.resetAfterIndex(rowIndex);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldValue]);
+
+  // const memoCell = useMemo(() => (
+
+  // ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+
+  return (
+    <div ref={rowRef}>
+      <RowCell
+        optionsMap={optionsMap}
+        fieldValue={fieldValue}
+        op={op}
+        isValid={isValid}
+        rowIndex={rowIndex}
+        setTableState={setTableState}
+        onRowChange={onRowChange}
+        colIndex={colIndex}
   />
-  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setSize, setTableState]);
+    </div>
+  );
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -218,15 +223,15 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes})
       data-test={`deleteTableRow-${rowIndex}`}
       aria-label="delete"
       onClick={() => {
-        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, index: rowIndex });
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex });
       }}
       className={classes.margin}>
       <DeleteIcon fontSize="small" />
     </ActionButton>
   ), [classes.margin, disableDeleteRows, rowIndex, setTableState]);
 export default function TableRow({
-  isVirtualizedTable,
   rowValue,
+  rowSizeMap,
   rowIndex,
   tableSize,
   optionsMap,
@@ -235,8 +240,9 @@ export default function TableRow({
   onRowChange,
   ignoreEmptyRow,
   disableDeleteRows,
-  setSize,
+  listRef,
 }) {
+  console.log('row ', rowValue);
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
 
@@ -249,14 +255,14 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
-              isVirtualizedTable={isVirtualizedTable}
-              setSize={setSize}
+              listRef={listRef}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
+              fieldHeight={rowSizeMap?.[op.id]}
               touched={touched}
               rowIndex={rowIndex}
-              colIndex={index}
+              colIndex={op.id}
               tableSize={tableSize}
               setTableState={setTableState}
               onRowChange={onRowChange}
