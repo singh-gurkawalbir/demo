@@ -43,6 +43,7 @@ export default function DynaFileKeyColumn_afe(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const editorId = 'filekeycolumns';
+  const parentFormKey = `${resourceType}-${resourceId}`;
   const { data: editorData, previewStatus, result } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -54,14 +55,26 @@ export default function DynaFileKeyColumn_afe(props) {
     resourceId, resourceType, fileType: options.fileType || 'csv',
   }));
 
-  const resourceObj = useSelector(state => selectors.resource(state, resourceType, resourceId)) || emptyObj;
-  const isHTTPExport = !!(resourceObj.adaptorType === 'HTTPExport' && !resourceObj.assistant && !resourceObj._rest);
-  const { data: rawData } = useSelector(state => selectors.getResourceSampleDataWithStatus(
-    state,
-    resourceId,
-    'preview',
-  ));
-  const resObj = processJsonSampleData(rawData);
+  /*
+   * In case of HTTP export, the raw data is saved in its parsed state
+   * no need to initiate the editor for evaluated result
+   */
+  const isHTTPExport = useSelector(state =>
+    selectors.fieldState(state, parentFormKey, 'http.successMediaType')?.value === 'csv');
+
+  const resObj = useSelector(state => {
+    const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+      state,
+      resourceId,
+      'preview',
+    );
+
+    if (!rawData) {
+      return emptyObj;
+    }
+
+    return processJsonSampleData(rawData);
+  });
 
   const multiSelectOptions = useMemo(() => {
     const columns = isHTTPExport ? Object.keys(resObj) : getFileColumns(result);
@@ -79,16 +92,17 @@ export default function DynaFileKeyColumn_afe(props) {
   }, [isHTTPExport, resObj, result, value]);
 
   useEffect(() => {
+    if (isHTTPExport) {
+      return;
+    }
     // this component requires editor only to get the evaluated result of parser
     // and then use it to show options
-    if (!isHTTPExport) {
-      dispatch(actions.editor.init(editorId, 'csvParser', {
-        resourceId,
-        resourceType,
-        data: csvData,
-        rule: options,
-      }));
-    }
+    dispatch(actions.editor.init(editorId, 'csvParser', {
+      resourceId,
+      resourceType,
+      data: csvData,
+      rule: options,
+    }));
 
     return () => dispatch(actions.editor.clear(editorId));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,8 +117,10 @@ export default function DynaFileKeyColumn_afe(props) {
     }
   }, [csvData, dispatch, id, editorData, onFieldChange, isHTTPExport]);
   useEffect(() => {
-    dispatch(actions.editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
-  }, [dispatch, options]);
+    if (!isHTTPExport) {
+      dispatch(actions.editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
+    }
+  }, [dispatch, isHTTPExport, options]);
 
   return (
     <FormControl
