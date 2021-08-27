@@ -1,5 +1,6 @@
 import { isArray, isEmpty } from 'lodash';
 import uniqBy from 'lodash/uniqBy';
+import { getAssistantConnectorType } from '../../../../../constants/applications';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
@@ -276,14 +277,13 @@ export function howToFindIdentifierFieldsMeta({
 
 export function fieldMeta({ resource, assistantData }) {
   const { assistant, lookups } = resource;
-  let { adaptorType } = resource;
   let headers;
 
-  if (adaptorType === 'RESTImport' || resource?.http?.formType === 'rest') {
-    adaptorType = 'rest';
+  const adaptorType = getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http';
+
+  if (adaptorType === 'RESTImport') {
     headers = resource.rest?.headers || [];
   } else {
-    adaptorType = 'http';
     headers = resource.http?.headers || [];
   }
 
