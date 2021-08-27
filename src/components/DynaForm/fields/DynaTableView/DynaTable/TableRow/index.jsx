@@ -185,7 +185,7 @@ const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
     setTableState({type: actionTypes.UPDATE_CELL_HEIGHT, rowIndex, colIndex, heightOfCell});
   }, [colIndex, rowIndex, heightOfCell, setTableState]);
   useEffect(() => {
-    listRef.current.resetAfterIndex(rowIndex);
+    listRef?.current?.resetAfterIndex(rowIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldHeight]);
 

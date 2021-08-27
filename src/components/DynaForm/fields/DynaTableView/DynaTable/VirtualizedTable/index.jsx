@@ -28,6 +28,7 @@ const VirtualizedListRow = ({index, style, data}) => {
       style={style} key={key}
     >
       <TableRow
+        isVirtualizedTable
         listRef={listRef}
         index={index}
         rowSizeMap={sizeMap}
