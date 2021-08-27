@@ -181,36 +181,30 @@ const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
   const rowRef = React.useRef();
   const heightOfCell = rowRef?.current?.getBoundingClientRect().height;
 
-  if (rowIndex === 0) {
-    console.log('check heightOfCell', heightOfCell, fieldHeight);
-  }
   useEffect(() => {
     setTableState({type: actionTypes.UPDATE_CELL_HEIGHT, rowIndex, colIndex, heightOfCell});
-    console.log('hello ', rowIndex);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [colIndex, rowIndex, heightOfCell]);
+  }, [colIndex, rowIndex, heightOfCell, setTableState]);
   useEffect(() => {
     listRef.current.resetAfterIndex(rowIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldValue]);
+  }, [fieldHeight]);
 
-  // const memoCell = useMemo(() => (
-
-  // ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  const memoCell = useMemo(() => (
+    <RowCell
+      optionsMap={optionsMap}
+      fieldValue={fieldValue}
+      op={op}
+      isValid={isValid}
+      rowIndex={rowIndex}
+      setTableState={setTableState}
+      onRowChange={onRowChange}
+      colIndex={colIndex}
+  />
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
 
   return (
-    <div ref={rowRef}>
-      <RowCell
-        optionsMap={optionsMap}
-        fieldValue={fieldValue}
-        op={op}
-        isValid={isValid}
-        rowIndex={rowIndex}
-        setTableState={setTableState}
-        onRowChange={onRowChange}
-        colIndex={colIndex}
-  />
+    <div style={{borderColor: 'black'}} ref={rowRef}>
+      {memoCell}
     </div>
   );
 };
