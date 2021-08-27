@@ -39,7 +39,6 @@ export default function reducer(state, action) {
           tableStateValue[rowIndex].sizeMap = {};
         }
         tableStateValue[rowIndex].sizeMap[colIndex] = heightOfCell;
-        draft.lastUpdatedRowHeight = rowIndex;
         break;
       case actionTypes.REMOVE_TABLE_ROW:
         tableStateValue.splice(rowIndex, 1);

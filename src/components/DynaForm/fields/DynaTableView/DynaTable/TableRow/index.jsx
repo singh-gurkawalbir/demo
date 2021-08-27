@@ -236,7 +236,6 @@ export default function TableRow({
   disableDeleteRows,
   listRef,
 }) {
-  console.log('row ', rowValue);
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
 
