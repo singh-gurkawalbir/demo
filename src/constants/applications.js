@@ -427,10 +427,14 @@ export const getApp = (type, assistant) => {
 
   return applications.find(c => c.id === id) || {};
 };
-export const getAssistantConnectorType = resource => {
-  const connectorType = getApp(null, resource?.assistant)?.type;
+export const getAssistantConnectorType = assistant => {
+  const connectorType = getApp(null, assistant)?.type;
 
-  return connectorType ? connectorType.toLowerCase() : '';
+  if (connectorType) {
+    return connectorType.toLowerCase() === 'rest' ? 'rest' : 'http';
+  }
+
+  return '';
 };
 export const applicationsPlaceHolderText = () => {
   const applications = applicationsList();

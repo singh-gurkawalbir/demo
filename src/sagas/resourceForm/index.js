@@ -788,7 +788,7 @@ export function* initFormValues({
     return; // nothing to do.
   }
   const { assistant, assistantMetadata, _connectionId } = resource;
-  const adaptorType = getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http';
+  const adaptorType = getAssistantConnectorType(resource.assistant);
 
   let assistantData;
 

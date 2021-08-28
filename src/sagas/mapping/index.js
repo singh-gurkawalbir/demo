@@ -198,7 +198,7 @@ export function* mappingInit({
 
     const assistantData = yield select(
       selectors.assistantData, {
-        adaptorType: getAssistantConnectorType(importResource) === 'rest' ? 'rest' : 'http',
+        adaptorType: getAssistantConnectorType(importResource.assistant),
         assistant,
       }
     );

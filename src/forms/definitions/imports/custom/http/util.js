@@ -292,7 +292,7 @@ export function fieldMeta({ resource, assistantData }) {
   const hiddenFields = hiddenFieldsMeta({
     values: {
       assistant,
-      adaptorType: getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http',
+      adaptorType: getAssistantConnectorType(assistant),
       assistantData,
       lookups,
     },

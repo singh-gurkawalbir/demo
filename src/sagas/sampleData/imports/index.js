@@ -15,7 +15,7 @@ export function* _fetchAssistantSampleData({ resource }) {
 
   yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(selectors.assistantData, {
-    adaptorType: getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http',
+    adaptorType: getAssistantConnectorType(resource.assistant),
     assistant: resource.assistant,
   });
 
