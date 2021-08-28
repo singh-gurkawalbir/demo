@@ -7,6 +7,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { semiAssistantExportOperationOptions, semiAssistantExportConfig } from './util';
 import useConfirmDialog from '../../../ConfirmDialog';
 import useFormContext from '../../../Form/FormContext';
+import { getAssistantConnectorType } from '../../../../constants/applications';
 
 export default function DynaSemiAssistantOperationSelect(props) {
   const { label = 'Select an operation', resourceType, flowId, resourceId, formKey, value, onFieldChange } = props;
@@ -25,9 +26,7 @@ export default function DynaSemiAssistantOperationSelect(props) {
 
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: (['RESTExport', 'RESTImport'].includes(staggedResource?.adaptorType) || staggedResource?.http?.formType === 'rest')
-        ? 'rest'
-        : 'http',
+      adaptorType: getAssistantConnectorType(staggedResource) === 'rest' ? 'rest' : 'http',
       assistant,
     })
   );

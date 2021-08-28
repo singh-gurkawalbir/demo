@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getApp } from '../../../constants/applications';
+import { getApp, getAssistantConnectorType } from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -32,9 +32,7 @@ export function FormView(props) {
   );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: (['RESTExport', 'RESTImport'].includes(staggedResource?.adaptorType) || staggedResource?.http?.formType === 'rest')
-        ? 'rest'
-        : 'http',
+      adaptorType: getAssistantConnectorType(staggedResource) === 'rest' ? 'rest' : 'http',
       assistant: staggedResource.assistant,
     })
   );

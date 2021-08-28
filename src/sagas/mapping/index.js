@@ -16,6 +16,7 @@ import { requestSampleData as requestFlowSampleData } from '../sampleData/flows'
 import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
+import { getAssistantConnectorType } from '../../constants/applications';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -190,14 +191,14 @@ export function* mappingInit({
       connectorExternalId: importResource.externalId,
     };
   } else if (importResource.assistant) {
-    const { type: adaptorType, assistant } = getResourceSubType(
+    const { assistant } = getResourceSubType(
       importResource
     );
     const { operation, resource, version } = importResource.assistantMetadata;
 
     const assistantData = yield select(
       selectors.assistantData, {
-        adaptorType,
+        adaptorType: getAssistantConnectorType(importResource) === 'rest' ? 'rest' : 'http',
         assistant,
       }
     );
