@@ -290,11 +290,13 @@ export function* saveMappings() {
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSuccess = !!flowSampleData;
 
   _mappings = mappingUtil.generateFieldsAndListMappingForApp({
     mappings: _mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
@@ -392,6 +394,7 @@ export function* previewMappings() {
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSuccess = !!flowSampleData;
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, key, ...others }) => others
   );
@@ -400,6 +403,7 @@ export function* previewMappings() {
     mappings: _mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
