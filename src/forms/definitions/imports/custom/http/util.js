@@ -279,16 +279,23 @@ export function fieldMeta({ resource, assistantData }) {
   const { assistant, lookups } = resource;
   let headers;
 
-  const adaptorType = getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http';
+  let { adaptorType } = resource;
 
   if (adaptorType === 'RESTImport') {
+    adaptorType = 'rest';
     headers = resource.rest?.headers || [];
   } else {
+    adaptorType = 'http';
     headers = resource.http?.headers || [];
   }
 
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData, lookups },
+    values: {
+      assistant,
+      adaptorType: getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http',
+      assistantData,
+      lookups,
+    },
   });
   let basicFields = [];
   let pathParameterFields = [];

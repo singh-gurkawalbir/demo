@@ -225,16 +225,21 @@ export function searchParameterFieldsMeta({
 export function fieldMeta({ resource, assistantData }) {
   const { assistant } = resource;
   let headers;
-  const adaptorType = getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http';
+  let { adaptorType } = resource;
 
   if (adaptorType === 'RESTExport') {
+    adaptorType = 'rest';
     headers = resource.rest?.headers || [];
   } else {
+    adaptorType = 'http';
     headers = resource.http?.headers || [];
   }
-
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData },
+    values: {
+      assistant,
+      adaptorType: getAssistantConnectorType(resource) === 'rest' ? 'rest' : 'http',
+      assistantData,
+    },
   });
   let basicFields = [];
   let pathParameterFields = [];
