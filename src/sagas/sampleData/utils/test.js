@@ -40,6 +40,7 @@ import saveTransformationRulesForNewXMLExport, {
   _getXmlHttpAdaptorSampleData,
 } from './xmlTransformationRulesGenerator';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+import { commitStagedChanges } from '../../resources';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
@@ -3104,7 +3105,13 @@ describe('Flow sample data utility sagas', () => {
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
           .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
-          .put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
+          .call(commitStagedChanges, 'exports',
+            {
+              resourceType: 'exports',
+              id: resourceId,
+              scope: SCOPES.VALUE,
+            }
+          )
           .run();
       });
     });
