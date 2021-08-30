@@ -10,13 +10,12 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   field: {
-    width: 'calc(100% - 100px)',
+    flex: 1,
   },
   resetBtn: {
     marginLeft: theme.spacing(1),
     alignSelf: 'flex-start',
     marginTop: 28,
-    flexGrow: 1,
   },
 }));
 
