@@ -205,7 +205,7 @@ const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
   ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
 
   return (
-    <div style={{borderColor: 'black'}} ref={rowRef}>
+    <div ref={rowRef}>
       {memoCell}
     </div>
   );
