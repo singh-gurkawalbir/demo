@@ -19,6 +19,7 @@ import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, fl
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { getAssistantConnectorType } from '../../constants/applications';
 
 export const SCOPES = {
   META: 'meta',
@@ -787,7 +788,7 @@ export function* initFormValues({
     return; // nothing to do.
   }
   const { assistant, assistantMetadata, _connectionId } = resource;
-  const adaptorType = (['RESTExport', 'RESTImport'].includes(resource.adaptorType) || resource.http?.formType === 'rest') ? 'rest' : 'http';
+  const adaptorType = getAssistantConnectorType(resource.assistant);
 
   let assistantData;
 

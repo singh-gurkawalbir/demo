@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import uniqBy from 'lodash/uniqBy';
+import { getAssistantConnectorType } from '../../../../../constants/applications';
 import {
   convertFromExport,
   PARAMETER_LOCATION,
@@ -223,19 +224,22 @@ export function searchParameterFieldsMeta({
 
 export function fieldMeta({ resource, assistantData }) {
   const { assistant } = resource;
-  let { adaptorType } = resource;
   let headers;
+  let { adaptorType } = resource;
 
-  if (adaptorType === 'RESTExport' || resource?.http?.formType === 'rest') {
+  if (adaptorType === 'RESTExport') {
     adaptorType = 'rest';
     headers = resource.rest?.headers || [];
   } else {
     adaptorType = 'http';
     headers = resource.http?.headers || [];
   }
-
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData },
+    values: {
+      assistant,
+      adaptorType: getAssistantConnectorType(assistant),
+      assistantData,
+    },
   });
   let basicFields = [];
   let pathParameterFields = [];
