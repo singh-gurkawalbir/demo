@@ -1,6 +1,6 @@
 /* global describe,test,expect, beforeAll */
 
-import reducer, {preSubmit} from './index';
+import reducer, {getRowHeight, preSubmit} from './index';
 import actionTypes from '../actionTypes';
 
 const initialState = {
@@ -239,38 +239,55 @@ describe('table reducer', () => {
   });
 });
 
-describe('selector preSubmit', () => {
-  const state = [
-    {
-      key: 'abc',
-      value: {generate: 'a', extract: 'k'},
-    },
-    {
-      key: 'bcd',
-      value: {generate: 'e', extract: 'f'},
-    },
-    {
-      key: 'efg',
-      value: {generate: 'v', extract: ''},
-    },
-    {
-      key: 'efgf',
-      value: {generate: '', extract: ''},
-    },
-  ];
+describe('selector', () => {
+  describe('preSubmit', () => {
+    const state = [
+      {
+        key: 'abc',
+        value: {generate: 'a', extract: 'k'},
+      },
+      {
+        key: 'bcd',
+        value: {generate: 'e', extract: 'f'},
+      },
+      {
+        key: 'efg',
+        value: {generate: 'v', extract: ''},
+      },
+      {
+        key: 'efgf',
+        value: {generate: '', extract: ''},
+      },
+    ];
 
-  test('should return all values including incomplete row when required optionsMap isn`t passed', () => {
-    const optionsMap = [{id: 'extract'}, {id: 'generate'}];
+    test('should return all values including incomplete row when required optionsMap isn`t passed', () => {
+      const optionsMap = [{id: 'extract'}, {id: 'generate'}];
 
-    expect(preSubmit(state, optionsMap)).toEqual(
-      [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}, {extract: '', generate: 'v'}]
-    );
+      expect(preSubmit(state, optionsMap)).toEqual(
+        [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}, {extract: '', generate: 'v'}]
+      );
+    });
+    test('should return all completed rows when required optionsMap is passed', () => {
+      const optionsMap = [{id: 'extract', required: true }, {id: 'generate', required: true }];
+
+      expect(preSubmit(state, optionsMap)).toEqual(
+        [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}]
+      );
+    });
   });
-  test('should return all completed rows when required optionsMap is passed', () => {
-    const optionsMap = [{id: 'extract', required: true }, {id: 'generate', required: true }];
 
-    expect(preSubmit(state, optionsMap)).toEqual(
-      [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}]
-    );
+  describe('getRowHeight', () => {
+    test('should return the default height for invalid index', () => {
+      let state = reducer(initialState, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'extract', heightOfCell: 60, rowIndex: 0 });
+
+      state = reducer(state, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'generate', heightOfCell: 55, rowIndex: 0 });
+      expect(getRowHeight(state, 2)).toBe(51);
+    });
+    test('should get the maximum rowCell height', () => {
+      let state = reducer(initialState, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'extract', heightOfCell: 60, rowIndex: 0 });
+
+      state = reducer(state, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'generate', heightOfCell: 55, rowIndex: 0 });
+      expect(getRowHeight(state, 0)).toBe(65);
+    });
   });
 });

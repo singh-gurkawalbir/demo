@@ -173,8 +173,18 @@ export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}
   return !required || (required && fieldValue);
 };
 
-const RowCellMemo = ({ fieldValue, optionsMap, colIndex,
-  op, touched, rowIndex, tableSize, setTableState, onRowChange, fieldHeight, listRef}) => {
+const RowCellMemo = ({
+  fieldValue,
+  optionsMap,
+  colIndex,
+  op,
+  touched,
+  rowIndex,
+  tableSize,
+  setTableState,
+  onRowChange,
+  fieldHeight,
+  listRef}) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 

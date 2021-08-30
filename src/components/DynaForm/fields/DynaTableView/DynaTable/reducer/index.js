@@ -75,7 +75,19 @@ export default function reducer(state, action) {
     }
   });
 }
+const ITEM_SIZE = 46;
+const PADDING = 5;
+export const getRowHeight = (state, rowIndex) => {
+  const {sizeMap } = state.tableStateValue?.[rowIndex] || {};
 
+  return Object.values(sizeMap || {}).reduce((acc, curr) => {
+    if (curr > acc) {
+      return curr;
+    }
+
+    return acc;
+  }, ITEM_SIZE) + PADDING;
+};
 export const preSubmit = (stateValue = [], optionsMap, ignoreEmptyRow) =>
   stateValue.map(val => val.value).filter((val, index) => {
     if (ignoreEmptyRow) {

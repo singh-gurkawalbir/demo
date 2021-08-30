@@ -3,10 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { VariableSizeList } from 'react-window';
 import Spinner from '../../../../../Spinner';
+import { getRowHeight } from '../reducer';
 import TableRow, { isCellValid } from '../TableRow';
 
-const ITEM_SIZE = 46;
-const PADDING = 5;
 const INVALID_ITEM_SIZE_EXTRA_SPACE = 9;
 const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
@@ -98,19 +97,7 @@ const VirtualizedTable = ({
   const [, setItemCount] = useState(items.length);
   const [scrollIndex, setScrollIndex] = useState(0);
 
-  const getSize = useCallback(rowIndex => {
-    const {sizeMap } = tableState.tableStateValue?.[rowIndex] || {};
-
-    return Object.values(sizeMap || {}).reduce((acc, curr) => {
-      if (curr > acc) {
-        return curr;
-      }
-
-      return acc;
-    }, ITEM_SIZE) + PADDING;
-  }, [tableState]);
-
-  const heightOfAllRows = (tableState?.tableStateValue || {}).reduce((acc, curr, index) => acc + getSize(index), 0);
+  const heightOfAllRows = (tableState?.tableStateValue || {}).reduce((acc, curr, index) => acc + getRowHeight(index), 0);
 
   const maxHeightOfSelect = TABLE_VIEW_PORT_HEIGHT < heightOfAllRows ? TABLE_VIEW_PORT_HEIGHT : heightOfAllRows;
 
@@ -120,12 +107,12 @@ const VirtualizedTable = ({
     const rowValue = items[rowIndex];
     const rowValid = isRowValid(optionsMapFinal, rowValue, rowIndex, items, touched);
 
-    const rowHeight = getSize(rowIndex);
+    const rowHeight = getRowHeight(tableState, rowIndex);
 
     if (!rowValid) return rowHeight + INVALID_ITEM_SIZE_EXTRA_SPACE;
 
     return rowHeight;
-  }, [items, optionsMapFinal, getSize, touched]);
+  }, [items, optionsMapFinal, tableState, touched]);
 
   const rowProps = useMemo(() => ({
     items,
