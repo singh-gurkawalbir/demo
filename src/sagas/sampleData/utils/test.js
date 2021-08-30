@@ -3105,7 +3105,7 @@ describe('Flow sample data utility sagas', () => {
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
           .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
-          .call(commitStagedChanges, 'exports',
+          .call(commitStagedChanges,
             {
               resourceType: 'exports',
               id: resourceId,
