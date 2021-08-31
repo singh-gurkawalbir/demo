@@ -1,6 +1,6 @@
 /* global describe,test,expect, beforeAll */
 
-import reducer, {preSubmit} from './index';
+import reducer, {getRowHeight, preSubmit} from './index';
 import actionTypes from '../actionTypes';
 
 const initialState = {
@@ -28,7 +28,7 @@ describe('table reducer', () => {
     const optionsMapNonRequiredFields = [{id: 'extract' }, {id: 'generate'}];
 
     test('should update non last rows without adding a new row', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', index: 0, field: 'extract'});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 0, field: 'extract'});
 
       expect(state).toEqual({
         touched: true,
@@ -49,7 +49,7 @@ describe('table reducer', () => {
       });
     });
     test('should not push a new row since a non first column value has been updated', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'l', index: 2, field: 'generate'});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'l', rowIndex: 2, field: 'generate'});
 
       expect(state).toEqual({
         touched: true,
@@ -69,10 +69,10 @@ describe('table reducer', () => {
         ],
       });
       state = reducer(state,
-        {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: '', index: 2, field: 'generate'});
+        {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: '', rowIndex: 2, field: 'generate'});
     });
     test('should update first column value and a new row is added since it is the first column value', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', index: 2, field: 'extract'});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 2, field: 'extract'});
       expect(state).toEqual({
         touched: true,
         tableStateValue: [
@@ -102,7 +102,7 @@ describe('table reducer', () => {
         return rowValue;
       };
 
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', index: 2, field: 'extract', onRowChange});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 2, field: 'extract', onRowChange});
 
       expect(state).toEqual({
         touched: true,
@@ -126,7 +126,7 @@ describe('table reducer', () => {
       });
     });
     test('should push a new row when last row is updated completely', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'v', index: 2, field: 'generate'});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'v', rowIndex: 2, field: 'generate'});
 
       expect(state).toEqual({
         touched: true,
@@ -162,7 +162,7 @@ describe('table reducer', () => {
       state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW,
         optionsMap: optionsMapRequiredFields,
         value: 'v',
-        index: 2,
+        rowIndex: 2,
         field: 'generate'});
 
       expect(state).toEqual({
@@ -187,7 +187,7 @@ describe('table reducer', () => {
       state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW,
         optionsMap: optionsMapRequiredFields,
         value: 'va',
-        index: 2,
+        rowIndex: 2,
         field: 'generate'});
 
       expect(state).toEqual({
@@ -212,7 +212,7 @@ describe('table reducer', () => {
       state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW,
         optionsMap: optionsMapRequiredFields,
         value: 'k',
-        index: 2,
+        rowIndex: 2,
         field: 'extract'});
 
       expect(state).toEqual({
@@ -239,38 +239,55 @@ describe('table reducer', () => {
   });
 });
 
-describe('selector preSubmit', () => {
-  const state = [
-    {
-      key: 'abc',
-      value: {generate: 'a', extract: 'k'},
-    },
-    {
-      key: 'bcd',
-      value: {generate: 'e', extract: 'f'},
-    },
-    {
-      key: 'efg',
-      value: {generate: 'v', extract: ''},
-    },
-    {
-      key: 'efgf',
-      value: {generate: '', extract: ''},
-    },
-  ];
+describe('selector', () => {
+  describe('preSubmit', () => {
+    const state = [
+      {
+        key: 'abc',
+        value: {generate: 'a', extract: 'k'},
+      },
+      {
+        key: 'bcd',
+        value: {generate: 'e', extract: 'f'},
+      },
+      {
+        key: 'efg',
+        value: {generate: 'v', extract: ''},
+      },
+      {
+        key: 'efgf',
+        value: {generate: '', extract: ''},
+      },
+    ];
 
-  test('should return all values including incomplete row when required optionsMap isn`t passed', () => {
-    const optionsMap = [{id: 'extract'}, {id: 'generate'}];
+    test('should return all values including incomplete row when required optionsMap isn`t passed', () => {
+      const optionsMap = [{id: 'extract'}, {id: 'generate'}];
 
-    expect(preSubmit(state, optionsMap)).toEqual(
-      [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}, {extract: '', generate: 'v'}]
-    );
+      expect(preSubmit(state, optionsMap)).toEqual(
+        [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}, {extract: '', generate: 'v'}]
+      );
+    });
+    test('should return all completed rows when required optionsMap is passed', () => {
+      const optionsMap = [{id: 'extract', required: true }, {id: 'generate', required: true }];
+
+      expect(preSubmit(state, optionsMap)).toEqual(
+        [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}]
+      );
+    });
   });
-  test('should return all completed rows when required optionsMap is passed', () => {
-    const optionsMap = [{id: 'extract', required: true }, {id: 'generate', required: true }];
 
-    expect(preSubmit(state, optionsMap)).toEqual(
-      [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}]
-    );
+  describe('getRowHeight', () => {
+    test('should return the default height for invalid index', () => {
+      let state = reducer(initialState, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'extract', heightOfCell: 60, rowIndex: 0 });
+
+      state = reducer(state, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'generate', heightOfCell: 55, rowIndex: 0 });
+      expect(getRowHeight(state, 2)).toBe(51);
+    });
+    test('should get the maximum rowCell height', () => {
+      let state = reducer(initialState, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'extract', heightOfCell: 60, rowIndex: 0 });
+
+      state = reducer(state, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'generate', heightOfCell: 55, rowIndex: 0 });
+      expect(getRowHeight(state, 0)).toBe(65);
+    });
   });
 });
