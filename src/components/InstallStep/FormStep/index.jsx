@@ -35,7 +35,9 @@ export default function FormStep({
   const handleSubmit = useCallback(
     formVal => {
       if (installerFunction) {
+        // For IA1.0
         if (addChild) {
+          // Add new child case
           dispatch(actions.integrationApp.child.updateStep(
             integrationId,
             installerFunction,
@@ -61,6 +63,7 @@ export default function FormStep({
           );
         }
       } else {
+        // For IA2.0
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,
