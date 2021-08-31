@@ -20,23 +20,44 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormStep({ integrationId, installerFunction, formMeta, title, formSubmitHandler, formCloseHandler }) {
+export default function FormStep({
+  integrationId,
+  installerFunction,
+  formMeta,
+  title,
+  formSubmitHandler,
+  formCloseHandler,
+  addChild,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
     formVal => {
-      installerFunction
-        ? dispatch(
-          actions.integrationApp.installer.installStep(
-            integrationId,
-            installerFunction,
-            undefined,
-            undefined,
-            formVal
-          )
-        )
-        : dispatch(
+      if (installerFunction) {
+        if (addChild) {
+          dispatch(
+            actions.integrationApp.child.installStep(
+              integrationId,
+              installerFunction,
+              undefined,
+              undefined,
+              formVal
+            )
+          );
+        } else {
+          dispatch(
+            actions.integrationApp.installer.installStep(
+              integrationId,
+              installerFunction,
+              undefined,
+              undefined,
+              formVal
+            )
+          );
+        }
+      } else {
+        dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,
             '',
@@ -44,6 +65,7 @@ export default function FormStep({ integrationId, installerFunction, formMeta, t
             formVal
           )
         );
+      }
     },
     [dispatch, installerFunction, integrationId]
   );

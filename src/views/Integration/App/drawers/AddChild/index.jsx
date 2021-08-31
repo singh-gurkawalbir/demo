@@ -317,6 +317,7 @@ export default function IntegrationAppAddNewChild(props) {
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.form}
+          addChild
           installerFunction={currentStep.installerFunction}
           title={currentStep.name}
           formCloseHandler={formCloseHandler}
