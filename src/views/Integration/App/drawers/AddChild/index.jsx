@@ -224,7 +224,7 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.integrationApp.child.updateStep(
         integrationId,
         installerFunction,
-        'inProgress',
+        undefined,
         true
       ));
     } else if (!step.isTriggered) {

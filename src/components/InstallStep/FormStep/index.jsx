@@ -36,12 +36,16 @@ export default function FormStep({
     formVal => {
       if (installerFunction) {
         if (addChild) {
+          dispatch(actions.integrationApp.child.updateStep(
+            integrationId,
+            installerFunction,
+            'inProgress',
+            false
+          ));
           dispatch(
             actions.integrationApp.child.installStep(
               integrationId,
               installerFunction,
-              undefined,
-              undefined,
               formVal
             )
           );
