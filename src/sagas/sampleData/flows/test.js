@@ -32,7 +32,7 @@ import {
   getPreProcessedResponseMappingData,
   getFlowStageData,
 } from '../utils/flowDataUtils';
-import { getAllDependentSampleDataStages, getSampleDataStage, getBlobResourceSampleData } from '../../../utils/flowData';
+import { getAllDependentSampleDataStages, getSampleDataStage, getBlobResourceSampleData, getSampleFileMeta } from '../../../utils/flowData';
 import { SCOPES } from '../../resourceForm';
 import getPreviewOptionsForResource, { _getUIDataForResource } from './pageProcessorPreviewOptions';
 
@@ -1286,6 +1286,36 @@ describe('pageProcessorPreviewOptions sagas', () => {
 
       expect(returnValue).toEqual({ uiData, postData });
     });
+    test('should return uiData with files if the resource is a file adaptor', async () => {
+      const flow = {
+        _id: 'flow-123',
+        _connectorId: 'connector-123',
+        name: 'testing flow',
+        pageGenerators: [],
+        pageProcessors: [],
+      };
+      const fileAdaptorResource = {
+        adaptorType: 'FTPExport',
+      };
+      const uiData = { test: 5 };
+
+      const { returnValue } = await expectSaga(getPreviewOptionsForResource, { resource: fileAdaptorResource, flow })
+        .provide([
+          [
+            call(_getUIDataForResource, {
+              resource: fileAdaptorResource,
+              connection: null,
+              flow,
+              refresh: undefined,
+            }),
+            uiData,
+          ],
+        ])
+        .run();
+      const files = getSampleFileMeta();
+
+      expect(returnValue).toEqual({ uiData, files });
+    });
     test('should return uiData returned from _getUIDataForResource when runOffline is false', () => {
       const iaResource = {
         _id: 'export-123',
@@ -1301,6 +1331,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
         pageProcessors: [],
       };
       const uiData = { test: 5 };
+      const files = undefined;
 
       return expectSaga(getPreviewOptionsForResource, { resource: iaResource, flow})
         .provide([
@@ -1314,7 +1345,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
             uiData,
           ],
         ])
-        .returns({ uiData })
+        .returns({ uiData, files })
         .run();
     });
   });
