@@ -78,6 +78,7 @@ export default function DynaStaticMapWidget(props) {
       name: extractFieldHeader,
       required: true,
       type: extracts.length ? 'autosuggest' : 'input',
+      multiline: false,
       // extracts can be a string we have safely type cast it to an array
       options: Array.isArray(extracts) ? extracts : [],
       supportsRefresh: supportsExtractsRefresh,
@@ -88,6 +89,7 @@ export default function DynaStaticMapWidget(props) {
       name: generateFieldHeader,
       required: true,
       options: Array.isArray(generates) ? generates : [],
+      multiline: false,
       type: generates.length ? 'autosuggest' : 'input',
       supportsRefresh: supportsGeneratesRefresh,
     },

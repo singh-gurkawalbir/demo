@@ -69,7 +69,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -148,11 +148,14 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   }
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
+    const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
+
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
         <DynaAutocomplete
           {...basicProps}
+          multiline={multiline}
           onFieldChange={onFieldChange}
           errorMessages={errorMessages}
           value={fieldValue}
