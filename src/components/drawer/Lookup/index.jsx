@@ -143,6 +143,8 @@ export default function LookupDrawer({
   const handleClose = isExact ? history.goBack : setCancelTriggered;
 
   useEffect(() => {
+    // update the state if the lookups are modified
+    // from parent component
     setValue(lookups);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lookupsHash]);
