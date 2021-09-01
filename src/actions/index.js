@@ -1040,10 +1040,11 @@ const integrationApp = {
         installerFunction,
         steps,
       }),
-    installStep: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction, formVal) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
+        formVal,
       }),
     failedNewChildSteps: (integrationId, message) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {

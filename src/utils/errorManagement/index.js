@@ -155,18 +155,9 @@ export const getSourceOptions = (sourceList = [], applicationName) => {
 };
 
 export function getClassificationOptions(classificationList = []) {
-  const classificationLabelsMap = {
-    connection: 'Connection',
-    duplicate: 'Duplicate',
-    governance: 'Governance',
-    missing: 'Missing',
-    parse: 'Parse',
-    value: 'Value',
-    intermittent: 'Intermittent',
-  };
   const options = classificationList
     .filter(classificationId => classificationId !== 'none')
-    .map(classificationId => ({_id: classificationId, name: classificationLabelsMap[classificationId] || classificationId}));
+    .map(classificationId => ({_id: classificationId, name: classificationId}));
   const sortedOptions = sortBy(options, s => s.name);
 
   return [{ _id: 'all', name: 'All classifications'}, ...sortedOptions];
