@@ -52,7 +52,7 @@ export default function MappingDrawerRoute(props) {
   });
 
   const importName = useSelector(state => selectors.resourceData(state, 'imports', importId).merged?.name);
-  const title = importName ? `Edit Mapping > ${importName}` : 'Edit Mapping';
+  const title = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
 
   return (
     // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property.
