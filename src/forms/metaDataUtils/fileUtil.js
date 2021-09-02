@@ -185,6 +185,8 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   's3.bucket': { fieldId: 's3.bucket' },
   's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
   's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
+  'file.sortByFields': { fieldId: 'file.sortByFields' },
+  'file.groupByFields': { fieldId: 'file.groupByFields' },
 };
 export const IMPORT_FILE_FIELD_MAP = {common: {
   formId: 'common',

@@ -352,8 +352,8 @@ const resource = {
       }),
   },
   connections: {
-    pingAndUpdate: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
+    pingAndUpdate: (connectionId, parentContext) =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId, parentContext }),
     updateStatus: collection =>
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
@@ -388,10 +388,11 @@ const resource = {
         resourceId,
         retainStatus,
       }),
-    saveAndAuthorize: (resourceId, values) =>
+    saveAndAuthorize: (resourceId, values, parentContext) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
         resourceId,
         values,
+        parentContext,
       }),
     authorized: connectionId =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
@@ -1039,10 +1040,11 @@ const integrationApp = {
         installerFunction,
         steps,
       }),
-    installStep: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction, formVal) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
+        formVal,
       }),
     failedNewChildSteps: (integrationId, message) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {
@@ -1539,7 +1541,8 @@ const resourceForm = {
     match,
     skipClose,
     isGenerate,
-    flowId
+    flowId,
+    parentContext
   ) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
@@ -1549,14 +1552,16 @@ const resourceForm = {
       skipClose,
       isGenerate,
       flowId,
+      parentContext,
     }),
-  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose, parentContext) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,
       match,
       skipClose,
+      parentContext,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
@@ -2033,6 +2038,11 @@ const flow = {
       fileName,
     }),
   runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
+  runActionStatus: (runStatus, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS, {
+      runStatus,
+      flowId,
+    }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,

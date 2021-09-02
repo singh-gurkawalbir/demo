@@ -3,6 +3,7 @@ import { select, call } from 'redux-saga/effects';
 import util from '../../utils/array';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 
 const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
@@ -62,7 +63,9 @@ export function resourceConflictResolution({ merged, master, origin }) {
     updatedMerged = applyPatch(origin, masterVsMerged, false, false)
       .newDocument;
   } catch (e) {
-    updatedMerged = {};
+    console.warn('cannot apply resolution patches doc = ', origin, 'patches = ', masterVsMerged);
+
+    return { conflict: masterVsMerged, merged: null };
   }
 
   return { conflict: null, merged: updatedMerged };
@@ -86,6 +89,38 @@ export function* constructResourceFromFormValues({
     resourceId,
     SCOPES.VALUE
   );
+
+  try {
+    return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
+      .newDocument;
+  } catch (e) {
+    return {};
+  }
+}
+
+export function* constructSuiteScriptResourceFromFormValues({
+  formValues = {},
+  resourceId,
+  resourceType,
+  ssLinkedConnectionId,
+  integrationId,
+}) {
+  const { patchSet } = yield call(createSuiteScriptFormValuesPatchSet, {
+    resourceType,
+    resourceId,
+    values: formValues,
+    scope: SCOPES.VALUE,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+  const { merged } = yield select(selectors.suiteScriptResourceData, {
+    resourceType,
+    id: resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+    scope: SCOPES.VALUE,
+  });
 
   try {
     return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))

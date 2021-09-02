@@ -287,7 +287,7 @@ const connectors = [
 // These can be removed once metadata gets updated.
 const newConnections = [
   {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
-  {id: 'azurestorageaccount', name: 'Azure Storage', type: 'http', assistant: 'azurestorageaccount'},
+  {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
 ];
 
 connectors.sort(stringCompare('name'));
@@ -426,6 +426,15 @@ export const getApp = (type, assistant) => {
   const applications = applicationsList();
 
   return applications.find(c => c.id === id) || {};
+};
+export const getAssistantConnectorType = assistant => {
+  const connectorType = getApp(null, assistant)?.type;
+
+  if (connectorType) {
+    return connectorType.toLowerCase() === 'rest' ? 'rest' : 'http';
+  }
+
+  return '';
 };
 export const applicationsPlaceHolderText = () => {
   const applications = applicationsList();

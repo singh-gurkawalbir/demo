@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
@@ -13,7 +13,10 @@ export default function OAuthAndTest({
   resourceId,
   onCancel,
   formKey,
-
+  flowId,
+  integrationId,
+  parentType,
+  parentId,
 }) {
   const formSaveStatus = useSelector(state =>
     selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
@@ -22,7 +25,15 @@ export default function OAuthAndTest({
     selectors.testConnectionCommState(state, resourceId)
   );
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
-  const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId});
+
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
+
+  const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext});
   const disabled = formSaveStatus === FORM_SAVE_STATUS.LOADING;
 
   return (
@@ -35,6 +46,7 @@ export default function OAuthAndTest({
         formSaveStatus={formSaveStatus}
         handleSave={handleSave}
         handleCancel={onCancel}
+        forceIsDirty
       />
       <TestButton
         disabled={disabled}

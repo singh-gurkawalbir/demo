@@ -75,6 +75,9 @@ export default function DynaNetSuiteSubRecords(props) {
     flowId,
   } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const { confirmDialog } = useConfirmDialog();
   const { resourceId } = resourceContext;
   const { recordType } = options;
 
@@ -99,6 +102,7 @@ export default function DynaNetSuiteSubRecords(props) {
     'imports',
     resourceId
   );
+
   const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useMemo(() => {
     let subrecords;
     let subrecordsFromMappings = [];
@@ -108,15 +112,15 @@ export default function DynaNetSuiteSubRecords(props) {
       hasNetsuiteDa = true;
       ({ subrecords } = importDoc.netsuite_da);
 
-      if (!subrecords && importDoc.netsuite_da.mapping) {
+      // only if the patched record type matches the one user has selected,
+      // then get the subrecords from the importDoc
+      if (!subrecords && importDoc.netsuite_da.mapping && recordType === importDoc.netsuite_da.recordType) {
         subrecordsFromMappings = getNetSuiteSubrecordImports(importDoc);
       }
     }
 
     return { hasNetsuiteDa, subrecords, subrecordsFromMappings };
-  }, [importDoc]);
-  const dispatch = useDispatch();
-  const { confirmDialog } = useConfirmDialog();
+  }, [importDoc, recordType]);
 
   useEffect(() => {
     if (!subrecords && subrecordsFromMappings) {
@@ -156,7 +160,6 @@ export default function DynaNetSuiteSubRecords(props) {
     }
   }, [defaultValue, hasSubrecord, id, onFieldChange, status, subrecords, value]);
 
-  const match = useRouteMatch();
   const handleDeleteClick = useCallback(
     fieldId => {
       confirmDialog({

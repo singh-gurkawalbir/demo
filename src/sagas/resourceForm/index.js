@@ -9,7 +9,7 @@ import {
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
 import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
-import connectionSagas, { createPayload } from './connections';
+import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
@@ -19,6 +19,7 @@ import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, fl
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { getAssistantConnectorType } from '../../constants/applications';
 
 export const SCOPES = {
   META: 'meta',
@@ -125,6 +126,16 @@ export function* deleteUISpecificValues({ values, resourceId }) {
     // remove ui field value from the form value payload
     delete valuesCopy[id];
   });
+
+  // TO DO: This logic should be revisited
+  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+    if (valuesCopy['/file/csv']?.keyColumns) {
+      valuesCopy['/file/csv'].keyColumns = undefined;
+    }
+  }
+  if (valuesCopy['/file/xlsx/keyColumns']) {
+    valuesCopy['/file/xlsx/keyColumns'] = undefined;
+  }
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);
@@ -195,6 +206,7 @@ export function* submitFormValues({
   resourceId,
   values,
   match,
+  parentContext,
 }) {
   let formValues = { ...values };
   const isNewIAPayload = yield call(newIAFrameWorkPayload, {
@@ -327,6 +339,7 @@ export function* submitFormValues({
       id: resourceId,
       scope: SCOPES.VALUE,
       asyncKey: getAsyncKey(type, resourceId),
+      parentContext,
     });
 
     if (resp && (resp.error || resp.conflict)) {
@@ -664,7 +677,7 @@ export function* submitResourceForm(params) {
 }
 
 export function* saveAndContinueResourceForm(params) {
-  const { resourceId } = params;
+  const { resourceId, parentContext } = params;
   const asyncKey = getAsyncKey('connections', resourceId);
 
   yield put(actions.asyncTask.start(asyncKey));
@@ -704,10 +717,7 @@ export function* saveAndContinueResourceForm(params) {
         );
       }
 
-      yield call(apiCallWithRetry, {
-        path: `/connections/${id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: id, parentContext });
     } catch (error) {
       yield put(actions.asyncTask.failed(asyncKey));
 
@@ -778,7 +788,7 @@ export function* initFormValues({
     return; // nothing to do.
   }
   const { assistant, assistantMetadata, _connectionId } = resource;
-  const adaptorType = ['RESTExport', 'RESTImport'].includes(resource.adaptorType) ? 'rest' : 'http';
+  const adaptorType = getAssistantConnectorType(resource.assistant);
 
   let assistantData;
 

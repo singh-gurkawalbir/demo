@@ -118,7 +118,7 @@ export default {
     'file.type': {
       id: 'file.type',
       name: '/file/type',
-      type: 'select',
+      type: 'filetypeselect',
       label: 'File type',
       required: true,
       defaultValue: r => (r && r.file && r.file.type) || '',
@@ -182,6 +182,8 @@ export default {
     traceKeyTemplate: {
       fieldId: 'traceKeyTemplate',
     },
+    'file.sortByFields': { fieldId: 'file.sortByFields' },
+    'file.groupByFields': { fieldId: 'file.groupByFields' },
   },
   layout: {
     type: 'collapse',
@@ -212,6 +214,14 @@ export default {
             'file.xlsx.rowsPerRecord',
             'file.xlsx.keyColumns',
           ]},
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like to group and sort records?',
+        fields: [
+          'file.sortByFields',
+          'file.groupByFields',
         ],
       },
       {

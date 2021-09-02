@@ -531,7 +531,7 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
+selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resource selectors
@@ -561,14 +561,14 @@ selectors.mkTileApplications = () => createSelector(
         const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
         integrationConnections.forEach(c => {
-          applications.push(c.assistant || c.rdbms?.type || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
         });
       });
 
       const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
       parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.rdbms?.type || c.type);
+        applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
       });
       applications = uniq(applications);
     }
@@ -1500,6 +1500,23 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (connection.rdbms?.type) {
           return (
             this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+
+        if (connection.type === 'http') {
+          return (
+            this.http?.formType !== 'rest' &&
+            this.type === 'http' &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+
+        if (connection.type === 'rest') {
+          return (
+            (this.http?.formType === 'rest' || this.type === 'rest') &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
@@ -5480,17 +5497,18 @@ selectors.transferListWithMetadata = state => {
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RESTExport') {
-    return false;
-  }
+  const { _connectionId: connectionId } = resourceObj || {};
 
   const connection = selectors.resource(state, 'connections', connectionId);
 
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
+  // This change is because of recent rest to http migration.
+  // In case of old connections, connection.type will come as a rest
+  // In all other cases, "connection?.http?.formType" should be used to find whether it is rest or http.
+  if (connection?.type === 'rest') {
+    return connection.rest?.mediaType === 'csv';
+  }
+
+  return connection?.http?.formType === 'rest' && connection?.http?.successMediaType === 'csv';
 };
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
@@ -5689,7 +5707,17 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || {};
+selectors.editorHelperFunctions = state => {
+  const functions = state?.session?.editors?.helperFunctions || {};
+  const userTimezone = selectors.userTimezone(state);
+  const timestampFunc = functions.timestamp;
+
+  if (timestampFunc && userTimezone) {
+    functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+  }
+
+  return functions;
+};
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
@@ -5858,7 +5886,7 @@ selectors.applicationName = (state, _expOrImpId) => {
   } else {
     const connection = selectors.resource(state, 'connections', _connectionId) || {};
 
-    appType = connection.assistant || connection.rdbms?.type || connection.type;
+    appType = connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type;
   }
 
   return getApp(appType)?.name;

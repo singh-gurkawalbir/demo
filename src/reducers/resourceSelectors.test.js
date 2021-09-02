@@ -1224,6 +1224,7 @@ describe('tests for reducer selectors', () => {
 
       const conn = {
         _id: 'c1',
+        type: 'rest',
         rest: {
           mediaType: 'csv',
         },

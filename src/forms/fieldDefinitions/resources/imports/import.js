@@ -18,6 +18,7 @@ export default {
   _connectionId: {
     type: 'replaceconnection',
     resourceType: 'connections',
+    parentResourceType: 'imports',
     label: 'Connection',
     appTypeIsStatic: true,
     allowEdit: true,

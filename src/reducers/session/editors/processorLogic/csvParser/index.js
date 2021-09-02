@@ -4,7 +4,9 @@ import { wrapExportFileSampleData } from '../../../../../utils/sampleData';
 const requestBody = ({ rule, data }) => {
   const rules = {
     ...rule,
+    keyColumns: rule.ignoreSortAndGroup && rule.keyColumns,
     rowsToSkip: Number.isInteger(rule.rowsToSkip) ? rule.rowsToSkip : 0,
+    ignoreSortAndGroup: undefined,
   };
 
   return {
@@ -14,7 +16,8 @@ const requestBody = ({ rule, data }) => {
   };
 };
 
-const init = ({options, fieldState}) => {
+const init = props => {
+  const {options, fieldState, resource} = props;
   const value = fieldState?.value || {};
   let rule = value;
 
@@ -23,6 +26,12 @@ const init = ({options, fieldState}) => {
   }
 
   rule.multipleRowsPerRecord = !!rule.keyColumns?.length;
+  if (!fieldState?.ignoreSortAndGroup) {
+    rule.groupByFields = resource?.file?.groupByFields || [];
+    rule.sortByFields = resource?.file?.sortByFields || [];
+  }
+
+  rule.ignoreSortAndGroup = fieldState?.ignoreSortAndGroup;
 
   return {
     ...options,

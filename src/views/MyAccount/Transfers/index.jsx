@@ -17,15 +17,14 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'auto',
     minHeight: 124,
   },
-  topHeading: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   heading: {
     paddingLeft: theme.spacing(1),
   },
   transferTableWrapper: {
     overflowX: 'auto',
+  },
+  description: {
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -47,8 +46,7 @@ export default function Transfers() {
         {!showInviteView && (
           <>
             <div className={classes.root}>
-              <div className={classes.topHeading}>
-                <PanelHeader title="Transfers" />
+              <PanelHeader title="Transfers" >
                 <IconTextButton
                   data-test="newTransfer"
                   variant="text"
@@ -57,7 +55,7 @@ export default function Transfers() {
                   <AddIcon />
                   Create transfer
                 </IconTextButton>
-              </div>
+              </PanelHeader>
 
               <ResourceTable
                 resourceType="transfers"
@@ -65,7 +63,7 @@ export default function Transfers() {
                 className={classes.transferTableWrapper}
             />
             </div>
-            <div>
+            <div className={classes.description}>
               Transfer individual integrations between integrator.io accounts.
               Send integrations by specifying the email of the owner
               of the integrator.io account you want to send the integration to.
@@ -82,3 +80,4 @@ export default function Transfers() {
     </>
   );
 }
+

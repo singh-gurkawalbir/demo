@@ -54,6 +54,10 @@ export default function UploadFile() {
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)
   );
+  const {previewFailedStatus, id} = useSelector(state =>
+    selectors.isPreviewStatusFailed(state)
+  );
+
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -64,6 +68,14 @@ export default function UploadFile() {
       dispatch(actions.template.clearUploaded(templateId));
     }
   }, [dispatch, isFileUploaded, location, history, templateId]);
+
+  useEffect(() => {
+    if (previewFailedStatus) {
+      setUploadInProgress(false);
+      dispatch(actions.template.clearUploaded(id));
+    }
+  }, [dispatch, previewFailedStatus, id]);
+
   const handleUploadFileChange = e => {
     const file = e.target.files[0];
 
