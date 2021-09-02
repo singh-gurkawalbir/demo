@@ -21,10 +21,12 @@ export default function reducer(state, action) {
   const {
     type,
     value,
-    index,
+    rowIndex,
+    colIndex,
     field,
     optionsMap,
     onRowChange,
+    heightOfCell,
   } = action;
 
   return produce(state, draft => {
@@ -32,8 +34,14 @@ export default function reducer(state, action) {
 
     // eslint-disable-next-line default-case
     switch (type) {
+      case actionTypes.UPDATE_CELL_HEIGHT:
+        if (!tableStateValue[rowIndex].sizeMap) {
+          tableStateValue[rowIndex].sizeMap = {};
+        }
+        tableStateValue[rowIndex].sizeMap[colIndex] = heightOfCell;
+        break;
       case actionTypes.REMOVE_TABLE_ROW:
-        tableStateValue.splice(index, 1);
+        tableStateValue.splice(rowIndex, 1);
         draft.touched = true;
         break;
       case actionTypes.UPDATE_TABLE_ROW:
@@ -41,13 +49,13 @@ export default function reducer(state, action) {
 
         if (onRowChange) {
           // eslint-disable-next-line no-param-reassign
-          tableStateValue[index].value = onRowChange(tableStateValue[index].value, field, value);
+          tableStateValue[rowIndex].value = onRowChange(tableStateValue[rowIndex].value, field, value);
         } else {
-          tableStateValue[index].value[field] = value;
+          tableStateValue[rowIndex].value[field] = value;
         }
 
         // eslint-disable-next-line no-case-declarations
-        const isAllValuesEntered = isAllValuesEnteredForARow(tableStateValue[index].value, optionsMap);
+        const isAllValuesEntered = isAllValuesEnteredForARow(tableStateValue[rowIndex].value, optionsMap);
         // eslint-disable-next-line no-case-declarations
         const isLastRowEmpty = Object.values(tableStateValue[tableStateValue.length - 1].value).every(val => !val);
 
@@ -67,7 +75,19 @@ export default function reducer(state, action) {
     }
   });
 }
+const ITEM_SIZE = 46;
+const PADDING = 5;
+export const getRowHeight = (state, rowIndex) => {
+  const {sizeMap } = state.tableStateValue?.[rowIndex] || {};
 
+  return Object.values(sizeMap || {}).reduce((acc, curr) => {
+    if (curr > acc) {
+      return curr;
+    }
+
+    return acc;
+  }, ITEM_SIZE) + PADDING;
+};
 export const preSubmit = (stateValue = [], optionsMap, ignoreEmptyRow) =>
   stateValue.map(val => val.value).filter((val, index) => {
     if (ignoreEmptyRow) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer } from 'react';
+import React, { useEffect, useCallback, useReducer, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
@@ -6,7 +6,6 @@ import { selectors } from '../../../../../reducers/index';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import { PING_STATES } from '../../../../../reducers/comms/ping';
 import TestButton, { PingMessage } from './TestButton';
-// import useHandleSubmit from '../hooks/useHandleSubmit';
 import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
@@ -84,11 +83,22 @@ export default function TestSaveAndClose(props) {
     disabled,
     formKey,
     onCancel,
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
   } = props;
   const dispatch = useDispatch();
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const { formValues, testInitiated, erroredMessage, savingForm, closeAfterSave } = formState;
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
+
   const handleSaveForm = useCallback(
     () => {
       const newValues = { ...values };
@@ -101,10 +111,13 @@ export default function TestSaveAndClose(props) {
         resourceId,
         newValues,
         null,
-        !closeAfterSave
+        !closeAfterSave,
+        null,
+        null,
+        parentContext
       ));
     },
-    [closeAfterSave, dispatch, resourceId, resourceType, values]
+    [closeAfterSave, dispatch, resourceId, resourceType, values, parentContext]
   );
   const handleTestConnection = useCallback(() => {
     const newValues = { ...values };
@@ -112,8 +125,8 @@ export default function TestSaveAndClose(props) {
     if (!newValues['/_borrowConcurrencyFromConnectionId']) {
       newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
     }
-    dispatch(actions.resource.connections.test(resourceId, newValues));
-  }, [dispatch, resourceId, values]);
+    dispatch(actions.resource.connections.test(resourceId, newValues, parentContext));
+  }, [dispatch, parentContext, resourceId, values]);
 
   const testClear = useCallback(
     () => dispatch(actions.resource.connections.testClear(resourceId, true)),

@@ -83,7 +83,7 @@ export default function PageGenerators({integrationId, flowId}) {
         axis="y">
         {pageGenerators.map((pg, i) => (
           <>
-            <ConnectLineListItem index={i} isLastItem={i + 1 === pageGenerators.lengt} />
+            <ConnectLineListItem index={i} isLastItem={i + 1 === pageGenerators.length} />
             <SortableItem
               index={i}
               hideSortableGhost={false}

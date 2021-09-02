@@ -244,6 +244,16 @@ export const isUIDataExpectedForResource = (resource, connection) =>
   isBlobTypeResource(resource) ||
   isIntegrationApp(resource); // Need to do
 
+export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
+// Gives sample file data
+export const getSampleFileMeta = () => [
+  {
+    fileMeta: {
+      fileName: 'sampleFileName',
+    },
+  },
+];
+
 /*
  * Gives a sample data for Blob resource
  */
@@ -322,7 +332,7 @@ export const getFormattedResourceForPreview = (
     }
   }
 
-  if (resource.useTechAdaptorForm && !resource.assistant) {
+  if (resource.http?.formType === 'rest' && !resource.assistant) {
     delete resource.rest;
   }
 

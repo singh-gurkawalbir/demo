@@ -794,7 +794,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   }
 
   if (
-    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '10') &&
+    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '5' || cronArr[MINUTES] === '10') &&
     cronArr[HOURS].indexOf('*') === -1 &&
     cronArr[HOURS].indexOf('?') === -1
   ) {
@@ -833,7 +833,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   }
 
   if (
-    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '10') &&
+    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '5' || cronArr[MINUTES] === '10') &&
     cronArr[HOURS] &&
     cronArr[HOURS].split(',').length === 1
   ) {

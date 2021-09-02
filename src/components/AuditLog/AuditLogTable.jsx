@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AuditLogTable({ resourceType, resourceId, filters, childId, className }) {
+export default function AuditLogTable({ resourceType, isFixed, resourceId, filters, childId, className }) {
   const classes = useStyles();
   const filterKey = `${resourceType}-${resourceId}-auditLogs`;
   const { take = 100 } = useSelector(state => selectors.filter(state, filterKey));
@@ -49,6 +49,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
         filterKey={filterKey}
         count={count}
         maxCount={totalCount}
+        isFixed={isFixed}
       />
     </div>
   );

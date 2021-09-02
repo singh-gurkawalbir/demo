@@ -26,15 +26,107 @@ import {
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import {
+  constructResourceFromFormValues,
+  constructSuiteScriptResourceFromFormValues,
+} from '../../utils';
 
 const formKey = 'form-123';
 const resourceId = 'export-123';
 const flowId = 'flow-123';
 const integrationId = 'int-123';
+const ssLinkedConnectionId = 'ss-con-123';
 
 describe('resourceFormSampleData sagas', () => {
+  describe('_fetchResourceInfoFromFormKey saga', () => {
+    test('should call constructResourceFromFormValues to fetch resourceObj and return all form properties', () => {
+      const parentContext = { resourceId, resourceType: 'imports' };
+      const formState = {
+        parentContext,
+        value: {},
+      };
+      const expectedOutput = {
+        formState,
+        resourceId,
+        resourceType: 'imports',
+        resourceObj: {},
+      };
+
+      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+        .provide([
+          [select(selectors.formState, formKey), formState],
+          [select(selectors.formParentContext, formKey), parentContext],
+          [call(constructResourceFromFormValues, {
+            formValues: {},
+            resourceId,
+            resourceType: 'imports',
+          }), {}],
+        ])
+        .call.fn(constructResourceFromFormValues)
+        .not.call.fn(constructSuiteScriptResourceFromFormValues)
+        .returns(expectedOutput)
+        .run();
+    });
+    test('should call constructSuiteScriptResourceFromFormValues incase of suite script form and return all form properties', () => {
+      const parentContext = {
+        resourceId,
+        resourceType: 'exports',
+        integrationId,
+        ssLinkedConnectionId,
+      };
+      const formState = {
+        parentContext,
+        value: {},
+      };
+      const ssResource = {
+        type: 'import',
+        version: 'V2',
+        _integrationId: integrationId,
+        ssLinkedConnectionId,
+        _id: resourceId,
+        import: {},
+        export: {
+          file: {
+            csv: {
+              columnDelimiter: ',',
+              hasHeaderRow: true,
+            },
+          },
+          type: 'ftp',
+        },
+      };
+      const expectedOutput = {
+        formState,
+        resourceId,
+        resourceType: 'exports',
+        resourceObj: ssResource.export,
+        integrationId,
+        ssLinkedConnectionId,
+      };
+
+      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+        .provide([
+          [select(selectors.formState, formKey), formState],
+          [select(selectors.formParentContext, formKey), parentContext],
+          [call(constructSuiteScriptResourceFromFormValues, {
+            formValues: formState?.value || {},
+            resourceId,
+            resourceType: 'exports',
+            ssLinkedConnectionId,
+            integrationId,
+          }), ssResource],
+        ])
+        .call.fn(constructSuiteScriptResourceFromFormValues)
+        .not.call.fn(constructResourceFromFormValues)
+        .returns(expectedOutput)
+        .run();
+    });
+  });
+
   describe('requestResourceFormSampleData saga', () => {
     test('should do nothing if there is no formKey', () => expectSaga(requestResourceFormSampleData, {})
+      .not.delay(500)
       .not.put(actions.resourceFormSampleData.setStatus(undefined, 'requested'))
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
@@ -43,6 +135,7 @@ describe('resourceFormSampleData sagas', () => {
       .provide([
         [call(_fetchResourceInfoFromFormKey, { formKey }), {}],
       ])
+      .not.delay(500)
       .not.put(actions.resourceFormSampleData.setStatus(undefined, 'requested'))
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
@@ -55,10 +148,11 @@ describe('resourceFormSampleData sagas', () => {
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'imports' }],
           [call(_requestImportSampleData, { formKey }), {}],
         ])
+        .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
         .call(_requestImportSampleData, { formKey })
-        .run();
+        .run(500);
     });
     test('should dispatch requested status and call _requestImportSampleData incase of imports resourceType ', () => {
       const refreshCache = true;
@@ -68,10 +162,11 @@ describe('resourceFormSampleData sagas', () => {
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
           [call(_requestExportSampleData, { formKey, refreshCache }), {}],
         ])
+        .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .call(_requestExportSampleData, { formKey, refreshCache })
         .not.call.fn(_requestImportSampleData)
-        .run();
+        .run(500);
     });
   });
   describe('_requestExportSampleData saga', () => {
@@ -118,6 +213,41 @@ describe('resourceFormSampleData sagas', () => {
       .call(_requestLookupSampleData, { formKey, refreshCache })
       .not.call.fn(_requestPGExportSampleData)
       .run());
+    test('should call _requestFileSampleData incase of suitescript file resource', () => {
+      const resourceObj = {
+        type: 'fileCabinet',
+        file: {
+          csv: {
+            columnDelimiter: ',',
+            hasHeaderRow: true,
+          },
+        },
+      };
+
+      return expectSaga(_requestExportSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
+        ])
+        .call(_requestFileSampleData, { formKey })
+        .not.call(_requestLookupSampleData, { formKey })
+        .not.call.fn(_requestPGExportSampleData)
+        .run();
+    });
+    test('should dispatch clearStages incase of suitescript but not of a file resource', () => {
+      const resourceObj = {
+        type: 'rakuten',
+      };
+
+      return expectSaga(_requestExportSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
+        ])
+        .put(actions.resourceFormSampleData.clearStages(resourceId))
+        .not.call(_requestFileSampleData, { formKey })
+        .not.call(_requestLookupSampleData, { formKey })
+        .not.call.fn(_requestPGExportSampleData)
+        .run();
+    });
   });
   describe('_requestPGExportSampleData saga', () => {
     const refreshCache = true;
@@ -207,6 +337,45 @@ describe('resourceFormSampleData sagas', () => {
       return expectSaga(_requestExportPreviewData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
+          [call(apiCallWithRetry, {
+            path: '/exports/preview',
+            opts: { method: 'POST', body },
+            hidden: true,
+          }), { test: 5 }],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/exports/preview',
+          opts: { method: 'POST', body },
+          hidden: true,
+        })
+        .run();
+    });
+    test('should ignore standalone integration Id while constructing body with needed props for making preview call', () => {
+      const resourceObj = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+      };
+      const flow = {
+        _id: flowId,
+        pageGenerators: [],
+        pageProcessors: [],
+        settings: {},
+      };
+
+      const body = {
+        ...resourceObj,
+        _flowId: flowId,
+        _integrationId: undefined,
+        test: {
+          limit: sampleDataRecordSize,
+        },
+      };
+
+      return expectSaga(_requestExportPreviewData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId: STANDALONE_INTEGRATION.id }],
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
           [call(apiCallWithRetry, {
@@ -330,6 +499,7 @@ describe('resourceFormSampleData sagas', () => {
             resourceId,
             fileContent: fileDefinitionSampleData,
             parserOptions: rule,
+            fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
             fileType: 'fileDefinitionParser',
           }), {}],
         ])
@@ -338,6 +508,7 @@ describe('resourceFormSampleData sagas', () => {
           fileContent: fileDefinitionSampleData,
           parserOptions: rule,
           fileType: 'fileDefinitionParser',
+          fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
         })
         .not.put(actions.resourceFormSampleData.clearStages(resourceId))
         .run();
@@ -354,8 +525,8 @@ describe('resourceFormSampleData sagas', () => {
         columnDelimiter: '|',
         hasHeaderRow: true,
         rowDelimiter: undefined,
-        multipleRowsPerRecord: undefined,
-        keyColumns: undefined,
+        sortByFields: [],
+        groupByFields: [],
       };
       const ftpResource = {
         _id: 'export-123',
@@ -405,8 +576,8 @@ describe('resourceFormSampleData sagas', () => {
         columnDelimiter: '|',
         hasHeaderRow: true,
         rowDelimiter: undefined,
-        multipleRowsPerRecord: undefined,
-        keyColumns: undefined,
+        sortByFields: [],
+        groupByFields: [],
       };
       const ftpResource = {
         _id: 'export-123',
@@ -641,12 +812,31 @@ describe('resourceFormSampleData sagas', () => {
         adaptorType: 'FTPExport',
       };
       const fileContent = { users: { test: 5 }};
-      const parseData = fileContent.users;
+      const parserOptions = {
+        resourcePath: 'users',
+      };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions: {}, isNewSampleData: true, fileType: 'json' })
+      const processorData = {
+        rule: parserOptions,
+        data: fileContent,
+        editorType: 'jsonParser',
+      };
+      const processorResponse = {
+        data: {
+          data: {
+            users: { test: 5 },
+          },
+        },
+      };
+
+      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+        .provide([
+          [call(_getProcessorOutput, { processorData }), processorResponse],
+        ])
         .put(actions.resourceFormSampleData.setRawData(resourceId, fileContent))
-        .put(actions.resourceFormSampleData.setParseData(resourceId, parseData))
-        .put(actions.resourceFormSampleData.setPreviewData(resourceId, parseData))
+        .call.fn(_getProcessorOutput)
+        .put(actions.resourceFormSampleData.setParseData(resourceId))
+        .put(actions.resourceFormSampleData.setPreviewData(resourceId))
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
         .run();
     });

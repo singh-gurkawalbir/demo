@@ -7,7 +7,7 @@ import { getDatabaseConnectors } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   small: {
-    maxHeight: theme.spacing(4),
+    maxHeight: '26px',
   },
   medium: {
     maxHeight: theme.spacing(7),
@@ -22,8 +22,6 @@ function iconMap(type = '') {
   if (type.toLowerCase().includes('ftp')) return 'ftp';
 
   if (type.toLowerCase().includes('http')) return 'http';
-
-  if (type.toLowerCase().includes('rest')) return 'rest';
 
   if (type.toLowerCase().includes('mysql')) return 'mysql';
 
@@ -47,6 +45,7 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('rdbms')) return 'rdbms';
 
+  if (['restexport', 'restimport'].includes(type.toLocaleLowerCase())) return 'rest';
   // 's3' are too few words that it could be contained in lot more words. In current list of applications, it matches with 'msdynamics360'.
   // Hence expilicity check for S3Export and S3Import for S3 type.
   if (['s3export', 's3import'].includes(type.toLowerCase())) return 's3';
@@ -78,16 +77,16 @@ export default function ApplicationImg({
 
   if (!assistant) {
     if (dbConnectors.includes(iconMap(type)) && markOnly) {
-      path += `marketplace/small/${iconMap(type)}.png`;
+      path += `react/application-logos/small/${iconMap(type)}.png`;
     } else {
-      path += `flow-builder/company-logos/integration-icon-${iconMap(
+      path += `react/application-logos/large/${iconMap(
         type
       )}.png`;
     }
   } else if (markOnly) {
-    path += `marketplace/small/${imageName(assistant)}.png`;
+    path += `react/application-logos/small/${imageName(assistant)}.png`;
   } else {
-    path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
+    path += `react/application-logos/large/${assistant}.png`;
   }
 
   return (

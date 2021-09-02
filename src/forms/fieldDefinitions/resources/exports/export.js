@@ -47,6 +47,7 @@ export default {
   _connectionId: {
     type: 'replaceconnection',
     resourceType: 'connections',
+    parentResourceType: 'exports',
     label: 'Connection',
     appTypeIsStatic: true,
     skipDefault: true,

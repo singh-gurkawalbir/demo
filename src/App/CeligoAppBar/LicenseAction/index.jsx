@@ -8,11 +8,22 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import NotificationToaster from '../../../components/NotificationToaster';
 import { platformLicenseActionDetails } from '../../../utils/license';
-import PillButton from '../../../components/Buttons/PillButton';
 
 const useStyles = makeStyles(theme => ({
+  inTrial: {
+    marginTop: -2,
+    borderRadius: 17,
+    fontSize: 13,
+    padding: '4px 16px',
+    fontFamily: 'source sans pro semibold',
+  },
+  inTrialDaysLeft: {
+    fontFamily: 'source sans pro',
+    paddingLeft: 3,
+  },
   titleStatusPanel: {
     fontSize: 15,
+    paddingTop: 3,
   },
   actionBtn: {
     color: theme.palette.primary.main,
@@ -118,12 +129,16 @@ function LicenseAction() {
 
         </NotificationToaster>
       ) : (
-        <PillButton
-          fill
+        <Button
+          variant="contained"
+          color="primary"
+          disableElevation
+          className={classes.inTrial}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
-        </PillButton>
+          <span className={classes.inTrialDaysLeft}>{licenseActionDetails.daysLeft}</span>
+        </Button>
       )}
     </>
   );

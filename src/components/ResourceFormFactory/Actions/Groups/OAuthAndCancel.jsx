@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
@@ -11,13 +11,22 @@ export default function OAuthAndCancel({
   resourceId,
   onCancel,
   formKey,
-
+  flowId,
+  integrationId,
+  parentType,
+  parentId,
 }) {
   const formSaveStatus = useSelector(state =>
     selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
   );
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
 
-  const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId});
+  const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext});
 
   return (
     <SaveAndCloseMiniResourceForm
@@ -27,6 +36,7 @@ export default function OAuthAndCancel({
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}
       handleCancel={onCancel}
-      />
+      forceIsDirty
+    />
   );
 }

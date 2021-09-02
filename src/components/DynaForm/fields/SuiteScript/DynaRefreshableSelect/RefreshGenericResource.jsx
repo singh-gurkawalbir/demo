@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   refreshRoot: {
     width: '100%',
+    overflow: 'hidden',
   },
 }));
 

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import FormView, { settingsFormKey } from './FormView';
+import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
@@ -51,6 +51,7 @@ export default function DynaSettings(props) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { resourceType, resourceId } = resourceContext;
+  const settingsFormKey = `settingsForm-${resourceId}`;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
   const allowFormEdit = useSelector(state =>

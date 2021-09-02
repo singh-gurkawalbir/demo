@@ -162,7 +162,7 @@ const emptyObject = {};
 const emptyArray = [];
 
 export default function SearchCriteriaEditor(props) {
-  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = emptyObject} = props;
+  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = emptyObject, setDisableSave} = props;
   const { data: fields, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -186,11 +186,16 @@ export default function SearchCriteriaEditor(props) {
     if (field === 'field') {
       dispatch(actions.searchCriteria.patchField(editorId, 'operator', row, null));
     }
-  }, [dispatch, editorId]);
+    // if any field is updated, enable the save button
+    setDisableSave && setDisableSave(false);
+  }, [dispatch, editorId, setDisableSave]);
 
   const handleDelete = useCallback(row => {
     dispatch(actions.searchCriteria.delete(editorId, row));
-  }, [dispatch, editorId]);
+
+    // if any row is deleted, enable the save button
+    setDisableSave && setDisableSave(false);
+  }, [dispatch, editorId, setDisableSave]);
 
   const handleRefresh = useCallback(() => {
     if (onRefresh) {
