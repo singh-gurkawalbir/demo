@@ -3456,7 +3456,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
     conn => {
       const accessLevel = selectors.userAccessLevelOnConnection(state, conn._id);
 
-      return accessLevel === 'manage' || accessLevel === 'owner';
+      return ['manage', 'owner', 'administrator'].includes(accessLevel);
     }
   );
 
