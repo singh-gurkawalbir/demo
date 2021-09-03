@@ -2,7 +2,6 @@ import {
   call,
   put,
   takeEvery,
-  takeLeading,
   all,
   select,
 } from 'redux-saga/effects';
@@ -449,7 +448,6 @@ export function* linkWithGoogle({ returnTo }) {
 }
 
 export const authenticationSagas = [
-  takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
   takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),

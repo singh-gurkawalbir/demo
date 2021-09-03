@@ -30,7 +30,7 @@ import {
   onErrorSaga,
   onAbortSaga,
 } from './api/requestInterceptors';
-import { authenticationSagas, initializeApp, initializeLogrocket } from './authentication';
+import { authenticationSagas, initializeApp, initializeLogrocket, invalidateSession } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -206,13 +206,12 @@ export default function* rootSaga() {
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    logout: take(actionsTypes.USER_LOGOUT),
     switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   // stop the main sagas
   t.cancel();
-
   if (logrocket) {
     // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
     yield call(initializeLogrocket);
@@ -223,8 +222,10 @@ export default function* rootSaga() {
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
-    // logout requires also reset the store
-    yield put(actions.auth.clearStore());
+    const { type, ...rest} = logout;
+
+    // invalidate the session and clear the store
+    yield call(invalidateSession, { ...rest });
     // restart the root saga again
     yield spawn(rootSaga);
   }

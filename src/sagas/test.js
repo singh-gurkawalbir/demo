@@ -21,7 +21,7 @@ import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
-import { initializeApp, initializeLogrocket } from './authentication';
+import { initializeApp, initializeLogrocket, invalidateSession } from './authentication';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {
@@ -517,7 +517,7 @@ describe('rootSaga', () => {
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
           logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+          logout: take(actionsTypes.USER_LOGOUT),
           switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
@@ -532,7 +532,7 @@ describe('rootSaga', () => {
       expect(saga.next().done).toBe(true);
     });
 
-    test('should clear store and respawn rootSaga during logout', () => {
+    test('should invalidate session clear store and respawn rootSaga during logout', () => {
       const forkEffect = fork(allSagas);
 
       expect(saga.next().value).toEqual(
@@ -545,12 +545,12 @@ describe('rootSaga', () => {
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
           logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+          logout: take(actionsTypes.USER_LOGOUT),
           switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
-      expect(saga.next({logout: {opts: {prop1: 'someOptsz'}}}).value)
-        .toEqual(put(actions.auth.clearStore()));
+      expect(saga.next({ logout: { isExistingSessionInvalid: undefined } }).value)
+        .toEqual(call(invalidateSession, { isExistingSessionInvalid: undefined }));
       expect(forkEffectRes.cancel).toHaveBeenCalled();
 
       expect(saga.next().value)
@@ -571,7 +571,7 @@ describe('rootSaga', () => {
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
           logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+          logout: take(actionsTypes.USER_LOGOUT),
           switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
