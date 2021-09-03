@@ -23,7 +23,7 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   integrationId, children }) => {
   const dispatch = useDispatch();
 
-  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
+  const {hasData: hasSettingsMetadata, isLoading} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
     ssLinkedConnectionId,
     integrationId,
     resourceType: 'settings',
@@ -36,11 +36,16 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   }));
 
   useEffect(() => {
-    if (!hasSettingsMetadata) { dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId)); }
+    // if settings is of type string during opening of tile...quiet likely there was an error before
+    // could be due to connection failure so we fetch settings once again
+    if (!hasSettingsMetadata || (typeof resource === 'string')) {
+      dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!hasSettingsMetadata) { return <Spinner />; }
+  if (!hasSettingsMetadata || isLoading) { return <Spinner />; }
+
   // if settings is of type string...quiet likely its an error
   if (typeof resource === 'string' || resource?.errors) {
     return <Typography color="error">{inferErrorMessages(resource)[0]}</Typography>;
