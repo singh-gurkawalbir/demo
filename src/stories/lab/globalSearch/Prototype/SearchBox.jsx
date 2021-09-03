@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
-import SearchIcon from '../../../../components/icons/SearchIcon';
 import FloatingPaper from './FloatingPaper';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 
@@ -13,13 +12,13 @@ const useStyles = makeStyles(theme => ({
   },
   searchBox: {
     width: '100%',
-    padding: theme.spacing(0.5, 1),
+    padding: [[5, 8]],
     display: 'flex',
     alignItems: 'center',
+    border: `1px solid ${theme.palette.secondary.contrastText}`,
     borderRadius: 24,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
-    borderColor: theme.palette.primary.main,
     borderLeft: 0,
     flexGrow: 1,
   },
@@ -67,8 +66,6 @@ export default function SearchBox() {
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
-        <SearchIcon fontSize="small" />
-
         <InputBase
           value={keyword}
           classes={{input: classes.inputBase}}
