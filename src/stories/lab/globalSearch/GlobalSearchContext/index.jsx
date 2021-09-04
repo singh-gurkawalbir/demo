@@ -3,13 +3,13 @@ import React, { useContext, useState } from 'react';
 const GlobalSearchContext = React.createContext();
 
 export const GlobalSearchProvider = ({ children, defaultKeyword = '', defaultType = [] }) => {
-  const [type, setType] = useState(defaultType);
+  const [filters, setFilters] = useState(defaultType);
   const [keyword, setKeyword] = useState(defaultKeyword);
   const [open, setOpen] = useState(false);
 
   return (
     <GlobalSearchContext.Provider
-      value={{ open, type, keyword, setOpen, setType, setKeyword }}>
+      value={{ open, filters, keyword, setOpen, setFilters, setKeyword }}>
       {children}
     </GlobalSearchContext.Provider>
   );

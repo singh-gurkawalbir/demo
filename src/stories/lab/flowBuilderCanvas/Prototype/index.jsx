@@ -17,11 +17,9 @@ const pageGenerators = {};
 
 function getAppBlock(resource, x, y) {
   const container = new PIXI.Container();
-
-  container.position.set(x, y);
-
   const block = new PIXI.Graphics();
 
+  container.position.set(x, y);
   container.addChild(block);
 
   block.lineStyle(2, 0xD6E4ED, 1);

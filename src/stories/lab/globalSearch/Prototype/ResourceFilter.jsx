@@ -1,4 +1,4 @@
-// import clsx from 'clsx';
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import { makeStyles,
   IconButton,
@@ -15,16 +15,7 @@ import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import FilterIcon from '../../../../components/icons/FilterIcon';
-
-const resources = [
-  'Connections',
-  'Imports',
-  'Exports',
-  'Flows',
-  'Integrations',
-  'Templates',
-  'Integration apps',
-];
+import { filterMap } from './filterMeta';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,21 +24,24 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   arrowContainer: {
-    color: theme.palette.common.white,
     paddingLeft: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
     borderRadius: 24,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: theme.palette.secondary.light,
-    borderColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.lightest,
+    border: `1px solid ${theme.palette.secondary.contrastText}`,
   },
   iconButton: {
     // margin: theme.spacing(0, 1),
   },
   menu: {
     marginRight: 2,
+  },
+  allItemChecked: {
+    color: `${theme.palette.text.disabled}!important`,
+    cursor: 'default',
   },
   divider: {
     margin: theme.spacing(1, 0),
@@ -62,23 +56,19 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   typeButton: {
-    color: theme.palette.common.white,
-    padding: 5,
-  },
-  badge: {
-    backgroundColor: theme.palette.primary.light,
+    padding: theme.spacing(0.5),
   },
 }));
 
 export default function ResourceFilter({openByDefault = false}) {
   const classes = useStyles();
-  const { type, setType } = useGlobalSearchContext();
+  const { filters, setFilters } = useGlobalSearchContext();
   const [open, setOpen] = useState(openByDefault);
 
   const handleArrowClick = () => setOpen(o => !o);
 
   const FilterLabel = () => {
-    if (type?.length === 0) {
+    if (filters?.length === 0) {
       return (
         <Typography variant="h6" color="inherit" className={classes.filterLabel}>
           All
@@ -87,8 +77,8 @@ export default function ResourceFilter({openByDefault = false}) {
     }
 
     return (
-      <Tooltip title={`Search only: ${type.join(', ')}`} placement="bottom" aria-label="Filters">
-        <Badge classes={{badge: classes.badge}} overlap="circle" variant="dot" badgeContent={type.length}>
+      <Tooltip title={`Filter${filters.length > 1 ? 's' : ''} applied`} placement="bottom" aria-label="Filters">
+        <Badge color="secondary" overlap="circle" variant="dot">
           <FilterIcon fontSize="small" />
         </Badge>
       </Tooltip>
@@ -96,16 +86,16 @@ export default function ResourceFilter({openByDefault = false}) {
   };
 
   const MenuItem = ({ name, label }) => {
-    const isChecked = type.includes(name) || (name === 'all' && !type?.length);
+    const isChecked = filters.includes(name) || (name === 'all' && !filters?.length);
 
     const handleMenuItemClick = name => {
       if (name === 'all') {
-        setType([]);
-      } else if (type?.includes(name)) {
-        setType(type.filter(i => i !== name));
+        setFilters([]);
+      } else if (filters?.includes(name)) {
+        setFilters(filters.filter(i => i !== name));
       } else {
       // last case is type not present, so add it.
-        setType([...type, name]);
+        setFilters([...filters, name]);
       }
     };
 
@@ -113,7 +103,13 @@ export default function ResourceFilter({openByDefault = false}) {
       <div>
         <FormControlLabel
           onClick={() => handleMenuItemClick(name)}
-          control={<Checkbox checked={isChecked} name={name} color="primary" />}
+          control={(
+            <Checkbox
+              checked={isChecked}
+              name={name}
+              className={clsx({[classes.allItemChecked]: isChecked && name === 'all' })}
+              color="primary" />
+          )}
           label={label} />
       </div>
     );
@@ -142,17 +138,18 @@ export default function ResourceFilter({openByDefault = false}) {
           </div>
 
           <Divider orientation="horizontal" className={classes.divider} />
-          <Typography variant="caption" color="textSecondary" gutterBottom component="div">Filter by category:</Typography>
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
 
-          {resources.map(r => (
-            <MenuItem key={r} name={r} label={r} />
-          ))}
+          {Object.keys(filterMap).map(key => {
+            const filter = filterMap[key];
+
+            return <MenuItem key={key} name={filter.name} label={filter.label} />;
+          })}
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>
 
-          <MenuItem name="ia" label="Integration App" />
+          <MenuItem name="ia" label="Integration apps" />
           <MenuItem name="template" label="Template" />
         </FloatingPaper>
       )}
