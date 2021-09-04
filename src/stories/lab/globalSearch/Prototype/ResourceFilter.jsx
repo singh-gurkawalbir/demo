@@ -15,21 +15,7 @@ import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import FilterIcon from '../../../../components/icons/FilterIcon';
-
-const resources = [
-  'Integrations',
-  'Flows',
-  'Connections',
-  'Imports',
-  'Exports',
-  'Scripts',
-  'Agents',
-  'Stacks',
-  'My APIs',
-  'API tokens',
-  'Templates',
-  'Integration apps',
-];
+import filterMeta from './filterMeta';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -76,13 +62,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function ResourceFilter({openByDefault = false}) {
   const classes = useStyles();
-  const { type, setType } = useGlobalSearchContext();
+  const { filters, setFilters } = useGlobalSearchContext();
   const [open, setOpen] = useState(openByDefault);
 
   const handleArrowClick = () => setOpen(o => !o);
 
   const FilterLabel = () => {
-    if (type?.length === 0) {
+    if (filters?.length === 0) {
       return (
         <Typography variant="h6" color="inherit" className={classes.filterLabel}>
           All
@@ -91,7 +77,7 @@ export default function ResourceFilter({openByDefault = false}) {
     }
 
     return (
-      <Tooltip title={`Filter${type.length > 1 ? 's' : ''} applied`} placement="bottom" aria-label="Filters">
+      <Tooltip title={`Filter${filters.length > 1 ? 's' : ''} applied`} placement="bottom" aria-label="Filters">
         <Badge color="secondary" overlap="circle" variant="dot">
           <FilterIcon fontSize="small" />
         </Badge>
@@ -100,16 +86,16 @@ export default function ResourceFilter({openByDefault = false}) {
   };
 
   const MenuItem = ({ name, label }) => {
-    const isChecked = type.includes(name) || (name === 'all' && !type?.length);
+    const isChecked = filters.includes(name) || (name === 'all' && !filters?.length);
 
     const handleMenuItemClick = name => {
       if (name === 'all') {
-        setType([]);
-      } else if (type?.includes(name)) {
-        setType(type.filter(i => i !== name));
+        setFilters([]);
+      } else if (filters?.includes(name)) {
+        setFilters(filters.filter(i => i !== name));
       } else {
       // last case is type not present, so add it.
-        setType([...type, name]);
+        setFilters([...filters, name]);
       }
     };
 
@@ -154,9 +140,11 @@ export default function ResourceFilter({openByDefault = false}) {
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
 
-          {resources.map(r => (
-            <MenuItem key={r} name={r} label={r} />
-          ))}
+          {Object.keys(filterMeta).map(key => {
+            const filter = filterMeta[key];
+
+            return <MenuItem key={key} name={filter.name} label={filter.label} />;
+          })}
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>

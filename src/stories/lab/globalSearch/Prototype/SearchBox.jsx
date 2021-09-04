@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
 import FloatingPaper from './FloatingPaper';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
+import filterMeta from './filterMeta';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,12 +53,31 @@ function TabPanel({ children, value, index}) {
   );
 }
 
+function getSearchString(filters, keyword) {
+  if (!filters?.length) {
+    return keyword;
+  }
+  const filterPrefix = filters.map(f => filterMeta[f]?.shortcut).filter(s => s).join(',');
+
+  return `${filterPrefix}: ${keyword}`;
+}
+
+function getKeyword(searchString) {
+  const parts = searchString.split(':');
+
+  if (parts.length > 1) {
+    return parts[1].trim();
+  }
+
+  return searchString;
+}
+
 export default function SearchBox() {
   const classes = useStyles();
   const [activeTab, setActiveTab] = React.useState(0);
-  const { keyword, setKeyword } = useGlobalSearchContext();
+  const { keyword, setKeyword, filters } = useGlobalSearchContext();
   const showResults = keyword?.length >= 2;
-  const handleKeywordChange = e => setKeyword(e.target.value);
+  const handleKeywordChange = e => setKeyword(getKeyword(e.target.value));
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -67,7 +87,7 @@ export default function SearchBox() {
     <div className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
         <InputBase
-          value={keyword}
+          value={getSearchString(filters, keyword)}
           classes={{input: classes.inputBase}}
           className={classes.input}
           placeholder="Search integrator.io"
