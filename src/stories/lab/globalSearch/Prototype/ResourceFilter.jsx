@@ -15,7 +15,7 @@ import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import FilterIcon from '../../../../components/icons/FilterIcon';
-import filterMeta from './filterMeta';
+import { filterMap } from './filterMeta';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -109,7 +109,7 @@ export default function ResourceFilter({openByDefault = false}) {
               name={name}
               className={clsx({[classes.allItemChecked]: isChecked && name === 'all' })}
               color="primary" />
-)}
+          )}
           label={label} />
       </div>
     );
@@ -140,8 +140,8 @@ export default function ResourceFilter({openByDefault = false}) {
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
 
-          {Object.keys(filterMeta).map(key => {
-            const filter = filterMeta[key];
+          {Object.keys(filterMap).map(key => {
+            const filter = filterMap[key];
 
             return <MenuItem key={key} name={filter.name} label={filter.label} />;
           })}

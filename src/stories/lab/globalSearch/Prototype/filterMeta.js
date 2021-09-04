@@ -1,9 +1,9 @@
-export default {
+export const filterMap = {
   integration:
-    { shortcut: 'i', name: 'integration', label: 'Integrations' },
+    { shortcut: 'in', name: 'integration', label: 'Integrations' },
   flow:
     { shortcut: 'f', name: 'flow', label: 'Flows' },
-  connections:
+  connection:
     { shortcut: 'c', name: 'connection', label: 'Connections' },
   import:
     { shortcut: 'i', name: 'import', label: 'Imports' },
@@ -26,3 +26,7 @@ export default {
   recyclebin:
     { shortcut: 'r', name: 'recyclebin', label: 'Recycle bin' },
 };
+
+export const shortcutMap = {};
+
+Object.keys(filterMap).forEach(filter => { shortcutMap[filterMap[filter].shortcut] = filter; });
