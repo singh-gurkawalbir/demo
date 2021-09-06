@@ -128,7 +128,7 @@ export function* apiCallWithRetry(args) {
       throw new APIException(CANCELLED_REQ);
     }
 
-    const { data } = apiResp.response || {};
+    const { data } = apiResp?.response || {};
 
     return data;
   } finally {
@@ -215,10 +215,8 @@ export default function* rootSaga() {
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
-    const { type, ...rest} = logout;
-
     // invalidate the session and clear the store
-    yield call(invalidateSession, { ...rest });
+    yield call(invalidateSession, { isExistingSessionInvalid: logout.isExistingSessionInvalid });
     // restart the root saga again
     yield spawn(rootSaga);
   }
