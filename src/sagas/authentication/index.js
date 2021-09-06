@@ -354,7 +354,7 @@ export function* initializeSession() {
     // Important: intializeApp should be the last thing to happen in this function
     } else {
       // existing session is invalid
-      yield put(actions.auth.logout({ isExistingSessionInvalid: true }));
+      yield put(actions.auth.logout(true));
     }
   } catch (e) {
     yield put(actions.auth.logout());
@@ -384,7 +384,6 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   // clear the store
   yield call(removeCSRFToken);
   yield put(actions.auth.clearStore());
-  yield put(actions.auth.abortAllSagasAndReset());
 }
 
 export function* signInWithGoogle({ returnTo }) {
