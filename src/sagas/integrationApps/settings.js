@@ -33,10 +33,12 @@ export function* requestUpgrade({ integrationId, options }) {
       message: 'Requesting license upgrade.',
     });
   } catch (error) {
-    return undefined;
+    yield put(actions.integrationApp.settings.requestedUpgrade(
+      licenseId,
+      error.message
+    )
+    );
   }
-
-  yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 
 export function* getMappingMetadata({ integrationId }) {
