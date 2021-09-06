@@ -88,7 +88,7 @@ export default function SearchCriteriaDialog(props) {
       if (!criteria.searchValue) {
         result[index] = [...result[index] || [], 'searchValue'];
       }
-      if (!criteria.formula) {
+      if (criteria.showFormulaField && !criteria.formula) {
         result[index] = [...result[index] || [], 'formula'];
       }
     });

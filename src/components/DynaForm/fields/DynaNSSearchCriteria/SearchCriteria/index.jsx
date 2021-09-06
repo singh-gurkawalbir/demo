@@ -163,7 +163,6 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
           id={`formula-${index}`}
           value={r.formula}
           multiline
-          placeholder="formula"
           className={classes.formulaField}
           onFieldChange={(id, _value) => {
             handleFieldUpdate(index, _value, 'formula');
