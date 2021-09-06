@@ -162,14 +162,13 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
         <DynaText
           id={`formula-${index}`}
           value={r.formula}
-          disabled={disabled}
           multiline
           placeholder="formula"
           className={classes.formulaField}
           onFieldChange={(id, _value) => {
             handleFieldUpdate(index, _value, 'formula');
           }}
-          isValid={!invalidFields?.includes('operator')}
+          isValid={!invalidFields?.includes('formula')}
           errorMessages="Please select a formula"
           />
         )}
