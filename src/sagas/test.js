@@ -200,7 +200,6 @@ describe('apiCallWithRetry saga', () => {
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
-        logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(2 * 60 * 1000),
       });
       // if an effect does not succeeds in a race...we get an undefined
@@ -243,62 +242,6 @@ describe('apiCallWithRetry saga', () => {
       expect(saga.next().done).toBe(true);
     });
 
-    test('Any non signout request with a logout action should return null', () => {
-      const args = { path, opts, hidden: undefined, message: undefined };
-      const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
-      const raceBetweenApiCallAndLogoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
-        logout: take(actionsTypes.USER_LOGOUT),
-        timeoutEffect: delay(120000),
-      });
-
-      // How can we inject a logout action to resolve
-      // the race between two effects
-      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
-
-      const resp = { apiResp: undefined, logout: { something: 'dsd' } };
-
-      expect(saga.next(resp).value).toEqual(cancelled());
-
-      expect(saga.next().value).toEqual(null);
-
-      expect(saga.next().done).toBe(true);
-    });
-
-    test('Any non signout request with a logout action should return null', () => {
-      const args = { path, opts, hidden: undefined, message: undefined };
-      const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
-      const raceBetweenApiCallAndLogoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
-        logout: take(actionsTypes.USER_LOGOUT),
-        timeoutEffect: delay(120000),
-      });
-
-      // How can we inject a logout action
-      // to resolve the race between two effects
-      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
-      // if an effect does not succeeds in a race...we get an undefined
-      const resp = { apiResp: undefined, logout: { something: 'dsd' } };
-
-      expect(saga.next(resp).value).toEqual(cancelled());
-
-      expect(saga.next().value).toEqual(null);
-
-      expect(saga.next().done).toBe(true);
-    });
-
     test('In the event of a 204 response apiCallWithRetry saga should return undefined to the parent saga', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
@@ -310,7 +253,6 @@ describe('apiCallWithRetry saga', () => {
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
-        logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(120000),
       });
 
@@ -342,7 +284,6 @@ describe('apiCallWithRetry saga', () => {
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
-        logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(120000),
       });
 
@@ -379,7 +320,6 @@ describe('apiCallWithRetry saga', () => {
           apiResp: call(sendRequest, apiRequestAction, {
             dispatchRequestAction: false,
           }),
-          logout: take(actionsTypes.USER_LOGOUT),
           timeoutEffect: delay(2 * 60 * 1000),
         });
         // if an effect does not succeeds in a race...we get an undefined
@@ -413,7 +353,6 @@ describe('apiCallWithRetry saga', () => {
           apiResp: call(sendRequest, apiRequestAction, {
             dispatchRequestAction: false,
           }),
-          logout: take(actionsTypes.USER_LOGOUT),
           timeoutEffect: delay(2 * 60 * 1000),
         });
         // if an effect does not succeeds in a race...we get an undefined

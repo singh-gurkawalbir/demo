@@ -108,15 +108,13 @@ export function* apiCallWithRetry(args) {
 
   try {
     let apiResp;
-    let logout;
     let timeoutEffect;
 
     if (path !== logoutParams.path) {
-      ({ apiResp, logout, timeoutEffect } = yield race({
+      ({ apiResp, timeoutEffect } = yield race({
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
-        logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(timeout),
       }));
     } else {
@@ -124,16 +122,11 @@ export function* apiCallWithRetry(args) {
         dispatchRequestAction: false,
       });
     }
-
     if (timeoutEffect) {
       yield call(requestCleanup, path, opts?.method);
 
       throw new APIException(CANCELLED_REQ);
     }
-
-    // logout effect succeeded then the apiResp would be undefined
-
-    if (logout) { return null; }
 
     const { data } = apiResp.response || {};
 
