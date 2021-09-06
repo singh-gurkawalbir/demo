@@ -9,6 +9,7 @@ import RefreshIcon from '../../../../icons/RefreshIcon';
 import ActionButton from '../../../../ActionButton';
 import DynaTypeableSelect from '../../DynaTypeableSelect';
 import DynaSelect from '../../DynaSelect';
+import DynaText from '../../DynaText';
 import {operators, operatorsByFieldType} from './operators';
 import Spinner from '../../../../Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -56,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   },
   deleteButton: {
     marginTop: theme.spacing(1),
+  },
+  formulaField: {
+    width: '25%',
   },
 }));
 
@@ -154,6 +158,21 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
             </ActionButton>
           </div>
         </div>
+        {r.showFormulaField && (
+        <DynaText
+          id={`formula-${index}`}
+          value={r.formula}
+          disabled={disabled}
+          multiline
+          placeholder="formula"
+          className={classes.formulaField}
+          onFieldChange={(id, _value) => {
+            handleFieldUpdate(index, _value, 'formula');
+          }}
+          isValid={!invalidFields?.includes('operator')}
+          errorMessages="Please select a formula"
+          />
+        )}
       </div>
     );
   }, [obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index]);

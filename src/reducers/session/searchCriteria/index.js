@@ -8,6 +8,10 @@ function enableSearchValue2(val) {
   return val === 'between' || val === 'within' || val === 'notwithin';
 }
 
+function isFormulaField(field) {
+  return ['formuladate', 'formulanumeric', 'formulatext'].includes(field);
+}
+
 export default function reducer(state = {}, action) {
   const { id, type, value = [], index, field } = action;
 
@@ -23,8 +27,9 @@ export default function reducer(state = {}, action) {
             const searchValue2Enabled = !!(
               m.operator && enableSearchValue2(m.operator)
             );
+            const showFormulaField = !!(m.formula && isFormulaField(m.field));
 
-            return { ...m, key: shortid.generate(), searchValue2Enabled };
+            return { ...m, key: shortid.generate(), searchValue2Enabled, showFormulaField };
           }),
         };
         break;
@@ -59,6 +64,13 @@ export default function reducer(state = {}, action) {
           if (field === 'field') {
             draft[id].searchCriteria[index][field] = fieldValue;
             draft[id].searchCriteria[index].join = fieldJoin;
+            const showFormulaField = isFormulaField(value);
+
+            draft[id].searchCriteria[index].showFormulaField = showFormulaField;
+
+            if (!showFormulaField) {
+              delete draft[id].searchCriteria[index].formula;
+            }
           }
         } else if (value) {
           const newObj = {
@@ -75,6 +87,7 @@ export default function reducer(state = {}, action) {
           if (field === 'field') {
             newObj[field] = fieldValue;
             newObj.join = fieldJoin;
+            newObj.showFormulaField = isFormulaField(fieldValue);
           }
 
           draft[id].searchCriteria.push(newObj);
