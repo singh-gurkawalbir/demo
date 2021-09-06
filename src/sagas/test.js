@@ -196,7 +196,7 @@ describe('apiCallWithRetry saga', () => {
         type: 'API_WATCHER',
         request: { url: path, args },
       };
-      const raceBetweenApiCallAndLogoutEffect = race({
+      const raceBetweenApiCallAndTimeoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
@@ -208,7 +208,7 @@ describe('apiCallWithRetry saga', () => {
         logout: undefined,
       };
 
-      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndTimeoutEffect);
       expect(saga.next(resp).value).toEqual(cancelled());
 
       expect(saga.next().value).toEqual('some response');
@@ -222,7 +222,7 @@ describe('apiCallWithRetry saga', () => {
         type: 'API_WATCHER',
         request: { url: path, args },
       };
-      const raceBetweenApiCallAndLogoutEffect = race([
+      const raceBetweenApiCallAndTimeoutEffect = race([
         call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
@@ -231,7 +231,7 @@ describe('apiCallWithRetry saga', () => {
 
       try {
         expect(saga.throw(_400Exception).value).toEqual(
-          raceBetweenApiCallAndLogoutEffect
+          raceBetweenApiCallAndTimeoutEffect
         );
         // should not reach statement
         fail('It should throw an exception');
@@ -249,7 +249,7 @@ describe('apiCallWithRetry saga', () => {
         type: 'API_WATCHER',
         request: { url: path, args },
       };
-      const raceBetweenApiCallAndLogoutEffect = race({
+      const raceBetweenApiCallAndTimeoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
@@ -257,7 +257,7 @@ describe('apiCallWithRetry saga', () => {
       });
 
       // to resolve the race between two effects
-      expect(saga.next(false).value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      expect(saga.next(false).value).toEqual(raceBetweenApiCallAndTimeoutEffect);
       // if an effect does not succeeds in a race...we get an undefined
 
       // we expect an undefined data in the response
@@ -280,14 +280,14 @@ describe('apiCallWithRetry saga', () => {
         type: 'API_WATCHER',
         request: { url: path, args },
       };
-      const raceBetweenApiCallAndLogoutEffect = race({
+      const raceBetweenApiCallAndTimeoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
         timeoutEffect: delay(120000),
       });
 
-      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndTimeoutEffect);
       // emulate a race with a request timed out
       const resp = { timeoutEffect: {something: 'something'} };
 
@@ -316,7 +316,7 @@ describe('apiCallWithRetry saga', () => {
           type: 'API_WATCHER',
           request: { url: path, args },
         };
-        const raceBetweenApiCallAndLogoutEffect = race({
+        const raceBetweenApiCallAndTimeoutEffect = race({
           apiResp: call(sendRequest, apiRequestAction, {
             dispatchRequestAction: false,
           }),
@@ -328,7 +328,7 @@ describe('apiCallWithRetry saga', () => {
           logout: undefined,
         };
 
-        expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+        expect(saga.next().value).toEqual(raceBetweenApiCallAndTimeoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
 
         expect(saga.next(true).value).toEqual(call(requestCleanup, path, 'GET'));
@@ -349,7 +349,7 @@ describe('apiCallWithRetry saga', () => {
           type: 'API_WATCHER',
           request: { url: path, args },
         };
-        const raceBetweenApiCallAndLogoutEffect = race({
+        const raceBetweenApiCallAndTimeoutEffect = race({
           apiResp: call(sendRequest, apiRequestAction, {
             dispatchRequestAction: false,
           }),
@@ -361,7 +361,7 @@ describe('apiCallWithRetry saga', () => {
           logout: undefined,
         };
 
-        expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+        expect(saga.next().value).toEqual(raceBetweenApiCallAndTimeoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
         expect(saga.next(true).value).toEqual(call(requestCleanup, path, 'GET'));
         expect(saga.next().done).toBe(true);
