@@ -1138,6 +1138,7 @@ export function convertToReactFormFields({
   value = {},
   flowId,
   resourceContext = {},
+  operationChanged,
 }) {
   const fields = [];
   const fieldDetailsMap = {};
@@ -1227,7 +1228,7 @@ export function convertToReactFormFields({
       /**
        * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = !anyParamValuesSet ? field : {};
+      let { defaultValue } = (!anyParamValuesSet && operationChanged) ? field : {};
 
       if (
         !anyParamValuesSet &&
