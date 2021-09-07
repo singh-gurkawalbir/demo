@@ -133,6 +133,23 @@ describe('search criteria tests', () => {
           },
         });
       });
+      test('should update showFormulaField as false incase formula fields have join', () => {
+        const stateWithFormulaJoinField = reducer(
+          defaultState,
+          actions.searchCriteria.patchField(id, 'field', 0, 'account.formuladate')
+        );
+
+        expect(stateWithFormulaJoinField).toEqual({
+          [id]: {
+            searchCriteria: [{
+              field: 'formuladate',
+              key: expect.any(String),
+              showFormulaField: false,
+              join: 'account',
+            }],
+          },
+        });
+      });
 
       test('should split if reference field is selected in criteria when prev state does not exist', () => {
         const state = reducer(

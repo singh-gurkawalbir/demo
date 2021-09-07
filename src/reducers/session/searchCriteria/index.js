@@ -87,7 +87,7 @@ export default function reducer(state = {}, action) {
           if (field === 'field') {
             newObj[field] = fieldValue;
             newObj.join = fieldJoin;
-            newObj.showFormulaField = isFormulaField(fieldValue);
+            newObj.showFormulaField = isFormulaField(value);
           }
 
           draft[id].searchCriteria.push(newObj);
