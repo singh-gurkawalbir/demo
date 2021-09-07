@@ -224,7 +224,7 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.integrationApp.child.updateStep(
         integrationId,
         installerFunction,
-        'inProgress',
+        undefined,
         true
       ));
     } else if (!step.isTriggered) {
@@ -317,6 +317,7 @@ export default function IntegrationAppAddNewChild(props) {
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.form}
+          addChild
           installerFunction={currentStep.installerFunction}
           title={currentStep.name}
           formCloseHandler={formCloseHandler}

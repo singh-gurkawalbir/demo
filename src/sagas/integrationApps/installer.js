@@ -233,15 +233,16 @@ export function* installScriptStep({
   );
 }
 
-export function* installChildStep({ id, installerFunction }) {
+export function* installChildStep({ id, installerFunction, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
+  const body = formVal ? { formVal } : {};
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: {}, method: 'PUT' },
+      opts: { body, method: 'PUT' },
       hidden: true,
       message: 'Installing',
     }) || {};

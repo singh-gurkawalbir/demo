@@ -531,7 +531,7 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
+selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resource selectors
@@ -3456,7 +3456,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
     conn => {
       const accessLevel = selectors.userAccessLevelOnConnection(state, conn._id);
 
-      return accessLevel === 'manage' || accessLevel === 'owner';
+      return ['manage', 'owner', 'administrator'].includes(accessLevel);
     }
   );
 

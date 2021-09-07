@@ -427,6 +427,15 @@ export const getApp = (type, assistant) => {
 
   return applications.find(c => c.id === id) || {};
 };
+export const getAssistantConnectorType = assistant => {
+  const connectorType = getApp(null, assistant)?.type;
+
+  if (connectorType) {
+    return connectorType.toLowerCase() === 'rest' ? 'rest' : 'http';
+  }
+
+  return '';
+};
 export const applicationsPlaceHolderText = () => {
   const applications = applicationsList();
 

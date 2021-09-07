@@ -1,5 +1,6 @@
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { VariableSizeList } from 'react-window';
 import Spinner from '../../../../../Spinner';
 import TableRow, { isCellValid } from '../TableRow';
@@ -77,6 +78,7 @@ const useResetErroredRowHeights = (listRef, items, optionsMap, touched) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 };
+
 const VirtualizedTable = ({
   items,
   optionsMapFinal,
@@ -90,11 +92,13 @@ const VirtualizedTable = ({
 
   const [, setItemCount] = useState(items.length);
   const [scrollIndex, setScrollIndex] = useState(0);
+
   const maxHeightOfSelect = items.length > NO_OF_ROWS
     ? TABLE_VIEW_PORT_HEIGHT
     : ITEM_SIZE * items.length;
 
   useResetErroredRowHeights(listRef, items, optionsMapFinal, touched);
+
   const getItemSize = useCallback(rowIndex => {
     const rowValue = items[rowIndex];
     const rowValid = isRowValid(optionsMapFinal, rowValue, rowIndex, items, touched);
@@ -103,6 +107,7 @@ const VirtualizedTable = ({
 
     return ITEM_SIZE;
   }, [items, optionsMapFinal, touched]);
+
   const rowProps = useMemo(() => ({
     items,
     optionsMapFinal,
@@ -111,7 +116,7 @@ const VirtualizedTable = ({
     setTableState,
     onRowChange,
     disableDeleteRows,
-  }), [disableDeleteRows, items, onRowChange, optionsMapFinal, setTableState, touched, ignoreEmptyRow]);
+  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders

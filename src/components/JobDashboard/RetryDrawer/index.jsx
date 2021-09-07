@@ -37,6 +37,13 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   const [error, setError] = useState();
   const [touched, setTouched] = useState(false);
   const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
+  const isResolvedError = useSelector(state => {
+    const jobErrors = selectors.jobErrors(state, jobId) || [];
+    const currentError = jobErrors.find(e => e._retryId === retryId);
+
+    return !!currentError?.resolved;
+  });
+
   const retryData = useSelector(state => {
     if (!retryId) return undefined;
 
@@ -119,7 +126,9 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
           onSave={handleSave}
           shouldHandleCancel
           />
+        { !isResolvedError && (
         <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
+        )}
       </DrawerFooter>
     </>
   );
