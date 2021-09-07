@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
     marginBottom: theme.spacing(2),
     '& img': {
-      maxWidth: '84px',
+      maxWidth: theme.spacing(10),
       maxHeight: theme.spacing(6),
     },
     '& span': {
@@ -24,17 +24,14 @@ const useStyles = makeStyles(theme => ({
   },
   threeAppImages: {
     '& img': {
-      maxWidth: theme.spacing(8),
-      maxHeight: theme.spacing(8),
-    },
-    '& > span': {
-      margin: '0px',
+      maxWidth: theme.spacing(9),
+      maxHeight: theme.spacing(6),
     },
   },
   fourAppImages: {
     '& img': {
-      maxWidth: '45px',
-      maxHeight: '45px',
+      maxWidth: theme.spacing(7),
+      maxHeight: theme.spacing(6),
     },
     '& > span': {
       margin: '0px',
@@ -54,7 +51,6 @@ export default function ApplicationImages({ children, className, noOfApps }) {
           classes.root,
           {[classes.threeAppImages]: noOfApps === 3},
           {[classes.fourAppImages]: noOfApps === 4},
-
         )
       }>
       {children}
