@@ -18,6 +18,13 @@ describe('search criteria tests', () => {
     operator: 'between',
     searchValue: '01-01-2020',
     searchValue2: '31-12-2020',
+  },
+  {
+    field: 'formuladate',
+    operator: 'between',
+    formula: 'sample-formula',
+    searchValue: '01-01-2020',
+    searchValue2: '31-12-2020',
   }];
 
   const expectedSearchCriteria = [
@@ -27,6 +34,7 @@ describe('search criteria tests', () => {
       key: expect.any(String),
       searchValue: 'salesorder',
       searchValue2Enabled: false,
+      showFormulaField: false,
     },
     {
       field: 'account',
@@ -34,6 +42,7 @@ describe('search criteria tests', () => {
       key: expect.any(String),
       searchValue: '1',
       searchValue2Enabled: false,
+      showFormulaField: false,
     },
     {
       field: 'trandate',
@@ -42,6 +51,17 @@ describe('search criteria tests', () => {
       searchValue: '01-01-2020',
       searchValue2: '31-12-2020',
       searchValue2Enabled: true,
+      showFormulaField: false,
+    },
+    {
+      field: 'formuladate',
+      operator: 'between',
+      key: expect.any(String),
+      searchValue: '01-01-2020',
+      searchValue2: '31-12-2020',
+      searchValue2Enabled: true,
+      formula: 'sample-formula',
+      showFormulaField: true,
     },
   ];
 
@@ -89,12 +109,26 @@ describe('search criteria tests', () => {
           defaultState,
           actions.searchCriteria.patchField(id, 'field', 0, 'account')
         );
+        const stateWithFormulaField = reducer(
+          defaultState,
+          actions.searchCriteria.patchField(id, 'field', 0, 'formuladate')
+        );
 
         expect(state).toEqual({
-          'searchCriteria-netsuite.restlet.criteria-1': {
+          [id]: {
             searchCriteria: [{
               field: 'account',
               key: expect.any(String),
+              showFormulaField: false,
+            }],
+          },
+        });
+        expect(stateWithFormulaField).toEqual({
+          [id]: {
+            searchCriteria: [{
+              field: 'formuladate',
+              key: expect.any(String),
+              showFormulaField: true,
             }],
           },
         });
@@ -112,6 +146,7 @@ describe('search criteria tests', () => {
               field: 'name',
               join: 'customer',
               key: expect.any(String),
+              showFormulaField: false,
             }],
           },
         });
@@ -154,6 +189,7 @@ describe('search criteria tests', () => {
             searchCriteria: [{
               field: 'Account2',
               key: 'k1',
+              showFormulaField: false,
             }],
           },
         });
@@ -180,6 +216,7 @@ describe('search criteria tests', () => {
               field: 'firstname',
               join: 'customer',
               key: 'k1',
+              showFormulaField: false,
             }],
           },
         });
@@ -239,7 +276,7 @@ describe('search criteria tests', () => {
 
         expect(state).toEqual({
           [id]: {
-            searchCriteria: [expectedSearchCriteria[0], expectedSearchCriteria[2]],
+            searchCriteria: [expectedSearchCriteria[0], expectedSearchCriteria[2], expectedSearchCriteria[3]],
           },
         });
       });
