@@ -58,8 +58,13 @@ const useStyles = makeStyles(theme => ({
   deleteButton: {
     marginTop: theme.spacing(1),
   },
+  formulaTextField: {
+    flexDirection: 'column',
+  },
   formulaField: {
-    width: '25%',
+    marginBottom: 0,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingLeft: theme.spacing(1),
   },
 }));
 
@@ -79,7 +84,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
       <div className={classes.rowContainer} key={r.key}>
         <div className={classes.innerRow}>
           <div
-            className={clsx(classes.childHeader, {
+            className={clsx(classes.childHeader, classes.formulaTextField, {
               [classes.disabled]: disabled,
             })}>
             <DynaTypeableSelect
@@ -96,6 +101,20 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
                 handleFieldUpdate(index, _value, 'field');
               }}
               />
+            {r.showFormulaField && (
+            <DynaText
+              id={`formula-${index}`}
+              value={r.formula}
+              multiline
+              className={classes.formulaField}
+              onFieldChange={(id, _value) => {
+                handleFieldUpdate(index, _value, 'formula');
+              }}
+              isValid={!invalidFields?.includes('formula')}
+              errorMessages="Please add formula"
+          />
+            )}
+
           </div>
           <div
             className={clsx(classes.childHeader, {
@@ -158,19 +177,6 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
             </ActionButton>
           </div>
         </div>
-        {r.showFormulaField && (
-        <DynaText
-          id={`formula-${index}`}
-          value={r.formula}
-          multiline
-          className={classes.formulaField}
-          onFieldChange={(id, _value) => {
-            handleFieldUpdate(index, _value, 'formula');
-          }}
-          isValid={!invalidFields?.includes('formula')}
-          errorMessages="Please add formula"
-          />
-        )}
       </div>
     );
   }, [obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index]);
