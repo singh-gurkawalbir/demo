@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import {
   NavLink,
 
@@ -27,7 +28,7 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
     ssLinkedConnectionId,
     integrationId,
     resourceType: 'settings',
-  }));
+  }), shallowEqual);
 
   const resource = useSelector(state => selectors.suiteScriptResource(state, {
     ssLinkedConnectionId,
