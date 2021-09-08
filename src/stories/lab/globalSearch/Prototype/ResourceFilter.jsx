@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ResourceFilter({openByDefault = false}) {
   const classes = useStyles();
-  const { filters, setFilters } = useGlobalSearchContext();
+  const { filters, setFilters, onFiltersChange } = useGlobalSearchContext();
   const [open, setOpen] = useState(openByDefault);
 
   const handleArrowClick = () => setOpen(o => !o);
@@ -89,14 +89,18 @@ export default function ResourceFilter({openByDefault = false}) {
     const isChecked = filters.includes(name) || (name === 'all' && !filters?.length);
 
     const handleMenuItemClick = name => {
+      let newFilters = [];
+
       if (name === 'all') {
-        setFilters([]);
+        newFilters = [];
       } else if (filters?.includes(name)) {
-        setFilters(filters.filter(i => i !== name));
+        newFilters = filters.filter(i => i !== name);
       } else {
       // last case is type not present, so add it.
-        setFilters([...filters, name]);
+        newFilters = [...filters, name];
       }
+      setFilters(newFilters);
+      onFiltersChange?.(newFilters);
     };
 
     return (

@@ -27,25 +27,21 @@ const useStyles = makeStyles(theme => ({
 
 function GlobalSearch() {
   const classes = useStyles();
-  const { keyword, setKeyword, open, setOpen } = useGlobalSearchContext();
+  const { open, setOpen } = useGlobalSearchContext();
   const [escapePressed, setEscapePressed] = useState(false);
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
   const handleEscapeKeypress = useCallback(() => {
     // clear the text on first ESCAPE press, then close search on second.
     if (escapePressed) return;
 
-    if (keyword?.length) {
-      setKeyword('');
-    } else {
-      setOpen(false);
-    }
+    setOpen(false);
 
     // We want to de-bounce this handler as the useKeyboardShortcut would
     // otherwise get called repeatedly each time this handler's dependency
     // array changes.
     setEscapePressed(true);
     setTimeout(() => setEscapePressed(false), 200);
-  }, [escapePressed, keyword, setKeyword, setOpen]);
+  }, [escapePressed, setOpen]);
 
   useKeyboardShortcut(['/'], handleOpenSearch);
   useKeyboardShortcut(['Escape'], handleEscapeKeypress, true);
@@ -78,9 +74,11 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto() {
+export default function GlobalSearchProto({onKeywordChange, onFiltersChange}) {
   return (
-    <GlobalSearchProvider>
+    <GlobalSearchProvider
+      onKeywordChange={onKeywordChange}
+      onFiltersChange={onFiltersChange}>
       <GlobalSearch />
     </GlobalSearchProvider>
   );

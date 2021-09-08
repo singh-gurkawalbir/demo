@@ -90,7 +90,7 @@ export default function SearchBox() {
   const [activeTab, setActiveTab] = React.useState(0);
   const [searchString, setSearchString] = React.useState('');
   const inputRef = useRef();
-  const { keyword, setKeyword, filters, setFilters } = useGlobalSearchContext();
+  const { keyword, setKeyword, filters, setFilters, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
   const showResults = keyword?.length >= 2;
 
   const handleSearchStringChange = e => {
@@ -98,8 +98,15 @@ export default function SearchBox() {
 
     setSkip(true);
     setSearchString(newSearchString);
-    setKeyword(getKeyword(newSearchString));
-    setFilters(getFilters(newSearchString));
+
+    const newKeyword = getKeyword(newSearchString);
+    const newFilters = getFilters(newSearchString);
+
+    setKeyword(newKeyword);
+    setFilters(newFilters);
+
+    onKeywordChange?.(newKeyword);
+    onFiltersChange?.(newFilters);
   };
 
   const handleTabChange = (event, newValue) => {
