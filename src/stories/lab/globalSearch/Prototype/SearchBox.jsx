@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
+import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { filterMap, shortcutMap } from './filterMeta';
@@ -102,11 +103,15 @@ export default function SearchBox() {
     const newKeyword = getKeyword(newSearchString);
     const newFilters = getFilters(newSearchString);
 
-    setKeyword(newKeyword);
-    setFilters(newFilters);
+    if (keyword !== newKeyword) {
+      setKeyword(newKeyword);
+      onKeywordChange?.(newKeyword);
+    }
 
-    onKeywordChange?.(newKeyword);
-    onFiltersChange?.(newFilters);
+    if (!isEqual(filters, newFilters)) {
+      setFilters(newFilters);
+      onFiltersChange?.(newFilters);
+    }
   };
 
   const handleTabChange = (event, newValue) => {
@@ -118,10 +123,11 @@ export default function SearchBox() {
 
     setSearchString(buildSearchString(filters, keyword));
 
-    // The ref of <InputBase> is actually a div. We want the first child.
-    const input = inputRef.current.children[0];
+    // The ref of <InputBase> is actually a div wrapper.
+    // We want the first child, which is the input element.
+    const input = inputRef.current?.children?.[0];
 
-    input.focus();
+    input?.focus();
   // we do not want this effect to fire on anything BUT filter changes...
   // This effect is used to update the search string if a user interacts with
   // the filter list component...

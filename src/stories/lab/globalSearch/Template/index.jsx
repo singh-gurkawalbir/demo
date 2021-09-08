@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { action } from '@storybook/addon-actions';
 import GlobalSearchProto from '../Prototype';
 
 const useStyles = makeStyles(() => ({
@@ -10,8 +12,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const handleKeywordChange = keyword => { console.log('onKeywordChange:', keyword); };
-const handleFiltersChange = filters => { console.log('onFiltersChange:', filters); };
+const handleKeywordChange = action('onKeywordChange');
+const handleFiltersChange = action('onFiltersChange:');
 
 export default function Template(args) {
   const classes = useStyles();
