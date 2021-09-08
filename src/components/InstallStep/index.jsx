@@ -144,7 +144,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install', templateId } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const connection = useSelector(state => {
@@ -181,8 +181,37 @@ export default function InstallationStep(props) {
         )
       );
       setVerified(true);
+    } else if (
+      step &&
+      step.isCurrentStep &&
+      (step.installURL || step.url) &&
+      !step.completed &&
+      !verified &&
+      templateId && !templateId.includes('flows-')
+    ) {
+      dispatch(
+        actions.integrationApp.installer.updateStep(
+          integrationId,
+          step.installerFunction,
+          'verify'
+        )
+      );
+
+      if (isFrameWork2) {
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(integrationId)
+        );
+      } else {
+        dispatch(
+          actions.integrationApp.installer.installStep(
+            integrationId,
+            step.installerFunction
+          )
+        );
+      }
+      setVerified(true);
     }
-  }, [connection, dispatch, step, templateId, verified]);
+  }, [connection, dispatch, integrationId, isFrameWork2, step, templateId, verified]);
 
   if (!step) {
     return null;

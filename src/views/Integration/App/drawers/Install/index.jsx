@@ -103,6 +103,7 @@ export default function ConnectorInstallation(props) {
     _connectorId,
     initChild,
     parentId,
+    templateId,
   } = useMemo(() => integration ? {
     name: integration.name,
     initChild: integration.initChild,
@@ -113,6 +114,7 @@ export default function ConnectorInstallation(props) {
     _connectorId: integration._connectorId,
     integrationInstallSteps: integration.installSteps,
     parentId: integration._parentId,
+    templateId: integration._templateId,
   } : emptyObject, [integration]);
 
   const {
@@ -623,6 +625,9 @@ export default function ConnectorInstallation(props) {
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
+                templateId={templateId}
+                integrationId={integrationId}
+                isFrameWork2={isFrameWork2}
               />
             ))}
           </div>
