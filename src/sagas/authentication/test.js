@@ -464,7 +464,7 @@ describe('initialize app saga', () => {
     const authLogoutEffect = saga.next().value;
 
     expect(authLogoutEffect).toEqual(
-      put(actions.auth.logout({ isExistingSessionInvalid: true }))
+      put(actions.auth.logout(true))
     );
   });
 
