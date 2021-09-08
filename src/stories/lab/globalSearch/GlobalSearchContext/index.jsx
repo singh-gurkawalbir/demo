@@ -4,6 +4,7 @@ const GlobalSearchContext = React.createContext();
 
 export const GlobalSearchProvider = ({
   children,
+  results,
   defaultKeyword = '',
   defaultType = [],
   onKeywordChange,
@@ -12,10 +13,12 @@ export const GlobalSearchProvider = ({
   const [keyword, setKeyword] = useState(defaultKeyword);
   const [open, setOpen] = useState(false);
 
+  console.log('gsc: ', results);
   const initialState = {
     open,
     filters,
     keyword,
+    results,
     onKeywordChange,
     onFiltersChange,
     setOpen,

@@ -20,3 +20,16 @@ const designParameters = {
 export const Example = Template.bind({});
 
 Example.parameters = designParameters;
+Example.args = {
+  results: {
+    flows: [
+      { name: 'Flow A', description: 'Description of a flow.' },
+    ],
+    imports: [
+      { name: 'Import 1', description: 'Description of the 1st import.', application: 'http' },
+    ],
+    exports: [
+      { name: 'Export 1', description: 'Description of the 1st Export.', application: 'http' },
+    ],
+  },
+};

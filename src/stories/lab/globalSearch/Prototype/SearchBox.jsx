@@ -91,7 +91,7 @@ export default function SearchBox() {
   const [activeTab, setActiveTab] = React.useState(0);
   const [searchString, setSearchString] = React.useState('');
   const inputRef = useRef();
-  const { keyword, setKeyword, filters, setFilters, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
+  const { results, keyword, setKeyword, filters, setFilters, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
   const showResults = keyword?.length >= 2;
 
   const handleSearchStringChange = e => {
@@ -133,6 +133,8 @@ export default function SearchBox() {
   // the filter list component...
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
+
+  console.log(results);
 
   return (
     <div className={classes.root}>

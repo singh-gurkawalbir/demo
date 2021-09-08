@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles, Tooltip, IconButton } from '@material-ui/core';
 import SearchIcon from '../../../../components/icons/SearchIcon';
 import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
@@ -74,12 +75,19 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto({onKeywordChange, onFiltersChange}) {
+export default function GlobalSearchProto({results, onKeywordChange, onFiltersChange}) {
   return (
     <GlobalSearchProvider
+      results={results}
       onKeywordChange={onKeywordChange}
       onFiltersChange={onFiltersChange}>
       <GlobalSearch />
     </GlobalSearchProvider>
   );
 }
+
+GlobalSearchProto.propTypes = {
+  onKeywordChange: PropTypes.func.isRequired,
+  onFiltersChange: PropTypes.func.isRequired,
+  results: PropTypes.object,
+};
