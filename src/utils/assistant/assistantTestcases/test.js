@@ -1228,7 +1228,7 @@ describe('convertToReactFormFields', () => {
             showLookup: false,
             required: false,
             readOnly: false,
-            defaultValue: 'abc',
+            defaultValue: '',
           },
         },
         layout: {
@@ -1541,7 +1541,7 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             { id: 'id_some.thing', fieldType: 'something' },
           ],
@@ -1602,7 +1602,7 @@ describe('convertToReactFormFields', () => {
             required: true,
             readOnly: false,
             type: 'multiselect',
-            defaultValue: [],
+            defaultValue: '',
           },
           id_text: {
             id: 'id_text',
@@ -1680,7 +1680,7 @@ describe('convertToReactFormFields', () => {
                 pattern: '^[\\d]+$',
               },
             },
-            defaultValue: 121,
+            defaultValue: '',
           },
           id_input2: {
             id: 'id_input2',
@@ -1689,7 +1689,7 @@ describe('convertToReactFormFields', () => {
             required: false,
             readOnly: false,
             type: 'textwithflowsuggestion',
-            defaultValue: '123',
+            defaultValue: '',
             showLookup: false,
           },
           'id_some/thing': {
@@ -1820,12 +1820,12 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             {
               id: 'id_input2',
               name: 'Input2',
-              defaultValue: 123,
+              defaultValue: '',
             },
             { id: 'id_some.thing', fieldType: 'something' },
           ],
@@ -1882,7 +1882,7 @@ describe('convertToReactFormFields', () => {
             required: true,
             readOnly: false,
             type: 'multiselect',
-            defaultValue: [],
+            defaultValue: '',
           },
           id_text: {
             id: 'id_text',
@@ -1960,7 +1960,7 @@ describe('convertToReactFormFields', () => {
                 pattern: '^[\\d]+$',
               },
             },
-            defaultValue: 121,
+            defaultValue: '',
           },
           id_input2: {
             id: 'id_input2',
@@ -1969,7 +1969,7 @@ describe('convertToReactFormFields', () => {
             required: false,
             readOnly: false,
             type: 'textwithflowsuggestion',
-            defaultValue: '123',
+            defaultValue: '',
             showLookup: false,
           },
           'id_some/thing': {
@@ -2099,7 +2099,7 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             {
               id: 'id_input2',

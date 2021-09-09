@@ -121,7 +121,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'microsoftbusinesscentral',
   ]
 );
-export function routeToRegExp(route) {
+export function routeToRegExp(route = '') {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
   const splatParam = /\*\w+/g;
@@ -530,7 +530,7 @@ export function getImportOperationDetails({
       if (operationDetails.howToFindIdentifier.lookup) {
         const lookupOperationDetails = getExportOperationDetails({
           version,
-          resource,
+          resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
           operation:
             operationDetails.howToFindIdentifier.lookup.id ||
             operationDetails.howToFindIdentifier.lookup.url,
@@ -547,6 +547,9 @@ export function getImportOperationDetails({
                 qp.defaultValue.includes('{{export.')
               )
           );
+        }
+        if (operationDetails.howToFindIdentifier.lookup.resource) {
+          lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
         }
 
         if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
@@ -665,6 +668,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   }
 
   const exportAdaptorSubSchema = exportDoc[adaptorType] || {};
+
   const urlMatch = getMatchingRoute(
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
@@ -1134,6 +1138,7 @@ export function convertToReactFormFields({
   value = {},
   flowId,
   resourceContext = {},
+  operationChanged,
 }) {
   const fields = [];
   const fieldDetailsMap = {};
@@ -1223,7 +1228,7 @@ export function convertToReactFormFields({
       /**
        * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = !anyParamValuesSet ? field : {};
+      let { defaultValue } = (!anyParamValuesSet && operationChanged) ? field : {};
 
       if (
         !anyParamValuesSet &&
@@ -1889,6 +1894,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   const lookupConfigMetadata = operationDetails.howToFindIdentifier
     ? operationDetails.howToFindIdentifier.lookup
     : undefined;
+
   const { lookupOperationDetails = {} } = operationDetails;
   const luConfig = {
     method: lookupOperationDetails.method || 'GET',
@@ -1954,6 +1960,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       if (lookupOperationDetails.id) {
         luMetadata[luConfig.name] = {
           operation: lookupOperationDetails.id,
+          ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
 

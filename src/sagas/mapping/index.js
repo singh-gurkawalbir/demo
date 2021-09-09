@@ -245,7 +245,7 @@ export function* mappingInit({
   });
   yield put(
     actions.mapping.initComplete({
-      mappings: formattedMappings.map(m => ({
+      mappings: (formattedMappings || []).map(m => ({
         ...m,
         key: shortid.generate(),
       })),
