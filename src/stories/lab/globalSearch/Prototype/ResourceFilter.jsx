@@ -119,6 +119,10 @@ export default function ResourceFilter({openByDefault = false}) {
     );
   };
 
+  // This is repetitive code that has similar patterns in the <SearchBox> component as well.
+  // These helper functions could move into the fieldMeta file and we can then also write tests
+  // for them... basically we need helper methods to split results and metadata between "resources"
+  // and "marketplace" in several places of global search.
   const resourceFilters = useMemo(() => Object.keys(filterMap)
     .filter(key => filterMap[key].isResource)
     .map(key => filterMap[key]), []);

@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { filterMap, shortcutMap } from './filterMeta';
+import Results from './Results';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -85,11 +86,20 @@ function getKeyword(searchString) {
   return searchString;
 }
 
-function getResourceCount(results) {
+function getResultCount(results, isResource) {
   if (!results || typeof results !== 'object') return 0;
 
-  return Object.keys(results)?.reduce((count, r) =>
-    filterMap[r]?.isResource ? count + (results[r].length) : count, 0);
+  return Object.keys(results)?.reduce((count, r) => {
+    const match = filterMap[r]?.isResource === isResource;
+
+    return match ? count + (results[r].length) : count;
+  }, 0);
+}
+
+function getTabResults(results, isResource) {
+  return Object.keys(filterMap)
+    .filter(key => filterMap[key].isResource === isResource && results[key] !== undefined)
+    .map(key => ({type: key, results: results[key]}));
 }
 
 export default function SearchBox() {
@@ -141,6 +151,9 @@ export default function SearchBox() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
+  const resourceResults = useMemo(() => getTabResults(results, true), [results]);
+  const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
+
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
@@ -163,16 +176,16 @@ export default function SearchBox() {
             variant="fullWidth"
             indicatorColor="primary"
           >
-            <Tab label={`Resources (${getResourceCount(results)})`} />
-            <Tab label="Marketplace (0)" />
+            <Tab label={`Resources (${getResultCount(results, true)})`} />
+            <Tab label={`Marketplace (${getResultCount(results, false)})`} />
           </Tabs>
 
           <TabPanel value={activeTab} index={0}>
-            No resource search results. Try another term or adjust your filter.
+            <Results results={resourceResults} />
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            No marketplace search results. Try another term or adjust your filter.
+            <Results results={marketplaceResults} />
           </TabPanel>
         </FloatingPaper>
       )}

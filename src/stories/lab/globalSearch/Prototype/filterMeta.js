@@ -34,6 +34,3 @@ export const filterMap = {
 export const shortcutMap = {};
 
 Object.keys(filterMap).forEach(filter => { shortcutMap[filterMap[filter].shortcut] = filter; });
-
-// export const resourceFilters = filterMap.filter(f => f.isResource).reduce((map, r) => ({...map, [r]: true}), {});
-// export const marketplaceFilters = filterMap.filter(f => !f.isResource).reduce((map, m) => ({...map, [m]: true}), {});
