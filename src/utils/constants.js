@@ -665,7 +665,7 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
-export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];
+export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
 export const LINE_GRAPH_TYPES = Object.freeze({
   SUCCESS: 'success',
   AVERAGE_TIME_TAKEN: 'averageTimeTaken',
