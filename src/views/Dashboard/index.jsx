@@ -32,6 +32,7 @@ export default function Dashboard() {
   useEffect(
     () => () => {
       // Filter should not be cleared if any drawer gets opened inside account dashboard like errors list, flow link and integration link
+      // To DO: Ashok to research on this and try to get better logic than below one.
       if (!(window.location.href.includes('/integrations') || window.location.href.includes('/integrationapps')) || window.location.href.includes('/new-')) {
         dispatch(
           actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
