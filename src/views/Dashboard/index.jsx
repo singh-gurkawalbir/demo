@@ -31,12 +31,15 @@ export default function Dashboard() {
 
   useEffect(
     () => () => {
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
-          range: DEFAULT_RANGE,
-        })
-      );
-      dispatch(actions.job.dashboard.completed.clear());
+      // Filter should not be cleared if any drawer gets opened inside account dashboard like errors list, flow link and integration link
+      if (!(window.location.href.includes('/integrations') || window.location.href.includes('/integrationapps')) || window.location.href.includes('/new-')) {
+        dispatch(
+          actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
+            range: DEFAULT_RANGE,
+          })
+        );
+        dispatch(actions.job.dashboard.completed.clear());
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch]
