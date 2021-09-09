@@ -13,7 +13,6 @@ export const GlobalSearchProvider = ({
   const [keyword, setKeyword] = useState(defaultKeyword);
   const [open, setOpen] = useState(false);
 
-  console.log('gsc: ', results);
   const initialState = {
     open,
     filters,

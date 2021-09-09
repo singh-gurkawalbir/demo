@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { makeStyles,
   IconButton,
   Typography,
@@ -85,19 +85,19 @@ export default function ResourceFilter({openByDefault = false}) {
     );
   };
 
-  const MenuItem = ({ name, label }) => {
-    const isChecked = filters.includes(name) || (name === 'all' && !filters?.length);
+  const MenuItem = ({ type, label }) => {
+    const isChecked = filters.includes(type) || (type === 'all' && !filters?.length);
 
-    const handleMenuItemClick = name => {
+    const handleMenuItemClick = type => {
       let newFilters = [];
 
-      if (name === 'all') {
+      if (type === 'all') {
         newFilters = [];
-      } else if (filters?.includes(name)) {
-        newFilters = filters.filter(i => i !== name);
+      } else if (filters?.includes(type)) {
+        newFilters = filters.filter(i => i !== type);
       } else {
       // last case is type not present, so add it.
-        newFilters = [...filters, name];
+        newFilters = [...filters, type];
       }
       setFilters(newFilters);
       onFiltersChange?.(newFilters);
@@ -106,18 +106,26 @@ export default function ResourceFilter({openByDefault = false}) {
     return (
       <div>
         <FormControlLabel
-          onClick={() => handleMenuItemClick(name)}
+          onClick={() => handleMenuItemClick(type)}
           control={(
             <Checkbox
               checked={isChecked}
-              name={name}
-              className={clsx({[classes.allItemChecked]: isChecked && name === 'all' })}
+              name={type}
+              className={clsx({[classes.allItemChecked]: isChecked && type === 'all' })}
               color="primary" />
           )}
           label={label} />
       </div>
     );
   };
+
+  const resourceFilters = useMemo(() => Object.keys(filterMap)
+    .filter(key => filterMap[key].isResource)
+    .map(key => filterMap[key]), []);
+
+  const marketplaceFilters = useMemo(() => Object.keys(filterMap)
+    .filter(key => !filterMap[key].isResource)
+    .map(key => filterMap[key]), []);
 
   return (
     <div className={classes.root}>
@@ -135,7 +143,7 @@ export default function ResourceFilter({openByDefault = false}) {
       {open && (
         <FloatingPaper className={classes.menu}>
           <div className={classes.allContainer}>
-            <MenuItem name="all" label="All" />
+            <MenuItem type="all" label="All" />
             <IconButton size="small" onClick={handleArrowClick}>
               <CloseIcon />
             </IconButton>
@@ -144,17 +152,12 @@ export default function ResourceFilter({openByDefault = false}) {
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
 
-          {Object.keys(filterMap).map(key => {
-            const filter = filterMap[key];
-
-            return <MenuItem key={key} name={filter.name} label={filter.label} />;
-          })}
+          {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>
 
-          <MenuItem name="ia" label="Integration apps" />
-          <MenuItem name="template" label="Template" />
+          {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
         </FloatingPaper>
       )}
     </div>

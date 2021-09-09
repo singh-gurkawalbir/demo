@@ -1,32 +1,39 @@
 export const filterMap = {
-  integration:
-    { shortcut: 'in', name: 'integration', label: 'Integrations' },
-  flow:
-    { shortcut: 'f', name: 'flow', label: 'Flows' },
-  connection:
-    { shortcut: 'c', name: 'connection', label: 'Connections' },
-  import:
-    { shortcut: 'i', name: 'import', label: 'Imports' },
-  export:
-    { shortcut: 'e', name: 'export', label: 'Exports' },
-  script:
-    { shortcut: 's', name: 'script', label: 'Scripts' },
-  agent:
-    { shortcut: 'a', name: 'agent', label: 'Agents' },
-  stack:
-    { shortcut: 'st', name: 'stack', label: 'Stacks' },
-  api:
-    { shortcut: 'api', name: 'api', label: 'My APIs' },
-  accesstoken:
-    { shortcut: 'token', name: 'accesstoken', label: 'API tokens' },
-  template:
-    { shortcut: 't', name: 'template', label: 'Templates' },
-  connector:
-    { shortcut: 'ia', name: 'connector', label: 'Integration apps' },
-  recyclebin:
-    { shortcut: 'r', name: 'recyclebin', label: 'Recycle bin' },
+  integrations:
+    { shortcut: 'in', type: 'integrations', label: 'Integrations', isResource: true },
+  flows:
+    { shortcut: 'f', type: 'flows', label: 'Flows', isResource: true },
+  connections:
+    { shortcut: 'c', type: 'connections', label: 'Connections', isResource: true },
+  imports:
+    { shortcut: 'i', type: 'imports', label: 'Imports', isResource: true },
+  exports:
+    { shortcut: 'e', type: 'exports', label: 'Exports', isResource: true },
+  scripts:
+    { shortcut: 's', type: 'scripts', label: 'Scripts', isResource: true },
+  agents:
+    { shortcut: 'a', type: 'agents', label: 'Agents', isResource: true },
+  stacks:
+    { shortcut: 'st', type: 'stacks', label: 'Stacks', isResource: true },
+  apis:
+    { shortcut: 'api', type: 'apis', label: 'My APIs', isResource: true },
+  accesstokens:
+    { shortcut: 'token', type: 'accesstokens', label: 'API tokens', isResource: true },
+  templates:
+    { shortcut: 't', type: 'templates', label: 'Templates', isResource: true },
+  connectors:
+    { shortcut: 'ia', type: 'connectors', label: 'Integration apps', isResource: true },
+  recycleBin:
+    { shortcut: 'r', type: 'recycleBin', label: 'Recycle bin', isResource: true },
+  marketplaceTemplates:
+    { shortcut: 'mt', type: 'marketplaceTemplates', label: 'Templates' },
+  marketplaceConnectors:
+    { shortcut: 'mia', type: 'marketplaceConnectors', label: 'Integration apps' },
 };
 
 export const shortcutMap = {};
 
 Object.keys(filterMap).forEach(filter => { shortcutMap[filterMap[filter].shortcut] = filter; });
+
+// export const resourceFilters = filterMap.filter(f => f.isResource).reduce((map, r) => ({...map, [r]: true}), {});
+// export const marketplaceFilters = filterMap.filter(f => !f.isResource).reduce((map, m) => ({...map, [m]: true}), {});

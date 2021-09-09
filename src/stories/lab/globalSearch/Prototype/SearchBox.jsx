@@ -85,6 +85,13 @@ function getKeyword(searchString) {
   return searchString;
 }
 
+function getResourceCount(results) {
+  if (!results || typeof results !== 'object') return 0;
+
+  return Object.keys(results)?.reduce((count, r) =>
+    filterMap[r]?.isResource ? count + (results[r].length) : count, 0);
+}
+
 export default function SearchBox() {
   const classes = useStyles();
   const [skip, setSkip] = React.useState(false);
@@ -134,8 +141,6 @@ export default function SearchBox() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  console.log(results);
-
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
@@ -158,7 +163,7 @@ export default function SearchBox() {
             variant="fullWidth"
             indicatorColor="primary"
           >
-            <Tab label="Resources (0)" />
+            <Tab label={`Resources (${getResourceCount(results)})`} />
             <Tab label="Marketplace (0)" />
           </Tabs>
 
