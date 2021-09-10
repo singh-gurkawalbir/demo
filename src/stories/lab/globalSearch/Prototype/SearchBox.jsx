@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
+import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { filterMap, shortcutMap } from './filterMeta';
+import Results from './Results';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,13 +86,29 @@ function getKeyword(searchString) {
   return searchString;
 }
 
+function getResultCount(results, isResource) {
+  if (!results || typeof results !== 'object') return 0;
+
+  return Object.keys(results)?.reduce((count, r) => {
+    const match = filterMap[r]?.isResource === isResource;
+
+    return match ? count + (results[r].length) : count;
+  }, 0);
+}
+
+function getTabResults(results, isResource) {
+  return Object.keys(filterMap)
+    .filter(key => filterMap[key].isResource === isResource && results[key] !== undefined)
+    .map(key => ({type: key, results: results[key]}));
+}
+
 export default function SearchBox() {
   const classes = useStyles();
   const [skip, setSkip] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState(0);
   const [searchString, setSearchString] = React.useState('');
   const inputRef = useRef();
-  const { keyword, setKeyword, filters, setFilters } = useGlobalSearchContext();
+  const { results, keyword, setKeyword, filters, setFilters, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
   const showResults = keyword?.length >= 2;
 
   const handleSearchStringChange = e => {
@@ -98,8 +116,19 @@ export default function SearchBox() {
 
     setSkip(true);
     setSearchString(newSearchString);
-    setKeyword(getKeyword(newSearchString));
-    setFilters(getFilters(newSearchString));
+
+    const newKeyword = getKeyword(newSearchString);
+    const newFilters = getFilters(newSearchString);
+
+    if (keyword !== newKeyword) {
+      setKeyword(newKeyword);
+      onKeywordChange?.(newKeyword);
+    }
+
+    if (!isEqual(filters, newFilters)) {
+      setFilters(newFilters);
+      onFiltersChange?.(newFilters);
+    }
   };
 
   const handleTabChange = (event, newValue) => {
@@ -111,15 +140,19 @@ export default function SearchBox() {
 
     setSearchString(buildSearchString(filters, keyword));
 
-    // The ref of <InputBase> is actually a div. We want the first child.
-    const input = inputRef.current.children[0];
+    // The ref of <InputBase> is actually a div wrapper.
+    // We want the first child, which is the input element.
+    const input = inputRef.current?.children?.[0];
 
-    input.focus();
+    input?.focus();
   // we do not want this effect to fire on anything BUT filter changes...
   // This effect is used to update the search string if a user interacts with
   // the filter list component...
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
+
+  const resourceResults = useMemo(() => getTabResults(results, true), [results]);
+  const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
 
   return (
     <div className={classes.root}>
@@ -143,16 +176,16 @@ export default function SearchBox() {
             variant="fullWidth"
             indicatorColor="primary"
           >
-            <Tab label="Resources (0)" />
-            <Tab label="Marketplace (0)" />
+            <Tab label={`Resources (${getResultCount(results, true)})`} />
+            <Tab label={`Marketplace (${getResultCount(results, false)})`} />
           </Tabs>
 
           <TabPanel value={activeTab} index={0}>
-            No resource search results. Try another term or adjust your filter.
+            <Results results={resourceResults} />
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            No marketplace search results. Try another term or adjust your filter.
+            <Results results={marketplaceResults} />
           </TabPanel>
         </FloatingPaper>
       )}
