@@ -143,7 +143,7 @@ export default function KeyValueRow(props) {
           disabled={disabled}
           id={`${valueName}-${index}`}
           data-test={`${valueName}-${index}`}
-          defaultValue={r[valueName]}
+          defaultValue={r[valueName] || false}
           variant="filled"
           fullWidth
           className={clsx(classes.dynaField, classes.dynaValueField)}
