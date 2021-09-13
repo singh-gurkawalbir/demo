@@ -212,6 +212,13 @@ export default function SalesforceLookupFilterPanel({
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
       return { isValid: false, error: 'Please select right operand.' };
     }
+    if (r.rhs.type === 'value' && r.rhs.value) {
+      const containsBrackets = /.*{|}/.test(r.rhs.value);
+
+      if (containsBrackets) {
+        return { isValid: false, error: 'Please remove brackets from right operand.' };
+      }
+    }
 
     return {
       isValid: true,
