@@ -7,8 +7,6 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
-import { isFileAdaptor } from '../../utils/resource';
-// import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -35,47 +33,20 @@ function PreviewInfo({
   flowId,
   resourceId,
   formKey,
-  resourceType,
   resourceSampleData,
   previewStageDataList,
-  isPreviewDisabled,
   showPreviewData,
   setShowPreviewData,
 }) {
-  const value = useSelector(
-    state => selectors.formState(state, formKey)?.value,
-    shallowEqual
-  );
   const dispatch = useDispatch();
-  const isPageGeneratorExport = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId)
-  );
-
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
-  // const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
   const fetchExportPreviewData = useCallback(() => {
-    // Just a fail safe condition not to request for sample data incase of not exports
-    if (resourceType !== 'exports') return;
-
     dispatch(actions.flowData.clearStages(flowId));
-
-    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
-    if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
-      dispatch(actions.sampleData.request(resourceId, resourceType, value, null, {flowId, refreshCache: true}));
-    } else {
-      dispatch(actions.sampleData.requestLookupPreview(resourceId, flowId, value, {refreshCache: true}));
-    }
+    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
   }, [
-    isPageGeneratorExport,
     dispatch,
-    resourceId,
-    resourceType,
-    value,
     flowId,
-    resource,
+    formKey,
   ]);
 
   const handlePreview = useCallback(() => {
@@ -83,23 +54,12 @@ function PreviewInfo({
     setShowPreviewData(true);
   }, [fetchExportPreviewData, setShowPreviewData]);
 
-  // useEffect(() => {
-  //   // Fetches preview data incase of initial load of an edit export mode
-  //   // Not fetched for online connections
-  //   // TODO @Raghu: should we make a offline preview call though connection is offline ?
-  //   // Needs a refactor to preview saga for that
-  //   if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
-  //     setIsPreviewDataFetched(true);
-  //     handlePreview();
-  //   }
-  // }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
-
   // on close of the panel, updates record size to default
   // remove this action, if in future we need to retain record size
   useEffect(() =>
-    () => dispatch(actions.sampleData.patch(resourceId, {
-      recordSize: DEFAULT_RECORD_SIZE,
-    })),
+    () => {
+      dispatch(actions.resourceFormSampleData.updateRecordSize(resourceId, DEFAULT_RECORD_SIZE));
+    },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
 
@@ -108,9 +68,8 @@ function PreviewInfo({
       fetchExportPreviewData={handlePreview}
       resourceSampleData={resourceSampleData}
       previewStageDataList={previewStageDataList}
-      disabled={isPreviewDisabled}
+      formKey={formKey}
       resourceId={resourceId}
-      resourceType={resourceType}
       showPreviewData={showPreviewData}
   />
   );
@@ -118,9 +77,6 @@ function PreviewInfo({
 
 export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
-
-  const isPreviewDisabled = useSelector(state =>
-    selectors.isExportPreviewDisabled(state, resourceId, resourceType));
   const availablePreviewStages = useSelector(state =>
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
@@ -144,19 +100,16 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   return (
     <div
       className={classes.previewPanelWrapper}>
-      <Typography className={classes.previewDataHeading}>
+      <Typography data-public className={classes.previewDataHeading}>
         Preview data
-        {/* <FieldHelp label="Preview data" helpKey="exports.previewData" /> */}
       </Typography>
       <div className={classes.container}>
         <PreviewInfo
           resourceSampleData={resourceSampleData}
           previewStageDataList={previewStageDataList}
-          isPreviewDisabled={isPreviewDisabled}
           flowId={flowId}
           resourceId={resourceId}
           formKey={formKey}
-          resourceType={resourceType}
           setShowPreviewData={setShowPreviewData}
           showPreviewData={showPreviewData}
       />

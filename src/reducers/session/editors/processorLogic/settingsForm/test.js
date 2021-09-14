@@ -284,7 +284,7 @@ describe('settingsForm processor logic', () => {
           },
         },
         insertStubKey: 'formInit',
-        originalData: { fieldMap: {}, layout: { fields: [] } },
+        originalData: JSON.stringify(parsedData, null, 2),
         settingsFormPatchPath: '/settingsForm',
         resourceDocs: {},
       };

@@ -17,7 +17,7 @@ import newExport from './new';
 import custom from './custom';
 import simple from './simple';
 import dynamodb from './dynamodb';
-import googledrive from './googledrive';
+import commonfileprovider from './commonfileprovider';
 
 export default {
   new: newExport,
@@ -39,5 +39,5 @@ export default {
   custom,
   simple,
   dynamodb,
-  googledrive,
+  commonfileprovider,
 };

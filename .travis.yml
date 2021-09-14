@@ -9,9 +9,6 @@ script:
   - yarn run lint 
   - yarn build-storybook
 
-# Script that is run before the script phase
-# before_script:
-
 # Deployment information
 deploy:
   provider: pages # Tell Travis we want to deploy to Github Pages
@@ -21,4 +18,4 @@ deploy:
   repo: celigo/integrator-ui # Add your username/project_name here
   target_branch: gh-pages # Tell Travis to deploy on the gh-pages branch
   on:
-    branch: master # Tell Travis to trigger a deploy only when we push to master
+    branch: storybook # Tell Travis to trigger a deploy only when we push to storybook

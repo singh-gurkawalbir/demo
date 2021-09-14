@@ -1,10 +1,9 @@
 import produce from 'immer';
 import {differenceWith, isEqual } from 'lodash';
 import shortid from 'shortid';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../../actions/types';
 import { getSuiteScriptAppType, isMappingObjEqual } from '../../../../utils/suiteScript/mapping';
-
-const { deepClone } = require('fast-json-patch');
 
 const emptyObj = {};
 const emptySet = [];

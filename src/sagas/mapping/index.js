@@ -10,12 +10,13 @@ import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType} from '../../utils/resource';
+import { getResourceSubType } from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
-import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
-import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
-import {requestAssistantMetadata} from '../resources/meta';
-import {getMappingMetadata as getIAMappingMetadata} from '../integrationApps/settings';
+import { requestSampleData as requestFlowSampleData } from '../sampleData/flows';
+import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
+import { requestAssistantMetadata } from '../resources/meta';
+import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
+import { getAssistantConnectorType } from '../../constants/applications';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -190,14 +191,14 @@ export function* mappingInit({
       connectorExternalId: importResource.externalId,
     };
   } else if (importResource.assistant) {
-    const { type: adaptorType, assistant } = getResourceSubType(
+    const { assistant } = getResourceSubType(
       importResource
     );
     const { operation, resource, version } = importResource.assistantMetadata;
 
     const assistantData = yield select(
       selectors.assistantData, {
-        adaptorType,
+        adaptorType: getAssistantConnectorType(importResource.assistant),
         assistant,
       }
     );
@@ -244,7 +245,7 @@ export function* mappingInit({
   });
   yield put(
     actions.mapping.initComplete({
-      mappings: formattedMappings.map(m => ({
+      mappings: (formattedMappings || []).map(m => ({
         ...m,
         key: shortid.generate(),
       })),
@@ -289,11 +290,13 @@ export function* saveMappings() {
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSuccess = !!flowSampleData;
 
   _mappings = mappingUtil.generateFieldsAndListMappingForApp({
     mappings: _mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
@@ -332,7 +335,7 @@ export function* saveMappings() {
 
       return true;
     }).map(({isConditionalLookup, ...others}) => ({...others}));
-    const lookupPath = lookupUtil.getLookupPath(importResource.adaptorType);
+    const lookupPath = lookupUtil.getLookupPath(importResource.adaptorType, true);
 
     // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
     if (lookupPath) {
@@ -377,7 +380,7 @@ export function* previewMappings() {
   if (!_importRes) {
     return yield put(actions.mapping.previewFailed());
   }
-  let importResource = deepClone(_importRes);
+  const importResource = deepClone(_importRes);
   let netsuiteRecordType;
 
   if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
@@ -391,6 +394,7 @@ export function* previewMappings() {
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSuccess = !!flowSampleData;
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, key, ...others }) => others
   );
@@ -399,11 +403,11 @@ export function* previewMappings() {
     mappings: _mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
   });
-
   const { _connectionId } = importResource;
   let path = `/connections/${_connectionId}/mappingPreview`;
   const requestBody = {
@@ -436,13 +440,14 @@ export function* previewMappings() {
       });
     }
 
-    importResource = importResource.netsuite_da || importResource.netsuite;
+    const importConfig = importResource.netsuite_da || importResource.netsuite;
 
     if (!subRecordMappingId) {
-      importResource.lookups = filteredLookups;
+      importConfig.lookups = filteredLookups;
     }
 
-    importResource.mapping = _mappings;
+    importConfig.mapping = _mappings;
+    requestBody.importConfig = importConfig;
     requestBody.data = [requestBody.data];
     requestBody.celigo_resource = 'previewImportMappingFields';
   } else if (importResource.adaptorType === 'HTTPImport') {
@@ -451,7 +456,9 @@ export function* previewMappings() {
     if (filteredLookups) importResource.http.lookups = filteredLookups;
   }
 
-  requestBody.importConfig = importResource;
+  if (!requestBody.importConfig) {
+    requestBody.importConfig = importResource;
+  }
 
   const opts = {
     method: 'PUT',

@@ -1366,3 +1366,47 @@ describe('selectors test cases', () => {
     });
   });
 });
+
+describe('isFormDirty', () => {
+  const fieldMeta = {
+    fieldMap: {
+      FIELD1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+        visibleWhen: [
+          {field: 'FIELD2', is: ['abc']},
+        ],
+      },
+
+    },
+
+    layout: { fields: ['FIELD1'] },
+  };
+  const formKey = '1-2';
+  const formState = forms(
+    undefined,
+    actions.form.init(formKey, '', {
+      fieldMeta,
+      showValidationBeforeTouched: true,
+    })
+  );
+
+  test('initially should not be dirty', () => {
+    const res = selectors.isFormDirty(formState, formKey);
+
+    expect(res).toBe(false);
+  });
+  test('should be enabled after any form touch event', () => {
+    const updatedFormState = forms(
+      formState,
+      actions.form.fieldChange(formKey)('FIELD1', 'fdfdf')
+
+    );
+    const res = selectors.isFormDirty(updatedFormState, formKey);
+
+    expect(res).toBe(true);
+  });
+});

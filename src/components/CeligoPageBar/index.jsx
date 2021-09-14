@@ -52,6 +52,7 @@ export default function CeligoPageBar(props) {
     subtitle,
     titleTag,
     className,
+    disableHtmlInInfoText,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -77,7 +78,7 @@ export default function CeligoPageBar(props) {
         elevation={0}
         square>
 
-        <Grid item container wrap="nowrap">
+        <Grid item container wrap="nowrap" alignItems="center">
           {parentUrl && (
           // eslint-disable-next-line react/jsx-handler-names
           <IconButton size="small" onClick={handleOnClick}>
@@ -88,7 +89,7 @@ export default function CeligoPageBar(props) {
             {title}
           </Typography>
           {titleTag && <span>{titleTag}</span>}
-          {infoText && <InfoIconButton info={infoText} />}
+          {infoText && <InfoIconButton info={infoText} disableHtml={disableHtmlInInfoText} />}
           <div className={classes.emptySpace} />
           {children}
         </Grid>

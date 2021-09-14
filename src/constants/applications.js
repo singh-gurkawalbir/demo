@@ -77,12 +77,6 @@ const connectors = [
     webhookOnly: true,
   },
   {
-    id: 'pagerduty',
-    type: 'webhook',
-    name: 'PagerDuty',
-    webhookOnly: true,
-  },
-  {
     id: 'mailparser-io',
     type: 'webhook',
     name: 'Mailparser',
@@ -231,6 +225,13 @@ const connectors = [
     assistant: 'recurly',
     webhook: true,
   },
+  {
+    id: 'pagerduty',
+    name: 'PagerDuty',
+    type: 'http',
+    assistant: 'pagerduty',
+    webhook: true,
+  },
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
 
   {
@@ -274,7 +275,7 @@ const connectors = [
     webhookOnly: true,
     icon: 'travis',
   },
-  { id: 's3', name: 'Amazon S3', type: 's3', group: 'tech'},
+  { id: 's3', name: 'Amazon S3', type: 's3'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
   {id: 'clover', name: 'Clover', type: 'http', assistant: 'clover'},
@@ -284,7 +285,10 @@ const connectors = [
   {id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba'},
 ];
 // These can be removed once metadata gets updated.
-const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
+const newConnections = [
+  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
+];
 
 connectors.sort(stringCompare('name'));
 const getAssistants = () => {
@@ -422,6 +426,15 @@ export const getApp = (type, assistant) => {
   const applications = applicationsList();
 
   return applications.find(c => c.id === id) || {};
+};
+export const getAssistantConnectorType = assistant => {
+  const connectorType = getApp(null, assistant)?.type;
+
+  if (connectorType) {
+    return connectorType.toLowerCase() === 'rest' ? 'rest' : 'http';
+  }
+
+  return '';
 };
 export const applicationsPlaceHolderText = () => {
   const applications = applicationsList();

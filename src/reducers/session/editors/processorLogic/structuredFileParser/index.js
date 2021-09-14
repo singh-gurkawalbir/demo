@@ -2,15 +2,17 @@ import isEqual from 'lodash/isEqual';
 import util from '../../../../../utils/json';
 
 export default {
-  init: ({options, fieldState, fileDefinitionData}) => {
+  init: ({options, fieldState, fileDefinitionData, resource}) => {
     const {sampleData, rule} = fileDefinitionData || {};
     const data = sampleData || fieldState?.sampleData;
 
     return {
       ...options,
-      rule,
+      rule: fieldState?.value || rule,
       data,
       originalData: data,
+      groupByFields: resource?.file?.groupByFields || [],
+      sortByFields: resource?.file?.sortByFields || [],
     };
   },
   dirty: editor => {
@@ -20,10 +22,17 @@ export default {
 
     return false;
   },
-  requestBody: editor => ({
-    rules: JSON.parse(editor.rule),
-    data: editor.data,
-  }),
+  requestBody: editor => {
+    const rules = {
+      groupByFields: editor.groupByFields,
+      sortByFields: editor.sortByFields,
+      ...JSON.parse(editor.rule)};
+
+    return {
+      rules,
+      data: editor.data,
+    };
+  },
   validate: editor => ({
     ruleError: util.validateJsonString(editor.rule),
     dataError:

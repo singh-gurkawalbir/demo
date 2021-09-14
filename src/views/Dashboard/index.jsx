@@ -1,70 +1,57 @@
-import { difference } from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../actions';
-import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
-import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
-import ResourceDrawer from '../../components/drawer/Resource';
+import React, {useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
-import DashboardPageBar from './PageBar';
-import DashboardTiles from './Tiles';
-import InstallZip from './InstallZip';
-import OfflineConnectionDrawer from './OfflineConnectionDrawer';
-
-// This component does not return a jsx ..it is sort of a hook
-// is there any better pattern to this
-const LoadTiles = () => {
-  const dispatch = useDispatch();
-  const ssLinkedConnections = useSelector(state =>
-    selectors.suiteScriptLinkedConnections(state)
-  );
-
-  const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
-    []
-  );
-
-  useEffect(() => {
-    const ssLinkedConnectionIds = ssLinkedConnections.map(c => c._id);
-    const newSuiteScriptResourcesToLoad = difference(
-      ssLinkedConnectionIds,
-      suiteScriptResourcesToLoad
-    );
-
-    if (newSuiteScriptResourcesToLoad.length > 0) {
-      setSuiteScriptResourcesToLoad(
-        suiteScriptResourcesToLoad.concat(newSuiteScriptResourcesToLoad)
-      );
-    }
-  }, [ssLinkedConnections, suiteScriptResourcesToLoad]);
-
-  useEffect(() => {
-    dispatch(actions.resource.requestCollection('tiles'));
-  }, [dispatch]);
-
-  useEffect(() => {
-    suiteScriptResourcesToLoad.forEach(connectionId =>
-      dispatch(
-        actions.resource.requestCollection(
-          `suitescript/connections/${connectionId}/tiles`
-        )
-      )
-    );
-  }, [dispatch, suiteScriptResourcesToLoad]);
-
-  return null;
-};
+import actions from '../../actions';
+import Tabs from './Tabs';
+import LoadResources from '../../components/LoadResources';
+import CeligoPageBar from '../../components/CeligoPageBar';
+import getRoutePath from '../../utils/routePaths';
+import {HOME_PAGE_PATH} from '../../utils/constants';
+import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../utils/accountDashboard';
+import { hashCode } from '../../utils/string';
 
 export default function Dashboard() {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const filters = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
+  const { paging, sort, ...nonPagingFilters } = filters;
+  const filterHash = hashCode(nonPagingFilters);
+
+  useEffect(() => {
+    dispatch(
+      actions.job.dashboard.completed.requestCollection()
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, filterHash]);
+
+  useEffect(
+    () => () => {
+      dispatch(
+        actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
+          range: DEFAULT_RANGE,
+        })
+      );
+      dispatch(actions.job.dashboard.completed.clear());
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch]
+  );
+  if (!isUserInErrMgtTwoDotZero) {
+    history.push(getRoutePath(HOME_PAGE_PATH));
+
+    return null;
+  }
+
   return (
-    <>
-      <LoadTiles />
-      <InstallZip />
-      <ResourceDrawer />
-      <DownloadIntegrationDrawer />
-      <InstallIntegrationDrawer />
-      <OfflineConnectionDrawer />
-      <DashboardPageBar />
-      <DashboardTiles />
-    </>
+    <LoadResources required resources="flows,integrations">
+      <CeligoPageBar title="Dashboard" />
+      <Tabs />
+      <QueuedJobsDrawer />
+    </LoadResources>
   );
 }

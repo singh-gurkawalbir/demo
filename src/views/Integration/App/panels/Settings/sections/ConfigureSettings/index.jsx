@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
-import { IAFormStateManager, useActiveTab } from '../../../Flows';
+import { IAFormStateManager } from '../../../Flows';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
@@ -57,7 +57,6 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
       ),
     shallowEqual
   );
-  const activeTabProps = useActiveTab();
 
   return (
     <LoadResources
@@ -65,8 +64,8 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
       resources={['flows', 'exports', 'imports', 'connections']}>
       {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
       <IAFormStateManager
-        {...activeTabProps}
         key={childId}
+        dataPublic
         formState={formState}
         className={clsx(classes.configureform, {
           [classes.configureCamForm]: section.sections,

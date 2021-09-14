@@ -1,84 +1,53 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDrop } from 'react-dnd-cjs';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {selectors} from '../../reducers';
 import MappingRow from './MappingRow';
 import actions from '../../actions';
+import SortableList from '../Sortable/SortableList';
+import SortableItem from '../Sortable/SortableItem';
+import useSortableList from '../../hooks/useSortableList';
 
-const emptyObject = {};
-export default function DragContainer({ onDrop, className, ...props }) {
-  const [isDragging, setIsDragging] = useState(false);
+export default function DragContainer({ onDrop, disabled, className, ...props }) {
   const dispatch = useDispatch();
   const mappings = useSelector(state => selectors.mapping(state).mappings);
-  const [mappingState, setMappingState] = useState(mappings);
-  const handleDrop = useCallback(
-    (key, finalIndex) => {
-      setIsDragging(false);
-      dispatch(actions.mapping.shiftOrder(key, finalIndex));
-    },
-    [dispatch]
-  );
-  const handleMove = useCallback(
-    (dragIndex, hoverIndex) => {
-      setIsDragging(true);
-      const mappingsCopy = [...mappingState];
-      const dragItem = mappingsCopy[dragIndex];
+  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
+    dispatch(actions.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
+  }, [dispatch, mappings]);
+  const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
-      mappingsCopy.splice(dragIndex, 1);
-      mappingsCopy.splice(hoverIndex, 0, dragItem);
-
-      setMappingState(mappingsCopy);
-    },
-    [mappingState]
-  );
-
-  const tableData = useMemo(
-    () =>
-      (mappingState || []).map((value, index) => {
-        const obj = { ...value };
-
-        obj.index = index;
-
-        return obj;
-      }),
-    [mappingState]
-  );
-  const [, drop] = useDrop({ accept: 'MAPPING',
-    drop(item) {
-      handleDrop(item.key, item.index);
-    },
-  });
-
-  useEffect(() => {
-    if (mappings.length !== mappingState.length) {
-      setMappingState(mappings);
-    }
-  }, [mappingState.length, mappings]);
-  const emptyRowIndex = mappingState.length;
+  const emptyRowIndex = mappings.length;
 
   return (
-    <div className={className}>
-      <div ref={drop}>
-
-        {tableData.map((mapping, index) => (
-          <MappingRow
-            index={index}
+    <>
+      <SortableList
+        onSortEnd={handleSortEnd}
+        updateBeforeSortStart={handleSortStart}
+        axis="y"
+        useDragHandle>
+        {mappings.map((mapping, index) => (
+          <SortableItem
             key={mapping.key}
-            mappingKey={mapping.key}
-            onMove={handleMove}
-            isDraggable
-            isDragInProgress={isDragging}
-            {...props}
-          />
+            index={index}
+            hideSortableGhost={false}
+            value={(
+              <MappingRow
+                index={index}
+                mappingKey={mapping.key}
+                disabled={disabled}
+                isDragInProgress={dragItemIndex !== undefined}
+                isRowDragged={dragItemIndex === index}
+                {...props}
+            />
+          )}
+        />
         ))}
-      </div>
+      </SortableList>
       <MappingRow
         key={`newMappingRow-${emptyRowIndex}`}
         index={emptyRowIndex}
-        mapping={emptyObject}
-        isDraggable={false}
+        disabled={disabled}
         {...props}
       />
-    </div>
+    </>
   );
 }

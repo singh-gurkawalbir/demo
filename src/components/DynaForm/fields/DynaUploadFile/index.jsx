@@ -3,15 +3,12 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import useFormContext from '../../../Form/FormContext';
 
 function findRowDelimiter(sampleData) {
   let rowDelimiter;
 
   if (sampleData && typeof sampleData === 'string') {
-    if (sampleData.indexOf('\n\r') > -1) {
-      rowDelimiter = '\n\r';
-    } else if (sampleData.indexOf('\r\n') > -1) {
+    if (sampleData.indexOf('\r\n') > -1) {
       rowDelimiter = '\r\n';
     } else if (sampleData.indexOf('\r') > -1) {
       rowDelimiter = '\r';
@@ -36,7 +33,6 @@ export default function DynaUploadFile(props) {
     placeholder,
     persistData = false,
   } = props;
-  const formContext = useFormContext(formKey);
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
@@ -47,7 +43,7 @@ export default function DynaUploadFile(props) {
   );
 
   useEffect(() => {
-    const { status, file, rawFile, fileType, name } = uploadedFile || {};
+    const { status, file, rawFile, name } = uploadedFile || {};
 
     if (status === 'received') {
       setFileName(name);
@@ -66,19 +62,7 @@ export default function DynaUploadFile(props) {
       } else {
         onFieldChange(id, file);
       }
-
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: fileType,
-            file,
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
+      dispatch(actions.resourceFormSampleData.request(formKey));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, resourceId, resourceType, uploadedFile]);
@@ -89,7 +73,7 @@ export default function DynaUploadFile(props) {
     // when persistData is passed... no cleanup is done as it implies retaining existing state
     // TODO @Raghu: Find a better way to clean up only when needed
     if (options && !persistData) {
-      dispatch(actions.sampleData.reset(resourceId));
+      dispatch(actions.resourceFormSampleData.clear(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
       setFileName('');

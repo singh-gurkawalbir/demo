@@ -33,7 +33,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   let flowIds = [];
 
   if (resourceType === 'integrations') {
-    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
+    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId === 'none' ? undefined : resourceId);
     if (!flowIds || !flowIds.length) {
       yield put(actions.flowMetrics.received(resourceId, []));
 
@@ -45,9 +45,21 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
     }
   }
   if (filters?.range?.preset === 'lastrun' && resourceType === 'flows') {
-    const flow = yield select(selectors.resource, 'flows', resourceId);
-    const latestJobDetails = yield select(selectors.latestJobMap, flow?._integrationId);
-    const latestJob = latestJobDetails?.data ? latestJobDetails.data.find(job => job._flowId === resourceId) : undefined;
+    let flowJobResponse;
+
+    try {
+      flowJobResponse = yield apiCallWithRetry({
+        path: `/flows/${resourceId}/jobs/latest`,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      });
+    } catch (e) {
+      flowJobResponse = [];
+    }
+
+    const latestJob = flowJobResponse?.[0];
 
     if (latestJob) {
       const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
@@ -66,6 +78,8 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
         startDate.setMinutes(startDate.getMinutes() - 2);
         endDate.setMinutes(endDate.getMinutes() + 2);
       }
+      yield put(actions.flowMetrics.updateLastRunRange(resourceId, startDate, endDate));
+
       // eslint-disable-next-line no-param-reassign
       filters.range = { startDate, endDate, preset: 'lastrun' };
     }

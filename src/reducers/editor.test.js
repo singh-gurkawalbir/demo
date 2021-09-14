@@ -12,10 +12,47 @@ describe('AFE region selectors test cases', () => {
         resources: {},
       },
       session: {
-        editors: {},
+        editors: {
+          helperFunctions: {
+            abs: '{{abs field}}',
+            add: '{{add field field}}',
+            timestamp: '{{timestamp format timezone}}',
+            uppercase: '{{uppercase field}}',
+          },
+        },
+      },
+      user: {
+        profile: { email: 'something@test.com', name: 'First Last', timezone: 'Asia/Calcutta' },
+        preferences: { defaultAShareId: 'own' },
       },
     };
   });
+
+  describe('selectors.editorHelperFunctions test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.editorHelperFunctions()).toEqual({});
+      expect(selectors.editorHelperFunctions(null)).toEqual({});
+    });
+    test('should return original helper functions if timestamp function is not present', () => {
+      delete state.session.editors.helperFunctions.timestamp;
+      expect(selectors.editorHelperFunctions(state)).toBe(state.session.editors.helperFunctions);
+    });
+    test('should return original helper functions if user timezone is empty', () => {
+      delete state.user.profile.timezone;
+      expect(selectors.editorHelperFunctions(state)).toBe(state.session.editors.helperFunctions);
+    });
+    test('should return updated timestamp function if user timezone is present', () => {
+      const expectedOutput = {
+        abs: '{{abs field}}',
+        add: '{{add field field}}',
+        timestamp: '{{timestamp format "Asia/Calcutta"}}',
+        uppercase: '{{uppercase field}}',
+      };
+
+      expect(selectors.editorHelperFunctions(state)).toEqual(expectedOutput);
+    });
+  });
+
   describe('selectors.editorSupportsOnlyV2Data test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.editorSupportsOnlyV2Data()).toEqual(false);
@@ -45,7 +82,7 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
     });
-    test('should return true for csv generator, backup path and traceKeyTemplate fields', () => {
+    test('should return true for csv generator, backup path, file json body and traceKeyTemplate fields', () => {
       state.session.editors[editorId] = {
         id: editorId,
         editorType: 'csvGenerator',
@@ -70,10 +107,19 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'traceKeyTemplate',
         stage: 'flowInput',
       };
+      state.session.editors.def2 = {
+        id: 'def2',
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '1234',
+        fieldId: 'file.json.body',
+        stage: 'flowInput',
+      };
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
       expect(selectors.editorSupportsOnlyV2Data(state, 'def')).toEqual(true);
       expect(selectors.editorSupportsOnlyV2Data(state, 'def1')).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, 'def2')).toEqual(true);
     });
     test('should return false for all other cases', () => {
       state.session.editors[editorId] = {

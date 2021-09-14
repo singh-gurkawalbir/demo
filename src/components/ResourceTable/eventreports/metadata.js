@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { capitalize, makeStyles } from '@material-ui/core';
+import { capitalize } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import DateFilter from '../commonCells/DateFilter';
@@ -12,7 +12,6 @@ import Spinner from '../../Spinner';
 import CeligoTruncate from '../../CeligoTruncate';
 import {EVENT_REPORTS_DEFAULT} from '../../DynaForm/fields/integrations/DynaReportDateRange';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 
 const EVENT_REPORT_STATUS = {
   QUEUED: 'queued',
@@ -33,11 +32,6 @@ const ALL_EVENT_STATUS = [
 
 Object.freeze(ALL_EVENT_STATUS);
 const FILTER_KEY = 'eventreports';
-const useStyles = makeStyles(() => ({
-  flex: {
-    display: 'flex',
-  },
-}));
 
 const flowsConfig = {type: 'flows'};
 const metadata = {
@@ -56,18 +50,15 @@ const metadata = {
         );
       },
       Value: function IntegrationName({rowData: r}) {
-        const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
-        const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
-
-        // if there is no integration associated to a flow then its a standalone flow
-        return integration?.name || STANDALONE_INTEGRATION.name;
+        return useSelector(state => selectors.getEventReportIntegrationName(state, r));
       },
     },
     {
       key: 'flows',
       heading: 'Flows',
       HeaderValue: function FlowOptionsSearchFilter() {
-        const flowOptions = useSelector(state => selectors.getAllFlowsTiedToEventReports(state));
+        const integrationId = useSelector(state => selectors.filter(state, FILTER_KEY)?.integrationId);
+        const flowOptions = useSelectorMemo(selectors.mkGetFlowsTiedToEventReports, integrationId);
 
         return (
           <MultiSelectColumnFilter
@@ -83,7 +74,7 @@ const metadata = {
           flowsConfig
         ).resources;
 
-        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
+        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name || `Flow id: ${id}(Flow deleted)`).join(',');
 
         return (
           <CeligoTruncate dataPublic placement="top" lines={3} >
@@ -145,10 +136,8 @@ const metadata = {
         );
       },
       Value: function EventReportStatus({rowData: r}) {
-        const classes = useStyles();
-
         if ([EVENT_REPORT_STATUS.QUEUED, EVENT_REPORT_STATUS.RUNNING].includes(r.status)) {
-          return <div className={classes.flex}><Spinner /> {capitalize(r?.status)} </div>;
+          return <Spinner size="small"> {capitalize(r?.status)}</Spinner>;
         }
 
         return capitalize(r?.status);

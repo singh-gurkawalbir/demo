@@ -8,6 +8,7 @@ import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
 import { SCOPES } from '../../resourceForm';
 import { emptyObject } from '../../../utils/constants';
+import { commitStagedChanges } from '../../resources';
 
 /*
  * Incase of File adaptors XML type, fetch sampleData from the state that has uploaded XML file
@@ -22,11 +23,8 @@ export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
     'raw'
   );
 
-  if (!sampleData || !sampleData.body) return;
-  const processedData = yield call(parseFileData, {
-    sampleData: sampleData.body,
-    resource,
-  });
+  if (!sampleData) return;
+  const processedData = yield call(parseFileData, { sampleData, resource });
 
   // processor calls return data wrapped inside 'data' array
   return processedData?.data?.[0];
@@ -82,10 +80,10 @@ export default function* saveTransformationRulesForNewXMLExport({
   ))?.merged || emptyObject;
 
   const isXmlFileAdaptor =
-    isFileAdaptor(resource) && resource.file.type === 'xml';
+    isFileAdaptor(resource) && resource.file?.type === 'xml';
   const isXmlHttpAdaptor =
     adaptorTypeMap[resource.adaptorType] === 'http' &&
-    resource.http.successMediaType === 'xml';
+    resource.http?.successMediaType === 'xml';
 
   // Other than XML File Adaptor / XML Http Adaptor , we don't need to patch
   // Also for Data loader flows no need to patch though XML file is uploaded
@@ -114,5 +112,11 @@ export default function* saveTransformationRulesForNewXMLExport({
   const patchSet = [{ op: 'replace', path: '/transform', value }];
 
   yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-  yield put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE));
+
+  yield call(
+    commitStagedChanges, {
+      resourceType: 'exports',
+      id: resourceId,
+      scope: SCOPES.VALUE,
+    });
 }

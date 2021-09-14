@@ -68,6 +68,12 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
+    padding: [[0, 12]],
+    lineHeight: 2,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
+    },
   },
   parentPicker: {
     display: 'flex',
@@ -318,15 +324,15 @@ export default function DateRangeSelector({
             </div>
             <div className={classes.actions}>
               <ButtonGroup>
-                <Button variant="outlined" color="primary" onClick={handleSave}>
+                <Button variant="contained" color="primary" onClick={handleSave}>
                   Apply
                 </Button>
                 {clearable && (
-                <Button variant="text" color="primary" onClick={handleClear}>
+                <Button variant="text" color="secondary" onClick={handleClear}>
                   Clear
                 </Button>
                 )}
-                <Button variant="text" color="primary" onClick={handleClose}>
+                <Button variant="text" color="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
               </ButtonGroup>

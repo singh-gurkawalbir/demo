@@ -1,44 +1,5 @@
 export default {
-  'rest.method': {
-    type: 'select',
-    label: 'HTTP method',
-    required: true,
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'rest.blobMethod': {
-    type: 'select',
-    label: 'HTTP method',
-    required: true,
-    defaultValue: r => r && r.rest && r.rest.method,
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
-  },
+
   'rest.postBody': {
     type: 'httprequestbody',
     label: 'HTTP request body',
@@ -52,31 +13,22 @@ export default {
       },
     ],
   },
-  'rest.resourcePath': {
-    type: 'text',
-    label: 'Resource path',
-  },
-  'rest.headers': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Configure HTTP headers',
-  },
+
   // #region paging
   'rest.pagingMethod': {
-    type: 'select',
+    type: 'selectwithvalidations',
+    helpKey: 'export.http.paging.method',
     label: 'Paging method',
     options: [
       {
         items: [
-          { label: 'Next Page URL', value: 'nextpageurl' },
-          { label: 'Page Argument', value: 'pageargument' },
-          { label: 'Relative URI', value: 'relativeuri' },
-          { label: 'Link Header', value: 'linkheader' },
-          { label: 'Skip Argument', value: 'skipargument' },
-          { label: 'Token', value: 'token' },
-          { label: 'Post Body', value: 'postbody' },
+          { label: 'Next page URL', value: 'nextpageurl' },
+          { label: 'Page number parameter', value: 'pageargument' },
+          { label: 'Custom relative URI', value: 'relativeuri' },
+          { label: 'Link header', value: 'linkheader' },
+          { label: 'Skip number parameter', value: 'skipargument' },
+          { label: 'Next page token', value: 'token' },
+          { label: 'Custom request body', value: 'postbody' },
         ],
       },
     ],
@@ -87,14 +39,36 @@ export default {
       },
     ],
   },
-  'rest.nextPagePath': {
+
+  // added 2 separate UI fields for paths for url and token methods
+  // to have diff help texts and labels
+  'rest.nextPageURLPath': {
     type: 'text',
-    label: 'Next page path',
+    label: 'Path to next page URL field in HTTP response body',
     required: true,
+    defaultValue: r => r?.rest?.nextPagePath,
+    helpKey: 'export.http.paging.urlPath',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
-        is: ['nextpageurl', 'token'],
+        is: ['nextpageurl'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'rest.nextPageTokenPath': {
+    type: 'text',
+    label: 'Path to next page token field in HTTP response body',
+    required: true,
+    defaultValue: r => r?.rest?.nextPagePath,
+    helpKey: 'export.http.paging.tokenPath',
+    visibleWhenAll: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['token'],
       },
       {
         field: 'outputMode',
@@ -104,7 +78,8 @@ export default {
   },
   'rest.linkHeaderRelation': {
     type: 'text',
-    label: 'Link header relation',
+    label: 'Override link header relation name',
+    helpKey: 'export.http.paging.linkHeaderRelation',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -117,8 +92,9 @@ export default {
     ],
   },
   'rest.nextPageRelativeURI': {
-    type: 'text',
-    label: 'Next page relative URI',
+    type: 'relativeuri',
+    label: 'Override relative URI for subsequent page requests',
+    helpKey: 'export.http.paging.relativeURI',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -130,23 +106,37 @@ export default {
       },
     ],
   },
+
+  // added 2 separate UI fields for paths for page number and token methods
+  // to have diff help texts and labels
   'rest.pageArgument': {
     type: 'text',
-    label: 'Page argument',
+    label: 'Override page number query parameter name',
+    visibleWhenAll: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['pageargument'],
+      },
+    ],
+  },
+  'rest.tokenPageArgument': {
+    type: 'text',
+    label: 'Next page token query parameter name',
+    defaultValue: r => r?.rest?.pageArgument,
     required: true,
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
-        is: ['pageargument', 'token'],
+        is: ['token'],
       },
     ],
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
-    label: 'Paging post body',
+    label: 'Override HTTP request body for subsequent page requests',
+    helpKey: 'export.http.paging.body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
-    required: true,
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -160,7 +150,7 @@ export default {
   },
   'rest.maxPagePath': {
     type: 'text',
-    label: 'Max page path',
+    label: 'Path to total number of pages field in HTTP response body',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -174,7 +164,7 @@ export default {
   },
   'rest.maxCountPath': {
     type: 'text',
-    label: 'Max count path',
+    label: 'Path to total number of results field in HTTP response body',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -188,8 +178,7 @@ export default {
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Skip argument',
-    required: true,
+    label: 'Override skip number query parameter name',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -203,84 +192,17 @@ export default {
   },
   'rest.relativeURI': {
     type: 'relativeuri',
+    showLookup: false,
     required: true,
     label: 'Relative URI',
-    validWhen: {
-      someAreTrue: {
-        message:
-          'For delta exports please use lastExportDateTime in the relative URI or Request Body.',
-        conditions: [
-          {
-            field: 'type',
-            isNot: {
-              values: ['delta'],
-            },
-          },
-          {
-            field: 'rest.postBody',
-            matchesRegEx: {
-              pattern: 'lastExportDateTime',
-            },
-          },
-          {
-            matchesRegEx: {
-              pattern: '^(.*)lastExportDateTime',
-            },
-          },
-        ],
-      },
-    },
+    validateInComponent: true,
+    deltaFieldsToValidate: ['rest.relativeURI', 'rest.postBody'],
     connectionId: r => r && r._connectionId,
-  },
-  'rest.successPath': {
-    type: 'text',
-    label: 'Success path',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'rest.successValues': {
-    type: 'text',
-    label: 'Success values',
-    delimiter: ',',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'rest.lastPageStatusCode': {
-    type: 'text',
-    label: 'Last page status code',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  'rest.lastPagePath': {
-    type: 'text',
-    label: 'Last page path',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
   },
   'rest.lastPageValue': {
     type: 'text',
-    label: 'Last page value',
+    label: 'Paging complete value',
+    helpKey: 'export.http.paging.lastPageValues',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -307,7 +229,9 @@ export default {
   // #endregion transform
   'rest.once.relativeURI': {
     type: 'relativeuri',
-    label: 'Relative URI',
+    showLookup: false,
+    label: 'Relative URI to update records',
+    required: true,
     connectionId: r => r && r._connectionId,
     visibleWhen: [
       {
@@ -318,7 +242,8 @@ export default {
   },
   'rest.once.method': {
     type: 'select',
-    label: 'HTTP method',
+    label: 'HTTP method to update records',
+    required: true,
     visibleWhen: [
       {
         field: 'outputMode',
@@ -334,29 +259,6 @@ export default {
       },
     ],
   },
-  'rest.blobFormat': {
-    type: 'select',
-    label: 'Blob format',
-    options: [
-      {
-        items: [
-          { label: 'ASCII', value: 'ascii' },
-          { label: 'Base64', value: 'base64' },
-          { label: 'Binary', value: 'binary' },
-          { label: 'Hex', value: 'hex' },
-          { label: 'UTF-16LE', value: 'utf-16le' },
-          { label: 'UTF-8', value: 'utf8' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
-  },
-  // #endregion once
   'rest.once.postBody': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
@@ -367,6 +269,9 @@ export default {
         is: ['records'],
       },
     ],
-    label: 'HTTP request body',
+    label: 'HTTP request body to update records',
+    helpKey: 'export.http.once.body',
+    required: true,
   },
+  // #endregion once
 };

@@ -10,15 +10,35 @@ import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
-export function* installStep({ id, installerFunction, childId, addOnId }) {
+export function* initInstall({ id }) {
+  const path = `/integrations/${id}/installSteps`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: { method: 'GET' },
+      message: 'Init install',
+    });
+  } catch (error) {
+    return;
+  }
+
+  // once init is complete, BE will update the hidden step (if any) with completed true
+  // so need to get updated doc
+  yield put(actions.resource.request('integrations', id));
+}
+
+export function* installStep({ id, installerFunction, childId, addOnId, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
+  const body = { storeId: childId, addOnId, ...(formVal && { formVal }) };
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+      opts: { body, method: 'PUT' },
       hidden: true,
     }) || {};
   } catch (error) {
@@ -54,10 +74,10 @@ export function* installStep({ id, installerFunction, childId, addOnId }) {
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
       yield put(actions.resource.request('integrations', id));
-      yield put(actions.resource.requestCollection('flows'));
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('imports'));
-      yield put(actions.resource.requestCollection('connections'));
+      yield put(actions.resource.requestCollection('flows', null, true));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('imports', null, true));
+      yield put(actions.resource.requestCollection('connections', null, true));
       yield put(
         actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
@@ -77,7 +97,7 @@ export function* installStep({ id, installerFunction, childId, addOnId }) {
     );
   }
 }
-export function* installInitChild({id}) {
+export function* installInitChild({ id }) {
   const path = `/integrations/${id}/initChild`;
 
   try {
@@ -116,7 +136,7 @@ export function* installScriptStep({
   let body = {};
 
   if (stackId) {
-    body = {_stackId: stackId};
+    body = { _stackId: stackId };
   } else {
     body = formSubmission ||
     (connectionId
@@ -166,7 +186,7 @@ export function* installScriptStep({
       integration.initChild &&
       integration.initChild.function
     ) {
-      yield call(installInitChild, {id});
+      yield call(installInitChild, { id });
     }
 
     // to clear session state
@@ -213,15 +233,16 @@ export function* installScriptStep({
   );
 }
 
-export function* installChildStep({ id, installerFunction }) {
+export function* installChildStep({ id, installerFunction, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
+  const body = formVal ? { formVal } : {};
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: {}, method: 'PUT' },
+      opts: { body, method: 'PUT' },
       hidden: true,
       message: 'Installing',
     }) || {};
@@ -353,4 +374,5 @@ export default [
   takeLatest(actionTypes.INTEGRATION_APPS.CHILD.ADD, addNewChild),
   takeLatest(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, installChildStep),
   takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild),
+  takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, initInstall),
 ];

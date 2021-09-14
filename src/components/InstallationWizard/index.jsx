@@ -69,6 +69,7 @@ export default function InstallationWizard(props) {
       'shopify-oauth',
       'acumatica-oauth',
       'hubspot-oauth',
+      'amazonmws-oauth',
     ],
     []
   );
@@ -285,7 +286,10 @@ export default function InstallationWizard(props) {
           resource={connection.doc}
           resourceType="connections"
           environment={environment}
-          connectionType={connection.doc.type}
+          // eslint-disable-next-line no-nested-ternary
+          connectionType={connection.doc.type === 'http'
+            ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
+            : connection.doc.type}
           onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}
           addOrSelect
@@ -323,7 +327,7 @@ export default function InstallationWizard(props) {
         <div className={classes.stepTable}>
           {installSteps.map((step, index) => (
             <InstallationStep
-              key={step.name}
+              key={step.key || step.name}
               templateId={templateId}
               connectionMap={connectionMap}
               handleStepClick={handleStepClick}

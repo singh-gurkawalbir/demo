@@ -12,6 +12,7 @@ export default {
   raw: data => data,
   'suitescript-settings-options': data => data?.options?.map(([value, label]) => ({value, label})),
   'suitescript-recordTypes': data =>
+    Array.isArray(data) &&
     data.map(item => ({
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
@@ -404,7 +405,7 @@ export default {
               applicationResource[connectionId][sObjectMetadataPath]) ||
             {};
 
-          if (childSObject && childSObject.fields.length) {
+          if (childSObject?.fields?.length) {
             childSObject.fields.forEach(field => {
               _data.push({
                 value: `${child.relationshipName}[*].${field.name}`,

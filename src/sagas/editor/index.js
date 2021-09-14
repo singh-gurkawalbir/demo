@@ -17,10 +17,11 @@ import { getResource, commitStagedChanges } from '../resources';
 import processorLogic, { featuresMap } from '../../reducers/session/editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
-import { requestExportSampleData } from '../sampleData/exports';
+import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
+import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId } from '../../utils/resource';
 
 /**
@@ -36,6 +37,13 @@ export function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
+}
+
+// Deals with any modification related to the sample data being passed to getContext API
+function* formatEditorSampleDataForGetContextBE({ sampleData, resourceId, resourceType }) {
+  const savedResourceObj = yield select(selectors.resource, resourceType, resourceId);
+
+  return extractRawSampleDataFromOneToManySampleData(sampleData, savedResourceObj);
 }
 
 export function* invokeProcessor({ editorId, processor, body }) {
@@ -370,7 +378,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -429,10 +437,15 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
+  const needPreviewStagesData = resourceType === 'exports' && !!resource?.http?.paging?.method && previewDataDependentFieldIds.includes(fieldId);
 
-  if (fetchPreviewStageData) {
-    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
+  if (showPreviewStageData || needPreviewStagesData) {
+    yield call(requestResourceFormSampleData, { formKey });
+  }
+
+  if (showPreviewStageData) {
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
       resourceId,
@@ -480,6 +493,8 @@ export function* requestEditorSampleData({
   } else {
     const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
     const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
+
+    sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
     const body = {
       sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
@@ -491,9 +506,36 @@ export function* requestEditorSampleData({
     const flow = yield select(selectors.resource, 'flows', flowId);
 
     body.integrationId = flow?._integrationId;
-
-    body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     body.fieldPath = fieldId || filterPath;
+
+    if (needPreviewStagesData) {
+      body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
+    }
+
+    if (resourceType === 'connections') {
+      const _userId = yield select(selectors.ownerUserId);
+
+      body.type = 'connection';
+      // _userId is required in BE to get integration settings
+      body.connection = {
+        _userId,
+        ...(resource || {}),
+      };
+
+      if (parentType) {
+        body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;
+      }
+
+      delete body.sampleData;
+      delete body.templateVersion;
+    } else {
+      if (resource?.oneToMany) {
+        const oneToMany = resource.oneToMany === true || resource.oneToMany === 'true';
+
+        resource = { ...resource, oneToMany };
+      }
+      body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
+    }
 
     const opts = {
       method: 'POST',
@@ -619,13 +661,18 @@ export function* initEditor({ id, editorType, options }) {
   const init = processorLogic.init(editorType);
 
   if (init) {
-    // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
-      formattedOptions = init({options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
+      formattedOptions = init({
+        options: formattedOptions,
+        resource,
+        formValues,
+        fieldState,
+        connection: resourceType === 'connections' ? resource : connection,
+        isPageGenerator});
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
       const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');

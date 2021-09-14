@@ -55,6 +55,13 @@ export default function DynaNetSuiteLookup_afe(props) {
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
+    // We don't want to allow saving the form when the field is required but it is an empty array
+    if (Array.isArray(rule) && rule.length === 0) {
+      onFieldChange(id, '');
+
+      return;
+    }
+
     onFieldChange(id, JSON.stringify(rule));
   }, [id, onFieldChange]);
 

@@ -1,5 +1,7 @@
 /* global describe, expect, test */
+import produce from 'immer';
 import { selectors } from '.';
+import { STANDALONE_INTEGRATION } from '../utils/constants';
 
 const state = {
   data: {
@@ -9,7 +11,10 @@ const state = {
         {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
         {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
         {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
-        {_id: '5', type: 'flow_events', _flowIds: ['flow5'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '5', type: 'flow_events', _flowIds: ['flow5'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}, sandbox: true},
+        {_id: '6', type: 'flow_events', _flowIds: ['flow6'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        // referencing deleted flow
+        {_id: '7', type: 'flow_events', _flowIds: ['flow7'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
       ],
       flows: [
         {_id: 'flow1', name: 'flow1', _integrationId: 'int1'},
@@ -17,18 +22,72 @@ const state = {
         {_id: 'flow3', name: 'flow3', _integrationId: 'int2'},
         {_id: 'flow4', name: 'flow4', _integrationId: 'int2'},
         {_id: 'flow5', name: 'flow4', _integrationId: 'int3', sandbox: true},
-
+        // standalone flow
+        {_id: 'flow6', name: 'flow6'},
       ],
       integrations: [
-        {_id: '5', name: 'int1', _integrationId: 'int1'},
-        {_id: '7', name: 'int2', _integrationId: 'int2'},
-        {_id: '8', name: 'int3', _integrationId: 'int3', sandbox: true },
+        {_id: 'int1', name: 'int1'},
+        {_id: 'int2', name: 'int2'},
+        {_id: 'int3', name: 'int3', sandbox: true },
 
       ],
     },
   },
 };
 
+describe('selectors.getEventReportIntegrationName', () => {
+  test('should return valid integrationName for reports based on non standaloneIntegration', () => {
+    const res = selectors.getEventReportIntegrationName(state, state.data.resources.eventreports[1]);
+
+    expect(res).toEqual('int1');
+  });
+  test('should return Standalone flows for reports based on standalone Integration', () => {
+    const res = selectors.getEventReportIntegrationName(state, state.data.resources.eventreports[5]);
+
+    expect(res).toEqual(STANDALONE_INTEGRATION.name);
+  });
+
+  test('should return empty string for reports based on completely deleted flows', () => {
+    const res = selectors.getEventReportIntegrationName(state, state.data.resources.eventreports[6]);
+
+    expect(res).toEqual('');
+  });
+});
+
+describe('getAllIntegrationsTiedToEventReports', () => {
+  test('should get nonsandbox Integrations and exclude integrations that could not be derived from the eventReports ', () => {
+    const res = selectors.getAllIntegrationsTiedToEventReports(state);
+
+    expect(res).toEqual([
+      {_id: 'int1', name: 'int1'},
+      {_id: 'int2', name: 'int2'},
+      STANDALONE_INTEGRATION,
+    ]);
+  });
+});
+
+describe('mkGetFlowsTiedToEventReports', () => {
+  const sel = selectors.mkGetFlowsTiedToEventReports();
+
+  test('should return all flows tied to eventReports when there are no integrationIds passed in the filter', () => {
+    const res = sel(state);
+
+    expect(res).toEqual([{_id: 'flow1', name: 'flow1', _integrationId: 'int1'},
+      {_id: 'flow2', name: 'flow2', _integrationId: 'int1'},
+      {_id: 'flow3', name: 'flow3', _integrationId: 'int2'},
+      {_id: 'flow4', name: 'flow4', _integrationId: 'int2'},
+      {_id: 'flow6', name: 'flow6'},
+    ]);
+  });
+  test('should return all flows tied to eventReports belonging to set of integrationIds ', () => {
+    const res = sel(state, ['int1']);
+
+    expect(res).toEqual(
+      [{_id: 'flow1', name: 'flow1', _integrationId: 'int1'},
+        {_id: 'flow2', name: 'flow2', _integrationId: 'int1'},
+      ]);
+  });
+});
 describe('selectors.mkEventReportsFiltered', () => {
   const eventReportsSelector = selectors.mkEventReportsFiltered();
 
@@ -44,7 +103,8 @@ describe('selectors.mkEventReportsFiltered', () => {
       const result = eventReportsSelector(updatedState, { type: 'eventreports' });
 
       expect(result.count).toEqual(1);
-      expect(result.resources).toEqual([{_id: '5', type: 'flow_events', _flowIds: ['flow5'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}}]);
+      expect(result.resources).toEqual([
+        {_id: '5', type: 'flow_events', _flowIds: ['flow5'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}, sandbox: true}]);
     });
     test('should return production reports', () => {
       const updatedState = {...state,
@@ -56,12 +116,86 @@ describe('selectors.mkEventReportsFiltered', () => {
 
       const result = eventReportsSelector(updatedState, { type: 'eventreports' });
 
-      expect(result.count).toEqual(4);
+      expect(result.count).toEqual(6);
       expect(result.resources).toEqual([
         {_id: '1', type: 'flow_events', _flowIds: ['flow1', 'flow2'], startTime: '2021-03-11T18:30:00.000Z', endTime: '2021-03-13T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T04:53:56.156Z', startedAt: '2021-03-16T04:53:57.129Z', endedAt: '2021-03-16T04:54:24.920Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
         {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
         {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
         {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '6', type: 'flow_events', _flowIds: ['flow6'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '7', type: 'flow_events', _flowIds: ['flow7'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+      ]);
+    });
+
+    test('should return a report even after its corresponding flow is deleted ', () => {
+      const stateWithDeletedflow3 = produce(state, draft => {
+        draft.data.resources.flows.splice(2, 1);
+      });
+      const updatedState = {...stateWithDeletedflow3,
+        user: {
+          preferences: {
+            environment: 'production',
+          },
+        }};
+
+      const result = eventReportsSelector(updatedState, { type: 'eventreports' });
+
+      expect(result.count).toEqual(6);
+      expect(result.resources).toEqual([
+        {_id: '1', type: 'flow_events', _flowIds: ['flow1', 'flow2'], startTime: '2021-03-11T18:30:00.000Z', endTime: '2021-03-13T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T04:53:56.156Z', startedAt: '2021-03-16T04:53:57.129Z', endedAt: '2021-03-16T04:54:24.920Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '6', type: 'flow_events', _flowIds: ['flow6'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '7', type: 'flow_events', _flowIds: ['flow7'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+
+      ]);
+    });
+    test('should return a multiflow report even if atleast one flow not deleted', () => {
+      const stateWithDeletedflow2 = produce(state, draft => {
+        draft.data.resources.flows.splice(1, 1);
+      });
+      const updatedState = {...stateWithDeletedflow2,
+        user: {
+          preferences: {
+            environment: 'production',
+          },
+        }};
+
+      const result = eventReportsSelector(updatedState, { type: 'eventreports' });
+
+      expect(result.count).toEqual(6);
+      expect(result.resources).toEqual([
+        {_id: '1', type: 'flow_events', _flowIds: ['flow1', 'flow2'], startTime: '2021-03-11T18:30:00.000Z', endTime: '2021-03-13T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T04:53:56.156Z', startedAt: '2021-03-16T04:53:57.129Z', endedAt: '2021-03-16T04:54:24.920Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '6', type: 'flow_events', _flowIds: ['flow6'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '7', type: 'flow_events', _flowIds: ['flow7'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+
+      ]);
+    });
+    test('should return a multiflow report event if all flows are deleted', () => {
+      const stateWithDeletedflow2 = produce(state, draft => {
+        draft.data.resources.flows.splice(0, 2);
+      });
+      const updatedState = {...stateWithDeletedflow2,
+        user: {
+          preferences: {
+            environment: 'production',
+          },
+        }};
+
+      const result = eventReportsSelector(updatedState, { type: 'eventreports' });
+
+      expect(result.count).toEqual(6);
+      expect(result.resources).toEqual([
+        {_id: '1', type: 'flow_events', _flowIds: ['flow1', 'flow2'], startTime: '2021-03-11T18:30:00.000Z', endTime: '2021-03-13T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T04:53:56.156Z', startedAt: '2021-03-16T04:53:57.129Z', endedAt: '2021-03-16T04:54:24.920Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '2', type: 'flow_events', _flowIds: ['flow1'], startTime: '2021-03-14T18:30:00.000Z', endTime: '2021-03-16T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-16T14:43:09.823Z', startedAt: '2021-03-16T14:43:11.733Z', endedAt: '2021-03-16T14:43:40.961Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '3', type: 'flow_events', _flowIds: ['flow3'], startTime: '2021-03-09T18:30:00.000Z', endTime: '2021-03-11T18:29:59.999Z', status: 'completed', reportGenerationErrors: [], createdAt: '2021-03-17T03:38:05.950Z', startedAt: '2021-03-17T03:38:07.704Z', endedAt: '2021-03-17T03:38:37.195Z', requestedByUser: {name: 'abc', email: 'abc@gmail.com'}},
+        {_id: '4', type: 'flow_events', _flowIds: ['flow4'], startTime: '2021-03-10T18:30:00.000Z', endTime: '2021-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2021-03-17T04:04:32.417Z', startedAt: '2021-03-17T04:04:34.000Z', endedAt: '2021-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '6', type: 'flow_events', _flowIds: ['flow6'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
+        {_id: '7', type: 'flow_events', _flowIds: ['flow7'], startTime: '2020-03-10T18:30:00.000Z', endTime: '2020-03-12T18:29:59.999Z', status: 'failed', reportGenerationErrors: [], createdAt: '2020-03-17T04:04:32.417Z', startedAt: '2020-03-17T04:04:34.000Z', endedAt: '2020-03-17T04:04:58.744Z', requestedByUser: {name: 'def', email: 'def@gmail.com'}},
 
       ]);
     });

@@ -72,6 +72,13 @@ export default {
 
       return 'export.file.backupPath';
     },
+    showLookup: false,
+    visibleWhenAll: [
+      {
+        field: 'fileMetadata',
+        isNot: [true],
+      },
+    ],
   },
   'file.encoding': {
     type: 'select',
@@ -126,6 +133,7 @@ export default {
     type: 'checkbox',
     label: 'Leave file on server',
     defaultValue: r => (r && r.file && r.file.skipDelete) || false,
+    helpKey: r => r?.assistant === 'azurestorageaccount' ? 'export.azure.skipDelete' : 'export.file.skipDelete',
   },
   'file.compressionFormat': {
     type: 'select',
@@ -137,6 +145,22 @@ export default {
       },
     ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
+  },
+  'file.sortByFields': {
+    type: 'sortandgroup',
+    enableSorting: true,
+    keyName: 'field',
+    valueName: 'descending',
+    valueType: 'keyvalue',
+    showDelete: true,
+    sampleData: r => r && r.sampleData,
+    defaultValue: r => (r.file?.sortByFields) || '',
+    label: 'Sort records by fields',
+  },
+  'file.groupByFields': {
+    type: 'sortandgroup',
+    label: 'Group records by fields',
+    defaultValue: r => r.file?.groupByFields || r.file?.csv?.keyColumns || r.file?.xlsx?.keyColumns,
   },
   pgpdecrypt: {
     type: 'fileencryptdecrypt',
@@ -253,7 +277,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File parser helper',
-    helpkey: 'export.file.filedefinition.rules',
+    helpKey: 'export.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -286,7 +310,8 @@ export default {
       columnDelimiter: ',',
       rowDelimiter: '\n',
       hasHeaderRow: false,
-      keyColumns: [],
+      groupByFields: [],
+      sortByFields: [],
       rowsToSkip: 0,
       trimSpaces: true,
     },
@@ -320,6 +345,9 @@ export default {
   'file.xlsx.rowsPerRecord': {
     type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
+    showDeprecatedMessage: true,
+    helpKey: 'export.file.rowsPerRecord',
+    defaultDisabled: true,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -335,6 +363,7 @@ export default {
   },
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
+    defaultDisabled: true,
     label: 'Key columns',
     hasHeaderRow: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),

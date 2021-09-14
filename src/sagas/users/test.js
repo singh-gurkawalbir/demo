@@ -528,12 +528,14 @@ describe('all modal sagas', () => {
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
         const response = { _id: 'something' };
-        const saga = createUser({ user });
+        const saga = createUser({ user, asyncKey: 'asyncKey' });
         const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
         const { path, opts } = requestOptions;
 
         opts.body = user;
-
+        expect(saga.next().value).toEqual(
+          put(actions.asyncTask.start('asyncKey'))
+        );
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
@@ -541,6 +543,9 @@ describe('all modal sagas', () => {
             message: 'Inviting User',
           }),
         );
+        expect(saga.next(response).value).toEqual(
+          put(actions.asyncTask.success('asyncKey')));
+
         expect(saga.next(response).value).toEqual(
           put(actions.user.org.users.created(response)),
         );
@@ -551,12 +556,14 @@ describe('all modal sagas', () => {
           email: 'something@something.com',
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
-        const saga = createUser({ user });
+        const saga = createUser({ user, asyncKey: 'asyncKey' });
         const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
         const { path, opts } = requestOptions;
 
         opts.body = user;
-
+        expect(saga.next().value).toEqual(
+          put(actions.asyncTask.start('asyncKey'))
+        );
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
@@ -564,7 +571,8 @@ describe('all modal sagas', () => {
             message: 'Inviting User',
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.throw(new Error()).value).toEqual(put(actions.asyncTask.failed('asyncKey')));
+        expect(saga.next().value).toEqual(true);
         expect(saga.next().done).toEqual(true);
       });
     });
@@ -576,14 +584,16 @@ describe('all modal sagas', () => {
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
         const response = { _id: 'something' };
-        const saga = updateUser({ _id: userId, user });
+        const saga = updateUser({ _id: userId, user, asyncKey: 'asyncKey' });
         const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
 
         opts.body = user;
-
+        expect(saga.next().value).toEqual(
+          put(actions.asyncTask.start('asyncKey'))
+        );
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
@@ -592,7 +602,10 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.next(response).value).toEqual(
-          put(actions.user.org.users.updated({ ...user, _id: userId })),
+          put(actions.asyncTask.success('asyncKey')));
+
+        expect(saga.next(response).value).toEqual(
+          put(actions.user.org.users.updated({ ...user, _id: userId})),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -602,14 +615,16 @@ describe('all modal sagas', () => {
           email: 'something@something.com',
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
-        const saga = updateUser({ _id: userId, user });
+        const saga = updateUser({ _id: userId, user, asyncKey: 'asyncKey' });
         const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
 
         opts.body = user;
-
+        expect(saga.next().value).toEqual(
+          put(actions.asyncTask.start('asyncKey'))
+        );
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
@@ -617,7 +632,8 @@ describe('all modal sagas', () => {
             message: 'Updating User',
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.throw(new Error()).value).toEqual(put(actions.asyncTask.failed('asyncKey')));
+        expect(saga.next().value).toEqual(true);
         expect(saga.next().done).toEqual(true);
       });
     });

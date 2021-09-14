@@ -121,7 +121,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'microsoftbusinesscentral',
   ]
 );
-export function routeToRegExp(route) {
+export function routeToRegExp(route = '') {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
   const splatParam = /\*\w+/g;
@@ -219,6 +219,7 @@ export function populateDefaults({
   const childWithDefaults = { ...child };
 
   if (isArray(childWithDefaults.headers)) {
+    childWithDefaults.headersMetadata = childWithDefaults.headers;
     childWithDefaults.headers = childWithDefaults.headers.reduce(
       (obj, h) => ({ ...obj, [h.name]: h.value }),
       {}
@@ -233,6 +234,12 @@ export function populateDefaults({
             parent[prop],
             childWithDefaults[prop]
           );
+          if (Array.isArray(parent.headers)) {
+            if (!childWithDefaults.headersMetadata) {
+              childWithDefaults.headersMetadata = [];
+            }
+            childWithDefaults.headersMetadata = [...parent.headers, ...childWithDefaults.headersMetadata];
+          }
         } else if (prop === 'queryParameters') {
           childWithDefaults[prop] = mergeQueryParameters(
             parent[prop],
@@ -424,7 +431,7 @@ export function getResourceDetails({ version, resource, assistantData }) {
     }
   }
 
-  return { ...resourceDetails };
+  return { ...resourceDetails, headersMetadata: versionDetails.headersMetadata };
 }
 
 export function getExportOperationDetails({
@@ -461,11 +468,21 @@ export function getExportOperationDetails({
     }
   }
 
+  const headersMetadata = [];
+
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
+  }
+
   return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
+    headersMetadata,
   });
 }
 
@@ -513,7 +530,7 @@ export function getImportOperationDetails({
       if (operationDetails.howToFindIdentifier.lookup) {
         const lookupOperationDetails = getExportOperationDetails({
           version,
-          resource,
+          resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
           operation:
             operationDetails.howToFindIdentifier.lookup.id ||
             operationDetails.howToFindIdentifier.lookup.url,
@@ -530,6 +547,9 @@ export function getImportOperationDetails({
                 qp.defaultValue.includes('{{export.')
               )
           );
+        }
+        if (operationDetails.howToFindIdentifier.lookup.resource) {
+          lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
         }
 
         if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
@@ -562,11 +582,21 @@ export function getImportOperationDetails({
     }
   }
 
+  const headersMetadata = [];
+
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
+  }
+
   return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
+    headersMetadata,
   });
 }
 
@@ -638,6 +668,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   }
 
   const exportAdaptorSubSchema = exportDoc[adaptorType] || {};
+
   const urlMatch = getMatchingRoute(
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
@@ -733,7 +764,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToExport({ assistantConfig, assistantData }) {
+export function convertToExport({ assistantConfig, assistantData, headers = [] }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -919,8 +950,14 @@ export function convertToExport({ assistantConfig, assistantData }) {
     }
   }
 
+  const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
+
   Object.keys(operationDetails.headers).forEach(headerName => {
-    if (operationDetails.headers[headerName] !== null) {
+    if (userHeaders.includes(headerName) && Array.isArray(headers)) {
+      const header = headers.find(header => header.name === headerName && !!header.value);
+
+      if (header) { exportDoc.headers.push(header); }
+    } else if (operationDetails.headers[headerName] !== null) {
       exportDoc.headers.push({
         name: headerName,
         value: operationDetails.headers[headerName],
@@ -1101,6 +1138,7 @@ export function convertToReactFormFields({
   value = {},
   flowId,
   resourceContext = {},
+  operationChanged,
 }) {
   const fields = [];
   const fieldDetailsMap = {};
@@ -1190,7 +1228,7 @@ export function convertToReactFormFields({
       /**
        * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = !anyParamValuesSet ? field : {};
+      let { defaultValue } = (!anyParamValuesSet && operationChanged) ? field : {};
 
       if (
         !anyParamValuesSet &&
@@ -1628,6 +1666,13 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreLookupName;
           }
         }
+        /*
+        Fix for https://celigo.atlassian.net/browse/IO-22027
+        If ignoreExtract has url parameter delimiters(? and /) in them, it will not be extracted from url
+        */
+        if (importAdaptorSubSchema.ignoreExtract && /(\?|\/)/.test(importAdaptorSubSchema.ignoreExtract)) {
+          pathParams[p.id] = importAdaptorSubSchema.ignoreExtract;
+        }
       }
 
       if (p.isIdentifier && pathParams[p.id]) {
@@ -1724,7 +1769,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToImport({ assistantConfig, assistantData }) {
+export function convertToImport({ assistantConfig, assistantData, headers }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -1839,7 +1884,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   if (operationDetails.parameters) {
     identifiers = operationDetails.parameters.filter(p => !!p.isIdentifier);
 
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       importDoc.lookups = importDoc.lookups.filter(
         lu => lu.name !== identifiers[0].id
       );
@@ -1849,6 +1894,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   const lookupConfigMetadata = operationDetails.howToFindIdentifier
     ? operationDetails.howToFindIdentifier.lookup
     : undefined;
+
   const { lookupOperationDetails = {} } = operationDetails;
   const luConfig = {
     method: lookupOperationDetails.method || 'GET',
@@ -1914,6 +1960,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
       if (lookupOperationDetails.id) {
         luMetadata[luConfig.name] = {
           operation: lookupOperationDetails.id,
+          ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
 
@@ -1922,7 +1969,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   }
 
   if (ignoreExisting) {
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       }
@@ -1932,7 +1979,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     lookupType === 'lookup' ||
     ignoreMissing
   ) {
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       } else if (lookupType === 'lookup') {
@@ -2002,8 +2049,12 @@ export function convertToImport({ assistantConfig, assistantData }) {
   }
 
   if (operationDetails.headers) {
+    const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
+
     Object.keys(operationDetails.headers).forEach(h => {
-      if (operationDetails.headers[h] !== null) {
+      if (userHeaders.includes(h) && Array.isArray(headers)) {
+        importDoc.headers.push(headers.find(header => header.name === h && !!header.value));
+      } else if (operationDetails.headers[h] !== null) {
         const hv = operationDetails.headers[h].replace(
           /RECORD_IDENTIFIER/gi,
           (!isEmpty(identifiers) && pathParams[identifiers[0]?.id]) || ''

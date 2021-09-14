@@ -1,9 +1,9 @@
 /* global describe, test, expect */
 import jsonPatch from 'fast-json-patch';
+import each from 'jest-each';
 import {
   getMissingPatchSet,
   sanitizePatchSet,
-  getPatchPathForCustomForms,
   getFieldById,
   getFieldByName,
   getFieldByIdFromLayout,
@@ -11,6 +11,14 @@ import {
   translateDependencyProps,
   getAllFormValuesAssociatedToMeta,
   adjustingFieldRules,
+  getFieldWithReferenceById,
+  fieldIDsExceptClockedFields,
+  isFormTouched,
+  alterFileDefinitionRulesVisibility,
+  getFieldConfig,
+  refGeneration,
+  convertFieldsToFieldReferenceObj,
+  integrationSettingsToDynaFormMetadata,
 } from '.';
 
 describe('Form Utils', () => {
@@ -311,131 +319,10 @@ describe('Form Utils', () => {
     });
   });
 
-  describe('getPatchPathFromCustomForms', () => {
-    test('should return null for meta having a non-existent field ', () => {
-      const testMeta = {
-        fieldMap: {
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          fields: ['exportData'],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'non-existentField', 1);
-
-      expect(res).toEqual(null);
-    });
-    test('should generate field path for meta having just fields in the root ', () => {
-      const testMeta = {
-        fieldMap: {
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          fields: ['exportData'],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual('/customForm/form/layout/fields/1');
-    });
-    test('should generate field path for meta having fields in containers ', () => {
-      const testMeta = {
-        fieldMap: {
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          type: 'tab||col||collapse',
-          containers: [
-            {
-              label: 'optional some label or tab name',
-              fields: ['exportData'],
-            },
-            // either or containers or fields
-          ],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual('/customForm/form/layout/containers/0/fields/1');
-    });
-
-    test('generate field path for meta having fields in containers and in the root', () => {
-      const testMeta = {
-        fieldMap: {
-          someField: {
-            fieldId: 'someField',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          fields: ['someField'],
-          type: 'tab||col||collapse',
-          containers: [
-            {
-              label: 'optional some label or tab name',
-              fields: ['exportData'],
-            },
-          ],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual('/customForm/form/layout/containers/0/fields/1');
-    });
-
-    test('generate field path for meta having fields in deep containers', () => {
-      const testMeta = {
-        fieldMap: {
-          someField: {
-            fieldId: 'someField',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-          exportData: {
-            fieldId: 'exportData',
-            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
-          },
-        },
-        layout: {
-          type: 'tab||col||collapse',
-          containers: [
-            {
-              type: 'tab||col||collapse',
-              containers: [
-                {
-                  label: 'optional some label or tab name',
-                  fields: ['someField'],
-                },
-                {
-                  label: 'optional some label or tab name',
-                  fields: ['exportData'],
-                },
-              ],
-            },
-          ],
-        },
-      };
-      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
-
-      expect(res).toEqual(
-        '/customForm/form/layout/containers/0/containers/1/fields/1'
-      );
-    });
-  });
-
   describe('search field by id through the fieldMap ', () => {
+    test('should return null if there is no metadata', () => {
+      expect(getFieldById({meta: null})).toEqual(null);
+    });
     test('should correctly search for a field in the metadata', () => {
       const testMeta = {
         fieldMap: {
@@ -715,6 +602,11 @@ describe('Form Utils', () => {
         metadata.fieldMap,
         'exportData'
       );
+
+      expect(foundValue).toEqual(null);
+    });
+    test('should return null if the field layout does not not exists', () => {
+      const foundValue = getFieldByIdFromLayout();
 
       expect(foundValue).toEqual(null);
     });
@@ -1133,6 +1025,22 @@ describe('Form Utils', () => {
       });
     });
   });
+  test('should return empty object if there is no metadata associated with it', () => {
+    const values = {
+      '/custom/Field': 'a',
+      '/someField': 'b',
+      '/file/decompressFiles': 'c',
+      '/exportData': 'd',
+      '/fieldA': 'somethingA',
+      '/fieldB': 'somethingB',
+      '/fieldC': 'somethingC',
+    };
+    const resultantValues = getAllFormValuesAssociatedToMeta(
+      values
+    );
+
+    expect(resultantValues).toEqual({});
+  });
 });
 
 describe('integrationSettingsToDynaFormMetadata', () => {
@@ -1549,6 +1457,371 @@ describe('integrationSettingsToDynaFormMetadata', () => {
           ],
         });
       });
+    });
+  });
+  describe('getFieldWithReferenceById', () => {
+    test('should return null if metadata is null ', () => {
+      const res = getFieldWithReferenceById({meta: null});
+
+      expect(res).toEqual(null);
+    });
+    test('should get field with reference by id', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['exportData'],
+        },
+      };
+      const res = getFieldWithReferenceById({meta: testMeta, id: 'exportData'});
+
+      expect(res).toEqual({field: {fieldId: 'exportData', visibleWhenAll: [{field: 'fieldA', is: ['someValue']}]}, fieldReference: 'exportData'});
+    });
+  });
+  describe('fieldIDsExceptClockedFields', () => {
+    test('should return null if metadata is null ', () => {
+      const res = fieldIDsExceptClockedFields();
+
+      expect(res).toEqual(null);
+    });
+    test('should return null if fieldMap inside meta data is null ', () => {
+      const res = fieldIDsExceptClockedFields({fieldMap: null});
+
+      expect(res).toEqual(null);
+    });
+    test('should return all field ids except clocked fields for given resource type', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'export1',
+            id: 'export1',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+          pageSize: {
+            fieldId: 'pageSize',
+            id: 'pageSize',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['export1', 'pageSize'],
+        },
+      };
+      const res = fieldIDsExceptClockedFields(testMeta, 'exports');
+
+      expect(res).toEqual(['export1']);
+    });
+  });
+  describe('isFormTouched', () => {
+    test('should return undefined when fields is null', () => {
+      const res = isFormTouched();
+
+      expect(res).toEqual(undefined);
+    });
+    test('should return false if there are no fields at all', () => {
+      const fields = [];
+      const res = isFormTouched(fields);
+
+      expect(res).toEqual(false);
+    });
+    test('should return false if fields do not have any touched field', () => {
+      const fields = [{
+        fieldId: 'exportData',
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      }];
+      const res = isFormTouched(fields);
+
+      expect(res).toEqual(false);
+    });
+    test('should return true if any one of the field has a prop touched set to true', () => {
+      const fields = [{
+        fieldId: 'exportData',
+        touched: true,
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      }];
+      const res = isFormTouched(fields);
+
+      expect(res).toEqual(true);
+    });
+  });
+  describe('alterFileDefinitionRulesVisibility', () => {
+    test('should alter fields for filetype csv', () => {
+      const fields = [{
+        fieldId: 'file.filedefinition.rules',
+        defaultVisible: false,
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        resourceType: 'exports',
+        value: '',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'file.type',
+        id: 'file.type',
+        label: 'File type',
+        value: 'csv',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+      const expectedFields = [{
+        fieldId: 'file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        label: 'File parser helper',
+        resourceType: 'exports',
+        value: '',
+        visible: false,
+        defaultVisible: false,
+      }, {
+        fieldId: 'file.type',
+        id: 'file.type',
+        label: 'File type',
+        value: 'csv',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      expect(fields).toEqual(expectedFields);
+    });
+    test('should alter fields if file definition rules contains userDefinitionId', () => {
+      const fields = [{
+        fieldId: 'file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        value: '',
+        userDefinitionId: '1234',
+        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'file.type',
+        id: 'file.type',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'edix12.format',
+        format: 'edi',
+        id: 'edix12.format',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        id: 'fixed.format',
+        visible: true,
+        defaultVisible: false,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      ];
+
+      const expectedFields = [{
+        fieldId: 'file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        value: '',
+        visible: false,
+        userDefinitionId: '1234',
+        defaultVisible: false,
+        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'file.type',
+        id: 'file.type',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }, {
+        fieldId: 'edix12.format',
+        defaultVisible: false,
+        format: 'edi',
+        id: 'edix12.format',
+        visible: false,
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        defaultVisible: false,
+        id: 'fixed.format',
+        visible: false,
+      },
+      {
+        defaultVisible: false,
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        visible: false,
+      },
+      ];
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      expect(fields).toEqual(expectedFields);
+    });
+    test('should alter fields if file definition is selected as file type', () => {
+      const fields = [{
+        fieldId: 'file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        value: '',
+        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
+      }, {
+        value: 'filedefinition',
+        fieldId: 'file.type',
+        id: 'file.type',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edix12.format',
+        format: 'edi',
+        id: 'edix12.format',
+        value: '',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        id: 'fixed.format',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+
+      const expectedFields = [{
+        defaultVisible: false,
+        fieldId: 'file.filedefinition.rules',
+        id: 'file.filedefinition.rules',
+        value: '',
+        visible: false,
+      }, {
+        value: 'filedefinition',
+        fieldId: 'file.type',
+        id: 'file.type',
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edix12.format',
+        format: 'edi',
+        id: 'edix12.format',
+        value: '',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'fixed.format',
+        format: 'edi',
+        id: 'fixed.format',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      },
+      {
+        fieldId: 'edifact.format',
+        format: 'edifact',
+        id: 'edifact.format',
+        visible: true,
+        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+      }];
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      expect(fields).toEqual(expectedFields);
+    });
+  });
+  describe('getFieldConfig', () => {
+    const testCases = [
+      [{type: 'text', value: null}, {}, {}, false],
+      [{type: 'refreshabletext', supportsRefresh: true, value: null}, {supportsRefresh: true}, {}, false],
+      [{type: 'text', value: null}, {type: 'input'}, {}, false],
+      [{type: 'iaexpression', flowId: '1234', value: null}, {type: 'expression'}, {_id: '1234'}, false],
+      [{type: 'radiogroup', value: null}, {type: 'radio'}, {}, false],
+      [{type: 'uploadfile', isIAField: true, value: null}, {type: 'file'}, {}, false],
+      [{type: 'matchingcriteria', value: null}, {type: 'matchingCriteria'}, {}, false],
+      [{type: 'integrationapprefreshableselect', supportsRefresh: true, value: null}, {type: 'select', supportsRefresh: true}, {}, false],
+      [{type: 'integrationapprefreshableselect', supportsRefresh: true, multiselect: true, value: []}, {type: 'multiselect', supportsRefresh: true}, {}, false],
+      [{type: 'iaselect', multiselect: false, value: null}, {type: 'select'}, {}, false],
+      [{type: 'iaselect', multiselect: true, value: []}, {type: 'multiselect'}, {}, false],
+      [{type: 'suitescriptsettings', supportsRefresh: true, value: null}, {type: 'select', supportsRefresh: true}, {}, true],
+      [{type: 'suitescriptsettings', multiselect: true, supportsRefresh: true, value: []}, {type: 'multiselect', supportsRefresh: true}, {}, true],
+      [{type: 'iaselect', multiselect: false, value: null}, {type: 'select'}, {}, true],
+      [{type: 'iaselect', multiselect: true, value: []}, {type: 'multiselect'}, {}, true],
+      [{type: 'salesforcereferencedfieldsia', resource: {}, value: null}, {type: 'referencedFieldsDialog'}, {}, false],
+      [{type: 'salesforcerelatedlistia', resource: {}, value: null}, {type: 'relatedListsDialog'}, {}, true],
+      [{type: 'suitescripttable', value: null}, {type: 'link'}, {}, true],
+      [{type: 'staticMap', value: null}, {type: 'staticMapWidget'}, {}, true],
+      [{type: 'textarea', multiline: true, rowsMax: 10, value: null}, {type: 'textarea'}, {}, true],
+      [{type: 'featurecheck', featureName: 'cbox', value: null, featureCheckConfig: {featureName: 'cbox'}}, {type: 'checkbox', featureCheckConfig: {featureName: 'cbox'}}, {}, true],
+      [{type: 'staticMap', defaultDisabled: true, disabled: true, value: null}, {type: 'staticMapWidget', disabled: true}, {}, true],
+      [{type: 'staticMap', visible: false, hidden: true, value: null}, {type: 'staticMapWidget', hidden: true}, {}, true],
+      [{type: 'iaselect', multiselect: true, value: []}, {type: 'multiselect'}, {}, false],
+      [{type: 'staticMap', defaultDisabled: true, disabled: true, value: null}, {type: 'staticMapWidget', disabled: true}, {}, true],
+    ];
+
+    each(testCases).test(
+      'should return %o when field = %o, resource = %s and isSuiteScript = %s',
+      (expected, field, resource, isSuiteScript) => {
+        expect(getFieldConfig(field, resource, isSuiteScript)).toEqual(expected);
+      }
+    );
+  });
+  describe('refGeneration', () => {
+    const testCases = [
+      ['1234', {fieldId: '1234'}],
+      ['abc', {id: 'abc'}],
+      ['456', {formId: '456'}],
+    ];
+
+    each(testCases).test(
+      'should return %o when field = %o',
+      (expected, field) => {
+        expect(refGeneration(field)).toEqual(expected);
+      }
+    );
+  });
+  describe('convertFieldsToFieldReferenceObj', () => {
+    const testCases = [
+      [{a: {}, 1234: {fieldId: '1234'}}, {a: {}}, {fieldId: '1234'}],
+      [{b: {}, abc: {id: 'abc'}}, {b: {}}, {id: 'abc'}],
+      [{c: {}, 456: {formId: '456'}}, {c: {}}, {formId: '456'}],
+    ];
+
+    each(testCases).test(
+      'should return %o when acc = %o and curr = %o',
+      (expected, acc, curr) => {
+        expect(convertFieldsToFieldReferenceObj(acc, curr)).toEqual(expected);
+      }
+    );
+  });
+  describe('integrationSettingsToDynaFormMetadata', () => {
+    test('should return null if metadata is null ', () => {
+      const res = integrationSettingsToDynaFormMetadata();
+
+      expect(res).toEqual(null);
+    });
+    test('should return null if metadata is empty object ', () => {
+      const res = integrationSettingsToDynaFormMetadata({});
+
+      expect(res).toEqual(null);
+    });
+    test('should get dyna form data from integration settings  for given metadata with fields', () => {
+      const meta = {fields: [{value: 'itemid', type: 'select', name: 'general_stat'}, { name: 'abc', required: false, value: '', type: 'date'}], sections: ''};
+      const res = integrationSettingsToDynaFormMetadata(meta, '1234', false);
+      const expected = {actions: [{id: 'saveintegrationsettings'}], fieldMap: {abc: {_integrationId: '1234', id: 'abc', name: '/abc', options: [{items: []}], required: false, type: 'date', value: ''}, general_stat: {_integrationId: '1234', multiselect: false, id: 'general_stat', name: '/general_stat', options: [{items: []}], type: 'iaselect', value: 'itemid'}}, layout: {containers: [{containers: [{fields: ['general_stat']}, {fields: ['abc']}], label: 'Advanced'}], type: 'collapse'}};
+
+      expect(res).toEqual(expected);
+    });
+    test('should get dynaformdata from integration settings  for given metadata with sections', () => {
+      const meta = { sections: [{title: 'Oppurtuniry', fields: [{ value: 'itemid', type: 'select', name: 'general_state_invokeSKUFieldsAction_listNSItemMetadat'}, { name: 'abc', required: false, value: '', type: 'date'}]}]};
+      const res = integrationSettingsToDynaFormMetadata(meta, '1234', false, {isSuiteScriptIntegrator: true});
+      const expected = {actions: [{id: 'saveintegrationsettings'}], fieldMap: {abc: {_integrationId: '1234', id: 'abc', name: '/abc', options: [{items: []}], required: false, type: 'date', value: ''}, general_state_invokeSKUFieldsAction_listNSItemMetadat: {_integrationId: '1234', id: 'general_state_invokeSKUFieldsAction_listNSItemMetadat', multiselect: false, name: '/general_state_invokeSKUFieldsAction_listNSItemMetadat', options: [{items: []}], type: 'iaselect', value: 'itemid'}}, layout: {containers: [{containers: [{collapsed: true, containers: [{fields: ['general_state_invokeSKUFieldsAction_listNSItemMetadat']}, {fields: ['abc']}], label: 'Oppurtuniry'}], label: 'Advanced', type: 'suitScriptTabIA'}], type: 'collapse'}};
+
+      expect(res).toEqual(expected);
     });
   });
 });

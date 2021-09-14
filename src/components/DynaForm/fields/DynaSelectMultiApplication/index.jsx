@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     padding: 0,
-
+    alignItems: 'center',
   },
   multiSelectWrapper: {
     width: '100%',
@@ -73,6 +73,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: `${theme.palette.secondary.lightest} !important`,
     borderRadius: 0,
   },
+  img: {
+    maxWidth: '70px',
+  },
 }));
 
 const chipUseStyles = makeStyles(theme => ({
@@ -102,7 +105,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      {tag && <Tag className={classes.tagWrapper} variant={tag} />}
+      {tag && <Tag className={classes.tagWrapper} label={tag} />}
     </>
   );
 };

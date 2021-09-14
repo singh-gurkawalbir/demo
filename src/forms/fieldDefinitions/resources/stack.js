@@ -66,7 +66,7 @@ export default {
   },
   'lambda.secretAccessKey': {
     type: 'text',
-    label: 'Secret acess key',
+    label: 'Secret access key',
     visibleWhen: [
       {
         field: 'type',
@@ -81,7 +81,7 @@ export default {
       {
         items: [
           { label: 'US East (N.Virginia) [us-east-1]', value: 'us-east-1' },
-          { label: 'US West (Oregon) [us-east-2]', value: 'us-west-2' },
+          { label: 'US West (Oregon) [us-west-2]', value: 'us-west-2' },
           {
             label: 'Asia Pacific (Singapore) [ap-southeast-1]',
             value: 'ap-southeast-1',

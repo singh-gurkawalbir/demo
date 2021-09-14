@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import ReactResizeDetector from 'react-resize-detector';
 import { useSelector } from 'react-redux';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
+import KeyColumnsDeprecationNotification from '../KeyColumnsDeprecationNotification';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
@@ -24,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   },
   notification: {
     paddingBottom: theme.spacing(2),
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 
@@ -67,7 +71,16 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
             <GenericAdaptorNotification onClose={onCloseNotificationToaster} />
           </div>
         )}
-        <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
+        <div className={classes.notification}>
+          <NetSuiteBundleInstallNotification resourceType={resourceType} resourceId={resourceId} />
+        </div>
+        {
+          resourceType === 'exports' && (
+          <div className={classes.notification}>
+            <KeyColumnsDeprecationNotification resourceId={resourceId} />
+          </div>
+          )
+        }
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <span {...shouldRedact}>

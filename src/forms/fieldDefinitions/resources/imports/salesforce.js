@@ -119,7 +119,9 @@ export default {
     ],
   },
   'salesforce.attachment.description': {
-    type: 'text',
+    type: 'uri',
+    showExtract: false,
+    showLookup: false,
     label: 'Description',
     visibleWhenAll: [
       {
@@ -325,7 +327,9 @@ export default {
     ],
   },
   'salesforce.document.developerName': {
-    type: 'text',
+    type: 'uri',
+    showExtract: false,
+    showLookup: false,
     label: 'Developer name',
     visibleWhenAll: [
       {
@@ -561,6 +565,7 @@ export default {
   'salesforce.idLookup.whereClause': {
     type: 'salesforcelookup',
     label: 'How can we find existing records?',
+    required: true,
     visibleWhen: [
       {
         field: 'ignoreExisting',

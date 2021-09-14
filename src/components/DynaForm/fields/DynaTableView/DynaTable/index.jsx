@@ -7,6 +7,7 @@ import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
+import VirtualizedTable from './VirtualizedTable';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -47,7 +48,7 @@ export const generateRow = value => ({
   key: generateRowKey(value),
   value,
 });
-const initializeTableState = optionsMap => value => {
+const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
   const emptyRowValue = generateEmptyRow(optionsMap);
   const emptyRow = generateRow(emptyRowValue);
 
@@ -55,6 +56,7 @@ const initializeTableState = optionsMap => value => {
     return {
 
       touched: false,
+      ignoreEmptyRow,
       tableStateValue: [
         emptyRow,
       ]};
@@ -62,30 +64,57 @@ const initializeTableState = optionsMap => value => {
 
   return {
     touched: false,
-    tableStateValue: [...value.map(val => generateRow(val)), emptyRow],
+    ignoreEmptyRow,
+    tableStateValue: ignoreEmptyRow ? value.map(val => generateRow(val)) : [...value.map(val => generateRow(val)), emptyRow],
   };
 };
 
 const BaseTable = ({
   onFieldChange,
+  isLoading,
   onRowChange,
   disableDeleteRows,
   optionsMapFinal,
   optionsMapInit,
+  isVirtualizedTable,
   id,
+  ignoreEmptyRow,
   value,
 }) => {
-  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit));
+  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
 
   const {touched, tableStateValue: tableValue} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
 
   useEffect(() => {
     if (touched) {
-      onFieldChange(id, preSubmit(tableValue, optionsMapFinal));
+      const val = preSubmit(tableValue, optionsMapFinal, ignoreEmptyRow);
+
+      onFieldChange(id, val);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
+
+  const isAnyColumnFetching = isLoading ? Object.values(isLoading).some(val => val) : false;
+
+  if (isVirtualizedTable) {
+    // not all tables have to be virtualized just the mapping based applications,
+    // isVirtualizedTable flag comes from there
+
+    return (
+      <VirtualizedTable
+        isAnyColumnFetching={isAnyColumnFetching}
+        items={tableValue}
+        optionsMapFinal={optionsMapFinal}
+        touched={touched}
+        tableState={tableState}
+        ignoreEmptyRow={ignoreEmptyRow}
+        setTableState={setTableState}
+        onRowChange={onRowChange}
+        disableDeleteRows={disableDeleteRows}
+    />
+    );
+  }
 
   return (tableValue.map((arr, rowIndex) => {
     const {value, key} = arr;
@@ -98,6 +127,7 @@ const BaseTable = ({
         tableSize={tableValue.length}
         optionsMap={optionsMapFinal}
         touched={touched}
+        ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
@@ -119,9 +149,12 @@ export const DynaTable = props => {
     isLoading = false,
     metadata = {},
     id,
+    ignoreEmptyRow,
     onFieldChange,
     onRowChange,
     disableDeleteRows,
+    isVirtualizedTable,
+    dataPublic,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 
@@ -136,22 +169,26 @@ export const DynaTable = props => {
 
   return (
     <div className={clsx(classes.container, className)}>
-      {!hideLabel && <Typography variant="h6">{label}</Typography>}
+      {!hideLabel && <Typography data-public={!!dataPublic} variant="h6">{label}</Typography>}
       <div data-test={id} className={classes.root} >
         <div className={classes.fieldsContentColumn}>
           <RefreshHeaders
+            dataPublic={dataPublic}
             hideHeaders={hideHeaders}
             isLoading={isLoading}
             optionsMap={optionsMapFinal}
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
           <BaseTable
+            isLoading={isLoading}
+            isVirtualizedTable={isVirtualizedTable}
             onFieldChange={onFieldChange}
             onRowChange={onRowChange}
             disableDeleteRows={disableDeleteRows}
             optionsMapFinal={optionsMapFinal}
             optionsMapInit={optionsMapInit}
             id={id}
+            ignoreEmptyRow={ignoreEmptyRow}
             value={value}
 
           />

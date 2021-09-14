@@ -8,6 +8,8 @@ import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 import FormBuilderButton from '../../../FormBuilderButton';
+import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
+import { useUpdateParentForm } from '../DynaCsvGenerate_afe';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,10 +46,12 @@ export default function DynaSettings(props) {
     label = 'Custom settings',
     collapsed = true,
     fieldsOnly = false,
+    formKey: parentFormKey,
   } = props;
   const classes = useStyles();
   const match = useRouteMatch();
   const { resourceType, resourceId } = resourceContext;
+  const settingsFormKey = `settingsForm-${resourceId}`;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
   const allowFormEdit = useSelector(state =>
@@ -59,13 +63,13 @@ export default function DynaSettings(props) {
   );
 
   const handleSettingFormChange = useCallback(
-    (values, isValid) => {
+    (values, isValid, skipFieldTouched) => {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
-        onFieldChange(id, { ...values, __invalid: true });
+        onFieldChange(id, { ...values, __invalid: true }, skipFieldTouched);
       } else {
-        onFieldChange(id, values);
+        onFieldChange(id, values, skipFieldTouched);
       }
       // dispatch(
       //   action.formFieldChange(formId, fieldId, newValue, shouldTouch, isValid)
@@ -74,6 +78,9 @@ export default function DynaSettings(props) {
     [id, onFieldChange]
   );
 
+  useUpdateParentForm(settingsFormKey, handleSettingFormChange);
+
+  useSetSubFormShowValidations(parentFormKey, settingsFormKey);
   // TODO: @Surya revisit this implementation of settings form
   // directly register field states
 

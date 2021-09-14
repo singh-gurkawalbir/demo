@@ -7,14 +7,12 @@ export default {
     type: 'licenseexpires',
     label: 'Expires',
     connectorId: r => r._connectorId,
-    trialLicenseTemplate: r => r.trialLicenseTemplate,
   },
   trialEndDate: {
     defaultValue: r => r.trialEndDate && moment(r.trialEndDate).format('L'),
     type: 'licenseexpires',
     label: 'Trial expires',
     connectorId: r => r._connectorId,
-    trialLicenseTemplate: r => r.trialLicenseTemplate,
   },
   opts: {
     defaultValue: r => r.opts,
@@ -47,7 +45,7 @@ export default {
   _editionId: {
     type: 'licenseedition',
     label: 'Edition',
-    defaultDisabled: r => !isNewId(r._id),
+    defaultDisabled: r => !isNewId(r._id) && !!r._integrationId,
     connectorId: r => r?._connectorId,
   },
   childLicenses: {

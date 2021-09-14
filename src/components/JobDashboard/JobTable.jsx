@@ -70,6 +70,10 @@ const useStyles = makeStyles(theme => ({
     width: '7.5%',
     textAlign: 'center',
   },
+  tableContainer: {
+    overflowX: 'auto',
+    overflowY: 'hidden',
+  },
 }));
 
 export default function JobTable({
@@ -191,45 +195,47 @@ export default function JobTable({
         <Spinner centerAll />
 
       ) : (
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.checkFlow}>
-                <Checkbox
-                  disabled={jobsInCurrentPage.length === 0}
-                  checked={isSelectAllChecked}
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                  inputProps={{ 'aria-label': 'Select all jobs' }}
+        <div className={classes.tableContainer}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.checkFlow}>
+                  <Checkbox
+                    disabled={jobsInCurrentPage.length === 0}
+                    checked={isSelectAllChecked}
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                    inputProps={{ 'aria-label': 'Select all jobs' }}
               />
-              </TableCell>
-              <TableCell className={classes.name}>Flow</TableCell>
-              <TableCell className={classes.status}>Status</TableCell>
-              <TableCell className={classes.success}>Success</TableCell>
-              <TableCell className={classes.ignore}>Ignored</TableCell>
-              <TableCell className={classes.error}>Errors</TableCell>
-              <TableCell className={classes.resolved}>Resolved</TableCell>
-              <TableCell className={classes.pages}>Pages</TableCell>
-              <TableCell className={classes.duration}>Duration</TableCell>
-              <TableCell className={classes.completed}>Completed</TableCell>
-              <TableCell className={classes.actions}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody data-test={`${integrationName}Dashboard`}>
-            {jobsInCurrentPage.map(job => (
-              <JobDetail
-                key={job._id}
-                job={job}
-                onSelectChange={handleSelectChange}
-                selectedJobs={selectedJobs}
-                userPermissionsOnIntegration={userPermissionsOnIntegration}
-                onViewErrorsClick={handleViewErrorsClick}
-                integrationName={integrationName}
-                isFlowBuilderView={isFlowBuilderView}
+                </TableCell>
+                <TableCell className={classes.name}>Flow</TableCell>
+                <TableCell className={classes.status}>Status</TableCell>
+                <TableCell className={classes.success}>Success</TableCell>
+                <TableCell className={classes.ignore}>Ignored</TableCell>
+                <TableCell className={classes.error}>Errors</TableCell>
+                <TableCell className={classes.resolved}>Resolved</TableCell>
+                <TableCell className={classes.pages}>Pages</TableCell>
+                <TableCell className={classes.duration}>Duration</TableCell>
+                <TableCell className={classes.completed}>Completed</TableCell>
+                <TableCell className={classes.actions}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody data-test={`${integrationName}Dashboard`}>
+              {jobsInCurrentPage.map(job => (
+                <JobDetail
+                  key={job._id}
+                  job={job}
+                  onSelectChange={handleSelectChange}
+                  selectedJobs={selectedJobs}
+                  userPermissionsOnIntegration={userPermissionsOnIntegration}
+                  onViewErrorsClick={handleViewErrorsClick}
+                  integrationName={integrationName}
+                  isFlowBuilderView={isFlowBuilderView}
             />
-            ))}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
       {(showErrorDialogFor?.jobId || _JobId) && (
       <ErrorDrawer

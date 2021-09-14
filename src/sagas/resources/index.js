@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race, all } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -7,13 +7,15 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
-import getRequestOptions from '../../utils/requestOptions';
+import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../utils/constants';
+import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
+import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+import { pingConnectionWithId } from '../resourceForm/connections';
 
 const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
@@ -132,7 +134,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   }
 }
 
-export function* commitStagedChanges({resourceType, id, scope, options, context}) {
+export function* commitStagedChanges({ resourceType, id, scope, options, context, parentContext }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -170,7 +172,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
+    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports'].includes(
       resourceType
     ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
@@ -181,14 +183,21 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
 
   let updated;
 
-  // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
-  // number of active tokens on netsuite, revoking token when user updates token-auto connection.
-  if (resourceType === 'connections' && !isNew && merged.type === 'netsuite') {
-    const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
+  if (resourceType === 'connections' && !isNew) {
+    // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
+    // number of active tokens on netsuite, revoking token when user updates token-auto connection.
+    if (merged.type === 'netsuite') {
+      const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
-    if (isTokenToBeRevoked) {
-      yield call(requestRevoke, {connectionId: master._id, hideNetWorkSnackbar: true});
+      if (isTokenToBeRevoked) {
+        yield call(requestRevoke, { connectionId: master._id, hideNetWorkSnackbar: true });
+      }
     }
+    // add parentContext to merged for only put connection calls
+    merged = {
+      ...merged,
+      ...pingConnectionParentContext(parentContext),
+    };
   }
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
@@ -203,6 +212,15 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
   }
+
+  // Forimports convert the lookup structure and rest placeholders to support http structure
+  if (!merged.assistant && merged?.http?.formType === 'rest' && merged.adaptorType === 'HTTPImport') {
+    merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
+  }
+  if (resourceType === 'exports' && merged._rest) {
+    delete merged._rest;
+  }
+
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
   // and connection will be auto registered to the integration.
   // This is required for tile level monitor access users
@@ -264,6 +282,10 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
 
     return { error };
   }
+  if (options?.action === 'UpdatedIA2.0Settings') {
+    yield put(actions.resource.requestCollection('exports', null, true));
+    yield put(actions.resource.requestCollection('imports', null, true));
+  }
 
   // HACK! when updating scripts, since content is stored in s3, it
   // seems the PUT API response does not contain the content. We need to
@@ -280,7 +302,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // Refetch the integration
   if (resourceType === 'connections' && merged.integrationId && isNew) {
     // eslint-disable-next-line no-use-before-define
-    yield call(getResource, {resourceType: 'integrations', id: merged.integrationId});
+    yield call(getResource, { resourceType: 'integrations', id: merged.integrationId });
   }
 
   /*
@@ -290,10 +312,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   */
   if (resourceType === 'connections' && updated?._id && isNew) {
     try {
-      yield call(apiCallWithRetry, {
-        path: `/connections/${updated._id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: updated._id, parentContext });
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
@@ -376,7 +395,25 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     );
   }
 }
+export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
+  // if asyncKey is defined we should try tagging with async updates
+  if (asyncKey) {
+    yield put(actions.asyncTask.start(asyncKey));
+    const resp = yield call(commitStagedChanges, props);
 
+    if (resp?.error) {
+    // save error message
+      yield put(actions.asyncTask.failed(asyncKey));
+
+      return resp;
+    }
+    yield put(actions.asyncTask.success(asyncKey));
+
+    return resp;
+  }
+
+  return yield call(commitStagedChanges, props);
+}
 export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
     resourceId: id,
@@ -499,8 +536,8 @@ export function* updateIntegrationSettings({
 
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
-      yield put(actions.resource.requestCollection('exports'));
-      yield put(actions.resource.requestCollection('flows'));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('flows', null, true));
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
@@ -510,7 +547,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH)
       );
     }
 
@@ -538,9 +575,9 @@ export function* updateIntegrationSettings({
     } else {
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
-      yield put(actions.resource.requestCollection('imports'));
+      yield put(actions.resource.requestCollection('imports', null, true));
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
-      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('exports', null, true));
     }
 
     yield put(
@@ -559,13 +596,14 @@ export function* updateIntegrationSettings({
   }
 }
 
-export function* patchResource({ resourceType, id, patchSet, options = {} }) {
+export function* patchResource({ resourceType, id, patchSet, options = {}, asyncKey }) {
   const isNew = isNewId(id);
 
   if (!patchSet || isNew) return; // nothing to do.
 
   const path = `/${resourceType}/${id}`;
 
+  yield put(actions.asyncTask.start(asyncKey));
   try {
     yield call(apiCallWithRetry, {
       path,
@@ -589,7 +627,9 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+    yield put(actions.asyncTask.failed(asyncKey));
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
@@ -641,20 +681,20 @@ export function* deleteResource({ resourceType, id }) {
   }
 }
 
-export function* deleteIntegration({integrationId}) {
+export function* deleteIntegration({ integrationId }) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
 
-  if (integration._connectorId) return;
+  if (integration?._connectorId) return;
 
-  yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
+  yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
   yield put(actions.resource.requestCollection('integrations', null, true));
   yield put(actions.resource.requestCollection('tiles', null, true));
   yield put(actions.resource.requestCollection('scripts', null, true));
-  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
+  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh}) {
+export function* getResourceCollection({ resourceType, refresh }) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -707,7 +747,7 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
-    if (!Array.isArray(collection)) {
+    if (collection !== undefined && !Array.isArray(collection) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
       // eslint-disable-next-line no-console
       console.warn('Getting unexpected collection values: ', collection);
       collection = undefined;
@@ -728,11 +768,13 @@ export function* validateResource({ resourceType, resourceId }) {
 
   if (!isEmpty(resource) || !resourceType || !resourceId) return;
 
-  return yield call(getResource, {resourceType, id: resourceId, hidden: true});
+  return yield call(getResource, { resourceType, id: resourceId, hidden: true });
 }
 
-export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail }) {
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail, asyncKey }) {
   const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
+
+  yield put(actions.asyncTask.start(asyncKey));
   const {
     flows: availableFlows = [],
     connections: availableConnections = [],
@@ -774,12 +816,15 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, chi
       message: 'Updating notifications',
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return;
   }
 
   if (response) {
     yield put(actions.resource.requestCollection('notifications'));
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* updateFlowNotification({ flowId, isSubscribed }) {
@@ -896,6 +941,36 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
+export function* fetchUnloadedResources({ integrationId, resourceType }) {
+  let resources = yield select(selectors.resources, resourceType);
+
+  if (!resources || resources.length === 0) {
+    yield call(getResourceCollection, { resourceType, refresh: true });
+    resources = yield select(selectors.resources, resourceType);
+  }
+  if (!integrationId || !resources || resources.length < GET_DOCS_MAX_LIMIT) {
+    return;
+  }
+  const url = `/integrations/${integrationId}/${resourceType}`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: url,
+      hidden: true,
+    });
+    yield put(actions.resource.integrations.updateResources(resourceType, response));
+  } catch (e) {
+  // do nothing
+  }
+}
+
+export function* fetchUnloadedIntegrationResources({ integrationId }) {
+  yield all(
+    ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
+  );
+}
+
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -986,7 +1061,7 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: {_connectionId, _newConnectionId},
+        body: { _connectionId, _newConnectionId },
         method: 'PUT',
       },
     });
@@ -1000,7 +1075,7 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
   yield put(actions.resource.requestCollection('imports', null, true));
 }
 
-export function* eventReportCancel({reportId}) {
+export function* eventReportCancel({ reportId }) {
   const path = `/eventreports/${reportId}/cancel`;
 
   try {
@@ -1017,7 +1092,7 @@ export function* eventReportCancel({reportId}) {
   yield put(actions.resource.request('eventreports', reportId));
 }
 
-export function* downloadReport({reportId}) {
+export function* downloadReport({ reportId }) {
   const path = `/eventreports/${reportId}/signedURL`;
 
   try {
@@ -1034,13 +1109,13 @@ export function* downloadReport({reportId}) {
 
 export function* pollForResourceCollection({ resourceType }) {
   while (true) {
-    yield call(getResourceCollection, {resourceType});
+    yield call(getResourceCollection, { resourceType });
     yield delay(STANDARD_DELAY_FOR_POLLING);
   }
 }
 export function* startPollingForResourceCollection({ resourceType }) {
   return yield race({
-    pollCollection: call(pollForResourceCollection, {resourceType}),
+    pollCollection: call(pollForResourceCollection, { resourceType }),
     cancelPoll: take(action => {
       if ([
         actionTypes.RESOURCE.STOP_COLLECTION_POLL,
@@ -1063,7 +1138,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
@@ -1073,7 +1148,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-
+  takeLatest(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, fetchUnloadedIntegrationResources),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),

@@ -23,6 +23,7 @@ const adjustDefaultVisibleRequiredValue = field => {
     field.defaultRequired = field.required;
   }
 };
+
 export const registerField = (field, formValue = {}) => {
   const { defaultValue, name, value, valueDelimiter } = field;
   const initialValue = getFirstDefinedValue(
@@ -268,67 +269,12 @@ export const processOptions = ({
         parentContext
       );
 
-      if (handlerOptions instanceof Promise) {
-        field.options = [];
-        field.pendingOptions = handlerOptions;
-      } else if (handlerOptions) {
+      if (handlerOptions) {
         field.options = handlerOptions;
         field.pendingOptions = undefined;
       }
     }
   });
-
-// NOTE: Just used for test purposes...
-// TODO: Move to test file...
-export const createField = field => {
-  const {
-    id = '',
-    name = '',
-    type = '',
-    placeholder = '',
-    value = undefined,
-    visible = true,
-    required = false,
-    disabled = false,
-    visibleWhen = [],
-    visibleWhenAll = [],
-    requiredWhen = [],
-    requiredWhenAll = [],
-    disabledWhen = [],
-    disabledWhenAll = [],
-    validWhen = {},
-    isValid = true,
-    errorMessages = '',
-    touched = false,
-  } = field;
-
-  return {
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    visible,
-    required,
-    disabled,
-    visibleWhen,
-    visibleWhenAll,
-    requiredWhen,
-    requiredWhenAll,
-    disabledWhen,
-    disabledWhenAll,
-    isValid,
-    validWhen,
-    errorMessages,
-    touched,
-  };
-};
-
-export const updateFieldTouchedState = (field, touched) => {
-  field.touched = touched;
-
-  return field;
-};
 
 export const updateFieldValue = (field, value) => {
   const updateValue = typeof value !== 'undefined' && value;
@@ -468,3 +414,29 @@ export const getNextStateFromFields = formState => {
 
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
+
+export function getFieldIdsInLayoutOrder(layout) {
+  const fields = [];
+
+  if (!layout) return fields;
+  if (layout.fields?.length) {
+    // add the fields in this layout to the list
+    fields.push(...layout.fields);
+  }
+  if (layout.containers?.length) {
+    // traverse through each container and fetch the fields
+    layout.containers.forEach(container => {
+      fields.push(...getFieldIdsInLayoutOrder(container));
+    });
+  }
+
+  return fields;
+}
+
+export function getFirstErroredFieldId(formState) {
+  const { fields, fieldMeta } = formState || {};
+
+  const orderedFieldIds = getFieldIdsInLayoutOrder(fieldMeta?.layout);
+
+  return orderedFieldIds.find(fieldId => fields[fieldId] && fields[fieldId].visible && !fields[fieldId].isValid);
+}

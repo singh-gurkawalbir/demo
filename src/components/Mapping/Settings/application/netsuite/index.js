@@ -286,14 +286,14 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import field (NetSuite)',
+          valueLabel: 'Import field value',
           // commMetaPath:  commMetaPath  to be added based on metadata type
           // connectionId:  connection  to be added based on metadata type
           label: '',
           keyOptions:
             fieldOptions && fieldOptions.length ? fieldOptions : undefined,
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
           defaultValue:
             lookup.map &&
@@ -308,6 +308,26 @@ export default {
               { field: 'fieldMappingType', is: ['lookup'] },
               { field: 'lookup.mode', is: ['static'] },
             ],
+        },
+        'lookup.name': {
+          id: 'lookup.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpKey: 'import.lookups.name',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+          ],
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
         },
         functions: {
           id: 'functions',
@@ -501,6 +521,7 @@ export default {
           'lookup.expressionText',
           'lookup.resultField',
           'lookup.mapList',
+          'lookup.name',
           'functions',
           'extract',
           'expression',

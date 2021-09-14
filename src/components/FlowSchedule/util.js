@@ -133,25 +133,7 @@ export const getCronExpression = (data, scheduleStartMinute) => {
       break;
     case 'twice_daily':
       toReturn[MINUTES] = '0';
-
-      if (!data.startTime && !data.endTime) {
-        toReturn[HOURS] = '*/12';
-      } else {
-        toReturn[HOURS] = getHours(
-          data.startTime
-            ? data.startTime
-            : moment()
-              .startOf('day')
-              .format('LT'),
-          data.endTime
-            ? data.endTime
-            : moment()
-              .endOf('day')
-              .format('LT'),
-          12 * 60
-        );
-      }
-
+      toReturn[HOURS] = `${getHoursValue(moment(data.startTime, 'LT').format('LT'))},${getHoursValue(moment(data.endTime, 'LT').format('LT'))}`;
       toReturn[DATE] = '?';
       toReturn[WEEKDAY] = data.daysToRunOn ? data.daysToRunOn.toString() : '*';
       break;
@@ -473,10 +455,17 @@ export const getMetadata = ({
         label: 'Start time',
         helpKey: 'flow.startTime',
         skipSort: true,
+        missingValueMessage: 'Please select both a start time and an end time for your flow.',
         defaultValue: resource && resource.startTime,
         options: [
           {
             items: startTimeOptions,
+          },
+        ],
+        requiredWhen: [
+          {
+            field: 'frequency',
+            is: ['twice_daily'],
           },
         ],
         visibleWhenAll: [
@@ -497,6 +486,7 @@ export const getMetadata = ({
         label: 'End time',
         helpKey: 'flow.endTime',
         skipSort: true,
+        missingValueMessage: 'Please select both a start time and an end time for your flow.',
         defaultValue: resource && resource.endTime,
         omitWhenHidden: true,
         options: [
@@ -505,6 +495,12 @@ export const getMetadata = ({
           },
         ],
         refreshOptionsOnChangesTo: ['frequency'],
+        requiredWhen: [
+          {
+            field: 'frequency',
+            is: ['twice_daily'],
+          },
+        ],
         visibleWhenAll: [
           {
             field: 'activeTab',
@@ -798,7 +794,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   }
 
   if (
-    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '10') &&
+    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '5' || cronArr[MINUTES] === '10') &&
     cronArr[HOURS].indexOf('*') === -1 &&
     cronArr[HOURS].indexOf('?') === -1
   ) {
@@ -816,7 +812,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
       }
 
       if (symDiff) {
-        resource.frequency = frequency[diff.toString()];
+        resource.frequency = frequency[hours.length === 2 ? '12' : diff.toString()];
         resource.startTime = moment()
           .startOf('day')
           .add(hours[0], 'h')
@@ -837,7 +833,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   }
 
   if (
-    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '10') &&
+    (cronArr[MINUTES] === '0' || cronArr[MINUTES] === '5' || cronArr[MINUTES] === '10') &&
     cronArr[HOURS] &&
     cronArr[HOURS].split(',').length === 1
   ) {
@@ -872,19 +868,26 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   return resource;
 };
 
-export const getScheduleStartMinute = (resource = {}, preferences) => {
+export const getScheduleStartMinute = (resource = {}) => {
   let scheduleStartMinute = 0;
 
-  if (preferences && preferences.scheduleShiftForFlowsCreatedAfter) {
-    const changeStartMinuteForFlowsCreatedAfter = moment(
-      preferences.scheduleShiftForFlowsCreatedAfter
-    );
+  const changeStartMinuteForFlowsCreatedAfter = moment(
+    process.env.SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+  );
+  const secondChangeStartMinuteForFlowsCreatedAfter = moment(
+    process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+  );
 
+  if (resource) {
     if (
-      resource && (
-        !resource.createdAt ||
+      !resource.createdAt ||
+      secondChangeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
+    ) {
+      scheduleStartMinute = 5;
+    } else if (
+      !resource.createdAt ||
       changeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
-      )) {
+    ) {
       scheduleStartMinute = 10;
     }
   }

@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-// import GlobalSearch from '../GlobalSearch';
-// import DebugOnly from '../../components/DebugOnly';
 import ProfileMenuButton from './ProfileMenuButton';
 import { selectors } from '../../reducers';
 import Notifications from './Notifications';

@@ -12,7 +12,7 @@ import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
-import { isEmpty, uniqBy } from 'lodash';
+import { isEmpty, uniqBy, cloneDeep } from 'lodash';
 import config from './config';
 import '../Filter/queryBuilder.css';
 import {
@@ -71,7 +71,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
   );
 
   useEffect(() => {
-    const qbRules = convertNetSuiteLookupFilterExpression(rule, data);
+    const qbRules = convertNetSuiteLookupFilterExpression(cloneDeep(rule), data);
 
     if (
         qbRules?.rules?.length === 1 &&
@@ -508,7 +508,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       {showOperandSettingsFor && (
       <OperandSettingsDialog
         ruleData={
-              rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
+              rulesState[getFilterRuleId(showOperandSettingsFor.rule)]?.data[
                 showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
               ]
             }

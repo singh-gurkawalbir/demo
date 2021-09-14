@@ -14,7 +14,6 @@ import { isNewId } from '../../utils/resource';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    wordBreak: 'break-word',
     height: '100%',
   },
   title: {
@@ -23,7 +22,6 @@ const useStyles = makeStyles(theme => ({
   },
   tableContainer: {
     height: 'calc(100% - 69px)',
-    overflowY: 'auto',
   },
 }));
 
@@ -34,6 +32,7 @@ export default function AuditLog({
   resourceType,
   resourceId,
   onClick,
+  isFixed,
   childId,
 }) {
   const classes = useStyles();
@@ -81,6 +80,7 @@ export default function AuditLog({
                 filters={filters}
                 childId={childId}
                 onClick={onClick}
+                isFixed={isFixed}
                 className={classes.tableContainer}
             />
             </div>

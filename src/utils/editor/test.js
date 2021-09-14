@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { dataAsString, getUniqueFieldId } from './index';
+import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getFormSaveStatusFromEditorStatus } from './index';
 
 describe('editor utils test cases', () => {
   describe('dataAsString util', () => {
@@ -17,6 +17,32 @@ describe('editor utils test cases', () => {
 
       expect(dataAsString(data)).toEqual(expectedString);
       expect(dataAsString({})).toEqual('{}');
+    });
+  });
+  describe('getFormSaveStatusFromEditorStatus util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(getFormSaveStatusFromEditorStatus()).toEqual('failed');
+    });
+    test('should return complete if status is success', () => {
+      expect(getFormSaveStatusFromEditorStatus('success')).toEqual('complete');
+    });
+    test('should return loading if status is requested', () => {
+      expect(getFormSaveStatusFromEditorStatus('requested')).toEqual('loading');
+    });
+  });
+
+  describe('getFormSaveStatusFromCommStatus util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(getFormSaveStatusFromCommStatus()).toEqual('complete');
+    });
+    test('should return complete if commStatus is success', () => {
+      expect(getFormSaveStatusFromCommStatus('success')).toEqual('complete');
+    });
+    test('should return loading if commStatus is loading', () => {
+      expect(getFormSaveStatusFromCommStatus('loading')).toEqual('loading');
+    });
+    test('should return failed if commStatus is error', () => {
+      expect(getFormSaveStatusFromCommStatus('error')).toEqual('failed');
     });
   });
 
@@ -37,7 +63,6 @@ describe('editor utils test cases', () => {
       };
 
       expect(getUniqueFieldId('http.bodyCreate', resource1)).toEqual('http.body');
-      expect(getUniqueFieldId('rest.relativeURIUpdate', resource1)).toEqual('rest.relativeURI');
       expect(getUniqueFieldId('http.bodyUpdate', resource2)).toEqual('http.body.0');
     });
     test('should return unique fieldId', () => {
@@ -47,10 +72,6 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('http.bodyUpdate')).toEqual('http.body.0');
       expect(getUniqueFieldId('http.relativeURIUpdate')).toEqual('http.relativeURI.0');
       expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
-      expect(getUniqueFieldId('rest.relativeURIUpdate')).toEqual('rest.relativeURI.0');
-      expect(getUniqueFieldId('rest.relativeURICreate')).toEqual('rest.relativeURI.1');
-      expect(getUniqueFieldId('rest.bodyUpdate')).toEqual('rest.body.0');
-      expect(getUniqueFieldId('rest.bodyCreate')).toEqual('rest.body.1');
     });
   });
 });

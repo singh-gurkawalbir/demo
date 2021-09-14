@@ -109,7 +109,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File generator helper',
-    helpkey: 'import.file.filedefinition.rules',
+    helpKey: 'import.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -184,6 +184,12 @@ export default {
     label: 'Encrypt files',
     defaultValue: r => !!(r?.file?.encrypt),
     connectionId: r => r && r._connectionId,
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'file.encrypt': {
     type: 'select',
@@ -240,6 +246,7 @@ export default {
 
       return 'import.file.backupPath';
     },
+    showLookup: false,
   },
   'file.skipAggregation': {
     type: 'checkbox',

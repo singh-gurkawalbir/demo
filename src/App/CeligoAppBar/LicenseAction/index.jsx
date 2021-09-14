@@ -12,6 +12,14 @@ import { platformLicenseActionDetails } from '../../../utils/license';
 const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
+    borderRadius: 17,
+    fontSize: 13,
+    padding: '4px 16px',
+    fontFamily: 'source sans pro semibold',
+  },
+  inTrialDaysLeft: {
+    fontFamily: 'source sans pro',
+    paddingLeft: 3,
   },
   titleStatusPanel: {
     fontSize: 15,
@@ -122,12 +130,14 @@ function LicenseAction() {
         </NotificationToaster>
       ) : (
         <Button
-          data-test={licenseActionDetails.label}
-          className={classes.inTrial}
           variant="contained"
-          color="secondary"
+          color="primary"
+          disableElevation
+          className={classes.inTrial}
+          data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
+          <span className={classes.inTrialDaysLeft}>{licenseActionDetails.daysLeft}</span>
         </Button>
       )}
     </>

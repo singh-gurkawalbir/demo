@@ -8,26 +8,27 @@ import {
 } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
-import Close from '../../../icons/CloseIcon';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
-import { KBDocumentation } from '../../../../utils/connections';
+import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
 import IconTextButton from '../../../IconTextButton';
 import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
+import CloseButton from './CloseButton';
+import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-const isNestedDrawer = url => !!matchPath(url, {
+export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
   strict: false});
@@ -90,17 +91,6 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     paddingRight: theme.spacing(2),
     color: theme.palette.secondary.main,
-  },
-
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(2),
-    top: theme.spacing(2),
-    padding: 0,
-    '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
-    },
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -204,7 +194,6 @@ const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
 
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
-  const [newId] = useState(generateNewId());
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -212,6 +201,9 @@ export default function Panel(props) {
   const applications = applicationsList();
 
   const { id, resourceType, operation } = match.params;
+  const { parentType, parentId } = getParentResourceContext(match.url);
+  const formKey = getAsyncKey(resourceType, id);
+
   const isNew = operation === 'add';
 
   useResourceFormRedirectionToParentRoute(resourceType, id);
@@ -353,13 +345,9 @@ export default function Panel(props) {
             </div>
             )}
           </div>
-
-          <IconButton
-            data-test="closeDrawer"
-            className={classes.closeButton}
-            onClick={onClose}>
-            <Close />
-          </IconButton>
+          <CloseButton
+            formKey={formKey}
+          />
         </div>
         <LoadResources required resources={requiredResources}>
           <div
@@ -370,7 +358,7 @@ export default function Panel(props) {
             )}
           >
             <ResourceFormWithStatusPanel
-              formKey={newId}
+              formKey={formKey}
               className={classes.resourceFormWrapper}
               variant={variant}
               isNew={isNew}
@@ -388,7 +376,7 @@ export default function Panel(props) {
             {showPreviewPanel && (
               <ExportsPreviewPanel
                 resourceId={id}
-                formKey={newId}
+                formKey={formKey}
                 resourceType={resourceType}
                 flowId={flowId}
           />
@@ -396,12 +384,14 @@ export default function Panel(props) {
           </div>
           <div className={classes.resourcePanelFooter}>
             <ResourceFormActionsPanel
-              formKey={newId}
+              formKey={formKey}
               isNew={isNew}
               resourceType={resourceType}
               resourceId={id}
               flowId={flowId}
               integrationId={integrationId}
+              parentType={parentType}
+              parentId={parentId}
               cancelButtonLabel="Cancel"
               submitButtonLabel={submitButtonLabel}
               submitButtonColor={submitButtonColor}

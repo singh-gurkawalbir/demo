@@ -35,7 +35,6 @@ export function* requestUpgrade({ integrationId, options }) {
   } catch (error) {
     return undefined;
   }
-
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 
@@ -314,6 +313,8 @@ export function* initCategoryMappings({ integrationId, flowId, id, sectionId, de
   let lookups;
   let deleted;
 
+  const sessionMappings = yield select(selectors.categoryMappingById, integrationId, flowId, id);
+
   if (isVariationMapping) {
     const mappingsForVariation = yield select(selectors.mkMappingsForVariation(), integrationId, flowId, {
       sectionId,
@@ -322,16 +323,19 @@ export function* initCategoryMappings({ integrationId, flowId, id, sectionId, de
       depth,
     });
 
-    ({ fieldMappings = emptyList} = mappingsForVariation || {});
+    if (sessionMappings.mappings) {
+      fieldMappings = sessionMappings.mappings;
+    } else {
+      ({ fieldMappings = emptyList} = mappingsForVariation || {});
+    }
   } else {
     const mappingsForCategory = yield select(selectors.mkMappingsForCategory(), integrationId, flowId, { depth, sectionId });
 
     ({ fieldMappings, lookups = [], deleted = false } = mappingsForCategory || {});
   }
 
-  const mappings = yield select(selectors.categoryMappingById, integrationId, flowId, id);
-  const { staged } = mappings || emptyObject;
-  const formattedMappings = staged || fieldMappings;
+  const { staged } = sessionMappings || emptyObject;
+  const formattedMappings = staged || fieldMappings || emptyList;
 
   yield put(
     actions.integrationApp.settings.categoryMappings.initComplete(

@@ -13,7 +13,7 @@ import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
-import { emptyList, emptyObject } from '../constants';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -166,7 +166,7 @@ const setVariationMappingData = (
     if (
       relation.variation_attributes?.length
     ) {
-      const key = `${flowId}-${mapping.id}-variationAttributes`;
+      const key = `${flowId}-${mapping.id}-${options.depth}-variationAttributes`;
 
       if (mappings[key]) {
         // eslint-disable-next-line no-param-reassign
@@ -178,6 +178,7 @@ const setVariationMappingData = (
               rowIdentifier,
               description,
               name,
+              key,
               filterType,
               showListOption,
               hardCodedValueTmp,
@@ -199,7 +200,7 @@ const setVariationMappingData = (
 
       if (variationTheme) {
         variationTheme.variation_attributes.forEach(vm => {
-          const key = `${flowId}-${mapping.id}-${vm}`;
+          const key = `${flowId}-${mapping.id}-${options.depth}-${vm}`;
 
           if (mappings[key]) {
             const stagedMappings =
@@ -251,7 +252,7 @@ const setVariationMappingData = (
         if (!childExists) {
           const mappingFound = mappingKeys.some(key =>
             isVariationAttributes
-              ? key === `${flowId}-${child.id}-variationAttributes`
+              ? key === `${flowId}-${child.id}-${options.depth}-variationAttributes`
               : key.startsWith(`${flowId}-${child.id}`)
           );
 
@@ -552,7 +553,7 @@ export default {
     if ('hardCodedValue' in value) {
       return 'hardCoded';
     }
-    if (value.extract?.indexOf('{{') !== -1) {
+    if (value.extract && value.extract.indexOf('{{') !== -1) {
       return 'multifield';
     }
 
@@ -822,6 +823,10 @@ export default {
       case adaptorTypeMap.SalesforceImport:
         return 'Salesforce';
       case adaptorTypeMap.HTTPImport:
+        if (resource?.http?.formType === 'rest') {
+          return 'REST API';
+        }
+
         return 'HTTP';
       case adaptorTypeMap.WrapperImport:
         return 'Wrapper';
@@ -1048,6 +1053,7 @@ export default {
     mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
@@ -1065,6 +1071,7 @@ export default {
     return mappingUtil.generateMappingFieldsAndList({
       mappings,
       isGroupedSampleData,
+      isPreviewSuccess,
       useFirstRowSupported: importResource.adaptorType !== 'SalesforceImport',
       importResource,
       exportResource,
@@ -1084,7 +1091,21 @@ export default {
       mappings.fields?.forEach(fm => {
         const _fm = { ...fm };
 
-        if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) _fm.useFirstRow = true;
+        if (isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+          if (isGroupedSampleData) {
+            _fm.useFirstRow = true;
+          } else if (!isPreviewSucess) {
+            // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
+            if (handlebarRegex.test(_fm.extract)) {
+              if (_fm.extract?.indexOf('*.') !== -1 || _fm.extract?.indexOf('[*].') !== -1) {
+                _fm.useIterativeRow = true;
+              }
+            } else if (/^\*\./.test(_fm?.extract)) {
+              _fm.useIterativeRow = true;
+            }
+          }
+        }
+
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
@@ -1105,6 +1126,16 @@ export default {
           if (!isPreviewSucess && /^\*\./.test(tempFm?.extract)) {
             tempFm.useIterativeRow = true;
           }
+
+          // adding support for multi-field list mappings for csv/NS only for now to reduce regression
+          if (!isPreviewSucess && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+            if (handlebarRegex.test(tempFm.extract)) {
+              if (tempFm.extract?.indexOf('*.') !== -1 || tempFm.extract?.indexOf('[*].') !== -1) {
+                tempFm.useIterativeRow = true;
+              }
+            }
+          }
+
           // remove *. if present after setting useFirstRow
           if (tempFm.extract?.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
 
@@ -1120,6 +1151,7 @@ export default {
   generateMappingFieldsAndList: ({
     mappings = [],
     isGroupedSampleData,
+    isPreviewSuccess,
     useFirstRowSupported = false,
     importResource = {},
     exportResource = {},
@@ -1163,18 +1195,34 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow) && isNetSuiteBatchExport(exportResource)) {
-        if (
-          !mapping.useFirstRow &&
-          mapping.extract?.indexOf('[*].') === -1 &&
-          !handlebarRegex.test(mapping.extract)
-        ) {
-          mapping.extract = `*.${mapping.extract}`;
+      } else if (isCsvOrXlsxResource(importResource) && isNetSuiteBatchExport(exportResource)) {
+        let isListMapping = false;
+        const listWithEmptyGenerate = lists.find(l => l.generate === '');
+
+        // for multi-field mappings, there is no concept of useFirstRow
+        if ((!isPreviewSuccess || isGroupedSampleData || mapping.useIterativeRow) && handlebarRegex.test(mapping.extract)) {
+          if (mapping.extract?.indexOf('*.') !== -1 || mapping.extract?.indexOf('[*].') !== -1) {
+            isListMapping = true;
+          }
         }
 
-        if (!mapping.useFirstRow) {
-          const listWithEmptyGenerate = lists.find(l => l.generate === '');
+        if (isGroupedSampleData || mapping.useIterativeRow) {
+          if (
+            !mapping.useFirstRow &&
+            mapping.extract?.indexOf('[*].') === -1 &&
+            !handlebarRegex.test(mapping.extract)
+          ) {
+            mapping.extract = `*.${mapping.extract}`;
+          }
 
+          // for csv/xl imports the mapping order matters
+          // so we maintain the order after a list with empty generate is found
+          if ((!handlebarRegex.test(mapping.extract) && !mapping.useFirstRow) || listWithEmptyGenerate?.fields?.length) {
+            isListMapping = true;
+          }
+        }
+
+        if (isListMapping) {
           if (!listWithEmptyGenerate) {
             list = {
               generate: '',
@@ -1442,5 +1490,12 @@ export default {
     }
 
     return '';
+  },
+  getFormStatusFromMappingSaveStatus: saveStatus => {
+    switch (saveStatus) {
+      case MAPPING_SAVE_STATUS.COMPLETED: return FORM_SAVE_STATUS.COMPLETE;
+      case MAPPING_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
+      default: return FORM_SAVE_STATUS.FAILED;
+    }
   },
 };

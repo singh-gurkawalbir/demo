@@ -16,9 +16,9 @@ import { generateNewId } from '../../../utils/resource';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
-import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
+import OnlineStatus from '../../OnlineStatus';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -119,10 +119,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  connectionStatusWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -153,28 +149,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ConnectionLoadingChip(props) {
-  const classes = useStyles();
-  const { connectionId } = props;
+  const { connectionId, flowId, integrationId, parentType, parentId} = props;
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
-  }, [connectionId, dispatch]);
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId, parentContext));
+  }, [connectionId, dispatch, parentContext]);
 
   const isConnectionOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  return isConnectionOffline ? (
-    <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="error" />
-      offline
-    </div>
-  ) : (
-    <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="success" />
-      online
-    </div>
+  return (
+    <OnlineStatus offline={isConnectionOffline} />
   );
 }
 
@@ -198,6 +192,7 @@ export default function DynaSelectResource(props) {
     skipPingConnection,
     integrationId,
     connectorId,
+    flowId,
   } = props;
   const {options} = props;
   const classes = useStyles();
@@ -384,7 +379,12 @@ export default function DynaSelectResource(props) {
               options={[{ items: truncatedItems(resourceItems || []) }]}
           />
             {resourceType === 'connections' && !!value && !skipPingConnection && (
-            <ConnectionLoadingChip connectionId={value} />
+            <ConnectionLoadingChip
+              connectionId={value}
+              flowId={flowId}
+              integrationId={integrationId || integrationIdFromUrl}
+              parentType={resourceContext.resourceType}
+              parentId={resourceContext.resourceId} />
             )}
           </div>
 

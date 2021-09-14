@@ -1,9 +1,13 @@
-import {invert} from 'lodash';
+import invert from 'lodash/invert';
 
-export const emptyList = [];
-export const emptyObject = {};
+export const emptyList = Object.freeze([]);
+export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
+});
+export const AFE_SAVE_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  REQUESTED: 'requested',
 });
 export const FORM_SAVE_STATUS = Object.freeze({
   COMPLETE: 'complete',
@@ -156,8 +160,10 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
+export const GET_DOCS_MAX_LIMIT = process.env.GET_DOCS_MAX_LIMIT || 1500;
+export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
-export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
+export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite' };
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
@@ -268,6 +274,7 @@ export const JOB_STATUS = Object.freeze({
   QUEUED: 'queued',
   RUNNING: 'running',
   RETRYING: 'retrying',
+  CANCELING: 'canceling',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
@@ -301,7 +308,6 @@ export const REST_ASSISTANTS = [
   'namely',
   'servicenow',
   'squareup',
-  'authorize.net',
   'stripe',
   'twilio',
   'woocommerce',
@@ -312,7 +318,6 @@ export const REST_ASSISTANTS = [
   'asana',
   'shopify',
   'slack',
-  // 'desk',
   'eventbrite',
   'smartsheet',
   'campaignmonitor',
@@ -425,6 +430,8 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
+export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
 export const AS2_URLS_STAGING = [
   {
@@ -606,6 +613,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.type',
     '_connectionId',
     'settings',
+    'salesforce.distributed.qualifier',
   ],
   imports: [
     '_connectionId',
@@ -625,6 +633,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
   ],
   flows: [
     '_runNextFlowIds',
+    'autoResolveMatchingTraceKeys',
     'disabled',
     'schedule',
     'timeZone',
@@ -642,9 +651,9 @@ export const C_LOCKED_FIELDS = Object.freeze({
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
-export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
+export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
-export const FILE_PROVIDER_ASSISTANTS = ['googledrive'];
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
 export const CONNECTORS_TO_IGNORE = ['yammer',
   'hybris',
   'etsy',
@@ -653,7 +662,7 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
   'concurv4',
   'constantcontact'];
 
-export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
+export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];
@@ -684,3 +693,41 @@ export const LINE_GRAPH_TYPE_LONG = Object.freeze(
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
+export const SENSITIVE_DATA = ['token', 'password'];
+
+export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
+  'accesstokens',
+  'agents',
+  'iClients',
+  'scripts',
+  'stacks',
+  'templates',
+  'published',
+  'transfers',
+  'apis',
+  'connectors',
+]);
+
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+
+export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
+export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
+export const MAPPINGS_FORM_KEY = 'mappingsformkey';
+export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
+export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
+export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
+export const HOME_PAGE_PATH = '/home';
+export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
+
+export const MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+};
+
+export const CATEGORY_MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  SAVED: 'saved',
+  CLOSE: 'close',
+  FAILED: 'failed',
+};

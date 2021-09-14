@@ -40,6 +40,7 @@ import saveTransformationRulesForNewXMLExport, {
   _getXmlHttpAdaptorSampleData,
 } from './xmlTransformationRulesGenerator';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+import { commitStagedChanges } from '../../resources';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
@@ -70,14 +71,68 @@ describe('Flow sample data utility sagas', () => {
         const expectedOptions = {
           columnDelimiter: ',',
           hasHeaderRow: false,
-          keyColumns: undefined,
-          multipleRowsPerRecord: undefined,
           rowDelimiter: ' ',
           rowsToSkip: 0,
           trimSpaces: true,
+          sortByFields: [],
+          groupByFields: [],
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
+      });
+      test('should return csv parse rules object incase of csv rest resource', () => {
+        const restCsvResource = {
+          _id: 'export-123',
+          name: 'Rest export',
+          adaptorType: 'RESTExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          ignoreSortAndGroup: true,
+        };
+
+        expect(generateFileParserOptionsFromResource(restCsvResource)).toEqual(expectedOptions);
+      });
+      test('should return csv parse rules object incase of csv http resource', () => {
+        const httpCsvResource = {
+          _id: 'export-123',
+          name: 'Rest export',
+          adaptorType: 'HTTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          ignoreSortAndGroup: true,
+        };
+
+        expect(generateFileParserOptionsFromResource(httpCsvResource)).toEqual(expectedOptions);
       });
       test('should return xml parse rules object incase of xml file resource', () => {
         const ftpXmlResource = {
@@ -121,22 +176,34 @@ describe('Flow sample data utility sagas', () => {
           stripNewLineChars: true,
           textNodeName: 'locations',
           trimSpaces: true,
+          sortByFields: [],
+          groupByFields: [],
         };
 
         expect(generateFileParserOptionsFromResource(ftpXmlResource)).toEqual(expectedOptions);
       });
-      test('should return empty object incase of json as there are no parse rules', () => {
+      test('should return options incase of json with expected json related parse options', () => {
         const ftpJsonResource = {
           _id: 'export-123',
           name: 'FTP export',
           file: {
             type: 'json',
+            json: {
+              resourcePath: 'test',
+            },
+            sortByFields: ['users'],
+            groupByFields: ['users'],
           },
           adaptorType: 'FTPExport',
           sampleData: { test: 5 },
         };
+        const expectedOptions = {
+          resourcePath: 'test',
+          sortByFields: ['users'],
+          groupByFields: ['users'],
+        };
 
-        expect(generateFileParserOptionsFromResource(ftpJsonResource)).toEqual({});
+        expect(generateFileParserOptionsFromResource(ftpJsonResource)).toEqual(expectedOptions);
       });
       test('should return file definition rules if existed on resource for file definition type', () => {
         const ftpFileDefResource = {
@@ -193,7 +260,7 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
-        const expectedOptions = { rule: ftpFileDefResource.file.filedefinition.rules };
+        const expectedOptions = { rule: ftpFileDefResource.file.filedefinition.rules, groupByFields: [], sortByFields: [] };
 
         expect(generateFileParserOptionsFromResource(ftpFileDefResource)).toEqual(expectedOptions);
       });
@@ -1073,8 +1140,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const resourceType = 'exports';
         const flowResourcesMap = {
-          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined }},
-          'export-456': {doc: pg2, options: { uiData: undefined }},
+          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined, files: undefined }},
+          'export-456': {doc: pg2, options: { uiData: undefined, files: undefined }},
         };
 
         return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
@@ -2801,11 +2868,9 @@ describe('Flow sample data utility sagas', () => {
       test('should call parseFileData saga with the xml data from the resource and return the result', () => {
         const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
-        const sampleData = {
-          body: `<?xml version="1.0" encoding="UTF-8"?>
+        const sampleData = `<?xml version="1.0" encoding="UTF-8"?>
           <letter>
-          </letter>`,
-        };
+          </letter>`;
         const fileParserData = {mediaType: 'json', data: [{letter: {}}], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
@@ -2815,10 +2880,7 @@ describe('Flow sample data utility sagas', () => {
               newResourceId,
               'raw'
             ), { data: sampleData}],
-            [call(parseFileData, {
-              sampleData: sampleData.body,
-              resource,
-            }), fileParserData],
+            [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
           .returns(fileParserData.data[0])
           .run();
@@ -2826,9 +2888,7 @@ describe('Flow sample data utility sagas', () => {
       test('should call the parseFileData saga and return undefined if the call does not return data', () => {
         const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
-        const sampleData = {
-          body: '<?xml version="1.0" encoding="UTF-8"?>',
-        };
+        const sampleData = '<?xml version="1.0" encoding="UTF-8"?>';
         const fileParserData = {mediaType: 'json', data: [], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
@@ -2838,10 +2898,7 @@ describe('Flow sample data utility sagas', () => {
               newResourceId,
               'raw'
             ), { data: sampleData}],
-            [call(parseFileData, {
-              sampleData: sampleData.body,
-              resource,
-            }), fileParserData],
+            [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
           .returns(undefined)
           .run();
@@ -3114,7 +3171,13 @@ describe('Flow sample data utility sagas', () => {
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
           .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
-          .put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
+          .call(commitStagedChanges,
+            {
+              resourceType: 'exports',
+              id: resourceId,
+              scope: SCOPES.VALUE,
+            }
+          )
           .run();
       });
     });

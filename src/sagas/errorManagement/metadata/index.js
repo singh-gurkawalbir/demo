@@ -21,7 +21,7 @@ export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
     return undefined;
   }
   if (response?.signedURL) {
-    openExternalUrl({url: response?.signedURL});
+    yield call(openExternalUrl, { url: response.signedURL });
   }
 }
 
@@ -45,7 +45,7 @@ export function* requestRetryData({ flowId, resourceId, retryId }) {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const error = JSON.parse(e.message);
+      const error = safeParse(e.message);
 
       yield put(
         actions.errorManager.retryData.receivedError({
@@ -83,7 +83,7 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
-      const error = JSON.parse(e.message);
+      const error = safeParse(e.message);
 
       yield put(
         actions.errorManager.retryData.receivedError({
@@ -125,12 +125,16 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
     }
 
     yield put(actions.errorManager.retryStatus.received({ flowId, resourceId, status}));
+    // stop polling if there are no retry jobs in progress
+    if (!pendingRetryList || !pendingRetryList.length) {
+      yield put(actions.errorManager.retryStatus.stopPoll());
+    }
   } catch (e) {
     // errors
   }
 }
 
-function* pollForRetryStatus({ flowId, resourceId }) {
+export function* _pollForRetryStatus({ flowId, resourceId }) {
   yield put(actions.errorManager.retryStatus.request({ flowId, resourceId }));
   while (true) {
     yield call(_requestRetryStatus, { flowId, resourceId });
@@ -138,8 +142,8 @@ function* pollForRetryStatus({ flowId, resourceId }) {
   }
 }
 
-function* startPollingForRetryStatus({ flowId, resourceId }) {
-  const watcher = yield fork(pollForRetryStatus, { flowId, resourceId });
+export function* startPollingForRetryStatus({ flowId, resourceId }) {
+  const watcher = yield fork(_pollForRetryStatus, { flowId, resourceId });
 
   yield take(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL);
   yield cancel(watcher);

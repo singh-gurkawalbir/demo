@@ -64,10 +64,11 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field',
+          valueLabel: 'Import field value',
           map: lookup && lookup.map,
+          required: true,
           visibleWhen: [
             {
               field: '_mode',
@@ -83,8 +84,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
-          helpText:
-            'Name of the lookups that will be exposed to the mapping to refer.',
+          helpKey: 'import.lookups.name',
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',
@@ -128,6 +128,7 @@ export default {
           type: 'text',
           label: 'Enter default value',
           defaultValue: lookup.default,
+          helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
           placeholder: 'Enter default value',
           visibleWhen: [
             {

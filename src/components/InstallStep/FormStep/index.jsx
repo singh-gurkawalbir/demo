@@ -20,22 +20,61 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormStep({ integrationId, formMeta, title, formSubmitHandler, formCloseHandler }) {
+export default function FormStep({
+  integrationId,
+  installerFunction,
+  formMeta,
+  title,
+  formSubmitHandler,
+  formCloseHandler,
+  addChild,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
     formVal => {
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(
-          integrationId,
-          '',
-          '',
-          formVal
-        )
-      );
+      if (installerFunction) {
+        // For IA1.0
+        if (addChild) {
+          // Add new child case
+          dispatch(actions.integrationApp.child.updateStep(
+            integrationId,
+            installerFunction,
+            'inProgress',
+            false
+          ));
+          dispatch(
+            actions.integrationApp.child.installStep(
+              integrationId,
+              installerFunction,
+              formVal
+            )
+          );
+        } else {
+          dispatch(
+            actions.integrationApp.installer.installStep(
+              integrationId,
+              installerFunction,
+              undefined,
+              undefined,
+              formVal
+            )
+          );
+        }
+      } else {
+        // For IA2.0
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(
+            integrationId,
+            '',
+            '',
+            formVal
+          )
+        );
+      }
     },
-    [dispatch, integrationId]
+    [dispatch, installerFunction, integrationId]
   );
   const onClose = useCallback(() => {
     dispatch(
@@ -43,7 +82,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
     );
   }, [dispatch, integrationId]);
 
-  const formKey = useFormInitWithPermissions({fieldMeta: formMeta});
+  const formKey = useFormInitWithPermissions({ fieldMeta: formMeta });
 
   return (
   // TODO: @ashu, this needs to be reverted to use RightDrawer,

@@ -23,6 +23,9 @@ describe('handlebars processor logic', () => {
     test('should prefix Build and convert first char to lowercase and return new label', () => {
       expect(_constructEditorTitle('File name')).toEqual('Build file name');
     });
+    test('should prefix Build and drop Override from label', () => {
+      expect(_constructEditorTitle('Override HTTP request body')).toEqual('Build HTTP request body');
+    });
   });
   describe('_editorSupportsV1V2data util', () => {
     test('should not throw error for invalid arguments', () => {
@@ -125,6 +128,42 @@ describe('handlebars processor logic', () => {
       };
 
       expect(init({options, resource, fieldState})).toHaveProperty('resultMode', 'text');
+    });
+    test('should correctly set result mode if field is file.xml.body', () => {
+      const options = {
+        fieldId: 'file.xml.body',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+      };
+      const resource = {
+        _id: 'res-123',
+        adaptorType: 'FTPImport',
+      };
+      const fieldState = {
+        type: 'httprequestbody',
+        id: 'file.xml.body',
+        value: '<></>',
+      };
+
+      expect(init({options, resource, fieldState})).toHaveProperty('resultMode', 'xml');
+    });
+    test('should correctly set result mode if field is file.json.body', () => {
+      const options = {
+        fieldId: 'file.json.body',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+      };
+      const resource = {
+        _id: 'res-123',
+        adaptorType: 'FTPImport',
+      };
+      const fieldState = {
+        type: 'httprequestbody',
+        id: 'file.json.body',
+        value: '{}',
+      };
+
+      expect(init({options, resource, fieldState})).toHaveProperty('resultMode', 'json');
     });
     test('should correctly return the formatted options with rule and other props', () => {
       const options = {

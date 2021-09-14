@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -13,6 +14,8 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
+import MessageWrapper from '../../MessageWrapper';
+import { hashCode } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -35,12 +38,14 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     background: theme.palette.background.default,
   },
-
-  messageContainer: {
-    padding: theme.spacing(3),
-  },
   rangeFilter: {
     padding: 5,
+  },
+  wrapper: {
+    position: 'relative',
+  },
+  hideWrapper: {
+    display: 'none',
   },
 }));
 
@@ -52,7 +57,7 @@ const defaultRange = {
 
 const ROWS_PER_PAGE = 50;
 
-export default function RunHistory({ flowId }) {
+export default function RunHistory({ flowId, className }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [currentPage, setCurrentPage] = useState(0);
@@ -69,6 +74,8 @@ export default function RunHistory({ flowId }) {
     selectors.filter(state, FILTER_KEYS.RUN_HISTORY),
   shallowEqual
   );
+  const filterHash = hashCode(filter.status);
+
   const isDateFilterSelected = !!(filter.range && filter.range.preset !== defaultRange.preset);
   const selectedDate = useMemo(() => isDateFilterSelected ? {
     startDate: new Date(filter.range.startDate),
@@ -88,14 +95,16 @@ export default function RunHistory({ flowId }) {
 
   useEffect(() => {
     fetchFlowRunHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterHash]);
 
-    return () => {
+  useEffect(() =>
+    () => {
       dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
       dispatch(actions.errorManager.runHistory.clear({ flowId }));
-    };
-
+    },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  []);
 
   const hasFlowRunHistory = !isLoadingHistory && !!runHistory?.length;
 
@@ -124,7 +133,7 @@ export default function RunHistory({ flowId }) {
   );
 
   return (
-    <>
+    <div className={clsx(classes.wrapper, className)}>
       <div className={classes.filterContainerRunHistory}>
         <>
           <div className={classes.rangeFilter}>
@@ -154,17 +163,16 @@ export default function RunHistory({ flowId }) {
           </div>
         </>
       </div>
-      { isLoadingHistory && <Spinner centerAll />}
-      { !hasFlowRunHistory &&
+      {isLoadingHistory && <Spinner centerAll />}
+
+      <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
+
+      {!hasFlowRunHistory &&
         (
-        <Typography className={classes.messageContainer}>
+        <MessageWrapper className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
           You don&apos;t have any run history.
-        </Typography>
+        </MessageWrapper>
         )}
-      {
-          hasFlowRunHistory &&
-          <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
-      }
-    </>
+    </div>
   );
 }

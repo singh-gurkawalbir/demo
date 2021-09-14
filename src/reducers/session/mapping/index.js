@@ -1,12 +1,10 @@
 import shortid from 'shortid';
 import produce from 'immer';
 import { differenceWith, isEqual } from 'lodash';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import {isMappingEqual} from '../../../utils/mapping';
 
-const { deepClone } = require('fast-json-patch');
-
-const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
@@ -312,7 +310,7 @@ export const selectors = {};
 // #region PUBLIC SELECTORS
 selectors.mapping = state => {
   if (!state || !state.mapping) {
-    return emptySet;
+    return emptyObj;
   }
 
   return state.mapping;

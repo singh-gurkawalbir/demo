@@ -30,13 +30,10 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED_ERROR: {
-        const {error} = action;
-
         if (!draft[id]) {
           draft[id] = {};
         }
         draft[id].status = 'error';
-        draft[id].data = error;
         break;
       }
 
@@ -53,7 +50,7 @@ selectors.suiteScriptImportSampleDataContext = (
 ) => {
   // returns input data for that stage to populate
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-  const flowData = state[id];
+  const flowData = state?.[id];
 
   return flowData || DEFAULT_VALUE;
 };

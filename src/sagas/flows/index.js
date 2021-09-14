@@ -39,6 +39,8 @@ export function* run({ flowId, customStartDate, options = {} }) {
   try {
     job = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
+    yield put(actions.flow.runActionStatus('Started', flowId));
+
     return true;
   }
 
@@ -49,7 +51,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
   }
 
   const additionalProps = {
-    _id: job._jobId,
+    _id: job?._jobId,
     _flowId: flowId,
     type: JOB_TYPES.FLOW,
     status: JOB_STATUS.QUEUED,
@@ -60,6 +62,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
   yield put(
     actions.job.receivedFamily({ job: { ...job, ...additionalProps } })
   );
+  yield put(actions.flow.runActionStatus('Started', flowId));
   yield put(actions.job.requestInProgressJobStatus());
 }
 

@@ -11,10 +11,10 @@ export const FILTER_KEYS = {
 
 export const DEFAULT_FILTERS = {
   OPEN: {
-    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId'],
+    searchBy: ['message', 'source', 'classification', 'code', 'occurredAt', 'traceKey', 'errorId'],
   },
   RESOLVED: {
-    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
+    searchBy: ['message', 'source', 'classification', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
   },
 };
 
@@ -53,7 +53,7 @@ export const getFilteredErrors = (errors = [], options = {}) => {
 };
 
 export const formatErrorDetails = (error = {}) => {
-  const { occurredAt, code, message, errorId, traceKey, source } = error;
+  const { occurredAt, code, message, errorId, traceKey, source, classification } = error;
 
   const content = `
   Message: 
@@ -66,7 +66,7 @@ export const formatErrorDetails = (error = {}) => {
   Timestamp: ${occurredAt}
 
   Error ID: ${errorId}
-
+  ${classification ? `\n  Classification : ${classification}\n` : ''}
   ${traceKey ? `Trace key : ${traceKey} ` : ''}
   `;
 
@@ -85,6 +85,18 @@ export const getErrorMapWithTotal = (errorList = [], resourceId) => {
   });
 
   return {data: errorMap, total: totalCount};
+};
+
+export const getOpenErrorDetailsMap = (errorList = [], resourceId) => {
+  const errorMap = {};
+
+  errorList.forEach(error => {
+    if (resourceId && error[resourceId]) {
+      errorMap[error[resourceId]] = error;
+    }
+  });
+
+  return errorMap;
 };
 
 export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
@@ -112,6 +124,7 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
 };
 
 export const getSourceOptions = (sourceList = [], applicationName) => {
+  if (!sourceList.length) return [];
   const sourceLabelsMap = {
     internal: 'Internal',
     application: `${applicationName || 'Application'}`,
@@ -141,8 +154,17 @@ export const getSourceOptions = (sourceList = [], applicationName) => {
   return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
 
+export function getClassificationOptions(classificationList = []) {
+  const options = classificationList
+    .filter(classificationId => classificationId !== 'none')
+    .map(classificationId => ({_id: classificationId, name: classificationId}));
+  const sortedOptions = sortBy(options, s => s.name);
+
+  return [{ _id: 'all', name: 'All classifications'}, ...sortedOptions];
+}
+
 export function getJobDuration(job) {
-  if (job.startedAt && job.endedAt) {
+  if (job?.startedAt && job?.endedAt) {
     const dtDiff = moment(moment(job.endedAt) - moment(job.startedAt)).utc();
     let duration = dtDiff.format('HH:mm:ss');
 
@@ -159,18 +181,6 @@ export function getJobDuration(job) {
 
   return undefined;
 }
-
-export function getJobStatus(job) {
-  const jobStatus = job?.status;
-  const statusMap = {
-    completed: 'Completed',
-    canceled: 'Canceled',
-    failed: 'Failed',
-  };
-
-  return statusMap[jobStatus] || jobStatus;
-}
-
 export function getMockHttpErrorDoc() {
   const MOCK_HTTP_BLOB_DOC = {
     headers: { 'content-type': 'application/json' },

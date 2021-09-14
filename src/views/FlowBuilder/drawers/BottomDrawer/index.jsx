@@ -195,7 +195,7 @@ export default function BottomDrawer({
 
   const handleTabChange = useCallback(
     (event, newValue) => {
-      dispatch(actions.bottomDrawer.setActiveTab({ index: newValue }));
+      dispatch(actions.bottomDrawer.switchTab({ index: newValue }));
 
       if (drawerHeight < minDrawerHeight) setDrawerHeight(minDrawerHeight);
     },
@@ -297,6 +297,7 @@ export default function BottomDrawer({
         classes={drawerClasses}
         PaperProps={drawerPaperProps}
         variant="persistent"
+        BackdropProps={{ invisible: true }}
         anchor="bottom">
         <div
           className={classes.tabBar}
@@ -446,69 +447,58 @@ export default function BottomDrawer({
         </div>
         <>
           {tabs?.map(({ tabType, resourceId}) => {
+            let tabPanelValue;
+
             switch (tabType) {
               case 'dashboard':
-                return (
-                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                    { isUserInErrMgtTwoDotZero
-                      ? <RunDashboardV2 flowId={flowId} />
-                      : <RunDashboardPanel flowId={flowId} />}
-                  </TabPanel>
-                );
+                tabPanelValue = isUserInErrMgtTwoDotZero
+                  ? <RunDashboardV2 flowId={flowId} />
+                  : <RunDashboardPanel flowId={flowId} />;
+                break;
               case 'runHistory':
-                return (
-                  <>
-                    {isUserInErrMgtTwoDotZero &&
-                    (
-                      <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                        <RunHistory flowId={flowId} />
-                      </TabPanel>
-                    )}
-                  </>
-                );
+                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} /> : null;
+                break;
 
               case 'connections':
-                return (
-                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                    <ConnectionPanel flowId={flowId} />
-                  </TabPanel>
-                );
+                tabPanelValue = <ConnectionPanel flowId={flowId} />;
+                break;
               case 'scripts':
-                return (
-                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                    <ScriptPanel flowId={flowId} />
-                  </TabPanel>
-                );
+                tabPanelValue = <ScriptPanel flowId={flowId} />;
+                break;
               case 'auditLogs':
-                return (
-                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                    <AuditPanel flowId={flowId} />
-                  </TabPanel>
-                );
+                tabPanelValue = <AuditPanel flowId={flowId} />;
+
+                break;
               case 'scriptLogs':
-                return (
-                  <TabPanel key={resourceId} value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                    <ScriptLogs flowId={flowId} scriptId={resourceId} />
-                  </TabPanel>
-                );
+                tabPanelValue = <ScriptLogs flowId={flowId} scriptId={resourceId} />;
+                break;
 
               case 'connectionLogs':
-                return (
-                  <TabPanel
-                    value={activeTabIndex}
-                    key={resourceId}
-                    index={tabContentIndex++}
-                    className={classes.tabPanel}>
-                    <>
-                      <ConnectionLogs
-                        connectionId={resourceId}
-                        flowId={flowId}
-                      />
-                    </>
-                  </TabPanel>
+                tabPanelValue = (
+                  <ConnectionLogs
+                    connectionId={resourceId}
+                    flowId={flowId}
+              />
                 );
+                break;
+
               default:
+                break;
             }
+
+            if (!tabPanelValue) { return null; }
+
+            return (
+              <TabPanel
+                value={activeTabIndex}
+                key={tabType}
+                index={tabContentIndex++}
+                className={classes.tabPanel}>
+
+                {tabPanelValue}
+
+              </TabPanel>
+            );
           })}
         </>
       </Drawer>

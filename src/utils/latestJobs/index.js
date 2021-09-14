@@ -1,13 +1,13 @@
 import { JOB_STATUS } from '../constants';
 import { getJobDuration } from '../../reducers/data/jobs/util';
 
-const FLOW_STEP_STATUS = {
+export const FLOW_STEP_STATUS = {
   WAITING: 'WAITING',
   CANCELLING: 'CANCELLING',
 };
 
-export const getFlowStepsYetToBeCreated = (flow = {}, createdSteps = []) => {
-  const { pageProcessors: pps = []} = flow;
+export const getFlowStepsYetToBeCreated = (flow, createdSteps = []) => {
+  const { pageProcessors: pps = []} = flow || {};
 
   return pps.filter(pp => {
     if (!createdSteps.length) return true;
@@ -22,9 +22,9 @@ export const getFlowStepsYetToBeCreated = (flow = {}, createdSteps = []) => {
   });
 };
 
-export const generatePendingFlowSteps = (resources = [], resourceMap = {}) =>
-  resources.reduce((flowSteps, resource) => {
-    const { type, _exportId, _importId } = resource;
+export const generatePendingFlowSteps = (pageProcessors = [], resourceMap = {}) =>
+  pageProcessors.reduce((flowSteps, pp) => {
+    const { type, _exportId, _importId } = pp;
 
     if (type === 'export') {
       flowSteps.push({
@@ -47,7 +47,6 @@ export const getRunConsoleJobSteps = (parentJob = {}, childJobs = [], resourceMa
   const dashboardSteps = [];
   const additionalProps = {
     doneExporting: !!parentJob.doneExporting,
-    numPagesProcessed: 0,
   };
 
   if (!additionalProps.doneExporting) {
@@ -83,11 +82,6 @@ export const getRunConsoleJobSteps = (parentJob = {}, childJobs = [], resourceMa
       } else {
         additionalChildProps.percentComplete = 0;
       }
-
-      additionalProps.numPagesProcessed += parseInt(
-        cJob.numPagesProcessed,
-        10
-      );
     }
 
     dashboardSteps.push({ ...cJob, ...additionalChildProps });
@@ -100,11 +94,11 @@ export const getParentJobSteps = parentJob => {
   const parentJobSteps = [];
 
   // when the job is queued / when the parent job is in progress with no children created yet
-  if (parentJob.status === JOB_STATUS.QUEUED ||
-    (parentJob.status === JOB_STATUS.RUNNING && !parentJob?.children?.length)) {
+  if (parentJob?.status === JOB_STATUS.QUEUED ||
+    (parentJob?.status === JOB_STATUS.RUNNING && !parentJob?.children?.length)) {
     parentJobSteps.push({...parentJob, uiStatus: parentJob.status});
   }
-  if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
+  if (parentJob?.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
     // In cases when job is cancelled while it is in queue, children are not yet created
     // So show this job as the export step cancelled
     parentJobSteps.push({...parentJob, uiStatus: parentJob.status});

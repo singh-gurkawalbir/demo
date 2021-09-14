@@ -9,6 +9,7 @@ import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
+import DynaUpdateOptions from './select/DynaUpdateOptions';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 import DynaRelativeUri_afe from './DynaRelativeUri_afe';
@@ -79,6 +80,7 @@ import DynaCsvGenerate_afe from './DynaCsvGenerate_afe';
 import DynaFileKeyColumn_afe from './DynaFileKeyColumn_afe';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
+import DynaTextWithConnectionContext from './text/DynaTextWithConnectionContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './DynaNSSearchCriteria';
@@ -129,8 +131,17 @@ import DynaTrialLicense from './DynaTrialLicense';
 import DynaLicenseExpires from './DynaLicenseExpires';
 import DynaLicenseEditor from './DynaLicenseEditor';
 import DynaSsoOrgId from './DynaSsoOrgId';
+import DynaSelectWithValidations from './select/DynaSelectWithValidations';
+import DynaAssistantHeaders from './DynaTableView/DynaAssistantHeaders';
+import DynaNetsuiteAuthType from './DynaNetsuiteAuthType';
+import DynaDynamicSelect from './DynaDynamicSelect';
+import DynaSelectLookup from './DynaSelectLookup';
+import DynaSortAndGroup from './DynaSortAndGroup';
+import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
+import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 
 export default {
+  updateoptions: DynaUpdateOptions,
   reportdaterange: DynaReportDateRange,
   flowstiedtointegrations: DynaFlowsTiedToIntegrations,
   allintegrations: DynaAllIntegrations,
@@ -154,6 +165,7 @@ export default {
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
+  assistantHeaders: DynaAssistantHeaders,
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
@@ -173,6 +185,7 @@ export default {
   csvgenerate: DynaCsvGenerate_afe,
   xmlparse: DynaXmlParse_afe,
   refreshableselect: DynaRefreshableSelect,
+  netsuiterecordtype: DynaNetSuiteRecordType,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
@@ -234,6 +247,7 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   queryradiogroup: DynaQueryRadioGroup,
   textwithflowcontext: DynaTextWithFlowContext,
+  textwithconnectioncontext: DynaTextWithConnectionContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   crongenerator: DynaCronGenerator,
   nssearchcriteria: DynaNSSearchCriteria,
@@ -268,4 +282,11 @@ export default {
   licenseexpires: DynaLicenseExpires,
   licenseeditor: DynaLicenseEditor,
   ssoorgid: DynaSsoOrgId,
+  selectwithvalidations: DynaSelectWithValidations,
+  salesforcesortorderselect: Salesforce.DynaSortOrderSelect,
+  nsauthtype: DynaNetsuiteAuthType,
+  dynamicselect: DynaDynamicSelect,
+  selectlookup: DynaSelectLookup,
+  sortandgroup: DynaSortAndGroup,
+  selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
 };

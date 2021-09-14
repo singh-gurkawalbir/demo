@@ -14,7 +14,7 @@ import IconTextButton from '../../../../components/IconTextButton';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { HOME_PAGE_PATH, STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../../utils/messageStore';
 import getRoutePath from '../../../../utils/routePaths';
@@ -151,7 +151,7 @@ export default function PageBar() {
     );
 
     setIsDeleting(false);
-    history.push(getRoutePath('dashboard'));
+    history.push(getRoutePath(HOME_PAGE_PATH));
   }
 
   const handleDelete = useCallback(() => {

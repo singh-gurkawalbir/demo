@@ -14,6 +14,7 @@ export default {
       '/http/auth/token/location': 'header',
       '/http/auth/token/headerName': 'Authorization',
       '/http/auth/token/scheme': 'Bearer',
+      '/http/auth/oauth/grantType': 'authorizecode',
       '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
       '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
       '/http/auth/oauth/clientCredentialsLocation': 'body',

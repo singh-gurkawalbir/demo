@@ -75,18 +75,16 @@ export default {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto400',
+        padding: '6px 24px',
+        fontSize: '15px',
+        lineHeight: '19px',
         '&: disabled': {
           cursor: 'not-allowed',
         },
       },
       contained: {
-        borderRadius: '17px',
-        fontSize: '13px',
-        lineHeight: '15px',
         border: '1px solid',
-        textTransform: 'none',
         boxShadow: 'none',
-        padding: '6px 20px',
         '&:disabled': {
           background: 'none',
         },
@@ -184,6 +182,12 @@ export default {
           color: colors.celigoNeutral4,
         },
       },
+      textSecondary: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: colors.celigoAccent2,
+        },
+      },
     },
     MuiToolbar: {
       dense: {
@@ -216,62 +220,7 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral7,
         padding: [[6, 8, 4, 8]],
-      },
-      tooltipPlacementBottom: {
-        margin: '0 !important',
-        '&:before': {
-          top: -7,
-          left: 0,
-          width: 8,
-          right: 0,
-          margin: 'auto',
-          content: '""',
-          zIndex: 1,
-          position: 'absolute',
-          borderLeft: '7px solid transparent',
-          borderRight: '7px solid transparent',
-          borderBottom: `7px solid ${colors.celigoNeutral7}`,
-        },
-        '&:after': {
-          top: -5,
-          left: 0,
-          right: 0,
-          width: 6,
-          margin: 'auto',
-          content: '""',
-          zIndex: 2,
-          position: 'absolute',
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent',
-          borderBottom: `6px solid ${colors.celigoNeutral7}`,
-        },
-      },
-      tooltipPlacementRight: {
         margin: '0px !important',
-        '&:before': {
-          top: 'calc(50% - 7px)',
-          left: -7,
-          right: 0,
-          width: 4,
-          content: '""',
-          zIndex: 1,
-          position: 'absolute',
-          borderTop: '7px solid transparent',
-          borderBottom: '7px solid transparent',
-          borderRight: `7px solid ${colors.celigoNeutral7}`,
-        },
-        '&:after': {
-          top: 'calc(50% - 6px)',
-          left: 0,
-          right: 0,
-          width: 4,
-          content: '""',
-          zIndex: 2,
-          position: 'absolute',
-          borderBottom: '6px solid transparent',
-          borderTop: '6px solid transparent',
-          borderRight: `6px solid ${colors.celigoNeutral7}`,
-        },
       },
     },
     MuiPickersDay: {
@@ -610,7 +559,7 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
-        marginTop: -4,
+        height: 20,
         '& svg': {
           fontSize: 18,
         },
@@ -751,7 +700,6 @@ export default {
         },
       },
     },
-    // Adding globally to fix the radio button and text alignment default is margin left -11,
     MuiFormControlLabel: {
       root: {
         marginLeft: 0,
@@ -884,6 +832,7 @@ export default {
     },
     MuiTooltip: {
       'data-public': true,
+      arrow: true,
     },
     MuiTabs: {
       'data-public': true,

@@ -1,7 +1,9 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES, JOB_STATUS } from './constants';
+import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
 import { getStaticCodesList } from './listenerLogs';
+import { getSelectedRange } from './flowMetrics';
+import { isNewId } from './resource';
 
 let path;
 
@@ -173,7 +175,7 @@ export default function getRequestOptions(
     case actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL:
       return {
         path: `/jobs/${resourceId}/files/signedURL`,
-        opts: { method: 'GET' },
+        opts: { method: 'POST' },
       };
     case actionTypes.JOB.CANCEL:
       return {
@@ -336,10 +338,13 @@ export default function getRequestOptions(
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
 
-      const { sources = [], occuredAt, resolvedAt } = filters;
+      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
+      }
+      if (!classifications.includes('all')) {
+        classifications.forEach(classification => queryParams.push(`classification=${classification}`));
       }
       if (occuredAt?.startDate && occuredAt?.endDate) {
         queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
@@ -359,14 +364,16 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
       let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
-      const statusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
-      const { range } = filters || {};
+      const { range, status } = filters || {};
       const queryParams = [];
+      const statusFilter = status?.length ? status : [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const {startDate, endDate} = getSelectedRange(range) || {};
 
       statusFilter.forEach(status => queryParams.push(`status=${status}`));
-      if (range?.startDate && range?.endDate) {
-        queryParams.push(`createdAt_gte=${moment(range.startDate).toISOString()}`);
-        queryParams.push(`createdAt_lte=${moment(range.endDate).toISOString()}`);
+
+      if (startDate && endDate) {
+        queryParams.push(`createdAt_gte=${moment(startDate).toISOString()}`);
+        queryParams.push(`createdAt_lte=${moment(endDate).toISOString()}`);
       }
       path += `&${queryParams.join('&')}`;
 
@@ -413,3 +420,23 @@ export default function getRequestOptions(
       return {};
   }
 }
+
+export const pingConnectionParentContext = values => {
+  if (!values) return {};
+
+  const { flowId, integrationId, parentType, parentId } = values;
+  const context = {
+    _flowId: isNewId(flowId) ? undefined : flowId,
+    _integrationId: (isNewId(integrationId) || integrationId === STANDALONE_INTEGRATION.id) ? undefined : integrationId,
+  };
+
+  if (parentType && !isNewId(parentId)) {
+    if (parentType === 'exports') {
+      context._exportId = parentId;
+    } else if (parentType === 'imports') {
+      context._importId = parentId;
+    }
+  }
+
+  return context;
+};

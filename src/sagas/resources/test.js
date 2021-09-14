@@ -50,6 +50,7 @@ import {
 import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -350,6 +351,74 @@ describe('commitStagedChanges saga', () => {
 
       const updated = { _id: 1 };
 
+      expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
+      const putEffect = saga.next(updated).value;
+
+      expect(putEffect).toEqual(
+        put(actions.resource.received(resourceType, updated))
+      );
+
+      expect(saga.next().value).toEqual(
+        put(
+          actions.resource.updated(
+            resourceType,
+            updated._id,
+            { lastModified: 100 },
+            somePatch
+          )
+        )
+      );
+
+      const finalEffect = saga.next();
+
+      expect(finalEffect).toEqual({ done: true, value: undefined });
+    });
+    test('should complete with dispatch of received, clear stage actions when commit succeeds and fetch exports and imports if it triggered from IA2.0 settings page.', () => {
+      const saga = commitStagedChanges({ resourceType, id, options: {action: 'UpdatedIA2.0Settings'} });
+      const selectEffect = saga.next().value;
+
+      expect(selectEffect).toEqual(select(selectors.userPreferences));
+
+      expect(saga.next().value).toEqual(
+        select(selectors.resourceData, resourceType, id, undefined)
+      );
+
+      const merged = { id, lastModified: 100 };
+      const path = `/${resourceType}/${id}`;
+      const master = { lastModified: 100 };
+      const getCallEffect = saga.next({
+        master,
+        merged,
+        patch: somePatch,
+      }).value;
+
+      expect(getCallEffect).toEqual(
+        call(resourceConflictDetermination, {
+          path,
+          merged,
+          id,
+          scope: undefined,
+          resourceType,
+          master,
+        })
+      );
+
+      const putCallEffect = saga.next({ merged, conflict: false }).value;
+
+      expect(putCallEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+      );
+
+      const updated = { _id: 1 };
+
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('exports', null, true)));
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('imports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
@@ -857,9 +926,9 @@ describe('updateIntegrationSettings saga', () => {
       [matchers.call.fn(apiCallWithRetry), {settings: {}, _flowId: 'flow-123'}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.requestCollection('exports'))
-    .put(actions.resource.requestCollection('flows'))
-    .put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'))
+    .put(actions.resource.requestCollection('exports', null, true))
+    .put(actions.resource.requestCollection('flows', null, true))
+    .put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH))
     .run());
   test('should dispatch patch and commit actions if response is a success and options action is flowEnableDisable', () => {
     const patchSet = [
@@ -902,8 +971,8 @@ describe('updateIntegrationSettings saga', () => {
       [matchers.call.fn(apiCallWithRetry), {success: true}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.requestCollection('imports'))
-    .put(actions.resource.requestCollection('exports'))
+    .put(actions.resource.requestCollection('imports', null, true))
+    .put(actions.resource.requestCollection('exports', null, true))
     .put(
       actions.integrationApp.settings.submitComplete({
         childId: undefined,
@@ -971,7 +1040,7 @@ describe('deleteIntegration saga', () => {
     .put(actions.resource.requestCollection('integrations', null, true))
     .put(actions.resource.requestCollection('tiles', null, true))
     .put(actions.resource.requestCollection('scripts', null, true))
-    .put(actions.resource.integrations.redirectTo('123', 'dashboard'))
+    .put(actions.resource.integrations.redirectTo('123', HOME_PAGE_PATH))
     .run());
 });
 

@@ -30,6 +30,9 @@ describe('structuredFileParser processor logic', () => {
         rule: '{"name": "DAF EDIFACT DESADV","description": "Despatch advice message"}',
         data: 'ISA|SA|850|1234',
         originalData: 'ISA|SA|850|1234',
+        groupByFields: [],
+        sortByFields: [],
+
       };
 
       expect(init({options, fileDefinitionData})).toEqual(expectedOutput);

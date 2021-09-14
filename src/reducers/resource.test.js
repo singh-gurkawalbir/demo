@@ -4,6 +4,8 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, MISCELLANEOUS_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
+import getRoutePath from '../utils/routePaths';
+import { COMM_STATES } from './comms/networkComms';
 
 const suitescriptConnectors = [
   {
@@ -239,12 +241,6 @@ describe('resource region selector testcases', () => {
   describe('selectors.resourceList test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.resourceList()).toEqual({count: 0, filtered: 0, resources: [], total: 0, type: undefined});
-    });
-  });
-
-  describe('selectors.resourceListModified test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceListModified(false)).toEqual({count: 0, filtered: 0, resources: [], total: 0, type: undefined});
     });
   });
 
@@ -3168,15 +3164,51 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.isDataReady test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isDataReady()).toEqual(false);
-    });
-  });
-
   describe('selectors.isResourceCollectionLoading test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isResourceCollectionLoading()).toEqual(false);
+    });
+
+    const resource = 'someResource';
+    const path = getRoutePath(resource);
+    const method = 'GET';
+
+    const newState = reducer(undefined, actions.api.request(path, method));
+
+    test('should return true when the api request is made', () => {
+      expect(selectors.isResourceCollectionLoading(newState, resource)).toEqual(true);
+    });
+
+    const state = reducer(newState, actions.api.complete(path, method));
+
+    test('should return false when the api request is complete', () => {
+      expect(selectors.isResourceCollectionLoading(state, resource)).toEqual(false);
+    });
+
+    const resource2 = 'transfers';
+    const path1 = getRoutePath(resource2);
+    const path2 = getRoutePath(`${resource2}/invited`);
+
+    const state1 = reducer(undefined, actions.api.request(path1, method));
+
+    test('should return true when the api request is made', () => {
+      expect(selectors.isResourceCollectionLoading(state1, resource2)).toEqual(true);
+    });
+    const state2 = reducer(state1, actions.api.complete(path1, method));
+
+    test('should return false when the api request is complete', () => {
+      expect(selectors.isResourceCollectionLoading(state2, resource2)).toEqual(false);
+    });
+
+    const state3 = reducer(undefined, actions.api.request(path2, method));
+
+    test('should return true when the api request is made', () => {
+      expect(selectors.isResourceCollectionLoading(state3, resource2)).toEqual(true);
+    });
+    const state4 = reducer(state3, actions.api.complete(path2, method));
+
+    test('should return false when the api request is complete', () => {
+      expect(selectors.isResourceCollectionLoading(state4, resource2)).toEqual(false);
     });
   });
 
@@ -3262,11 +3294,118 @@ describe('resource region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.resourceStatusModified()).toEqual({hasData: false, isLoading: false, isReady: false, method: 'GET', resourceType: undefined, retryCount: 0});
     });
+
+    const resourceType = 'someResource';
+    const resourceCollection = [
+      { _id: 's1' },
+    ];
+    const path = getRoutePath(resourceType);
+    const method = 'GET';
+
+    describe('resource collection is not present in state', () => {
+      const newState = reducer(undefined, actions.api.request(path, method));
+
+      test('should return correct object when api request is made', () => {
+        expect(selectors.resourceStatusModified(newState.data.resources, newState.comms.networkComms, resourceType)).toEqual(
+          {hasData: false, isLoading: true, isReady: false, method: 'GET', resourceType: 'someResource', retryCount: 0}
+        );
+      });
+
+      const state1 = reducer(newState, actions.api.retry(path, method));
+
+      test('should return correct object when api retry is made', () => {
+        expect(selectors.resourceStatusModified(state1.data.resources, state1.comms.networkComms, resourceType)).toEqual(
+          {hasData: false, isLoading: true, isReady: false, method: 'GET', resourceType: 'someResource', retryCount: 1}
+        );
+      });
+      const state2 = reducer(state1, actions.api.complete(path, method));
+
+      test('should return correct object when api is successful', () => {
+        expect(selectors.resourceStatusModified(state2.data.resources, state2.comms.networkComms, resourceType)).toEqual(
+          {hasData: false, isLoading: false, isReady: false, method: 'GET', resourceType: 'someResource', retryCount: 0}
+        );
+      });
+
+      const state3 = reducer(state2, actions.resource.receivedCollection(resourceType, resourceCollection));
+
+      test('should return correct object when resource collection is received', () => {
+        expect(selectors.resourceStatusModified(state3.data.resources, state3.comms.networkComms, resourceType)).toEqual(
+          {hasData: true, isLoading: false, isReady: true, method: 'GET', resourceType: 'someResource', retryCount: 0}
+        );
+      });
+    });
+    describe('resource collection is present in state', () => {
+      const previousCollection = [{ _id: 's2' }];
+      const newState = reducer(undefined, actions.resource.receivedCollection(resourceType, previousCollection));
+
+      test('should return correct object when collection is received', () => {
+        expect(selectors.resourceStatusModified(newState.data.resources, newState.comms.networkComms, resourceType)).toEqual(
+          {hasData: true, isLoading: false, isReady: true, method: 'GET', resourceType: 'someResource', retryCount: 0}
+        );
+      });
+      const state1 = reducer(newState, actions.api.request(path, method));
+
+      test('should return correct object when api request is made', () => {
+        expect(selectors.resourceStatusModified(state1.data.resources, state1.comms.networkComms, resourceType)).toEqual(
+          {hasData: true, isLoading: true, isReady: false, method: 'GET', resourceType: 'someResource', retryCount: 0}
+        );
+      });
+
+      const state2 = reducer(state1, actions.api.retry(path, method));
+
+      test('should return correct object when api retry is made', () => {
+        expect(selectors.resourceStatusModified(state2.data.resources, state2.comms.networkComms, resourceType)).toEqual(
+          {hasData: true, isLoading: true, isReady: false, method: 'GET', resourceType: 'someResource', retryCount: 1}
+        );
+      });
+
+      const state3 = reducer(state1, actions.api.complete(path, method));
+
+      test('should return correct object when api is successful', () => {
+        expect(selectors.resourceStatusModified(state3.data.resources, state3.comms.networkComms, resourceType)).toEqual(
+          {hasData: true, isLoading: false, isReady: true, method: 'GET', resourceType: 'someResource', retryCount: 0}
+        );
+      });
+    });
   });
 
   describe('selectors.allResourceStatus test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.allResourceStatus({}, {}, [])).toEqual([]);
+    });
+    test('should return correct object at a given state', () => {
+      const method = 'GET';
+      const paths = {
+        integrationsPath: '/integrations',
+        exportsPath: '/exports',
+        importsPath: '/imports',
+        connectionsPath: '/connections',
+      };
+      const integrations = [{ _id: 'i1' }];
+      const exports = [{ _id: 'e1' }, { _id: 'e2' }];
+      const connections = [{ _id: 'c1' }];
+      const resourceTypes = [
+        'integrations',
+        'exports',
+        'connections',
+        'imports',
+      ];
+
+      const newState = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+      const state1 = reducer(newState, actions.resource.receivedCollection('exports', exports));
+      const state2 = reducer(state1, actions.resource.receivedCollection('connections', connections));
+
+      const state3 = reducer(state2, actions.api.request(paths.integrationsPath, method));
+      const state4 = reducer(state3, actions.api.request(paths.exportsPath, method));
+      const state5 = reducer(state4, actions.api.request(paths.importsPath, method));
+      const state6 = reducer(state5, actions.api.retry(paths.importsPath, method));
+
+      expect(selectors.allResourceStatus(state6.data.resources, state6.comms.networkComms, resourceTypes)).toEqual([
+        {hasData: true, isLoading: true, isReady: false, method: 'GET', resourceType: 'integrations', retryCount: 0},
+        {hasData: true, isLoading: true, isReady: false, method: 'GET', resourceType: 'exports', retryCount: 0},
+        {hasData: true, isLoading: false, isReady: true, method: 'GET', resourceType: 'connections', retryCount: 0},
+        {hasData: false, isLoading: true, isReady: false, method: 'GET', resourceType: 'imports', retryCount: 1},
+      ]);
     });
   });
 
@@ -3276,86 +3415,84 @@ describe('resource region selector testcases', () => {
 
       expect(selector({}, ['connectorLicenses'])).toEqual([{hasData: false, isLoading: false, isReady: false, method: 'GET', resourceType: 'connectorLicenses', retryCount: 0}]);
     });
-  });
-
-  describe('resourceData', () => {
-    test('should return {} on bad state or args.', () => {
-      expect(selectors.resourceData()).toEqual({sandbox: false});
-      expect(selectors.resourceData({ data: {} })).toEqual({sandbox: false});
-    });
-
-    test('should return correct data when no staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test A' }];
+    test('should return correct object for a given state', () => {
       const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
+        {
+          data: {
+            resources: {
+              connectorLicenses: [
+                { _id: 'cl1' },
+              ],
+            },
+          },
+          comms: {
+            networkComms: {
+              'GET:/connectorLicenses': {
+                status: COMM_STATES.LOADING,
+                method: 'GET',
+              },
+            },
+          },
+        },
+        'some-action',
       );
 
-      expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: exports[0],
-        staged: undefined,
-        master: exports[0],
-      });
-    });
+      const selector = selectors.makeAllResourceStatusSelector();
 
-    test('should return correct data when no staged data or resource exists. (new resource)', () => {
-      const exports = [{ _id: 1, name: 'test A' }];
-      const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-
-      expect(
-        selectors.resourceData(state, 'exports', 'new-resource-id')
-      ).toEqual({
-        merged: {sandbox: false},
-        staged: undefined,
-        master: undefined,
-      });
-    });
-
-    test('should return correct data when staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged(1, patch));
-
-      expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: { _id: 1, name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: exports[0],
-      });
-    });
-
-    test('should return correct data when staged data exists but no master.', () => {
-      const exports = [{ _id: 1, name: 'test X' }];
-      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', exports)
-      );
-      state = reducer(state, actions.resource.patchStaged('new-id', patch));
-
-      expect(selectors.resourceData(state, 'exports', 'new-id')).toEqual({
-        merged: { name: 'patch X' },
-        lastChange: expect.any(Number),
-        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        master: null,
-      });
+      expect(selector(state, ['connectorLicenses'])).toEqual([{hasData: true, isLoading: true, isReady: false, method: 'GET', resourceType: 'connectorLicenses', retryCount: 0}]);
     });
   });
 
   describe('selectors.resourceDataModified test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceDataModified()).toEqual({sandbox: false});
+      expect(selectors.resourceDataModified()).toEqual({});
+    });
+    test('should return correct data if only resource is present', () => {
+      const resource = { _id: 1, name: 'test X' };
+
+      expect(selectors.resourceDataModified(resource, null, 'exports', '1')).toEqual(
+        {
+          lastChange: undefined,
+          master: { _id: 1, name: 'test X' },
+          merged: { _id: 1, name: 'test X' },
+          patch: undefined,
+        }
+      );
+    });
+    test('should return correct data if only stageIdState present', () => {
+      const timestamp1 = Date.now();
+      const timestamp2 = Date.now();
+      const stagedIdState = {
+        patch: [
+          { op: 'add', path: '/_connectionId', value: '123', timestamp: timestamp1},
+          { op: 'add', path: '/name', value: 'patch X', timestamp: timestamp2},
+        ],
+      };
+
+      expect(selectors.resourceDataModified(null, stagedIdState, 'exports', 'new-0t575NHzJT')).toEqual(
+        {
+          lastChange: timestamp2,
+          master: null,
+          merged: { _connectionId: '123', name: 'patch X' },
+          patch: stagedIdState.patch,
+        }
+      );
+    });
+    test('should return correct data if both resource and patch are present', () => {
+      const resource = { _id: 1, name: 'test X' };
+      const timestamp = Date.now();
+      const stagedIdState = {
+        patch: [{ op: 'replace', path: '/name', value: 'patch X', timestamp}],
+      };
+
+      expect(selectors.resourceDataModified(resource, stagedIdState, 'exports', '1')).toEqual(
+        {
+          lastChange: timestamp,
+          master: { _id: 1, name: 'test X' },
+          merged: { _id: 1, name: 'patch X' },
+          patch: stagedIdState.patch,
+        }
+      );
     });
   });
 
@@ -3363,8 +3500,8 @@ describe('resource region selector testcases', () => {
     const resourceData = selectors.makeResourceDataSelector();
 
     test('should return {} on bad state or args.', () => {
-      expect(resourceData()).toEqual({sandbox: false});
-      expect(resourceData({ data: {} })).toEqual({sandbox: false});
+      expect(resourceData()).toEqual({});
+      expect(resourceData({ data: {} })).toEqual({});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -3388,13 +3525,7 @@ describe('resource region selector testcases', () => {
         actions.resource.receivedCollection('exports', exports)
       );
 
-      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({
-        merged: {
-          sandbox: false,
-        },
-        staged: undefined,
-        master: undefined,
-      });
+      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({merged: {}});
     });
 
     test('should return correct data when staged data exists.', () => {
@@ -3505,12 +3636,6 @@ describe('resource region selector testcases', () => {
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         master: null,
       });
-    });
-  });
-
-  describe('selectors.resourceFormField test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceFormField()).toEqual();
     });
   });
 
@@ -3797,6 +3922,290 @@ describe('resource region selector testcases', () => {
       const selector = selectors.mkFlowResources();
 
       expect(selector()).toEqual([{_id: undefined, name: 'Flow-level'}]);
+    });
+
+    const flows = [
+      {
+        _id: 'f1',
+        _exportId: 'e1',
+        _importId: 'i1',
+        p1: 1,
+        p2: 2,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f4',
+        pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f5',
+        pageProcessors: [
+          { _exportId: 'e1', type: 'export' },
+          { _importId: 'i1', type: 'import' },
+          { _exportId: 'e2', type: 'export' },
+        ],
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f6',
+        pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+        pageProcessors: [
+          { _exportId: 'e3', type: 'export' },
+          { _importId: 'i1', type: 'import' },
+          { _exportId: 'e4', type: 'export' },
+          { _importId: 'i2', type: 'import' },
+        ],
+        _integrationId: 'i1',
+      },
+    ];
+    const exports = [{
+      _id: 'e1',
+      name: 'e1',
+      _connectionId: 'c1',
+    },
+    {
+      _id: 'e2',
+      name: 'e2',
+      _connectionId: 'c2',
+    }, {
+      _id: 'e3',
+      name: 'e3',
+      _connectionId: 'c3',
+    }];
+    const imports = [{
+      _id: 'i1',
+      name: 'i1',
+      _connectionId: 'c1',
+    }, {
+      _id: 'i2',
+      name: 'i2',
+      _connectionId: 'c4',
+    }];
+
+    test('should return correct object if flows are not present in state', () => {
+      const flowId = 'f1';
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              exports,
+              imports,
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowResources();
+
+      expect(selector(state, flowId)).toEqual([{_id: 'f1', name: 'Flow-level'}]);
+    });
+    test('should Really eturn return correct object for a given state', () => {
+      const flowId = 'f6';
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              flows,
+              exports,
+              imports,
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowResources();
+
+      expect(selector(state, flowId)).toEqual(
+        [
+          {_id: 'f6', name: 'Flow-level'},
+          {_id: 'e1', name: 'e1', type: 'exports'},
+          {_id: 'e2', name: 'e2', type: 'exports'},
+          {_id: 'e3', name: 'e3', isLookup: true, type: 'exports'},
+          {_id: 'i1', name: 'i1', type: 'imports'},
+          {_id: 'i2', name: 'i2', type: 'imports'},
+        ]);
+    });
+  });
+
+  describe('selectors.mkFlowResources test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector()).toEqual([]);
+    });
+
+    const flows = [
+      {
+        _id: 'f1',
+        _exportId: 'e1',
+        _importId: 'i1',
+        p1: 1,
+        p2: 2,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f4',
+        pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f5',
+        pageProcessors: [
+          { _exportId: 'e1', type: 'export' },
+          { _importId: 'i1', type: 'import' },
+          { _exportId: 'e2', type: 'export' },
+        ],
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'f6',
+        pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+        pageProcessors: [
+          { _exportId: 'e3', type: 'export' },
+          { _importId: 'i1', type: 'import' },
+          { _exportId: 'e4', type: 'export' },
+          { _importId: 'i2', type: 'import' },
+        ],
+        _integrationId: 'i1',
+      },
+    ];
+    const exports = [{
+      _id: 'e1',
+      name: 'e1',
+      _connectionId: 'c1',
+    },
+    {
+      _id: 'e2',
+      name: 'e2',
+      _connectionId: 'c2',
+    }, {
+      _id: 'e3',
+      name: 'e3',
+      _connectionId: 'c3',
+    }];
+    const imports = [{
+      _id: 'i1',
+      name: 'i1',
+      _connectionId: 'c1',
+    }, {
+      _id: 'i2',
+      name: 'i2',
+      _connectionId: 'c4',
+    }];
+
+    test('should return empty list if there are no steps for the passed flow', () => {
+      const flowId = 'f1';
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              exports,
+              imports,
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector(state, flowId)).toEqual([]);
+    });
+    test('should return expected error steps for the passed flow with corresponding open error info ', () => {
+      const flowId = 'f6';
+      const integrationId = 'i1';
+      const lastErrorAt = new Date().toISOString();
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              flows,
+              exports,
+              imports,
+            },
+          },
+
+          session: {
+            errorManagement: {
+              openErrors: {
+                [flowId]: {
+                  status: 'received',
+                  data: {
+                    e1: { _expOrImpId: 'e1', numError: 10, lastErrorAt },
+                    e2: { _expOrImpId: 'e2', numError: 20 },
+                    e3: { _expOrImpId: 'e3', numError: 30, lastErrorAt },
+                    i1: { _expOrImpId: 'i1', numError: 10 },
+                    i2: { _expOrImpId: 'i2', numError: 20 },
+                  },
+                },
+              },
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector(state, flowId, integrationId)).toEqual(
+        [
+          {id: 'e1', name: 'e1', integrationId, flowId, type: 'exports', count: 10, lastErrorAt },
+          {id: 'e2', name: 'e2', integrationId, flowId, type: 'exports', count: 20 },
+          {id: 'e3', name: 'e3', isLookup: true, integrationId, flowId, type: 'exports', count: 30, lastErrorAt },
+          {id: 'i1', name: 'i1', integrationId, flowId, type: 'imports', count: 10 },
+          {id: 'i2', name: 'i2', integrationId, flowId, type: 'imports', count: 20 },
+        ]);
+    });
+    test('should return expected error steps for the passed flow with corresponding open error info sorted by lastErrorAt', () => {
+      const flowId = 'f6';
+      const integrationId = 'i1';
+      const lastErrorAt = new Date().toISOString();
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              flows,
+              exports,
+              imports,
+            },
+          },
+
+          session: {
+            errorManagement: {
+              openErrors: {
+                [flowId]: {
+                  status: 'received',
+                  data: {
+                    e1: { _expOrImpId: 'e1', numError: 10, lastErrorAt },
+                    e2: { _expOrImpId: 'e2', numError: 20 },
+                    e3: { _expOrImpId: 'e3', numError: 30, lastErrorAt },
+                    i1: { _expOrImpId: 'i1', numError: 10 },
+                    i2: { _expOrImpId: 'i2', numError: 20 },
+                  },
+                },
+              },
+            },
+            filters: {
+              errorsList: {
+                sort: {
+                  order: 'desc',
+                  orderBy: 'lastErrorAt',
+                },
+              },
+            },
+          },
+        },
+        'some-action',
+      );
+      const selector = selectors.mkFlowStepsErrorInfo();
+
+      expect(selector(state, flowId, integrationId, undefined, 'errorsList')).toEqual(
+        [
+          {id: 'e1', name: 'e1', integrationId, flowId, type: 'exports', count: 10, lastErrorAt },
+          {id: 'e3', name: 'e3', isLookup: true, integrationId, flowId, type: 'exports', count: 30, lastErrorAt },
+          {id: 'e2', name: 'e2', integrationId, flowId, type: 'exports', count: 20 },
+          {id: 'i1', name: 'i1', integrationId, flowId, type: 'imports', count: 10 },
+          {id: 'i2', name: 'i2', integrationId, flowId, type: 'imports', count: 20 },
+        ]);
     });
   });
 
@@ -4115,6 +4524,11 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.mkDIYIntegrationFlowList test cases', () => {
+    const sortProperties = {
+      lastExecutedAtSort: undefined,
+      lastExecutedAtSortType: 'date',
+    };
+
     test('should not throw any exception for bad params', () => {
       const selector = selectors.mkDIYIntegrationFlowList();
 
@@ -4134,22 +4548,40 @@ describe('resource region selector testcases', () => {
                 integrationId1: {
                   status: 'received',
                   data: {
-                    flow2: 2,
-                    flow6: 1,
-                    flow7: 0,
+                    flow2: {
+                      flowId: 'flow2',
+                      numError: 2,
+                    },
+                    flow6: {
+                      flowId: 'flow6',
+                      numError: 1,
+                    },
+                    flow7: {
+                      flowId: 'flow7',
+                      numError: 0,
+                    },
                   },
                 },
                 integrationId2: {
                   status: 'received',
                   data: {
-                    flow3: 23,
+                    flow3: {
+                      flowId: 'flow3',
+                      numError: 23,
+                    },
                   },
                 },
                 integrationId3: {
                   status: 'received',
                   data: {
-                    flow4: 213,
-                    flow5: 32,
+                    flow4: {
+                      flowId: 'flow4',
+                      numError: 213,
+                    },
+                    flow5: {
+                      flowId: 'flow5',
+                      numError: 32,
+                    },
                   },
                 },
               },
@@ -4217,6 +4649,7 @@ describe('resource region selector testcases', () => {
 
       test('should return correct flow list for standalone integration', () => {
         expect(selector(state, 'none')).toEqual([{
+          ...sortProperties,
           name: 'flow name 1',
           errors: 0,
           _id: 'flow1',
@@ -4224,25 +4657,33 @@ describe('resource region selector testcases', () => {
       });
       test('should return correct flow list for standalone integration for sandbox environment', () => {
         expect(selector({...state, user: {preferences: { environment: 'sandbox'}}})).toEqual([
-          {name: 'flow name 1 sandbox', _id: 'flow1sb', sandbox: true, errors: 0},
+          {
+            ...sortProperties,
+            name: 'flow name 1 sandbox',
+            _id: 'flow1sb',
+            sandbox: true,
+            errors: 0},
         ]);
       });
 
       test('should return correct flow list for a diy integration in default order', () => {
         expect(selector(state, 'integrationId1')).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
             _id: 'flow2',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
@@ -4252,20 +4693,23 @@ describe('resource region selector testcases', () => {
       });
 
       test('should return correct flow list for a diy integration in sorted order', () => {
-        expect(selector(state, 'integrationId1', null, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
+        expect(selector(state, 'integrationId1', null, false, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
             _id: 'flow7',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
@@ -4273,20 +4717,23 @@ describe('resource region selector testcases', () => {
           },
         ]);
 
-        expect(selector(state, 'integrationId1', null, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
+        expect(selector(state, 'integrationId1', null, false, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
           {
+            ...sortProperties,
             name: 'flow name 2',
             _integrationId: 'integrationId1',
             errors: 2,
             _id: 'flow2',
           },
           {
+            ...sortProperties,
             name: 'flow name 6',
             _integrationId: 'integrationId1',
             errors: 1,
             _id: 'flow6',
           },
           {
+            ...sortProperties,
             name: 'flow name 7',
             _integrationId: 'integrationId1',
             errors: 0,
@@ -5043,6 +5490,45 @@ describe('resource region selector testcases', () => {
           title: 'Miscellaneous',
         },
       ]);
+    });
+  });
+
+  describe('selectors.getResourceType saga', () => {
+    const state = {
+      session: {
+        resource: {
+          'res-id1': 'temp-id1',
+          'res-id2': 'temp-id2',
+        },
+      },
+      data: {
+        resources: {
+          imports: [{
+            name: 'import name 1',
+            _id: 'import1',
+          }, {
+            name: 'import name 2',
+            _id: 'temp-id1',
+          }],
+          exports: [{
+            name: 'export name 1',
+            _id: 'temp-id2',
+          }],
+        },
+      },
+    };
+
+    test('should return exports if passed resource type is pageGenerator', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageGenerator', resourceId: 'res-123' })).toEqual('exports');
+    });
+    test('should return imports if passed resource type is pageProcessor and an import resource exists with that id', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id1' })).toEqual('imports');
+    });
+    test('should return exports if passed resource type is pageProcessor and no import resource exists with that id', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id2' })).toEqual('exports');
+    });
+    test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => {
+      expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toEqual('imports');
     });
   });
 });

@@ -11,6 +11,7 @@ import {
   Typography,
   Link,
 } from '@material-ui/core';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -69,6 +70,15 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }));
+
+const oAuthApplications = [
+  ...resourceConstants.OAUTH_APPLICATIONS,
+  'netsuite-oauth',
+  'shopify-oauth',
+  'acumatica-oauth',
+  'hubspot-oauth',
+  'amazonmws-oauth',
+];
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -176,6 +186,14 @@ export default function ConnectorInstallation(props) {
 
   const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
 
+  // init the install for IA2.0 to get updated installSteps
+  useEffect(() => {
+    if (isFrameWork2) {
+      dispatch(actions.integrationApp.installer.init(integrationId));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (redirectTo) {
       history.push(getRoutePath(redirectTo));
@@ -196,17 +214,6 @@ export default function ConnectorInstallation(props) {
       }
     }
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
-
-  const oAuthApplications = useMemo(
-    () => [
-      ...resourceConstants.OAUTH_APPLICATIONS,
-      'netsuite-oauth',
-      'shopify-oauth',
-      'acumatica-oauth',
-      'hubspot-oauth',
-    ],
-    []
-  );
 
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
@@ -255,7 +262,6 @@ export default function ConnectorInstallation(props) {
       installSteps,
       integrationId,
       isFrameWork2,
-      oAuthApplications,
       selectedConnectionType,
     ]
   );
@@ -339,7 +345,7 @@ export default function ConnectorInstallation(props) {
 
             // for old cloned IAs, uninstall should happen the old way
             if (isFrameWork2 && !isCloned) {
-              const {url} = match;
+              const { url } = match;
               const urlExtractFields = url.split('/');
               const index = urlExtractFields.findIndex(
                 element => element === 'child'
@@ -384,6 +390,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
       completed,
       url,
+      form,
     } = step;
 
     if (completed) {
@@ -476,6 +483,13 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (type === 'stack') {
       if (!stackId) setShowStackDialog(generateNewId());
+    } else if (!isEmpty(form)) {
+      dispatch(actions.integrationApp.installer.updateStep(
+        integrationId,
+        installerFunction,
+        'inProgress',
+        form
+      ));
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -508,7 +522,7 @@ export default function ConnectorInstallation(props) {
 
   const handleHelpUrlClick = e => {
     e.preventDefault();
-    openExternalUrl({url: helpUrl});
+    openExternalUrl({ url: helpUrl });
   };
 
   return (
@@ -564,7 +578,10 @@ export default function ConnectorInstallation(props) {
             resourceId={connection.newId}
             resource={connection.doc}
             resourceType="connections"
-            connectionType={connection.doc.type}
+            // eslint-disable-next-line no-nested-ternary
+            connectionType={connection.doc.type === 'http'
+              ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
+              : connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
             addOrSelect={!_connectorId}
@@ -583,6 +600,7 @@ export default function ConnectorInstallation(props) {
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
+          installerFunction={currentStep.installerFunction}
           title={currentStep.name}
           index={currStepIndex + 1}
         />
@@ -592,10 +610,11 @@ export default function ConnectorInstallation(props) {
           {helpUrl ? (
             <RawHtml
               className={classes.message}
-              html={` Complete the below steps to install your ${_connectorId ? 'integration app' : 'template'}.<br /> 
+              options={{ allowedHtmlTags: ['a', 'br'] }}
+              html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (
-            <Typography className={classes.message}>{`Complete the below steps to install your ${_connectorId ? 'integration app' : 'template'}.`}</Typography>
+            <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (

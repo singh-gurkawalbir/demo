@@ -1,13 +1,11 @@
 import isEqual from 'lodash/isEqual';
-import React, { useMemo, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useRouteMatch, useHistory, Redirect, Switch, Route } from 'react-router-dom';
 import {selectors} from '../../../reducers';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
@@ -15,11 +13,15 @@ import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
-import ButtonGroup from '../../ButtonGroup';
 import EditorDrawer from '../../AFE/Drawer';
+import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
+import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import useFormOnCancelContext from '../../FormOnCancelContext';
 
 const emptySet = [];
 const emptyObject = {};
+
+const formKey = 'mappingSettings';
 
 /**
  * disabled property set to true in case of monitor level access
@@ -134,9 +136,7 @@ function MappingSettings({
     } else {
       dispatch(actions.mapping.patchSettings(mappingKey, settings));
     }
-
-    handleClose();
-  }, [dispatch, editorId, flowId, handleClose, integrationId, isCategoryMapping, mappingKey]);
+  }, [dispatch, editorId, flowId, integrationId, isCategoryMapping, mappingKey]);
 
   const handleLookupUpdate = useCallback((oldLookup, newLookup) => {
     if (oldLookup && newLookup) {
@@ -161,8 +161,10 @@ function MappingSettings({
       dispatch(actions.mapping.updateLookup({oldValue: oldLookup, newValue: newLookup, isConditionalLookup: false}));
     }
   }, [dispatch, editorId, flowId, integrationId, isCategoryMapping]);
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const [count, setCount] = useState(0);
   const handleSubmit = useCallback(
-    formVal => {
+    closeAfterSave => {
       const oldLookupValue = lookupName && lookups.find(lookup => lookup.name === lookupName);
       const {
         settings,
@@ -183,12 +185,18 @@ function MappingSettings({
       }
       handleLookupUpdate(oldLookupValue, updatedLookup);
       patchSettings(settings);
+      if (closeAfterSave) {
+        return;
+      }
+      setCount(count => count + 1);
     },
-    [enquesnackbar, extract, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
+    [enquesnackbar, extract, formVal, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
   );
 
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
+    formKey,
     disabled,
+    remount: count,
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
@@ -200,22 +208,13 @@ function MappingSettings({
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
-          <DynaSubmit
-            formKey={formKey}
-            disabled={disableSave}
-            id="fieldMappingSettingsSave"
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test="fieldMappingSettingsCancel"
-            onClick={handleClose}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </ButtonGroup>
+        <SaveAndCloseResourceForm
+          formKey={formKey}
+          onClose={handleClose}
+          onSave={handleSubmit}
+          status={FORM_SAVE_STATUS.COMPLETE}
+          disabled={disableSave}
+        />
       </DrawerFooter>
     </>
   );
@@ -271,12 +270,14 @@ function CategoryMappingSettingsWrapper(props) {
 }
 export default function SettingsDrawer(props) {
   const match = useRouteMatch();
+  const {setCancelTriggered} = useFormOnCancelContext(formKey);
 
   return (
     <RightDrawer
       hideBackButton
       variant="temporary"
       disableBackdropClick
+      onClose={setCancelTriggered}
       path={[
         'settings/:mappingKey',
         'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',

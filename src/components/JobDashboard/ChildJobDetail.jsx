@@ -4,7 +4,7 @@ import TableCell from '@material-ui/core/TableCell';
 import { makeStyles } from '@material-ui/core/styles';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-import { getPages, getSuccess } from './util';
+import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
 import { JOB_STATUS } from '../../utils/constants';

@@ -7,11 +7,37 @@ describe('aunthentication region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isAuthenticated()).toBe(false);
     });
+    test('should return true if authentication is complete', () => {
+      const initializedState = reducer(undefined, { type: null });
+      const state = reducer(initializedState, actions.auth.complete());
+
+      expect(selectors.isAuthenticated(state)).toBe(true);
+    });
+    test('should return false if the app is being authenticated or authentication failed', () => {
+      const initializedState = reducer(undefined, { type: null });
+      const state1 = reducer(initializedState, actions.auth.request());
+
+      expect(selectors.isAuthenticated(state1)).toBe(false);
+      const state2 = reducer(state1, actions.auth.failure());
+
+      expect(selectors.isAuthenticated(state2)).toBe(false);
+    });
   });
 
   describe('selectors.isDefaultAccountSet test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isDefaultAccountSet(false)).toBe(false);
+    });
+    test('should return true if defaultAccount is set in any other case is false', () => {
+      const initializedState = reducer(undefined, { type: null });
+
+      expect(selectors.isDefaultAccountSet(initializedState)).toBe(false);
+      const state1 = reducer(initializedState, actions.auth.complete());
+
+      expect(selectors.isDefaultAccountSet(initializedState)).toBe(false);
+      const state2 = reducer(state1, actions.auth.defaultAccountSet());
+
+      expect(selectors.isDefaultAccountSet(state2)).toBe(true);
     });
   });
 
@@ -54,11 +80,39 @@ describe('aunthentication region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isUserLoggedInDifferentTab()).toBe(false);
     });
+    test('should return true when already authenticated user tries to open app in different tab', () => {
+      const initializedState = reducer(undefined, { type: null });
+      const state1 = reducer(initializedState, actions.auth.complete());
+
+      expect(selectors.isUserLoggedInDifferentTab(state1)).toBe(false);
+
+      const state2 = reducer(state1, actions.auth.userAlreadyLoggedIn());
+
+      expect(selectors.isUserLoggedInDifferentTab(state2)).toBe(true);
+    });
   });
 
   describe('selectors.authenticationErrored test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.authenticationErrored(undefined, {})).toEqual();
+    });
+    test('should return true', () => {
+      const state = {
+        auth: {
+          failure: true,
+        },
+      };
+
+      expect(selectors.authenticationErrored(state)).toEqual(true);
+    });
+    test('should return false', () => {
+      const state = {
+        auth: {
+          failure: false,
+        },
+      };
+
+      expect(selectors.authenticationErrored(state)).toEqual(false);
     });
   });
 
@@ -80,6 +134,24 @@ describe('aunthentication region selector testcases', () => {
   describe('selectors.isDefaultAccountSetAfterAuth test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isDefaultAccountSetAfterAuth(undefined, {})).toEqual(true);
+    });
+
+    const authStateLoading = reducer(undefined, actions.auth.request());
+
+    test('should return false if the app is being authenticated', () => {
+      expect(selectors.isDefaultAccountSetAfterAuth(authStateLoading)).toEqual(false);
+    });
+
+    const authStateSucceeded = reducer(authStateLoading, actions.auth.complete());
+
+    test('should return false if app is authenticated and default account is not set', () => {
+      expect(selectors.isDefaultAccountSetAfterAuth(authStateSucceeded)).toEqual(false);
+    });
+
+    const defaultAccountSetState = reducer(authStateSucceeded, actions.auth.defaultAccountSet());
+
+    test('should return true if app is authenticated and default account is set', () => {
+      expect(selectors.isDefaultAccountSetAfterAuth(defaultAccountSetState)).toEqual(true);
     });
   });
 
@@ -172,11 +244,32 @@ describe('aunthentication region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isSessionExpired(undefined, {})).toEqual(false);
     });
+
+    test('should return true only if the user is already authenticated and the app fails otherwise it is false', () => {
+      const authStateLoading = reducer(undefined, actions.auth.request());
+
+      expect(selectors.isSessionExpired(authStateLoading)).toEqual(false);
+
+      const authStateSucceeded = reducer(authStateLoading, actions.auth.complete());
+
+      expect(selectors.isSessionExpired(authStateSucceeded)).toEqual(false);
+      const authStateFailed = reducer(authStateSucceeded, actions.auth.failure());
+
+      expect(selectors.isSessionExpired(authStateFailed)).toEqual(true);
+    });
   });
 
   describe('selectors.sessionValidTimestamp test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.sessionValidTimestamp()).toEqual();
+      expect(selectors.sessionValidTimestamp()).toBeUndefined();
+    });
+    test('should return false when there the authTimeStamp is not updated in state', () => {
+      expect(selectors.sessionValidTimestamp({})).toBeUndefined();
+    });
+    test('should return true when authTimeStamp is updated', () => {
+      const state = reducer(undefined, actions.auth.sessionTimestamp());
+
+      expect(selectors.sessionValidTimestamp(state)).toEqual(state.auth.authTimestamp);
     });
   });
 });

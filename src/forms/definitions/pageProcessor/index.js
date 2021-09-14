@@ -42,15 +42,16 @@ export default {
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
-    // If there is no assistant for the import, we need to show generic adaptor form
-    // we are patching useTechAdaptorForm field to not to show default assistant form
-    if ((!app.import && !app.export) && app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
-      newValues['/useTechAdaptorForm'] = true;
-    }
 
     // On creation of a new page processor lookup,  isLookup is set true
     if (['lookupRecords', 'lookupFiles'].indexOf(resourceType) >= 0) {
       newValues['/isLookup'] = true;
+    }
+
+    // If there is no assistant for the import, we need to show generic adaptor form
+    // we are patching useTechAdaptorForm field to not to show default assistant form
+    if (app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
+      if ((newValues['/isLookup'] && !app.export) || (!newValues['/isLookup'] && !app.import)) { newValues['/useTechAdaptorForm'] = true; }
     }
 
     return newValues;
@@ -180,6 +181,11 @@ export default {
 
       if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
+      } else if (app.type === 'rest') {
+        expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+      } else if (app.type === 'http') {
+        expression.push({ 'http.formType': { $ne: 'rest' } });
+        expression.push({ type: app.type });
       } else {
         expression.push({ type: app.type });
       }
@@ -226,9 +232,25 @@ export default {
         }
       }
 
-      expression.push({
-        adaptorType,
-      });
+      if (app.type === 'rest') {
+        expression.push({
+          $or: [
+            { adaptorType: `REST${adaptorTypeSuffix}` },
+            { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'rest' }] },
+          ],
+        });
+      } else if (app.type === 'http') {
+        expression.push({
+          adaptorType,
+        });
+        expression.push({
+          'http.formType': { $ne: 'rest' },
+        });
+      } else {
+        expression.push({
+          adaptorType,
+        });
+      }
 
       if (connectionField.value) {
         expression.push({ _connectionId: connectionField.value });

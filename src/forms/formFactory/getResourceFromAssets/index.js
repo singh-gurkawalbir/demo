@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
 import { getResourceSubType, isNewId } from '../../../utils/resource';
 
 const getAllOptionsHandlerSubForms = (
@@ -195,6 +195,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 
         meta = formMeta.connections.salesforce;
+      } else if (resource && resource.assistant === 'authorize.net') {
+        meta = formMeta.connections.custom.http['authorize.net'];
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
@@ -217,6 +219,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         meta = formMeta.connections.rdbms[rdbmsSubType];
       } else if (RDBMS_TYPES.includes(type)) {
         meta = formMeta.connections.rdbms[type];
+      } else if (resource?.http?.formType === 'rest' && type === 'http') {
+        meta = formMeta.connections.rest;
       } else {
         meta = formMeta.connections[type];
       }
@@ -248,8 +252,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.rdbms.sql;
           }
-        } else if (resource.assistant === 'googledrive') {
-          meta = meta.googledrive;
+        } else if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
+          // Common metadata for both the file providers googledrive and azurestorageaccount
+          meta = meta.commonfileprovider;
         } else if (
           resource &&
             (resource.useParentForm !== undefined
@@ -261,6 +266,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             resource,
             assistantData
           );
+        } else if (resource?.http?.formType === 'rest' && type === 'http') {
+          meta = meta.rest;
         } else {
           meta = meta[type];
         }
@@ -290,8 +297,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         ) {
           // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
           meta = meta.salesforce;
-        } else if (resource.assistant === 'googledrive') {
-          meta = meta.googledrive;
+        } else if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
+          // Common metadata for both the file providers googledrive and azurestorageaccount
+          meta = meta.commonfileprovider;
         } else if (
           resource && resource.assistant !== 'openair' &&
             (resource.useParentForm !== undefined
@@ -303,12 +311,10 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             resource,
             assistantData
           );
-        } else if (type === 'rest') {
-          const { mediaType } = (connection && connection[type]) || {};
+        } else if (type === 'rest' || (type === 'http' && resource?.http?.formType === 'rest')) {
+          meta = meta.rest;
 
-          meta = meta[type];
-
-          if (mediaType === 'csv') {
+          if (connection?.http?.successMediaType === 'csv' || connection?.rest?.mediaType === 'csv') {
             meta = meta.csv;
           } else {
             meta = meta.json;

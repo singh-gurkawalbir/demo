@@ -7,21 +7,19 @@ import { selectors } from '../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
-  getPatchPathForCustomForms,
-  getFieldWithReferenceById,
 } from '../../forms/formFactory/utils';
-import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
-import { getResource, commitStagedChanges } from '../resources';
-import connectionSagas, { createPayload } from './connections';
+import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
+import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/constants';
-import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
+import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
-import getFieldsWithoutFuncs from '../../forms/formFactory/getFieldsWithoutFuncs';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { getAssistantConnectorType } from '../../constants/applications';
 
 export const SCOPES = {
   META: 'meta',
@@ -30,99 +28,6 @@ export const SCOPES = {
 };
 
 Object.freeze(SCOPES);
-
-export function* patchFormField({
-  resourceType,
-  resourceId,
-  fieldId,
-  value,
-  op = 'replace',
-  offset = 0,
-}) {
-  const { merged } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
-
-  if (!merged) return; // nothing to do.
-
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return; // nothing to do
-
-  const path = getPatchPathForCustomForms(meta, fieldId, offset);
-  // we try to get the corresponding fieldReference for the field so that we can patch fieldReference
-  const { fieldReference } = getFieldWithReferenceById({
-    meta,
-    id: fieldId,
-  });
-
-  if (!path) return; // nothing to do.
-  let patchFieldReference = [];
-  let patchLayout = [];
-
-  // patch the entire value into the fieldReference
-  if (op === 'add') {
-    // when adding a new field reference use field Id to generate the name of the field reference
-    patchFieldReference = [
-      {
-        op,
-        path: `/customForm/form/fieldMap/${value && value.id}`,
-        value,
-      },
-    ];
-    patchLayout = [{ op, path, value: value && value.id }];
-  } else {
-    patchFieldReference = [
-      { op, path: `/customForm/form/fieldMap/${fieldReference}`, value },
-    ];
-  }
-
-  // patch layout field with the reference
-  const patchSet = [...patchFieldReference, ...patchLayout];
-
-  // Apply the new patch to the session
-  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
-}
-
-export function* runHook({ hook, data }) {
-  const { entryFunction, scriptId } = hook;
-  const { merged } = yield select(selectors.resourceData, 'scripts', scriptId);
-
-  // okay extracting script from the session
-  // if it isn't there, make a call to receive the resource
-  // Aren't we loading all the scripts?
-  if (!merged) return; // nothing to do.
-
-  let code = merged.content;
-
-  if (code === undefined) {
-    const origin = yield call(getResource, {
-      resourceType: 'scripts',
-      id: scriptId,
-      message: `Loading ${merged.name} script content.`,
-    });
-
-    yield put(actions.resource.received('scripts', origin));
-    code = origin.content;
-  }
-
-  const path = '/processors/javascript';
-  const opts = {
-    method: 'post',
-    body: processorLogic.requestBody({
-      data,
-      rule: {code,
-        entryFunction,
-      },
-    }),
-  };
-  const results = yield call(apiCallWithRetry, { path, opts });
-
-  return yield results.data;
-}
-
 export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
@@ -144,43 +49,32 @@ export function* createFormValuesPatchSet({
     resourceType,
     resourceId
   );
-  const { customForm } = resource;
   let finalValues = values;
 
-  if (customForm && customForm.preSave) {
-    // pre-save-resource
-    // this resource has an embedded custom form.
+  let connection;
 
-    finalValues = yield call(runHook, {
-      hook: customForm.preSave,
-      data: values,
-    });
-  } else {
-    let connection;
+  if (resource?._connectionId) {
+    connection = yield select(
+      selectors.resource,
+      'connections',
+      resource._connectionId
+    );
+  }
 
-    if (resource && resource._connectionId) {
-      connection = yield select(
-        selectors.resource,
-        'connections',
-        resource._connectionId
-      );
-    }
+  const { preSave } = getResourceFormAssets({
+    resourceType,
+    resource,
+    connection,
+    isNew: formState.isNew,
+  });
 
-    const { preSave } = getResourceFormAssets({
-      resourceType,
-      resource,
-      connection,
-      isNew: formState.isNew,
+  if (typeof preSave === 'function') {
+    const iClients = yield select(selectors.resourceList, {
+      type: 'iClients',
     });
 
-    if (typeof preSave === 'function') {
-      const iClients = yield select(selectors.resourceList, {
-        type: 'iClients',
-      });
-
-      // stock preSave handler present...
-      finalValues = preSave(values, resource, {iClients});
-    }
+    // stock preSave handler present...
+    finalValues = preSave(values, resource, {iClients, connection});
   }
 
   const patchSet = sanitizePatchSet({
@@ -188,8 +82,6 @@ export function* createFormValuesPatchSet({
     fieldMeta: formState.fieldMeta,
     resource,
   });
-
-  // console.log('patch set', patchSet);
 
   return { patchSet, finalValues };
 }
@@ -206,35 +98,44 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     return values;
   }
 
-  // 'rawFile' stage gives back the file content as well as file type
   const { data: rawData } = yield select(
     selectors.getResourceSampleDataWithStatus,
     resourceId,
-    'rawFile'
+    'raw'
   );
 
   if (!rawData) return values;
   // Gets application file type to be passed on file upload
-  const fileType = fileTypeToApplicationTypeMap[rawData.type];
+  const uploadedFileType = values['/file/type'];
+  const fileType = fileTypeToApplicationTypeMap[uploadedFileType];
   // Incase of JSON, we need to stringify the content to pass while uploading
-  const fileContent =
-    rawData.type === 'json' ? JSON.stringify(rawData.body) : rawData.body;
+  const fileContent = uploadedFileType === 'json' ? JSON.stringify(rawData) : rawData;
   const rawDataKey = yield call(uploadRawData, {
     file: fileContent,
-    fileName: `file.${rawData.type}`,
+    fileName: `file.${uploadedFileType}`,
     fileType,
   });
 
   return { ...values, '/rawData': rawDataKey };
 }
 
-function* deleteUISpecificValues({ values, resourceId }) {
+export function* deleteUISpecificValues({ values, resourceId }) {
   const valuesCopy = { ...values };
 
   UI_FIELD_VALUES.forEach(id => {
     // remove ui field value from the form value payload
     delete valuesCopy[id];
   });
+
+  // TO DO: This logic should be revisited
+  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+    if (valuesCopy['/file/csv']?.keyColumns) {
+      valuesCopy['/file/csv'].keyColumns = undefined;
+    }
+  }
+  if (valuesCopy['/file/xlsx/keyColumns']) {
+    valuesCopy['/file/xlsx/keyColumns'] = undefined;
+  }
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);
@@ -244,10 +145,10 @@ function* deleteUISpecificValues({ values, resourceId }) {
   return valuesCopy;
 }
 
-const removeParentFormPatch = [{ op: 'remove', path: '/useParentForm' }];
-const removeAssistantPatch = [{ op: 'remove', path: '/assistant' }];
+export function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
+  const removeParentFormPatch = [{ op: 'remove', path: '/useParentForm' }];
+  const removeAssistantPatch = [{ op: 'remove', path: '/assistant' }];
 
-function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
@@ -255,7 +156,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
     SCOPES.VALUE
   );
 
-  if (resource && resource.useParentForm) {
+  if (resource?.useParentForm) {
     yield put(
       actions.resource.patchStaged(
         resourceId,
@@ -305,15 +206,16 @@ export function* submitFormValues({
   resourceId,
   values,
   match,
+  parentContext,
 }) {
   let formValues = { ...values };
-  const isNewIA = yield call(newIAFrameWorkPayload, {
+  const isNewIAPayload = yield call(newIAFrameWorkPayload, {
     resourceId,
   });
 
-  if (isNewIA?.installStepConnection) {
+  if (isNewIAPayload?.installStepConnection) {
     // UI will not create a connection in New IA installer. Connection payload will be given to backend.
-    // Backend will create a connection and connection id will get back in reponse.
+    // Backend will create a connection and connection id will get back in response.
     const connectionPayload = yield call(createPayload, {
       values,
       resourceType: 'connections',
@@ -364,9 +266,7 @@ export function* submitFormValues({
       scope: SCOPES.VALUE,
     }));
   } catch (e) {
-    return yield put(
-      actions.resourceForm.submitFailed(resourceType, resourceId)
-    );
+    return yield put(actions.resourceForm.submitFailed(resourceType, resourceId));
   }
   if (patchSet && patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
@@ -379,11 +279,11 @@ export function* submitFormValues({
   );
 
   if (skipCommit) {
-    const resourceIdPatch = patchSet.find(
+    const resourceIdPatch = patchSet?.find(
       p => p.op === 'replace' && p.path === '/resourceId'
     );
 
-    if (resourceIdPatch && resourceIdPatch.value) {
+    if (resourceIdPatch?.value) {
       yield put(actions.resource.created(resourceIdPatch.value, resourceId));
     }
 
@@ -407,8 +307,7 @@ export function* submitFormValues({
   if (resourceType === 'connectorLicenses') {
     // construct url for licenses
     const connectorUrlStr = match.url.indexOf('/connectors/edit/connectors/') >= 0 ? '/connectors/edit/connectors/' : '/connectors/';
-    const startIndex =
-      match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
+    const startIndex = match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
 
     if (startIndex !== -1) {
       const connectorId = match.url.substring(
@@ -431,14 +330,16 @@ export function* submitFormValues({
     type = `integrations/${integrationIdPatch.value}/${resourceType}`;
   }
 
-  if (patch && patch.length) {
+  if (patch?.length) {
     // no context = {flowId} sent on purpose for the resource forms
     // on resource submit complete updateFlowDoc will be called anyway
     // sending context = {flowId} will trigger updateFlowDoc again
-    const resp = yield call(commitStagedChanges, {
+    const resp = yield call(commitStagedChangesWrapper, {
       resourceType: type,
       id: resourceId,
       scope: SCOPES.VALUE,
+      asyncKey: getAsyncKey(type, resourceId),
+      parentContext,
     });
 
     if (resp && (resp.error || resp.conflict)) {
@@ -464,15 +365,15 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     !flowId) return [];
 
   // is pageGenerator or pageProcessor
-  const { merged: flowDoc, master: origFlowDoc } = yield select(
+  const { merged: flowDoc, master: origFlowDoc } = (yield select(
     selectors.resourceData,
     'flows',
     flowId
-  );
+  )) || emptyObject;
+
   // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
   // this was specifically created to support webhooks where in generating url we have to create a new PG...
-
   if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
     return [];
   }
@@ -538,8 +439,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       }
     }
   } else {
-    // imports resourcetype
-
+    // imports resource type
     flowPatches = [
       {
         op: pending ? 'replace' : 'add',
@@ -550,7 +450,6 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   }
 
   // only one flow patch so
-
   let missingPatches = [];
 
   if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators) {
@@ -584,28 +483,20 @@ export function* skipRetriesPatches(
   skipRetries
 ) {
   if (resourceType !== 'exports') return null;
+
   const createdId = yield select(selectors.createdResourceId, resourceId);
-  const createdResource = yield select(
-    selectors.resource,
-    resourceType,
-    createdId || resourceId
-  );
+  const resId = createdId || resourceId;
+
+  const createdResource = yield select(selectors.resource, resourceType, resId);
+
   // if the export is a lookup then no patches should be applied
+  if (createdResource?.isLookup) return [];
 
-  if (createdResource.isLookup) return [];
+  const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged || emptyObject;
 
-  const flow = (yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  ))?.merged || emptyObject;
-  const index =
-    flow.pageGenerators &&
-    flow.pageGenerators.findIndex(
-      pg => pg._exportId === (createdId || resourceId)
-    );
+  const index = flow.pageGenerators?.findIndex(pg => pg._exportId === resId);
 
-  if (index === null || index === -1) {
+  if (index === undefined || index === null || index === -1) {
     return [];
   }
   // if its same value no point patching...return
@@ -613,8 +504,7 @@ export function* skipRetriesPatches(
     return [];
   }
 
-  const opDetermination =
-    flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
+  const opDetermination = flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
 
   return [
     {
@@ -623,26 +513,6 @@ export function* skipRetriesPatches(
       value: skipRetries,
     },
   ];
-}
-
-function* getResourceType({ resourceType, resourceId }) {
-  let updatedResourceType;
-
-  if (resourceType === 'pageGenerator') updatedResourceType = 'exports';
-  else if (resourceType === 'pageProcessor') {
-    const createdId = yield select(selectors.createdResourceId, resourceId);
-    const importResource = yield select(
-      selectors.resource,
-      'imports',
-      createdId
-    );
-
-    // it should be either an export or an import
-    if (importResource) updatedResourceType = 'imports';
-    else updatedResourceType = 'exports';
-  } else updatedResourceType = resourceType;
-
-  return updatedResourceType;
 }
 
 export function* touchFlow(flowId, resourceType, resourceId) {
@@ -656,6 +526,7 @@ export function* touchFlow(flowId, resourceType, resourceId) {
       path: '/lastModified',
       value: r.lastModified,
     });
+    // TODO: remove the hack and use flowLastModifiedPatch
     // this is a hack, the backend will need to enhance the audit log generation
     // https://celigo.atlassian.net/browse/IO-15873
     // until then, without the hack, flow audit log will show the following paths being changed by mistake
@@ -688,11 +559,35 @@ export function* touchFlow(flowId, resourceType, resourceId) {
   return out;
 }
 
-export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
-  const updatedResourceType = yield call(getResourceType, {
-    resourceType,
-    resourceId,
+function* updateIAFlowDoc({flow, resource }) {
+  if (!shouldUpdateLastModified(flow, resource)) return;
+  const patch = flowLastModifiedPatch(flow, resource);
+
+  yield put(actions.resource.patchStaged(flow._id, patch, SCOPES.VALUE));
+
+  yield call(commitStagedChanges, {
+    resourceType: 'flows',
+    id: flow._id,
+    scope: SCOPES.VALUE,
   });
+}
+
+export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
+  const flow = (yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  ))?.merged || emptyObject;
+
+  if (isIntegrationApp(flow)) {
+    // update the last modified time
+    const resource = yield select(selectors.resource, resourceType, resourceId);
+
+    yield call(updateIAFlowDoc, {flow, resource});
+
+    return;
+  }
+  const updatedResourceType = yield select(selectors.getResourceType, {resourceType, resourceId });
   let flowPatches = yield call(
     getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
@@ -700,15 +595,16 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     flowId
   );
 
-  // if flowPatches is already non-empty, the flow will be udpated and lastmodified will be changed as well
+  // if flowPatches is already non-empty, the flow will be updated and lastmodified will be changed as well
   // thus nothing to do for the lastmodified particularly
   // otherwise, check the stored flow and the changed resource to determine if the flow should be "touched"
   // to update the lastmodified
-  if (!flowPatches || !flowPatches.length) flowPatches = yield call(touchFlow, flowId, resourceType, resourceId);
+  if (!flowPatches || !flowPatches.length) {
+    flowPatches = yield call(touchFlow, flowId, resourceType, resourceId);
+  }
 
   yield put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE));
-  // TODO: is skipRetries a ui field value should this be deleted
-  // So that it does not get applied at the root of flow doc
+
   const skipRetries = resourceValues['/skipRetries'];
 
   if (skipRetries !== undefined) {
@@ -720,9 +616,7 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
       !!skipRetries
     );
 
-    yield put(
-      actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE)
-    );
+    yield put(actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE));
   }
 
   yield call(commitStagedChanges, {
@@ -747,7 +641,9 @@ export function* submitResourceForm(params) {
   });
 
   // perform submit cleanup
-  if (cancelSave) return yield put(actions.resource.clearStaged(resourceId));
+  if (cancelSave) {
+    return yield put(actions.resource.clearStaged(resourceId));
+  }
 
   const { formSaveStatus, skipCommit } = yield select(
     selectors.resourceFormState,
@@ -758,21 +654,12 @@ export function* submitResourceForm(params) {
   // if it fails return
   if (formSaveStatus === FORM_SAVE_STATUS.FAILED || !flowId) return;
 
-  const { merged: flow } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
-
-  // do not update the flow when its an IA
-  if (isIntegrationApp(flow)) return;
-
   // when there is nothing to commit there is no reason to update the flow doc..hence we return
-  // however there is a usecase where we create a resource from an existing resource and that
+  // however there is a use case where we create a resource from an existing resource and that
   // is a one step process with skipCommit being true...we have to update the flow doc in that case
   if (skipCommit) {
     if (['pageGenerator', 'pageProcessor'].includes(resourceType)) {
-      const { exportId, importId } = values;
+      const { exportId, importId } = values || {};
 
       // if exportId or importId values are present it indicated its created from an existing import or export
       // in that case we allow a flow doc update
@@ -790,8 +677,10 @@ export function* submitResourceForm(params) {
 }
 
 export function* saveAndContinueResourceForm(params) {
-  const { resourceId } = params;
+  const { resourceId, parentContext } = params;
+  const asyncKey = getAsyncKey('connections', resourceId);
 
+  yield put(actions.asyncTask.start(asyncKey));
   yield call(submitResourceForm, params);
   const formState = yield select(
     selectors.resourceFormState,
@@ -815,7 +704,9 @@ export function* saveAndContinueResourceForm(params) {
         },
       });
 
-      if (response && response.errors) {
+      if (response?.errors) {
+        yield put(actions.asyncTask.failed(asyncKey));
+
         return yield put(
           actions.api.failure(
             path,
@@ -826,14 +717,14 @@ export function* saveAndContinueResourceForm(params) {
         );
       }
 
-      yield call(apiCallWithRetry, {
-        path: `/connections/${id}/ping`,
-        hidden: true,
-      });
+      yield call(pingConnectionWithId, { connectionId: id, parentContext });
     } catch (error) {
+      yield put(actions.asyncTask.failed(asyncKey));
+
       return { error };
     }
   }
+  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* saveResourceWithDefinitionID({
@@ -842,9 +733,9 @@ export function* saveResourceWithDefinitionID({
   flowId,
   skipClose = false,
 }) {
-  const { resourceId, resourceType, values } = formValues;
+  const { resourceId, resourceType, values } = formValues || {};
   const newValues = { ...values };
-  const { definitionId, resourcePath } = fileDefinitionDetails;
+  const { definitionId, resourcePath } = fileDefinitionDetails || {};
 
   delete newValues['/file/filedefinition/rules'];
   newValues['/file/type'] = 'filedefinition';
@@ -896,11 +787,13 @@ export function* initFormValues({
 
     return; // nothing to do.
   }
+  const { assistant, assistantMetadata, _connectionId } = resource;
+  const adaptorType = getAssistantConnectorType(resource.assistant);
 
   let assistantData;
 
-  if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
-    if (!resource.assistantMetadata) {
+  if (['exports', 'imports'].includes(resourceType) && assistant) {
+    if (!assistantMetadata) {
       yield put(
         actions.resource.patchStaged(
           resourceId,
@@ -911,31 +804,19 @@ export function* initFormValues({
     }
 
     assistantData = yield select(selectors.assistantData, {
-      adaptorType: ['RESTExport', 'RESTImport'].includes(resource.adaptorType)
-        ? 'rest'
-        : 'http',
-      assistant: resource.assistant,
+      adaptorType,
+      assistant,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
-        adaptorType: ['RESTExport', 'RESTImport'].includes(resource.adaptorType)
-          ? 'rest'
-          : 'http',
-        assistant: resource.assistant,
+        adaptorType,
+        assistant,
       });
     }
   }
 
-  let connection;
-
-  if (resource && resource._connectionId) {
-    connection = yield select(
-      selectors.resource,
-      'connections',
-      resource._connectionId
-    );
-  }
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
 
   try {
     const defaultFormAssets = getResourceFormAssets({
@@ -945,12 +826,9 @@ export function* initFormValues({
       assistantData,
       connection,
     });
-    const { customForm } = resource;
-    const form =
-      customForm && customForm.form
-        ? customForm.form
-        : defaultFormAssets.fieldMeta;
-    //
+
+    const form = defaultFormAssets.fieldMeta;
+
     const fieldMeta = getFieldsWithDefaults(
       form,
       resourceType,
@@ -959,17 +837,7 @@ export function* initFormValues({
     );
     let finalFieldMeta = fieldMeta;
 
-    if (customForm && customForm.init) {
-      // pre-save-resource
-      // this resource has an embedded custom form.
-      // TODO: if there is an error here we should show that message
-      // in the UI.....and point them to the link to edit the
-      // script or maybe prevent them from saving the script
-      finalFieldMeta = yield call(runHook, {
-        hook: customForm.init,
-        data: fieldMeta,
-      });
-    } else if (typeof defaultFormAssets.init === 'function') {
+    if (typeof defaultFormAssets.init === 'function') {
       // standard form init fn...
 
       finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
@@ -993,59 +861,7 @@ export function* initFormValues({
   }
 }
 
-// Maybe the session could be stale...and the pre-submit values might
-// be excluded
-// we want to init the customForm metadata with a copy of the default metadata
-// we would normally send to the DynaForm component.
-export function* initCustomForm({ resourceType, resourceId }) {
-  const { merged: resource } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
-
-  if (!resource) return; // nothing to do.
-
-  if (resource.customForm && resource.customForm.form) {
-    // init the resource custom form only if no current form exists.
-    return;
-  }
-
-  const { merged: connection } = yield select(
-    selectors.resourceData,
-    'connections',
-    resource._connectionId
-  );
-  const defaultFormAssets = getResourceFormAssets({
-    connection,
-    resourceType,
-    resource,
-  });
-  const {
-    extractedInitFunctions,
-    ...remainingMeta
-  } = getFieldsWithoutFuncs(
-    defaultFormAssets && defaultFormAssets.fieldMeta,
-    resource,
-    resourceType
-  );
-  // Todo: have to write code to merge init functions
-  const patchSet = [
-    {
-      op: 'replace',
-      path: '/customForm',
-      value: {
-        form: remainingMeta,
-      },
-    },
-  ];
-
-  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
-}
-
 export const resourceFormSagas = [
-  takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
-  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
   takeEvery(

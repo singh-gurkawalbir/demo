@@ -118,7 +118,7 @@ describe('exportData saga', () => {
       resource,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(mockError)]])
-      .put(actions.exportData.receiveError(kind, identifier, JSON.parse(msg)))
+      .put(actions.exportData.receiveError(kind, identifier, 'netsuite subschema not defined'))
       .dispatch(actions.exportData.request(kind, identifier, resource))
       .silentRun();
   });

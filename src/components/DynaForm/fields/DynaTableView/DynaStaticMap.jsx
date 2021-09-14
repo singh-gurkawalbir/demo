@@ -10,6 +10,7 @@ export default function DynaStaticMap(props) {
     map,
     value,
     id,
+    disabled,
     onFieldChange,
     keyOptions,
     valueOptions,
@@ -22,6 +23,7 @@ export default function DynaStaticMap(props) {
       label: keyLabel,
       required: true,
       options: keyOptions,
+      readOnly: disabled,
       type: keyOptions ? 'autosuggest' : 'input',
       supportsRefresh: false,
     },
@@ -30,10 +32,11 @@ export default function DynaStaticMap(props) {
       label: valueLabel,
       required: true,
       options: valueOptions,
+      readOnly: disabled,
       type: valueOptions ? 'autosuggest' : 'input',
       supportsRefresh: false,
     },
-  ], [keyLabel, keyName, keyOptions, valueLabel, valueName, valueOptions]);
+  ], [disabled, keyLabel, keyName, keyOptions, valueLabel, valueName, valueOptions]);
 
   const computedValue = useMemo(() => {
     // giving preference to map if present in props
@@ -57,7 +60,9 @@ export default function DynaStaticMap(props) {
   return (
     <DynaTableView
       {...props}
+      isVirtualizedTable
       optionsMap={optionsMap}
+      disableDeleteRows={disabled}
       value={computedValue}
     />
   );

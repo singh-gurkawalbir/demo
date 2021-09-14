@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { id, type, update, steps, installerFunction, message } = action;
+  const { id, type, update, steps, installerFunction, message, showForm } = action;
   let step;
 
   return produce(state, draft => {
@@ -49,8 +49,13 @@ export default (state = {}, action) => {
         }
 
         if (step) {
+          // for 'form' type step
+          if (showForm) {
+            step.showForm = showForm;
+          }
           if (update === 'inProgress') {
             step.isTriggered = true;
+            delete step.showForm;
           } else if (update === 'verify') {
             step.verifying = true;
             step.isTriggered = true;
@@ -61,6 +66,9 @@ export default (state = {}, action) => {
             step.isTriggered = false;
             step.verifying = false;
             step.completed = true;
+          } else if (update === 'reset') {
+            step.isTriggered = false;
+            delete step.showForm;
           }
         }
 

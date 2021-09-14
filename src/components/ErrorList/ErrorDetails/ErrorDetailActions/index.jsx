@@ -5,6 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
+import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -96,6 +99,7 @@ export default function Actions({
   );
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
+  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
@@ -103,15 +107,19 @@ export default function Actions({
         <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
         </Button>
-        <Button variant="outlined" color="secondary" disabled={!isRetryDataChanged} onClick={updateRetry}>
-          Save &amp; close
-        </Button>
+        <SaveAndCloseMiniButtonGroup
+          isDirty={isRetryDataChanged}
+          handleSave={updateRetry}
+          handleClose={onClose}
+          shouldNotShowCancelButton
+          asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY}
+        />
         { !isResolved && (
           <Button variant="outlined" color="secondary" onClick={resolve}>
             Resolve
           </Button>
         )}
-        <Button variant="text" color="primary" onClick={onClose}>
+        <Button variant="text" color="primary" onClick={handleCancel}>
           Close
         </Button>
       </div>

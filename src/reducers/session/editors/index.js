@@ -1,5 +1,6 @@
+/* eslint-disable camelcase */
 import { original, produce } from 'immer';
-import { deepClone } from 'fast-json-patch';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 import { toggleData } from './processorLogic/settingsForm';
@@ -235,6 +236,16 @@ export default function reducer(state = {}, action) {
         const editor = draft[id];
 
         editor.saveStatus = 'success';
+        const ap = editor.activeProcessor;
+
+        // to handle javascript dirty logic
+        // reset the _init_code
+        if (ap && editor.rule?.[ap] && editor.rule[ap]._init_code) {
+          editor.rule[ap]._init_code = editor.rule[ap].code;
+        } else if (editor.rule?._init_code) {
+          editor.rule._init_code = editor.rule.code;
+        }
+
         let originalRule = editor.rule;
 
         if (typeof originalRule === 'object') {

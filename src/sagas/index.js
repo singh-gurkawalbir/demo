@@ -30,14 +30,14 @@ import {
   onErrorSaga,
   onAbortSaga,
 } from './api/requestInterceptors';
-import { authenticationSagas, initializeApp, initializeLogrocket } from './authentication';
+import { authenticationSagas, initializeApp, initializeLogrocket, invalidateSession } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
 import { cloneSagas } from './clone';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
-import exportsSampleDataSagas from './sampleData/exports';
+import resourceFormSampleDataSagas from './sampleData/resourceForm';
 import flowDataSagas from './sampleData/flows';
 import rawDataUpdateSagas from './sampleData/rawDataUpdates';
 import importsSampleDataSagas from './sampleData/imports';
@@ -65,9 +65,14 @@ import {logsSagas} from './logs';
 import ssoSagas from './sso';
 import { APIException } from './api';
 import { bottomDrawerSagas } from './bottomDrawer';
+import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
 
 export function* unauthenticateAndDeleteProfile() {
-  yield put(actions.auth.failure('Authentication Failure'));
+  const authFailure = yield select(selectors.authenticationErrored);
+
+  if (!authFailure) {
+    yield put(actions.auth.failure(AUTH_FAILURE_MESSAGE));
+  }
   yield put(actions.user.profile.delete());
 }
 
@@ -103,15 +108,13 @@ export function* apiCallWithRetry(args) {
 
   try {
     let apiResp;
-    let logout;
     let timeoutEffect;
 
     if (path !== logoutParams.path) {
-      ({ apiResp, logout, timeoutEffect } = yield race({
+      ({ apiResp, timeoutEffect } = yield race({
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: false,
         }),
-        logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(timeout),
       }));
     } else {
@@ -119,18 +122,13 @@ export function* apiCallWithRetry(args) {
         dispatchRequestAction: false,
       });
     }
-
     if (timeoutEffect) {
       yield call(requestCleanup, path, opts?.method);
 
       throw new APIException(CANCELLED_REQ);
     }
 
-    // logout effect succeeded then the apiResp would be undefined
-
-    if (logout) { return null; }
-
-    const { data } = apiResp.response || {};
+    const { data } = apiResp?.response || {};
 
     return data;
   } finally {
@@ -157,7 +155,7 @@ export function* allSagas() {
     ...agentSagas,
     ...uploadFileSagas,
     ...stackSagas,
-    ...exportsSampleDataSagas,
+    ...resourceFormSampleDataSagas,
     ...flowDataSagas,
     ...rawDataUpdateSagas,
     ...importsSampleDataSagas,
@@ -201,13 +199,12 @@ export default function* rootSaga() {
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    logout: take(actionsTypes.USER_LOGOUT),
     switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   // stop the main sagas
   t.cancel();
-
   if (logrocket) {
     // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
     yield call(initializeLogrocket);
@@ -218,8 +215,8 @@ export default function* rootSaga() {
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
-    // logout requires also reset the store
-    yield put(actions.auth.clearStore());
+    // invalidate the session and clear the store
+    yield call(invalidateSession, { isExistingSessionInvalid: logout.isExistingSessionInvalid });
     // restart the root saga again
     yield spawn(rootSaga);
   }

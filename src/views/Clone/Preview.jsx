@@ -21,6 +21,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
+import {HOME_PAGE_PATH} from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -142,7 +143,7 @@ export default function ClonePreview(props) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
             title: 'Confirm switch',
-            message: `Your integration app has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
             buttons: [
               {
                 label: 'Yes, switch',
@@ -219,7 +220,7 @@ export default function ClonePreview(props) {
             getRoutePath(`/integrations/${integration._id}/flows`)
           );
         } else {
-          props.history.push(getRoutePath('dashboard'));
+          props.history.push(getRoutePath(HOME_PAGE_PATH));
         }
       } else {
         props.history.push(getRoutePath(`/${resourceType}`));
@@ -363,7 +364,7 @@ export default function ClonePreview(props) {
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
+        <Typography data-public variant="h4">Loading</Typography>
         <Spinner />
       </Loader>
     );
@@ -372,7 +373,7 @@ export default function ClonePreview(props) {
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
+        <Typography data-public variant="h4">Loading Clone Preview</Typography>
         <Spinner />
       </Loader>
     );
@@ -443,7 +444,7 @@ export default function ClonePreview(props) {
   if (cloneRequested) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
+        <Typography data-public variant="h4">Loading</Typography>
         <Spinner />
       </Loader>
     );

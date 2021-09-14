@@ -69,7 +69,8 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
           generatePath(match.path, {
             id: newResourceId || id,
             resourceType,
-            operation,
+            // in a single step process after saving we should the change the operation from an add to edit
+            operation: 'edit',
           })
         );
       }

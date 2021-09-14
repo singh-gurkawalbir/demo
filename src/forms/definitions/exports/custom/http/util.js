@@ -1,4 +1,6 @@
 import { isEmpty } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
+import { getAssistantConnectorType } from '../../../../../constants/applications';
 import {
   convertFromExport,
   PARAMETER_LOCATION,
@@ -13,7 +15,7 @@ export function hiddenFieldsMeta({ values }) {
   }));
 }
 
-export function basicFieldsMeta({ assistantConfig, assistantData }) {
+export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -31,7 +33,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
     },
   };
-  const { labels = {}, versions = [] } = assistantData;
+  const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
   return Object.keys(fieldDefinitions).map(fieldId => {
     if (fieldId === 'version') {
@@ -46,10 +48,44 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
 
+    fieldDefinitions[fieldId].helpKey = `${assistant}.export.${fieldId}`;
+
+    if (helpTexts[fieldId]) {
+      fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
+    }
+
     return fieldDefinitions[fieldId];
   });
 }
+export function headerFieldsMeta({operationDetails, headers = []}) {
+  const editableHeaders = Object.keys(operationDetails?.headers || {})
+    .filter(key => !operationDetails.headers[key]);
+  const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
+  const headersValue = uniqBy([
+    ...userEditableHeaderValues,
+    ...editableHeaders
+      .map(key => ({
+        name: key,
+        value: operationDetails.headers[key],
+      })),
+  ], 'name');
 
+  if (editableHeaders.length) {
+    return [{
+      id: 'assistantMetadata.headers',
+      type: 'assistantHeaders',
+      keyName: 'name',
+      headersMetadata: operationDetails?.headersMetadata,
+      validate: true,
+      valueName: 'value',
+      label: 'Configure HTTP headers',
+      value: headersValue,
+      required: true,
+    }];
+  }
+
+  return [];
+}
 export function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters.map(pathParam => {
     const pathParamField = {
@@ -94,14 +130,14 @@ export function exportTypeFieldsMeta({
   supportedExportTypes = [],
   exportType,
 }) {
-  const exportTypeOptions = [{ value: 'all', label: 'All' }];
+  const exportTypeOptions = [{ value: 'all', label: 'All – always export all data' }];
 
   if (supportedExportTypes.includes('delta')) {
-    exportTypeOptions.push({ value: 'delta', label: 'Delta' });
+    exportTypeOptions.push({ value: 'delta', label: 'Delta – export only modified data' });
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test' });
+    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
   }
 
   if (exportTypeOptions.length <= 1) {
@@ -128,6 +164,7 @@ export function searchParameterFieldsMeta({
   parameters = [],
   oneMandatoryQueryParamFrom,
   value,
+  operationChanged,
   deltaDefaults = {},
   isDeltaExport,
 }) {
@@ -135,8 +172,16 @@ export function searchParameterFieldsMeta({
   const defaultValue = {};
 
   parameters.forEach(p => {
-    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue')) {
-      defaultValue[p.id] = p.defaultValue;
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
+      if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
+        try {
+          defaultValue[p.id] = JSON.parse(p.defaultValue);
+        } catch (e) {
+          defaultValue[p.id] = [];
+        }
+      } else {
+        defaultValue[p.id] = p.defaultValue;
+      }
     }
   });
 
@@ -180,21 +225,28 @@ export function searchParameterFieldsMeta({
 
 export function fieldMeta({ resource, assistantData }) {
   const { assistant } = resource;
+  let headers;
   let { adaptorType } = resource;
 
   if (adaptorType === 'RESTExport') {
     adaptorType = 'rest';
+    headers = resource.rest?.headers || [];
   } else {
     adaptorType = 'http';
+    headers = resource.http?.headers || [];
   }
-
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData },
+    values: {
+      assistant,
+      adaptorType: getAssistantConnectorType(assistant),
+      assistantData,
+    },
   });
   let basicFields = [];
   let pathParameterFields = [];
   let exportTypeFields = [];
   let searchParameterFields = [];
+  let headerFields = [];
 
   if (assistantData && assistantData.export) {
     const assistantConfig = convertFromExport({
@@ -204,6 +256,7 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
+      assistant,
       assistantConfig,
       assistantData: assistantData.export,
     });
@@ -211,6 +264,11 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      headerFields = headerFieldsMeta({
+        headers,
+        operationDetails,
+        assistantConfig,
+      });
       pathParameterFields = pathParameterFieldsMeta({
         operationParameters: operationDetails.pathParameters,
         values: assistantConfig.pathParams,
@@ -230,7 +288,8 @@ export function fieldMeta({ resource, assistantData }) {
           parameters: operationDetails.queryParameters,
           oneMandatoryQueryParamFrom:
             operationDetails.oneMandatoryQueryParamFrom,
-          value: assistantConfig.queryParams,
+          value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
+          operationChanged: resource.assistantMetadata?.operationChanged,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&
@@ -247,7 +306,7 @@ export function fieldMeta({ resource, assistantData }) {
           label: operationDetails.bodyParametersLabel,
           paramLocation: PARAMETER_LOCATION.BODY,
           parameters: operationDetails.bodyParameters,
-          value: assistantConfig.bodyParams,
+          value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.bodyParams,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&
@@ -263,7 +322,7 @@ export function fieldMeta({ resource, assistantData }) {
     ...hiddenFields,
     ...basicFields,
     ...pathParameterFields,
-
+    ...headerFields,
     ...searchParameterFields,
   ];
   const exportTypeRelatedFields = [...exportTypeFields];

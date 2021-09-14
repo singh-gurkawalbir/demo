@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
+import Status from '../../../../components/Buttons/Status';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import EditableText from '../../../../components/EditableText';
@@ -14,7 +15,6 @@ import CalendarIcon from '../../../../components/icons/CalendarIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import RunFlowButton from '../../../../components/RunFlowButton';
-import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../utils/constants';
@@ -138,7 +138,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
   const dispatch = useDispatch();
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    dispatch(actions.bottomDrawer.setActiveTab({ tabType: 'dashboard' }));
+    dispatch(actions.bottomDrawer.switchTab({ tabType: 'dashboard' }));
 
     // Raising bottom drawer in cases where console is minimized
     // and user can not see dashboard after running the flow
@@ -243,31 +243,23 @@ const PageBarChildren = ({integrationId, flowId}) => {
 };
 const pageBarUseStyles = makeStyles(({
   errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    display: 'flex',
-    alignItems: 'center',
     marginRight: 12,
-    fontSize: '12px',
   },
 
 }));
 
 const TotalErrors = ({flowId}) => {
   const classes = pageBarUseStyles();
-  const {
-    total: totalErrors = 0,
-  } = useSelector(state => selectors.errorMap(state, flowId));
+  const totalErrors = useSelector(state => selectors.totalOpenErrors(state, flowId));
 
   if (!totalErrors) {
     return null;
   }
 
   return (
-    <span className={classes.errorStatus}>
-      <StatusCircle variant="error" size="small" />
+    <Status variant="error" size="small" className={classes.errorStatus}>
       <span>{totalErrors} errors</span>
-    </span>
+    </Status>
   );
 };
 
@@ -284,7 +276,9 @@ export default function PageBar({flowId, integrationId}) {
     <CeligoPageBar
       title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
-      infoText={description}>
+      infoText={description}
+      disableHtmlInInfoText
+    >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
         flowId={flowId} integrationId={integrationId}

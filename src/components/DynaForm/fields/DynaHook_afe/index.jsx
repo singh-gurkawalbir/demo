@@ -10,7 +10,6 @@ import { selectors } from '../../../../reducers';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import actions from '../../../../actions';
-import EditorDrawer from '../../../AFE/Drawer';
 import LoadResources from '../../../LoadResources';
 import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 import hookReducer from './stateReducer';
@@ -59,6 +58,8 @@ export default function DynaHook_afe({
   resourceId,
   label: propsLabel,
   helpKey: propsHelpKey,
+  dataPublic,
+  isValid = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -87,10 +88,10 @@ export default function DynaHook_afe({
     setHookState({ type: 'setShowCreateScriptDialog', value: true });
   };
 
-  const handleCreateScriptSave = useCallback(values => {
+  const handleCreateScriptSave = useCallback((values, formKey) => {
     const options = { dispatch, isNew: true };
 
-    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId });
+    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId }, formKey);
   }, [dispatch, flowId, hookState.tempScriptId]);
 
   const handleCreateScriptDialogClose = useCallback(() => {
@@ -124,7 +125,7 @@ export default function DynaHook_afe({
       const isEmptyHook = !func && !(_scriptId || _stackId);
 
       // If all fields are empty , then it is valid as we accept empty hook(except resource type apis)
-      if (isEmptyHook) return resourceType !== 'apis';
+      if (isEmptyHook) return required ? isValid : resourceType !== 'apis';
 
       // If hook is not empty, then valid if those respective fields are not empty
       switch (field) {
@@ -137,7 +138,7 @@ export default function DynaHook_afe({
         default:
       }
     },
-    [value, resourceType]
+    [value, required, isValid, resourceType]
   );
 
   return (
@@ -160,6 +161,7 @@ export default function DynaHook_afe({
           <div className={classes.wrapper}>
             <div className={classes.field}>
               <DynaText
+                dataPublic={dataPublic}
                 key={id}
                 name={name}
                 label="Function"
@@ -176,6 +178,7 @@ export default function DynaHook_afe({
             </div>
             {hookType === 'stack' && (
             <StackView
+              dataPublic={dataPublic}
               disabled={disabled}
               required={required}
               stackId={value?._stackId}
@@ -188,6 +191,7 @@ export default function DynaHook_afe({
               id={id}
               flowId={flowId}
               disabled={disabled}
+              dataPublic={dataPublic}
               onFieldChange={onFieldChange}
               required={required}
               value={value}
@@ -203,7 +207,6 @@ export default function DynaHook_afe({
           </div>
         </div>
       </LoadResources>
-      <EditorDrawer />
     </>
   );
 }

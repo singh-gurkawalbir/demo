@@ -7,14 +7,15 @@ export default {
       executionType === 'scheduled' ? apiType : executionType;
 
     newValues['/netsuite/type'] = netsuiteType;
-
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
+      newValues['/netsuite/distributed/useSS2Framework'] = newValues['/netsuite/distributed/useSS2Framework'] === 'true';
       // removing other netsuiteType's Sub Doc @BugFix IO-12678
       newValues['/netsuite/restlet'] = undefined;
       newValues['/netsuite/searches'] = undefined;
       newValues['/netsuite/webservices'] = undefined;
       delete newValues['/netsuite/restlet/criteria'];
+      delete newValues['/netsuite/restlet/useSS2Restlets'];
       delete newValues['/netsuite/webservices/criteria'];
       delete newValues['/netsuite/searches/criteria'];
     }
@@ -71,6 +72,7 @@ export default {
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'] && Array.isArray(newValues['/restlet/delta/dateField']) ? newValues['/restlet/delta/dateField'].join(',') : newValues['/restlet/delta/dateField'];
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
+      newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
       delete newValues['/restlet/delta/dateField'];
@@ -114,8 +116,6 @@ export default {
       newValues['/type'] = 'blob';
       delete newValues['/netsuite/type'];
     }
-
-    newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
 
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
@@ -277,6 +277,35 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    'netsuite.distributed.useSS2Framework': {
+      fieldId: 'netsuite.distributed.useSS2Framework',
+      type: 'netsuiteapiversion',
+      label: 'NetSuite API version',
+      defaultValue: r => r?.netsuite?.distributed?.useSS2Framework ? 'true' : 'false',
+      defaultDisabled: r => {
+        if (!isNewId(r._id)) {
+          return true;
+        }
+
+        return false;
+      },
+      options: [
+        {
+          items: [
+            { label: 'SuiteScript 1.0', value: 'false' },
+            { label: 'SuiteScript 2.0 (beta)', value: 'true' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        { field: 'netsuite.execution.type', is: ['distributed'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+      isNew: r => isNewId(r._id),
+      connectionId: r => r?._connectionId,
+      resourceType: 'exports',
+      resourceId: r => r?._id,
+    },
     'netsuite.restlet.batchSize': {
       fieldId: 'netsuite.restlet.batchSize',
       visibleWhenAll: [
@@ -353,9 +382,9 @@ export default {
     },
     'once.booleanField': {
       id: 'once.booleanField',
-      label: 'Boolean field',
+      label: 'Boolean field to mark records as exported',
       type: 'refreshableselect',
-      placeholder: 'Please select a Boolean field',
+      placeholder: 'Please select a boolean field',
       required: true,
       connectionId: r => r && r._connectionId,
       filterKey: 'webservices-booleanField',
@@ -385,10 +414,10 @@ export default {
       options: [
         {
           items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
+            { label: 'All – always export all data', value: 'all' },
+            { label: 'Delta – export only modified data', value: 'delta' },
+            { label: 'Once – export records only once', value: 'once' },
+            { label: 'Test – export only 1 record', value: 'test' },
           ],
         },
       ],
@@ -426,10 +455,10 @@ export default {
         return output || 'all';
       },
       selectOptions: [
-        { label: 'All', value: 'all' },
-        { label: 'Test', value: 'test' },
-        { label: 'Delta', value: 'delta' },
-        { label: 'Once', value: 'once' },
+        { label: 'All – always export all data', value: 'all' },
+        { label: 'Delta – export only modified data', value: 'delta' },
+        { label: 'Once – export records only once', value: 'once' },
+        { label: 'Test – export only 1 record', value: 'test' },
       ],
       visibleWhenAll: [
         { field: 'outputMode', is: ['records'] },
@@ -439,7 +468,7 @@ export default {
     },
     'restlet.delta.dateField': {
       id: 'restlet.delta.dateField',
-      label: 'Date field(s)',
+      label: 'Date fields to use in delta search',
       type: 'refreshableselect',
       multiselect: true,
       helpKey: 'export.delta.dateField',
@@ -460,7 +489,7 @@ export default {
     'restlet.delta.lagOffset': {
       id: 'restlet.delta.lagOffset',
       type: 'text',
-      label: 'Offset',
+      label: 'Delta date lag offset',
       helpKey: 'export.delta.lagOffset',
       defaultValue: r => r && r.delta && r.delta.lagOffset,
       visibleWhenAll: [
@@ -473,10 +502,10 @@ export default {
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
-      label: 'Boolean field',
+      label: 'Boolean field to mark records as exported',
       type: 'refreshableselect',
-      helpKey: 'export.delta.booleanField',
-      placeholder: 'Please select a Boolean field',
+      helpKey: 'export.once.booleanField',
+      placeholder: 'Please select a boolean field',
       filterKey: 'suitescript-booleanField',
       required: true,
       defaultValue: r => r && r.once && r.once.booleanField,
@@ -569,6 +598,7 @@ export default {
           {
             fields: [
               'netsuite.blob.purgeFileAfterExport',
+              'netsuite.distributed.useSS2Framework',
               'netsuite.distributed.skipExportFieldId',
               'netsuite.distributed.forceReload',
               'netsuite.restlet.batchSize',

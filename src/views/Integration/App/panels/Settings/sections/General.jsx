@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import { IAFormStateManager, useActiveTab } from '../../Flows';
+import { IAFormStateManager } from '../../Flows';
 import { SavingMask } from '../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GeneralPanel({ integrationId, childId }) {
+export default function GeneralPanel({ integrationId, childId, dataPublic }) {
   const classes = useStyles();
   // TODO: rethink our data-layer just as we would an API. Currently we
   // have selectors that do too much and as such, they are wasteful and
@@ -50,7 +50,6 @@ export default function GeneralPanel({ integrationId, childId }) {
     state => selectors.integrationAppSettingsFormState(state, integrationId),
     shallowEqual
   );
-  const activeTabProps = useActiveTab();
 
   return (
     <div>
@@ -60,7 +59,7 @@ export default function GeneralPanel({ integrationId, childId }) {
         {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
 
         <IAFormStateManager
-          {...activeTabProps}
+          dataPublic={dataPublic}
           key={childId}
           fieldMeta={translatedMeta}
           integrationId={integrationId}

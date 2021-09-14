@@ -17,6 +17,24 @@ const useStyles = makeStyles(theme => ({
   infoTransfers: {
     margin: theme.spacing(1, 0),
   },
+  createTransferContainer: {
+    background: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+    padding: theme.spacing(2),
+  },
+  submitBtn: {
+    marginTop: theme.spacing(2),
+  },
+  initiateTransferWrapper: {
+    marginTop: theme.spacing(2),
+    background: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+  },
+  initiateTransferBtn: {
+    margin: theme.spacing(2, 0, 2, 2),
+  },
 }));
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -31,7 +49,7 @@ export default function Invite(props) {
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
-  ).resources;
+  ).resources?.filter(res => !res._parentId); // filter the child integrations
   const clearPreview = useCallback(() => {
     dispatch(actions.transfer.clearPreview());
   }, [dispatch]);
@@ -107,30 +125,33 @@ export default function Invite(props) {
 
   return (
     <>
-      <IconTextButton
-        onClick={backToTransferClick}
-        variant="outlined"
-        color="secondary">
-        <ArrowLeftIcon /> Back to transfers
-      </IconTextButton>
-      <div className={classes.infoTransfers}>
-        Important! As part of the transfer process, all your currently
-        in-progress flows will be allowed to complete, and new flows will not be
-        started. If there are any webhook based flows, then they will stop
-        accepting new data until the transfer is complete. Once the in-progress
-        flows have finished processing, all the flows will be transferred to the
-        new user. Jobs and related retry data will not be transferred, and this
-        information will be lost for any in-progress jobs that have errors. If
-        you are concerned about this data loss then please first disable the
-        flows manually, and then retry/resolve all open errors, and then
-        initiate the transfer process again.
-      </div>
-      <DynaForm formKey={formKey} />
-      <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
+      <div className={classes.createTransferContainer}>
+        <IconTextButton
+          onClick={backToTransferClick}
+          variant="outlined"
+          color="secondary">
+          <ArrowLeftIcon /> Back to transfers
+        </IconTextButton>
+        <div className={classes.infoTransfers}>
+          Important! As part of the transfer process, all your currently
+          in-progress flows will be allowed to complete, and new flows will not be
+          started. If there are any webhook based flows, then they will stop
+          accepting new data until the transfer is complete. Once the in-progress
+          flows have finished processing, all the flows will be transferred to the
+          new user. Jobs and related retry data will not be transferred, and this
+          information will be lost for any in-progress jobs that have errors. If
+          you are concerned about this data loss then please first disable the
+          flows manually, and then retry/resolve all open errors, and then
+          initiate the transfer process again.
+        </div>
+        <DynaForm formKey={formKey} />
+        <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
 
-      {!!error && <> {error} </>}
-      {response && response.length && (
-        <>
+        {!!error && <div className={classes.infoTransfers}> {error} </div>}
+      </div>
+      <>
+        {response && response.length && (
+        <div className={classes.initiateTransferWrapper}>
           <>
             <CeligoTable
               resourceType="transfers"
@@ -142,11 +163,14 @@ export default function Invite(props) {
             data-test="invite"
             variant="outlined"
             color="primary"
+            className={classes.initiateTransferBtn}
             onClick={initiateTransferClick}>
             Initiate Transfer
           </Button>
-        </>
-      )}
+        </div>
+        )}
+      </>
+
     </>
   );
 }

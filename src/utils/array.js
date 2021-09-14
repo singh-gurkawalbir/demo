@@ -2,6 +2,7 @@ import { isEqual } from 'lodash';
 
 export default {
   removeItem: (arr, test) => {
+    if (!arr) return arr;
     const index = arr.findIndex(test);
 
     // insert if not found, replace if found...
