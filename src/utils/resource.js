@@ -916,3 +916,14 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
 
   return accessLevelOnConnection;
 };
+
+export const getAssistantFromResource = resource => {
+  if (!resource) return;
+  const {assistant} = resource;
+
+  if (assistant?.includes('constantcontact')) {
+    return 'constantcontact';
+  }
+
+  return assistant;
+};

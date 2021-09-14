@@ -19,6 +19,7 @@ import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, fl
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
 
 export const SCOPES = {
@@ -788,11 +789,16 @@ export function* initFormValues({
     return; // nothing to do.
   }
   const { assistant, assistantMetadata, _connectionId } = resource;
+
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+
+  resource.assistant = getAssistantFromConnection(assistant, connection);
+
   const adaptorType = getAssistantConnectorType(resource.assistant);
 
   let assistantData;
 
-  if (['exports', 'imports'].includes(resourceType) && assistant) {
+  if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
     if (!assistantMetadata) {
       yield put(
         actions.resource.patchStaged(
@@ -805,19 +811,16 @@ export function* initFormValues({
 
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
-      assistant,
+      assistant: resource.assistant,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
-        assistant,
+        assistant: resource.assistant,
       });
     }
   }
-
-  const connection = yield select(selectors.resource, 'connections', _connectionId);
-
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,

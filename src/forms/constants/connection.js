@@ -187,6 +187,7 @@ export default {
     'powerbi',
     'sharepoint',
     'outreach',
+    'constantcontact',
     'constantcontactv3',
     'constantcontactv2',
     'skubana',
