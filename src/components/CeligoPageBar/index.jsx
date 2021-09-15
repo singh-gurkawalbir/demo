@@ -52,6 +52,7 @@ export default function CeligoPageBar(props) {
     subtitle,
     titleTag,
     className,
+    escapeUnsecuredDomains,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -88,7 +89,7 @@ export default function CeligoPageBar(props) {
             {title}
           </Typography>
           {titleTag && <span>{titleTag}</span>}
-          {infoText && <InfoIconButton info={infoText} />}
+          {infoText && <InfoIconButton info={infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} />}
           <div className={classes.emptySpace} />
           {children}
         </Grid>

@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TooltipContent({ children, className }) {
+export default function TooltipContent({ children, className, escapeUnsecuredDomains }) {
   const classes = useStyles();
 
   return (
@@ -25,7 +25,7 @@ export default function TooltipContent({ children, className }) {
       component="div"
       variant="body2">
       {/<\/?[a-z][\s\S]*>/i.test(children) ? (
-        <RawHtml html={children} options={{allowedTags: ['a', 'b', 'br']}} />
+        <RawHtml html={children} options={{allowedTags: ['a', 'b', 'br'], escapeUnsecuredDomains}} />
       ) : (
         children
       )}

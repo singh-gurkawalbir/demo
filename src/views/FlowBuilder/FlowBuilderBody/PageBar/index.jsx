@@ -277,6 +277,7 @@ export default function PageBar({flowId, integrationId}) {
       title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
       infoText={description}
+      escapeUnsecuredDomains
     >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
