@@ -64,16 +64,11 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, flowId }) {
 
     if (exportPreviewData) {
       const parseData = getPreviewStageData(exportPreviewData, 'raw');
-      const rawData = parseData && JSON.stringify(parseData);
 
       yield call(saveRawDataOnResource, {
         resourceId,
-        rawData,
+        rawData: parseData && JSON.stringify(parseData),
       });
-      if (flowId && rawData) {
-        // clear flowData state whenever a resource gets updated
-        yield put(actions.flowData.clearStages(flowId));
-      }
     }
   } else {
     // TODO @Raghu : Commenting this now as there is no BE Support on saving raw data for PPs
