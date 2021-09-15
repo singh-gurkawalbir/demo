@@ -747,13 +747,15 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
 
   if (
     cronArr[MINUTES] === '0,30' ||
+    cronArr[MINUTES] === '5,35' ||
     cronArr[MINUTES] === '10,40' ||
     cronArr[MINUTES] === '0,15,30,45' ||
+    cronArr[MINUTES] === '5,20,35,50' ||
     cronArr[MINUTES] === '10,25,40,55'
   ) {
     resource.activeTab = PRESET_TAB;
     resource.frequency =
-      cronArr[MINUTES] === '0,30' || cronArr[MINUTES] === '10,40'
+      cronArr[MINUTES] === '0,30' || cronArr[MINUTES] === '5,35' || cronArr[MINUTES] === '10,40'
         ? 'every_half_hour'
         : 'every_quarter';
 
