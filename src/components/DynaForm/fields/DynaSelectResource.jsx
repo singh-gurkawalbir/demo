@@ -136,7 +136,6 @@ const useStyles = makeStyles(theme => ({
   dynaSelectWithStatusWrapper: {
     maxWidth: '95%',
     position: 'relative',
-    overflow: 'hidden',
     '& > div:last-child': {
       position: 'absolute',
       right: '50px',
