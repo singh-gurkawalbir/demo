@@ -42,7 +42,7 @@ export default function NameCell({
     <div className={classes.root}>
       <Link to={flowBuilderTo}>{flowName}</Link>
 
-      <InfoIconButton info={description} disableHtml size="xs" />
+      <InfoIconButton info={description} size="xs" />
 
       {isFree && (
         <Chip
