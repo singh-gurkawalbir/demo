@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0.5),
     color: theme.palette.secondary.contrastText,
   },
+  fileUploadStatus: {
+    marginTop: 60,
+  },
 }));
 
 export default function UploadFile() {
@@ -85,7 +88,7 @@ export default function UploadFile() {
 
   if (uploadInProgress) {
     return (
-      <Spinner centerAll />
+      <Spinner centerAll className={classes.fileUploadStatus} />
     );
   }
 
