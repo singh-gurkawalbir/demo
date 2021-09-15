@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { uniq } from 'lodash';
 import moment from 'moment';
 import dateTimezones from '../../utils/dateTimezones';
@@ -878,6 +879,10 @@ export const getScheduleStartMinute = (resource = {}) => {
     process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
   );
 
+  console.log('changeStartMinuteForFlowsCreatedAfter', changeStartMinuteForFlowsCreatedAfter);
+  console.log('secondChangeStartMinuteForFlowsCreatedAfter', secondChangeStartMinuteForFlowsCreatedAfter);
+  console.log('resource', resource);
+
   if (resource) {
     if (
       !resource.createdAt ||
@@ -891,6 +896,7 @@ export const getScheduleStartMinute = (resource = {}) => {
       scheduleStartMinute = 10;
     }
   }
+  console.log('final offset', scheduleStartMinute);
 
   return scheduleStartMinute;
 };
