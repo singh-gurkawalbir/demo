@@ -25,7 +25,7 @@ export default function TooltipContent({ children, className, escapeUnsecuredDom
       component="div"
       variant="body2">
       {/<\/?[a-z][\s\S]*>/i.test(children) ? (
-        <RawHtml html={children} options={{allowedTags: ['a'], escapeUnsecuredDomains}} />
+        <RawHtml html={children} options={{allowedTags: ['a', 'b', 'br'], escapeUnsecuredDomains}} />
       ) : (
         children
       )}
