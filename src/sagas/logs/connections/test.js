@@ -1,18 +1,23 @@
 /* global describe, test, jest, expect */
 import { expectSaga } from 'redux-saga-test-plan';
-import { call, select, delay } from 'redux-saga/effects';
+import { call, select, delay, fork, cancel } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
+import { createMockTask } from '@redux-saga/testing-utils';
 import moment from 'moment';
 // import { createMockTask } from '@redux-saga/testing-utils';
 // import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import actionTypes from '../../../actions/types';
+import openExternalUrl from '../../../utils/window';
 import {
   getConnectionDebugLogs,
   pollForConnectionLogs,
-  // startPollingForConnectionDebugLogs,
+  startPollingForConnectionDebugLogs,
+  refreshConnectionDebugLogs,
   deleteConnectionDebugLogs,
+  downloadConnectionDebugLogs,
   startDebug,
 } from '.';
 
@@ -61,33 +66,52 @@ describe('Connection debugger log sagas', () => {
     });
   });
   describe('startPollingForConnectionDebugLogs saga', () => {
-    // TODO
-    // test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
-    // const connectionId = 'c1';
-    // const saga = startPollingForConnectionDebugLogs({connectionId});
+    test('should dispatch request failed action and not call pollForConnectionLogs if connection logs are not supported', () => {
+      const connectionId = 'c1';
 
-    // expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+      return expectSaga(startPollingForConnectionDebugLogs, { connectionId })
+        .provide([
+          [select(selectors.isConnectionLogsNotSupported, connectionId), true],
+        ])
+        .put(actions.logs.connections.requestFailed(connectionId))
+        .not.fork.fn(pollForConnectionLogs)
+        .run();
+    });
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
+      const connectionId = 'c1';
+      const saga = startPollingForConnectionDebugLogs({connectionId});
 
-    // const watcherTask = createMockTask();
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
 
-    // expect(saga.next(watcherTask).value).toEqual(
-    //   // take(actionTypes.LOGS.CONNECTIONS.CLEAR)
-    //   take(action => {
-    //     if (action.type === actionTypes.LOGS.CONNECTIONS.REQUEST && action.connectionId === connectionId) {
-    //       return true;
-    //     }
-    //     if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
-    //       if (action.clearAllLogs) {
-    //         return true;
-    //       }
+      const watcherTask = createMockTask();
 
-    //       return action.connectionId === connectionId;
-    //     }
-    //   })
-    // );
-    // expect(saga.next().value).toEqual(cancel(watcherTask));
-    // expect(saga.next().done).toEqual(true);
-    // });
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.CLEAR, clearAllLogs: true}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+  describe('refreshConnectionDebugLogs saga', () => {
+    test('should not call getConnectionDebugLogs if connection logs are not supported', () => {
+      const connectionId = 'c1';
+
+      return expectSaga(refreshConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.isConnectionLogsNotSupported, connectionId), true],
+        ])
+        .not.call.fn(getConnectionDebugLogs)
+        .run();
+    });
+    test('should call getConnectionDebugLogs if connection logs are supported', () => {
+      const connectionId = 'c1';
+
+      return expectSaga(refreshConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.isConnectionLogsNotSupported, connectionId), false],
+        ])
+        .call(getConnectionDebugLogs, { connectionId })
+        .run();
+    });
   });
   describe('deleteConnectionDebugLogs saga', () => {
     test('should call apiCallWithRetry with delete connection log path', () => {
@@ -95,6 +119,30 @@ describe('Connection debugger log sagas', () => {
 
       return expectSaga(deleteConnectionDebugLogs, { connectionId })
         .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
+        .run();
+    });
+  });
+  describe('downloadConnectionDebugLogs saga', () => {
+    test('should call openExternalUrl with url not containing integrator-ashareid query param', () => {
+      const connectionId = 'c1';
+      const url = `/connections/${connectionId}/debug`;
+
+      return expectSaga(downloadConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.accountShareHeader, url), {}],
+        ])
+        .call(openExternalUrl, { url: `/api${url}` })
+        .run();
+    });
+    test('should call openExternalUrl with url containing integrator-ashareid query param if present', () => {
+      const connectionId = 'c1';
+      const url = `/connections/${connectionId}/debug`;
+
+      return expectSaga(downloadConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.accountShareHeader, url), {'integrator-ashareid': '123'}],
+        ])
+        .call(openExternalUrl, { url: `/api/connections/${connectionId}/debug?integrator-ashareid=123` })
         .run();
     });
   });
