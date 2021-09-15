@@ -215,6 +215,7 @@ import orangehrm from './orangehrm';
 import sapsuccessfactors from './sapsuccessfactors';
 import braintree from './braintree';
 import zenefits from './zenefits';
+import saphana from './saphana';
 
 export default {
   channelape,
@@ -434,4 +435,5 @@ export default {
   sapsuccessfactors,
   braintree,
   zenefits,
+  saphana,
 };
