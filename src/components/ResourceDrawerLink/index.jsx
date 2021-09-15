@@ -38,7 +38,7 @@ export default function ResourceDrawerLink({
         to={`${match.url}/edit/${resourceType}/${resource._id}`}>
         {linkLabel}
       </Link>
-      { resource.description && <InfoIconButton info={resource.description} disableHtml size="xs" />}
+      { resource.description && <InfoIconButton info={resource.description} size="xs" />}
       {resource.shared && <Typography>Shared</Typography>}
     </>
   );
