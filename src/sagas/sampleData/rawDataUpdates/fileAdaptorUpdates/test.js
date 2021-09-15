@@ -3,8 +3,7 @@
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { selectors } from '../../../../reducers';
-import saveRawDataForFileAdaptors, { _fetchRawDataForFileAdaptors } from '.';
-import { saveSampleDataOnResource } from '../utils';
+import { _fetchRawDataForFileAdaptors } from '.';
 
 describe('fileAdaptorUpdates sagas', () => {
   describe('_fetchRawDataForFileAdaptors saga', () => {
@@ -199,37 +198,3 @@ describe('fileAdaptorUpdates sagas', () => {
         .run();
     });
   });
-  describe('saveRawDataForFileAdaptors saga', () => {
-    test('should not call saveSampleDataOnResource if there is no resourceId', () => expectSaga(saveRawDataForFileAdaptors, {})
-      .not.call.fn(saveSampleDataOnResource)
-      .run());
-    test('should call _fetchRawDataForFileAdaptors and not call saveSampleDataOnResource if there is no rawData', () => expectSaga(saveRawDataForFileAdaptors, {})
-      .provide([
-        [call(_fetchRawDataForFileAdaptors, {
-          resourceId: 'export-123',
-          type: 'exports',
-        }), undefined],
-      ])
-      .not.call.fn(saveSampleDataOnResource)
-      .run());
-    test('should call _fetchRawDataForFileAdaptors and also call saveSampleDataOnResource if there is rawData', () => {
-      const resourceId = 'export-123';
-      const rawData = { body: { test: 5 } };
-
-      return expectSaga(saveRawDataForFileAdaptors, { resourceId, type: 'exports' })
-        .provide([
-          [call(_fetchRawDataForFileAdaptors, {
-            resourceId,
-            tempResourceId: undefined,
-            type: 'exports',
-          }), rawData],
-        ])
-        .call(saveSampleDataOnResource, {
-          resourceId,
-          rawData,
-          resourceType: 'exports',
-        })
-        .run();
-    });
-  });
-});

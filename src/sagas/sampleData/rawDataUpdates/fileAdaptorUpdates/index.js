@@ -1,6 +1,5 @@
-import { select, call } from 'redux-saga/effects';
+import { select } from 'redux-saga/effects';
 import { selectors } from '../../../../reducers';
-import { saveSampleDataOnResource } from '../utils';
 import { safeParse } from '../../../../utils/string';
 
 export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
@@ -48,30 +47,4 @@ export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type
   }
 
   return rawData;
-}
-
-export default function* saveRawDataForFileAdaptors({
-  resourceId,
-  tempResourceId,
-  type,
-}) {
-  const rawData = yield call(_fetchRawDataForFileAdaptors, {
-    resourceId,
-    tempResourceId,
-    type,
-  });
-
-  // Updated this to check for undefined... as there is a case where user can upload empty file
-  // In which case , we get rawData as '' which is falsy too
-  if (rawData !== undefined) {
-    // Raw data is saved as 'sampleData' field in resourceDoc for imports and exports
-    return yield call(saveSampleDataOnResource, {
-      resourceId,
-      rawData,
-      resourceType: type,
-    });
-
-    // TODO @Raghu Deferred for now :  Raw data is uploaded to S3 and key is saved in resourceDoc for Exports/ Lookups
-    // return yield call(saveRawDataOnResource, { resourceId, rawData });
-  }
 }
