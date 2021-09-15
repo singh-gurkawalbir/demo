@@ -13,6 +13,7 @@ import FontStager from '../src/components/FontStager';
 import { ConfirmDialogProvider } from '../src/components/ConfirmDialog';
 import rootReducer from '../src/reducers';
 import rootSaga from '../src/sagas';
+import customViewPorts from './customViewports';
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -20,6 +21,8 @@ export const parameters = {
     storySort: (a, b) =>
       a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
   },
+  viewport: { viewports: customViewPorts},
+   layout: 'fullscreen' ,
 }
 export const globalTypes = {
   theme: {
