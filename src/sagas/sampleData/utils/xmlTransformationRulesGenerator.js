@@ -14,17 +14,13 @@ import { commitStagedChanges } from '../../resources';
  * Incase of File adaptors XML type, fetch sampleData from the state that has uploaded XML file
  * Parse XML content to JSON to get sampleData
  */
-export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
-  if (!resource || !newResourceId) return;
+export function* _getXmlFileAdaptorSampleData({ resource }) {
+  if (!resource || !resource.sampleData) return;
 
-  const { data: sampleData } = yield select(
-    selectors.getResourceSampleDataWithStatus,
-    newResourceId,
-    'raw'
-  );
-
-  if (!sampleData) return;
-  const processedData = yield call(parseFileData, { sampleData, resource });
+  const processedData = yield call(parseFileData, {
+    sampleData: resource.sampleData,
+    resource,
+  });
 
   // processor calls return data wrapped inside 'data' array
   return processedData?.data?.[0];
@@ -94,10 +90,7 @@ export default function* saveTransformationRulesForNewXMLExport({
   // Calls related saga for XML/FileAdaptor type
   // newResourceId is a temporary Id which is not part of 'resource' fetched from patches. So need to send explicitly
   const convertedXmlToJSON = isXmlFileAdaptor
-    ? yield call(_getXmlFileAdaptorSampleData, {
-      resource,
-      newResourceId: tempResourceId,
-    })
+    ? yield call(_getXmlFileAdaptorSampleData, { resource })
     : yield call(_getXmlHttpAdaptorSampleData, {
       resource,
       newResourceId: tempResourceId,

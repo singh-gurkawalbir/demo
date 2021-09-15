@@ -11,10 +11,16 @@ import {
 import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { isNewId } from '../../utils/resource';
+import {
+  isNewId,
+  isFileAdaptor,
+  isAS2Resource,
+  isRestCsvMediaTypeExport,
+} from '../../utils/resource';
+import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -117,6 +123,51 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   });
 
   return { ...values, '/rawData': rawDataKey };
+}
+
+export function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
+  const { merged: resourceObj } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+  const connectionObj = yield select(
+    selectors.resource,
+    'connections',
+    resourceObj && resourceObj._connectionId
+  );
+
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    (resourceType === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
+  ) {
+    const sampleData = yield call(_fetchRawDataForFileAdaptors, {
+      resourceId,
+      type: resourceType,
+    });
+
+    if (sampleData !== undefined) {
+      return { ...values, '/sampleData': sampleData };
+    }
+  }
+
+  return values;
+}
+
+function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
+  const { merged: resourceObj } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+
+  // TODO: make a generic fix on raw data and not specific to netsuite. Ref: IO-18967 for netsuite specific fix
+  if (resourceObj?.adaptorType === 'NetSuiteExport' || !resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
+    return values;
+  }
+
+  return { ...values, '/rawData': EMPTY_RAW_DATA };
 }
 
 export function* deleteUISpecificValues({ values, resourceId }) {
@@ -242,8 +293,7 @@ export function* submitFormValues({
   });
 
   if (resourceType === 'exports') {
-    delete formValues['/rawData'];
-
+    formValues = yield call(clearRawDataFromFormValues, { resourceId, resourceType, values: formValues });
     // We have a special case for exports that define a "Data loader" flow.
     // We need to store the raw data s3 key so that when a user 'runs' the flow,
     // we can post the runKey to the api. For file connectors, we do not use rawData
@@ -254,6 +304,10 @@ export function* submitFormValues({
       values: formValues,
     });
   }
+  if (['exports', 'imports'].includes(resourceType)) {
+    formValues = yield call(updateFileAdaptorSampleData, { resourceId, resourceType, values: formValues });
+  }
+
   let patchSet;
   let finalValues;
 

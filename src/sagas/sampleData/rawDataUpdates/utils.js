@@ -4,6 +4,7 @@ import { uploadRawData } from '../../uploadFile';
 import { selectors } from '../../../reducers';
 import { EMPTY_RAW_DATA } from '../../../utils/constants';
 import { SCOPES } from '../../resourceForm';
+import { commitStagedChanges } from '../../resources';
 
 export function* saveSampleDataOnResource({
   resourceId,
@@ -47,7 +48,11 @@ export function* saveRawDataOnResource({
 
   // Save the resource
   yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-  yield put(actions.resource.commitStaged(resourceType, resourceId, SCOPES.VALUE));
+  yield call(commitStagedChanges, {
+    resourceType,
+    id: resourceId,
+    scope: SCOPES.VALUE,
+  });
 }
 
 /**

@@ -15,12 +15,11 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
-import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
-import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
+import { saveRawDataOnResource } from './utils';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
-export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId, flowId }) {
+export function* _fetchAndSaveRawDataForResource({ type, resourceId, flowId }) {
   const resourceObj = yield select(
     selectors.resource,
     type === 'imports' ? 'imports' : 'exports',
@@ -46,18 +45,14 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourc
     isBlobModeFileAdaptor
   ) return;
 
-  // For file adaptors and AS2 resource , raw data is fetched from uploaded file stored in state
-  // Same applies for Rest Export incase of CSV as media type
+  // For file adaptors and AS2 resource , sampleData is saved while saving the resource itself
+  // Nothing to do here
   if (
     isFileAdaptor(resourceObj) ||
     isAS2Resource(resourceObj) ||
     (type === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
   ) {
-    return yield call(saveRawDataForFileAdaptors, {
-      resourceId,
-      tempResourceId,
-      type,
-    });
+    return;
   }
 
   if (type === 'exports') {
@@ -69,14 +64,16 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourc
 
     if (exportPreviewData) {
       const parseData = getPreviewStageData(exportPreviewData, 'raw');
+      const rawData = parseData && JSON.stringify(parseData);
 
       yield call(saveRawDataOnResource, {
         resourceId,
-        rawData: parseData && JSON.stringify(parseData),
+        rawData,
       });
-    } else {
-      // If there is no preview data , remove rawDataKey if present on the resource
-      yield call(removeRawDataOnResource, { resourceId });
+      if (flowId && rawData) {
+        // clear flowData state whenever a resource gets updated
+        yield put(actions.flowData.clearStages(flowId));
+      }
     }
   } else {
     // TODO @Raghu : Commenting this now as there is no BE Support on saving raw data for PPs
