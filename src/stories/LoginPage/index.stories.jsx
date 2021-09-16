@@ -1,4 +1,6 @@
 import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { action } from '@storybook/addon-actions';
 import {makeStyles, Typography, Button, TextField} from '@material-ui/core';
 import CeligoLogo from '../../components/CeligoLogo';
 import HeroImages from './HeroImages';
@@ -153,6 +155,8 @@ const useStyles = makeStyles(theme => ({
 export function Login() {
   const classes = useStyles();
 
+  const handleClick = action('Sign in with google');
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.signUpForm}>
@@ -183,7 +187,11 @@ export function Login() {
               </Button>
             </div>
             <Button
-              variant="contained" fullWidth color="primary" value="Submit"
+              variant="contained"
+              fullWidth
+              color="primary"
+              value="Submit"
+              onClick={action('Form Submitted!')}
               className={classes.submitBtn}>Sign in
             </Button>
             <div className={classes.or}>
@@ -191,8 +199,9 @@ export function Login() {
             </div>
             <form className={classes.googleBtnForm}>
               <Button
-                type="submit"
+                type="button"
                 color="secondary"
+                onClick={handleClick}
                 className={classes.googleBtn}>
                 Sign in with Google
               </Button>
@@ -200,7 +209,10 @@ export function Login() {
           </div>
           <Typography component="div" className={classes.signuplinkWrapper}>
             Don&apos;t have an account?
-            <Button href="containedButton" className={classes.signUpLink}>
+            <Button
+              href="#"
+              className={classes.signUpLink}
+             >
               Sign up
             </Button>
           </Typography>
