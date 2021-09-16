@@ -214,7 +214,6 @@ export default function SearchBox() {
               value={activeTab}
               onChange={handleTabChange}
               aria-label="Global search results"
-            // variant="fullWidth"
               indicatorColor="primary"
           >
               <Tab label={`Resources (${getResultCount(results, true)})`} />
@@ -226,10 +225,12 @@ export default function SearchBox() {
           </div>
           <TabPanel value={activeTab} index={0}>
             <div className={classes.resultContainer}>
+              { results?.length && (
               <div className={classes.resourceHeader}>
                 <Typography variant="h6">Name</Typography>
                 <Typography variant="h6" className={classes.lastUpdated}>Last updated</Typography>
               </div>
+              )}
               <Results results={resourceResults} />
               {marketplaceResults?.length > 0 && (
               <div className={classes.resultFooter}>

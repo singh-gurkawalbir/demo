@@ -19,10 +19,10 @@ const designParameters = {
   },
 };
 
-export const Example = Template.bind({});
+export const FullResults = Template.bind({});
 
-Example.parameters = designParameters;
-Example.args = {
+FullResults.parameters = designParameters;
+FullResults.args = {
   results: {
     flows: [
       { lastModified: '2021-02-18T21:29:37Z', name: 'Move data from point A to B', description: 'Description of a flow.' },
@@ -51,3 +51,9 @@ Example.args = {
   },
 };
 
+export const EmptyResults = Template.bind({});
+
+EmptyResults.parameters = designParameters;
+EmptyResults.args = {
+  results: {},
+};

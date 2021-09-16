@@ -6,9 +6,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     position: 'absolute',
     zIndex: theme.zIndex.drawer + 1,
-    top: 50,
+    marginTop: 2,
   },
-
 }));
 
 export default function FloatingPaper({className, children}) {

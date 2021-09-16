@@ -19,9 +19,9 @@ import { filterMap } from './filterMeta';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    flexDirection: 'column',
+    // display: 'flex',
+    // alignItems: 'flex-end',
+    // flexDirection: 'column',
   },
   arrowContainer: {
     paddingLeft: theme.spacing(2),
@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
   menu: {
     padding: theme.spacing(1, 1, 1, 2),
+    marginLeft: -87,
   },
   allItemChecked: {
     color: `${theme.palette.text.disabled}!important`,

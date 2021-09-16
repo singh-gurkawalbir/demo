@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   typeContainer: {
     marginBottom: theme.spacing(1.5),
   },
+  noResults: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 export default function Results({ results }) {
@@ -44,7 +47,9 @@ export default function Results({ results }) {
 
   if (!results?.length) {
     return (
-      <Typography>No results</Typography>
+      <Typography className={classes.noResults} variant="body2" color="textSecondary">
+        Your search didn’t return any matching results. Try a different term or adjust your filters.
+      </Typography>
     );
   }
 
