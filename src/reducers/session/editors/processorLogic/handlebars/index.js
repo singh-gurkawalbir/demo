@@ -55,6 +55,16 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
     return true;
   }
 
+  // AFE 1/2 toggle is shown for paging fields
+  if ([
+    'http.paging.body',
+    'http.paging.relativeURI',
+    'rest.pagingPostBody',
+    'rest.nextPageRelativeURI',
+  ].includes(fieldId)) {
+    return true;
+  }
+
   // no AFE1/2 is shown for PG export (with some exceptions)
   if (isPageGenerator) {
     return false;
