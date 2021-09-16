@@ -539,7 +539,7 @@ export function* requestEditorSampleData({
 
         resource = { ...resource, oneToMany };
       }
-      if (isOldRestExp && resource?.rest?.pagingMethod) {
+      if (isOldRestExp && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
         // create http sub doc with paging method as /getContext expects it
         // map rest paging method to http paging method
         resource.http = {

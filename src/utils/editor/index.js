@@ -47,22 +47,6 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
   const { ignoreExisting, ignoreMissing } = resource || {};
   const isNewRestExport = !isOldRestExport(resource, connection);
 
-  if (isNewRestExport) {
-    // field mappings for the new Rest exports with http sub schema
-    switch (fieldId) {
-      case 'rest.pagingPostBody':
-        return 'http.paging.body';
-      case 'rest.nextPageRelativeURI':
-        return 'http.paging.relativeURI';
-      case 'rest.postBody':
-        return 'http.body';
-      case 'rest.relativeURI':
-        return 'http.relativeURI';
-      case 'rest.once.postBody':
-        return 'http.once.body';
-      default:
-    }
-  }
   // some field types have same field ids
   switch (fieldId) {
     case 'rdbms.query1':
@@ -94,8 +78,27 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
     default:
-      return fieldId;
   }
+
+  if (isNewRestExport) {
+    // field mappings for the new Rest exports with http sub schema
+    switch (fieldId) {
+      case 'rest.pagingPostBody':
+        return 'http.paging.body';
+      case 'rest.nextPageRelativeURI':
+        return 'http.paging.relativeURI';
+      case 'rest.postBody':
+        return 'http.body';
+      case 'rest.relativeURI':
+        return 'http.relativeURI';
+      case 'rest.once.postBody':
+        return 'http.once.body';
+      default:
+    }
+  }
+
+  // returns same fieldId if it does not match
+  return fieldId;
 };
 
 // fieldIds that show previewData when paging is configured
