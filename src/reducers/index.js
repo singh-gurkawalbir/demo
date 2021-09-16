@@ -5820,7 +5820,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     resourceType,
     resourceId
   )?.merged || emptyObject;
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
