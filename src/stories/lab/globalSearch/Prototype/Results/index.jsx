@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { filterMap } from '../filterMeta';
 import GenericRow from './types/Generic';
-import ConnectionRow from './types/Connection';
+import ConnectedRow from './types/Connected';
 
 // TODO: We need to create custom row types for several of
 // the resource types. Only common resource types can use the
@@ -10,11 +10,11 @@ import ConnectionRow from './types/Connection';
 const rowTypeMap = {
   integrations: GenericRow,
   flows: GenericRow,
-  connections: ConnectionRow,
+  connections: ConnectedRow,
   imports: GenericRow,
   exports: GenericRow,
   scripts: GenericRow,
-  agents: GenericRow,
+  agents: ConnectedRow,
   stacks: GenericRow,
   apis: GenericRow,
   accesstokens: GenericRow,
@@ -27,6 +27,11 @@ const rowTypeMap = {
 
 const useStyles = makeStyles(theme => ({
   root: {
+    flexGrow: 1,
+    overflow: 'hidden',
+    overflowY: 'auto',
+    paddingTop: 8,
+
   },
   typeContainer: {
     marginBottom: theme.spacing(1.5),
@@ -47,14 +52,16 @@ export default function Results({ results }) {
     <div className={classes.root}>
       {results.map(({type, results: typeResults}) => (
         <div key={type} className={classes.typeContainer}>
-          <Typography variant="subtitle2">{filterMap[type]?.label.toUpperCase()}</Typography>
-          {typeResults.map(r => {
+          <Typography variant="caption"><b>{filterMap[type]?.label.toUpperCase()}</b></Typography>
+          {typeResults.map((r, i) => {
             const Row = rowTypeMap[type];
+            const includeDivider = typeResults.length > 1 && i > 0;
 
-            return <Row key={r.id} result={r} />;
+            return <Row key={r.id} result={r} includeDivider={includeDivider} />;
           })}
         </div>
       ))}
     </div>
   );
 }
+

@@ -1,16 +1,15 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
+import { makeStyles, Paper, InputBase, Tabs, Tab, Typography } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
+import MarketplaceIcon from '../../../../components/icons/MarketplaceIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { filterMap, shortcutMap } from './filterMeta';
 import Results from './Results';
+import TextButton from '../../../../components/Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // display: 'flex',
-    // alignItems: 'flex-start',
-    // flexDirection: 'column',
     width: '100%',
   },
   searchBox: {
@@ -35,11 +34,28 @@ const useStyles = makeStyles(theme => ({
   resultsPaper: {
     width: 500,
     minHeight: 300,
-    maxHeight: 500,
   },
   tabPanel: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+  },
+  resultContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxHeight: '50vh',
+  },
+  resultFooter: {
     paddingTop: theme.spacing(1),
+    borderTop: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  resourceHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(1, 0),
+  },
+  lastUpdated: {
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -154,6 +170,8 @@ export default function SearchBox() {
   const resourceResults = useMemo(() => getTabResults(results, true), [results]);
   const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
 
+  const marketplaceResultCount = getResultCount(results, false);
+
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
@@ -167,7 +185,7 @@ export default function SearchBox() {
           onChange={handleSearchStringChange}
       />
       </Paper>
-      {showResults && (
+      {showResults && ( // We could/should use <Popover/> component if possible..
         <FloatingPaper className={classes.resultsPaper}>
           <Tabs
             value={activeTab}
@@ -177,15 +195,33 @@ export default function SearchBox() {
             indicatorColor="primary"
           >
             <Tab label={`Resources (${getResultCount(results, true)})`} />
-            <Tab label={`Marketplace (${getResultCount(results, false)})`} />
+            <Tab label={`Marketplace (${marketplaceResultCount})`} />
           </Tabs>
 
           <TabPanel value={activeTab} index={0}>
-            <Results results={resourceResults} />
+            <div className={classes.resultContainer}>
+              <div className={classes.resourceHeader}>
+                <Typography variant="subtitle2"><b>Name</b></Typography>
+                <Typography variant="subtitle2" className={classes.lastUpdated}><b>Last updated</b></Typography>
+              </div>
+              <Results results={resourceResults} />
+              {marketplaceResults?.length > 0 && (
+              <div className={classes.resultFooter}>
+                <TextButton
+                  onClick={e => handleTabChange(e, 1)}
+                  startIcon={<MarketplaceIcon />}
+                  color="primary">
+                  Checkout {marketplaceResultCount} result{marketplaceResultCount > 1 && 's'} in Marketplace
+                </TextButton>
+              </div>
+              )}
+            </div>
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            <Results results={marketplaceResults} />
+            <div className={classes.resultContainer}>
+              <Results results={marketplaceResults} />
+            </div>
           </TabPanel>
         </FloatingPaper>
       )}

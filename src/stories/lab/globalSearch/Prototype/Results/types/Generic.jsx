@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     // justifyContent: 'space-between',
-    padding: theme.spacing(0, 0.5),
+    padding: theme.spacing(0.75),
     width: '100%',
     '&:hover': {
       backgroundColor: theme.palette.background.paper2,
@@ -18,14 +18,14 @@ const useStyles = makeStyles(theme => ({
   filler: {
     flexGrow: 1,
   },
-  divider: {
+  dataDivider: {
     height: theme.spacing(3),
     width: 1,
     margin: theme.spacing(0, 1),
   },
 }));
 
-export default function Generic({result, children}) {
+export default function Generic({result, children, includeDivider}) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -34,17 +34,20 @@ export default function Generic({result, children}) {
   const handleRowClick = () => history.push(result.url);
 
   return (
-    <div className={classes.root} onClick={handleRowClick}>
-      <Typography>
-        {result.name || result.id}
-      </Typography>
-      {result.description && <InfoIconButton size="xs" info={result.description} />}
-      {children && <Divider orientation="vertical" className={classes.divider} />}
-      {children}
+    <>
+      {includeDivider && <Divider orientation="horizontal" />}
+      <div className={classes.root} onClick={handleRowClick}>
+        <Typography>
+          {result.name || result.id}
+        </Typography>
+        {result.description && <InfoIconButton size="xs" info={result.description} />}
+        {children && <Divider orientation="vertical" className={classes.dataDivider} />}
+        {children}
 
-      <div className={classes.filler} />
+        <div className={classes.filler} />
 
-      <CeligoTimeAgo date={result.lastModified} />
-    </div>
+        <CeligoTimeAgo date={result.lastModified} />
+      </div>
+    </>
   );
 }

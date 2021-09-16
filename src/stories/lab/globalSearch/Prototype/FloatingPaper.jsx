@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     position: 'absolute',
     zIndex: theme.zIndex.drawer + 1,
-    top: 52,
+    top: 50,
   },
 
 }));

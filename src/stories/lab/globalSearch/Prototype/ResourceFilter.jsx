@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
   allItemChecked: {
     color: `${theme.palette.text.disabled}!important`,
-    cursor: 'default',
+    cursor: 'not-allowed',
   },
   divider: {
     margin: theme.spacing(1, 0),
@@ -57,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   },
   typeButton: {
     padding: theme.spacing(0.5),
+  },
+  marketplaceTitle: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -155,12 +158,9 @@ export default function ResourceFilter({openByDefault = false}) {
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
-
           {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
 
-          <Divider orientation="horizontal" className={classes.divider} />
-          <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>
-
+          <Typography variant="subtitle2" className={classes.marketplaceTitle} gutterBottom component="div">MARKETPLACE</Typography>
           {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
         </FloatingPaper>
       )}

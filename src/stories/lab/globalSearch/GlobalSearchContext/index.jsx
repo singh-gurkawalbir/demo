@@ -6,10 +6,10 @@ export const GlobalSearchProvider = ({
   children,
   results,
   defaultKeyword = '',
-  defaultType = [],
+  defaultFilters = [],
   onKeywordChange,
   onFiltersChange }) => {
-  const [filters, setFilters] = useState(defaultType);
+  const [filters, setFilters] = useState(defaultFilters);
   const [keyword, setKeyword] = useState(defaultKeyword);
   const [open, setOpen] = useState(false);
 

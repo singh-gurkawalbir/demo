@@ -26,9 +26,9 @@ export const filterMap = {
   recycleBin:
     { shortcut: 'r', type: 'recycleBin', label: 'Recycle bin', isResource: true },
   marketplaceTemplates:
-    { shortcut: 'mt', type: 'marketplaceTemplates', label: 'Templates' },
+    { shortcut: 'mt', type: 'marketplaceTemplates', label: 'Templates', isResource: false },
   marketplaceConnectors:
-    { shortcut: 'mia', type: 'marketplaceConnectors', label: 'Integration apps' },
+    { shortcut: 'mia', type: 'marketplaceConnectors', label: 'Integration apps', isResource: false },
 };
 
 export const shortcutMap = {};
