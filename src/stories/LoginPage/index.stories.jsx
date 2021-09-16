@@ -1,6 +1,7 @@
 import React from 'react';
 import {makeStyles, Typography, Button, TextField} from '@material-ui/core';
 import CeligoLogo from '../../components/CeligoLogo';
+import HeroImages from './HeroImages';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -205,17 +206,8 @@ export function Login() {
           </Typography>
         </div>
       </div>
-      {/* Below styles are temporary, once we get the final mocks we will replace with iframe url */}
-      <div
-        className={classes.imgContainier}
-        style={
-          {
-            background: 'url(https://www.celigo.com/wp-content/uploads/home-hero.svg) center center / 90% no-repeat',
-            padding: 16,
-          }
-        }>
-        {/* <iframe src="https://www.celigo.com/wp-content/uploads/home-hero.svg/" title="Celigo" /> */}
-      </div>
+      {/* Below component shows a static image, once we get the final mocks we will replace with iframe url */}
+      <HeroImages />
     </div>
   );
 }
