@@ -834,7 +834,7 @@ describe('editor sagas', () => {
         flowId,
         resourceType: 'exports',
         resourceId,
-        fieldId: 'http.relativeURI',
+        fieldId: 'rest.relativeURI',
         formKey: 'new-123',
       };
 

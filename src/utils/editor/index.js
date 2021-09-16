@@ -75,16 +75,6 @@ export const getUniqueFieldId = (fieldId, resource) => {
 
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
-    case 'rest.pagingPostBody':
-      return 'http.paging.body';
-    case 'rest.nextPageRelativeURI':
-      return 'http.paging.relativeURI';
-    case 'rest.postBody':
-      return 'http.body';
-    case 'rest.relativeURI':
-      return 'http.relativeURI';
-    case 'rest.once.postBody':
-      return 'http.once.body';
     default:
       return fieldId;
   }
@@ -93,8 +83,12 @@ export const getUniqueFieldId = (fieldId, resource) => {
 // fieldIds that show previewData when paging is configured
 export const previewDataDependentFieldIds = [
   'http.paging.body',
+  'rest.pagingPostBody',
+  'rest.nextPageRelativeURI',
   'http.paging.relativeURI',
+  'rest.relativeURI',
   'http.relativeURI',
+  'rest.postBody',
   'http.body',
 ];
 
