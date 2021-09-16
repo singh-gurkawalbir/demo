@@ -7,17 +7,17 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/sap/opu/odata/sap/API_SALES_ORDER_SRV',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/http/unencrypted/communicationArrangementUrlHost']}-api.s4hana.ondemand.com`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/host']}-api.s4hana.ondemand.com`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.unencrypted.communicationArrangementUrlHost': {
-      id: 'http.unencrypted.communicationArrangementUrlHost',
+    'http.unencrypted.host': {
+      id: 'http.unencrypted.host',
       startAdornment: 'https://',
       endAdornment: '-api.s4hana.ondemand.com',
       type: 'text',
-      label: 'Communication Arrangement URL Host',
-      helpKey: 'saphana.connection.http.unencrypted.communicationArrangementUrlHost',
+      label: 'Host',
+      helpKey: 'saphana.connection.http.unencrypted.host',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -47,7 +47,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.communicationArrangementUrlHost',
+        fields: ['http.unencrypted.host',
           'http.auth.basic.username',
           'http.auth.basic.password'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
