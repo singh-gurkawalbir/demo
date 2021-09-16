@@ -7,17 +7,17 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/sap/opu/odata/sap/API_SALES_ORDER_SRV',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/http/baseurl']}-api.s4hana.ondemand.com`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/communicationArrangementUrlHost']}-api.s4hana.ondemand.com`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.baseurl': {
-      id: 'http.baseurl',
+    'http.unencrypted.communicationArrangementUrlHost': {
+      id: 'http.unencrypted.communicationArrangementUrlHost',
       startAdornment: 'https://',
       endAdornment: '-api.s4hana.ondemand.com',
       type: 'text',
-      label: 'Base URL',
-      helpKey: 'saphana.connection.http.baseurl',
+      label: 'Communication Arrangement URL Host',
+      helpKey: 'saphana.connection.http.unencrypted.communicationArrangementUrlHost',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -25,19 +25,7 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
-      defaultValue: r => {
-        const baseUri = r?.http?.baseURI;
-        const baseurl =
-          baseUri &&
-          baseUri.substring(
-            baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('-api.s4hana.ondemand.com')
-          );
-
-        return baseurl;
-      },
     },
-
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'Username',
@@ -59,7 +47,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.baseurl',
+        fields: ['http.unencrypted.communicationArrangementUrlHost',
           'http.auth.basic.username',
           'http.auth.basic.password'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
