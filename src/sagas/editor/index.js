@@ -22,7 +22,8 @@ import { constructResourceFromFormValues } from '../utils';
 import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
-import { isNewId } from '../../utils/resource';
+import { isNewId, isOldRestExport } from '../../utils/resource';
+import { restToHttpPagingMethodMap } from '../../utils/http';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -401,6 +402,9 @@ export function* requestEditorSampleData({
   } else {
     resource = yield select(selectors.resource, resourceType, resourceId);
   }
+
+  const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
+  const isOldRestExp = isOldRestExport(resource, connection);
   let sampleData;
 
   // for my apis, no sample data is shown
@@ -439,7 +443,8 @@ export function* requestEditorSampleData({
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
   const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
-  const needPreviewStagesData = resourceType === 'exports' && !!resource?.http?.paging?.method && previewDataDependentFieldIds.includes(fieldId);
+  const isPagingMethodConfigured = !!(isOldRestExp ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
+  const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
 
   if (showPreviewStageData || needPreviewStagesData) {
     yield call(requestResourceFormSampleData, { formKey });
@@ -533,6 +538,15 @@ export function* requestEditorSampleData({
         const oneToMany = resource.oneToMany === true || resource.oneToMany === 'true';
 
         resource = { ...resource, oneToMany };
+      }
+      if (isOldRestExp && resource?.rest?.pagingMethod) {
+        // create http sub doc with paging method as /getContext expects it
+        // map rest paging method to http paging method
+        resource.http = {
+          paging: {
+            method: restToHttpPagingMethodMap[resource.rest.pagingMethod],
+          },
+        };
       }
       body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     }
@@ -655,6 +669,7 @@ export function* initEditor({ id, editorType, options }) {
   }
 
   const flow = yield select(selectors.resource, 'flows', flowId);
+  const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
 
@@ -734,7 +749,7 @@ export function* initEditor({ id, editorType, options }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId, resource),
+    fieldId: getUniqueFieldId(fieldId, resource, connection),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
     sampleDataStatus: 'requested',
