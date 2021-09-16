@@ -874,10 +874,14 @@ export const getScheduleStartMinute = (resource = {}) => {
   let scheduleStartMinute = 0;
 
   const changeStartMinuteForFlowsCreatedAfter = moment(
-    process.env.SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+    // SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER is defined by webpack
+    // eslint-disable-next-line no-undef
+    SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
   );
   const secondChangeStartMinuteForFlowsCreatedAfter = moment(
-    process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+    // SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER is defined by webpack
+    // eslint-disable-next-line no-undef
+    SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
   );
 
   if (resource) {
