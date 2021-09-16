@@ -3,6 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { filterMap } from '../filterMeta';
 import GenericRow from './types/Generic';
 import ConnectedRow from './types/Connected';
+import RecycleBinRow from './types/RecycleBin';
 
 // TODO: We need to create custom row types for several of
 // the resource types. Only common resource types can use the
@@ -20,7 +21,7 @@ const rowTypeMap = {
   accesstokens: GenericRow,
   templates: GenericRow,
   connectors: GenericRow,
-  recycleBin: GenericRow,
+  recycleBin: RecycleBinRow,
   marketplaceTemplates: GenericRow,
   marketplaceConnectors: GenericRow,
 };
@@ -31,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     overflowY: 'auto',
     paddingTop: 8,
-
+    paddingRight: 8,
   },
   typeContainer: {
     marginBottom: theme.spacing(1.5),
@@ -46,13 +47,12 @@ export default function Results({ results }) {
       <Typography>No results</Typography>
     );
   }
-  // console.log(results);
 
   return (
     <div className={classes.root}>
       {results.map(({type, results: typeResults}) => (
         <div key={type} className={classes.typeContainer}>
-          <Typography variant="caption"><b>{filterMap[type]?.label.toUpperCase()}</b></Typography>
+          <Typography color="textSecondary" variant="overline">{filterMap[type]?.label}</Typography>
           {typeResults.map((r, i) => {
             const Row = rowTypeMap[type];
             const includeDivider = typeResults.length > 1 && i > 0;

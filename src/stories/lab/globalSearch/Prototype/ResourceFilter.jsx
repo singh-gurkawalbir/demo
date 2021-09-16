@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     // margin: theme.spacing(0, 1),
   },
   menu: {
-    marginRight: 2,
+    padding: theme.spacing(1, 1, 1, 2),
   },
   allItemChecked: {
     color: `${theme.palette.text.disabled}!important`,
@@ -63,10 +63,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceFilter({openByDefault = false}) {
+export default function ResourceFilter() {
   const classes = useStyles();
   const { filters, setFilters, onFiltersChange } = useGlobalSearchContext();
-  const [open, setOpen] = useState(openByDefault);
+  const [open, setOpen] = useState(false);
 
   const handleArrowClick = () => setOpen(o => !o);
 

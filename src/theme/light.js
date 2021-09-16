@@ -37,7 +37,7 @@ export default {
       disabled: colors.celigoNeutral4,
       primary: colors.celigoNeutral8,
       hint: colors.celigoNeutral5,
-      secondary: colors.celigoNeutral7,
+      secondary: colors.celigoNeutral6,
     },
     info: {
       main: colors.celigoAccent2,
@@ -368,9 +368,15 @@ export default {
         letterSpacing: 'normal',
       },
       overline: {
-        fontSize: '12px',
+        fontFamily: 'source sans pro',
+        fontWeight: '700',
+        fontSize: '14px',
         lineHeight: '16px',
-        letterSpacing: '1px',
+        letterSpacing: 0.5,
+      },
+      caption: {
+        fontFamily: 'source sans pro',
+        fontSize: '13px',
       },
     },
     MuiListItem: {

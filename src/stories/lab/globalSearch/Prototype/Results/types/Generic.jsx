@@ -7,7 +7,7 @@ import InfoIconButton from '../../../../../../components/InfoIconButton';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    // justifyContent: 'space-between',
+    alignItems: 'center',
     padding: theme.spacing(0.75),
     width: '100%',
     '&:hover': {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   dataDivider: {
-    height: theme.spacing(3),
+    height: theme.spacing(2),
     width: 1,
     margin: theme.spacing(0, 1),
   },
@@ -37,10 +37,9 @@ export default function Generic({result, children, includeDivider}) {
     <>
       {includeDivider && <Divider orientation="horizontal" />}
       <div className={classes.root} onClick={handleRowClick}>
-        <Typography>
-          {result.name || result.id}
-        </Typography>
+        <Typography variant="body2">{result.name || result.id}</Typography>
         {result.description && <InfoIconButton size="xs" info={result.description} />}
+
         {children && <Divider orientation="vertical" className={classes.dataDivider} />}
         {children}
 
