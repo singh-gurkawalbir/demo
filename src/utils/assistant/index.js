@@ -823,6 +823,8 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let { url: relativeURI } = { ...operationDetails };
 
+  let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
+
   operationDetails.pathParameters.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
@@ -841,6 +843,12 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         new RegExp(`:_${pathParam.id}`, 'g'),
         pathParamValue
       );
+      if (pagingRelativeURI) {
+        pagingRelativeURI = pagingRelativeURI.replace(
+          new RegExp(`:_${pathParam.id}`, 'g'),
+          pathParamValue
+        );
+      }
     }
   });
 
@@ -883,9 +891,19 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   if (queryString) {
     relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
+    if (pagingRelativeURI) {
+      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + queryString;
+    }
   }
 
   exportDoc.relativeURI = relativeURI;
+  if (pagingRelativeURI) {
+    if (adaptorType === 'rest') {
+      exportDoc.nextPageRelativeURI = pagingRelativeURI;
+    } else if (adaptorType === 'http') {
+      exportDoc.paging.relativeURI = pagingRelativeURI;
+    }
+  }
 
   if (adaptorType === 'rest') {
     if (['POST', 'PUT'].includes(exportDoc.method)) {
