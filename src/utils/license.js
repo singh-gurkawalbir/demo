@@ -146,7 +146,8 @@ export function platformLicenseActionDetails(license) {
       } else {
         licenseActionDetails = {
           action: 'upgrade',
-          label: `Upgrade now - ${license.expiresInDays} days left`,
+          label: 'Upgrade now -',
+          daysLeft: `${license.expiresInDays} days left`,
         };
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;
       }

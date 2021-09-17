@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
+import { withRouter, Link, useRouteMatch } from 'react-router-dom';
+import { Typography, Tooltip, makeStyles } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Content from '../../components/HomePageCard/Content';
@@ -16,12 +16,8 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
-import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
-import {
-  tileStatus,
-  isTileStatusConnectionDown,
-} from './util';
+import { tileStatus } from './util';
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import CeligoTruncate from '../../components/CeligoTruncate';
@@ -65,12 +61,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
+  const match = useRouteMatch();
   const classes = useStyles();
   const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
   const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, tile.ssLinkedConnectionId)
+  );
+
   const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
   const status = tileStatus(tile);
-  const isConnectionDown = isTileStatusConnectionDown(tile);
   let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
@@ -84,19 +84,24 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
   const handleTileClick = useCallback(
     event => {
       event.stopPropagation();
+      if (isOffline) {
+        history.push(getRoutePath(`${match.url}/edit/connections/${tile.ssLinkedConnectionId}`));
 
+        return;
+      }
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [history, urlToIntegrationSettings]
+    [isOffline, history, urlToIntegrationSettings, match.url, tile.ssLinkedConnectionId]
   );
-  const handleConnectionDownStatusClick = useCallback(event => {
-    event.stopPropagation();
-    // TODO - open connection edit
-  }, []);
 
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
+      if (isOffline) {
+        history.push(getRoutePath(`${match.url}/edit/connections/${tile.ssLinkedConnectionId}`));
+
+        return;
+      }
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
@@ -115,7 +120,7 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         );
       }
     },
-    [tile.status, tile._connectorId, tile.ssLinkedConnectionId, tile.urlName, tile._integrationId, history]
+    [isOffline, tile.status, tile._connectorId, tile.ssLinkedConnectionId, tile.urlName, tile._integrationId, history, match.url]
   );
   // IO-13418
   const getApplication = application =>
@@ -132,21 +137,6 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
             className={classes.headerTileStatus}>
             {status.label}
           </Status>
-          {isConnectionDown && (
-          <Tooltip
-            data-public
-            title="Connection down"
-            placement="bottom"
-            className={classes.tooltip}>
-            <IconButton
-              size="small"
-              color="inherit"
-              onClick={handleConnectionDownStatusClick}
-              className={classes.status}>
-              <ConnectionDownIcon />
-            </IconButton>
-          </Tooltip>
-          )}
         </Header>
         <Content>
           <CardTitle>

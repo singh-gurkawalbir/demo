@@ -430,6 +430,8 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
+export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
 export const AS2_URLS_STAGING = [
   {
@@ -611,6 +613,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.type',
     '_connectionId',
     'settings',
+    'salesforce.distributed.qualifier',
   ],
   imports: [
     '_connectionId',
@@ -708,7 +711,7 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
 
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
-
+export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
 export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
 export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';

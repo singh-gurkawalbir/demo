@@ -49,13 +49,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: 12,
   },
   bottomActions: {
-    background: theme.palette.background.paper2,
-    padding: theme.spacing(1),
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: theme.spacing(1),
-    height: 30,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+    borderRight: 'none',
+    borderLeft: 'none',
   },
   profileArea: {
     display: 'flex',
@@ -66,7 +63,10 @@ const useStyles = makeStyles(theme => ({
   },
   bottomActionsBtn: {
     fontFamily: 'source sans pro',
-    padding: 0,
+    background: theme.palette.background.paper2,
+    margin: '4px 0px',
+    borderRadius: 0,
+    height: 33,
   },
 }));
 
@@ -170,16 +170,9 @@ function ProfileMenuButton() {
             className={classes.bottomActionsBtn}
             href="mailto:product_feedback@celigo.com"
             target="_blank"
+            fullWidth
             >
             Provide UX feedback
-          </TextButton>
-          <TextButton
-            data-test="switchLegacy"
-            component="a"
-            className={classes.bottomActionsBtn}
-            href="/legacy"
-            >
-            Switch to legacy UI
           </TextButton>
         </div>
       </ArrowPopper>

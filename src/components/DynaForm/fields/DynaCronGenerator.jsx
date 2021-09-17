@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   field: {
-    width: '100%',
+    flex: 1,
   },
   resetBtn: {
     marginLeft: theme.spacing(1),

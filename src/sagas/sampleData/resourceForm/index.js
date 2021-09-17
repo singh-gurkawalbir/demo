@@ -1,9 +1,12 @@
-import { select, takeLatest, call, put } from 'redux-saga/effects';
+import { select, takeLatest, call, put, delay } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import { constructResourceFromFormValues } from '../../utils';
+import {
+  constructResourceFromFormValues,
+  constructSuiteScriptResourceFromFormValues,
+} from '../../utils';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import {
@@ -14,7 +17,7 @@ import {
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
-import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
+import { processJsonSampleData } from '../../../utils/sampleData';
 import { generateFileParserOptionsFromResource } from '../utils/fileParserUtils';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
@@ -22,6 +25,7 @@ import { safeParse } from '../../../utils/string';
 
 const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
 const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
+const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
 const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
 const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 /*
@@ -33,6 +37,7 @@ const PARSERS = {
   csv: 'csvParser',
   xlsx: 'csvParser',
   xml: 'xmlParser',
+  json: 'jsonParser',
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
@@ -67,10 +72,27 @@ export function* _getProcessorOutput({ processorData }) {
 export function* _fetchResourceInfoFromFormKey({ formKey }) {
   const formState = yield select(selectors.formState, formKey);
   const parentContext = (yield select(selectors.formParentContext, formKey)) || {};
+  const { resourceId, resourceType, integrationId, ssLinkedConnectionId } = parentContext;
+
+  if (ssLinkedConnectionId) {
+    const ssResourceObj = (yield call(constructSuiteScriptResourceFromFormValues, {
+      formValues: formState?.value || {},
+      resourceId,
+      resourceType,
+      ssLinkedConnectionId,
+      integrationId,
+    })) || {};
+
+    return {
+      formState,
+      ...parentContext,
+      resourceObj: resourceType === 'exports' ? ssResourceObj.export : ssResourceObj.import,
+    };
+  }
   const resourceObj = (yield call(constructResourceFromFormValues, {
     formValues: formState?.value || {},
-    resourceId: parentContext.resourceId,
-    resourceType: parentContext.resourceType,
+    resourceId,
+    resourceType,
   })) || {};
 
   return {
@@ -166,14 +188,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
     yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
   }
   switch (fileType) {
-    case 'json': {
-      const processedJsonData = processJsonPreviewData(fileContent, fileProps);
-      const parseData = processJsonSampleData(fileContent, fileProps);
-
-      yield put(actions.resourceFormSampleData.setParseData(resourceId, parseData));
-      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(processedJsonData, recordSize)));
-      break;
-    }
+    case 'json':
     case 'csv':
     case 'xml': {
       const processorData = {
@@ -229,10 +244,14 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
       break;
     }
     case 'fileDefinitionParser': {
+      const {groupByFields, sortByFields} = fileProps;
+
       const processorData = {
         rule: parserOptions,
         data: fileContent,
         editorType: PARSERS.fileDefinitionParser,
+        groupByFields,
+        sortByFields,
       };
 
       const processorOutput = yield call(_getProcessorOutput, { processorData });
@@ -258,8 +277,13 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 
 export function* _requestFileSampleData({ formKey }) {
   // file related sample data is handled here
-  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
+  const resourceObj = { ...resourceInfo };
+
+  if (ssLinkedConnectionId && SUITESCRIPT_FILE_RESOURCE_TYPES.includes(resourceObj.type)) {
+    resourceObj.file.type = 'csv';
+  }
   const fileType = resourceObj?.file?.type;
 
   if (!fileType) {
@@ -290,6 +314,7 @@ export function* _requestFileSampleData({ formKey }) {
       fileContent: fileDefinitionData?.sampleData || resourceObj.sampleData,
       parserOptions: fieldValue || fileDefinitionData?.rule,
       fileType: 'fileDefinitionParser',
+      fileProps: parserOptions,
     });
   } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
     // parse through the file and update state
@@ -364,7 +389,15 @@ export function* _requestLookupSampleData({ formKey, refreshCache }) {
 }
 
 export function* _requestExportSampleData({ formKey, refreshCache }) {
-  const { resourceId, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+
+  if (ssLinkedConnectionId) {
+    if (SUITESCRIPT_FILE_RESOURCE_TYPES.includes(resourceObj?.type)) {
+      return yield call(_requestFileSampleData, { formKey });
+    }
+
+    return yield put(actions.resourceFormSampleData.clearStages(resourceId));
+  }
   const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
   const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
 
@@ -440,6 +473,7 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId || !VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA.includes(resourceType)) return;
+  yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {

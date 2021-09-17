@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 136,
     '& > img': {
       maxWidth: '100%',
-      maxHeight: '44px',
+      maxHeight: theme.spacing(3),
     },
   },
   installIntegrationStepWrapper: {
@@ -226,7 +226,7 @@ export default function InstallationStep(props) {
             <ApplicationImg
               size="small"
               type={
-                step?.options?.connectionType?.toLowerCase() || step?.sourceConnection?.type || ''
+                step?.options?.connectionType?.toLowerCase() || step?.sourceConnection?.http?.formType || step?.sourceConnection?.type || ''
               }
               assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type}
             />

@@ -7,6 +7,7 @@ import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../reso
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
+import { getAssistantConnectorType } from '../../../constants/applications';
 
 export function* _fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
@@ -14,13 +15,13 @@ export function* _fetchAssistantSampleData({ resource }) {
 
   yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(selectors.assistantData, {
-    adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
+    adaptorType: getAssistantConnectorType(resource.assistant),
     assistant: resource.assistant,
   });
 
   if (!assistantMetadata) {
     assistantMetadata = yield call(requestAssistantMetadata, {
-      adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
+      adaptorType: (resource.adaptorType === 'HTTPImport' && resource.http?.formType !== 'rest') ? 'http' : 'rest',
       assistant: resource.assistant,
     });
   }

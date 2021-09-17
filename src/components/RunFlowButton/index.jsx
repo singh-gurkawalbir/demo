@@ -100,6 +100,9 @@ export default function RunFlowButton({
     shallowEqual
   );
 
+  const runStatus = useSelector(state =>
+    selectors.flowRunStatus(state, flowId).runStatus
+  );
   const isNewFlow = !flowId || flowId.startsWith('new');
   const isDataLoaderFlow = flowDetails.isSimpleImport;
   const dataLoaderFileType = useSelector(state => {
@@ -145,10 +148,8 @@ export default function RunFlowButton({
       } else {
         dispatch(actions.flow.run({ flowId, customStartDate }));
       }
-
-      if (onRunStart) onRunStart();
     },
-    [dispatch, flowId, isDataLoaderFlow, onRunStart]
+    [dispatch, flowId, isDataLoaderFlow]
   );
   const handleClick = useCallback(() => {
     if (isDataLoaderFlow && !hasRunKey) {
@@ -191,6 +192,13 @@ export default function RunFlowButton({
   const disabled = isNewFlow || !flowDetails?.isRunnable || flowDetails?.disableRunFlow;
 
   useEffect(() => {
+    if (runStatus === 'Started' && onRunStart) {
+      onRunStart();
+      dispatch(actions.flow.runActionStatus('Done', flowId));
+    }
+  }, [dispatch, flowId, onRunStart, runStatus]);
+
+  useEffect(() => {
     const { status, file, error, rawFile } = uploadedFile || {};
 
     switch (status) {
@@ -213,7 +221,6 @@ export default function RunFlowButton({
         // Removes uploaded file from session as it is no longer needed once triggered flow run
         dispatch(actions.file.reset(fileId));
 
-        if (onRunStart) onRunStart();
         break;
       default:
     }

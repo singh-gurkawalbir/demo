@@ -72,6 +72,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     borderRadius: 0,
   },
+  img: {
+    maxWidth: '70px',
+  },
 }));
 
 const chipUseStyles = makeStyles(theme => ({

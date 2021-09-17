@@ -3,7 +3,7 @@
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -152,6 +152,14 @@ export default function IntegrationAppAddNewChild(props) {
     isSetupComplete,
     props.history]);
 
+  const formCloseHandler = useCallback(() => {
+    dispatch(actions.integrationApp.child.updateStep(
+      integrationId,
+      currentStep.installerFunction,
+      'reset'
+    ));
+  }, [currentStep?.installerFunction, dispatch, integrationId]);
+
   if (error) {
     history.push(
       getRoutePath(
@@ -216,7 +224,7 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.integrationApp.child.updateStep(
         integrationId,
         installerFunction,
-        'inProgress',
+        undefined,
         true
       ));
     } else if (!step.isTriggered) {
@@ -308,8 +316,10 @@ export default function IntegrationAppAddNewChild(props) {
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.form}
+          addChild
           installerFunction={currentStep.installerFunction}
           title={currentStep.name}
+          formCloseHandler={formCloseHandler}
           index={currStepIndex + 1}
         />
       )}

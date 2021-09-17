@@ -28,7 +28,7 @@ import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import { TextButton } from '../../../Buttons';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-const isNestedDrawer = url => !!matchPath(url, {
+export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
   strict: false});

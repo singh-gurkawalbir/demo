@@ -20,23 +20,51 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormStep({ integrationId, installerFunction, formMeta, title, formSubmitHandler, formCloseHandler }) {
+export default function FormStep({
+  integrationId,
+  installerFunction,
+  formMeta,
+  title,
+  formSubmitHandler,
+  formCloseHandler,
+  addChild,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
     formVal => {
-      installerFunction
-        ? dispatch(
-          actions.integrationApp.installer.installStep(
+      if (installerFunction) {
+        // For IA1.0
+        if (addChild) {
+          // Add new child case
+          dispatch(actions.integrationApp.child.updateStep(
             integrationId,
             installerFunction,
-            undefined,
-            undefined,
-            formVal
-          )
-        )
-        : dispatch(
+            'inProgress',
+            false
+          ));
+          dispatch(
+            actions.integrationApp.child.installStep(
+              integrationId,
+              installerFunction,
+              formVal
+            )
+          );
+        } else {
+          dispatch(
+            actions.integrationApp.installer.installStep(
+              integrationId,
+              installerFunction,
+              undefined,
+              undefined,
+              formVal
+            )
+          );
+        }
+      } else {
+        // For IA2.0
+        dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,
             '',
@@ -44,6 +72,7 @@ export default function FormStep({ integrationId, installerFunction, formMeta, t
             formVal
           )
         );
+      }
     },
     [dispatch, installerFunction, integrationId]
   );

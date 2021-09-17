@@ -17,6 +17,24 @@ const useStyles = makeStyles(theme => ({
   infoTransfers: {
     margin: theme.spacing(1, 0),
   },
+  createTransferContainer: {
+    background: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+    padding: theme.spacing(2),
+  },
+  submitBtn: {
+    marginTop: theme.spacing(2),
+  },
+  initiateTransferWrapper: {
+    marginTop: theme.spacing(2),
+    background: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+  },
+  initiateTransferBtn: {
+    margin: theme.spacing(2, 0, 2, 2),
+  },
 }));
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -107,43 +125,40 @@ export default function Invite(props) {
 
   return (
     <>
-      <OutlinedButton
-        onClick={backToTransferClick}
-        color="secondary"
-        startIcon={<ArrowLeftIcon />}>
-        Back to transfers
-      </OutlinedButton>
-      <div className={classes.infoTransfers}>
-        Important! As part of the transfer process, all your currently
-        in-progress flows will be allowed to complete, and new flows will not be
-        started. If there are any webhook based flows, then they will stop
-        accepting new data until the transfer is complete. Once the in-progress
-        flows have finished processing, all the flows will be transferred to the
-        new user. Jobs and related retry data will not be transferred, and this
-        information will be lost for any in-progress jobs that have errors. If
-        you are concerned about this data loss then please first disable the
-        flows manually, and then retry/resolve all open errors, and then
-        initiate the transfer process again.
-      </div>
-      <DynaForm formKey={formKey} />
-      <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
+      <div className={classes.createTransferContainer}>
+        <OutlinedButton
+          onClick={backToTransferClick}
+          color="secondary"
+          startIcon={<ArrowLeftIcon />}>
+          Back to transfers
+        </OutlinedButton>
+        <div className={classes.infoTransfers}>
+          Important! As part of the transfer process, all your currently
+          in-progress flows will be allowed to complete, and new flows will not be
+          started. If there are any webhook based flows, then they will stop
+          accepting new data until the transfer is complete. Once the in-progress
+          flows have finished processing, all the flows will be transferred to the
+          new user. Jobs and related retry data will not be transferred, and this
+          information will be lost for any in-progress jobs that have errors. If
+          you are concerned about this data loss then please first disable the
+          flows manually, and then retry/resolve all open errors, and then
+          initiate the transfer process again.
+        </div>
+        <DynaForm formKey={formKey} />
+        <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
 
-      {!!error && <> {error} </>}
+        {!!error && <div className={classes.infoTransfers}> {error} </div>}
+      </div>
       {response && response.length && (
-        <>
-          <>
-            <CeligoTable
-              resourceType="transfers"
-              data={response}
-              {...metadata}
-            />
-          </>
+        <div className={classes.initiateTransferWrapper}>
+          <CeligoTable resourceType="transfers" data={response} {...metadata} />
           <FilledButton
             data-test="invite"
+            className={classes.initiateTransferBtn}
             onClick={initiateTransferClick}>
             Initiate Transfer
           </FilledButton>
-        </>
+        </div>
       )}
     </>
   );

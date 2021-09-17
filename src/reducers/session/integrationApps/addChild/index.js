@@ -55,6 +55,7 @@ export default (state = {}, action) => {
           }
           if (update === 'inProgress') {
             step.isTriggered = true;
+            delete step.showForm;
           } else if (update === 'verify') {
             step.verifying = true;
             step.isTriggered = true;
@@ -65,6 +66,9 @@ export default (state = {}, action) => {
             step.isTriggered = false;
             step.verifying = false;
             step.completed = true;
+          } else if (update === 'reset') {
+            step.isTriggered = false;
+            delete step.showForm;
           }
         }
 

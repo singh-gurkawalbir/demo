@@ -48,13 +48,10 @@ export default function JobRetriesDialog({
   let { retries } = job;
 
   retries = reverse(
-    retries
-      .filter(r =>
-        [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
-          r.status
-        )
-      )
-      .map((r, index) => ({ ...r, index }))
+    retries?.filter(r =>
+      [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
+        r.status
+      )).map((r, index) => ({ ...r, index }))
   );
 
   return (
