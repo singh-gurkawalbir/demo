@@ -19,10 +19,10 @@ const meta = {
       options: [
         {
           items: [
-            { label: '5', value: '5' },
-            { label: '20', value: '20' },
-            { label: '35', value: '35' },
-            { label: '50', value: '50' },
+            { label: '0', value: '0' },
+            { label: '15', value: '15' },
+            { label: '30', value: '30' },
+            { label: '45', value: '45' },
           ],
         },
       ],

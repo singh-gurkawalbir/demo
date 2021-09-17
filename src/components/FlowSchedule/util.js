@@ -589,6 +589,7 @@ export const getMetadata = ({
         name: 'schedule',
         helpKey: 'flow.schedule',
         type: 'crongenerator',
+        scheduleStartMinuteOffset: scheduleStartMinute,
         label: 'Schedule',
         defaultValue: schedule || '? */5 * * * *',
         validWhen: {
