@@ -45,8 +45,8 @@ FullResults.args = {
       { lastModified: '2019-12-18T21:29:37Z', name: 'Some deleted Export', resourceType: 'Export' },
     ],
     marketplaceTemplates: [
-      { lastModified: '2019-12-18T21:29:37Z', name: 'Some template', description: 'Description of the 1st Export.' },
-      { lastModified: '2019-12-18T21:29:37Z', name: 'Another template'},
+      { name: 'Some template', description: 'This is newest version of Salesforce - NetSuite Integration App built on Celigos integrator.io platform. Streamline your Lead-to-Cash process and manage sales process effectively and in real-time. Packed with Celigos deep domain expertise and best practices, this Integration App is the embodiment of several years of customer feedback, learning and growth. With distributed adapters running in NetSuite and Salesforce, our integration app allows endless customization options.' },
+      { name: 'Another template'},
     ],
   },
 };

@@ -4,6 +4,7 @@ import { filterMap } from '../filterMeta';
 import GenericRow from './types/Generic';
 import ConnectedRow from './types/Connected';
 import RecycleBinRow from './types/RecycleBin';
+import MarketplaceRow from './types/Marketplace';
 
 // TODO: We need to create custom row types for several of
 // the resource types. Only common resource types can use the
@@ -22,8 +23,8 @@ const rowTypeMap = {
   templates: GenericRow,
   connectors: GenericRow,
   recycleBin: RecycleBinRow,
-  marketplaceTemplates: GenericRow,
-  marketplaceConnectors: GenericRow,
+  marketplaceTemplates: MarketplaceRow,
+  marketplaceConnectors: MarketplaceRow,
 };
 
 const useStyles = makeStyles(theme => ({
