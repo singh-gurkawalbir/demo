@@ -50,7 +50,7 @@ selectors.suiteScriptImportSampleDataContext = (
 ) => {
   // returns input data for that stage to populate
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-  const flowData = state[id];
+  const flowData = state?.[id];
 
   return flowData || DEFAULT_VALUE;
 };

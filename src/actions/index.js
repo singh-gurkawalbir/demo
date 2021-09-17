@@ -109,8 +109,6 @@ const auth = {
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-
-  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, { accountToResetTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -1040,10 +1038,11 @@ const integrationApp = {
         installerFunction,
         steps,
       }),
-    installStep: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction, formVal) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
+        formVal,
       }),
     failedNewChildSteps: (integrationId, message) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {
@@ -2037,6 +2036,11 @@ const flow = {
       fileName,
     }),
   runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
+  runActionStatus: (runStatus, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS, {
+      runStatus,
+      flowId,
+    }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,

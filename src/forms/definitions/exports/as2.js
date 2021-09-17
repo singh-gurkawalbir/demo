@@ -95,6 +95,8 @@ export default {
     },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
+    'file.sortByFields': { fieldId: 'file.sortByFields' },
+    'file.groupByFields': { fieldId: 'file.groupByFields' },
   },
   layout: {
     type: 'collapse',
@@ -120,6 +122,14 @@ export default {
         containers: [{fields: [
           'file.csv',
         ]}],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like to group and sort records?',
+        fields: [
+          'file.sortByFields',
+          'file.groupByFields',
+        ],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

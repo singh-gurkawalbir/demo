@@ -428,7 +428,7 @@ export const processOneToManySampleData = (sampleData, resource) => {
 
   if (!sampleData || !pathSegments || !pathSegments.length) return sampleData;
 
-  if (!isValidPathToMany(sampleData, pathSegments)) return sampleData;
+  if (!isValidPathToMany(sampleData, pathSegments)) return { _PARENT: sampleData };
   let pathPointer = sampleData;
   let sampleDataAtPath;
 
@@ -451,6 +451,33 @@ export const processOneToManySampleData = (sampleData, resource) => {
   };
 
   return processedSampleData;
+};
+
+export const extractRawSampleDataFromOneToManySampleData = (sampleData, resource) => {
+  const { oneToMany, pathToMany } = resource || {};
+
+  if (!sampleData || !sampleData._PARENT || !oneToMany || !pathToMany) return sampleData;
+
+  const { _PARENT: parentSampleData, ...rest} = deepClone(sampleData);
+
+  const pathSegments = getPathSegments(pathToMany);
+
+  let pathPointer = parentSampleData;
+
+  for (let i = 0; i < pathSegments.length - 1; i += 1) {
+    pathPointer = pathPointer[pathSegments[i]];
+    if (!pathPointer) break;
+  }
+  if (!pathPointer) {
+    return parentSampleData;
+  }
+  const targetPath = pathSegments[pathSegments.length - 1];
+
+  if (!Array.isArray(pathPointer) && typeof pathPointer === 'object') {
+    pathPointer[targetPath] = isEmpty(rest) ? [] : [rest];
+  }
+
+  return parentSampleData;
 };
 
 /**
@@ -573,28 +600,6 @@ export const wrapSampleDataWithContext = ({
         processedData.settings = settings;
       }
 
-      // todo: remove this once BE is stable and correctly wraps the sample data
-      // add connection object for http exports and imports, only for AFE2
-      // if (resource.adaptorType?.includes('HTTP') && (resourceType === 'export' || templateVersion === 2)) {
-      //   processedData.connection = {
-      //     name: connection.name,
-      //     http: {
-      //       unencrypted: connection.http.unencrypted,
-      //       encrypted: connection.http.encrypted,
-      //     },
-      //   };
-      // }
-
-      // add paging sub-object for both HTTP and REST API "exports" (i.e. Lookups, Exports -- but NOT transfers).
-      if ((resource.adaptorType?.includes('HTTP') || resource.adaptorType?.includes('REST')) && resourceType === 'export' &&
-      resource.http?.paging) {
-        processedData.export = {
-          http: {
-            paging: {...resource.http.paging},
-          },
-        };
-      }
-
       return {
         data: processedData,
         status,
@@ -629,6 +634,14 @@ export const wrapSampleDataWithContext = ({
         status,
         data: {
           data: data ? [data] : [],
+          files: [
+            {
+              fileMeta:
+                {
+                  fileName: 'sampleFileName',
+                },
+            },
+          ],
           errors: [],
           ...resourceIds,
           ...contextFields,

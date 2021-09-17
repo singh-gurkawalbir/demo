@@ -80,7 +80,7 @@ export default function UninstallSection({ childId, integrationId }) {
       <PanelHeader title="Uninstall" />
 
       <div className={classes.content}>
-        <Typography variant="h5">
+        <Typography>
           Use this page to uninstall this instance (i.e. this tile) of the
           Integration App. Uninstalling an Integration App will remove all
           components, including the integration tile, from your integrator.io
@@ -89,7 +89,7 @@ export default function UninstallSection({ childId, integrationId }) {
           want to uninstall as this action cannot be undone.
         </Typography>
         <Divider className={classes.divider} />
-        <Typography variant="h5">
+        <Typography>
           Once you uninstall this Integration App there is no going back. Please
           be certain.
         </Typography>

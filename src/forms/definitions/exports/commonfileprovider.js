@@ -39,7 +39,6 @@ export default {
     }
     newValues['/http/method'] = 'GET';
     newValues['/http/type'] = 'file';
-    newValues['/file/encoding'] = undefined;
     newValues['/http/response'] = {
       resourcePath: 'files',
     };
@@ -124,6 +123,14 @@ export default {
           'http.fileRelativeURI',
           'file.fileNameStartsWith',
           'file.fileNameEndsWith',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like to group and sort records?',
+        fields: [
+          'file.sortByFields',
+          'file.groupByFields',
         ],
       },
       {

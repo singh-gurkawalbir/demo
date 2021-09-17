@@ -35,7 +35,6 @@ export function* requestUpgrade({ integrationId, options }) {
   } catch (error) {
     return undefined;
   }
-
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 

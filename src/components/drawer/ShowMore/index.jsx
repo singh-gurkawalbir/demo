@@ -32,10 +32,14 @@ const useStyles = makeStyles(theme => ({
   button: {
     marginTop: '5px',
   },
+  pagingDown: {
+    position: 'relative',
+    left: 0,
+  },
 }));
 
 export default function ShowMoreDrawer(props) {
-  const { count, maxCount, filterKey, pageSize = 100 } = props;
+  const { count, maxCount, filterKey, pageSize = 100, isFixed = true } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -60,7 +64,7 @@ export default function ShowMoreDrawer(props) {
       elevation={0}
       className={clsx(classes.pagingBar, {
         [classes.pagingBarShift]: drawerOpened,
-      })}>
+      }, {[classes.pagingDown]: !isFixed})}>
       <Typography variant="body2">
         Viewing first {count} of {maxCount}
       </Typography>

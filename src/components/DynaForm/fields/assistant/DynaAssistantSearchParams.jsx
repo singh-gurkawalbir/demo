@@ -12,11 +12,14 @@ import {
   PARAMETER_LOCATION,
   isMetaRequiredValuesMet,
 } from '../../../../utils/assistant';
+import { selectors } from '../../../../reducers/index';
+import { SCOPES } from '../../../../sagas/resourceForm';
 import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
 import { OutlinedButton, TextButton } from '../../../Buttons';
+import { useSelectorMemo } from '../../../../hooks';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -50,11 +53,21 @@ const SearchParamsModal = props => {
     flowId,
     resourceContext,
   } = props;
+  const dispatch = useDispatch();
+
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceContext.resourceType,
+      resourceContext.resourceId
+    ) || {};
+
   const { fieldMap, layout, fieldDetailsMap } = convertToReactFormFields({
     paramMeta,
     value,
     flowId,
     resourceContext,
+    operationChanged: merged.assistantMetadata?.operationChanged,
   });
 
   function onSaveClick(formValues) {
@@ -65,6 +78,18 @@ const SearchParamsModal = props => {
     });
 
     onFieldChange(id, updatedValues);
+
+    dispatch(
+      actions.resource.patchStaged(
+        resourceContext.resourceId,
+        [{
+          op: 'replace',
+          path: '/assistantMetadata/operationChanged',
+          value: false,
+        }],
+        SCOPES.VALUE
+      )
+    );
     onClose();
   }
 

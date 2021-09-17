@@ -77,6 +77,7 @@ const oAuthApplications = [
   'shopify-oauth',
   'acumatica-oauth',
   'hubspot-oauth',
+  'amazonmws-oauth',
 ];
 
 export default function ConnectorInstallation(props) {

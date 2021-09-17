@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import uniqBy from 'lodash/uniqBy';
+import { getAssistantConnectorType } from '../../../../../constants/applications';
 import {
   convertFromExport,
   PARAMETER_LOCATION,
@@ -163,6 +164,7 @@ export function searchParameterFieldsMeta({
   parameters = [],
   oneMandatoryQueryParamFrom,
   value,
+  operationChanged,
   deltaDefaults = {},
   isDeltaExport,
 }) {
@@ -170,8 +172,16 @@ export function searchParameterFieldsMeta({
   const defaultValue = {};
 
   parameters.forEach(p => {
-    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue')) {
-      defaultValue[p.id] = p.defaultValue;
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
+      if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
+        try {
+          defaultValue[p.id] = JSON.parse(p.defaultValue);
+        } catch (e) {
+          defaultValue[p.id] = [];
+        }
+      } else {
+        defaultValue[p.id] = p.defaultValue;
+      }
     }
   });
 
@@ -215,8 +225,8 @@ export function searchParameterFieldsMeta({
 
 export function fieldMeta({ resource, assistantData }) {
   const { assistant } = resource;
-  let { adaptorType } = resource;
   let headers;
+  let { adaptorType } = resource;
 
   if (adaptorType === 'RESTExport') {
     adaptorType = 'rest';
@@ -225,9 +235,12 @@ export function fieldMeta({ resource, assistantData }) {
     adaptorType = 'http';
     headers = resource.http?.headers || [];
   }
-
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData },
+    values: {
+      assistant,
+      adaptorType: getAssistantConnectorType(assistant),
+      assistantData,
+    },
   });
   let basicFields = [];
   let pathParameterFields = [];
@@ -276,6 +289,7 @@ export function fieldMeta({ resource, assistantData }) {
           oneMandatoryQueryParamFrom:
             operationDetails.oneMandatoryQueryParamFrom,
           value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
+          operationChanged: resource.assistantMetadata?.operationChanged,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&

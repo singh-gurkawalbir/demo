@@ -1062,6 +1062,7 @@ describe('template test cases', () => {
       expect(selectors.templateInstallSteps(undefined)).toEqual([]);
       expect(selectors.connectionMap(undefined)).toEqual({});
       expect(selectors.isFileUploaded(undefined)).toEqual({});
+      expect(selectors.isPreviewStatusFailed(undefined)).toEqual({previewFailedStatus: false});
     });
 
     test('should return template with selected id from the state', () => {
@@ -1126,6 +1127,17 @@ describe('template test cases', () => {
       expect(selectors.isFileUploaded(state)).toEqual({
         templateId: testTemplateId,
         isFileUploaded: true,
+      });
+    });
+    test('should return uploaded template id with previewFailedStatus flag', () => {
+      const state = reducer(
+        {},
+        actions.template.failedPreview(testTemplateId)
+      );
+
+      expect(selectors.isPreviewStatusFailed(state)).toEqual({
+        id: testTemplateId,
+        previewFailedStatus: true,
       });
     });
   });

@@ -65,9 +65,10 @@ export function* uploadRawData({
 
 export function* previewZip({ file, fileType = 'application/zip' }) {
   const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(file.name)}&file_type=${fileType}`;
+  let runKey;
 
   try {
-    const runKey = yield call(uploadFile, { file, fileType, uploadPath });
+    runKey = yield call(uploadFile, { file, fileType, uploadPath });
     const previewPath = `/integrations/template/preview?runKey=${runKey}`;
     const components = yield call(apiCallWithRetry, {
       path: previewPath,
@@ -76,7 +77,7 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
 
     yield put(actions.template.receivedPreview(components, runKey, true));
   } catch (e) {
-    // @TODO handle error
+    yield put(actions.template.failedPreview(runKey));
   }
 }
 

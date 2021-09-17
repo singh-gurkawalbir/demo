@@ -121,7 +121,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'microsoftbusinesscentral',
   ]
 );
-export function routeToRegExp(route) {
+export function routeToRegExp(route = '') {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
   const splatParam = /\*\w+/g;
@@ -530,7 +530,7 @@ export function getImportOperationDetails({
       if (operationDetails.howToFindIdentifier.lookup) {
         const lookupOperationDetails = getExportOperationDetails({
           version,
-          resource,
+          resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
           operation:
             operationDetails.howToFindIdentifier.lookup.id ||
             operationDetails.howToFindIdentifier.lookup.url,
@@ -547,6 +547,9 @@ export function getImportOperationDetails({
                 qp.defaultValue.includes('{{export.')
               )
           );
+        }
+        if (operationDetails.howToFindIdentifier.lookup.resource) {
+          lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
         }
 
         if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
@@ -665,6 +668,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   }
 
   const exportAdaptorSubSchema = exportDoc[adaptorType] || {};
+
   const urlMatch = getMatchingRoute(
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
@@ -819,6 +823,8 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let { url: relativeURI } = { ...operationDetails };
 
+  let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
+
   operationDetails.pathParameters.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
@@ -837,6 +843,12 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         new RegExp(`:_${pathParam.id}`, 'g'),
         pathParamValue
       );
+      if (pagingRelativeURI) {
+        pagingRelativeURI = pagingRelativeURI.replace(
+          new RegExp(`:_${pathParam.id}`, 'g'),
+          pathParamValue
+        );
+      }
     }
   });
 
@@ -879,9 +891,19 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   if (queryString) {
     relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
+    if (pagingRelativeURI) {
+      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + queryString;
+    }
   }
 
   exportDoc.relativeURI = relativeURI;
+  if (pagingRelativeURI) {
+    if (adaptorType === 'rest') {
+      exportDoc.nextPageRelativeURI = pagingRelativeURI;
+    } else if (adaptorType === 'http') {
+      exportDoc.paging.relativeURI = pagingRelativeURI;
+    }
+  }
 
   if (adaptorType === 'rest') {
     if (['POST', 'PUT'].includes(exportDoc.method)) {
@@ -1134,6 +1156,7 @@ export function convertToReactFormFields({
   value = {},
   flowId,
   resourceContext = {},
+  operationChanged,
 }) {
   const fields = [];
   const fieldDetailsMap = {};
@@ -1223,7 +1246,7 @@ export function convertToReactFormFields({
       /**
        * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = !anyParamValuesSet ? field : {};
+      let { defaultValue } = (!anyParamValuesSet && operationChanged) ? field : {};
 
       if (
         !anyParamValuesSet &&
@@ -1661,6 +1684,13 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreLookupName;
           }
         }
+        /*
+        Fix for https://celigo.atlassian.net/browse/IO-22027
+        If ignoreExtract has url parameter delimiters(? and /) in them, it will not be extracted from url
+        */
+        if (importAdaptorSubSchema.ignoreExtract && /(\?|\/)/.test(importAdaptorSubSchema.ignoreExtract)) {
+          pathParams[p.id] = importAdaptorSubSchema.ignoreExtract;
+        }
       }
 
       if (p.isIdentifier && pathParams[p.id]) {
@@ -1882,6 +1912,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   const lookupConfigMetadata = operationDetails.howToFindIdentifier
     ? operationDetails.howToFindIdentifier.lookup
     : undefined;
+
   const { lookupOperationDetails = {} } = operationDetails;
   const luConfig = {
     method: lookupOperationDetails.method || 'GET',
@@ -1947,6 +1978,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       if (lookupOperationDetails.id) {
         luMetadata[luConfig.name] = {
           operation: lookupOperationDetails.id,
+          ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
 

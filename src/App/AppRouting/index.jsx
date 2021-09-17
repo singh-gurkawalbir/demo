@@ -159,6 +159,14 @@ export default function AppRouting() {
             getRoutePath('/dashboard/runningFlows')
           )}
         />
+      <Route
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId')}
+        exact
+        render={({ history, match }) =>
+          history.replace(
+            getRoutePath(`/integrations/${match.params.integrationId}/flows`)
+          )}
+        />
 
       <Route
         path={getRoutePath('/marketplace/templates/:templateId')}

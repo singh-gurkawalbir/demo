@@ -12,6 +12,14 @@ import {PillButton, TextButton} from '../../../components/Buttons';
 const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
+    borderRadius: 17,
+    fontSize: 13,
+    padding: '4px 16px',
+    fontFamily: 'source sans pro semibold',
+  },
+  inTrialDaysLeft: {
+    fontFamily: 'source sans pro',
+    paddingLeft: 3,
   },
   titleStatusPanel: {
     fontSize: 15,
@@ -124,6 +132,7 @@ function LicenseAction() {
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
+          <span className={classes.inTrialDaysLeft}>{licenseActionDetails.daysLeft}</span>
         </PillButton>
       )}
     </>

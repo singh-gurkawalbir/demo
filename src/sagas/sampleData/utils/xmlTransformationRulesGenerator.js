@@ -8,6 +8,7 @@ import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
 import { SCOPES } from '../../resourceForm';
 import { emptyObject } from '../../../utils/constants';
+import { commitStagedChanges } from '../../resources';
 
 /*
  * Incase of File adaptors XML type, fetch sampleData from the state that has uploaded XML file
@@ -111,5 +112,11 @@ export default function* saveTransformationRulesForNewXMLExport({
   const patchSet = [{ op: 'replace', path: '/transform', value }];
 
   yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-  yield put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE));
+
+  yield call(
+    commitStagedChanges, {
+      resourceType: 'exports',
+      id: resourceId,
+      scope: SCOPES.VALUE,
+    });
 }
