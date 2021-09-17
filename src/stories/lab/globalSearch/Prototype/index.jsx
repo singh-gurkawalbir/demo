@@ -52,7 +52,6 @@ function GlobalSearch() {
       {!open && (
       <Tooltip
         classes={{tooltip: classes.muiTooltip}}
-        arrow
         data-public
         title={<TooltipTitle />}
         placement="bottom"

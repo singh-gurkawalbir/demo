@@ -1,16 +1,16 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { makeStyles, Paper, InputBase, Tabs, Tab } from '@material-ui/core';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { makeStyles, Paper, InputBase, Tabs, Tab, Typography, IconButton } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
+import MarketplaceIcon from '../../../../components/icons/MarketplaceIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { filterMap, shortcutMap } from './filterMeta';
 import Results from './Results';
+import TextButton from '../../../../components/Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // display: 'flex',
-    // alignItems: 'flex-start',
-    // flexDirection: 'column',
     width: '100%',
   },
   searchBox: {
@@ -33,13 +33,42 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   resultsPaper: {
-    width: 500,
+    width: 550,
     minHeight: 300,
-    maxHeight: 500,
+    padding: theme.spacing(0, 0, 1, 2),
   },
   tabPanel: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+  },
+  resultContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxHeight: '50vh',
+  },
+  resultFooter: {
     paddingTop: theme.spacing(1),
+    borderTop: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  resourceHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(1, 0),
+  },
+  lastUpdated: {
+    marginRight: theme.spacing(2),
+  },
+  tabsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingRight: theme.spacing(1),
+  },
+  searchCloseButton: {
+    padding: 0,
+    margin: -6,
+    marginLeft: 4,
   },
 }));
 
@@ -104,12 +133,12 @@ function getTabResults(results, isResource) {
 
 export default function SearchBox() {
   const classes = useStyles();
-  const [skip, setSkip] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState(0);
-  const [searchString, setSearchString] = React.useState('');
+  const [skip, setSkip] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [searchString, setSearchString] = useState('');
+  const [resultsOpen, setResultsOpen] = useState(false);
   const inputRef = useRef();
-  const { results, keyword, setKeyword, filters, setFilters, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
-  const showResults = keyword?.length >= 2;
+  const { results, keyword, setKeyword, filters, setFilters, setOpen, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
 
   const handleSearchStringChange = e => {
     const newSearchString = e.target.value;
@@ -128,6 +157,12 @@ export default function SearchBox() {
     if (!isEqual(filters, newFilters)) {
       setFilters(newFilters);
       onFiltersChange?.(newFilters);
+    }
+
+    if (newKeyword.length > 1 && !resultsOpen) {
+      setResultsOpen(true);
+    } else if (newKeyword.length < 2 && resultsOpen) {
+      setResultsOpen(false);
     }
   };
 
@@ -154,6 +189,8 @@ export default function SearchBox() {
   const resourceResults = useMemo(() => getTabResults(results, true), [results]);
   const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
 
+  const marketplaceResultCount = getResultCount(results, false);
+
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
@@ -166,26 +203,52 @@ export default function SearchBox() {
           inputProps={{ 'aria-label': 'Search integrator.io' }}
           onChange={handleSearchStringChange}
       />
+        <IconButton size="small" onClick={() => setOpen(false)} className={classes.searchCloseButton}>
+          <CloseIcon />
+        </IconButton>
       </Paper>
-      {showResults && (
+      {resultsOpen && ( // We could/should use <Popover/> component if possible..
         <FloatingPaper className={classes.resultsPaper}>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            aria-label="Global search results"
-            variant="fullWidth"
-            indicatorColor="primary"
+          <div className={classes.tabsContainer}>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              aria-label="Global search results"
+              indicatorColor="primary"
           >
-            <Tab label={`Resources (${getResultCount(results, true)})`} />
-            <Tab label={`Marketplace (${getResultCount(results, false)})`} />
-          </Tabs>
-
+              <Tab label={`Resources (${getResultCount(results, true)})`} />
+              <Tab label={`Marketplace: Apps & templates (${marketplaceResultCount})`} />
+            </Tabs>
+            <IconButton size="small" onClick={() => setResultsOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </div>
           <TabPanel value={activeTab} index={0}>
-            <Results results={resourceResults} />
+            <div className={classes.resultContainer}>
+              { results?.length && (
+              <div className={classes.resourceHeader}>
+                <Typography variant="h6">Name</Typography>
+                <Typography variant="h6" className={classes.lastUpdated}>Last updated</Typography>
+              </div>
+              )}
+              <Results results={resourceResults} />
+              {marketplaceResults?.length > 0 && (
+              <div className={classes.resultFooter}>
+                <TextButton
+                  onClick={e => handleTabChange(e, 1)}
+                  startIcon={<MarketplaceIcon />}
+                  color="primary">
+                  Checkout {marketplaceResultCount} result{marketplaceResultCount > 1 && 's'} in Marketplace
+                </TextButton>
+              </div>
+              )}
+            </div>
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            <Results results={marketplaceResults} />
+            <div className={classes.resultContainer}>
+              <Results results={marketplaceResults} />
+            </div>
           </TabPanel>
         </FloatingPaper>
       )}

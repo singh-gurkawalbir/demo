@@ -5,10 +5,10 @@ export const filterMap = {
     { shortcut: 'f', type: 'flows', label: 'Flows', isResource: true },
   connections:
     { shortcut: 'c', type: 'connections', label: 'Connections', isResource: true },
-  imports:
-    { shortcut: 'i', type: 'imports', label: 'Imports', isResource: true },
-  exports:
-    { shortcut: 'e', type: 'exports', label: 'Exports', isResource: true },
+  // imports:
+  //   { shortcut: 'i', type: 'imports', label: 'Imports', isResource: true },
+  // exports:
+  //   { shortcut: 'e', type: 'exports', label: 'Exports', isResource: true },
   scripts:
     { shortcut: 's', type: 'scripts', label: 'Scripts', isResource: true },
   agents:
@@ -26,9 +26,9 @@ export const filterMap = {
   recycleBin:
     { shortcut: 'r', type: 'recycleBin', label: 'Recycle bin', isResource: true },
   marketplaceTemplates:
-    { shortcut: 'mt', type: 'marketplaceTemplates', label: 'Templates' },
+    { shortcut: 'mt', type: 'marketplaceTemplates', label: 'Templates', isResource: false },
   marketplaceConnectors:
-    { shortcut: 'mia', type: 'marketplaceConnectors', label: 'Integration apps' },
+    { shortcut: 'mia', type: 'marketplaceConnectors', label: 'Integration apps', isResource: false },
 };
 
 export const shortcutMap = {};

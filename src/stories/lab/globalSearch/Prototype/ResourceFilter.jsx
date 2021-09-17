@@ -19,9 +19,9 @@ import { filterMap } from './filterMeta';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    flexDirection: 'column',
+    // display: 'flex',
+    // alignItems: 'flex-end',
+    // flexDirection: 'column',
   },
   arrowContainer: {
     paddingLeft: theme.spacing(2),
@@ -37,11 +37,12 @@ const useStyles = makeStyles(theme => ({
     // margin: theme.spacing(0, 1),
   },
   menu: {
-    marginRight: 2,
+    padding: theme.spacing(1, 1, 1, 2),
+    marginLeft: -87,
   },
   allItemChecked: {
     color: `${theme.palette.text.disabled}!important`,
-    cursor: 'default',
+    cursor: 'not-allowed',
   },
   divider: {
     margin: theme.spacing(1, 0),
@@ -58,12 +59,15 @@ const useStyles = makeStyles(theme => ({
   typeButton: {
     padding: theme.spacing(0.5),
   },
+  marketplaceTitle: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
-export default function ResourceFilter({openByDefault = false}) {
+export default function ResourceFilter() {
   const classes = useStyles();
   const { filters, setFilters, onFiltersChange } = useGlobalSearchContext();
-  const [open, setOpen] = useState(openByDefault);
+  const [open, setOpen] = useState(false);
 
   const handleArrowClick = () => setOpen(o => !o);
 
@@ -155,12 +159,9 @@ export default function ResourceFilter({openByDefault = false}) {
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
-
           {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
 
-          <Divider orientation="horizontal" className={classes.divider} />
-          <Typography variant="subtitle2" gutterBottom component="div">MARKETPLACE</Typography>
-
+          <Typography variant="subtitle2" className={classes.marketplaceTitle} gutterBottom component="div">MARKETPLACE</Typography>
           {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
         </FloatingPaper>
       )}
