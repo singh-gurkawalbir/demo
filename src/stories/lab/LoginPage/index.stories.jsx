@@ -3,7 +3,7 @@ import React from 'react';
 import { action } from '@storybook/addon-actions';
 import {makeStyles, Typography, Button, TextField} from '@material-ui/core';
 import CeligoLogo from '../../../components/CeligoLogo';
-import HeroImages from './HeroImages';
+import LoginMarketingContent from './LoginMarketingContent';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -218,14 +218,13 @@ export function Login() {
           </Typography>
         </div>
       </div>
-      {/* Below component shows a static image, once we get the final mocks we will replace with iframe url */}
-      <HeroImages />
+      <LoginMarketingContent />
     </div>
   );
 }
 
 export default {
-  title: 'Lab/Login',
+  title: 'Lab/New Marketing Login',
   component: Login,
 };
 
