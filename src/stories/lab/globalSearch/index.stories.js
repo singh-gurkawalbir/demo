@@ -57,3 +57,46 @@ EmptyResults.parameters = designParameters;
 EmptyResults.args = {
   results: {},
 };
+
+export const ResourceOnlyResults = Template.bind({});
+
+ResourceOnlyResults.parameters = designParameters;
+ResourceOnlyResults.args = {
+  results: {
+    connections: [
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Walmart API', isOnline: true },
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Starwars API', description: 'public API that exposes access to a database of the the Starwars universe.', isOnline: true },
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Shopify -EU stores', isOnline: false },
+    ],
+  },
+};
+
+export const MarketplaceOnlyResults = Template.bind({});
+
+MarketplaceOnlyResults.parameters = designParameters;
+MarketplaceOnlyResults.args = {
+  results: {
+    marketplaceTemplates: [
+      { name: 'Some template', description: 'This is newest version of Salesforce - NetSuite Integration App built on Celigos integrator.io platform. Streamline your Lead-to-Cash process and manage sales process effectively and in real-time. Packed with Celigos deep domain expertise and best practices, this Integration App is the embodiment of several years of customer feedback, learning and growth. With distributed adapters running in NetSuite and Salesforce, our integration app allows endless customization options.' },
+      { name: 'Another template'},
+    ],
+    marketplaceConnectors: [
+      { name: 'Some Integration app', description: 'This is newest version of Salesforce - NetSuite Integration App built on Celigos integrator.io platform. Streamline your Lead-to-Cash process and manage sales process effectively and in real-time. Packed with Celigos deep domain expertise and best practices, this Integration App is the embodiment of several years of customer feedback, learning and growth. With distributed adapters running in NetSuite and Salesforce, our integration app allows endless customization options.' },
+      { name: 'Another marketplace integration app with a long title.'},
+    ],
+  },
+};
+
+export const BlackListedFiltersResults = Template.bind({});
+
+BlackListedFiltersResults.parameters = designParameters;
+BlackListedFiltersResults.args = {
+  filterBlacklist: ['flows', 'agents', 'apis', 'connectors', 'scripts'],
+  results: {
+    connections: [
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Walmart API', isOnline: true },
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Starwars API', description: 'public API that exposes access to a database of the the Starwars universe.', isOnline: true },
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Shopify -EU stores', isOnline: false },
+    ],
+  },
+};

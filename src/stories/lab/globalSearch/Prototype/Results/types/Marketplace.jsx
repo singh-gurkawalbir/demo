@@ -13,25 +13,31 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
+    paddingLeft: 0,
   },
   details: {
     border: 0,
     paddingTop: 0,
+    paddingLeft: 28,
   },
   divider: {
     height: theme.spacing(2),
     width: 1,
     margin: theme.spacing(0, 1),
   },
+  button: {
+    whiteSpace: 'nowrap',
+  },
 }));
 
-export default function Generic({result, includeDivider}) {
+export default function Marketplace({type, result, includeDivider}) {
   const classes = useStyles();
   const history = useHistory();
 
   if (!result) return null;
 
   const handleClick = () => history.push(result.url);
+  const buttonLabel = type === 'marketplaceConnectors' ? 'Request a demo' : 'Preview';
 
   return (
     <>
@@ -45,8 +51,8 @@ export default function Generic({result, includeDivider}) {
           id="panel1a-header"
         >
           <div className={classes.summary}>
-            <Typography>{result.name}</Typography>
-            <FilledButton size="small" onClick={handleClick}>Request a demo</FilledButton>
+            <Typography variant="body2">{result.name}</Typography>
+            <FilledButton size="small" className={classes.button} onClick={handleClick}>{buttonLabel}</FilledButton>
           </div>
         </AccordionSummary>
         <AccordionDetails

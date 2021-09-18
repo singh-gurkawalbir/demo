@@ -34,15 +34,14 @@ const useStyles = makeStyles(theme => ({
   },
   resultsPaper: {
     width: 550,
-    minHeight: 300,
     padding: theme.spacing(0, 0, 1, 2),
   },
   tabPanel: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   resultContainer: {
     display: 'flex',
     flexDirection: 'column',
+    minHeight: 200,
     maxHeight: '50vh',
   },
   resultFooter: {
@@ -64,6 +63,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingRight: theme.spacing(1),
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
+
   },
   searchCloseButton: {
     padding: 0,
@@ -140,6 +141,11 @@ export default function SearchBox() {
   const inputRef = useRef();
   const { results, keyword, setKeyword, filters, setFilters, setOpen, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
 
+  const resourceResults = useMemo(() => getTabResults(results, true), [results]);
+  const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
+  const resourceResultCount = getResultCount(results, true);
+  const marketplaceResultCount = getResultCount(results, false);
+
   const handleSearchStringChange = e => {
     const newSearchString = e.target.value;
 
@@ -186,10 +192,18 @@ export default function SearchBox() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  const resourceResults = useMemo(() => getTabResults(results, true), [results]);
-  const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
-
-  const marketplaceResultCount = getResultCount(results, false);
+  useEffect(() => {
+    if (marketplaceResultCount > 0 && resourceResultCount === 0 && activeTab === 0) {
+      setActiveTab(1);
+    } else if (resourceResultCount > 0 && activeTab === 1) {
+      setActiveTab(0);
+    }
+  // We do not want the 'activeTab' to be part of the dependencies... otherwise
+  // every time we update it as above, this effect gets re-triggered and prevents
+  // the user from switching tabs. We only want the tab to switch to marketplace
+  // when the result counts change.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceResultCount, marketplaceResultCount]);
 
   return (
     <div className={classes.root}>
@@ -223,6 +237,7 @@ export default function SearchBox() {
               <CloseIcon />
             </IconButton>
           </div>
+
           <TabPanel value={activeTab} index={0}>
             <div className={classes.resultContainer}>
               { results?.length && (
@@ -231,7 +246,9 @@ export default function SearchBox() {
                 <Typography variant="h6" className={classes.lastUpdated}>Last updated</Typography>
               </div>
               )}
+
               <Results results={resourceResults} />
+
               {marketplaceResults?.length > 0 && (
               <div className={classes.resultFooter}>
                 <TextButton
