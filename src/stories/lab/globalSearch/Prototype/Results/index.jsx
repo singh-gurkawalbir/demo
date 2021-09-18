@@ -48,9 +48,11 @@ export default function Results({ results }) {
 
   if (!results?.length) {
     return (
-      <Typography className={classes.noResults} variant="body2" color="textSecondary">
-        Your search didn’t return any matching results. Try a different term or adjust your filters.
-      </Typography>
+      <div className={classes.root}>
+        <Typography className={classes.noResults} variant="body2" color="textSecondary">
+          Your search didn’t return any matching results. Try a different term or adjust your filters.
+        </Typography>
+      </div>
     );
   }
 
@@ -63,7 +65,7 @@ export default function Results({ results }) {
             const Row = rowTypeMap[type];
             const includeDivider = typeResults.length > 1 && i > 0;
 
-            return <Row key={r.id} result={r} includeDivider={includeDivider} />;
+            return <Row key={r.id} result={r} type={type} includeDivider={includeDivider} />;
           })}
         </div>
       ))}
