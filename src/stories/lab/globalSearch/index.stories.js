@@ -86,3 +86,17 @@ MarketplaceOnlyResults.args = {
     ],
   },
 };
+
+export const BlackListedFiltersResults = Template.bind({});
+
+BlackListedFiltersResults.parameters = designParameters;
+BlackListedFiltersResults.args = {
+  filterBlacklist: ['flows', 'agents', 'apis', 'connectors', 'scripts'],
+  results: {
+    connections: [
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Walmart API', isOnline: true },
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Starwars API', description: 'public API that exposes access to a database of the the Starwars universe.', isOnline: true },
+      { lastModified: '2019-09-09T14:29:37Z', name: 'Shopify -EU stores', isOnline: false },
+    ],
+  },
+};

@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ResourceFilter() {
   const classes = useStyles();
-  const { filters, setFilters, onFiltersChange } = useGlobalSearchContext();
+  const { filters, setFilters, filterBlacklist = [], onFiltersChange } = useGlobalSearchContext();
   const [open, setOpen] = useState(false);
 
   const handleArrowClick = () => setOpen(o => !o);
@@ -159,7 +159,9 @@ export default function ResourceFilter() {
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
-          {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
+          {resourceFilters
+            .filter(filter => !filterBlacklist.includes(filter.type))
+            .map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}
 
           <Typography variant="subtitle2" className={classes.marketplaceTitle} gutterBottom component="div">MARKETPLACE</Typography>
           {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} />)}

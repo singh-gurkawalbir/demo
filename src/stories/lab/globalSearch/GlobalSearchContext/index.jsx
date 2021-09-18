@@ -5,6 +5,7 @@ const GlobalSearchContext = React.createContext();
 export const GlobalSearchProvider = ({
   children,
   results,
+  filterBlacklist,
   defaultKeyword = '',
   defaultFilters = [],
   onKeywordChange,
@@ -18,6 +19,7 @@ export const GlobalSearchProvider = ({
     filters,
     keyword,
     results,
+    filterBlacklist,
     onKeywordChange,
     onFiltersChange,
     setOpen,
