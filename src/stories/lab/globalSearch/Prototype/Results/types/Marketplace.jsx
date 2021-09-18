@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Generic({type, result, includeDivider}) {
+export default function MArketplace({type, result, includeDivider}) {
   const classes = useStyles();
   const history = useHistory();
 
