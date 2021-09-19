@@ -10,26 +10,43 @@ import actionTypes from './actionTypes';
 const isEveryNUnit = val => val?.includes('*') || val?.includes('/');
 
 const isEveryUnit = val => val?.includes('*') && !(val?.includes('/'));
+const updateOffset = (options, scheduleStartMinuteOffset) => options[0].items.reduce((acc, curr) => {
+  const intVal = parseInt(curr.value, 10) + scheduleStartMinuteOffset;
+  const offSettedVal = intVal.toString();
+  const updatedOption = {
+    label: offSettedVal,
+    value: offSettedVal,
+  };
 
+  acc[0].items.push(updatedOption);
+
+  return acc;
+}, [{items: []}]);
 const SelectedField = props => {
-  const {field, value, setCronBuilderState} = props;
+  const {field, value, setCronBuilderState, scheduleStartMinuteOffset} = props;
 
   if (!field) return null;
   const metaProps = meta.fieldMap[field];
 
-  const {type} = metaProps;
+  const {type, options} = metaProps;
 
   const Component = components[type];
   const onFieldChange = value => {
     setCronBuilderState({type: actionTypes.SET_VALUE, value});
   };
 
+  let updatedOptions = options;
+
+  if (field === 'everySelectedMinute') {
+    updatedOptions = updateOffset(options, scheduleStartMinuteOffset);
+  }
+
   return (
     <Component
       onFieldChange={onFieldChange}
       value={value}
       {...metaProps}
-   />
+      options={updatedOptions} />
   );
 };
 
@@ -51,7 +68,7 @@ export default function CronBuilder(props) {
   const classes = useStyles();
   const parentTabs = meta.layout.containers;
 
-  const {value, onChange} = props;
+  const {value, onChange, scheduleStartMinuteOffset} = props;
   const splitVal = useMemo(() => value && value.split(' '), [value]);
 
   const [cronBuilderState, setCronBuilderState] = useReducer(cronBuilderReducer, {
@@ -162,6 +179,7 @@ export default function CronBuilder(props) {
         setCronBuilderState={setCronBuilderState}
         value={activeFieldValue}
         field={activeSubTabIndex}
+        scheduleStartMinuteOffset={scheduleStartMinuteOffset}
       />
     </div>
   );

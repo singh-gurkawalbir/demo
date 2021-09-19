@@ -916,3 +916,9 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
 
   return accessLevelOnConnection;
 };
+
+export const isOldRestExport = (resource, connection) => {
+  const { adaptorType, _id } = resource || {};
+
+  return (adaptorType === 'RESTExport' && _id && !isNewId(_id)) || connection?.isHTTP === false;
+};

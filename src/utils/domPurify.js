@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { getDomainUrl } from './resource';
 import { URI_VALIDATION_PATTERN } from './constants';
 
+const SECURE_DOMAINS = ['celigo.com', 'paypal.com', 'shopify.com', 'zendesk.com'];
 export default function getDomPurify(options = {}) {
   // allowed URI schemes
   const whitelist = ['http', 'https'];
@@ -36,6 +37,11 @@ export default function getDomPurify(options = {}) {
       }
 
       if (anchor.href && !anchor.href.match(URI_VALIDATION_PATTERN)) {
+        node.removeAttribute('href');
+      }
+      if (options.escapeUnsecuredDomains &&
+        anchor.hostname && !SECURE_DOMAINS.some(secureDomain =>
+        anchor.hostname.endsWith(secureDomain))) {
         node.removeAttribute('href');
       }
 
