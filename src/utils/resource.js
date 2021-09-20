@@ -922,3 +922,9 @@ export const isOldRestExport = (resource, connection) => {
 
   return (adaptorType === 'RESTExport' && _id && !isNewId(_id)) || connection?.isHTTP === false;
 };
+
+export const isOldRestImport = (resource, connection) => {
+  const { adaptorType, _id } = resource || {};
+
+  return (adaptorType === 'RESTImport' && _id && !isNewId(_id)) || connection?.isHTTP === false;
+};

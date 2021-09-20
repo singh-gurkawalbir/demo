@@ -1,6 +1,6 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
-import { isOldRestExport } from '../resource';
+import { isOldRestExport, isOldRestImport } from '../resource';
 
 export const FLOW_STAGES = [
   'outputFilter',
@@ -46,6 +46,34 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
   if (!fieldId) { return ''; }
   const { ignoreExisting, ignoreMissing } = resource || {};
   const isNewRestExport = !isOldRestExport(resource, connection);
+  const isOldRestImp = isOldRestImport(resource, connection);
+
+  if (isOldRestImp) {
+    switch (fieldId) {
+      case 'http.bodyCreate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
+        return 'rest.body.1';
+
+      case 'http.bodyUpdate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
+        return 'rest.body.0';
+      case 'http.relativeURIUpdate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
+        return 'rest.relativeURI.0';
+      case 'http.relativeURICreate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
+        return 'rest.relativeURI.1';
+      case 'http.relativeURI':
+        return 'rest.relativeURI';
+      case 'http.body':
+        return 'rest.body';
+      default:
+    }
+  }
 
   // some field types have same field ids
   switch (fieldId) {
