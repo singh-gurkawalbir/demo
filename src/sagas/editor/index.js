@@ -680,7 +680,7 @@ export function* initEditor({ id, editorType, options }) {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isStandaloneExport = resourceType === 'exports' && (yield select(selectors.isStandaloneExport, flowId, resourceId));
-      const isPageGenerator = !isStandaloneExport && (yield select(selectors.isPageGenerator, flowId, resourceId, resourceType));
+      const isPageGenerator = isStandaloneExport || (yield select(selectors.isPageGenerator, flowId, resourceId, resourceType));
 
       formattedOptions = init({
         options: formattedOptions,
