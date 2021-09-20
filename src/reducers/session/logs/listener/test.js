@@ -77,7 +77,7 @@ describe('Listener logs reducer', () => {
     test('should not throw error if the listener state does not exist and set status as requested', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, exportId})
       );
       const expectedState = {
         [exportId]: {
@@ -95,7 +95,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, exportId})
       );
       const expectedState = {
         [exportId]: {
@@ -113,7 +113,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId, loadMore: true})
+        actions.logs.flowStep.request({flowId, exportId, loadMore: true})
       );
       const expectedState = {
         [exportId]: {
@@ -137,7 +137,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, exportId})
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -150,7 +150,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.received({exportId})
+        actions.logs.flowStep.received({exportId})
       );
 
       expect(newState).toEqual({});
@@ -164,11 +164,11 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, exportId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received({exportId, logs: logsSummary, nextPageURL: '/api/url'})
+        actions.logs.flowStep.received({exportId, logs: logsSummary, nextPageURL: '/api/url'})
       );
       const expectedState = {
         [exportId]: {
@@ -191,11 +191,11 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, exportId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received({exportId,
+        actions.logs.flowStep.received({exportId,
           logs: logsSummary,
           nextPageURL: '/api/url',
           loadMore: true})
@@ -223,7 +223,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.received({
+        actions.logs.flowStep.received({
           exportId,
           logs: [],
           nextPageURL: '/api/url'})
@@ -239,7 +239,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.requestLogDetails(flowId, exportId)
+        actions.logs.flowStep.requestLogDetails(flowId, exportId)
       );
 
       expect(newState).toEqual({});
@@ -257,7 +257,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, '5642310475121')
+        actions.logs.flowStep.requestLogDetails(flowId, exportId, '5642310475121')
       );
 
       expect(newState).toBe(initialState);
@@ -270,7 +270,7 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.received({
+        actions.logs.flowStep.received({
           exportId,
           logs: logsSummary,
           nextPageURL: '/v1(api)/flows/:_flowId',
@@ -278,7 +278,7 @@ describe('Listener logs reducer', () => {
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, '5642310475121')
+        actions.logs.flowStep.requestLogDetails(flowId, exportId, '5642310475121')
       );
       const expectedState = {
         [exportId]: {
@@ -304,7 +304,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, '5642310475121')
+        actions.logs.flowStep.requestLogDetails(flowId, exportId, '5642310475121')
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -317,7 +317,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+        actions.logs.flowStep.receivedLogDetails(exportId, logKey, logDetails)
       );
 
       expect(newState).toEqual({});
@@ -334,12 +334,12 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, logKey)
+        actions.logs.flowStep.requestLogDetails(flowId, exportId, logKey)
       );
 
       const newState = reducer(
         tempState,
-        actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+        actions.logs.flowStep.receivedLogDetails(exportId, logKey, logDetails)
       );
       const expectedState = {
         [exportId]: {
@@ -369,7 +369,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+        actions.logs.flowStep.receivedLogDetails(exportId, logKey, logDetails)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -384,7 +384,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.setActiveLog(exportId, activeLogKey)
+        actions.logs.flowStep.setActiveLog(exportId, activeLogKey)
       );
 
       expect(newState).toEqual({});
@@ -401,7 +401,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.setActiveLog(exportId, activeLogKey)
+        actions.logs.flowStep.setActiveLog(exportId, activeLogKey)
       );
       const expectedState = {
         [exportId]: {
@@ -427,7 +427,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.setActiveLog(exportId, activeLogKey)
+        actions.logs.flowStep.setActiveLog(exportId, activeLogKey)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -442,7 +442,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(exportId, deletedLogKey)
       );
 
       expect(newState).toEqual({});
@@ -465,7 +465,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(exportId, deletedLogKey)
       );
 
       expect(newState).toBe(initialState);
@@ -494,7 +494,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(exportId, deletedLogKey)
       );
       const expectedState = {
         [exportId]: {
@@ -538,7 +538,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(exportId, deletedLogKey)
       );
       const expectedState = {
         [exportId]: {
@@ -569,7 +569,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(exportId, deletedLogKey)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -582,7 +582,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, exportId, '15')
       );
 
       expect(newState).toEqual({});
@@ -605,7 +605,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, exportId, '15')
       );
       const expectedState = {
         [exportId]: {
@@ -637,7 +637,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, exportId, '15')
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -650,7 +650,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.stopDebug(flowId, exportId)
+        actions.logs.flowStep.stopDebug(flowId, exportId)
       );
 
       expect(newState).toEqual({});
@@ -673,7 +673,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopDebug(flowId, exportId)
+        actions.logs.flowStep.stopDebug(flowId, exportId)
       );
       const expectedState = {
         [exportId]: {
@@ -705,7 +705,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopDebug(flowId, exportId)
+        actions.logs.flowStep.stopDebug(flowId, exportId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -718,7 +718,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.startLogsPoll(flowId, exportId)
+        actions.logs.flowStep.startLogsPoll(flowId, exportId)
       );
 
       expect(newState).toEqual({});
@@ -741,7 +741,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.startLogsPoll(flowId, exportId)
+        actions.logs.flowStep.startLogsPoll(flowId, exportId)
       );
       const expectedState = {
         [exportId]: {
@@ -773,7 +773,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.startLogsPoll(flowId, exportId)
+        actions.logs.flowStep.startLogsPoll(flowId, exportId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -786,7 +786,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(exportId, true)
       );
 
       expect(newState).toEqual({});
@@ -808,7 +808,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(exportId, true)
       );
       const expectedState = {
         [exportId]: {
@@ -839,7 +839,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(exportId, true)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -854,7 +854,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.failed(exportId, error)
+        actions.logs.flowStep.failed(exportId, error)
       );
 
       expect(newState).toEqual({});
@@ -876,7 +876,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.failed(exportId, error)
+        actions.logs.flowStep.failed(exportId, error)
       );
       const expectedState = {
         [exportId]: {
@@ -910,7 +910,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.failed(exportId, error)
+        actions.logs.flowStep.failed(exportId, error)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -923,7 +923,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.setFetchStatus(exportId, 'paused')
+        actions.logs.flowStep.setFetchStatus(exportId, 'paused')
       );
 
       expect(newState).toEqual({});
@@ -945,7 +945,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(exportId, 'inProgress')
       );
 
       expect(newState).toHaveProperty('exp-123.fetchStatus', 'inProgress');
@@ -967,7 +967,7 @@ describe('Listener logs reducer', () => {
 
       const newState1 = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(exportId, 'inProgress')
       );
 
       expect(newState1).toHaveProperty('exp-123.currQueryTime', 9898);
@@ -989,7 +989,7 @@ describe('Listener logs reducer', () => {
 
       const newState2 = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(exportId, 'inProgress')
       );
 
       expect(newState2).toHaveProperty('exp-123.currQueryTime', 1089);
@@ -1006,7 +1006,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(exportId, 'inProgress')
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -1029,11 +1029,11 @@ describe('Listener logs reducer', () => {
 
       const tempState = reducer(
         initialState,
-        actions.logs.listener.receivedLogDetails(exportId, '123', {})
+        actions.logs.flowStep.receivedLogDetails(exportId, '123', {})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.clear(exportId)
+        actions.logs.flowStep.clear(exportId)
       );
 
       expect(newState).not.toHaveProperty(exportId);
@@ -1050,7 +1050,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.clear(exportId)
+        actions.logs.flowStep.clear(exportId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -1074,12 +1074,12 @@ describe('Listener logs selectors', () => {
   };
   const tempState = reducer(
     initialState,
-    actions.logs.listener.requestLogDetails(flowId, exportId, logKey)
+    actions.logs.flowStep.requestLogDetails(flowId, exportId, logKey)
   );
 
   const newState = reducer(
     tempState,
-    actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+    actions.logs.flowStep.receivedLogDetails(exportId, logKey, logDetails)
   );
 
   describe('listenerLogs', () => {
@@ -1134,7 +1134,7 @@ describe('Listener logs selectors', () => {
       expect(selectors.hasNewLogs(newState, exportId)).toEqual(false);
       const finalState = reducer(
         newState,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(exportId, true)
       );
 
       expect(selectors.hasNewLogs(finalState, exportId)).toEqual(true);
@@ -1161,7 +1161,7 @@ describe('Listener logs selectors', () => {
     test('should return correct state prop when a match is found', () => {
       const finalState = reducer(
         newState,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, exportId, '15')
       );
 
       expect(selectors.isDebugEnabled(finalState, exportId)).toEqual(true);
@@ -1186,7 +1186,7 @@ describe('Listener logs selectors', () => {
     test('should return correct state error when a match is found', () => {
       const finalState = reducer(
         newState,
-        actions.logs.listener.failed(exportId, {key: '200-POST', error: 'NoSuchKey'})
+        actions.logs.flowStep.failed(exportId, {key: '200-POST', error: 'NoSuchKey'})
       );
 
       expect(selectors.listenerErrorMsg(finalState, exportId)).toEqual({changeIdentifier: 1, key: '200-POST', error: 'NoSuchKey'});

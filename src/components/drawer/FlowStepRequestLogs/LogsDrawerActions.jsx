@@ -9,7 +9,7 @@ import StartDebugEnhanced from '../../StartDebugEnhanced';
 import CeligoPagination from '../../CeligoPagination';
 import IconTextButton from '../../IconTextButton';
 import RefreshIcon from '../../icons/RefreshIcon';
-import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/listenerLogs';
+import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/flowStepLogs';
 import FetchProgressIndicator from '../../FetchProgressIndicator';
 
 const useStyles = makeStyles(theme => ({
@@ -72,7 +72,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
       if (!loadMore) {
         dispatch(actions.clearFilter(FILTER_KEY));
       }
-      dispatch(actions.logs.listener.request({flowId, exportId, loadMore}));
+      dispatch(actions.logs.flowStep.request({flowId, exportId, loadMore}));
     },
     [dispatch, exportId, flowId]
   );
@@ -90,20 +90,20 @@ export default function LogsDrawerActions({ flowId, exportId }) {
   );
 
   const startDebugHandler = useCallback(value => {
-    dispatch(actions.logs.listener.startDebug(flowId, exportId, value));
+    dispatch(actions.logs.flowStep.startDebug(flowId, exportId, value));
   }, [dispatch, flowId, exportId]);
 
   const stopDebugHandler = useCallback(() => {
-    dispatch(actions.logs.listener.stopDebug(flowId, exportId));
+    dispatch(actions.logs.flowStep.stopDebug(flowId, exportId));
   }, [dispatch, flowId, exportId]);
 
   const pauseHandler = useCallback(() => {
-    dispatch(actions.logs.listener.setFetchStatus(exportId, 'paused'));
-    dispatch(actions.logs.listener.pauseFetch(flowId, exportId));
+    dispatch(actions.logs.flowStep.setFetchStatus(exportId, 'paused'));
+    dispatch(actions.logs.flowStep.pauseFetch(flowId, exportId));
   }, [dispatch, exportId, flowId]);
 
   const resumeHandler = useCallback(() => {
-    dispatch(actions.logs.listener.request({flowId, exportId, loadMore: true}));
+    dispatch(actions.logs.flowStep.request({flowId, exportId, loadMore: true}));
   }, [dispatch, exportId, flowId]);
 
   return (

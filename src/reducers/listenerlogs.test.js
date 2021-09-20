@@ -1,7 +1,7 @@
 /* global describe, expect, beforeEach, test */
 import { selectors } from '.';
-import { FILTER_KEY } from '../utils/listenerLogs';
-import * as constants from '../utils/listenerLogs';
+import { FILTER_KEY } from '../utils/flowStepLogs';
+import * as constants from '../utils/flowStepLogs';
 
 const getMockRequests = () => [{
   key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-401-POST',

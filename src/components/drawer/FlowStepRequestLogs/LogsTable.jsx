@@ -10,7 +10,7 @@ import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import PreviewLogDetails from './PreviewLogDetails';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { FILTER_KEY } from '../../../utils/listenerLogs';
+import { FILTER_KEY } from '../../../utils/flowStepLogs';
 
 const useStyles = makeStyles(theme => ({
   listContainer: {
@@ -78,14 +78,14 @@ export default function LogsTable({ flowId, exportId }) {
   const currPageFirstKey = logsInCurrPage[0]?.key;
 
   useEffect(() => () => {
-    dispatch(actions.logs.listener.clear(exportId));
+    dispatch(actions.logs.flowStep.clear(exportId));
     dispatch(actions.clearFilter(FILTER_KEY));
   }, [dispatch, exportId]);
 
   useEffect(() => {
-    dispatch(actions.logs.listener.request({flowId, exportId}));
+    dispatch(actions.logs.flowStep.request({flowId, exportId}));
     if (debugUntil) {
-      dispatch(actions.logs.listener.startLogsPoll(flowId, exportId));
+      dispatch(actions.logs.flowStep.startLogsPoll(flowId, exportId));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -93,7 +93,7 @@ export default function LogsTable({ flowId, exportId }) {
   useEffect(() => {
     // set the first key on the current page as default when user navigates b/w pages
     if (currPageFirstKey) {
-      dispatch(actions.logs.listener.setActiveLog(exportId, currPageFirstKey));
+      dispatch(actions.logs.flowStep.setActiveLog(exportId, currPageFirstKey));
     }
   }, [currPageFirstKey, dispatch, exportId]);
 

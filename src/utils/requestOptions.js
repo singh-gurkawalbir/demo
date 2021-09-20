@@ -1,7 +1,7 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
 import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
-import { getStaticCodesList } from './listenerLogs';
+import { getStaticCodesList } from './flowStepLogs';
 import { getSelectedRange } from './flowMetrics';
 import { isNewId } from './resource';
 
@@ -383,7 +383,7 @@ export default function getRequestOptions(
       };
     }
 
-    case actionTypes.LOGS.LISTENER.REQUEST: {
+    case actionTypes.LOGS.FLOWSTEP.REQUEST: {
       let path;
 
       if (loadMore && nextPageURL) {

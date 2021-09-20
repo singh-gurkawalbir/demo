@@ -6,7 +6,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.LOGS.LISTENER.REQUEST:
+      case actionTypes.LOGS.FLOWSTEP.REQUEST:
         if (!draft[exportId]) {
           draft[exportId] = {};
         }
@@ -19,7 +19,7 @@ export default (state = {}, action) => {
         }
         break;
 
-      case actionTypes.LOGS.LISTENER.RECEIVED:
+      case actionTypes.LOGS.FLOWSTEP.RECEIVED:
         if (!draft[exportId]) break;
         draft[exportId].logsStatus = 'received';
         draft[exportId].loadMoreStatus = 'received';
@@ -35,7 +35,7 @@ export default (state = {}, action) => {
           : logs;
         break;
 
-      case actionTypes.LOGS.LISTENER.LOG.REQUEST:
+      case actionTypes.LOGS.FLOWSTEP.LOG.REQUEST:
         if (!draft[exportId]) break;
         if (!draft[exportId].logsDetails) {
           draft[exportId].logsDetails = {};
@@ -48,7 +48,7 @@ export default (state = {}, action) => {
 
         break;
 
-      case actionTypes.LOGS.LISTENER.LOG.RECEIVED:
+      case actionTypes.LOGS.FLOWSTEP.LOG.RECEIVED:
         if (!draft[exportId] || !draft[exportId].logsDetails) break;
 
         draft[exportId].logsDetails[logKey] = {
@@ -57,12 +57,12 @@ export default (state = {}, action) => {
         };
         break;
 
-      case actionTypes.LOGS.LISTENER.ACTIVE_LOG:
+      case actionTypes.LOGS.FLOWSTEP.ACTIVE_LOG:
         if (!draft[exportId]) break;
         draft[exportId].activeLogKey = activeLogKey;
         break;
 
-      case actionTypes.LOGS.LISTENER.LOG.DELETED: {
+      case actionTypes.LOGS.FLOWSTEP.LOG.DELETED: {
         if (!draft[exportId] || !deletedLogKey || !draft[exportId].logsSummary) break;
         const logs = draft[exportId].logsSummary;
         const index = logs.findIndex(l => l.key === deletedLogKey);
@@ -79,27 +79,27 @@ export default (state = {}, action) => {
 
         break;
       }
-      case actionTypes.LOGS.LISTENER.DEBUG.START:
+      case actionTypes.LOGS.FLOWSTEP.DEBUG.START:
         if (!draft[exportId]) break;
         draft[exportId].debugOn = true;
         break;
 
-      case actionTypes.LOGS.LISTENER.DEBUG.STOP:
+      case actionTypes.LOGS.FLOWSTEP.DEBUG.STOP:
         if (!draft[exportId]) break;
         draft[exportId].debugOn = false;
         break;
 
-      case actionTypes.LOGS.LISTENER.START_POLL:
+      case actionTypes.LOGS.FLOWSTEP.START_POLL:
         if (!draft[exportId]) break;
         draft[exportId].debugOn = true;
         break;
 
-      case actionTypes.LOGS.LISTENER.STOP_POLL:
+      case actionTypes.LOGS.FLOWSTEP.STOP_POLL:
         if (!draft[exportId]) break;
         draft[exportId].hasNewLogs = hasNewLogs;
         break;
 
-      case actionTypes.LOGS.LISTENER.FAILED: {
+      case actionTypes.LOGS.FLOWSTEP.FAILED: {
         if (!draft[exportId]) break;
         // adding changeIdentifier to know if a new failed action was dispatched
         const changeIdentifier = draft[exportId].error?.changeIdentifier || 0;
@@ -108,7 +108,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.LOGS.LISTENER.FETCH_STATUS: {
+      case actionTypes.LOGS.FLOWSTEP.FETCH_STATUS: {
         if (!draft[exportId]) break;
         draft[exportId].fetchStatus = status;
         const {nextPageURL} = draft[exportId];
@@ -128,7 +128,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.LOGS.LISTENER.CLEAR:
+      case actionTypes.LOGS.FLOWSTEP.CLEAR:
         delete draft[exportId];
         break;
 

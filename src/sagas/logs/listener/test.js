@@ -20,7 +20,7 @@ import {
   toggleDebug,
   removeLogs,
 } from './index';
-import { FILTER_KEY } from '../../../utils/listenerLogs';
+import { FILTER_KEY } from '../../../utils/flowStepLogs';
 
 const flowId = 'flow-123';
 const exportId = 'exp-123';
@@ -70,7 +70,7 @@ describe('Listener logs sagas', () => {
           [matchers.call.fn(apiCallWithRetry), response],
         ])
         .put(
-          actions.logs.listener.stopLogsPoll(
+          actions.logs.flowStep.stopLogsPoll(
             exportId,
             true,
           )
@@ -85,7 +85,7 @@ describe('Listener logs sagas', () => {
         }))],
       ])
       .not.put(
-        actions.logs.listener.stopLogsPoll(
+        actions.logs.flowStep.stopLogsPoll(
           exportId,
           true,
         )
@@ -127,12 +127,12 @@ describe('Listener logs sagas', () => {
 
       expect(saga.next(mockTask).value).toEqual(
         take([
-          actionTypes.LOGS.LISTENER.DEBUG.STOP,
-          actionTypes.LOGS.LISTENER.STOP_POLL,
-          actionTypes.LOGS.LISTENER.CLEAR,
+          actionTypes.LOGS.FLOWSTEP.DEBUG.STOP,
+          actionTypes.LOGS.FLOWSTEP.STOP_POLL,
+          actionTypes.LOGS.FLOWSTEP.CLEAR,
         ])
       );
-      expect(saga.next({type: actionTypes.LOGS.LISTENER.CLEAR}).value).toEqual(cancel(mockTask));
+      expect(saga.next({type: actionTypes.LOGS.FLOWSTEP.CLEAR}).value).toEqual(cancel(mockTask));
       expect(saga.next().done).toEqual(true);
     });
     test('should call fetchNewLogs if the cancelled action type is of stop debug', () => {
@@ -144,12 +144,12 @@ describe('Listener logs sagas', () => {
 
       expect(saga.next(mockTask).value).toEqual(
         take([
-          actionTypes.LOGS.LISTENER.DEBUG.STOP,
-          actionTypes.LOGS.LISTENER.STOP_POLL,
-          actionTypes.LOGS.LISTENER.CLEAR,
+          actionTypes.LOGS.FLOWSTEP.DEBUG.STOP,
+          actionTypes.LOGS.FLOWSTEP.STOP_POLL,
+          actionTypes.LOGS.FLOWSTEP.CLEAR,
         ])
       );
-      expect(saga.next({type: actionTypes.LOGS.LISTENER.DEBUG.STOP}).value).toEqual(cancel(mockTask));
+      expect(saga.next({type: actionTypes.LOGS.FLOWSTEP.DEBUG.STOP}).value).toEqual(cancel(mockTask));
       expect(saga.next().value).toEqual(call(fetchNewLogs, {flowId, exportId}));
       expect(saga.next().done).toEqual(true);
     });
@@ -179,7 +179,7 @@ describe('Listener logs sagas', () => {
         }],
       ])
       .put(
-        actions.logs.listener.setFetchStatus(
+        actions.logs.flowStep.setFetchStatus(
           exportId,
           'completed'
         )
@@ -197,7 +197,7 @@ describe('Listener logs sagas', () => {
         }],
       ])
       .put(
-        actions.logs.listener.setFetchStatus(
+        actions.logs.flowStep.setFetchStatus(
           exportId,
           'paused'
         )
@@ -220,7 +220,7 @@ describe('Listener logs sagas', () => {
         }],
       ])
       .put(
-        actions.logs.listener.setFetchStatus(
+        actions.logs.flowStep.setFetchStatus(
           exportId,
           'inProgress'
         )
@@ -297,7 +297,7 @@ describe('Listener logs sagas', () => {
         ])
         .call(apiCallWithRetry, { path: `/flows/${flowId}/${exportId}/requests/${logKey}` })
         .put(
-          actions.logs.listener.receivedLogDetails(
+          actions.logs.flowStep.receivedLogDetails(
             exportId,
             logKey,
             logDetails
@@ -313,7 +313,7 @@ describe('Listener logs sagas', () => {
         }))],
       ])
       .not.put(
-        actions.logs.listener.receivedLogDetails(
+        actions.logs.flowStep.receivedLogDetails(
           exportId,
           logKey,
           {}
@@ -421,7 +421,7 @@ describe('Listener logs sagas', () => {
               keys: logsToRemove,
             },
           } })
-        .put(actions.logs.listener.logDeleted(exportId, 'key1'))
+        .put(actions.logs.flowStep.logDeleted(exportId, 'key1'))
         .run();
     });
     test('should dispatch failed action if there are errors in the response', () => {
@@ -438,8 +438,8 @@ describe('Listener logs sagas', () => {
               keys: logsToRemove,
             },
           } })
-        .put(actions.logs.listener.logDeleted(exportId, undefined))
-        .put(actions.logs.listener.failed(exportId, {key: 'key1', error: 'NoSuchKey'}))
+        .put(actions.logs.flowStep.logDeleted(exportId, undefined))
+        .put(actions.logs.flowStep.failed(exportId, {key: 'key1', error: 'NoSuchKey'}))
         .run();
     });
   });

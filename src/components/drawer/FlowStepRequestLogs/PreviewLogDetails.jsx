@@ -33,7 +33,7 @@ export default function PreviewLogDetails({ flowId, exportId }) {
 
   useEffect(() => {
     if (activeLogKey) {
-      dispatch(actions.logs.listener.requestLogDetails(flowId, exportId, activeLogKey));
+      dispatch(actions.logs.flowStep.requestLogDetails(flowId, exportId, activeLogKey));
     }
   }, [dispatch, exportId, flowId, activeLogKey]);
 

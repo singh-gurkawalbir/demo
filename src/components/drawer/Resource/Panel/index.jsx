@@ -22,7 +22,7 @@ import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
 import IconTextButton from '../../../IconTextButton';
-import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import FlowRequestLogsDrawer from '../../FlowStepRequestLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import CloseButton from './CloseButton';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
@@ -213,7 +213,7 @@ export default function Panel(props) {
     match,
   });
 
-  const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
+  const hasFlowStepLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -322,7 +322,7 @@ export default function Panel(props) {
                 {app.name || applicationType} connection guide
               </a>
               )}
-              {hasListenerLogsAccess && (
+              {hasFlowStepLogsAccess && (
                 <IconTextButton
                   onClick={listenerDrawerHandler}
                   color="primary"
@@ -401,7 +401,7 @@ export default function Panel(props) {
         </LoadResources>
       </div>
       <EditorDrawer />
-      <ListenerRequestLogsDrawer flowId={flowId} exportId={id} />
+      <FlowRequestLogsDrawer flowId={flowId} exportId={id} />
     </>
   );
 }

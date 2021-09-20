@@ -18,6 +18,7 @@ import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
 import {HOME_PAGE_PATH} from '../../../utils/constants';
+import FlowStepDebugLogs from './crumbs/FlowStepDebugLogs';
 
 const modelLabelToPlural = resourceType => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '';
 const useStyles = makeStyles(theme => ({
@@ -276,7 +277,7 @@ const commonChildRoutes = [
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
     childRoutes: [
-      { path: '/logs', breadcrumb: 'View listener debug logs' },
+      { path: '/logs', breadcrumb: FlowStepDebugLogs },
     ],
   },
 ];

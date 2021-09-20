@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import getRequestOptions from '../../../utils/requestOptions';
-import { FILTER_KEY } from '../../../utils/listenerLogs';
+import { FILTER_KEY } from '../../../utils/flowStepLogs';
 
 export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   const opts = {
@@ -23,7 +23,7 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
 
     if (response?.requests?.length) {
       yield put(
-        actions.logs.listener.stopLogsPoll(
+        actions.logs.flowStep.stopLogsPoll(
           exportId,
           true,
         )
@@ -50,13 +50,13 @@ export function* startPollingForRequestLogs({flowId, exportId}) {
   const watcher = yield fork(pollForLatestLogs, {flowId, exportId});
 
   const stopAction = yield take([
-    actionTypes.LOGS.LISTENER.DEBUG.STOP,
-    actionTypes.LOGS.LISTENER.STOP_POLL,
-    actionTypes.LOGS.LISTENER.CLEAR,
+    actionTypes.LOGS.FLOWSTEP.DEBUG.STOP,
+    actionTypes.LOGS.FLOWSTEP.STOP_POLL,
+    actionTypes.LOGS.FLOWSTEP.CLEAR,
   ]);
 
   yield cancel(watcher);
-  if (stopAction.type === actionTypes.LOGS.LISTENER.DEBUG.STOP) {
+  if (stopAction.type === actionTypes.LOGS.FLOWSTEP.DEBUG.STOP) {
     // do a final fetch to cover any gaps
     yield call(fetchNewLogs, {flowId, exportId});
   }
@@ -70,7 +70,7 @@ export function* putReceivedAction({exportId, requests = [], nextPageURL, loadMo
   });
 
   yield put(
-    actions.logs.listener.received({
+    actions.logs.flowStep.received({
       exportId,
       logs: formattedLogs,
       nextPageURL,
@@ -101,7 +101,7 @@ export function* retryToFetchRequests({freshCall, count = 0, fetchRequestsPath, 
     yield call(putReceivedAction, {exportId, requests, loadMore: !!shouldAppendLogs});
 
     return yield put(
-      actions.logs.listener.setFetchStatus(
+      actions.logs.flowStep.setFetchStatus(
         exportId,
         'completed'
       )
@@ -112,7 +112,7 @@ export function* retryToFetchRequests({freshCall, count = 0, fetchRequestsPath, 
     yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
 
     return yield put(
-      actions.logs.listener.setFetchStatus(
+      actions.logs.flowStep.setFetchStatus(
         exportId,
         'paused'
       )
@@ -122,7 +122,7 @@ export function* retryToFetchRequests({freshCall, count = 0, fetchRequestsPath, 
   if (newCount < 1000) {
     yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
     yield put(
-      actions.logs.listener.setFetchStatus(
+      actions.logs.flowStep.setFetchStatus(
         exportId,
         'inProgress'
       )
@@ -139,7 +139,7 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
   const filters = yield select(selectors.filter, FILTER_KEY);
 
   const requestOptions = getRequestOptions(
-    actionTypes.LOGS.LISTENER.REQUEST,
+    actionTypes.LOGS.FLOWSTEP.REQUEST,
     { flowId, exportId, filters, nextPageURL, loadMore }
   );
   const { path } = requestOptions;
@@ -159,8 +159,8 @@ export function* requestLogsWithCancel(params) {
   yield race({
     callAPI: call(requestLogs, params),
     cancelCallAPI: take(action =>
-      action.type === actionTypes.LOGS.LISTENER.CLEAR ||
-      action.type === actionTypes.LOGS.LISTENER.PAUSE_FETCH
+      action.type === actionTypes.LOGS.FLOWSTEP.CLEAR ||
+      action.type === actionTypes.LOGS.FLOWSTEP.PAUSE_FETCH
     ),
   });
 }
@@ -182,7 +182,7 @@ export function* requestLogDetails({ flowId, exportId, logKey }) {
   }
 
   yield put(
-    actions.logs.listener.receivedLogDetails(
+    actions.logs.flowStep.receivedLogDetails(
       exportId,
       logKey,
       log
@@ -233,17 +233,17 @@ export function* removeLogs({ flowId, exportId, logsToRemove }) {
 
   // user can only delete one log at a time from UI
   // hence we pick first index from 'deleted' and 'errors' array
-  yield put(actions.logs.listener.logDeleted(exportId, deleted[0]));
+  yield put(actions.logs.flowStep.logDeleted(exportId, deleted[0]));
   if (errors.length) {
-    yield put(actions.logs.listener.failed(exportId, errors[0]));
+    yield put(actions.logs.flowStep.failed(exportId, errors[0]));
   }
 }
 
 export default [
-  takeLatest(actionTypes.LOGS.LISTENER.REQUEST, requestLogsWithCancel),
-  takeEvery(actionTypes.LOGS.LISTENER.LOG.REQUEST, requestLogDetails),
-  takeLatest(actionTypes.LOGS.LISTENER.DEBUG.START, toggleDebug),
-  takeLatest(actionTypes.LOGS.LISTENER.DEBUG.STOP, toggleDebug),
-  takeEvery(actionTypes.LOGS.LISTENER.LOG.REMOVE, removeLogs),
-  takeLatest(actionTypes.LOGS.LISTENER.START_POLL, startPollingForRequestLogs),
+  takeLatest(actionTypes.LOGS.FLOWSTEP.REQUEST, requestLogsWithCancel),
+  takeEvery(actionTypes.LOGS.FLOWSTEP.LOG.REQUEST, requestLogDetails),
+  takeLatest(actionTypes.LOGS.FLOWSTEP.DEBUG.START, toggleDebug),
+  takeLatest(actionTypes.LOGS.FLOWSTEP.DEBUG.STOP, toggleDebug),
+  takeEvery(actionTypes.LOGS.FLOWSTEP.LOG.REMOVE, removeLogs),
+  takeLatest(actionTypes.LOGS.FLOWSTEP.START_POLL, startPollingForRequestLogs),
 ];

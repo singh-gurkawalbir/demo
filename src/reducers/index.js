@@ -37,7 +37,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
-  isRealtimeExport,
+  // isRealtimeExport,
   addLastExecutedAtSortableProp,
 } from '../utils/flows';
 import {
@@ -95,7 +95,7 @@ import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
-import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
@@ -5939,11 +5939,10 @@ selectors.tileLicenseDetails = (state, tile) => {
 
 // #region listener request logs selectors
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
-  if (resourceType !== 'exports' || !flowId) return false;
-  const resource = selectors.resource(state, 'exports', resourceId);
+  if (!['exports', 'imports'].includes(resourceType) || !flowId) return false;
+  // const resource = selectors.resource(state, resourceType, resourceId);
 
-  if (!isRealtimeExport(resource)) return false;
-
+  // return !isNew && (isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType));
   return !isNew;
 };
 
@@ -5970,11 +5969,11 @@ selectors.canEnableDebug = (state, exportId, flowId) => {
 
 selectors.mkLogsInCurrPageSelector = () => createSelector(
   selectors.logsSummary,
-  state => selectors.filter(state, LISTENER_LOG_FILTER_KEY),
+  state => selectors.filter(state, FLOWSTEP_LOG_FILTER_KEY),
   (debugLogsList, filterOptions) => {
     const { currPage = 0 } = filterOptions.paging || {};
 
-    return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
+    return debugLogsList.slice(currPage * FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE);
   }
 );
 

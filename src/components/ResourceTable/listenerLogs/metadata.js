@@ -4,7 +4,7 @@ import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../actions';
 import DateFilter from '../commonCells/DateFilter';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import { LISTENER_LOGS_RANGE_FILTERS, FILTER_KEY, LISTENER_LOGS_STATUS_CODES } from '../../../utils/listenerLogs';
+import { FLOWSTEP_LOGS_RANGE_FILTERS, FILTER_KEY, FLOWSTEP_LOGS_STATUS_CODES } from '../../../utils/flowStepLogs';
 import TrashIcon from '../../icons/TrashIcon';
 import LogDetailsLink from './cells/LogDetailsLink';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
@@ -19,7 +19,7 @@ export default {
 
         const dispatch = useDispatch();
         const handleChange = useCallback(() => {
-          dispatch(actions.logs.listener.request({flowId, exportId}));
+          dispatch(actions.logs.flowStep.request({flowId, exportId}));
         },
         [dispatch, exportId, flowId],
         );
@@ -30,7 +30,7 @@ export default {
             filterBy="time"
             filterKey={FILTER_KEY}
             handleChange={handleChange}
-            customPresets={LISTENER_LOGS_RANGE_FILTERS}
+            customPresets={FLOWSTEP_LOGS_RANGE_FILTERS}
             fromDate={startOfDay(addDays(new Date(), -29))}
             showTime
             skipLastEndDate />
@@ -54,7 +54,7 @@ export default {
 
         const dispatch = useDispatch();
         const handleSave = useCallback(() => {
-          dispatch(actions.logs.listener.request({flowId, exportId}));
+          dispatch(actions.logs.flowStep.request({flowId, exportId}));
         },
         [dispatch, exportId, flowId],
         );
@@ -65,7 +65,7 @@ export default {
             filterBy="codes"
             filterKey={FILTER_KEY}
             handleSave={handleSave}
-            options={LISTENER_LOGS_STATUS_CODES} />
+            options={FLOWSTEP_LOGS_STATUS_CODES} />
         );
       },
       Value: ({rowData: log}) => log.statusCode,
@@ -84,7 +84,7 @@ export default {
 
         return useCallback(() => {
           const handleClick = () => {
-            dispatch(actions.logs.listener.removeLog(flowId, exportId, [log?.key]));
+            dispatch(actions.logs.flowStep.removeLog(flowId, exportId, [log?.key]));
           };
 
           confirmDialog({

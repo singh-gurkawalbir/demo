@@ -31,7 +31,7 @@ export default function LogDetailsLink({ logKey, exportId, time }) {
   const activeLogKey = useSelector(state => selectors.activeLogKey(state, exportId));
 
   const handleActionClick = useCallback(() => {
-    dispatch(actions.logs.listener.setActiveLog(exportId, logKey));
+    dispatch(actions.logs.flowStep.setActiveLog(exportId, logKey));
   }, [dispatch, exportId, logKey]);
 
   return (
