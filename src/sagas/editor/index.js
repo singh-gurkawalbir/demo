@@ -679,7 +679,8 @@ export function* initEditor({ id, editorType, options }) {
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
-      const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
+      const isStandaloneExport = resourceType === 'exports' && (yield select(selectors.isStandaloneExport, flowId, resourceId));
+      const isPageGenerator = !isStandaloneExport && (yield select(selectors.isPageGenerator, flowId, resourceId, resourceType));
 
       formattedOptions = init({
         options: formattedOptions,
