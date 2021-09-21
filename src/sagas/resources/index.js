@@ -545,9 +545,9 @@ export function* updateIntegrationSettings({
 
     if (response._flowId) {
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
-      // UI should navigate to dashboard so that user can the see the flow status.
+      // UI should navigate to the integration dashboard so that user can the see the flow status.
       yield put(
-        actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH)
+        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
       );
     }
 
