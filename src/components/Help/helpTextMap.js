@@ -1298,7 +1298,8 @@ export default {
     'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
   'export.exportData':
     'Over here you can specify how you would like to export data.',
-  'export.file.backupPath': 'Specify the directory path of the google drive folder where files will be backed up after successful transfer.',
+  'export.file.backupPath': 'Specify the directory path of the google drive folder where files will be backed up after the successful transfer.',
+  'export.azure.backupPath': 'Specify the directory path of the Azure blob storage  where files will be backed up after the successful transfer.',
   'export.ftp.directoryPath':
     "Use this field to specify the directory path of the FTP folder containing the files that you want to transfer.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then transfer all files from the child folder 'Orders'.  integrator.io will transfer all files and also delete them from the folder once the transfer completes. Copies of the original files will be stored in integrator.io up to 30 days. You can also (optionally) configure integrator.io to leave files on the FTP server, or to only transfer files that match a certain 'starts with' or 'ends with' name pattern.",
   'export.ftp.fileNameStartsWith':
@@ -1309,6 +1310,10 @@ export default {
     "Use this field to specify a file name prefix that will be used to filter which files in the google drive folder will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
   'export.file.fileNameEndsWith':
     "Use this field to specify a file name postfix that will be used to filter which files in the google drive folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
+  'export.azure.fileNameStartsWith':
+    "Use this field to specify a file name prefix that will be used to filter which files in the Azure blob storage will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
+  'export.azure.fileNameEndsWith':
+    "Use this field to specify a file name postfix that will be used to filter which files in the Azure blob storage will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
   'export.file.batchSize': 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
   'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
   'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
@@ -1596,7 +1601,10 @@ export default {
   'import.gdrive.directoryPath':
     'Specify google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
   'import.azure.containerName': 'Specify the Azure blob storage container that has the files to be transferred. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes. You can also (optionally) configure <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder or transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
-  'import.file.backupPath': 'Specify the directory path of the google drive folder where files will be backed up after successful transfer.',
+  'import.azure.fileName':
+  "Use this field to specify how the files being uploaded to the Azure blob storage should be named. You can type '{{{' to include a predefined timestamp template in your file name. For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+  'import.file.backupPath': 'Specify the directory path of the google drive folder where files will be backed up after the successful transfer.',
+  'import.azure.backupPath': 'Specify the directory path of the Azure blob storage where files will be backed up after the successful transfer.',
   'import.s3.region':
     'Name of the nearest amazon s3 region to the location from where the request is being made. If not set, by default "us-east-1" is selected',
   'import.s3.bucket':
