@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaCronGenerator(props) {
   const classes = useStyles();
-  const { onFieldChange, id, value } = props;
+  const { onFieldChange, id, value, scheduleStartMinuteOffset} = props;
   const [reset, setReset] = useState(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onChange = useCallback(
@@ -48,6 +48,7 @@ export default function DynaCronGenerator(props) {
         key={reset}
         value={value}
         onChange={onChange}
+        scheduleStartMinuteOffset={scheduleStartMinuteOffset}
       />
     </>
   );

@@ -1,6 +1,16 @@
 import { isEmpty } from 'lodash';
 import { isJsonString } from '../string';
 
+export const restToHttpPagingMethodMap = {
+  nextpageurl: 'url',
+  pageargument: 'page',
+  relativeuri: 'relativeuri',
+  linkheader: 'linkheader',
+  skipargument: 'skip',
+  token: 'token',
+  postbody: 'body',
+};
+
 export const getContentType = httpPayload => {
   if (!httpPayload || !httpPayload.headers?.['content-type']) {
     return 'json';
