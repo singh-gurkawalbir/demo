@@ -104,7 +104,7 @@ export default function Editors() {
 
         </main>
       </div>
-      <EditorDrawer hideSave playGroundMode />
+      <EditorDrawer hideSave />
       <ResourceDrawer />
     </>
   );
