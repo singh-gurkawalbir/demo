@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
-function RouterWrappedContent({ hideSave }) {
+function RouterWrappedContent({ hideSave, playGroundMode }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -73,7 +73,7 @@ function RouterWrappedContent({ hideSave }) {
     dispatch(actions.editor.clear(editorId));
     onClose();
   };
-  const CloseButton = <CloseIconButton editorId={editorId} />;
+  const CloseButton = !playGroundMode && <CloseIconButton editorId={editorId} />;
   const drawerTitle = editorTitle || label;
 
   return (
@@ -95,14 +95,14 @@ function RouterWrappedContent({ hideSave }) {
   );
 }
 
-export default function EditorDrawer({ hideSave, hidePreview, width = 'full' }) {
+export default function EditorDrawer({ hideSave, hidePreview, playGroundMode, width = 'full' }) {
   return (
     <RightDrawer
       path="editor/:editorId"
       variant="temporary"
       height="tall"
       width={width}>
-      <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} />
+      <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} playGroundMode={playGroundMode} />
     </RightDrawer>
   );
 }
