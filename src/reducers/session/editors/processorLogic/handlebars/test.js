@@ -62,6 +62,12 @@ describe('handlebars processor logic', () => {
           resource: {adaptorType: 'RESTExport', rest: { pagingMethod: 'relativeuri' }},
           connection: {isHTTP: true},
         })).toEqual(true);
+      expect(_editorSupportsV1V2data(
+        {isPageGenerator: false,
+          fieldId: 'http.body',
+          resource: {adaptorType: 'HTTPExport', http: { paging: { method: 'relativeuri' } }},
+          connection: {isHTTP: true},
+        })).toEqual(true);
     });
 
     test('should return false for native REST adaptor', () => {
