@@ -127,6 +127,7 @@ export default {
     'braintree',
     'zenefits',
     'saphana',
+    'mixpanel',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

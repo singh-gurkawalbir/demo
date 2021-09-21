@@ -216,6 +216,7 @@ import sapsuccessfactors from './sapsuccessfactors';
 import braintree from './braintree';
 import zenefits from './zenefits';
 import saphana from './saphana';
+import mixpanel from './mixpanel';
 
 export default {
   channelape,
@@ -436,4 +437,5 @@ export default {
   braintree,
   zenefits,
   saphana,
+  mixpanel,
 };
