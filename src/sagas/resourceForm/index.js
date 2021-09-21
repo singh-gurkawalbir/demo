@@ -792,13 +792,15 @@ export function* initFormValues({
 
   const connection = yield select(selectors.resource, 'connections', _connectionId);
 
-  resource.assistant = getAssistantFromConnection(assistant, connection);
+  const connectionAssistant = getAssistantFromConnection(assistant, connection);
 
-  const adaptorType = getAssistantConnectorType(resource.assistant);
+  const newResource = {...resource, assistant: connectionAssistant};
+
+  const adaptorType = getAssistantConnectorType(connectionAssistant);
 
   let assistantData;
 
-  if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
+  if (['exports', 'imports'].includes(resourceType) && connectionAssistant) {
     if (!assistantMetadata) {
       yield put(
         actions.resource.patchStaged(
@@ -811,20 +813,20 @@ export function* initFormValues({
 
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
-      assistant: resource.assistant,
+      assistant: connectionAssistant,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
-        assistant: resource.assistant,
+        assistant: connectionAssistant,
       });
     }
   }
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
-      resource,
+      resource: newResource,
       isNew,
       assistantData,
       connection,
@@ -835,7 +837,7 @@ export function* initFormValues({
     const fieldMeta = getFieldsWithDefaults(
       form,
       resourceType,
-      resource,
+      newResource,
       { developerMode, flowId, integrationId }
     );
     let finalFieldMeta = fieldMeta;
@@ -843,7 +845,7 @@ export function* initFormValues({
     if (typeof defaultFormAssets.init === 'function') {
       // standard form init fn...
 
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);
