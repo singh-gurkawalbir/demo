@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import StatusCircle from '../../../../components/StatusCircle';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
@@ -15,14 +15,13 @@ const useStyles = makeStyles(() => ({
   gridContainer: {
     display: 'grid',
     gridColumnGap: '10px',
-    gridTemplateColumns: 'auto 38%',
+    gridTemplateColumns: `auto ${theme.spacing(5)}px`,
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',
     },
     '& > div:last-child': {
       position: 'relative',
-      right: -12,
     },
   },
 }));
