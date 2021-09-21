@@ -14,14 +14,11 @@ const useStyles = makeStyles(theme => ({
   },
   gridContainer: {
     display: 'grid',
-    gridColumnGap: '10px',
-    gridTemplateColumns: `auto ${theme.spacing(5)}px`,
+    gridColumnGap: theme.spacing(1),
+    gridTemplateColumns: `auto ${theme.spacing(7)}px`,
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',
-    },
-    '& > div:last-child': {
-      position: 'relative',
     },
   },
 }));
