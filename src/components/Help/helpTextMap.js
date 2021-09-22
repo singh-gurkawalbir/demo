@@ -560,7 +560,7 @@ export default {
   'connection.http.unencrypted.Store_Code':
     'Enter the store code, as listed in your Miva store’s settings.',
   'connection.xMivaAPIToken':
-    'Enter the API token of your account. (Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe.) This token is generated in the Miva admin under Users > API tokens. \nNOTE: When generating the Miva token on this page, also select the security options Accept requests without signature and Accept requests without timestamp. In addition, provide the Allowed IP address  0.0.0.0/0.',
+    'Enter the API token of your account. (Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe.) This token is generated in the Miva admin under Users > API tokens. \nNOTE: When generating the Miva token on this page, also select the security options <b>Accept requests without signature</b> and <b>Accept requests without timestamp</b>. In addition, provide the <b>Allowed IP address</b>  0.0.0.0/0.',
   'target.connection.accType':
     'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
   'target.connection.http.auth.token.token':
