@@ -656,7 +656,7 @@ export const integrationSettingsToDynaFormMetadata = (
 
   if (finalData.fieldMap) finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
-  // Wrap everything in a adavancedSettings container
+  // Wrap everything in a advancedSettings container
   if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
@@ -664,8 +664,12 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  if (!sections || !isFlow) finalData.actions = [{ id: 'saveintegrationsettings' }];
-  else finalData.actions = [];
+  // for suitescript, there is no need of isFlow check. We just rely on the sections
+  if (isSuiteScriptIntegrator) {
+    if (!sections) { finalData.actions = [{ id: 'saveintegrationsettings' }]; } else finalData.actions = [];
+  } else if (!sections || !isFlow) {
+    finalData.actions = [{ id: 'saveintegrationsettings' }];
+  } else finalData.actions = [];
 
   return finalData;
 };

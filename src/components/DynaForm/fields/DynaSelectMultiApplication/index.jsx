@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import CreatableSelect from 'react-select/creatable';
 import Select, { components } from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { Button, FormControl, FormLabel } from '@material-ui/core';
@@ -143,18 +144,21 @@ const DropdownIndicator = props => (
 const Option = props => {
   const classes = useStyles();
   const { type, icon, value, label } = props.data;
+  const {hideApplicationImg} = props.selectProps;
 
   return (
     <div data-test={value} className={classes.menuItems}>
       <components.Option {...props}>
-        <span className={classes.optionImg}>
-          <ApplicationImg
-            markOnly
-            type={type === 'webhook' ? value : type}
-            assistant={icon}
-            className={classes.img}
+        {!hideApplicationImg ? (
+          <span className={classes.optionImg}>
+            <ApplicationImg
+              markOnly
+              type={type === 'webhook' ? value : type}
+              assistant={icon}
+              className={classes.img}
           />
-        </span>
+          </span>
+        ) : ''}
         <span className={classes.optionLabel}>{label}</span>
         <span className={classes.optionCheckBox}>
           <Checkbox
@@ -218,6 +222,8 @@ export default function MultiSelectApplication(props) {
     placeholder,
     isValid,
     onFieldChange,
+    creatableMultiSelect,
+    hideApplicationImg,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -351,6 +357,7 @@ export default function MultiSelectApplication(props) {
       },
     }),
   };
+  const CustomSelect = creatableMultiSelect ? CreatableSelect : Select;
 
   return (
     <div className={classes.multiSelectWrapper}>
@@ -365,8 +372,9 @@ export default function MultiSelectApplication(props) {
         disabled={disabled}
         required={required}
         className={classes.multiSelectWrapper}>
-        <Select
+        <CustomSelect
           isMulti
+          hideApplicationImg={hideApplicationImg}
           placeholder={placeholder}
           components={{ Option, MultiValueLabel, DropdownIndicator, Menu }}
           defaultValue={defaultValue}

@@ -679,6 +679,7 @@ export function* initEditor({ id, editorType, options }) {
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
+      const isStandaloneExport = resourceType === 'exports' && (yield select(selectors.isStandaloneExport, flowId, resourceId));
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
       formattedOptions = init({
@@ -687,7 +688,9 @@ export function* initEditor({ id, editorType, options }) {
         formValues,
         fieldState,
         connection: resourceType === 'connections' ? resource : connection,
-        isPageGenerator});
+        isPageGenerator,
+        isStandaloneExport,
+      });
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
       const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');

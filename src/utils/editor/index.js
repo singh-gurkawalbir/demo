@@ -133,14 +133,18 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
   return fieldId;
 };
 
-// fieldIds that show previewData when paging is configured
-export const previewDataDependentFieldIds = [
+export const PAGING_FIELD_IDS = [
   'http.paging.body',
   'http.paging.relativeURI',
-  'http.relativeURI',
-  'http.body',
   'rest.pagingPostBody',
   'rest.nextPageRelativeURI',
+];
+
+// fieldIds that show previewData when paging is configured
+export const previewDataDependentFieldIds = [
+  ...PAGING_FIELD_IDS,
+  'http.relativeURI',
+  'http.body',
   'rest.relativeURI',
   'rest.postBody',
 ];
