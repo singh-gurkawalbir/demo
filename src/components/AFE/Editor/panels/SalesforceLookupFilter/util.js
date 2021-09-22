@@ -45,6 +45,8 @@ export function convertSalesforceLookupFilterExpression(expression, data = [], s
         operator: operatorsMap.ioFiltersToJQuery[value.operator.toLowerCase()],
         value: rightValue.value
           ?.replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2')
+          ?.replace(/(^'\{{2})(.*)(\}{2}')$/g, '$2')
+          ?.replace(/(^')(.*)(')$/g, '$2')
           ?.replace(/^\w+\s/, ''),
       };
       const isInData = data.find(f => f.id === toReturn.value);
@@ -75,8 +77,14 @@ export function convertSalesforceLookupFilterExpression(expression, data = [], s
     .replace(/{{{/g, "'{{{")
     .replace(/}}}\)/g, "}}}')")
     : expression
-      .replace(/{{{/g, "'{{{")
-      .replace(/}}}\)/g, "}}}')");
+      .replace(/{{{/g, "'<<<")
+      .replace(/}}}\)/g, ">>>')")
+      .replace(/{{/g, "'<<")
+      .replace(/}}\)/g, ">>')")
+      .replace(/{/g, "'<")
+      .replace(/}\)/g, ">')")
+      .replaceAll('<', '{')
+      .replaceAll('>', '}');
 
   let whereClause;
 
