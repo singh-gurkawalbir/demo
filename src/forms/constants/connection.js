@@ -126,6 +126,8 @@ export default {
     'sapsuccessfactors',
     'braintree',
     'zenefits',
+    'saphana',
+    'mixpanel',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
