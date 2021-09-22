@@ -5,12 +5,21 @@ import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-u
 import CeligoPageBar from '../../components/CeligoPageBar';
 import Editor from '../../components/AFE/Editor';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
-import ExampleMenu from './ExampleMenu';
-import ExplorerMenu from './ExplorerMenu';
+import loadable from '../../utils/loadable';
+import retry from '../../utils/retry';
 import EditorDrawer from '../../components/AFE/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
-import ExportExampleButton from './ExportExampleButton';
 import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
+
+const ExampleMenu = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'ExampleMenu' */ './ExampleMenu'))
+);
+const ExplorerMenu = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'ExplorerMenu' */ './ExplorerMenu'))
+);
+const ExportExampleButton = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'ExportExampleButton' */ './ExportExampleButton'))
+);
 
 const useStyles = makeStyles(theme => ({
   root: {
