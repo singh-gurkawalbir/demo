@@ -30,6 +30,7 @@ import {
   isNetSuiteBatchExport,
   isQueryBuilderSupported,
   getUserAccessLevelOnConnection,
+  getAssistantFromResource,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -2103,5 +2104,25 @@ describe('resource util tests', () => {
       ], '555')).toEqual(undefined);
     });
   });
+  describe('getAssistantFromResource test cases', () => {
+    test('should return the same assistant if it is not constantcontact', () => {
+      expect(getAssistantFromResource({assistant: 'square'})).toEqual('square');
+      expect(getAssistantFromResource({assistant: 'amazonmws'})).toEqual('amazonmws');
+      expect(getAssistantFromResource({assistant: 'zoom'})).toEqual('zoom');
+      expect(getAssistantFromResource({assistant: 'hubspot'})).toEqual('hubspot');
+      expect(getAssistantFromResource({assistant: 'zendesk'})).toEqual('zendesk');
+    });
+    test('should return constantcontact if the assistant is constantcontactv2', () => {
+      expect(getAssistantFromResource({assistant: 'constantcontactv2'})).toEqual('constantcontact');
+    });
+    test('should return constantcontact if the assistant is constantcontactv3', () => {
+      expect(getAssistantFromResource({assistant: 'constantcontactv3'})).toEqual('constantcontact');
+    });
+    test('should not throw error if resource is undefined', () => {
+      expect(getAssistantFromResource()).toBeUndefined();
+    });
+    test('should not throw error if resource does not contain assistant', () => {
+      expect(getAssistantFromResource({id: 123})).toBeUndefined();
+    });
+  });
 });
-
