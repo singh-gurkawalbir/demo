@@ -124,6 +124,10 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
       default:
     }
   }
+  if (!isNewRestExport && fieldId === 'http.once.relativeURI') {
+    // only exception for old rest exports where once relative uri rests inside rest sub doc but fieldId is http.once.relativeURI
+    return 'rest.once.relativeURI';
+  }
 
   // returns same fieldId if it does not match
   return fieldId;
