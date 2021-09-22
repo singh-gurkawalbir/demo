@@ -6,7 +6,7 @@ import { selectors } from '../../../../reducers';
 import { emptyObject, FORM_SAVE_STATUS } from '../../../../utils/constants';
 import SaveAndCloseResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
-export default function SaveButtonGroup({ value, formKey, onCancel, resourceType, resourceId, parentOnSave }) {
+export default function SaveButtonGroup({ value = {}, formKey, onCancel, resourceType, resourceId, parentOnSave }) {
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,

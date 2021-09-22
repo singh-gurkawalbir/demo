@@ -712,6 +712,7 @@ export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', '
 
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
 export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
+export const LOOKUP_FORM_KEY = 'LOOKUP_FORM_KEY';
 export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
 export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
