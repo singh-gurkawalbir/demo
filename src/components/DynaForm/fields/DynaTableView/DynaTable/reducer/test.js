@@ -1,6 +1,6 @@
 /* global describe,test,expect, beforeAll */
 
-import reducer, {getRowHeight, preSubmit} from './index';
+import reducer, { preSubmit} from './index';
 import actionTypes from '../actionTypes';
 
 const initialState = {
@@ -273,21 +273,6 @@ describe('selector', () => {
       expect(preSubmit(state, optionsMap)).toEqual(
         [{extract: 'k', generate: 'a'}, {extract: 'f', generate: 'e'}]
       );
-    });
-  });
-
-  describe('getRowHeight', () => {
-    test('should return the default height for invalid index', () => {
-      let state = reducer(initialState, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'extract', heightOfCell: 60, rowIndex: 0 });
-
-      state = reducer(state, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'generate', heightOfCell: 55, rowIndex: 0 });
-      expect(getRowHeight(state, 2)).toBe(51);
-    });
-    test('should get the maximum rowCell height', () => {
-      let state = reducer(initialState, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'extract', heightOfCell: 60, rowIndex: 0 });
-
-      state = reducer(state, {type: actionTypes.UPDATE_CELL_HEIGHT, colIndex: 'generate', heightOfCell: 55, rowIndex: 0 });
-      expect(getRowHeight(state, 0)).toBe(65);
     });
   });
 });

@@ -928,7 +928,7 @@ describe('updateIntegrationSettings saga', () => {
     .call.fn(apiCallWithRetry)
     .put(actions.resource.requestCollection('exports', null, true))
     .put(actions.resource.requestCollection('flows', null, true))
-    .put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH))
+    .put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'))
     .run());
   test('should dispatch patch and commit actions if response is a success and options action is flowEnableDisable', () => {
     const patchSet = [

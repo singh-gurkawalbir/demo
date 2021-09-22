@@ -193,7 +193,7 @@ function ProfileMenuButton() {
             target="_blank"
             fullWidth
             >
-            Provide UX feedback
+            Provide feedback
           </IconTextButton>
         </div>
       </ArrowPopper>
