@@ -1,4 +1,6 @@
 import util from '../../../../../utils/json';
+import { isOldRestExport } from '../../../../../utils/resource';
+import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
 
 /* this util is used to read field label and generate editor title from it
 * eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
@@ -27,9 +29,10 @@ export function _constructEditorTitle(label) {
 
   return `Build ${title[0].toLowerCase()}${title.slice(1)}`;
 }
-export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
+export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport}) {
   const {adaptorType} = resource || {};
   const {isHTTP} = connection || {};
+  const isOldRestExp = isOldRestExport(resource, connection);
 
   if (fieldId === '_query') {
     // we don't get whole resource object in case of rdbms lookup query so
@@ -55,8 +58,25 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
     return true;
   }
 
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  if (isPageGenerator) {
+  // AFE 1/2 toggle is shown for paging fields
+  if (PAGING_FIELD_IDS.includes(fieldId)) {
+    return true;
+  }
+  // root level fields with paging configured should show AFE 1/2 toggle
+  const isPagingMethodConfigured = !!(isOldRestExp ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
+  // irrespective of paging, AFE 2.0 is not supported a native rest adaptor
+  const isNativeRestAdaptor = ['RESTImport', 'RESTExport'].includes(adaptorType) && !isHTTP;
+
+  if (
+    isPagingMethodConfigured &&
+    !isNativeRestAdaptor &&
+    ['http.relativeURI', 'http.body', 'rest.relativeURI', 'rest.postBody'].includes(fieldId)
+  ) {
+    return true;
+  }
+
+  // no AFE1/2 is shown for PG/Standalone export (with some exceptions)
+  if (isPageGenerator || isStandaloneExport) {
     return false;
   }
 
@@ -89,7 +109,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator, formValues, ...rest} = props;
+    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneExport, formValues, ...rest} = props;
     const {fieldId} = options;
     const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
@@ -103,7 +123,7 @@ export default {
       rule = value?.query;
     }
 
-    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport});
     let v1Rule;
     let v2Rule;
 

@@ -288,6 +288,15 @@ const connectors = [
 const newConnections = [
   {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
   {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
+  {
+    id: 'constantcontact',
+    name: 'Constant Contact',
+    type: 'http',
+    assistant: 'constantcontact',
+    export: 'true',
+    import: 'true',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038589232-Set-up-a-connection-to-Constant-Contact',
+  },
 ];
 
 connectors.sort(stringCompare('name'));
@@ -395,9 +404,17 @@ export const applicationsList = () => {
   });
 
   assistants.forEach(asst => {
+    let {name} = asst;
+
+    // TODO: Siddharth, temporary check to ensure consistency for constant contact
+    // once constantcontactv2 & v3 are migrated to constantcontact in db
+    // this should be removed https://celigo.atlassian.net/browse/IO-23182
+    if (asst.id.includes('constantcontact')) {
+      name = 'Constant contact';
+    }
     applications.push({
       id: asst.id,
-      name: asst.name,
+      name,
       type: asst.type,
       assistant: asst.id,
       export: asst.export,

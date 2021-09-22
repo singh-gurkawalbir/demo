@@ -49,11 +49,38 @@ describe('handlebars processor logic', () => {
     test('should return false if resource is a page generator', () => {
       expect(_editorSupportsV1V2data({isPageGenerator: true, fieldId: 'rdbms.query'})).toEqual(false);
     });
+    test('should return false if resource is a page generator', () => {
+      expect(_editorSupportsV1V2data({isPageGenerator: true, fieldId: 'rdbms.query'})).toEqual(false);
+    });
+    test('should return true for paging related fields', () => {
+      expect(_editorSupportsV1V2data({fieldId: 'http.paging.body'})).toEqual(true);
+    });
+    test('should return true for root level fields when paging is configured', () => {
+      expect(_editorSupportsV1V2data(
+        {isPageGenerator: false,
+          fieldId: 'rest.body',
+          resource: {adaptorType: 'RESTExport', rest: { pagingMethod: 'relativeuri' }},
+          connection: {isHTTP: true},
+        })).toEqual(true);
+      expect(_editorSupportsV1V2data(
+        {isPageGenerator: false,
+          fieldId: 'http.body',
+          resource: {adaptorType: 'HTTPExport', http: { paging: { method: 'relativeuri' } }},
+          connection: {isHTTP: true},
+        })).toEqual(true);
+    });
+
     test('should return false for native REST adaptor', () => {
       expect(_editorSupportsV1V2data(
         {isPageGenerator: false,
           fieldId: 'rest.body',
           resource: {adaptorType: 'RESTImport'},
+          connection: {isHTTP: false},
+        })).toEqual(false);
+      expect(_editorSupportsV1V2data(
+        {isPageGenerator: false,
+          fieldId: 'rest.body',
+          resource: {adaptorType: 'RESTExport'},
           connection: {isHTTP: false},
         })).toEqual(false);
     });
