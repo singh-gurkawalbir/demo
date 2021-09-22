@@ -1,9 +1,16 @@
 import React, { useMemo } from 'react';
+import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
 
+const useStyles = makeStyles({
+  spinnerPreview: {
+    position: 'relative',
+    height: '100%',
+  },
+});
 const useColumns = () => [
   {
     key: 'name',
@@ -18,6 +25,7 @@ const useColumns = () => [
 ];
 
 export default function PreviewTable({ templateId }) {
+  const classes = useStyles();
   const {components, status} = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   ) || {};
@@ -37,7 +45,9 @@ export default function PreviewTable({ templateId }) {
   }
   if (status === 'requested') {
     return (
-      <Spinner centerAll />
+      <div className={classes.spinnerPreview}>
+        <Spinner centerAll />
+      </div>
     );
   }
 

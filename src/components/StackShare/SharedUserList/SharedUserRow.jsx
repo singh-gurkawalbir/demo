@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-  Button,
   TableCell,
   TableRow,
   Typography,
@@ -11,6 +10,7 @@ import actions from '../../../actions';
 import useConfirmDialog from '../../ConfirmDialog';
 import DeleteIcon from '../../icons/TrashIcon';
 import CeligoSwitch from '../../CeligoSwitch';
+import { TextButton } from '../../Buttons';
 
 export default function SharedUserRow({ user }) {
   const dispatch = useDispatch();
@@ -86,7 +86,7 @@ export default function SharedUserRow({ user }) {
           />
         )}
         {user.dismissed && (
-          <Button onClick={handleReinviteClick}>Reinvite</Button>
+          <TextButton onClick={handleReinviteClick}>Reinvite</TextButton>
         )}
       </TableCell>
       <TableCell>

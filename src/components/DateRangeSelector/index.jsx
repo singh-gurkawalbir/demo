@@ -1,6 +1,4 @@
-import { Button, List, ListItem, ListItemText } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
@@ -11,9 +9,10 @@ import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
-import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
+import { OutlinedButton, TextButton} from '../Buttons/index';
+import ActionGroup from '../ActionGroup';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -251,14 +250,13 @@ export default function DateRangeSelector({
             <Icon />
           </ActionButton>
         ) : (
-          <Button
+          <OutlinedButton
+            color="secondary"
             disabled={!!disabled}
             onClick={toggleClick}
-            variant="outlined"
-            color="secondary"
             className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
             {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
-          </Button>
+          </OutlinedButton>
         )
       }
       <ArrowPopper
@@ -323,19 +321,19 @@ export default function DateRangeSelector({
               )}
             </div>
             <div className={classes.actions}>
-              <ButtonGroup>
-                <Button variant="contained" color="primary" onClick={handleSave}>
+              <ActionGroup>
+                <OutlinedButton onClick={handleSave}>
                   Apply
-                </Button>
+                </OutlinedButton>
                 {clearable && (
-                <Button variant="text" color="secondary" onClick={handleClear}>
+                <TextButton onClick={handleClear}>
                   Clear
-                </Button>
+                </TextButton>
                 )}
-                <Button variant="text" color="secondary" onClick={handleClose}>
+                <TextButton onClick={handleClose}>
                   Cancel
-                </Button>
-              </ButtonGroup>
+                </TextButton>
+              </ActionGroup>
             </div>
           </div>
         )}

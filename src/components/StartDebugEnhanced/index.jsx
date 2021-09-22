@@ -1,18 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
+import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../reducers';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import CancelIcon from '../icons/CancelIcon';
-import IconTextButton from '../IconTextButton';
+import {TextButton, OutlinedButton} from '../Buttons/index';
+import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -170,24 +170,25 @@ export default function StartDebugEnhanced({
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         disabled={disabled}
         onClick={toggleClick}
+        startIcon={<DebugIcon />}
         className={classes.debugButton}
         data-test="refreshResource">
-        <DebugIcon />
         {activeDebugUntil ? (
           <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
-      </IconTextButton>
+      </TextButton>
+
       {!!activeDebugUntil && (
-      <IconTextButton
+      <TextButton
         disabled={disabled}
+        startIcon={<CancelIcon />}
         className={clsx(classes.debugButton, classes.stopDebugButton)}
         onClick={handleStopDebug} >
-        <CancelIcon />
         Stop debug
-      </IconTextButton>
+      </TextButton>
       )}
       <ArrowPopper
         disabled={disabled}
@@ -234,14 +235,14 @@ export default function StartDebugEnhanced({
                 </div>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={updateTimeHandler}>
+                <ActionGroup>
+                  <OutlinedButton onClick={updateTimeHandler}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </OutlinedButton>
+                  <TextButton onClick={handleClose}>
                     Close
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

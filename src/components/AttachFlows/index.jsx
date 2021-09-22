@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
@@ -8,6 +7,7 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import {OutlinedButton, TextButton} from '../Buttons';
 
 const flowsFilterConfig = { type: 'flows' };
 
@@ -87,19 +87,15 @@ export default function AttachFlows({ onClose, integrationId }) {
       )}
       {hasFlows ? (
         <div>
-          <Button
+          <OutlinedButton
             data-test="attachFlows"
-            onClick={handleAttachFlowsClick}
-            variant="outlined"
-            color="primary">
+            onClick={handleAttachFlowsClick}>
             Attach
-          </Button>
-          <Button
-            variant="text"
-            color="primary"
+          </OutlinedButton>
+          <TextButton
             onClick={onClose}>
             Cancel
-          </Button>
+          </TextButton>
         </div>
       ) : <div>No flows found</div>}
     </ModalDialog>
