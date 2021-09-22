@@ -556,11 +556,11 @@ export default {
     'Please enter your API key here. Navigate to Merchant view on left hand side and click on API keys section to find API Key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'vend.connection.http.subdomain': 'Enter your Vend subdomain. For example, in https://soda.vendhq.com, \'soda\' is the subdomain.',
   'connection.http.apiEndpoint':
-    'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
+    'Enter the unique API endpoint for your account, found in the Miva admin at Domain settings > Site configuration > Base URL for graphics. For example, avim.mivamerchantdev.com/mm5/.',
   'connection.http.unencrypted.Store_Code':
-    'Please enter the Store Code. Under store settings, we will get the store code.',
+    'Enter the store code, as listed in your Miva store’s settings.',
   'connection.xMivaAPIToken':
-    'Please enter the API token of your account. The token is generated in the Miva admin under Users > API Tokens. Note: When we are generating token we should select the Accept Requests Without Signature, Accept Requests Without Timestamp and also we should provide IP Address as 0.0.0.0/0 and also we should provide required permissions for groups and functions.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+    'Enter the API token of your account. (Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe.) This token is generated in the Miva admin under Users > API tokens. \nNOTE: When generating the Miva token on this page, also select the security options Accept requests without signature and Accept requests without timestamp. In addition, provide the Allowed IP address  0.0.0.0/0.',
   'target.connection.accType':
     'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
   'target.connection.http.auth.token.token':
