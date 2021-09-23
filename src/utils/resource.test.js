@@ -31,6 +31,7 @@ import {
   isQueryBuilderSupported,
   getUserAccessLevelOnConnection,
   getAssistantFromResource,
+  isOldRestAdaptor,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -2124,5 +2125,51 @@ describe('resource util tests', () => {
     test('should not throw error if resource does not contain assistant', () => {
       expect(getAssistantFromResource({id: 123})).toBeUndefined();
     });
+  });
+});
+
+describe('isOldRestAdaptor test cases', () => {
+  test('should return false in case of invalid resource ', () => {
+    const resource = {
+      _id: '123',
+      adaptorType: 'HTTPExport',
+    };
+
+    expect(isOldRestAdaptor()).toBeFalsy();
+    expect(isOldRestAdaptor({}, null)).toBeFalsy();
+    expect(isOldRestAdaptor(resource)).toBeFalsy();
+  });
+  test('should return true when the resource is Rest Export or Rest Import', () => {
+    const restExp = {
+      _id: '123',
+      adaptorType: 'RESTExport',
+    };
+    const restImp = {
+      _id: '123',
+      adaptorType: 'RESTImport',
+    };
+
+    expect(isOldRestAdaptor(restExp)).toBeTruthy();
+    expect(isOldRestAdaptor(restImp)).toBeTruthy();
+  });
+  test('should return true when the resource is Http Export but connection doc has isHTTP as false', () => {
+    const resource = {
+      _id: '123',
+      adaptorType: 'HTTPExport',
+    };
+    const connection = {
+      _id: 'conn-123',
+      isHTTP: false,
+    };
+
+    expect(isOldRestAdaptor(resource, connection)).toBeTruthy();
+  });
+  test('should return false for new resource', () => {
+    const newResource = {
+      _id: 'new-123',
+      adaptorType: 'RESTExport',
+    };
+
+    expect(isOldRestAdaptor(newResource)).toBeFalsy();
   });
 });
