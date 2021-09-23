@@ -19,7 +19,7 @@ export default {
       newValues['/netsuite_da/internalIdLookup'] = undefined;
     }
 
-    const subrecords = newValues['/netsuite_da/useSS2Restlets'] === 'true' ? [] : newValues['/netsuite_da/subrecords'];
+    const subrecords = newValues['/netsuite_da/subrecords'];
 
     const useSS2RestletsValue = newValues['/netsuite_da/useSS2Restlets'] === 'true';
 
