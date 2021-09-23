@@ -1,5 +1,5 @@
 import util from '../../../../../utils/json';
-import { isOldRestExport } from '../../../../../utils/resource';
+import { isOldRestAdaptor } from '../../../../../utils/resource';
 import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
 
 /* this util is used to read field label and generate editor title from it
@@ -32,7 +32,7 @@ export function _constructEditorTitle(label) {
 export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport}) {
   const {adaptorType} = resource || {};
   const {isHTTP} = connection || {};
-  const isOldRestExp = isOldRestExport(resource, connection);
+  const isOldRestResource = isOldRestAdaptor(resource, connection);
 
   if (fieldId === '_query') {
     // we don't get whole resource object in case of rdbms lookup query so
@@ -63,7 +63,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
     return true;
   }
   // root level fields with paging configured should show AFE 1/2 toggle
-  const isPagingMethodConfigured = !!(isOldRestExp ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
+  const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   // irrespective of paging, AFE 2.0 is not supported a native rest adaptor
   const isNativeRestAdaptor = ['RESTImport', 'RESTExport'].includes(adaptorType) && !isHTTP;
 

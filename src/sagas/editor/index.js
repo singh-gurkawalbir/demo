@@ -22,7 +22,7 @@ import { constructResourceFromFormValues } from '../utils';
 import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
-import { isNewId, isOldRestExport } from '../../utils/resource';
+import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 
 /**
@@ -404,7 +404,7 @@ export function* requestEditorSampleData({
   }
 
   const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
-  const isOldRestExp = isOldRestExport(resource, connection);
+  const isOldRestResource = isOldRestAdaptor(resource, connection);
   let sampleData;
 
   // for my apis, no sample data is shown
@@ -443,7 +443,7 @@ export function* requestEditorSampleData({
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
   const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
-  const isPagingMethodConfigured = !!(isOldRestExp ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
+  const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
 
   if (showPreviewStageData || needPreviewStagesData) {
@@ -539,7 +539,7 @@ export function* requestEditorSampleData({
 
         resource = { ...resource, oneToMany };
       }
-      if (isOldRestExp && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
+      if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
         // create http sub doc with paging method as /getContext expects it
         // map rest paging method to http paging method
         resource.http = {

@@ -927,14 +927,9 @@ export const getAssistantFromResource = resource => {
 
   return assistant;
 };
-export const isOldRestExport = (resource, connection) => {
+
+export const isOldRestAdaptor = (resource, connection) => {
   const { adaptorType, _id } = resource || {};
 
-  return (adaptorType === 'RESTExport' && _id && !isNewId(_id)) || connection?.isHTTP === false;
-};
-
-export const isOldRestImport = (resource, connection) => {
-  const { adaptorType, _id } = resource || {};
-
-  return (adaptorType === 'RESTImport' && _id && !isNewId(_id)) || connection?.isHTTP === false;
+  return (['RESTExport', 'RESTImport'].includes(adaptorType) && _id && !isNewId(_id)) || connection?.isHTTP === false;
 };

@@ -1,6 +1,6 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
-import { isOldRestExport, isOldRestImport } from '../resource';
+import { isOldRestAdaptor } from '../resource';
 
 export const FLOW_STAGES = [
   'outputFilter',
@@ -45,10 +45,9 @@ export function dataAsString(data) {
 export const getUniqueFieldId = (fieldId, resource, connection) => {
   if (!fieldId) { return ''; }
   const { ignoreExisting, ignoreMissing } = resource || {};
-  const isNewRestExport = !isOldRestExport(resource, connection);
-  const isOldRestImp = isOldRestImport(resource, connection);
+  const isOldRestResource = isOldRestAdaptor(resource, connection);
 
-  if (isOldRestImp) {
+  if (isOldRestResource) {
     switch (fieldId) {
       case 'http.bodyCreate':
         if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
@@ -71,6 +70,22 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
         return 'rest.relativeURI';
       case 'http.body':
         return 'rest.body';
+      case 'http.once.relativeURI':
+        return 'rest.once.relativeURI';
+      default:
+    }
+  } else {
+    switch (fieldId) {
+      case 'rest.pagingPostBody':
+        return 'http.paging.body';
+      case 'rest.nextPageRelativeURI':
+        return 'http.paging.relativeURI';
+      case 'rest.postBody':
+        return 'http.body';
+      case 'rest.relativeURI':
+        return 'http.relativeURI';
+      case 'rest.once.postBody':
+        return 'http.once.body';
       default:
     }
   }
@@ -106,27 +121,6 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
     default:
-  }
-
-  if (isNewRestExport) {
-    // field mappings for the new Rest exports with http sub schema
-    switch (fieldId) {
-      case 'rest.pagingPostBody':
-        return 'http.paging.body';
-      case 'rest.nextPageRelativeURI':
-        return 'http.paging.relativeURI';
-      case 'rest.postBody':
-        return 'http.body';
-      case 'rest.relativeURI':
-        return 'http.relativeURI';
-      case 'rest.once.postBody':
-        return 'http.once.body';
-      default:
-    }
-  }
-  if (!isNewRestExport && fieldId === 'http.once.relativeURI') {
-    // only exception for old rest exports where once relative uri rests inside rest sub doc but fieldId is http.once.relativeURI
-    return 'rest.once.relativeURI';
   }
 
   // returns same fieldId if it does not match
