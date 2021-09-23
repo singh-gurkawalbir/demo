@@ -1,8 +1,9 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { makeStyles, Typography, Button } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { getHelpUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL } from '../../utils/constants';
+import FilledButton from '../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,9 +43,9 @@ export default function NotFound() {
       </Typography>
 
       <div className={classes.button}>
-        <Button color="primary" variant="outlined" onClick={() => history.goBack()}>
+        <FilledButton onClick={() => history.goBack()}>
           Go back and prosper!
-        </Button>
+        </FilledButton>
       </div>
     </div>
   );

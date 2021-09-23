@@ -3,11 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import NotificationToaster from '../../NotificationToaster';
 import { PING_STATES } from '../../../reducers/comms/ping';
+import { TextButton } from '../../Buttons';
 // import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -136,13 +136,13 @@ export default function ConnectionStatusPanel(props) {
           <Typography component="div" variant="h6">
             The connection associated with this export is currently offline and
             configuration is limited,
-            <Button
+            <TextButton
               data-test="fixConnection"
               size="small"
-              className={classes.fixConnectionBtn}
+              color="primary"
               onClick={handleConnectionFixClick}>
               Fix your connection
-            </Button>
+            </TextButton>
             to bring it back online
           </Typography>
         )}

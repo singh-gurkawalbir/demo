@@ -1,5 +1,8 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
@@ -315,17 +318,34 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     textAlign: 'center',
+    position: 'relative',
+    borderRadius: 4,
+    cursor: 'pointer',
+    '&:hover': {
+      borderColor: theme.palette.primary.light,
+    },
   },
 }));
 
 const IconTemplate = ({Icon, iconName, args}) => {
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
+
+  const handleCopy = copiedText => {
+    enquesnackbar({ message: `${copiedText} copied!` });
+  };
 
   return (
-    <div className={classes.iconContainer}>
-      <Icon {...args} />
-      <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
-    </div>
+    <CopyToClipboard
+      onCopy={handleCopy}
+      text={`<${iconName}/>`}
+      key={iconName}>
+
+      <div className={classes.iconContainer}>
+        <Icon {...args} />
+        <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
+      </div>
+    </CopyToClipboard>
   );
 };
 

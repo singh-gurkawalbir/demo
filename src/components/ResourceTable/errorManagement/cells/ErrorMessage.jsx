@@ -1,10 +1,10 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import RawHtml from '../../../RawHtml';
 import { selectors } from '../../../../reducers';
 import openExternalUrl from '../../../../utils/window';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -82,25 +82,23 @@ export default function ErrorMessage({errorId, message, flowId, resourceId, expo
         <RawHtml html={message} options={options} className={classes.htmlMessage} />
         <div>
           {exportRecordLink && (
-          <Button
+          <TextButton
             data-test="viewExportRecord"
-            variant="text"
             onClick={() => {
               handleRecordLinkClick(exportRecordLink);
             }}>
             View export record
-          </Button>
+          </TextButton>
           )}
           {exportRecordText}
           {importRecordLink && (
-          <Button
+          <TextButton
             data-test="viewImportRecord"
-            variant="text"
             onClick={() => {
               handleRecordLinkClick(importRecordLink);
             }}>
             View import record
-          </Button>
+          </TextButton>
           )}
           {importRecordText}
         </div>

@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -14,8 +13,8 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import getRoutePath from '../../../utils/routePaths';
-import IconTextButton from '../../../components/IconTextButton';
 import TrashIcon from '../../../components/icons/TrashIcon';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
@@ -188,16 +187,14 @@ function AccountList() {
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         onClick={handleMenu}
-        variant="text"
-        color="secondary"
+        endIcon={<ArrowDownIcon />}
         className={classes.currentContainer}
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true">
         {selectedAccount && selectedAccount.company}
-        <ArrowDownIcon color="secondary" />
-      </IconTextButton>
+      </TextButton>
 
       <ArrowPopper
         id="accountList"
@@ -229,16 +226,13 @@ function AccountList() {
               <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
               {a.company && a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
-                  <Button
+                  <TextButton
                     data-test="leaveAccount"
-                    className={classes.leave}
-                    variant="text"
-                    color="primary"
                     onClick={() => {
                       handleAccountLeaveClick(a);
                     }}>
                     <TrashIcon />
-                  </Button>
+                  </TextButton>
                 </ListItemSecondaryAction>
               )}
             </ListItem>

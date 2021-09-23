@@ -18,6 +18,9 @@ export default {
     size: {
       control: { type: 'select' },
     },
+    startIcon: {
+      description: 'Start Icon will display the icon as a prefix ',
+    },
   },
 };
 const Template = args => <FilledButton {...args} />;

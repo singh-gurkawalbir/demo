@@ -36,6 +36,7 @@ OutlinedButton.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   error: PropTypes.bool,
+  color: PropTypes.oneOf(['primary', 'secondary']),
 };
 
 OutlinedButton.defaultProps = {

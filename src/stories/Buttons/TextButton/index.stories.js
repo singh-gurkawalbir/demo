@@ -74,7 +74,7 @@ export const bold = Template.bind({});
 
 bold.args = {
   children: 'Resume',
-  bold,
+  bold: 'true',
   color: 'primary',
 };
 

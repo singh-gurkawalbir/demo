@@ -1,4 +1,4 @@
-import { Button, Drawer } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
@@ -10,6 +10,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
 import { SCOPES } from '../../../../../sagas/resourceForm';
+import { TextButton } from '../../../../Buttons';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
 import DynaSubmit from '../../../DynaSubmit';
 import getFormFieldMetadata from './util';
@@ -180,13 +181,11 @@ function SubRecordDrawer(props) {
                 onClick={handleSubmit}>
                 Save
               </DynaSubmit>
-              <Button
-                variant="text"
-                color="primary"
+              <TextButton
                 data-test="cancel-subrecord"
                 onClick={handleClose}>
                 Cancel
-              </Button>
+              </TextButton>
             </>
           )}
         </div>

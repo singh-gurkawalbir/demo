@@ -1,17 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import CeligoTable from '../../../../components/CeligoTable';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import IconTextButton from '../../../../components/IconTextButton';
 import metadata from './metadata';
 import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import FilledButton from '../../../../components/Buttons/FilledButton';
+import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   infoTransfers: {
@@ -126,12 +126,12 @@ export default function Invite(props) {
   return (
     <>
       <div className={classes.createTransferContainer}>
-        <IconTextButton
+        <OutlinedButton
           onClick={backToTransferClick}
-          variant="outlined"
-          color="secondary">
-          <ArrowLeftIcon /> Back to transfers
-        </IconTextButton>
+          color="secondary"
+          startIcon={<ArrowLeftIcon />}>
+          Back to transfers
+        </OutlinedButton>
         <div className={classes.infoTransfers}>
           Important! As part of the transfer process, all your currently
           in-progress flows will be allowed to complete, and new flows will not be
@@ -149,28 +149,17 @@ export default function Invite(props) {
 
         {!!error && <div className={classes.infoTransfers}> {error} </div>}
       </div>
-      <>
-        {response && response.length && (
+      {response && response.length && (
         <div className={classes.initiateTransferWrapper}>
-          <>
-            <CeligoTable
-              resourceType="transfers"
-              data={response}
-              {...metadata}
-            />
-          </>
-          <Button
+          <CeligoTable resourceType="transfers" data={response} {...metadata} />
+          <FilledButton
             data-test="invite"
-            variant="outlined"
-            color="primary"
             className={classes.initiateTransferBtn}
             onClick={initiateTransferClick}>
             Initiate Transfer
-          </Button>
+          </FilledButton>
         </div>
-        )}
-      </>
-
+      )}
     </>
   );
 }
