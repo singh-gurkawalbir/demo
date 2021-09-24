@@ -1,6 +1,5 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
@@ -59,23 +58,23 @@ const useStyles = makeStyles(theme => ({
   },
   bothValues: {
     '&:after': {
-      width: props => `${props.resolvedValue}%`,
+      width: props => `${props.resolvedCount}%`,
     },
     '&:before': {
-      width: props => `${props.errorValue}%`,
-      left: props => `calc(100% - ${(props.errorValue + props.resolvedValue)}%)`,
+      width: props => `${props.errorCount}%`,
+      left: props => `calc(100% - ${(props.errorCount + props.resolvedCount)}%)`,
     },
   },
-  errorValueOnly: {
+  errorCountOnly: {
     '&:before': {
-      width: props => `${props.errorValue}%`,
-      left: props => `calc(100% - ${props.errorValue}%)`,
+      width: props => `${props.errorCount}%`,
+      left: props => `calc(100% - ${props.errorCount}%)`,
     },
   },
-  resolvedValueOnly: {
+  resolvedCountOnly: {
     '&:after': {
-      width: props => `${props.resolvedValue}%`,
-      left: props => `calc(100% - ${props.resolvedValue}%)`,
+      width: props => `${props.resolvedCount}%`,
+      left: props => `calc(100% - ${props.resolvedCount}%)`,
     },
   },
   customLabel: {
@@ -90,14 +89,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Tag(props) {
+export default function DashboardTag(props) {
   const {
-    variant = 'default',
-    errorValue,
-    resolvedValue,
-    className,
+    color,
+    errorCount,
+    resolvedCount,
     label,
-    ...other
   } = props;
   const classes = useStyles(props);
 
@@ -105,15 +102,14 @@ export default function Tag(props) {
     <div
       className={clsx(
         classes.root,
-        classes[variant],
-        errorValue && !resolvedValue && classes.errorValueOnly,
-        resolvedValue && !errorValue && classes.resolvedValueOnly,
-        errorValue && resolvedValue && classes.bothValues,
-        (errorValue || resolvedValue) && classes.values,
-        className
+        classes[color],
+        errorCount && !resolvedCount && classes.errorCountOnly,
+        resolvedCount && !errorCount && classes.resolvedCountOnly,
+        errorCount && resolvedCount && classes.bothValues,
+        (errorCount || resolvedCount) && classes.values,
       )}
-      {...other}>
-      {errorValue || resolvedValue ? (
+      >
+      {errorCount || resolvedCount ? (
         <span className={classes.customLabel}>{label}</span>
       ) : (
         label
@@ -122,20 +118,24 @@ export default function Tag(props) {
   );
 }
 
-Tag.propTypes = {
-  variant: PropTypes.oneOf([
-    'default',
+DashboardTag.propTypes = {
+  errorCount: PropTypes.number,
+  resolvedCount: PropTypes.number,
+  label: PropTypes.string,
+  color: PropTypes.oneOf([
     'info',
     'warning',
     'error',
     'success',
-    'realtime',
   ]),
 };
 
-Tag.defaultProps = {
-  variant: 'default',
+DashboardTag.defaultProps = {
+  color: 'info',
+  errorCount: 0,
+  resolvedCount: 0,
 };
+
 /*
-<DashboardTag successCount="5" ignoreCount="7" errorCount="1" />
+TODO: Implement this: <DashboardTag label="completed" color="error" resolvedCount="5" errorCount="1" />
 */

@@ -1,6 +1,5 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
@@ -145,6 +144,4 @@ Tag.defaultProps = {
 <Tag color="warn" label="Warn" />
 <Tag color="success" label="Info" />
 <Tag color="error" label="Info" />
-
-<DashboardTag successCount="5" ignoreCount="7" errorCount="1" />
 */
