@@ -7,7 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ApplicationImg from '../../../icons/ApplicationImg';
-import Tag from '../../../HomePageCard/Footer/Tag';
+import IntegrationTag from '../../../tags/IntegrationTag';
 import SearchIcon from '../../../icons/SearchIcon';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 
@@ -104,7 +104,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      {tag && <Tag className={classes.tagWrapper} label={tag} />}
+      {tag && <IntegrationTag className={classes.tagWrapper} label={tag} />}
     </>
   );
 };

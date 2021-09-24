@@ -1,7 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -60,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Tag({ label, className }) {
+export default function IntegrationTag({ label, className }) {
   const classes = useStyles();
 
   return (
@@ -70,6 +69,7 @@ export default function Tag({ label, className }) {
   );
 }
 
-Tag.propTypes = {
+IntegrationTag.propTypes = {
   label: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };
