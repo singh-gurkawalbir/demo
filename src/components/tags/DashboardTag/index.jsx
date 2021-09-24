@@ -135,7 +135,3 @@ DashboardTag.defaultProps = {
   errorCount: 0,
   resolvedCount: 0,
 };
-
-/*
-TODO: Implement this: <DashboardTag label="completed" color="error" resolvedCount="5" errorCount="1" />
-*/
