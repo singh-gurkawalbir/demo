@@ -9,9 +9,9 @@ export default function JobStatusWithTag({job}) {
     return null;
   }
   const statusMap = {
-    completed: <Tag variant="success" label="Completed" />,
-    canceled: <Tag variant="warning" label="Canceled" />,
-    failed: <Tag variant="error" label="Failed" />,
+    completed: <Tag color="success" label="Completed" />,
+    canceled: <Tag color="warning" label="Canceled" />,
+    failed: <Tag color="error" label="Failed" />,
   };
 
   return statusMap[jobStatus] || <Typography>{jobStatus}</Typography>;

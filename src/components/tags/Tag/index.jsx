@@ -17,10 +17,6 @@ const useStyles = makeStyles(theme => ({
     lineHeight: 1,
   },
   default: {
-    background: theme.palette.secondary.lightest,
-    color: theme.palette.secondary.light,
-  },
-  realtime: {
     backgroundColor: theme.palette.secondary.light,
   },
   success: {
@@ -35,113 +31,35 @@ const useStyles = makeStyles(theme => ({
   warning: {
     backgroundColor: theme.palette.warning.main,
   },
-  values: {
-    position: 'relative',
-    width: 70,
-    height: 22,
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-    '&:after': {
-      content: '""',
-      position: 'absolute',
-      zIndex: 2,
-      right: 0,
-      background: theme.palette.primary.main,
-      bottom: 0,
-      top: 0,
-    },
-    '&:before': {
-      content: '""',
-      position: 'absolute',
-      zIndex: 2,
-      background: theme.palette.error.dark,
-      bottom: 0,
-      top: 0,
-    },
-  },
-  bothValues: {
-    '&:after': {
-      width: props => `${props.resolvedValue}%`,
-    },
-    '&:before': {
-      width: props => `${props.errorValue}%`,
-      left: props => `calc(100% - ${(props.errorValue + props.resolvedValue)}%)`,
-    },
-  },
-  errorValueOnly: {
-    '&:before': {
-      width: props => `${props.errorValue}%`,
-      left: props => `calc(100% - ${props.errorValue}%)`,
-    },
-  },
-  resolvedValueOnly: {
-    '&:after': {
-      width: props => `${props.resolvedValue}%`,
-      left: props => `calc(100% - ${props.resolvedValue}%)`,
-    },
-  },
-  customLabel: {
-    position: 'absolute',
-    zIndex: 3,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    left: 0,
-  },
 }));
 
-export default function Tag(props) {
-  const {
-    variant = 'default',
-    errorValue,
-    resolvedValue,
-    className,
-    label,
-    ...other
-  } = props;
-  const classes = useStyles(props);
+export default function Tag({color, className, label}) {
+  const classes = useStyles();
 
   return (
     <div
       className={clsx(
         classes.root,
-        classes[variant],
-        errorValue && !resolvedValue && classes.errorValueOnly,
-        resolvedValue && !errorValue && classes.resolvedValueOnly,
-        errorValue && resolvedValue && classes.bothValues,
-        (errorValue || resolvedValue) && classes.values,
-
+        classes[color],
         className
-      )}
-      {...other}>
-      {errorValue || resolvedValue ? (
-        <span className={classes.customLabel}>{label}</span>
-      ) : (
-        label
-      )}
+      )}>
+      {label}
     </div>
   );
 }
 
 Tag.propTypes = {
-  variant: PropTypes.oneOf([
+  label: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  color: PropTypes.oneOf([
     'default',
     'info',
     'warning',
     'error',
     'success',
-    'realtime',
   ]),
 };
 
 Tag.defaultProps = {
-  variant: 'default',
+  color: 'default',
 };
-/*
-<Tag color="info" label="Info" />
-<Tag color="warn" label="Warn" />
-<Tag color="success" label="Info" />
-<Tag color="error" label="Info" />
-*/

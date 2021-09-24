@@ -37,7 +37,7 @@ Info.args = {
 
 export const Error = Template.bind({});
 
-Info.args = {
+Error.args = {
   label: 'Error',
   color: 'error',
 };
