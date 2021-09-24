@@ -17,8 +17,7 @@ import Spinner from '../../../components/Spinner';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
-import FilledButton from '../../../components/Buttons/FilledButton';
-import { TextButton } from '../../../components/Buttons';
+import { TextButton, FilledButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {

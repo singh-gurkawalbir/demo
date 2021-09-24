@@ -52,11 +52,12 @@ const useStyles = makeStyles(theme => ({
   lockIcon: {
     position: 'absolute',
     right: 10,
-    top: 6,
+    top: '50%',
+    transform: 'translateY(-50%)',
     color: theme.palette.text.hint,
   },
   lockedIcon: {
-    right: 40,
+    right: theme.spacing(5),
   },
   deleteBtn: {
     border: 'none',
@@ -89,9 +90,9 @@ const useStyles = makeStyles(theme => ({
     height: 1,
     flexGrow: 1,
   },
-  rowContainer: {
-    '&:hover': {
-
+  hasLockHardCodeIcons: {
+    '& .MuiFilledInput-multiline': {
+      paddingRight: theme.spacing(8),
     },
   },
 }));
@@ -255,7 +256,7 @@ export default function MappingRow({
             className={clsx(classes.childHeader, classes.mapField, {
               [classes.disableChildRow]:
               isSubRecordMapping || isRequired || disabled,
-            })}>
+            }, {[classes.hasLockHardCodeIcons]: isLookup || isMultiField || isHardCodedValue})}>
             <DynaTypeableSelect
               key={generate}
               id={`fieldMappingGenerate-${index}`}
