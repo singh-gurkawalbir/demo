@@ -3,7 +3,7 @@ import React from 'react';
 import { action } from '@storybook/addon-actions';
 import {makeStyles, Typography, Button, TextField} from '@material-ui/core';
 import CeligoLogo from '../../../components/CeligoLogo';
-import LoginMarketingContent from './LoginMarketingContent';
+import MarketingContent from './MarketingContent';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -154,8 +154,7 @@ const useStyles = makeStyles(theme => ({
 
 export function Login() {
   const classes = useStyles();
-
-  const handleClick = action('Sign in with google');
+  const contentUrl = 'https://staging.celigo.com/login/display';
 
   return (
     <div className={classes.wrapper}>
@@ -201,7 +200,7 @@ export function Login() {
               <Button
                 type="button"
                 color="secondary"
-                onClick={handleClick}
+                onClick={action('sign in with google')}
                 className={classes.googleBtn}>
                 Sign in with Google
               </Button>
@@ -218,13 +217,13 @@ export function Login() {
           </Typography>
         </div>
       </div>
-      <LoginMarketingContent />
+      <MarketingContent contentUrl={contentUrl} />
     </div>
   );
 }
 
 export default {
-  title: 'Lab/New Marketing Login',
+  title: 'Lab/ Marketing Login',
   component: Login,
 };
 
