@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
 
-const defaultState = {
+export const defaultState = {
   appErrored: false,
   bannerOpened: true,
   count: 1,
