@@ -8,12 +8,12 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
-import IconTextButton from '../IconTextButton';
 import {
   EMPTY_RAW_DATA,
   MAX_DATA_LOADER_FILE_SIZE,
 } from '../../utils/constants';
 import Spinner from '../Spinner';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -64,13 +64,13 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
 
   if (variant === 'iconText') {
     return (
-      <IconTextButton
+      <TextButton
         disabled={disabled}
-        variant="text"
+        startIcon={<RunIcon />}
         data-test="runFlow"
         onClick={onRunClick}>
-        <RunIcon /> {label}
-      </IconTextButton>
+        {label}
+      </TextButton>
     );
   }
 

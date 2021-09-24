@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardActions, Button, Typography } from '@material-ui/core';
+import { Card, CardActions, Typography } from '@material-ui/core';
 import {applicationsList} from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -20,6 +20,7 @@ import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH} from '../../utils/constants';
 import { capitalizeFirstLetter } from '../../utils/string';
+import FilledButton from '../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -257,31 +258,25 @@ export default function MarketplaceList() {
             />
             <CardActions className={classes.cardAction}>
               {connector.canInstall && (
-                <Button
+                <FilledButton
                   data-test="installConnector"
-                  onClick={() => handleConnectorInstallClick(connector)}
-                  variant="outlined"
-                  color="primary">
+                  onClick={() => handleConnectorInstallClick(connector)}>
                   Install
-                </Button>
+                </FilledButton>
               )}
               {connector.canStartTrial && (
-                <Button
+                <FilledButton
                   data-test="startFreeTrial"
-                  onClick={() => handletrialEnabledClick(connector)}
-                  variant="outlined"
-                  color="primary">
+                  onClick={() => handletrialEnabledClick(connector)}>
                   Start free trial
-                </Button>
+                </FilledButton>
               )}
               {connector.canRequestDemo && (
-                <Button
+                <FilledButton
                   data-test="contactSales"
-                  onClick={() => handleContactSalesClick(connector)}
-                  variant="outlined"
-                  color="primary">
+                  onClick={() => handleContactSalesClick(connector)}>
                   Request a demo
-                </Button>
+                </FilledButton>
               )}
             </CardActions>
             <div className={classes.cardFooter}>
@@ -310,14 +305,12 @@ export default function MarketplaceList() {
               type="template"
             />
             <CardActions className={classes.cardAction}>
-              <Button
+              <FilledButton
                 data-test="installTemplate"
-                variant="outlined"
-                color="primary"
                 component={Link}
                 to={`${location.pathname}/installTemplate/preview/${template._id}`}>
                 Preview
-              </Button>
+              </FilledButton>
             </CardActions>
             <div className={classes.cardFooter}>
               <Typography className={classes.title} variant="body2">

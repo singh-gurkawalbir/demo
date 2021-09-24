@@ -4,7 +4,6 @@ import {
   ClickAwayListener,
   makeStyles,
   Checkbox,
-  Button,
   FormGroup,
   FormLabel,
   FormControl,
@@ -18,6 +17,7 @@ import ArrowPopper from '../../../../../../components/ArrowPopper';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -91,10 +91,10 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
   return (
     <ClickAwayListener onClickAway={handleClose}>
       <>
-        <Button variant="text" onClick={handleMenu} className={classes.filter}>
+        <TextButton onClick={handleMenu} className={classes.filter}>
           Filters
           {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
-        </Button>
+        </TextButton>
         <ArrowPopper
           placement="bottom"
           id="categoryMappingFilters"

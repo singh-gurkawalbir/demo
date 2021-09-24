@@ -14,8 +14,8 @@ import FlowCharts from '../../../../components/LineGraph/Flow';
 import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
-import IconTextButton from '../../../../components/IconTextButton';
 import { getRoundedDate, getSelectedRange } from '../../../../utils/flowMetrics';
+import { TextButton } from '../../../../components/Buttons';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -151,9 +151,9 @@ export default function LineGraphDrawer({ flowId }) {
       onClose={handleClose}
       path="charts">
       <DrawerHeader title="Dashboard">
-        <IconTextButton onClick={handleRefresh}>
-          <RefreshIcon /> Refresh
-        </IconTextButton>
+        <TextButton startIcon={<RefreshIcon />} onClick={handleRefresh}>
+          Refresh
+        </TextButton>
         <DateRangeSelector
           onSave={handleDateRangeChange}
           customPresets={customPresets}

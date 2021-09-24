@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { capitalize, makeStyles, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -18,6 +17,8 @@ import Spinner from '../../../components/Spinner';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
+import FilledButton from '../../../components/Buttons/FilledButton';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -235,15 +236,13 @@ export default function Endpoint() {
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
             Need more flows? Do you use FTP or AS2 connections? Need to support EDI? We’ve got you covered!
-            <Button
+            <TextButton
               data-test="upgradeSubscription"
-              variant="text"
-              color="primary"
               onClick={onRequestUpgradeClick}
               className={classes.subscriptionUpgradeLink}
               >
               Upgrade today!
-            </Button>
+            </TextButton>
           </Typography>
         </NotificationToaster>
       </div>
@@ -253,14 +252,12 @@ export default function Endpoint() {
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
             Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet,
-            <Button
+            <TextButton
               data-test="upgradeSubscription"
-              variant="text"
-              color="primary"
               onClick={onTrialUpgradeClick}
               className={classes.subscriptionUpgradeLink}
               > upgrade now
-            </Button>
+            </TextButton>
             and keep them all!
           </Typography>
         </NotificationToaster>
@@ -310,39 +307,35 @@ export default function Endpoint() {
             {licenseActionDetails.subscriptionActions.actions.indexOf(
               'start-free-trial'
             ) > -1 && (
-            <Button
+            <FilledButton
               onClick={onStartFreeTrialClick}
-              className={classes.subscriptionUpgradeBtn}
-              color="primary"
-              variant="outlined">
+              className={classes.subscriptionUpgradeBtn}>
               Go unlimited for 30 days!
-            </Button>
+            </FilledButton>
             )}
             {(licenseActionDetails.subscriptionActions.actions.indexOf(
               'request-upgrade'
             ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
               'request-subscription'
             ) > -1) && (
-            <Button
+            <FilledButton
               onClick={onRequestUpgradeClick}
               disabled={upgradeRequested}
               className={classes.subscriptionUpgradeBtn}
-              color="primary"
-              variant="outlined">
+             >
               Upgrade
-            </Button>
+            </FilledButton>
             )}
             {licenseActionDetails.subscriptionActions.actions.indexOf(
               'add-more-flows'
             ) > -1 && (
-            <Button
+            <FilledButton
               onClick={onRequestUpgradeClick}
               disabled={upgradeRequested}
               className={classes.subscriptionUpgradeBtn}
-              color="primary"
-              variant="outlined">
+             >
               Add more flows
-            </Button>
+            </FilledButton>
             )}
           </div>
           )}

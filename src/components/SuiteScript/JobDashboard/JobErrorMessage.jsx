@@ -1,7 +1,7 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import openExternalUrl from '../../../utils/window';
 import RawHtml from '../../RawHtml';
+import { TextButton } from '../../Buttons';
 
 const handleRecordLinkClick = url => openExternalUrl({ url });
 const recordLabels = {
@@ -15,14 +15,13 @@ export default function JobErrorMessage({ type, message, recordLink }) {
       <RawHtml html={message} options={{ allowedTags: ['a'] }} />
       <div>
         {recordLink && (
-          <Button
+          <TextButton
             data-test="viewRecord"
-            variant="text"
             onClick={() => {
               handleRecordLinkClick(recordLink);
             }}>
             {recordLabels[type]}
-          </Button>
+          </TextButton>
         )}
       </div>
     </>

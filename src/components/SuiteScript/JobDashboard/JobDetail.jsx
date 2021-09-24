@@ -2,7 +2,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { JOB_STATUS } from '../../../utils/constants';
@@ -10,6 +9,7 @@ import JobStatus from './JobStatus';
 import { getSuccess } from './util';
 import JobActionsMenu from './JobActionsMenu';
 import DateTimeDisplay from '../../DateTimeDisplay';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -89,7 +89,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   stateBtn: {
-    color: theme.palette.error.dark,
     float: 'right',
     padding: 0,
     minWidth: 'unset',
@@ -181,16 +180,16 @@ export default function JobDetail({
             [classes.errorCount]: job.numError > 0,
           })}>
           {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
-            <Button
+            <TextButton
+              error
               data-test="viewJobErrors"
-              variant="text"
-              color="primary"
+              bold
               className={classes.stateBtn}
               onClick={() => {
                 handleViewErrorsClick(false);
               }}>
               View
-            </Button>
+            </TextButton>
           ) : (
             job.numError
           )}

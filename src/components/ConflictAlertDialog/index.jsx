@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -13,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
+import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -83,14 +83,13 @@ export default function ConflictAlertDialog() {
         ))}
       </DialogContent>
       <DialogActions>
-        <Button
+        <FilledButton
           data-test="cancelAndReview"
-          variant="contained"
           onClick={() => {
             window.location.reload();
           }}>
           Refresh
-        </Button>
+        </FilledButton>
       </DialogActions>
     </Dialog>
   );

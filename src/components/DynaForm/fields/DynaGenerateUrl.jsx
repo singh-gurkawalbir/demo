@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
+
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';

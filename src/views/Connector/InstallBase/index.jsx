@@ -6,13 +6,13 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
-import IconTextButton from '../../../components/IconTextButton';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import KeywordSearch from '../../../components/KeywordSearch';
 import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -129,9 +129,9 @@ export default function InstallBase(props) {
           <KeywordSearch
             filterKey={filterKey}
           />
-          <IconTextButton onClick={handleUpdateClick} variant="text">
+          <TextButton onClick={handleUpdateClick}>
             {selectedUsers ? `Update ${selectedUsers} user(s)` : 'Update'}
-          </IconTextButton>
+          </TextButton>
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>

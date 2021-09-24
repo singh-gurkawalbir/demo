@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -8,6 +7,7 @@ import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../components/icons/TransferUpIcon';
+import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
@@ -28,6 +28,8 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   blockButton: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: 0,
     marginRight: theme.spacing(2),
     textTransform: 'none',
@@ -42,9 +44,7 @@ const useStyles = makeStyles(theme => ({
     width: 48,
     height: 48,
   },
-  resourceBtnName: {
-    color: theme.palette.secondary.main,
-  },
+
 }));
 
 export default function ResourceButton({ onClick, variant }) {
@@ -52,15 +52,14 @@ export default function ResourceButton({ onClick, variant }) {
   const block = blockMap[variant];
 
   return (
-    <Button
-      size="small"
-      className={classes.blockButton}
+    <TextButton
       data-test={block.label}
       onClick={onClick}>
-      <div>
+      <div className={classes.blockButton}>
         <block.Icon className={classes.blockIcon} />
-        <Typography variant="body2" className={classes.resourceBtnName}>{block.label}</Typography>
+        {block.label}
       </div>
-    </Button>
+
+    </TextButton>
   );
 }

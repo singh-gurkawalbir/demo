@@ -14,8 +14,8 @@ import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 import CeligoSelect from '../../CeligoSelect';
-import IconTextButton from '../../IconTextButton';
 import FlowSelector from './FlowSelector';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -174,11 +174,11 @@ export default function Filters({
       </div>
 
       <div className={classes.rightActionContainer}>
-        <IconTextButton
-          className={classes.refreshButton}
+        <TextButton
+          startIcon={<RefreshIcon />}
           onClick={handleRefreshClick}>
-          <RefreshIcon /> Refresh
-        </IconTextButton>
+          Refresh
+        </TextButton>
         {maxPage > 0 && (
           <>
             <IconButton

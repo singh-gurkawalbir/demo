@@ -35,6 +35,7 @@ export default function PillButton({fill, className, ...rest}) {
 PillButton.propTypes = {
   disabled: PropTypes.bool,
   children: PropTypes.node.isRequired,
+  color: PropTypes.oneOf(['primary', 'secondary']),
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   fill: PropTypes.bool,
 };
