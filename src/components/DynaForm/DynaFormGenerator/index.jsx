@@ -34,7 +34,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const getCorrespondingFieldMap = (fields, fieldMap) =>
+export const getCorrespondingFieldMap = (fields = [], fieldMap) =>
   fields.map(field => {
     const transformedFieldValue = fieldMap[field];
 

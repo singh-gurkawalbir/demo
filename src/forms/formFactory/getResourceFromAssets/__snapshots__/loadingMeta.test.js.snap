@@ -9111,6 +9111,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "unencrypted.apiType": Object {
+        "fieldId": "unencrypted.apiType",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -9205,6 +9208,7 @@ Object {
                 },
               ],
               "fields": Array [
+                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.compositeType",
@@ -10012,9 +10016,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "unencrypted.apiType": Object {
-        "fieldId": "unencrypted.apiType",
-      },
       "upateExistingData": Object {
         "id": "upateExistingData",
         "label": "Upate existing data",
@@ -10103,7 +10104,6 @@ Object {
                 },
               ],
               "fields": Array [
-                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.compositeType",

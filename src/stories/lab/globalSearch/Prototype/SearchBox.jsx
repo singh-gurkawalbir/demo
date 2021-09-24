@@ -210,6 +210,7 @@ export default function SearchBox() {
       <Paper component="form" className={classes.searchBox} variant="outlined">
         <InputBase
           ref={inputRef}
+          spellcheck="false"
           value={searchString}
           classes={{input: classes.inputBase}}
           className={classes.input}

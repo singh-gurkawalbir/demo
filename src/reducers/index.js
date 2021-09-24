@@ -3456,7 +3456,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
     conn => {
       const accessLevel = selectors.userAccessLevelOnConnection(state, conn._id);
 
-      return accessLevel === 'manage' || accessLevel === 'owner';
+      return ['manage', 'owner', 'administrator'].includes(accessLevel);
     }
   );
 
@@ -5822,7 +5822,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     resourceType,
     resourceId
   )?.merged || emptyObject;
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 

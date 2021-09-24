@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-handler-names */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import {
   makeStyles,
@@ -19,6 +19,7 @@ import LookupListRow from '../../Lookup/LookupListRow';
 import AddIcon from '../../icons/AddIcon';
 import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
+import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
@@ -45,13 +46,22 @@ const useStyles = makeStyles(theme => ({
 
 const rootPath = 'lookup';
 
-export default function LookupDrawer({lookups, onSave, options, disabled, resourceId, resourceType, flowId, hideBackButton = true }) {
+export default function LookupDrawer({
+  lookups,
+  onSave,
+  options,
+  disabled,
+  resourceId,
+  resourceType,
+  flowId,
+  hideBackButton = true }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const location = useLocation();
   const [error, setError] = useState();
   const [value, setValue] = useState(lookups || []);
+  const lookupsHash = hashCode(lookups);
 
   // used to remount the form on save
   const [remountCount, setRemountCount] = useState(0);
@@ -130,6 +140,13 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
   const selectedLookup = (lookupIndex >= 0 && lookupIndex < value.length) ? value[lookupIndex] : {};
   const {setCancelTriggered} = useFormOnCancelContext(LOOKUP_DRAWER_FORM_KEY);
   const handleClose = isExact ? history.goBack : setCancelTriggered;
+
+  useEffect(() => {
+    // update the state if the lookups are modified
+    // from parent component
+    setValue(lookups);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lookupsHash]);
 
   return (
     <RightDrawer

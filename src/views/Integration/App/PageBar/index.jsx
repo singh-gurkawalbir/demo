@@ -221,7 +221,7 @@ export default function PageBar() {
           />
         )}
       infoText={integration.description}
-      disableHtmlInInfoText
+      escapeUnsecuredDomains
     >
       {isCloningSupported && integration && !supportsMultiStore && (
       <TextButton

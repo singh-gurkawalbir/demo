@@ -101,6 +101,8 @@ const config = {
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
       LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
+      SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER: JSON.stringify(process.env.SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER),
+      SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER: JSON.stringify(process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER),
       GA_KEY_1: JSON.stringify(process.env.GA_KEY_1),
       GA_KEY_2: JSON.stringify(process.env.GA_KEY_2),
       GA_KEY_1_EU: JSON.stringify(process.env.GA_KEY_1_EU),
