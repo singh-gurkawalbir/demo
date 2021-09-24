@@ -1,8 +1,8 @@
 import React from 'react';
-import StatusTag from '../../components/StatusTag';
+import StatusTag from '../../../components/StatusTag';
 
 export default {
-  title: 'Components / StatusTag',
+  title: 'Components / Tags / StatusTag',
   component: StatusTag,
 };
 
