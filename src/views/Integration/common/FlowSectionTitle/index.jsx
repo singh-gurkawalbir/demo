@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
+import Status from '../../../../components/Buttons/Status';
 import StatusCircle from '../../../../components/StatusCircle';
 
 const useStyles = makeStyles(theme => ({
@@ -35,10 +36,9 @@ export default function FlowSectionTitle({ title, errorCount = 0 }) {
     }
 
     return (
-      <div>
-        <StatusCircle size="mini" variant="error" />
+      <Status size="mini" variant="error" >
         <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-      </div>
+      </Status>
     );
   }, [errorCount]);
 
@@ -47,9 +47,9 @@ export default function FlowSectionTitle({ title, errorCount = 0 }) {
   }
 
   return (
-    <div className={classes.gridContainer}>
-      <div> { title }</div>
-      <div> {errorStatus} </div>
-    </div>
+    <span className={classes.gridContainer}>
+      <span> { title }</span>
+      <span> {errorStatus} </span>
+    </span>
   );
 }
