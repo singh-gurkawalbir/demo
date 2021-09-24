@@ -1,5 +1,5 @@
 import React from 'react';
-import IntegrationTag from '../../../components/HomePageCard/Footer/IntegrationTag';
+import IntegrationTag from '../../../components/tags/IntegrationTag';
 
 export default {
   title: 'Components / Tags / IntegrationTag',

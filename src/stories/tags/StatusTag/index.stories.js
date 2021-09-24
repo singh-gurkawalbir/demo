@@ -1,13 +1,13 @@
 import React from 'react';
-import StatusTag from '../../../components/StatusTag';
+import Tag from '../../../components/tags/Tag';
 
 export default {
-  title: 'Components / Tags / StatusTag',
-  component: StatusTag,
+  title: 'Components / Tags / Tag',
+  component: Tag,
 };
 
 const Template = args => (
-  <StatusTag {...args} />
+  <Tag {...args} />
 );
 
 export const Defaults = Template.bind({});

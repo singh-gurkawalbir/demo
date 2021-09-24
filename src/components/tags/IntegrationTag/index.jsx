@@ -71,4 +71,5 @@ export default function IntegrationTag({ label, className }) {
 
 IntegrationTag.propTypes = {
   label: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };

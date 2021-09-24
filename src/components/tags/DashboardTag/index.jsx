@@ -21,9 +21,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.secondary.lightest,
     color: theme.palette.secondary.light,
   },
-  realtime: {
-    backgroundColor: theme.palette.secondary.light,
-  },
   success: {
     backgroundColor: theme.palette.success.dark,
   },
@@ -93,7 +90,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function StatusTag(props) {
+export default function Tag(props) {
   const {
     variant = 'default',
     errorValue,
@@ -113,7 +110,6 @@ export default function StatusTag(props) {
         resolvedValue && !errorValue && classes.resolvedValueOnly,
         errorValue && resolvedValue && classes.bothValues,
         (errorValue || resolvedValue) && classes.values,
-
         className
       )}
       {...other}>
@@ -126,7 +122,7 @@ export default function StatusTag(props) {
   );
 }
 
-StatusTag.propTypes = {
+Tag.propTypes = {
   variant: PropTypes.oneOf([
     'default',
     'info',
@@ -137,6 +133,9 @@ StatusTag.propTypes = {
   ]),
 };
 
-StatusTag.defaultProps = {
+Tag.defaultProps = {
   variant: 'default',
 };
+/*
+<DashboardTag successCount="5" ignoreCount="7" errorCount="1" />
+*/

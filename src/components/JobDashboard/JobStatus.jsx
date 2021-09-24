@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import StatusTag from '../StatusTag';
+import Tag from '../tags/Tag';
 import Spinner from '../Spinner';
 import { getJobStatusDetails } from '../../utils/jobdashboard';
 
@@ -38,7 +38,7 @@ export default function JobStatus({ job }) {
 
   if (jobStatusDetails.showStatusTag) {
     return (
-      <StatusTag
+      <Tag
         variant={jobStatusDetails.variant}
         label={jobStatusDetails.status}
         errorValue={jobStatusDetails.errorValue}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import StatusTag from '../../StatusTag';
+import Tag from '../../tags/Tag';
 import Spinner from '../../Spinner';
 import { getJobStatusDetails } from './util';
 
@@ -28,7 +28,7 @@ export default function JobStatus({ job }) {
 
   if (jobStatusDetails.showStatusTag) {
     return (
-      <StatusTag
+      <Tag
         variant={jobStatusDetails.variant}
         label={jobStatusDetails.status}
         errorValue={jobStatusDetails.errorValue || 0}
