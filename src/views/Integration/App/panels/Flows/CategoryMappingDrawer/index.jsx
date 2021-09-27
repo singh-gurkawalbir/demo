@@ -20,7 +20,6 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import Spinner from '../../../../../../components/Spinner';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
@@ -35,7 +34,6 @@ import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
-import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
@@ -45,6 +43,8 @@ import SaveAndCloseButtonGroupAuto from '../../../../../../components/SaveAndClo
 import { getFormStatusFromCategoryMappingStatus } from '../../../../../../utils/integrationApps';
 import { useFormOnCancel } from '../../../../../../components/FormOnCancelContext';
 import { CATEGORY_MAPPING_SAVE_STATUS, CATEGORY_MAPPING_ASYNC_KEY } from '../../../../../../utils/constants';
+import ActionGroup from '../../../../../../components/ActionGroup';
+import { TextButton } from '../../../../../../components/Buttons';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -66,7 +66,6 @@ const useStyles = makeStyles(theme => ({
   },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
-    float: 'left',
   },
   fullWidth: {
     width: '100%',
@@ -488,19 +487,19 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                     uiAssistant={uiAssistant}
                   />
                   {collapseStatus === 'collapsed' ? (
-                    <IconTextButton
-                      variant="text"
+                    <TextButton
+                      startIcon={<ExpandWindowIcon />}
                       onClick={handleExpandAll}
                       className={classes.expCollBtn}>
-                      <ExpandWindowIcon /> Expand All
-                    </IconTextButton>
+                      Expand All
+                    </TextButton>
                   ) : (
-                    <IconTextButton
-                      variant="text"
+                    <TextButton
+                      startIcon={<CollapseWindowIcon />}
                       onClick={handleCollapseAll}
                       className={classes.expCollBtn}>
-                      <CollapseWindowIcon /> Collapse All
-                    </IconTextButton>
+                      Collapse All
+                    </TextButton>
                   )}
                 </PanelHeader>
                 <div className={classes.mappingHeader}>
@@ -664,7 +663,7 @@ const ButtonComp = ({flowId, integrationId, parentUrl}) => {
   }, [dispatch, flowId, history, integrationId, parentUrl]);
 
   return (
-    <ButtonGroup className={classes.saveButtonGroup}>
+    <ActionGroup className={classes.saveButtonGroup}>
       <SaveAndCloseButtonGroupAuto
         isDirty={mappingsChanged}
         status={saveStatus}
@@ -673,7 +672,7 @@ const ButtonComp = ({flowId, integrationId, parentUrl}) => {
         shouldHandleCancel
         asyncKey={CATEGORY_MAPPING_ASYNC_KEY}
       />
-    </ButtonGroup>
+    </ActionGroup>
   );
 };
 export default function CategoryMappingDrawerRoute(props) {

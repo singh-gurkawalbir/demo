@@ -7,10 +7,10 @@ import actions from '../../../actions';
 import ActionGroup from '../../ActionGroup';
 import StartDebugEnhanced from '../../StartDebugEnhanced';
 import CeligoPagination from '../../CeligoPagination';
-import IconTextButton from '../../IconTextButton';
 import RefreshIcon from '../../icons/RefreshIcon';
 import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/listenerLogs';
 import FetchProgressIndicator from '../../FetchProgressIndicator';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refreshLogsButton: {
@@ -134,14 +134,15 @@ export default function LogsDrawerActions({ flowId, exportId }) {
           resourceType="exports"
           startDebugHandler={startDebugHandler}
           stopDebugHandler={stopDebugHandler} />
-        <IconTextButton
+        <TextButton
           onClick={refreshLogs}
           data-test="refreshLogs"
           className={classes.refreshLogsButton}
-          disabled={!enableRefresh} >
-          <RefreshIcon />
+          disabled={!enableRefresh}
+          startIcon={<RefreshIcon />}
+           >
           Refresh logs
-        </IconTextButton>
+        </TextButton>
       </ActionGroup>
     </>
   );

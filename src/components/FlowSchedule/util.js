@@ -589,6 +589,7 @@ export const getMetadata = ({
         name: 'schedule',
         helpKey: 'flow.schedule',
         type: 'crongenerator',
+        scheduleStartMinuteOffset: scheduleStartMinute,
         label: 'Schedule',
         defaultValue: schedule || '? */5 * * * *',
         validWhen: {
@@ -747,13 +748,15 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
 
   if (
     cronArr[MINUTES] === '0,30' ||
+    cronArr[MINUTES] === '5,35' ||
     cronArr[MINUTES] === '10,40' ||
     cronArr[MINUTES] === '0,15,30,45' ||
+    cronArr[MINUTES] === '5,20,35,50' ||
     cronArr[MINUTES] === '10,25,40,55'
   ) {
     resource.activeTab = PRESET_TAB;
     resource.frequency =
-      cronArr[MINUTES] === '0,30' || cronArr[MINUTES] === '10,40'
+      cronArr[MINUTES] === '0,30' || cronArr[MINUTES] === '5,35' || cronArr[MINUTES] === '10,40'
         ? 'every_half_hour'
         : 'every_quarter';
 
@@ -872,10 +875,14 @@ export const getScheduleStartMinute = (resource = {}) => {
   let scheduleStartMinute = 0;
 
   const changeStartMinuteForFlowsCreatedAfter = moment(
-    process.env.SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+    // SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER is defined by webpack
+    // eslint-disable-next-line no-undef
+    SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
   );
   const secondChangeStartMinuteForFlowsCreatedAfter = moment(
-    process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
+    // SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER is defined by webpack
+    // eslint-disable-next-line no-undef
+    SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER
   );
 
   if (resource) {

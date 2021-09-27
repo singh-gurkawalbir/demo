@@ -1,14 +1,15 @@
-import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
+import { TextButton, OutlinedButton } from '../Buttons';
+import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,18 +53,6 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     marginTop: theme.spacing(2),
-  },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
-    fontSize: 15,
-    lineHeight: 2,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
-    },
   },
   selectResourceItem: {
     display: 'flex',
@@ -265,14 +254,14 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                 </FormControl>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="contained" color="primary" onClick={handleSave} disabled={isEqual(checked, selected)}>
+                <ActionGroup>
+                  <OutlinedButton onClick={handleSave} disabled={isEqual(checked, selected)}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="secondary" onClick={handleClose}>
+                  </OutlinedButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

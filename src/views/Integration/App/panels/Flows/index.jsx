@@ -27,11 +27,11 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
-import ButtonGroup from '../../../../../components/ButtonGroup';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
 import useFormOnCancelContext from '../../../../../components/FormOnCancelContext';
 import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
+import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -130,7 +130,7 @@ export const ActionsPanel = ({actions, actionProps, ...rest}) => {
 
   return (
     <div className={classes.actions}>
-      <ButtonGroup>
+      <ActionGroup>
         {actions.map(({id}) => {
           const Action = consolidatedActions[id];
 
@@ -144,7 +144,7 @@ export const ActionsPanel = ({actions, actionProps, ...rest}) => {
           );
         })}
 
-      </ButtonGroup>
+      </ActionGroup>
     </div>
   );
 };

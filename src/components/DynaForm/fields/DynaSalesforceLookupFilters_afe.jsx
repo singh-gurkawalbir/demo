@@ -2,13 +2,13 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FilterPanel from '../../AFE/Editor/panels/SalesforceLookupFilter';
 import Spinner from '../../Spinner';
 import RefreshIcon from '../../icons/RefreshIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refreshFilters: {
@@ -20,9 +20,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: 0,
     padding: 0,
   },
-  salesForceLookupFilterIcon: {
-    marginLeft: theme.spacing(1),
-  },
+
 }));
 
 export default function DynaSalesforceLookupFilters_afe(props) {
@@ -81,15 +79,11 @@ export default function DynaSalesforceLookupFilters_afe(props) {
     <>
       <div className={classes.refreshFilters}>
         Refresh search filters
-        <Button
+        <TextButton
+          startIcon={<RefreshIcon />}
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
-          variant="text"
-          color="primary"
-          onClick={handleRefreshFiltersClick}>
-          <RefreshIcon className={classes.salesForceLookupFilterIcon} />
-        </Button>
-
+          onClick={handleRefreshFiltersClick} />
       </div>
       {isEditorInitialized && (
       <FilterPanel

@@ -11,12 +11,12 @@ import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import actions from '../../actions';
 import SearchInput from '../../components/SearchInput';
-import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
+import { TextButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -61,14 +61,14 @@ export default function AccessTokenList(props) {
         <CeligoPageBar title="API tokens" infoText={infoText.accesstokens}>
           <div className={classes.actions}>
             <SearchInput onChange={handleKeywordChange} />
-            <IconTextButton
+            <TextButton
               data-test="newAccessToken"
               component={Link}
+              startIcon={<AddIcon />}
               to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
-              variant="text"
-              color="primary">
-              <AddIcon /> Create API token
-            </IconTextButton>
+              >
+              Create API token
+            </TextButton>
           </div>
         </CeligoPageBar>
 

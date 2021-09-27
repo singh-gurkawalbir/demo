@@ -1,5 +1,6 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
+import { isOldRestExport } from '../resource';
 
 export const FLOW_STAGES = [
   'outputFilter',
@@ -41,9 +42,10 @@ export function dataAsString(data) {
     : JSON.stringify(data, null, 2);
 }
 
-export const getUniqueFieldId = (fieldId, resource) => {
+export const getUniqueFieldId = (fieldId, resource, connection) => {
   if (!fieldId) { return ''; }
   const { ignoreExisting, ignoreMissing } = resource || {};
+  const isNewRestExport = !isOldRestExport(resource, connection);
 
   // some field types have same field ids
   switch (fieldId) {
@@ -76,20 +78,39 @@ export const getUniqueFieldId = (fieldId, resource) => {
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
     default:
-      return fieldId;
   }
+
+  if (isNewRestExport) {
+    // field mappings for the new Rest exports with http sub schema
+    switch (fieldId) {
+      case 'rest.pagingPostBody':
+        return 'http.paging.body';
+      case 'rest.nextPageRelativeURI':
+        return 'http.paging.relativeURI';
+      case 'rest.postBody':
+        return 'http.body';
+      case 'rest.relativeURI':
+        return 'http.relativeURI';
+      case 'rest.once.postBody':
+        return 'http.once.body';
+      default:
+    }
+  }
+
+  // returns same fieldId if it does not match
+  return fieldId;
 };
 
 // fieldIds that show previewData when paging is configured
 export const previewDataDependentFieldIds = [
   'http.paging.body',
+  'http.paging.relativeURI',
+  'http.relativeURI',
+  'http.body',
   'rest.pagingPostBody',
   'rest.nextPageRelativeURI',
-  'http.paging.relativeURI',
   'rest.relativeURI',
-  'http.relativeURI',
   'rest.postBody',
-  'http.body',
 ];
 
 // DO NOT DELETE below utils
