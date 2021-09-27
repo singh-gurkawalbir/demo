@@ -151,12 +151,12 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   'file.encoding': { fieldId: 'file.encoding' },
   pageSize: {
     fieldId: 'pageSize',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[\\d]+$',
+        message: 'Only numbers allowed',
       },
-    ],
+    },
   },
   dataURITemplate: {
     fieldId: 'dataURITemplate',
