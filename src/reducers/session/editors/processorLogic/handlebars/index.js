@@ -29,7 +29,7 @@ export function _constructEditorTitle(label) {
 
   return `Build ${title[0].toLowerCase()}${title.slice(1)}`;
 }
-export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport}) {
+export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneResource}) {
   const {adaptorType} = resource || {};
   const {isHTTP} = connection || {};
   const isOldRestResource = isOldRestAdaptor(resource, connection);
@@ -76,7 +76,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
   }
 
   // no AFE1/2 is shown for PG/Standalone export (with some exceptions)
-  if (isPageGenerator || isStandaloneExport) {
+  if (isPageGenerator || isStandaloneResource) {
     return false;
   }
 
@@ -109,7 +109,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneExport, formValues, ...rest} = props;
+    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
     const {fieldId} = options;
     const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
@@ -123,7 +123,7 @@ export default {
       rule = value?.query;
     }
 
-    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneResource});
     let v1Rule;
     let v2Rule;
 
