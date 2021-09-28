@@ -429,6 +429,7 @@ export const SUBMIT_TICKET_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
+export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics';
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
@@ -715,6 +716,7 @@ export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', '
 
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
 export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
+export const LOOKUP_FORM_KEY = 'LOOKUP_FORM_KEY';
 export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
 export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';

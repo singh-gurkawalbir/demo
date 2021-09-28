@@ -89,6 +89,12 @@ export default {
       return 'export.file.backupPath';
     },
     showLookup: false,
+    visibleWhenAll: [
+      {
+        field: 'fileMetadata',
+        isNot: [true],
+      },
+    ],
   },
   'file.encoding': {
     type: 'select',

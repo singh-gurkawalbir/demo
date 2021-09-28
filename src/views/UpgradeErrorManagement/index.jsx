@@ -2,15 +2,17 @@ import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, Button } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import ButtonGroup from '../../components/ButtonGroup';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
 import LoadResources from '../../components/LoadResources';
+import ActionGroup from '../../components/ActionGroup';
+import TextButton from '../../components/Buttons/TextButton';
+import FilledButton from '../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
@@ -145,24 +147,20 @@ export default function UpgradeErrorManagement() {
         </ul>
 
         <div className={classes.footer}>
-          <ButtonGroup>
-            <Button
-              variant="outlined"
-              color="primary"
+          <ActionGroup>
+            <FilledButton
               disabled={upgradeRequested}
               onClick={handleUpgrade}
               data-test="em2.0_upgrade"
               >
               {(upgradeRequested && commStatus === 'loading') ? 'Upgrading...' : 'Upgrade'}
-            </Button>
-            <Button
-              variant="text"
-              color="primary"
+            </FilledButton>
+            <TextButton
               onClick={redirectToDashboard}
               data-test="em2.0_later">
               I&apos;ll do this later
-            </Button>
-          </ButtonGroup>
+            </TextButton>
+          </ActionGroup>
         </div>
 
       </Paper>

@@ -85,7 +85,7 @@ describe('Connector metadata', () => {
       },
     });
     const requestState2 = reducer(
-      requestState,
+      receivedState1,
       actions.connectors.refreshMetadata(
         'id',
         'rest.secondField',
@@ -184,7 +184,7 @@ describe('Connector metadata', () => {
         },
       });
       const requestState2 = reducer(
-        requestState,
+        receivedState1,
         actions.connectors.refreshMetadata(
           'id',
           'rest.secondField',
@@ -218,7 +218,7 @@ describe('Connector metadata', () => {
         },
       });
       const receivedState = reducer(
-        requestState,
+        receivedState2,
         actions.connectors.clearMetadata('rest.headers', _integrationId)
       );
 
@@ -273,7 +273,7 @@ describe('Connector metadata', () => {
       );
 
       state = reducer(
-        requestState,
+        state,
         actions.connectors.refreshMetadata(
           'id',
           'rest.secondField',

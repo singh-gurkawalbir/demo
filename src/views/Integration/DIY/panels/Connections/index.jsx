@@ -9,12 +9,12 @@ import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/connections/metadata';
-import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -151,15 +151,18 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       <PanelHeader title="Connections">
         <>
           {permission.create && (
-            <IconTextButton
+            <TextButton
+              startIcon={<AddIcon />}
               onClick={handleClick}>
-              <AddIcon /> Create connection
-            </IconTextButton>
+              Create connection
+            </TextButton>
           )}
           {permission.register && !isStandalone && (
-            <IconTextButton onClick={() => setShowRegister(true)}>
-              <ConnectionsIcon /> Register connections
-            </IconTextButton>
+            <TextButton
+              startIcon={<ConnectionsIcon />}
+              onClick={() => setShowRegister(true)}>
+              Register connections
+            </TextButton>
           )}
         </>
       </PanelHeader>

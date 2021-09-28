@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import DynaText from './DynaText';
 import { getApiUrl } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { OutlinedButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   dynaAPIWrapper: {
@@ -43,13 +42,12 @@ export default function DynaApiIdentifier(props) {
         <CopyToClipboard
           onCopy={handleCopy}
           text={invokeUrl}>
-          <Button
+          <OutlinedButton
             data-test="copyToClipboard"
             title="Copy to clipboard"
-            variant="outlined"
             color="secondary">
             Copy URL
-          </Button>
+          </OutlinedButton>
         </CopyToClipboard>
       </div>
 

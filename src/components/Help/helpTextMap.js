@@ -838,7 +838,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Select one of the following options: \n • Use SQL query – Insert, update, or delete per record. \n • Use bulk INSERT SQL query – Insert multiple records. With this type, you must also configure import mapping. \n • Use SQL query once per page of data – Execute the query once per page, such as in a MERGE statement. \n • Use SQL query once per flow run – Execute the query only once on the first page.',
+  'snowflake.import.rdbms.queryType': 'Select one of the following options: <br><b> • Use SQL query</b> – Insert, update, or delete per record. <br><b> • Use bulk INSERT SQL query</b> – Insert multiple records. With this type, you must also configure import mapping. <br><b> • Use SQL query once per page of data </b>– Execute the query once per page, such as in a MERGE statement. <br><b> • Use SQL query once per flow run</b> – Execute the query only once on the first page.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':

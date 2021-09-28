@@ -4016,6 +4016,8 @@ selectors.suiteScriptResourceStatus = (
     path += `integrations/${integrationId}/flows`;
   } else if (resourceType === 'nextFlows') {
     path += 'flows';
+  } else if (resourceType === 'settings') {
+    path += `integrations/${integrationId}/settings`;
   } else {
     path += `${resourceType}`;
   }

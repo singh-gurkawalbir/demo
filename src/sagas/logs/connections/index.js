@@ -115,7 +115,7 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
       additionalHeaders['integrator-ashareid']
     }`;
   }
-  openExternalUrl({ url: _url });
+  yield call(openExternalUrl, { url: _url });
 }
 export function* startDebug({connectionId, value}) {
   const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);

@@ -4,8 +4,15 @@ import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import { selectors } from '../../reducers';
-import IntegrationApp from './App';
-import IntegrationDIY from './DIY';
+import loadable from '../../utils/loadable';
+import retry from '../../utils/retry';
+
+const IntegrationApp = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationApp2' */ './App'))
+);
+const IntegrationDIY = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationDIY' */ './DIY'))
+);
 
 export default function Integration() {
   const match = useRouteMatch();
