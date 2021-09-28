@@ -19,11 +19,13 @@ export const withIframe = Template.bind({});
 withIframe.args = {
   contentUrl,
 };
-export const fallBackIframe = Template.bind({});
 
-fallBackIframe.args = {
-  contentUrl: '',
-};
+// Have to work on fallback
+// export const fallBackIframe = Template.bind({});
+
+// fallBackIframe.args = {
+//   contentUrl: '',
+// };
 
 export const withImages = Template.bind({});
 
@@ -53,11 +55,12 @@ frontCenterImage.args = {
   ...withImages.args,
   direction: 'center',
 };
+// Have to work on fallback
 
-export const fallBackImages = Template.bind({});
+// export const fallBackImages = Template.bind({});
 
-fallBackImages.args = {
-  backgroundImageUrl: '',
-  foregroundImageUrl: '',
-  targetUrl: '',
-};
+// fallBackImages.args = {
+//   backgroundImageUrl: '',
+//   foregroundImageUrl: '',
+//   targetUrl: '',
+// };
