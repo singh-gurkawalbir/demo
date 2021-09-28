@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, capitalize } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
+import FilledButton from '../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -195,12 +195,9 @@ export default function Subscription() {
             You currently dont have any subscription.
           </Typography>
           <div className={classes.wrapper}>
-            <Button
-              onClick={onStartFreeTrialClick}
-              variant="outlined"
-              color="primary">
+            <FilledButton onClick={onStartFreeTrialClick}>
               Go Unlimited For 30 Days!
-            </Button>
+            </FilledButton>
             <Typography varaint="body2" className={classes.description}>
               Start a 30 day free trial to explore the full capabilities of
               integrator.io. At the end of the trial, you get to keep one
@@ -326,34 +323,29 @@ export default function Subscription() {
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'start-free-trial'
                       ) > -1 && (
-                        <Button
-                          onClick={onStartFreeTrialClick}
-                          color="primary"
-                          variant="outlined">
+                        <FilledButton onClick={onStartFreeTrialClick} >
                           Go unlimited for 30 days!
-                        </Button>
+                        </FilledButton>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'request-subscription'
                       ) > -1 && (
-                        <Button
+                        <FilledButton
                           onClick={onRequestSubscriptionClick}
                           disabled={upgradeRequested}
-                          color="primary"
-                          variant="outlined">
+                         >
                           Request subscription
-                        </Button>
+                        </FilledButton>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'request-upgrade'
                       ) > -1 && (
-                        <Button
+                        <FilledButton
                           onClick={onRequestUpgradeClick}
                           disabled={upgradeRequested}
-                          color="primary"
-                          variant="outlined">
+                         >
                           Request upgrade
-                        </Button>
+                        </FilledButton>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'request-trial-extension'
@@ -361,13 +353,12 @@ export default function Subscription() {
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'request-trial-extension'
                       ) > -1 && (
-                        <Button
+                        <FilledButton
                           onClick={onRequestTrialExtensionClick}
                           disabled={upgradeRequested}
-                          color="primary"
-                          variant="outlined">
+                         >
                           Request trial extension
-                        </Button>
+                        </FilledButton>
                       )}
                       <a
                         className={classes.linkCompare}

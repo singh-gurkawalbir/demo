@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
+import { OutlinedButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -52,14 +52,12 @@ export default function UploadFile(props) {
   return (
     <>
       <label htmlFor="fileUpload">
-        <Button
+        <OutlinedButton
           data-test="selectFile"
-          variant="outlined"
-          color="primary"
           component="span"
           className={classes.uploadButton}>
           Select template zip file
-        </Button>
+        </OutlinedButton>
         <input
           data-test="uploadFile"
           id="fileUpload"

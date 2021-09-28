@@ -1,12 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Grid, Divider, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Divider, Typography, makeStyles } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import Addons from './Addons';
+import { FilledButton } from '../../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -108,14 +109,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
-                <Button
-                  variant="contained"
-                  color="primary"
+                <FilledButton
                   className={classes.button}
                   disabled={upgradeRequested || upgradeSettingsRequested}
                   onClick={handleUpgrade}>
                   {upgradeText}
-                </Button>
+                </FilledButton>
                 )}
               </Grid>
             </Grid>
