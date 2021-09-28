@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
   formContainer: {
     marginTop: '50%',
+    background: theme.palette.common.white,
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',

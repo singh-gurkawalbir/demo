@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const useStylesImages = makeStyles(theme => ({
   loginMarketingContentWrapper: {
-    background: props => `center / contain no-repeat url(${props.backgroundImageUrl}), ${theme.palette.background.default}`,
+    background: props => `center / 95% no-repeat url(${props.backgroundImageUrl}), ${theme.palette.background.default}`,
     padding: theme.spacing(2),
     backgroundOrigin: 'content-box, padding-box',
     position: 'relative',
@@ -63,14 +63,13 @@ export function MarketingContentWithImages(props) {
   const {
     backgroundImageUrl,
     foregroundImageUrl,
-    direction = 'left',
     targetUrl,
-    size = 'medium',
+    direction = 'left',
+    size = 'small',
   } = props;
 
   return (
     <>
-
       {(backgroundImageUrl && foregroundImageUrl) ? (
         <div className={clsx({[classes.loginMarketingContentWrapper]: foregroundImageUrl})}>
           <div direction={direction}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import { MarketingContentWithIframe, MarketingContentWithImages } from '../../../../components/LoginScreen/MarketingContent';
-import LoginForm from '../../../../components/LoginScreen/LoginForm';
+import { MarketingContentWithIframe, MarketingContentWithImages } from './MarketingContent/index';
+import LoginForm from './LoginForm';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -14,14 +14,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function LoginTemplate(props) {
-  const { backgroundImageUrl, foregroundImageUrl, contentUrl, targetUrl} = props;
+  const { backgroundImageUrl,
+    foregroundImageUrl,
+    contentUrl,
+    targetUrl,
+    direction,
+    size} = props;
 
   const classes = useStyles();
 
   return (
     <div className={classes.wrapper}>
       <LoginForm />
-      {/* render when we want to show marketing promotion using an Iframe */}
       {contentUrl &&
       <MarketingContentWithIframe contentUrl={contentUrl} />}
       {
@@ -30,8 +34,8 @@ export default function LoginTemplate(props) {
             backgroundImageUrl={backgroundImageUrl}
             foregroundImageUrl={foregroundImageUrl}
             targetUrl={targetUrl}
-            direction="center"
-            size="small" />
+            direction={direction}
+            size={size} />
         )
     }
     </div>
