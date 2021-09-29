@@ -1,5 +1,4 @@
 import React from 'react';
-// import Template from './Template';
 import LoginScreen from '../../../components/LoginScreen';
 
 const contentUrl = 'https://staging.celigo.com/login/display';
@@ -20,12 +19,11 @@ withIframe.args = {
   contentUrl,
 };
 
-// Have to work on fallback
-// export const fallBackIframe = Template.bind({});
+export const fallBackIframe = Template.bind({});
 
-// fallBackIframe.args = {
-//   contentUrl: '',
-// };
+fallBackIframe.args = {
+  contentUrl: '',
+};
 
 export const withImages = Template.bind({});
 
@@ -55,12 +53,11 @@ frontCenterImage.args = {
   ...withImages.args,
   direction: 'center',
 };
-// Have to work on fallback
 
-// export const fallBackImages = Template.bind({});
+export const fallBackImages = Template.bind({});
 
-// fallBackImages.args = {
-//   backgroundImageUrl: '',
-//   foregroundImageUrl: '',
-//   targetUrl: '',
-// };
+fallBackImages.args = {
+  backgroundImageUrl: '',
+  foregroundImageUrl: '',
+  targetUrl: '',
+};

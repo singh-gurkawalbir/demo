@@ -12,12 +12,11 @@ const useFallBackIframe = makeStyles(theme => ({
   },
 }));
 
-// FallBACK Case have to handle
-
-export function MarketingContentFallback() {
+export default function MarketingContentFallback() {
   const classes = useFallBackIframe();
 
   return (
     <div className={classes.fallBackWrapper} />
+
   );
 }

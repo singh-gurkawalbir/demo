@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import LoginForm from './LoginForm';
 import MarketingContentWithImages from './MarketingContentWithImages';
 import MarketingContentWithIframe from './MarketingContentWithIframe';
+import MarketingContentFallback from './MarketingContentFallback';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -17,25 +18,31 @@ const useStyles = makeStyles(theme => ({
 export default function LoginScreen(props) {
   const { backgroundImageUrl,
     foregroundImageUrl,
-    contentUrl,
     targetUrl,
     direction,
     size} = props;
-
   const classes = useStyles();
+
+  if (props.contentUrl) {
+    return (
+      <div className={classes.wrapper}>
+        <LoginForm />
+        <MarketingContentWithIframe contentUrl={props.contentUrl} />
+      </div>
+    );
+  }
 
   return (
     <div className={classes.wrapper}>
       <LoginForm />
-      {contentUrl && <MarketingContentWithIframe contentUrl={contentUrl} />}
-      {!contentUrl && (backgroundImageUrl && foregroundImageUrl) && (
+      {(backgroundImageUrl && foregroundImageUrl) ? (
         <MarketingContentWithImages
           backgroundImageUrl={backgroundImageUrl}
           foregroundImageUrl={foregroundImageUrl}
           targetUrl={targetUrl}
           direction={direction}
           size={size} />
-      )}
+      ) : (<MarketingContentFallback />)}
     </div>
   );
 }
