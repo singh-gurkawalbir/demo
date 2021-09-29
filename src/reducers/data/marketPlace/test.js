@@ -148,20 +148,30 @@ describe('marketplace selectors', () => {
     const testTemplates = [
       { _id: '123' },
       { _id: '456', applications: ['some application'] },
+      { _id: '1', applications: ['constantcontactv2'] },
+      { _id: '2', applications: ['constantcontactv3'] },
+      { _id: '3', applications: ['constantcontact'] },
     ];
 
     test('should return empty array on empty/undefined state', () => {
       expect(selectors.marketplaceTemplatesByApp(undefined)).toEqual([]);
       expect(selectors.marketplaceTemplatesByApp({})).toEqual([]);
     });
-    test('should return templates on valid state', () => {
-      const state = reducer(
-        undefined,
-        actions.marketplace.receivedTemplates({ templates: testTemplates })
-      );
+    const state = reducer(
+      undefined,
+      actions.marketplace.receivedTemplates({ templates: testTemplates })
+    );
 
+    test('should return templates on valid state', () => {
       expect(selectors.marketplaceTemplatesByApp(state, 'some application')).toEqual([
         state.templates[1],
+      ]);
+    });
+    test('should return constant contact v2 and v3 templates if application is constantcontact', () => {
+      expect(selectors.marketplaceTemplatesByApp(state, 'constantcontact')).toEqual([
+        { _id: '1', applications: ['constantcontactv2'] },
+        { _id: '2', applications: ['constantcontactv3'] },
+        { _id: '3', applications: ['constantcontact'] },
       ]);
     });
   });

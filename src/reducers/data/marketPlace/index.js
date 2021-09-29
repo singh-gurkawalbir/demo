@@ -109,8 +109,11 @@ selectors.marketplaceTemplatesByApp = (state, application) => {
   let templates = state.templates || emptySet;
 
   if (application) {
+    const isAppConstantContact = application === 'constantcontact';
+
     templates = templates
-      .filter(t => t.applications && t.applications.includes(application))
+      .filter(t => t.applications?.some(app =>
+        isAppConstantContact ? app.includes(application) : app === application))
       .sort(stringCompare('name'));
   }
 
