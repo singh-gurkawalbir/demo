@@ -20,14 +20,15 @@ export default function LoginScreen(props) {
     foregroundImageUrl,
     targetUrl,
     direction,
+    contentUrl,
     size} = props;
   const classes = useStyles();
 
-  if (props.contentUrl) {
+  if (contentUrl) {
     return (
       <div className={classes.wrapper}>
         <LoginForm />
-        <MarketingContentWithIframe contentUrl={props.contentUrl} />
+        <MarketingContentWithIframe contentUrl={contentUrl} />
       </div>
     );
   }
