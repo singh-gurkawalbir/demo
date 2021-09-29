@@ -655,13 +655,16 @@ export const ALLOWED_HTML_TAGS =
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
-export const CONNECTORS_TO_IGNORE = ['yammer',
+export const CONNECTORS_TO_IGNORE = [
+  'yammer',
   'hybris',
   'etsy',
   'concur',
   'concurall',
   'concurv4',
-  'constantcontact'];
+  'constantcontactv2',
+  'constantcontactv3',
+];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
@@ -733,3 +736,13 @@ export const CATEGORY_MAPPING_SAVE_STATUS = {
   CLOSE: 'close',
   FAILED: 'failed',
 };
+
+export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
+  'constantcontact',
+  'constantcontactv2',
+  'constantcontactv3',
+  'zoom',
+  'amazonmws',
+];
+
+export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

@@ -35,6 +35,9 @@ export default {
       if (r?.adaptorType === 'FTPImport') {
         return 'import.ftp.fileName';
       }
+      if (r?.assistant === 'azurestorageaccount') {
+        return 'import.azure.fileName';
+      }
 
       return 'import.file.fileName';
     },
@@ -242,6 +245,8 @@ export default {
         return 'import.s3.backupBucket';
       } if (r?.adaptorType === 'FTPImport') {
         return 'import.ftp.backupDirectoryPath';
+      } if (r?.assistant === 'azurestorageaccount') {
+        return 'import.azure.backupPath';
       }
 
       return 'import.file.backupPath';

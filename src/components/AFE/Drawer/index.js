@@ -73,7 +73,7 @@ function RouterWrappedContent({ hideSave }) {
     dispatch(actions.editor.clear(editorId));
     onClose();
   };
-  const CloseButton = <CloseIconButton editorId={editorId} />;
+  const CloseButton = <CloseIconButton editorId={editorId} onClose={handleClose} hideSave={hideSave} />;
   const drawerTitle = editorTitle || label;
 
   return (

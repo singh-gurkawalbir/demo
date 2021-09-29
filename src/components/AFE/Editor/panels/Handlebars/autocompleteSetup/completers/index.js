@@ -26,7 +26,7 @@ export const FunctionCompleter = {
         .filter(
           helperFunction =>
             textAfterBraces.length === 0 ||
-            helperFunction.startsWith(textAfterBraces)
+            helperFunction.toLowerCase().includes(textAfterBraces.toLowerCase())
         )
         .map(helperFunction => {
           const matchingResult = this.functionsHints[helperFunction];
@@ -66,7 +66,7 @@ export const LookupCompleter = {
         .filter(
           hint =>
             textAfterBraces.length === 0 ||
-            hint.name.startsWith(textAfterBraces)
+            hint.name.toLowerCase().includes(textAfterBraces.toLowerCase())
         )
         .map(hint => ({
           caption: hint.name,
@@ -89,20 +89,20 @@ export const JsonCompleter = {
 
     if (!validText) return callback(null, []);
 
+    const textAfterBraces = validText[1];
+
     const insertMatch = (editor, completionMetaData) => {
       const { matchingResult } = completionMetaData;
 
-      insertMatchingResult(editor, matchingResult);
+      insertMatchingResult(editor, matchingResult, textAfterBraces);
     };
-
-    const textAfterBraces = validText[1];
 
     return callback(
       null,
       this.jsonHints
         .filter(
           hint =>
-            textAfterBraces.length === 0 || hint.id.startsWith(textAfterBraces)
+            textAfterBraces.length === 0 || hint.id.toLowerCase().includes(textAfterBraces.toLowerCase())
         )
         .map(hint => ({
           caption: hint.id,
