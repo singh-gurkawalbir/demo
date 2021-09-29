@@ -196,10 +196,10 @@ describe('Mappings region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowImports()).toEqual([]);
     });
-    test('should not throw any exception for invalid arguments', () => {
+    test('should not throw any exception for null arguments', () => {
       expect(selectors.flowImports(null, null)).toEqual([]);
     });
-    test('should not throw any exception for invalid arguments', () => {
+    test('should not throw any exception if state is null', () => {
       expect(selectors.flowImports(null, 1)).toEqual([]);
     });
     test('should return empty array if flowId is null', () => {
@@ -215,7 +215,6 @@ describe('Mappings region selector testcases', () => {
     test('should return empty array if imports used in a flow are not in state', () => {
       expect(selectors.flowImports(state, 2)).toEqual([]);
     });
-    // TODO: add test case: if flow contains _importId
   });
 
   describe('selectors.flowMappingsImportsList test cases', () => {
@@ -281,7 +280,7 @@ describe('Mappings region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.mappingPreviewType()).toBeUndefined();
     });
-    test('should not throw any exception for invalid arguments', () => {
+    test('should return undefined if state does not contain the import with given importId', () => {
       expect(selectors.mappingPreviewType(state, 1234)).toBeUndefined();
     });
     describe('If adaptor type is netsuite', () => {
@@ -362,12 +361,6 @@ describe('Mappings region selector testcases', () => {
   });
 
   describe('selectors.isPreviewPanelAvailableForResource test cases', () => {
-  // selectors.isPreviewPanelAvailableForResource = (
-  // state,
-  // resourceId,
-  // resourceType,
-  // flowId)
-
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isPreviewPanelAvailableForResource()).toBeFalsy();
     });
