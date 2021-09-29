@@ -32,6 +32,7 @@ import CloudTransferIcon from '../../../components/icons/CloudTransferIcon';
 import CeligoMarkIcon from '../../../components/icons/CeligoMarkIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import ConfigureSettingIcon from '../../../components/icons/ConfigureSettingIcon';
+import CommunityIcon from '../../../components/icons/CommunityIcon';
 import TransformIcon from '../../../components/icons/TransformIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
@@ -173,6 +174,7 @@ const icons =
       CeligoMarkIcon,
       ConnectionsIcon,
       ConfigureSettingIcon,
+      CommunityIcon,
       TransformIcon,
       DataLoaderIcon,
       DashboardIcon,
