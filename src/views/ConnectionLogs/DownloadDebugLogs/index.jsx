@@ -2,8 +2,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
+import { TextButton } from '../../../components/Buttons';
 import DownloadIcon from '../../../components/icons/DownloadIcon';
-import IconTextButton from '../../../components/IconTextButton';
 
 export default function DownloadDebugLogs({ connectionId, disabled}) {
   const dispatch = useDispatch();
@@ -14,14 +14,14 @@ export default function DownloadDebugLogs({ connectionId, disabled}) {
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         key="downloadLogs"
         onClick={handleDownloadLogsClick}
         disabled={disabled}
-        data-test="downloadLogs">
-        <DownloadIcon />
+        data-test="downloadLogs"
+        startIcon={<DownloadIcon />}>
         Download logs
-      </IconTextButton>
+      </TextButton>
     </>
   );
 }

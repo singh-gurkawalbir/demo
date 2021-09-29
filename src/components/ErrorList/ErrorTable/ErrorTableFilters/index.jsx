@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { DEFAULT_ROWS_PER_PAGE } from '../../../../utils/errorManagement';
 import CeligPagination from '../../../CeligoPagination';
@@ -13,6 +12,7 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { useIsFreshLoadData } from '..';
 import { useFetchErrors } from '../FetchErrorsHook';
+import { OutlinedButton } from '../../../Buttons';
 
 const rowsPerPageOptions = [10, 25, 50];
 const emptySet = [];
@@ -177,13 +177,11 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
         )}
         {
             hasErrors && (
-            <Button
-              variant="outlined"
+            <OutlinedButton
               color="secondary"
-              className={classes.btnActions}
               onClick={handleDownload}>
               Download
-            </Button>
+            </OutlinedButton>
             )
           }
 

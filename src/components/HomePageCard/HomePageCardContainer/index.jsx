@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import SortableHandle from '../../Sortable/SortableHandle';
@@ -88,3 +89,8 @@ export default function HomePageCardContainer({ children, onClick, isDragInProgr
     </div>
   );
 }
+
+HomePageCardContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+  onclick: PropTypes.func,
+};

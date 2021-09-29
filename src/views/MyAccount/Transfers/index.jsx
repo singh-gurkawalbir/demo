@@ -5,9 +5,9 @@ import { selectors } from '../../../reducers';
 import LoadResources from '../../../components/LoadResources';
 import ResourceTable from '../../../components/ResourceTable';
 import Invite from './Invite';
-import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
 import PanelHeader from '../../../components/PanelHeader';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,14 +47,12 @@ export default function Transfers() {
           <>
             <div className={classes.root}>
               <PanelHeader title="Transfers" >
-                <IconTextButton
+                <TextButton
                   data-test="newTransfer"
-                  variant="text"
-                  color="primary"
+                  startIcon={<AddIcon />}
                   onClick={handleNewTransferClick}>
-                  <AddIcon />
                   Create transfer
-                </IconTextButton>
+                </TextButton>
               </PanelHeader>
 
               <ResourceTable

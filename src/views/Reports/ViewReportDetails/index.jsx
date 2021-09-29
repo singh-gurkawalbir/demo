@@ -1,6 +1,6 @@
-import { Button } from '@material-ui/core';
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import FilledButton from '../../../components/Buttons/FilledButton';
 import RightDrawer from '../../../components/drawer/Right';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
@@ -41,7 +41,7 @@ export default function ViewReportDetails() {
         </LoadResources>
       </DrawerContent>
       <DrawerFooter >
-        <Button variant="outlined" color="primary" onClick={() => history.goBack()}>Close </Button>
+        <FilledButton onClick={() => history.goBack()}>Close </FilledButton>
       </DrawerFooter>
     </RightDrawer>
   );

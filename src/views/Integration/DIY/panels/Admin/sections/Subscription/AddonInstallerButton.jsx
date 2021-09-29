@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { Button, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
-import Loader from '../../../../../../../components/Loader';
+import Loader from '../../../../../../../components/Loader'; import OutlinedButton from '../../../../../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   unInstallBtn: {
@@ -135,14 +135,13 @@ export default function AddonInstallerButton({ resource }) {
   }
 
   return (
-    <Button
+    <OutlinedButton
       data-test="addOnInstall"
       size="small"
-      variant="outlined"
-      color="primary"
+      error={resource.status === 'installed'}
       className={clsx({[classes.unInstallBtn]: resource.status === 'installed'})}
       onClick={() => onClick(resource)}>
       {getLabel()}
-    </Button>
+    </OutlinedButton>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
+import CreatableSelect from 'react-select/creatable';
 import Select, { components } from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
-import { Button, FormControl, FormLabel } from '@material-ui/core';
+import { FormControl, FormLabel } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Checkbox from '@material-ui/core/Checkbox';
 import FieldMessage from '../FieldMessage';
@@ -9,6 +10,7 @@ import FieldHelp from '../../FieldHelp';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Tag from '../../../HomePageCard/Footer/Tag';
 import SearchIcon from '../../../icons/SearchIcon';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -69,8 +71,6 @@ const useStyles = makeStyles(theme => ({
     minHeight: 42,
     margin: 0,
     padding: 0,
-    border: '1px solid',
-    borderColor: `${theme.palette.secondary.lightest} !important`,
     borderRadius: 0,
   },
   img: {
@@ -143,18 +143,21 @@ const DropdownIndicator = props => (
 const Option = props => {
   const classes = useStyles();
   const { type, icon, value, label } = props.data;
+  const {hideApplicationImg} = props.selectProps;
 
   return (
     <div data-test={value} className={classes.menuItems}>
       <components.Option {...props}>
-        <span className={classes.optionImg}>
-          <ApplicationImg
-            markOnly
-            type={type === 'webhook' ? value : type}
-            assistant={icon}
-            className={classes.img}
+        {!hideApplicationImg ? (
+          <span className={classes.optionImg}>
+            <ApplicationImg
+              markOnly
+              type={type === 'webhook' ? value : type}
+              assistant={icon}
+              className={classes.img}
           />
-        </span>
+          </span>
+        ) : ''}
         <span className={classes.optionLabel}>{label}</span>
         <span className={classes.optionCheckBox}>
           <Checkbox
@@ -194,14 +197,13 @@ const Menu = props => {
   return (
     <components.Menu {...props}>
       {props.children}
-      <Button
-        id="select-multi-close"
-        variant="outlined"
+      <OutlinedButton
         color="secondary"
+        id="select-multi-close"
         onClick={closeSelect}
         className={classes.doneButton}>
         Done
-      </Button>
+      </OutlinedButton>
     </components.Menu>
   );
 };
@@ -218,6 +220,8 @@ export default function MultiSelectApplication(props) {
     placeholder,
     isValid,
     onFieldChange,
+    creatableMultiSelect,
+    hideApplicationImg,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -351,6 +355,7 @@ export default function MultiSelectApplication(props) {
       },
     }),
   };
+  const CustomSelect = creatableMultiSelect ? CreatableSelect : Select;
 
   return (
     <div className={classes.multiSelectWrapper}>
@@ -365,8 +370,9 @@ export default function MultiSelectApplication(props) {
         disabled={disabled}
         required={required}
         className={classes.multiSelectWrapper}>
-        <Select
+        <CustomSelect
           isMulti
+          hideApplicationImg={hideApplicationImg}
           placeholder={placeholder}
           components={{ Option, MultiValueLabel, DropdownIndicator, Menu }}
           defaultValue={defaultValue}

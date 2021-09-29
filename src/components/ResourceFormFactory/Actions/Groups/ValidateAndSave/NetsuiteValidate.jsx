@@ -1,19 +1,11 @@
-import Button from '@material-ui/core/Button';
-import { makeStyles} from '@material-ui/core/styles';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../../reducers';
+import { OutlinedButton } from '../../../../Buttons';
 import useFormContext from '../../../../Form/FormContext';
-
-const useStyles = makeStyles(theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
 
 export default function NetsuiteValidateButton(props) {
   const dispatch = useDispatch();
@@ -25,7 +17,6 @@ export default function NetsuiteValidateButton(props) {
     visibleWhenAll,
     formKey,
   } = props;
-  const classes = useStyles();
 
   const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
   const { disabled = formDisabled } = props;
@@ -116,15 +107,13 @@ export default function NetsuiteValidateButton(props) {
   }
 
   return (
-    <Button
+    <OutlinedButton
       data-test={id}
-      variant="outlined"
       color="secondary"
-      className={classes.actionButton}
       disabled={disabled || isValidatingNetsuiteUserRoles}
       onClick={handleValidate}>
       {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test Connection'}
-    </Button>
+    </OutlinedButton>
   );
 }
 
