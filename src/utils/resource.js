@@ -85,7 +85,7 @@ export const multiStepSaveResourceTypes = [
   'pageProcessor',
 ];
 
-const inferResourceType = adaptorType => {
+export const inferResourceType = adaptorType => {
   if (!adaptorType) return 'connections';
 
   if (adaptorType.toLowerCase().indexOf('import') > 0) {

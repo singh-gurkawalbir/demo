@@ -1,5 +1,5 @@
 import util from '../../../../../utils/json';
-import { isOldRestAdaptor } from '../../../../../utils/resource';
+import { isOldRestAdaptor, inferResourceType } from '../../../../../utils/resource';
 import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
 
 /* this util is used to read field label and generate editor title from it
@@ -48,9 +48,12 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
   // for below fields,
   // the whole adaptor is not yet supported (except for native REST)
   // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-  if (fieldId === 'idLockTemplate' ||
-  fieldId === 'dataURITemplate' ||
-  fieldId?.includes('once')) {
+  const isStandaloneImport = inferResourceType(adaptorType) === 'imports' && isStandaloneResource;
+
+  if (
+    ((fieldId === 'idLockTemplate' || fieldId === 'dataURITemplate') && !isStandaloneImport) ||
+    fieldId?.includes('once')
+  ) {
     if (['RESTImport', 'RESTExport'].includes(adaptorType)) {
       return isHTTP;
     }
