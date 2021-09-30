@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import DynaConnectoroNColumnMap from './DynaConnectorNColumnMap';
 import DynaStaticMap from './DynaStaticMap';
 import DynaTableView from './DynaTable';
 import DynaStaticMapWidget from './DynaStaticMapWidget';
 import LoadResources from '../../../LoadResources';
 import DynaRefreshableStaticMap from './DynaRefreshableStaticMap';
+import FieldMessage from '../FieldMessage';
 
 export default function DynaTable(props) {
   const {
@@ -16,6 +17,8 @@ export default function DynaTable(props) {
     extracts,
     onFieldChange,
     value,
+    keyResource,
+    valueResource,
   } = props;
   let tableType;
   // The values should be saved within a value object
@@ -23,24 +26,25 @@ export default function DynaTable(props) {
     (id, value) => {
       onFieldChange(id, { value });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [onFieldChange]
   );
+
+  const propsWithVirtualization = useMemo(() => ({...props, isVirtualizedTable: true}), [props]);
   // this is done to account for the above value save behavior
-  const updatedValue = (value && value.value) || value;
-  const updatedProps = {
-    ...props,
-    value: updatedValue,
+
+  const updatedProps = useMemo(() => ({
+    ...propsWithVirtualization,
+    value: (value && value.value) || value,
     onFieldChange: updatedOnFieldChange,
-  };
+  }), [propsWithVirtualization, updatedOnFieldChange, value]);
 
   if (extractFieldHeader || extracts) {
     tableType = 'staticMapWidget';
-  } else if ((map || !optionsMap) && !connectionId) {
+  } else if ((map || !optionsMap) && !connectionId && !keyResource && !valueResource) {
     tableType = 'staticMap';
-  } else if (optionsMap && optionsMap.length && _integrationId) {
+  } else if (optionsMap?.length && _integrationId && !keyResource && !valueResource) {
     tableType = 'connectorStaticMap';
-  } else if (connectionId) {
+  } else if (connectionId || keyResource || valueResource) {
     tableType = 'refreshableStaticMap';
   } else {
     tableType = 'generic';
@@ -52,11 +56,12 @@ export default function DynaTable(props) {
         <DynaConnectoroNColumnMap {...updatedProps} />
       )}
       {tableType === 'refreshableStaticMap' && (
-        <DynaRefreshableStaticMap {...props} />
+        <DynaRefreshableStaticMap {...propsWithVirtualization} />
       )}
-      {tableType === 'staticMap' && <DynaStaticMap {...props} />}
-      {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...props} />}
+      {tableType === 'staticMap' && <DynaStaticMap {...propsWithVirtualization} />}
+      {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...propsWithVirtualization} />}
       {tableType === 'generic' && <DynaTableView {...updatedProps} />}
+      <FieldMessage {...props} />
     </LoadResources>
   );
 }

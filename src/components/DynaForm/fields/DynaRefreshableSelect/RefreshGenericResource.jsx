@@ -9,7 +9,7 @@ import DynaMultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   refreshRoot: {
     width: '100%',
+    overflow: 'hidden',
   },
 }));
 
@@ -47,6 +48,7 @@ export default function RefreshGenericResource(props) {
     disableOptionsLoad,
     id,
     resourceToFetch,
+    ignoreValueUnset = false,
     resetValue,
     multiselect,
     onFieldChange,
@@ -60,6 +62,7 @@ export default function RefreshGenericResource(props) {
     urlToOpen,
     value,
   } = props;
+
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
@@ -109,10 +112,10 @@ export default function RefreshGenericResource(props) {
   useEffect(() => {
     // if selected option is not in options list then reset it to empty
 
-    if (!multiselect && !isSelectedValueInOptions && !isValueEqualDefaultValue(value)) {
-      onFieldChange(id, multiselect ? [] : '', true);
+    if (!ignoreValueUnset && !isLoading && !multiselect && !isSelectedValueInOptions && !isValueEqualDefaultValue(value)) {
+      onFieldChange(id, '', true);
     }
-  }, [id, isSelectedValueInOptions, multiselect, onFieldChange, value]);
+  }, [id, isLoading, isSelectedValueInOptions, multiselect, onFieldChange, value, ignoreValueUnset]);
 
   const handleOpenResource = useCallback(() => {
     openExternalUrl({ url: urlToOpen });
@@ -120,7 +123,7 @@ export default function RefreshGenericResource(props) {
 
   const options = useMemo(() => [{ items: fieldData || [] }], [fieldData]);
 
-  if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
   return (
     <div>
@@ -149,7 +152,7 @@ export default function RefreshGenericResource(props) {
               classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
-            <Spinner size={24} />
+            <Spinner />
           </span>
         )}
         {urlToOpen && (
@@ -161,18 +164,24 @@ export default function RefreshGenericResource(props) {
           </ActionButton>
         )}
       </FormControl>
-      {fieldError && <ErroredMessageComponent errorMessages={fieldError} />}
-      {description && <ErroredMessageComponent description={description} />}
+      {fieldError && <FieldMessage errorMessages={fieldError} />}
+      {description && <FieldMessage description={description} />}
     </div>
   );
 }
 
 export function DynaGenericSelect(props) {
-  const { multiselect } = props;
+  const { multiselect, ignoreValueUnset, disableOptionsLoad, fieldStatus } = props;
+  // component is in loading state in both request and refresh cases
+  const isLoading =
+    !disableOptionsLoad &&
+    (!fieldStatus ||
+      fieldStatus === 'requested' ||
+      fieldStatus === 'refreshed');
 
   return (
     <RefreshGenericResource {...props}>
-      {multiselect ? <DynaMultiSelect removeInvalidValues /> : <DynaSelect />}
+      {multiselect ? <DynaMultiSelect removeInvalidValues={!ignoreValueUnset} isLoading={isLoading} /> : <DynaSelect />}
     </RefreshGenericResource>
   );
 }

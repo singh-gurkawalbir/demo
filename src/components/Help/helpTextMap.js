@@ -1,11 +1,16 @@
 import { HELP_CENTER_BASE_URL } from '../../utils/constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
-  previewPanelRecords: 'Define the number of records to return in the preview. You can select a predefined value, of manually enter a custom value between 1 and 100.',
+  formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',
+  'afe.handlebar.data': 'This is sample help for handlebar afe, data panel',
+  'afe.handlebar.rule.relaviveUri': 'This is sample help for handlebar afe, rule panel, relativeUri fieldId',
+  previewPanelRecords: 'Enter or select the maximum number of records – up to 100 – to preview. Then, click <b>Preview</b> to see the records that match your query in the order that they’re received.',
   settingsForm:
-    'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
+    'Open <a href="https://docs.celigo.com/hc/en-us/articles/360058595552-Create-forms" target="_blank">Form builder</a> to create or edit user-friendly fields that prompt for text entry or selections that will be returned as settings applied to this resource. Your forms can include any <a href="https://docs.celigo.com/hc/en-us/articles/360059205112-Common-form-fields" target="_blank">field types</a> that you see elsewhere in integrator.io. Forms fields make it much easier for less technical users to work with your settings.',
   settings:
     'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
+  'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
+  'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -24,30 +29,29 @@ export default {
   'import.http.requestType':
     'Please specify whether the record is being created or updated using this field.',
   'import.rdbms.queryType':
-    "Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.",
-  'import.rdbms.query': 'This field is used to define the exact SQL query that will get sent to your database.  The query can be static or dynamic.  For dynamic queries, handlebars templates are used to source data and settings from your flow.',
-  'import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
-    Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
-    Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
+    'Choose <b>Insert</b> if you are importing new records into the database. Choose <b>Update</b> if you are importing changes to existing records in the database. Choose <b>Insert or Update</b> if you want your import to dynamically check whether a record exists in the database. If so, that record will be updated; otherwise, a record will be created.',
+  'import.rdbms.query': 'Enter the exact SQL query to be sent to your database. The query can be static or dynamic, which means that <a href="https://docs.celigo.com/hc/en-us/articles/360039326071">handlebars</a> templates are used to source data and settings from your flow.',
   // definitions
-  'http.connection.customScopeDelimiter': 'If your provider doesn\'t use spaces to delimit scopes, check this box and enter your provider’s custom scope delimiter.',
+  'amazonmws.connection.http.sellingPartnerId': 'The identifier of the selling partner who is authorizing your application.',
+  'amazonmws.connection.http.type': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Hybrid Selling Partner API (SP-API and MWS)</b>: Hybrid Selling Partner API application can make calls both to the Selling Partner API and to Amazon Marketplace Web Service (Amazon MWS). Use Hybrid Selling Partner API when your integration requires functionality from both services.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'connection.salesforce.info.email': 'Your Salesforce account email.',
   'connection.salesforce.info.organization_id':
     "Your organization's unique Salesforce ID",
-  'xcart.connection.rest.bearerToken':
-    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+  'omnisend.connection.http.auth.token.token': 'Enter the API key of your Omnisend account.<br><b>Steps to get the API key:</b><br>1. Sign into the Omnisend account.<br>2. From the account avatar at the top right, select <b>Store settings</b>. Navigate to <b>Integrations & API > API keys.</b><br>3. Copy the API key. (If none exists yet or you want to change the API key,click <b>Create APIKEY+</b>, select its permissions, and click <b>Save</b>.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pagerduty.connection.http.auth.token.token': 'Enter the API key of your Pagerduty account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → API Access Keys</b>.<br>3. Copy the API key.(If none exists yet or you want to change the API key,click to <b>Create New API Key</b> option and select appropriate permissions to create a new API key.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pagerduty.connection.http.auth.type': 'Please select Authentication Type.',
+  'pagerduty.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><b>Steps to get the client ID and client secret:</b><br>1. Sign in to the Pagerduty account.<br>2. On the dashboard, Navigate to <b>Integrations → Developer Tools → Developer Mode</b>.<br> 3. Click on the App(under functionality) → Manage option for OAuth 2.0.<br> 4. Copy the Client ID and Client Secret.(If none exists yet,click to <b>Create New App</b> option to create a new pair.)',
   'sharepoint.connection.http.subDomain':
     "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
   'vroozi.connection.accountType':
     'Please select your account type here. Select Sandbox if your API Endpoint starts with https://sandbox-api.vroozi.com. Select Production if your API Endpoint starts with https://api.vroozi.com',
   'vroozi.connection.http.unencrypted.apiKey':
     'Please enter your API Key here.API key is generated after creating your application.',
-  'vroozi.connection.http.auth.token.token': 'Please enter your Access Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To get an API key for your Vroozi account,login to your Vroozi account and Under API Integration section, click on Credentials.Create your application by clicking on "Add New Application" After entering your application name, you will be provided with an access token which is shown only once.',
-  'saplitmos.connection.http.auth.token.token': 'Please enter API Key of your SAP Litmos Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.Steps to generate API Key: Login to SAP Litmos Account -- > Click "My Profile & Settings" from the drop-down menu at the top right corner of the screen -- > View the bottom of your profile.',
+  'vroozi.connection.http.auth.token.token': 'Please enter your Access Token here. To get an API key for your Vroozi account,login to your Vroozi account and Under API Integration section, click on Credentials.Create your application by clicking on "Add New Application" After entering your application name, you will be provided with an access token which is shown only once.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'saplitmos.connection.http.auth.token.token': 'Please enter API Key of your SAP Litmos Account. <br> <b>Steps to generate API Key:</b> <br> 1. Login to SAP Litmos Account <br>2. Click "My Profile & Settings" from the drop-down menu at the top right corner of the screen <br>3. View the bottom of your profile.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'oandav20fxtrade.connection.accountType': 'Please select your account type here. Select Demo if your account type is "fxTrade Practice". Select Trading if your account type is "fxTrade".',
   'oandav20fxtrade.connection.http.auth.token.token':
-    'Please enter your API token here.',
+    'Please enter your API token here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'openair.connection.environment':
     'Please select the environment of your OpenAir account.',
   'openair.connection.http.unencrypted.companyId':
@@ -55,94 +59,96 @@ export default {
   'openair.connection.http.unencrypted.userId':
     'Please enter User ID of your account.',
   'openair.connection.http.encrypted.password':
-    'Please enter Password of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+    'Please enter Password of your account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.unencrypted.namespace':
     'Please enter the API Namespace of your account.',
   'openair.connection.http.unencrypted.apiKey':
-    'Please enter the API Key of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+    'Please enter the API Key of your account. <br> Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.oneloginRegion': 'Please enter Region for URI.',
   'onelogin.connection.http.unencrypted.apiKey':
-    'Please enter API Key of your OneLogin Account.',
+    'Please enter API key of your OneLogin Account.',
   'onelogin.connection.http.encrypted.apiSecret':
-    'Please enter API Secret of your OneLogin Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'Please enter API secret of your OneLogin Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'onelogin.connection.http.auth.token.token':
     'The access token of your OneLogin account.',
   'paycor.connection.http.unencrypted.publicKey':
     'Please enter your public key here. Your public key identifies you to our system. This is similar to a username. You will include your public key every time you send request to Paycor. This is not secret information.',
   'paycor.connection.http.encrypted.secretKey':
-    'Please enter your private key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
+    'Please enter your private key here. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.<br> Multiple layers of protection, including AES 256 encryption, are in place to keep your Private key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.quickbooksEnvironment':
     'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
   'trinet.connection.http.unencrypted.companyId':
     'Please reach out to TriNet support team for company Id.',
   'trinet.connection.http.auth.token.token':
-    'Please reach out to TriNet support team for API key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+    'Please reach out to TriNet support team for API key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.unencrypted.pacejetLocation':
     'Please reach out to Pacejet support team for location header.',
   'connection.http.encrypted.pacejetLicenseKey':
-    'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
+    'Please reach out to Pacejet support team for License key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your license key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'integratorio.connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
-  'integratorio.connection.http.auth.token.token':
-    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+  'integratorio.connection.http.auth.token.token': 'Enter an integrator.io token. You can generate a token in <b>Resources</b> > <a href=https://docs.celigo.com/hc/en-us/articles/360019782431-Generate-API-tokens>API tokens</a>, when <a href=https://docs.celigo.com/hc/en-us/articles/227018868-Switch-to-Developer-mode>Developer mode</a> is enabled. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'recharge.connection.http.auth.token.token':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
+    'Please enter your API key here. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bamboohr.connection.http.bamboohrSubdomain':
     'Enter the unique portion of the bamboohr.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.bamboohr.com, then enter personnel for the subdomain.',
-  'bamboohr.connection.http.encrypted.apiKey': 'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
-  'connection.http.oktaSubdomain':
-    'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
-  'okta.connection.http.auth.token.token': 'Please enter your Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
+  'bamboohr.connection.http.encrypted.apiKey': 'Please enter your API key here. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'connection.http.unencrypted.oktaDomain':
+    'Enter the domain of your Okta account.<br><b> Steps to find your Okta domain:</b><br>1. Sign in to your Okta organization with your administrator account.<br>2. Look for the Okta domain in the global header located in the upper-right corner of the dashboard.<br>3.Your Okta domain looks like:<br> <b>example.oktapreview.com,<br> example.okta.com,<br> example.okta-emea.com</b>.<br>See<a href="https://developer.okta.com/docs/concepts/okta-organizations/">Okta Organizations</a>for more information on the types of Okta orgs.',
+  'okta.connection.http.auth.token.token': 'Please enter your Token here. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pipedrive.connection.http.auth.type': 'Please select Authentication Type.',
+  'pipedrive.connection.http.subdomain': 'Please enter the unique portion of the pipedrive.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.pipedrive.com, then enter personnel for the subdomain.',
+  'pipedrive.connection.http.auth.token.token': 'Please enter the API token of your Pipedrive account.<br><b>Please follow the steps below to fetch this</b><br> 1. Log in to your Pipedrive account, on the top right corner you’ll find "Personal Preferences" when you click on your profile image.<br>2. Click on the API tab. You can generate a new token or use the existing one.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'easyship.connection.http.auth.token.token':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can generate the API Access Token from https://app.easyship.com/connect. You will need to create an API connection, and then retrieve the token from the store settings.',
+    'Please enter your API access token here. You can generate the API Access Token from https://app.easyship.com/connect. You will need to create an API connection, and then retrieve the token from the store settings.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'propack.connection.environment':
     'Please select your environment here. Select Test if the account is created on https://test.webservices.p3pl.com. Select Production if the account is created on https://webservices.p3pl.com.',
   'connection.http.unencrypted.p3plUserID':
     'Please enter your P3PL account User ID.',
   'connection.http.encrypted.p3plUserPassword':
-    'Please enter your P3PL account Password.',
+    'Please enter your P3PL account Password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'solidcommerce.connection.http.encrypted.securityKey':
-    'Enter your Solid Commerce Developer Key or Security Key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Security Key safe. This can be obtained from the Settings section and Security Key subsection.',
+    'Enter your Solid Commerce Developer Key or Security Key here. This can be obtained from the Settings section and Security Key subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your security key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'solidcommerce.connection.http.encrypted.appKey':
     'Application Key is generated at https://www.upsefulfillment.com, under Marketplaces --> Marketplaces Setup --> Web Services.',
   'parseur.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+    'Please enter your API key here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'paypal.connection.http.accountType':
     'Select one of the following, depending on the account you’re connecting to. <br> <b>.</b> Sandbox </br> <b>.</b> Production',
   'paypal.connection.http.unencrypted.clientId':
     'Please enter Client ID of your Paypal Account.Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret',
   'paypal.connection.http.encrypted.clientSecret':
-    'Please enter Client Secret of your Paypal Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret',
+    'Please enter Client Secret of your Paypal Account. Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'paypal.connection.http.auth.token.token':
     'The access token of your Paypal account.',
   'returnly.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Summary tab in Your Account section.',
+    'Please enter your API key here. This can be obtained from the Summary tab in Your Account section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   '4castplus.connection.http.subdomain':
     'The subdomain is the unique portion of the 4castplus.com address that you visit to log in to your portal.',
   '4castplus.connection.http.unencrypted.username':
     'Username is your 4castplus account email.',
   '4castplus.connection.http.encrypted.password':
-    'Password is your 4castplus account password. Multiple layers of protection are employed (including AES 256 encryption) to keep your password safe.',
+    'Password is your 4castplus account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.unencrypted.partnerUserId':
     'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
   'expensify.connection.http.encrypted.partnerUserSecret':
-    'Please enter your partner user secret of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'Please enter your partner user secret of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your user secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'klaviyo.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+    'Please enter your API key here. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zohodesk.connection.http.unencrypted.organizationId':
     'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
   'tophatter.connection.http.auth.token.token':
-    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+    'Please enter your token here. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zohocrm.connection.http.zohoSubdomain': 'Please enter the Domain. Input ".com" to connect to US data-center. Input ".in" to connect to India data-center. Input ".com.cn" to connect to China data-center. Input ".eu" to connect to Europe data-center.',
   'tsheets.connection.http.tsheetsSubdomain':
     'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
   'squareup.connection.http.auth.type': 'Please select Authentication Type.',
   'squareup.connection.http.auth.token.token':
-    'Enter your access token for Square here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+    'Enter your access token for Square here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.encrypted.serverToken':
-    'Please enter your Server Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Server Token safe. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.',
+    'Please enter your Server Token here. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Server token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.encrypted.accountToken':
-    'Please enter your Account Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account Token safe. Used for requests that require account level privileges. This token is only accessible by the account owner, and can be found on the API tokens tab of your Postmark account.',
+    'Please enter your Account Token here. Used for requests that require account level privileges. This token is only accessible by the account owner, and can be found on the API tokens tab of your Postmark account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Account token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zendesk.connection.http.auth.type': 'Please select Authentication Type.',
   'zendesk.connection.http.zendeskSubdomain':
     'Please enter your team name here which you configured while signing up for a new Zendesk account.',
@@ -157,23 +163,23 @@ export default {
   'connection.http.activecampaignSubdomain':
     'Please enter your account subdomain here.',
   'activecampaign.connection.http.auth.token.token':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
+    'Please enter your API key here. This can be obtained from the Settings section and Developer subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'drift.connection.http.auth.token.token':
-    'Please enter your access token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your access token safe. This token is automatically generated when you installed the app to your team. You can use this to authenticate your app.',
+    'Please enter your access token here. This token is automatically generated when you installed the app to your team. You can use this to authenticate your app.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your accesstoken safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.authorizeNet.accType':
     'Please select your account type here. Select Sandbox if your API Endpoint starts with https://apitest.authorize.net. Select Production if your API Endpoint starts with https://api.authorize.net.',
   'connection.http.encrypted.apiLoginID':
     'Merchant’s unique API Login ID. The API Login ID is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
   'connection.http.encrypted.transactionKey':
-    'Merchant’s unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+    'Merchant’s unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Transaction key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.recurlySubdomain':
     'Please enter your subdomain here which you configured while activating your new Recurly account.',
   'recurly.connection.http.auth.basic.username':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can go to Integrations >> API Credentials to find it.',
+    'Please enter your API key here. You can go to Integrations >> API Credentials to find it.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'cartrover.connection.http.auth.basic.username':
     'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'cartrover.connection.http.auth.basic.password':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Navigate to Merchant view on left hand side and click on API keys section to find API Key.',
+    'Please enter your API key here. Navigate to Merchant view on left hand side and click on API keys section to find API Key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'amazonmws.connection.http.unencrypted.sellerId': 'Specify the account ID for the Amazon seller account you are integrating with. Amazon’s UI calls this the Merchant token, but their API response calls it the Seller ID, which Amazon calls the Merchant token . You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters. If you don’t know this value, you can find it in Amazon Seller Central > Settings > Account info.',
   'amazonmws.connection.http.unencrypted.mwsAuthToken':
     'The MWS authorization token.',
@@ -182,59 +188,62 @@ export default {
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'amazonmws.connection.http._iClientId': `Integrator IO uses Celigo’s Developer keys to connect to Amazon. You'll need to give Celigo permission to access your Amazon account. For help with authorization, refer to (<a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360035639851-Enable-Developer-Access-for-Celigo-in-Amazon-Seller-Central-Registration-">Developer Access</a>).<br>If you want to use your own developer keys instead of Celigo, add the iClient which lets you configure your developer and secret keys for your marketplace region.`,
   'autopilot.connection.http.auth.token.token':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To get an API key for your Autopilot account, login to your Autopilot account and go to Settings and to Autopilot API.',
+    'Please enter your API key here. To get an API key for your Autopilot account, login to your Autopilot account and go to Settings and to Autopilot API.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ebay-xml.connection.environment': 'Select either Production or Sandbox.',
   'connection.http.unencrypted.apiSiteId':
     'After you have specified the API Site ID, click Save & Authorize that opens up the eBay window where you can enter email/username and password to establish the connection with eBay.',
   '3dcart.connection.http.threedcartSecureUrl': "3dcart merchant's Secure URL.",
   '3dcart.connection.http.encrypted.PrivateKey':
-    "Your application's private key.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Private Key safe. This can be obtained from the Settings section and Private Key subsection.",
-  '3dcart.connection.http.auth.token.token': "The 3dcart merchant's token.",
+    "Your application's private key. This can be obtained from the Settings section and Private Key subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Private key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
+  '3dcart.connection.http.auth.token.token': "The 3dcart merchant's token.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'snapfulfil.connection.http.subdomain':
     "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
   'snapfulfil.connection.http.auth.basic.username':
     "Please enter your snapfulfil account's username",
   'snapfulfil.connection.http.auth.basic.password':
-    "Please enter your snapfulfil account's password",
+    "Please enter your snapfulfil account's password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'anaplan.connection.http.auth.basic.username':
     'The username of your Anaplan account.',
   'anaplan.connection.http.auth.basic.password':
-    'The password of your Anaplan account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+    'The password of your Anaplan account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'anaplan.connection.http.auth.type': 'Please select Authentication type.',
   'namely.connection.http.namelyCompanyName':
     'Your subdomain. For example, https://mysubdomain.namely.com',
   'namely.connection.http.auth.token.token':
-    'The personal access token of your account on namely. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Personal Access Token safe. This can be obtained from the Settings section and Personal Access Token subsection.',
+    'The personal access token of your account on namely. This can be obtained from the Settings section and Personal Access Token subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your personal access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'newegg.connection.accountType':
     "Select 'Newegg Business' if your account is created on https://www.neweggbusiness.com.Select 'Newegg' if your account is created on https://www.newegg.com.",
   'newegg.connection.http.encrypted.apiKey':
-    'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
+    'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.This can be obtained from the Settings section and API Key subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'newegg.connection.http.encrypted.apiSecret':
-    'Please enter the unique Secret Key which Newegg Marketplace integration team assigned to you. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your key safe.',
+    'Please enter the unique Secret Key which Newegg Marketplace integration team assigned to you.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'newegg.connection.http.unencrypted.sellerId':
     'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
   'asana.connection.http.auth.token.token':
-    'Enter your personal access token.Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+    'Enter your personal access token. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Personal access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'slack.connection.http.auth.type': 'Please select Authentication Type.',
+  'slack.connection.http.auth.token.token': 'Enter the token of your Slack account. <b>Steps to get the token:</b><br>1. Sign into your Slack account.<br>2. Click <b>Your Apps</b> in the top right corner and select an application.<br>3. Navigate to the <b>OAuth & Permissions tab</b>. If there are no tokens, you will get an option to <b>Install to Workspace</b>.<br>The tokens will be automatically generated once the app is connected to the workspace.<br><br> Multiple layers of protection are in place, including AES 256 encryption, to keep your connection’s token safe. When editing this form later, you must enter this value again; it is stored only when the connection is saved and never displayed as text.',
+  'slack.import.resource': 'Choose the API resource to send the records to Slack, such as <b>chat</b>, <b>groups</b>, or <b>team</b>. The methods below will change according to the resource you apply.',
+  'slack.import.operation': 'Choose the Slack API method for the selected resource. For example, if you’re posting a field to a specific channel, select <b>chat</b> for the resource and <b>chat.postMessage</b> for the method.',
   'bigcommerce.connection.http.auth.type': 'Please select Authentication Type.',
   'bigcommerce.connection.http.auth.basic.username':
     'Client ID will be the Username.',
   'bigcommerce.connection.http.auth.basic.password':
-    'Access Token will be the Password.',
+    'Access Token will be the Password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bigcommerce.connection.http.auth.token.token':
-    'This Access Token works in tandem with the Client ID.',
+    'This Access Token works in tandem with the Client ID.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bigcommerce.connection.http.unencrypted.clientId':
     'This Client ID works together with the Access Token to grant authorization.',
   'connection.storeHash':
-    'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+    'The BigCommerce store hash is a unique identifier for your store comprised of a short sequence of lower-case letters and numbers. It can be found in the URLs assigned to your store by BigCommerce. The base API path will look something like this: https://api.bigcommerce.com/stores/123456/, where the store hash is 123456.',
   'certify.connection.http.encrypted.apiKey':
-    'The API Key of your Certify account.',
+    'The API Key of your Certify account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'certify.connection.http.encrypted.apiSecret':
-    'The API Secret of your Certify account.',
+    'The API Secret of your Certify account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.chargifySubdomain':
     'The subdomain of your chargify account. For example, https://mysubdomain.chargify.com.',
   'chargify.connection.http.encrypted.apiKey':
-    'The API key of your Chargify account.',
+    'The API key of your Chargify account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'docusign.connection.environment':
     'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
   'ebay.connection.accountType':
@@ -242,13 +251,13 @@ export default {
   'jet.connection.http.refreshTokenBody.user':
     'API User Key available from Jet under API Section-> Get API Keys',
   'jet.connection.http.encrypted.password':
-    'Secret Key available from Jet under API Section-> Get API Keys',
+    'Secret Key available from Jet under API Section-> Get API Keys<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'jira.connection.http.baseURI':
-    'The base URI for JIRA. For example, http://www.company.com/confluence',
+    'Enter the Base URI for Jira Cloud platform. The base URI for Jira Cloud platform is <b>https://your-domain.atlassian.net</b>. Replace <b>your-domain</b> with the base URL for your Jira Cloud platform',
   'jira.connection.http.auth.basic.username':
     'The username of your JIRA account.',
   'jira.connection.http.auth.basic.password':
-    'To create an API token for Atlassian account:Login to your Atlassian account– >Go to User management– >Go to Your profile --> Security – > API token',
+    'To create an API token for your Atlassian account, log in to your Atlassian account and navigate to <b>Profile</b> > <b>Manage your account</b> > <b>Security</b>.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'jobvite.connection.environment':
     'Select either Production or Sandbox based on your requirement.',
   'jobvite.connection.http.unencrypted.companyId':
@@ -256,17 +265,17 @@ export default {
   'jobvite.connection.http.unencrypted.api':
     'The API Key of your Jobvite account.',
   'jobvite.connection.http.encrypted.secret':
-    'The Secret Key of your Jobvite account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe. This can be obtained from the Settings section and user secret subsection.',
+    'The Secret Key of your Jobvite account. This can be obtained from the Settings section and user secret subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'liquidplanner.connection.http.auth.type':
     'Please select Authentication Type.',
   'liquidplanner.connection.http.auth.basic.username':
     'Enter Username of your registered LiquidPlanner account.',
   'liquidplanner.connection.http.auth.basic.password':
-    'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
+    'Enter Password of your registered LiquidPlanner account. The Password is created when the account is created.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'liquidplanner.connection.http.auth.token.token':
     'The API token of your LiquidPlanner account when using the Token authentication.',
   'magento.connection.http.baseURI':
-    'regex magento regex The Base URI of Magento 2.',
+    'Enter the Base URI for Magento 2. You can find this URL in the address bar where you log in to your account. For example, <b> http://123.12.12.1/community231/rest</b>',
   'magento.connection.http.auth.token.token':
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
@@ -276,94 +285,122 @@ export default {
   'servicenow.connection.http.auth.basic.username':
     'The username of your ServiceNow account.',
   'servicenow.connection.http.auth.basic.password':
-    'The password of your ServiceNow account.',
+    'The password of your ServiceNow account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shipstation.connection.http.auth.basic.username':
     'The API Key of your ShipStation account.',
   'shipstation.connection.http.auth.basic.password':
-    'The API Secret of your ShipStation account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API secret safe. This can be obtained from the Settings section and API secret subsection.',
+    'The API Secret of your ShipStation account. This can be obtained from the Settings section and API secret subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shopify.connection.http.auth.type': 'Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.',
   'shopify.connection.http.storeURL': 'Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.',
   'shopify.connection.http.unencrypted.version':
-    'Please enter your Shopify account version, for example 2020-01.For more information check the <a href="https://shopify.dev/concepts/about-apis/versioning">Shopify API Versioning</a>.',
+    'Select your Shopify account version, such as 2020-10. For more information, see <a href="https://shopify.dev/concepts/about-apis/versioning">Shopify API Versioning</a>.',
   'shopify.connection.http.auth.basic.username': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
-  'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
+  'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'concurinvoice.connection.http.unencrypted.username': 'Please enter the value of <b>id</b> which appears in the redirected popup page URL after signin to integrator.io.',
-  'concurinvoice.connection.http.encrypted.password': 'Please enter the value of <b>requestToken</b> which appears in the redirected popup page URL after signin to integrator.io.',
+  'concurinvoice.connection.http.encrypted.password': 'Please enter the value of <b>requestToken</b> which appears in the redirected popup page URL after signin to integrator.io.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'fulfilment.connection.http.unencrypted.clientId': 'Please enter Client ID of your Fulfillment.com account. <br> Note: To obtain an OAuth Client ID contact your account executive.',
+  'fulfilment.connection.http.encrypted.clientSecret': 'Please enter Client Secret of your Fulfillment.com account. <br>Note: To obtain an OAuth Client Secret contact your account executive.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'fulfilment.connection.http.unencrypted.username': 'Enter the username of your Fulfillment.com account.',
+  'fulfilment.connection.http.encrypted.password': 'Enter the password of your Fulfillment.com account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'fulfilment.connection.http.auth.token.token': 'The Access Token of your Fulfillment.com account',
   'stripe.connection.http.auth.token.token':
-    'The secret key of your Stripe account.',
+    'The secret key of your Stripe account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'twilio.connection.http.auth.basic.username':
     'The Account Sid of your Twilio account.',
   'twilio.connection.http.auth.basic.password':
-    'The token of your Twilio account.',
-  'woocommerce.connection.http.baseURI': 'Please enter baseURI of your WooCommerce account. If your endpoint is  “https://shopName.com/wp-json/wc/v1/orders”, then use "https://shopName.com" as base URL.',
+    'The token of your Twilio account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'woocommerce.connection.http.baseURI': 'Enter the base URI of your WooCommerce account. For example, if your endpoint is at https://shopName.com/wp-json/wc/v1/orders, then enter https://shopName.com.',
   'woocommerce.connection.http.auth.basic.username':
     'The consumer key of your WooCommerce account.',
   'woocommerce.connection.http.auth.basic.password':
-    'The consumer secret of your WooCommerce account.',
+    'The consumer secret of your WooCommerce account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shipwire.connection.environment':
     'Please select your environment here. Select Sandbox if the account is created on https://beta.shipwire.com. Select Production if the account is created on https://www.shipwire.com.',
   'shipwire.connection.http.auth.basic.username':
     'The username of your Shipwire account.',
   'shipwire.connection.http.auth.basic.password':
-    'The password of your Shipwire account.',
+    'The password of your Shipwire account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zuora.connection.http.unencrypted.apiAccessKeyId':
     'Please enter Username of your Zuora account.',
   'zuora.connection.http.encrypted.apiSecretAccessKey':
-    'Please enter Password of your Zuora account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe. This can be obtained from the Settings section and password subsection.',
+    'Please enter Password of your Zuora account. This can be obtained from the Settings section and password subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.sandbox': 'regex zuora regex The Zuora account type.',
   'atera.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by Navigating to Admin >> API from the left hand panel.',
+    'Please enter your API key here. This can be obtained by Navigating to Admin >> API from the left hand panel.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'hubspot.connection.http.auth.type': 'Please select Authentication Type',
   'hubspot.connection.http.auth.token.token':
-    'Please enter API Key of your Hubspot Account.',
+    'Please enter API Key of your Hubspot Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'insightly.connection.http.auth.basic.username':
-    'The API key of your Insightly account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+    'The API key of your Insightly account. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.freshdeskSubdomain':
     "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
   'freshdesk.connection.http.auth.basic.username':
-    'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
-  'freshdesk.connection.http.auth.basic.password':
-    'The password of your Freshdesk account.',
+    'Enter the API key of your Freshdesk account.<br><b>Steps to get the API key:</b><br>1. Sign into the Freshdesk account.<br>2. From the account avatar at the top right, select <b>Profile settings</b>.<br>3. Copy the <b>API key</b> present in the sidebar.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'avalara.connection.accType':
     'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
   'connection.http.acceloSubdomain':
     'Please enter your subdomain here which you configured in Deployment Information page while signing up for your new Accelo account.',
   'harvest.connection.http.encrypted.accountId':
-    'Please enter the Harvest account ID .Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account ID safe. This can be obtained from the Settings section and Account ID subsection.',
+    'Please enter the Harvest account ID. This can be obtained from the Settings section and Account ID subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Account ID safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pulseway.connection.http.baseURI':
-    'Please enter baseURI of your Pulseway account. If you host your own Pulseway Enterprise Server, use “https://your-server-name/api” as base URL.',
+    'Enter the base URI of your Pulseway account. If you host your own Pulseway Enterprise Server, enter https://your-server-name/api as the base URI.',
   'shiphawk.connection.http.encrypted.apiKey':
-    'The API Key of your ShipHawk account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
+    'The API Key of your ShipHawk account. This can be obtained from the Settings section and API Key subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'newrelic.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. From the account dropdown in the New Relic UI, select Account settings > Integrations > API keys to find it.',
+    'Please enter your API key here. From the account dropdown in the New Relic UI, select Account settings > Integrations > API keys to find it.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'tableau.connection.http.myServer':
     'Please enter your server name here which you configured while signing up for a new Tableau account.',
   'tableau.connection.http.auth.basic.username':
     'Please enter the User Id/Email of your Tableau Account.',
   'tableau.connection.http.auth.basic.password':
-    'Please enter password of your Tableau Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'Please enter password of your Tableau Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'tableau.connection.http.unencrypted.contentUrl':
     'The content URL is the value that in the server environment is referred to as the Site ID.',
   'tableau.connection.http.auth.token.token':
     'The access token of your Tableau account.',
   'tableau.connection.http.unencrypted.siteId':
     'The Site ID of your Tableau account.',
+  'tableau.connection.http.unencrypted.version': 'Please enter the version of the API to use, such as 3.10. For more information, see <a href="https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_concepts_versions.htm">REST API and Resource Versions</a>.',
   'tesco.connection.http.encrypted.apiKey':
-    'The subscription key of your Tesco account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+    'The subscription key of your Tesco account. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your subscription key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'fieldaware.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by reaching out to FieldAware support team.',
+    'Please enter your API key here. This can be obtained by reaching out to FieldAware support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'chargebee.connection.http.auth.basic.username':
     'The API Key of your Chargebee account.',
   'taxjar.connection.http.auth.token.token':
-    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+    'Please enter your token here. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.sandbox':
     'Please select your environment here.',
   'pitneybowes.connection.http.unencrypted.apiKey':
-    'Please enter API Key of your Pitney Bowes Account.',
+    'Please enter API Key of your Pitney Bowes Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.encrypted.apiSecret':
-    'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'Please enter API Secret of your Pitney Bowes Account. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.auth.token.token':
     'The access token of your Pitney Bowes account.',
+  'mixpanel.connection.http.unencrypted.projectId': 'Enter your Mixpanel Project ID.<br><b>Steps to get the Project ID: </b><br>1. Sign in to your Mixpanel Account.<br>2. Navigate to <b>Settings</b> → <b>Project settings</b>.<br>3. Select your project (if none exists yet, create a new project).<br>4. Copy your <b>Project ID</b> from the \'Overview\' tab.',
+  'mixpanel.connection.http.encrypted.projectToken': 'Enter your Mixpanel Project token.<br><b>Steps to get the Project Token: </b><br>1. Sign in to your Mixpanel Account.<br>2. Navigate to <b>Settings</b> → <b>Project settings</b>.<br>3. Select your project (if none exists yet, create a new project).<br>4. Copy your <b>Project Token</b> from the \'Overview\' tab.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'mixpanel.connection.http.auth.basic.username': 'Enter your Mixpanel username.<br><b>Steps to get the username: </b><br>1. Sign in to your Mixpanel Account.<br>2. Navigate to <b>Settings</b>  →  <b>Organizational Settings</b> and select an organization.<br>3.Select your service account(if none exists yet, create a new service account).<br>4. Copy your <b>Username</b> from the \'Service account\' tab.',
+  'mixpanel.connection.http.auth.basic.password': 'Enter your Mixpanel secret.<br><b>Steps to get the secret: </b><br>1.Sign in to your Mixpanel Account.<br>2. Navigate to <b>Settings</b>  →  <b>Organizational Settings</b> and select an organization.<br>3. Create a new service account and Copy your <b>Secret</b> from the \'Service account\' tab.<br> <b>Note:</b> Make sure you save the service account\'s secret. You will never be able to access it again.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'saphana.connection.http.unencrypted.host': 'Enter the host for your SAP S/4HANA Cloud instance. If your instance is located at <b>https://my1234.s4hana.ondemand.com</b>, then enter <b>my1234</b>.<br> This URL can also be found under the "Communication Arrangement" tab → "API-URL" field in your SAP S/4HANA Cloud instance.',
+  'saphana.connection.http.auth.basic.username': 'Enter the username from the Communication Arrangement.<br> For more information, refer to <a href=https://blogs.sap.com/2017/11/09/setting-up-communication-management-in-sap-s4hana-cloud/>Setting up Communication Management in SAP S/4HANA Cloud</a>',
+  'saphana.connection.http.auth.basic.password': 'Enter the password from the Communication Arrangement.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'zenefits.connection.http.auth.token.token': 'Enter your Zenefits App key.<br><b>Steps to get the App key: </b><br>1.Log in to your Zenefits account.<br>2.On the dashboard, Navigate to <b>Company Profile</b> → <b>Custom Integrations</b>.<br>3. Unmask and copy the token. (If none exists yet, click “Add Token” and select required scopes to create a new token.)<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'sapsuccessfactors.connection.http.unencrypted.baseurl': 'Enter the Base URL for your SAP SuccessFactors account.<br>If your instance is located at <b>https://pmsalesdemo8.successfactors.com</b>, then your URL would be <b>apisalesdemo8.successfactors.com</b>.<br>For more information on DCs and API Servers, refer to <a href="https://help.sap.com/viewer/d599f15995d348a1b45ba5603e2aba9b/2105/en-US/af2b8d5437494b12be88fe374eba75b6.html">List of SAP SuccessFactors API Servers</a>.',
+  'sapsuccessfactors.connection.http.unencrypted.clientId': 'Enter your Client ID.<br><b>Steps to get the Client ID:</b> <br>1. Log in to your SAP SuccessFactors account. <br> 2. Navigate to your Admin Center and under tools, search for “Manage OAuth2 Client Applications”.<br>3. Register a Client Application and generate X.509 Certificate in your application or via terminal.<br>4. Click "Download" to download the certificate and the private key. (which can only be seen while registering an app)<br>5. Once registered, you can find your Client ID under the "API Key" field.',
+  'sapsuccessfactors.connection.http.unencrypted.companyId': 'Enter your Company ID, which you can find under your profile dropdown in "Show Version information", when logged in.',
+  'sapsuccessfactors.connection.http.unencrypted.userId': 'Enter Your SAP SuccessFactors User ID.',
+  'sapsuccessfactors.connection.http.encrypted.assertion': 'Once you register an application in the <b>API center</b>, you can download the private key, using which you can generate a SAML Assertion via terminal. For more information, refer to <a href=https://launchpad.support.sap.com/#/notes/3031657>How to generate SAML assertion for SAP SuccessFactors API</a><br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your assertion safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pagerdutyevents.connection.http.encrypted.routingKey': 'Enter the Routing Key. This is the 32 character Integration Key for an integration on a service or on a global ruleset.<br> <b>Steps to get the key:</b><br>1. Log in to the Pagerduty account.<br>2. From the dashboard, Navigate to <b>Integrations</b> → <b>Developer Tools</b> → <b>Developer Mode</b>.<br>3. Select an App. Under functionality, Click the manage option for Events Integration.<br>4. From the Event API endpoint, copy the Integration Key. For example, if the endpoint looks like “https://events.pagerduty.com/integration/Integartion-Key/enqueue”. Copy the value which is in place of <b>Integration-Key</b> to authenticate the connection.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'quickbase.connection.http.unencrypted.hostname': 'Enter the hostname for your Quickbase account. For example, if your account is located at https://demo.quickbase.com/, then your hostname would be <b>demo.quickbase.com</b>',
+  'quickbase.connection.http.unencrypted.appId': 'Enter the App ID. <br><b>Steps to get the App ID:</b><br>1. Sign in to your Quickbase account.<br>2. Navigate to <b>My Apps</b> and select an application(If none exists yet, create a new app).<br>3. Copy the <b>App ID</b> from your address bar.',
+  'quickbase.connection.http.auth.token.token': 'Enter the token of your Quickbase account.<br> <b>Steps to get the token:</b> <br>1. Sign in to your Quickbase Account.<br>2. Navigate to <b>My profile</b> > <b>My Preferences</b> > <b>Manage User Tokens</b>.<br>3. Copy your Token(If none exists yet or you want to change the token, Click <b>New token</b> and select appropriate permissions to create a new token).<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'orangehrm.connection.http.unencrypted.username': 'Enter the username of your OrangeHRM account.',
+  'orangehrm.connection.http.encrypted.password': 'Enter the password of your OrangeHRM account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'orangehrm.connection.http.unencrypted.subdomain': 'Enter the subdomain of your OrangeHRM account. For example, if <b>https://mycompany.orangehrm.com</b> is the login URL, then <b>"mycompany"</b> is the subdomain.',
+  'pricefx.connection.http.unencrypted.baseurl': 'Enter the Base URL for your PriceFx account. For example, if your account is located at https://test.pricefx.com/, then enter “test.pricefx.com”.<br>For more information, refer to <a href="https://pricefx.atlassian.net/wiki/spaces/KB/pages/2564915288/REST+API+Documentation#RESTAPIDocumentation-HowtoAccesstheAPI">How to Access the API</a>.',
+  'pricefx.connection.http.unencrypted.partition': 'Please enter the partition of your Pricefx account.This can be found under the Administration/User Admin section of your Pricefx account.',
+  'pricefx.connection.http.unencrypted.username': 'Please enter the username of your Pricefx account.',
+  'pricefx.connection.http.encrypted.password': 'Please enter the password of your Pricefx account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
   'lexbizz.connection.instanceURI':
     'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://isv.lexbizz.app.',
@@ -374,11 +411,14 @@ export default {
   'lexbizz.connection.http.unencrypted.username':
     'Please enter username of your lexbizz account.',
   'lexbizz.connection.http.encrypted.password':
-    'Please enter password of your lexbizz account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+    'Please enter password of your lexbizz account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'lexbizz.connection.http.unencrypted.company':
     'Please enter company name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.locale':
     'Please enter locale of your lexbizz account.',
+  'braintree.connection.http.unencrypted.environment': 'Select the environment of your Braintree account.',
+  'braintree.connection.http.auth.basic.username': 'Enter the Public key of your Braintree account.<br> <b>Steps to get the Public Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Public Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)',
+  'braintree.connection.http.auth.basic.password': 'Enter the Private key of your Braintree account.<br> <b>Steps to get the Private Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Private Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
   'myobadvanced.connection.instanceURI':
       'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be demo.myobadvanced.com.',
@@ -389,14 +429,14 @@ export default {
   'myobadvanced.connection.http.unencrypted.username':
       'Please enter username of your MYOB Advanced account.',
   'myobadvanced.connection.http.encrypted.password':
-      'Please enter password of your MYOB Advanced account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+      'Please enter password of your MYOB Advanced account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'myobadvanced.connection.http.unencrypted.company':
       'Please enter company name of your MYOB Advanced account.',
   'myobadvanced.connection.http.unencrypted.locale':
       'Please enter locale of your MYOB Advanced account.',
-  'g2.connection.http.auth.token.token': 'Please enter your API Token here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.<br><b>Steps to get API Token:</b> <br>Login to your G2 account, under Integrations > API Tokens, you can create and manage your Tokens.',
+  'g2.connection.http.auth.token.token': 'Please enter your API Token here.<br><b>Steps to get API Token:</b> <br>Login to your G2 account, under Integrations > API Tokens, you can create and manage your Tokens.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shippo.connection.http.encrypted.token':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can find your token on the Shippo API settings page.',
+    'Please enter your API key here. You can find your token on the Shippo API settings page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'acumatica.connection.instanceURI':
     'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001, then the Instance URI would be http://try.acumatica.com/isv.',
   'acumatica.connection.http.unencrypted.endpointName':
@@ -406,35 +446,35 @@ export default {
   'acumatica.connection.http.unencrypted.username':
     'Please enter username of your Acumatica account.',
   'acumatica.connection.http.encrypted.password':
-    'Please enter password of your Acumatica account.',
+    'Please enter password of your Acumatica account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'acumatica.connection.http.unencrypted.company':
     'Please enter company name of your Acumatica account.',
   'zoom.connection.http.encrypted.apiKey':
-    'The API Key of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'The API Key of your zoom account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zoom.connection.http.encrypted.apiSecret':
-    'The API Secret of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'The API Secret of your zoom account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bronto.connection.http.unencrypted.clientId':
     'Please enter Client ID of your Bronto Account.',
   'bronto.connection.http.encrypted.clientSecret':
-    'Please enter Client Secret of your Bronto Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'Please enter Client Secret of your Bronto Account. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bronto.connection.http.auth.token.token':
     'The access token of your Bronto account.',
   'greenhouse.connection.http.auth.basic.username':
-    'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
+    'Please enter your API token here. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'greenhouse.connection.http.unencrypted.userID':
-    'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
+    'Enter the unique user ID for a Greenhouse developer account with “Can manage ALL organization’s API credentials“ permissions. You can view the ID by signing into Greenhouse, viewing the page source in the browser’s Inspector (right-click and choose Inspect), and searching for “USER_ID“ in the HTML code.',
   'connection.http.unencrypted.adminUser':
     'Please check this if you are The Power BI Service Administrator. The Power BI Service Administrator role can be assigned to users who should have access to the Power BI Admin Portal without also granting them other Office 365 administrative access.',
   'mailgun.connection.http.auth.basic.password':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+    'Please enter your API key here. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'procurify.connection.http.procurifySubdomain': 'Enter your Procurify subdomain. For example, in https://celigo.procurify.com/api "celigo" is the subdomain.',
   'procurify.connection.http.unencrypted.username':
     'Please enter the Username of your Procurify account.',
-  'procurify.connection.http.encrypted.password': 'Please enter password of your Procurify account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'procurify.connection.http.encrypted.password': 'Please enter password of your Procurify account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'procurify.connection.http.generateClientIdandSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify account.',
   'procurify.connection.http.unencrypted.clientId':
     'Please click "Generate client id & secret" button to get Client id of your Procurify account.',
-  'procurify.connection.http.encrypted.clientSecret': 'Please click "Generate client id & secret" button to get Client secret of your Procurify account.',
+  'procurify.connection.http.encrypted.clientSecret': 'Please click "Generate client id & secret" button to get Client secret of your Procurify account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-generate this value each time; it is stored only when the connection is saved and never displayed as text.',
   'procurify.connection.http.auth.token.token':
     'The access token of your Procurify account.',
   'strata.connection.http.unencrypted.applicationKey':
@@ -444,23 +484,23 @@ export default {
   'strata.connection.http.auth.token.token':
     'The Access Token of your Strata account',
   'aptrinsic.connection.http.encrypted.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from Account Settings in REST API section.',
+    'Please enter your API key here. This can be obtained from Account Settings in REST API section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.coupaSubdomain':
     'Please enter the subdomain of your account here which can be obtained from the login url.',
   'coupa.connection.http.auth.token.token':
-    'Please enter API Key of your Coupa account',
+    'Please enter API Key of your Coupa account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.microsoftDynamics365Subdomain':
-    'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+    'Please enter the unique portion of the dynamics.com address that you visit to log in to your portal. For example, if your portal is found at https://my-corp.dynamics.com, then enter <b>my-corp</b> for the subdomain.',
   'quip.connection.http.auth.token.token':
-    'Please enter your API token here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
+    'Please enter your API token here. This can be obtained from the Settings section and API Access token subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'oandaexchangerates.connection.http.auth.token.token':
-    'Please enter the API Key of your OANDA account.',
+    'Please enter the API Key of your OANDA account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.sugarcrmSubdomain': 'Please enter your SugarCRM subdomain. For example, in https://jpeyoy4394.trial.sugarcrm.eu/http/v11_2/ "jpeyoy4394.trial.sugarcrm.eu" is the subdomain.',
   'sugarcrm.connection.http.unencrypted.version':
     'Please enter endpoint version of your SugarCRM account.',
   'sugarcrm.connection.http.unencrypted.clientID': 'The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id \'s can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.',
   'sugarcrm.connection.http.unencrypted.platform': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
-  'sugarcrm.connection.http.encrypted.clientSecret': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+  'sugarcrm.connection.http.encrypted.clientSecret': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.http.auth.token.token':
     'The access token of your Tableau account.',
   'connection.http.marketoSubdomain':
@@ -468,17 +508,17 @@ export default {
   'marketo.connection.http.unencrypted.clientId':
     'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
   'marketo.connection.http.encrypted.clientSecret':
-    'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zimbra.connection.http.unencrypted.userAccount':
     'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
   'grms.connection.http.unencrypted.apiKey':
     'GRMS assigned API key to a partner account. API key is given out by GRMS customer support team.',
   'grms.connection.http.encrypted.apiSecret':
-    'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+    'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'grms.connection.http.auth.token.token':
     'The Access Token of your GRMS account',
   'retailops.connection.http.encrypted.apiKey':
-    'Please enter API Key of your RetailOps Account.Path to get API Key(Administration > User Manager>Select your user account>User Details pane(bottom-right),when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously). Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+    'Please enter API Key of your RetailOps Account.Path to get API Key(Administration > User Manager>Select your user account>User Details pane(bottom-right),when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously). This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'skubana.connection.environment':
     'Please select your environment here. Select Sandbox if the account is created on https://demo.skubana.com/login. Select Production if the account is created on https://app.skubana.com/login.',
   'connection.http.unencrypted.profileId':
@@ -489,7 +529,7 @@ export default {
   'dunandbradstreet.connection.http.unencrypted.username':
     'Please enter username of your Dun & Bradstreet account.',
   'dunandbradstreet.connection.http.encrypted.password':
-    'Please enter password of your Dun & Bradstreet account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+    'Please enter password of your Dun & Bradstreet account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'dunandbradstreet.connection.http.auth.token.token':
     'The access token of your Dun & Bradstreet account.',
   'adp.connection.accType':
@@ -497,7 +537,7 @@ export default {
   'adp.connection.http.unencrypted.clientId':
     'Please enter the Client ID provided by ADP support service.',
   'adp.connection.http.encrypted.clientSecret':
-    'Please enter the Client Secret provided by ADP support service. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+    'Please enter the Client Secret provided by ADP support service. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'adp.connection.http.clientCertificates.cert':
     '1. Install OpenSSL Light and configure the OpenSSL by adding an environmental variable after this we have to open the openssl.cfg file which is located in the C drive and remove the ìunstructuredName = An optional company nameî present in ì[req_attributes ]î area.2.After installation, we have to generate a CSR file (Certificate Signing Request) file using command prompt and execute the below commands. Replace yourcompanynamehere with an actual company name. Command to generate the CSR file: Openssl req -new -key yourcompanynamehere_auth.key -out yourcompanynamehere_auth.csr3.Email the .csr file that was generated to ADP Representative and we have to wait for the certificate Signing and the ADP Representative will mail us .pem file.',
   'adp.connection.http.clientCertificates.key':
@@ -506,33 +546,32 @@ export default {
     'If there is any password for PFX file then it should be given here.',
   'faire.connection.http.accountType': 'Please select your environment here.',
   'faire.connection.http.encrypted.apiKey':
-    'Please Enter the access token got from Faire support. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
+    'Please Enter the access token got from Faire support. This can be obtained from the Settings section and API Access token subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.Multiple layers of protection, including AES 256 encryption, are in place to keep your access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ware2go.connection.http.accountType':
     'Please select your environment here. Select Staging if the account is created on https://openapi.staging.ware2goproject.com/ware2go. Select Production if the account is created on https://openapi.ware2goproject.com/ware2go.',
   'ware2go.connection.http.auth.basic.username':
     'Please enter your Access Token here. This can be obtained by reaching out to Ware2Go support team.',
   'ware2go.connection.http.auth.basic.password':
-    'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
+    'Please enter your Access Secret here. This can be obtained by reaching out to Ware2Go support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ware2go.connection.http.unencrypted.merchantId':
     'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
   'ware2go.connection.http.unencrypted.username': 'Please enter the username of your Ware2Go account here.',
-  'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+  'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'messagemedia.connection.http.auth.basic.username':
     'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'messagemedia.connection.http.auth.basic.password':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Navigate to Merchant view on left hand side and click on API keys section to find API Key.',
-  'vend.connection.http.subdomain':
-    "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
+    'Please enter your API key here. Navigate to Merchant view on left hand side and click on API keys section to find API Key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'vend.connection.http.subdomain': 'Enter your Vend subdomain. For example, in https://soda.vendhq.com, \'soda\' is the subdomain.',
   'connection.http.apiEndpoint':
-    'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
+    'Enter the unique API endpoint for your account, found in the Miva admin at Domain settings > Site configuration > Base URL for graphics. For example, avim.mivamerchantdev.com/mm5/.',
   'connection.http.unencrypted.Store_Code':
-    'Please enter the Store Code. Under store settings, we will get the store code.',
+    'Enter the store code, as listed in your Miva store&amp;s settings.',
   'connection.xMivaAPIToken':
-    'Please enter the API token of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. The token is generated in the Miva admin under Users > API Tokens. Note: When we are generating token we should select the Accept Requests Without Signature, Accept Requests Without Timestamp and also we should provide IP Address as 0.0.0.0/0 and also we should provide required permissions for groups and functions.',
+    'Enter the API token of your account. (Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe.) This token is generated in the Miva admin under Users > API tokens. <br>NOTE: When generating the Miva token on this page, also select the security options <b>Accept requests without signature</b> and <b>Accept requests without timestamp</b>. In addition, provide the <b>Allowed IP address</b> 0.0.0.0/0.',
   'target.connection.accType':
     'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
   'target.connection.http.auth.token.token':
-    'Please enter the x-seller-token provided by Target',
+    'Please enter the x-seller-token provided by Target.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'target.connection.http.unencrypted.x-seller-id':
     'Please enter the x-seller-id provided by Target.',
   '3plcentral.connection.http.unencrypted.tpl':
@@ -540,54 +579,36 @@ export default {
   '3plcentral.connection.http.unencrypted.userLoginId':
     'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
   'loopreturns.connection.http.auth.token.token': `Please enter your API key here. Log into your Loop Returns Account. Go to Settings > Developers, you can generate an API key or use an existing one.
- Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.`,
-  'shopify.connection.rest.authType': 'Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.',
-  'shopify.connection.rest.storeURL': 'Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.',
-  'shopify.connection.rest.basicAuth.username': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
-  'shopify.connection.rest.basicAuth.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
-  'zendesk.connection.rest.zendeskSubdomain':
-    'Please enter your team name here which you configured while signing up for a new Zendesk account.',
-  'jet.connection.rest.refreshTokenBody.user':
-    'API User Key available from Jet under API Section-> Get API Keys',
-  'jet.connection.rest.encrypted.password':
-    'Secret Key available from Jet under API Section-> Get API Keys',
-  'jira.connection.rest.baseURI':
-    'The base URI for JIRA. For example, http://www.company.com/confluence',
-  'jira.connection.rest.basicAuth.username':
-    'The username of your JIRA account.',
-  'jira.connection.rest.basicAuth.password':
-    'The password of your JIRA account.',
-  'magento.connection.rest.baseURI':
-    'regex magento regex The Base URI of Magento 2.',
-  'magento.connection.rest.bearerToken':
-    'The access token of your Magento 2 account.',
-  'bigcommerce.connection.rest.basicAuth.username':
-    'Client ID will be the Username.',
-  'bigcommerce.connection.rest.basicAuth.password':
-    'Access Token will be the Password.',
-  'bigcommerce.connection.rest.bearerToken':
-    'This Access Token works in tandem with the Client ID.',
-  'bigcommerce.connection.rest.unencrypted.clientId':
-    'This Client ID works together with the Access Token to grant authorization.',
-  'bigcommerce.connection.storeHash':
-    'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+ <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.`,
+  'clover.connection.http.unencrypted.environment': 'Please select the environment of your Clover account.',
+  'clover.connection.http.unencrypted.region': 'Please select your region.',
+  'clover.connection.http.unencrypted.merchantId': 'Please enter the Merchant ID of your Clover account.<br> <b>Follow the below steps to get Merchant ID:</b><br> 1.  Log in to your clover account.<br>2. On the dashboard, navigate to SetUp, select Merchants.<br>3. You can find your Merchant ID(MID) in that section if you have a merchant created.',
   'inspectorio.connection.http.encrypted.apiKey':
-    'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+    'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'inspectorio.connection.enviornment':
     'Please select the environment of your Inspectorio account.',
+  'orderful.connection.http.unencrypted.version': 'Please enter the version of your Orderful account.',
   'orderful.connection.http.auth.token.token':
-    'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API token.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+    'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API token.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'gorgias.connection.gorgiasSubdomain': 'Please enter your Gorgias subdomain. For example, in https://temp-portal.gorgias.com \'temp-portal\' is the subdomain.',
   'gorgias.connection.http.auth.basic.username':
     'Please enter the Username of your Gorgias account',
   'gorgias.connection.http.auth.basic.password':
-    'Please enter the Password of your Gorgias account',
+    'Please enter the Password of your Gorgias account <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmart.connection.environment':
-    'Please select the enviornment of your Walmart account here.',
+    'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
-    'Please enter Client Secret of your Walmart Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
+    'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the consumer ID, which you can find in your <a href="https://developer.walmart.com/ca/">Walmart Canada account</a>.<br>1. Sign in and click <b>My Account</b> at the top right.<br>2. Choose the account type <b>Marketplace</b>, and sign in with your email address & password.<br>3. From the <b>Settings</b> menu, select <b>Consumer IDs & Private Keys</b>.<br>4. Copy the consumer ID. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
+  'walmartcanada.connection.http.unencrypted.localeId': 'Select the geographic location of your Walmart Canada account.',
+  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the private key, which you can find in your <a href="https://developer.walmart.com/ca/">Walmart Canada account</a>.<br>1. Sign in and click <b>My Account</b> at the top right.<br>2. Choose the account type <b>Marketplace</b>, and sign in with your email address & password.<br>3. From the <b>Settings</b> menu, select <b>Consumer IDs & Private Keys</b>.<br>4. Copy the private key. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
+  'paylocity.connection.http.unencrypted.environment': 'Please select the environment of your Paylocity account.',
+  'paylocity.connection.http.unencrypted.companyId': 'Enter the Company ID.<br><br><b>Steps to get the Company ID:</b><br> 1. Sign in to the Paylocity account.<br>2.On the Dashboard, select <b>Help</b> → <b>About/Copyright</b>.<br>3. Copy the Company ID.',
+  'freshservice.connection.http.unencrypted.subdomain': 'Enter the subdomain of your Freshservice account. For example, if https://mycompany.freshservice.com is the login URL, then \'mycompany\' is the subdomain.',
+  'freshservice.connection.http.auth.basic.username': 'Enter the username of your Freshservice account.',
+  'freshservice.connection.http.auth.basic.password': 'Enter the password of your Freshservice account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
@@ -595,35 +616,56 @@ export default {
   'logisense.connection.http.unencrypted.username':
     'Please enter the Username of your LogiSense account.',
   'logisense.connection.http.encrypted.password':
-    'Please enter the Password of your LogiSense account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+    'Please enter the Password of your LogiSense account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'logisense.connection.http.encrypted.clientId':
-    'Please enter the client_id provided by LogiSense team and perform any needed whitelisting with the destination/source systems.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client id safe.',
+    'Please enter the Client ID provided by LogiSense team and perform any needed whitelisting with the destination/source systems.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client ID safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'microsoftteams.connection.http.unencrypted.tenantId': 'Please enter the Tenant ID of your Azure application.<br><b>Please follow the steps to find the Tenant ID:</b><br>1. Login to your Azure portal.<br>2. Under Azure services, click on App registrations.<br>3. Select the application which you will be using for Microsoft Teams.<br>4. In the overview tab under Essentials, you will find your Directory (tenant) ID.',
+  'prestashop.connection.storeURL': 'Please enter the URL where you log in to your back office. For example, if http://localhost/prestashop/admin12345 is your login URL, then just enter \'localhost/prestashop\'.',
+  'prestashop.connection.http.encrypted.apiKey': 'Please enter the API key of your PrestaShop account.<br><b>Steps to fetch the API key</b><br>1.Login to your back office.<br>2.In the left pane, go to <b>CONFIGURE > Advanced Parameters > Webservice</b>, under Configuration, <b>Enable PrestaShop\'s webservice</b> should be set to YES.<br>3. On the same page, you’ll find an option to add a new webservice key. You can give the appropriate scopes and generate a key.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API Key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'adobesign.connection.http.unencrypted.subdomain': 'Please enter the “shard” of your Adobe Sign account.For example, in https://na3.adobesign.com \'na3\' is the subdomain.',
+  'adobesign.connection.http.unencrypted.email': 'Please enter the email of API caller using the Adobe Sign account.',
   'joor.connection.environment':
-    'Please select the enviornment of your JOOR account here.',
+    'Please select the environment of your JOOR account here.',
   'joor.connection.http.encrypted.apiKey':
-    'Please enter the API token thats generated by the JOOR technical team and provided to approved clients to access the AIS web services.',
+    'Please enter the API token thats generated by the JOOR technical team and provided to approved clients to access the AIS web services.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'freshworks.connection.http.freshworksSubdomain': 'Please enter the Subdomain of your Freshworks CRM account. <br><b>Steps to fetch the subdomain:</b><br>1. Log in to your Freshworks CRM Account.<br>2. In the URL you will find the subdomain. For example:- If “https://test.myfreshworks.com/crm/marketer/mas/#/settings/domain-verify“ is the URL, then the subdomain will be <b>test</b> from “test.myfreshworks.com“.',
+  'freshworks.connection.http.encrypted.apiKey': 'Please enter the API key of your Freshworks CRM account.<br><b>Steps to fetch the API key:</b><br>1. Log in to your Freshworks CRM account.<br>2. Click on your profile picture and select <b>Profile Settings</b>.<br>3. Click on the <b>API Settings</b> tab.<br>4. You can find your API key in the field <b>Your API key.</b> <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'yotpo.connection.http.unencrypted.clientId': 'Please enter the API key of your Yotpo account.<br><b>Steps to fetch the API key:</b><br>1. Log in to your Yotpo <b>Reviews & Ratings</b> Account as an administrator.<br>2. Click on the profile icon at the top right corner of the screen.<br>3.Select <b>Store Settings</b>.<br>4.You will find your Yotpo API Credentials at the bottom of the <b>General Settings</b> section.',
+  'yotpo.connection.http.encrypted.clientSecret': 'Please enter the API secret of your Yotpo account.<br><b>Steps to fetch the API secret:</b><br>1. Log in to your Yotpo <b>Reviews & Ratings</b> Account as an administrator.<br>2. Click on the profile icon at the top right corner of the screen.<br>3.Select <b>Store Settings</b>.<br>4.You will find your Yotpo API Credentials at the bottom of the <b>General Settings</b> section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'googleads.connection.http.encrypted.developerToken': 'Enter the Developer token of your Google Ads account. Use the following steps to retrieve the developer token:<br>1. Log in to your Manager Account. (You can apply for a token for your Manager Account directly from the Google Ads UI.)<br> 2.Navigate to <b>TOOLS > MORE TOOLS > API Center</b>. The API Center option only displays for Google Ads Manager Accounts.<br> 3.You will find your <b>Developer token</b> under <b>API Access.</b> <br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your developer token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'googleads.connection.http.unencrypted.customerId': 'Enter the Customer ID of your Google Ads account. Use the following steps to retrieve the Customer ID:<br> 1.Log in to your Google Ads account.<br> 2. Click the help icon (<b>?</b>) on the top right corner of the page. <br> 3.Your <b>Customer ID</b> displays at the bottom of the menu. <br> If you are using a client account to make API calls, enter the client customer ID in the <b>Customer ID</b> field and manager customer ID in the <b>Login customer ID</b> field.',
+  'googleads.connection.http.unencrypted.loginCustomerId': 'Enter the Login customer ID of your Google Ads account. For Google Ads API calls made by a manager to a client account, you must supply the login-customer-id. This value represents the Google Ads customer ID of the manager making the API call.<br> <b>Note:</b> If you are making API calls directly to a manager account then enter the same value as <b>Customer ID</b>.',
+  'looker.connection.http.unencrypted.instanceurl': 'Enter the instance URL for Looker. For example, if your instance is located at https://test-instance.cloud.looker.com, then your Instance URL would be <b>test-instance.cloud.looker.com</b>. If your URL includes port number, it should be specified as a part of the Instance URL. For example, <b>test-instance.cloud.looker.com:443</b>',
+  'looker.connection.http.unencrypted.clientId': 'Enter your Client ID.<br><b> Steps to get the Client ID:</b><br> 1. Log in to your Looker account. <br>2. Navigate to <b>Admin > Users</b>. Add a new user or edit an existing user.<br>3. Under the user, you will find <b>API3 Keys</b>. Click <b>Edit Keys</b>, this will redirect to a page where you can view <b>API3 Keys.</b>(If none exists yet or you want to create new API credentials, click <b>New API3 Key</b> to generate a new pair.)',
+  'looker.connection.http.encrypted.clientSecret': 'Enter your Client secret.<br> <b>Steps to get the Client secret:</b><br> 1. Log in to your Looker account. <br>2. Navigate to <b>Admin > Users</b>. Add a new user or edit an existing user.<br>3. Under the user, you will find <b>API3 Keys</b>. Click <b>Edit Keys</b>, this will redirect to a page where you can view <b>API3 Keys</b>.(If none exists yet or you want to create new API credentials, click <b>New API3 Key</b> to generate a new pair.)<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'pandadoc.connection.http.auth.type': 'Please select Authentication Type.',
+  'pandadoc.connection.http.auth.token.token': 'Enter the API key of your PandaDoc account.<br><b> Steps to get the API key:</b> <br>1. Sign in to the PandaDoc account. <br> 2. Navigate to <b>Profile settings -> API & Integrations -> API</b> and generate the API key.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sapbydesign.connection.storeURL': 'Please enter the Store URL of your SAP ByDesign account.',
   'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
-  'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s environment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
-  'precisely.http._iClientId': 'Save your API key and secret of Prcisely account in iClient for an added layer of security.',
+  'precisely.http._iClientId': 'Save your API key and secret of Precisely account in iClient for an added layer of security.',
   'microsoftdynamics365financeandoperation.connection.http.subdomain': 'Please enter the subdomain of your Microsoft Finance and Operations account. <br><b>Steps to get the organization\'s root URL: </b><br>1.Login to LCS portal<br>2.Open the project Associated to Finance and Operations.<br>3.Scroll to the right and in the Environment pane, click on the deployed topology.<br>4.Click on the Login at top right corner and click on Log on to environment after that a separate tab will open in browser and copy the URL after https:// upto .dynamics.com from search.',
-  'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
-  if you're using a production account, you'll find your API keys under the 'API Management' page.`,
+  'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
+  if you're using a production account, you'll find your API keys under the 'API Management' page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.`,
   'jiraserver.connection.http.baseURI':
     'Please enter the base URI for Jira Server. For example, http://localhost:8080/rest/api/2/customFields, if this is your endpoint URL. The Base URL would be http://localhost:8080/.',
   'jiraserver.connection.http.auth.basic.username':
     'Please enter the username of your Jira Server account.',
   'jiraserver.connection.http.auth.basic.password':
-    'Please enter the password of your Jira Server account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+    'Please enter the password of your Jira Server account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'gainsight.connection.http.gainsightInstanceURL': 'Please enter the instance URI shown in your Gainsight CS account.For example, if https://test-domain.gainsightcloud.com/v1/ui/home is the URL after logging in,then the instance URI would be \'test-domain.gainsightcloud\'.',
-  'gainsight.connection.http.auth.token.token': 'Please enter the API key of Gainsight account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Steps to get API key:</b><br>1. Login to your Gainsight CS account<br>2. Navigate to Administration > Integrations > Connectors 2.0 > Connectors tab > Click on Gainsight API <br> 3.Click the Create Connection button and click GENERATE ACCESS KEY.<br><b> Note:</b>You can create a connection or edit the existing connection to retrieve the Access Key.',
+  'gainsight.connection.http.auth.token.token': 'Please enter the API key of Gainsight account here.<br><b>Steps to get API key:</b><br>1. Login to your Gainsight CS account<br>2. Navigate to Administration > Integrations > Connectors 2.0 > Connectors tab > Click on Gainsight API <br> 3.Click the Create Connection button and click GENERATE ACCESS KEY.<br><b> Note:</b>You can create a connection or edit the existing connection to retrieve the Access Key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'dotdigital.connection.http.auth.basic.username': 'Please enter the username from API user credentials of your Dotdigital account.To know how to create the API user, please follow the link <a href=https://developer.dotdigital.com/docs/getting-started-with-the-api#setting-up-your-api-user>https://developer.dotdigital.com/docs/getting-started-with-the-api#setting-up-your-api-user</a>.',
-  'dotdigital.connection.http.auth.basic.password': 'Please enter the password from API user credentials of your Dotdigital account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'dotdigital.connection.http.auth.basic.password': 'Please enter the password from API user credentials of your Dotdigital account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'dotdigital.connection.http.region': 'Please select your region.',
-  'channelape.connection.http.auth.token.token': 'To generate a new private key visit ChannelApe and create an API Account for your business. If you want to access the API\'s via a user account, you can use the Users - Create session request, and use that Session ID as the X-Channel-Ape-Authorization-Token.',
+  'channelape.connection.http.auth.token.token': 'To generate a new private key visit ChannelApe and create an API Account for your business. If you want to access the API\'s via a user account, you can use the Users - Create session request, and use that Session ID as the X-Channel-Ape-Authorization-Token.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your private key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'checkout.connection.environment': 'Please select the environment of your Checkout.com account.',
-  'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'walmartmexico.connection.environment':
+    'Please select the environment of your Walmart Mexico account here.',
+  'walmartmexico.connection.http.unencrypted.clientId': 'Enter the client ID, which you can find at the Walmart Mexico <a href="https://developer.walmart.com/mx/">Developer portal</a>: <br> 1. Click <b>My Account</b> at the top right.<br> 2. Choose the account type <b>Marketplace</b>, and sign in with your email address & password. <br> 3. Copy the client ID shown on the dashboard. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
+  'walmartmexico.connection.http.encrypted.clientSecret': 'Enter the client secret, which you can find at the Walmart Mexico <a href="https://developer.walmart.com/mx/">Developer portal</a>: <br> 1. Click <b>My Account</b> at the top right.<br> 2. Choose the account type <b>Marketplace</b>, and sign in with your email address & password. <br> 3. Copy the client secret shown on the dashboard. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -686,7 +728,7 @@ export default {
   'connection.netsuite.email':
     'The email address that you use to login to NetSuite.',
   'connection.netsuite.password':
-    'Your NetSuite password.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password data safe.',
+    'Your NetSuite password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.netsuite.tokenId':
     "Important: before creating an Access Token in NetSuite for integrator.io, please make sure you have installed the 'Celigo integrator.io' SuiteApp (i.e. the Bundle with id 20038) in your NetSuite account. You must reference 'integrator.io' in the 'Application' field for all Access Tokens used by integrator.io. After you create an Access Token in NetSuite, 'Token Id' and 'Token Secret' will be displayed only once (on the token confirmation page inside NetSuite). Please copy and paste 'Token Id' here before you leave the confirmation page.",
   'connection.netsuite.tokenSecret':
@@ -699,63 +741,28 @@ export default {
     'Set this field to limit (or increase) the number of concurrent requests allowed by this connection.  Please contact NetSuite if you are unsure how many concurrent requests are allowed in your NetSuite account.  You can also contact NetSuite to purchase additional concurrent requests if you need more throughput.  If you need more throughput than 25 concurrent requests for a single connection resource then please consider creating a second connection resource and partitioning your flows across different connections.',
   'connection.netsuite.concurrencyLevel':
     'Set this field to limit (or increase) the number of concurrent requests allowed by this connection.  Please contact NetSuite if you are unsure how many concurrent requests are allowed in your NetSuite account.  You can also contact NetSuite to purchase additional concurrent requests if you need more throughput.  If you need more throughput than 25 concurrent requests for a single connection resource then please consider creating a second connection resource and partitioning your flows across different connections.',
-  'connection.rest.mediaType':
-    'The data format that should be used for all HTTP requests sent to the REST API.  Typically a REST API will only support one media type and will publish this info right at the top of their API guides.',
-  'connection.rest.baseURI':
-    "The common part of an API's URL that can be used across all the different HTTP/REST API endpoints that you invoke. Using a base URI in your connection makes it easier to configure all your exports and imports because all you need then is the Relative URI, and using a Base URI also makes it easier to manage upgrading versions of the HTTP/REST API because all you typically need to change is the version value in the Base URI. Assuming that the new version of the REST API is mostly backward compatible, very few of your exports and imports should need to be changed.\nTypically, a Base URI will have the following format: https://< api.domain.com>/<version>. For example, 'https://api.stripe.com/v1' is the Base URI you would use for Stripe's v1 API. Another example, 'https://www.googleapis.com/calendar/v3' is the Base URI you would use for Google's v3 calendar API.",
-  'connection.rest.bearerToken':
-    'Please enter your API token here.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
-  'connection.rest.tokenLocation':
-    "Use this field to specify where in the HTTP request the API token should be located.  If both 'URL Parameter' and 'Header' are supported by the REST API then 'Header' is the preferred option because HTTP header data is slightly less likely to end up in an access log file (i.e. in the REST API's server logs).",
   'connection.configureTokenRefresh':
-    'If your token is going to expire, you set up automatic refresh though integrator.io. You’ll need to get some info from the API documentation for the app or system that you’re working with for refresh token paths and any custom headers for the token request.',
-  'connection.rest.tokenParam':
-    "Use this field to specify the name of the URL parameter that will hold the API token value.  For example, if you specify 'myAPITokenURLParam' then all HTTP requests will include the following: '?myAPITokenURLParam=bearerToken'.",
-  'connection.rest.refreshTokenURI':
-    'The URL that intrgrator.io will need to call to refresh the token.',
-  'connection.rest.refreshTokenMediaType':
-    'Choose the media type for refresh token request body.',
-  'connection.rest.refreshTokenMethod':
-    'Choose the HTTP method for the refresh token request.',
-  'connection.rest.refreshTokenPath':
-    'If the token will be returned in the response body, you can provide a path to the token here.',
-  'connection.rest.refreshTokenHeaders':
-    'You can configure the headers for the refresh token request with custom key value pairs that are specific to your needs.',
-  'connection.rest.scope':
-    "Use this field to list out all the scope values that should be sent when a connection is authorized.  The list of supported scopes for any given REST API should be documented clearly in that API's user guide.  If you cannot find this info then please contact the company, or author that owns the API.",
-  'connection.rest.scopeDelimiter':
-    "Use this field to override the default delimiter (' ') used to separate scope values sent to the REST API during the authorization process.",
-  'connection.rest.refreshToken':
-    'This field is set automatically during the OAuth 2.0 authorization process, and can never be retrieved in the browser or the integrator.io API (this field is only used by the back-end servers to generate access tokens as needed).  Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
-  'connection.rest.authURI':
-    'Use this field to specify the authorization endpoint that should be invoked when the initial OAuth 2.0 workflow kicks off.',
-  'connection.rest.authHeader':
+    'Check this box if your token expires after a period of time. A series of new fields will appear in the form.',
+  'connection.http.auth.token.refreshMediaType':
+    'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
+  'connection.http.auth.cookie.method':
+    'Select GET or POST for the session cookie request.',
+  'connection.http.auth.cookie.uri':
+    'Provide the absolute URL where the session cookie is obtained.',
+  'connection.http.auth.cookie.successStatusCode':
+    'This field only needs to be set if the HTTP status code for success is not 200.',
+  'connection.http.auth.token.headerName':
     "By default, integrator.io will send all authentication type info in the 'Authorization: ' HTTP header field.  If the REST API you are connecting to requires a different HTTP header, use this field to provide an override.",
-  'connection.rest.authScheme':
-    'By default, integrator.io will follow the HTTP specs with regards to auth scheme names (i.e. Bearer, OAuth, MAC, etc...), but if the REST API you are connecting to does not follow the specs exactly, this field can be used to provide an override.',
   'connection.rest.disableStrictSSL':
     'An optional flag that (if set) skips verifying the SSL certificate, allowing self-signed or expired certs.  It is highly recommended (for hopefully obvious reasons) that you never set this flag for any production data connections.  In general, use at your own risk.',
-  'connection.rest.retryHeader':
-    "It is common for a REST API to return status code 429 if too many requests are made in a short period of time. These 429 responses are typically paired with a 'retry-after' response HTTP header with information used to determine when the next request will be successfully served. It is also possible that an API may use a custom header, and this field can be used to provide an override.",
-  'connection.rest.basicAuth.username':
-    'The basic authentication username. Sometimes services providers use other terms like clientId or API Key',
-  'connection.rest.basicAuth.password':
-    "The password associated with your service account. Sometimes service providers have other names for this field, such as 'secret key', or 'API key', and so on. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
   'connection.rest._iClientId':
     'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own Integration App product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
-  'connection.rest.info':
-    'This read only field is used to store ad hoc profile type data returned by the OAuth 2.0 provider during the OAuth 2.0 authorization flow.',
-  'connection.rest.pingRelativeURI':
-    "Any relative URI for an authenticated HTTP GET request that can be used to test if a connection is working properly.  For example: '/me', '/tokenInfo', '/currentTime', etc...  Whenever a connection is saved, integrator.io will invoke the Ping URI (if one is set), and only if the ping request is successful will the connection resource be saved.  There is also an automated batch process that runs multiple times per hour to continually ping all offline connections (i.e. connections that failed at one point) to bring those connection back online (and to resume any data flows that were paused as a result of the connections being offline).  It is definitely a best practice to set Ping URI on all your REST API connections so that integrator.io can do more to identify offline connections (before they are saved) and also bring them back online automatically wherever possible.",
-  'connection.rest.pingSuccessPath':
-    "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if the ping HTTP request failed, and instead use a field in the response body to identify success vs fail. For these use cases, the 'Ping Success Path' field can be used to specify the JSON path of a field in the response body that should instead be used to determine if a ping request was a success.  For example, if you are building a connection for Slack's API you would set this field to: 'ok' (see Slack API docs for more info).",
-  'connection.rest.pingSuccessValues':
-    'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against this list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
-  'connection.rest.concurrencyLevel':
-    "Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode.  With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency.  APIs like Google's are really great with burst mode, and can typically handle any types of volume.  Other APIs, like Zendesk or Shopify, are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.",
-  'connection.http.mediaType': 'Specify the data format for all sent HTTP requests or received HTTP responses for the connected API. A single API usually supports only one format and publishes this info at the top of their API docs. If the media type for a request or response is different, you can use your export’s success and error media type fields to override the media type for specific endpoints.',
-  'connection.http.successMediaType': 'Specify the content-type of a successful response received from this endpoint. For HTTP exports and connections, we support content-types of XML, CSV, and JSON. For HTTP imports, we support XML and JSON.',
-  'connection.http.errorMediaType': 'Specify the content-type of an error (unsuccessful) response received from this endpoint. We support XML and JSON content-types.',
+  'connection.http.mediaType':
+    'Specify the data format to use in the HTTP request body and HTTP response body.',
+  'connection.http.successMediaType':
+    'Use this field to handle the use case where a successful HTTP response returns a different media type than the original HTTP request body sent.',
+  'connection.http.errorMediaType':
+    'Use this field to handle the use case where an unsuccessful HTTP response returns a different media type than the original HTTP request body sent.',
   'connection.http.baseURI': 'This common part of an API’s URL is used across all of the HTTP endpoints you invoke. A base URI makes it easier to configure exports and imports.',
   'connection.http.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> automatically adds the appropriate content-type header based on the mediaType value described in the connection associated with this request (typically application/json). Note that the request header value automatically includes the authentication method described in the associated connection if required. Use this header field in the rare case when an API requires additional headers other than application or JSON.',
   'connection.http.disableStrictSSL':
@@ -771,29 +778,34 @@ export default {
   'connection.http.ping.relativeURI':
     "Any relative URI (for an HTTP GET request) to an authenticated endpoint that can indicate if a connection is working properly.  For example: '/me', '/tokenInfo', '/currentTime', etc...  Whenever a connection is saved, integrator.io will invoke the Ping URI (if one is set), and only if the ping request is successful will the connection resource be saved.  There is also an automated batch process that runs multiple times per hour to continually ping all offline connections (i.e. connections that failed at one point) to bring those connection back online (and to resume any data flows that were paused as a result of the connections being offline).  It is definitely a best practice to set Ping URI on all your REST API connections so that integrator.io can do more to identify offline connections (before they are saved) and also bring them back online automatically wherever possible.",
   'connection.http.ping.successPath':
-    "There are many non-REST based APIs that will return a 200 HTTP status code even if the ping HTTP request failed, and instead use a field in the response body to identify success vs fail. For these use cases, the 'Ping Success Path' field can be used to specify the path of a field in the response body that should instead be used to determine if a ping request was a success.",
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a successful request. For example, if the API always returns a 200 success HTTP status code, but then indicates success via a 'success' boolean field in the HTTP response body.",
   'connection.http.ping.failPath':
-    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a failed request. For example, if the API always returns a 200 success HTTP status code, but then indicates errors via an 'error.message' field in the HTTP response body.",
   'connection.http.ping.failValues':
-    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request failed. To provide multiple values, use a comma-separated list.',
   'connection.http.ping.successValues':
-    'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against this list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request succeeded. To provide multiple values, use a comma-separated list.',
   'connection.http.ping.errorPath':
-    'This optional field can be used if the response from failed ping request is large and only part of the response should be returned as the reason for a failed ping response. If no value is given, then the full HTTP response is used as a description of the failure. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses to ping requests have no body then a text version of the HTTP status code is used as the reason for failure.',
+    'This optional field is used to specify which field in the HTTP response body contains the detailed error message for the purpose of displaying the error on the error management dashboard.  If this field is not set, then the full HTTP response body will be used as the error message in the error management dashboard.',
   'connection.http.auth.type':
-    "The HTTP adaptors the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>Digest:</b> Select Digest if your service relies on digest authentication.With “Digest” auth, the client sends a first request to the API, and the server responds with a few details, including a number that can be used only once (nonce), a realm value, and a 401 unauthorized response. An encrypted array of data including username and password combined with the data received from the server in the first request is then sent back. The server uses the passed data to generate an encrypted string and compares it against what is sent in the previous step to authenticate requests.'",
-  'connection.http.auth.failStatusCode': 'Use this field if the service you are connecting to returns a status code other than 401 or returns 200 with authentication errors in the HTTP body.',
-  'connection.http.auth.failPath': 'Use this field if the service you are connecting to embeds authentication errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a failed authentication response.',
-  'connection.http.auth.failValues': 'Use this field only if the authentication fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to recognize a failed authentication response.',
+    'Select your connection’s authentication type: <br><b>Basic:</b> This authentication method sends Base64-encoded username and password values in the \'authentication\' HTTP request header. <br><b>Cookie:</b> This session-based method typically includes a unique cookie in the HTTP request header. integrator.io automatically creates and inserts this cookie into every HTTP request sent to your application. <br><b>Custom:</b> For a custom type, integrator.io will not perform any special authentication. You must configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any required values. You can store these values in the encrypted and unencrypted fields in this connection. <br><b>OAuth 2.0:</b> This <a href="https://oauth.net/2/" target="_blank">authorization framework</a> enables integrator.io to obtain limited access to an HTTP service on behalf of an account. Scope is a mechanism in OAuth 2.0 to limit an application’s access to an account. <br><b>Token:</b> The token required for this auth type may be sent in the header, URL, or body of the HTTP request. You can also choose to refresh tokens, if needed. <br><b>Digest:</b> With the <a href="https://en.wikipedia.org/wiki/Digest_access_authentication" target="_blank">digest method</a>, integrator.io  sends the first request to the API, and the server responds with details that include a number that can be used only once (nonce), a realm value, and a 401 unauthorized response. An encrypted array of data including the username and password combined with the data received from the server in the first request is then sent back. The server uses the passed data to generate an encrypted string and compares it against what is sent in the previous step to authenticate requests.',
+  'connection.http.auth.failStatusCode':
+     'This field only needs to be set if the HTTP status code for auth errors is not 401. For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate auth errors.',
+  'connection.http.auth.failPath':
+    "This field only needs to be set if the API returns a field in the HTTP response body to indicate auth errors. For example, if an API returns the field 'errorMessage' with the value 'Auth failed', then you would set this field to 'errorMessage'.",
+  'connection.http.auth.failValues':
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine auth errors. To provide multiple values, use a comma-separated list.',
   'connection.http.auth.basic.username':
     'The basic authentication username. Sometimes services providers use other terms like clientId or API Key',
   'connection.http.auth.basic.password':
-    "The password associated with your service account. Sometimes service providers have other names for this field such as 'secret key', or 'API key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
+    "The password associated with your service account. Sometimes service providers have other names for this field such as 'secret key', or 'API key', etc.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.http.auth.token.token':
-    "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.",
+    "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your authentication token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
-  'connection.http.auth.token.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
-  'connection.http.auth.token.scheme': 'By default, integrator.io follows the HTTP specs for authentication scheme names (for example: Bearer, OAuth, MAC). If the API you are connecting to doesn\'t follow the specs exactly, use this field to provide an override.',
+  'connection.http.auth.oauth.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
+  'connection.http.auth.wsse.headerName': 'Provide “header name”, where the hash token generated needs to be added in the request headers. By default, the name is going to be <b>X-WSSE</b>.',
+  'connection.http.auth.token.scheme':
+    "Use this field to set the HTTP authorization header scheme value. For example, 'Bearer' would be the scheme value for 'Authorization: Bearer my_secret_api_token'",
   'connection.http.auth.token.paramName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
   'connection.http.auth.token.refreshMethod':
     'If the service being connected to supports request/refresh token, use this field to set the HTTP method to use in the token call.',
@@ -806,10 +818,13 @@ export default {
   'connection.http.auth.token.refreshHeaders':
     "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
   'connection.http.auth.token.refreshToken':
-    'This field is used if you have a refresh token that can be used in refresh expired auth tokens. You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.auth.token.refreshToken}}}. Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
-  'connection.http.rateLimit.failStatusCode': 'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
-  'connection.http.rateLimit.failPath': 'Use this field if the service you are connecting to embeds rate limit errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses this path to identify a rate-limited (throttled) response.',
-  'connection.http.rateLimit.failValues': 'Use this field only if the rate limit fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a rate-limited response.',
+    'This field is used if you have a refresh token that can be used in refresh expired auth tokens. You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.auth.token.refreshToken}}}. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'connection.http.rateLimit.failStatusCode':
+    'This field only needs to be set if the HTTP status code for rate-limit errors is not 429.  For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate rate-limit errors.',
+  'connection.http.rateLimit.failPath':
+    "This field only needs to be set if the API returns a field in the HTTP response body to indicate rate-limit errors. For example, if an API returns the field 'errorMessage' with the value 'Too many requests', then you would set this field to 'errorMessage'.",
+  'connection.http.rateLimit.failValues':
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine rate-limit errors. To provide multiple values, use a comma-separated list.',
   'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.http.encrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. These values are stored with AES-256 encryption and other layers of protection to keep your data safe.',
   'connection.http.unencrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
@@ -823,7 +838,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': '“Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. “Use SQL Query once per flow run” when you want to execute the query once per run. You define the query command in Query Builder editor.',
+  'snowflake.import.rdbms.queryType': 'Select one of the following options: \n • Use SQL query – Insert, update, or delete per record. \n • Use bulk INSERT SQL query – Insert multiple records. With this type, you must also configure import mapping. \n • Use SQL query once per page of data – Execute the query once per page, such as in a MERGE statement. \n • Use SQL query once per flow run – Execute the query only once on the first page.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -862,12 +877,14 @@ export default {
   'connection.mongodb.ssl': 'Enables or disables TLS/SSL for the connection.',
   'connection.mongodb.authSource':
     "The name of the database associated with the user’s credentials. If a database name is not provided here, then the 'Database' field above will be used as the default",
+  'connection.dynamodb.aws.accessKeyId': 'Enter the ID for this account set up by the DynamoDB server administrator.',
+  'connection.dynamodb.aws.secretAccessKey': 'Enter the access key for the account ID.',
   'connection.ftp.hostURI':
     "The URI of the FTP/SFTP/FTPS server host.  Typically this value will look something like 'ftp.mycompany.com', or sometimes just a raw IP address '100.200.300.1'.  It is also very common for FTP/SFTP/FTPS servers to be behind a firewall, and to support accessing resources behind a firewall you will need to make sure all of the FTP/SFTP/FTPS specific integrator.io IP addresses (listed right below the HOST field) have been white-listed on your FTP/SFTP/FTPS server infrastructure.",
   'connection.ftp.username':
     'The username that you will use to log in to the FTP/SFTP/FTPS server.',
   'connection.ftp.password':
-    'The password associated with the username that you are using to connect with the FTP/SFTP/FTPS server.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+    'The password associated with the username that you are using to connect with the FTP/SFTP/FTPS server.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.ftp.port':
     'Set this field to override the default port number. In most cases, this field can be left empty. Only on rare occasions are FTP/SFTP/FTPS servers configured to run on alternate ports.',
   'connection.ftp.usePassiveMode':
@@ -876,7 +893,7 @@ export default {
   'connection.ftp.entryParser':
     "This optional field can be used to explicity identify the system specific FTP/SFTP/FTPS implementation. In most cases no value should be selected; you only need to set this field if your FTP/SFTP/FTPS server is an uncommon type (not Windows or Linux), or it does not support the 'SYST' command.  Possible values are: ['UNIX', 'UNIX-TRIM', 'VMS', 'WINDOWS', 'OS/2', 'OS/400', 'AS/400', 'MVS', 'UNKNOWN-TYPE', 'NETWARE', 'MACOS-PETER']",
   'connection.ftp.authKey':
-    'A SFTP connection can use a password or an authentication key to authenticate a user trying to connect to the SFTP server.  Use this field to store the RSA private key used for authentication.  The key must be in PEM format.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your authentication key safe.',
+    'A SFTP connection can use a password or an authentication key to authenticate a user trying to connect to the SFTP server.  Use this field to store the RSA private key used for authentication.  The key must be in PEM format.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your authentication key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.ftp.userDirectoryIsRoot':
     'This optional field is used to tell integrator.io if the Relative Path used by a File Export or File Import is relative to your FTP/SFTP/FTPS login\'s user directory or to the server root folder.  Suppose your files are located on the server at "/usr/local/iio/files/download"--if your FTP/SFTP/FTPS server account places you in your user directory after login ("/usr/local/iio") then you need to check this checkbox and use "/files/download" as your Relative Path, but if you go straight to the server’s root directory ("/") after login then leave this checkbox unchecked and use "/usr/local/iio/files/download" as your Relative Path.',
   'connection.ftp.useImplicitFtps':
@@ -884,11 +901,21 @@ export default {
   'connection.ftp.requireSocketReUse':
     'By default FTPS servers are configured to use 2 sockets on 2 different ports for connections.  If your FTPS server uses only 1 port for FTPS traffic you can check this optional checkbox field to tell integrator.io to reuse 1 socket to connect to this 1 port.',
   'connection.ftp.pgpEncryptKey':
-    'Specify a public key for use with PGP file transfers.  If you set this field then all files imported from integrator.io will be encrypted with this public key during file upload.  If you do not want to use PGP encryption in your FTP Import then leave this field blank.  The key must be in ASCII Armor format.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your authentication key safe.',
+    'Specify a public key for use with PGP file transfers.  If you set this field then all files imported from integrator.io will be encrypted with this public key during file upload.  If you do not want to use PGP encryption in your FTP Import then leave this field blank.  The key must be in ASCII Armor format.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your authentication key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.ftp.pgpDecryptKey':
-    'Specify a private key for use with PGP file transfers.  If you set this field then all files exported to integrator.io will be decrypted with this private key during file download.  If you do not want to use PGP decryption in your FTP Export then leave this field blank.  The key must be in ASCII Armor format.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your authentication key safe.',
+    'Specify a private key for use with PGP file transfers.  If you set this field then all files exported to integrator.io will be decrypted with this private key during file download.  If you do not want to use PGP decryption in your FTP Export then leave this field blank.  The key must be in ASCII Armor format.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your authentication key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.ftp.pgpPassphrase':
-    'Set this field if your PGP private key is secured with a passphrase.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your passphrase safe.',
+    'Set this field if your PGP private key is secured with a passphrase.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your passphrase safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'connection.pgp.publicKey':
+    'Enter the public key to use for encryption and verifying signatures.',
+  'connection.pgp.privateKey':
+    'Enter the private key to use for decryption and signing files.',
+  'connection.pgp.passphrase':
+    'Enter the private key’s passphrase',
+  'connection.pgp.compressionAlgorithm':
+    'Select an algorithm to use to compress files during encryption and decompress files during decryption. If this field is empty, files are left uncompressed.',
+  'connection.pgp.asciiArmored':
+    'In an Export step, this setting indicates the incoming file format for parsing. In an Import step, it dictates the output format of the encrypted file. Select “Yes” for text (ASCII-armored) format. Select "No" for binary format.',
   'connection.ftp.concurrencyLevel': 'Set this field to limit the number of concurrent/parallel requests allowed by the connection at any one time.',
   'connection.as2.as2Id':
     'This is the AS2 Identifier your trading partners will use as the "To" identifier when sending you documents, and the identifier integrator.io will use as the "From" identifier when you send documents to your trading partners. This field must be unique across all integrator.io users to ensure that inbound documents from your trading partners are routed to the correct integration flows. In addition, you should use a different identifier for production vs. sandbox.',
@@ -917,9 +944,9 @@ export default {
   'connection.as2.partnerStationInfo.auth.basic.username':
     'The basic authentication username. Sometimes services providers use other terms like clientId or API Key',
   'connection.as2.partnerStationInfo.auth.basic.password':
-    "The password associated with your service account. Sometimes service providers have other names for this field such as 'secret key', or 'API key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
+    "The password associated with your service account. Sometimes service providers have other names for this field such as 'secret key', or 'API key', etc.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.as2.partnerStationInfo.auth.token.token':
-    "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.",
+    "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your authentication token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.as2.partnerStationInfo.auth.token.location':
     "Where does your application's API expect to find the auth token? Choose 'url' if the auth token should be located in the url.  You will then be able to specify the query string parameter name that should hold the token value. If you choose 'header' you will then need to specify the header name and auth scheme to use when constructing the HTTP request. Finally, choose 'body' if your API needs the token embedded in the body structure of your HTTP request. In this case, its up to you to place the token in your body template using the placeholder: {{{connection.as2.partnerStationInfo.auth.token.token}}}",
   'connection.as2.partnerStationInfo.auth.token.headerName':
@@ -939,7 +966,7 @@ export default {
   'connection.as2.partnerStationInfo.auth.token.refreshHeaders':
     "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}} with a complete path matching the connection field.",
   'connection.as2.partnerStationInfo.auth.token.refreshToken':
-    'This field is used if you have a refresh token that can be used in refresh expired auth tokens.  You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.as2.partnerStationInfo.auth.token.refreshToken}}}.  Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
+    'This field is used if you have a refresh token that can be used in refresh expired auth tokens.  You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.as2.partnerStationInfo.auth.token.refreshToken}}}.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your refresh token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.as2.partnerStationInfo.rateLimit.failStatusCode':
     'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
   'connection.as2.partnerStationInfo.rateLimit.failPath':
@@ -968,7 +995,7 @@ export default {
   'connection.s3.accessKeyId':
     "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
   'connection.s3.secretAccessKey':
-    'When you create a new access key in your AWS account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
+    'When you create a new access key in your AWS account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret access key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.s3.pingBucket':
     'If you specify a bucket name in this field then integrator.io will specifically try to connect to this bucket when your S3 connection is tested, pinged, etc.... If you do not specify a bucket name then please make sure your AWS access key has access to get the list of buckets in your AWS account.',
   'connection.salesforce.concurrencyLevel':
@@ -976,7 +1003,7 @@ export default {
   'connection.wrapper.unencrypted':
     "Use this JSON field to store all the non security sensitive fields needed by your wrapper (to access the application being integrated).  For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
   'connection.wrapper.encrypted':
-    "Use this encrypted JSON field to store all the security sensitive fields needed by your wrapper (to access the application being integrated).  For example:  {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}.  Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
+    "Use this encrypted JSON field to store all the security sensitive fields needed by your wrapper (to access the application being integrated).  For example:  {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your data safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.wrapper.pingFunction':
     'If you implement a ping function in your wrapper code, and specify the name of that function here, then integrator.io can test your connection to make sure it is working; and also if your connection ever goes offline due to an intermittent issue, integrator.io runs a batch process every hour (with an exponential decay) to regularly ping all offline connections and automatically bring them back online (if possible) so that any pending or in progress jobs can resume processing.',
   'connection.wrapper._stackId':
@@ -990,7 +1017,7 @@ export default {
   'connection.amazonmws.accessKeyId':
     'This is the ID that Amazon assigns to your MWS account when you signed up for the service.  You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters.  If you do not know this value please go to mws.amazon.com and follow the API and Developer Guides to sign up for the service and retrieve this ID.',
   'connection.amazonmws.secretAccessKey':
-    "This is your MWS account's signing key.  When making a request to Amazon MWS integrator.io will sign the request with this key and add a 'Signature' header to the request.  If you do not know this value please go to mws.amazon.com and follow the API and Developer Guides to sign up for the service and retrieve this key.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.",
+    "This is your MWS account's signing key.  When making a request to Amazon MWS integrator.io will sign the request with this key and add a 'Signature' header to the request.  If you do not know this value please go to mws.amazon.com and follow the API and Developer Guides to sign up for the service and retrieve this key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret access key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.",
   'connection.amazonmws.marketplaceRegion':
     'This is the region where the Amazon seller account is based.  Select the country or continent where your seller account is based (North America and Europe are unified seller regions).',
   'connection.mode': 'Select cloud if you are connecting to a publicly accessible application like Salesforce, Slack, etc... Select on-premise if you are connecting to an application that is behind a firewall like a database or custom HTTP endpoint.  Connecting to an on-premise application requires installing an agent behind your firewall.',
@@ -1019,6 +1046,12 @@ export default {
   'connector.oAuthServerFlow._iClientId': '.',
   'connector.oAuthServerFlow.putConnection': '.',
   'connector.repository.name': '.',
+  'connection.ftp.type':
+    'Choose the protocol to use for your FTP connection. Choose <b>FTP</b> (basic File Transfer Protocol) if your data is sent and received unencrypted. Choose <b>SFTP</b> if your data is transferred over the encrypted Secure Shell (SSH2) protocol. <b>FTPS</b> is similar to basic FTP, but data is encrypted via the Transport Layer Security (TLS) protocol before transfer.',
+  'connection.usePgp':
+    'Set this field to <a href="https://docs.celigo.com/hc/en-us/articles/360060934611-Enable-PGP-encryption-decryption-in-file-exports-and-imports" target="_blank">configure PGP</a>cryptographic information used for encrypting and decrypting files.',
+  'connection.as2.userStationInfo.mdn.mdnEncoding':
+    'You can tell integrator.io which character encoding to use when we send an MDN back to your trading partner. You can choose between base64 or binary. Base64 will be the default.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'editor.xml.simple':
@@ -1041,6 +1074,8 @@ export default {
     "When an export runs in the context of a data flow (where the data from the export is sent right away to an import queue) integrator.io will break the data being exported into one or more smaller pages of records.  Saying this another way, integrator.io uses streaming to export data out of one app and import it into another app.  The 'Page Size' field can be used to specify how many records you want in each page of data.  The default system value (when you leave this field blank) is 20.  There is no max value, but a page of data will automatically get capped when it exceeds 5 MB.  Most of the time, the application that you are importing data into will bottleneck the page size value.  For example, if you are importing data into NetSuite or Salesforce they each specify (in their API guides) a maximum number of records that can be submitted in any single request.",
   'export.dataURITemplate':
     "When your flow runs but has data errors this field can be really helpful in that it allows you to make sure that all the errors in your job dashboard have a link to the original data in the export application.  This field uses a handlebars template to generate the dynamic links based on the data being exported.  For example, if you are exporting a customer record from Shopify, you would most likely set this field to the following value 'https://your-store.myshopify.com/admin/customers/{{{id}}}'.  Or, if you are just exporting a CSV file from an FTP site then this field could simply be one or more columns from the file: {{{internal_id}}, {{{email}}}, etc...",
+  'export.traceKeyTemplate':
+    'Define a <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> that integrator.io will use to identify a unique record. You can use a single field such as {{{field1}}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a trace key template field1_field2. When this field is set, you will override the platform default trace key field.',
   'export.sampleData':
     'Enter a sample destination record here so that integrator.io can help you later map fields between source and destination applications. The sample destination record should ideally contain all fields that you want to process in this flow, and should follow the exact same formatting rules that the destination application/API requires.',
   'export.description':
@@ -1088,7 +1123,7 @@ export default {
   'export.netsuite.restlet.recordType':
     'Use this field to specify which NetSuite record type you want to export.  You can choose any standard record type (i.e. customer, sales order, journal entry) or any custom record type that has been defined in your NetSuite account. Please note that this list of record types is dependent on the permissions associated with the connection selected above. Also, if you add any new custom record types to your NetSuite account, or if there are any changes to the permissions associated with the connection selected above, you can use the refresh icon (next to this field) to regenerate the list.',
   'export.netsuite.restlet.searchId':
-    'Once you have a NetSuite Saved Search defined with all the data that you want to export then simply tell us which one it is here, and then it really is that simple.  Exporting data via NetSuite Saved Searches is one of the most popular features of the integrator.io platform!  If you are not familiar with NetSuite Saved Searches then please checkout the NetSuite help guides for a basic intro, and then the best way to become an expert fast is to just test them out in your own NetSuite account.  IMPORTANT: please be sure to always sort your NetSuite Saved Searches by Internal Id (and to also explicitly include the Internal Id column in the search results).  This sort is required to group consecutive search rows with the same Internal Id into individual logical records.  For example, one single sales order will output multiple search rows if there are multiple line items on the order, and the Internal Id column is what integrator.io uses to group all the rows (belonging to the same sales order) together.  If you cannot sort your NetSuite Saved Search by Internal Id then you will need to set Skip Grouping below to true, and please see the help text for Skip Grouping to learn more about that field.',
+  'Once you have a NetSuite Saved Search defined with all the data that you want to export then simply tell us which one it is here, and then it really is that simple.  Exporting data via NetSuite Saved Searches is one of the most popular features of the integrator.io platform!  If you are not familiar with NetSuite Saved Searches then please checkout the NetSuite help guides for a basic intro, and then the best way to become an expert fast is to just test them out in your own NetSuite account.  IMPORTANT: please be sure to always sort your NetSuite Saved Searches by Internal Id (and to also explicitly include the Internal Id column in the search results).  This sort is required to group consecutive search rows with the same Internal Id into individual logical records.  For example, one single sales order will output multiple search rows if there are multiple line items on the order, and the Internal Id column is what integrator.io uses to group all the rows (belonging to the same sales order) together.  If you cannot sort your NetSuite Saved Search by Internal Id then you will need to set Skip Grouping below to true, and please see the help text for Skip Grouping to learn more about that field.',
   'export.netsuite.restlet.hooks.batchSize': '',
   'export.netsuite.restlet.hooks.preSend.fileInternalId':
     'The internal id of the file record (inside your NetSuite file cabinet) containing the SuiteScript code.',
@@ -1103,55 +1138,33 @@ export default {
     'Page size can be set on the basicSearch results fetched back from the NS.',
   'export.rest.relativeURI':
     "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/products' or '/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this export. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to refine the set of resources an API endpoint returns.",
-  'export.rest.method':
-    "The most common HTTP method used by APIs for the retrieval of resources is 'GET'. In some cases, RPC style APIs will require the use of the 'POST' HTTP method.  Both of these scenarios are supported by integrator.io.  If the POST method is used, typically the body of the HTTP request will contain filtering or selection criteria in the body of the request.  This information is provided in the postBody field. Refer to this field for more information.",
   'export.rest.headers':
     "In some rare cases, it may be necessary to include custom HTTP headers with your API requests.  The appropriate 'content-type' header is automatically added by integrator.io based on the mediaType value described in the connection associated with this request (typically 'application/json'). Note that if the authentication method described in the associated connection requires a header value, this will also be added automatically.  This header field is used in the rare case that an API requires additional headers other than these two.",
-  'export.rest.resourcePath':
-    'This optional field is used to help integrator.io locate the resource (or set of resources) returned from an API call.  If the HTTP response from an API contains the resource(s) at the root, then no value is necessary for this field.  If on the other hand, the response from an API contains a deeper json structure that for example contains paging information, it will be necessary for you to provide the JSON path to the resource(s).',
-  'export.rest.successPath':
-    "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails.  These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful.  For example, if you are working with Slack's API you would set this field to: 'ok'.",
-  'export.rest.successValues':
-    'This field indicates the value(s) that represents the success of an HTTP response. For example, 0 or 0,2,3.\nThis field is used in unison with the Success Path field. The value found in the HTTP response at the path specified in Success Path is compared against the provided list of success values. If there is an exact case-sensitive match of any of the specified values, the request is considered successful.',
   'export.rest.postBody':
     "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebars templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
-  'export.rest.pagingMethod':
-    "Some APIs offer paging functionality in order to limit each of their responses to a manageable size if the total set of resources is large. The following paging methods are supported by integrator.io. Choose 'Next Page URL' if the API returns a link to the next page within the response body. Choose 'Page Argument' if the API uses a query string parameter to paginate the results. Choose 'Relative URI' if the same endpoint should be hit repeatedly until no more data is returned. Choose Link header if the API points to subsequent pages in the Link header of the API response. Choose 'Skip Argument' if the API uses a query string parameter to indicate the record offset for the next page request. Finally, choose Token if the API responds with a token that should be used to fetch the next page.The export will automatically calculate the amount to skip and integrator.io will add this parameter to the relativeURI for each subsequent page request. Note that typically these services also support an optional 'take' or 'pageSize' query string parameter to control how many records are returned in each page; integrator.io will not set or modify this parameter.",
-  'export.rest.nextPagePath':
-    "This optional field can be used when the 'Paging Method' is set to 'Next Page URL'.  Set this field's value to the JSON path that will point to the next page URL returned in the HTTP response from the API. Zendesk for example uses 'next_page' while SalesForce uses 'nextRecordsUrl'. The default value used if this field is left blank is 'nextpage'.",
   'export.rest.pageArgument':
-    "This optional field can be used when the 'Paging Method' is set to 'Page Argument'.  Set this field's value to the name of the query string argument that should be used to convey paging information to the API. The default, and most common argument name is, 'page'.",
-  'export.rest.nextPageRelativeURI':
-    "This optional field can be used when the 'Paging Method' is set to 'Relative URI'. If this field is blank, the 'Relative URI' field is used repeatedly to request pages of data until no more records or a 404 (not found) status is returned.  If required, subsequent page requests (after the 1st) can use this field to set a custom relative uri expression. The value can contain {{placeholders}} that are populated from the last record of the previous page. For example: '/products?skip={{itemNumber}}'",
-  'export.rest.blobFormat':
-    'Please specify the encoding type of the file that needs to be exported. Supported encoding types are: utf8, ucs2 / utf16-le, ascii, binary, base64, hex. We need this encoding type to have the file content properly transmitted as data is transmitted in binary format.',
+    "This field only needs to be set if the page number URL query parameter used by the API is not 'page'. While the export is running, the page number query parameter gets updated automatically for each subsequent page request. Example: '/products?page=1', '/products?page=2', '/products?page=3’.",
+  'export.rest.tokenPageArgument':
+    'Use this field to tell integrator.io which query parameter name to use for the next page token field when requesting the next page of data.',
   'export.rest.maxPagePath':
     'Some APIs return the number of pages available in their response to resource requests. This optional field can be used to tell integrator.io how many pages to expect. Set the value to the JSON path of the field containing the max page count. If omitted, integrator.io will continue to make requests until no resources are returned, or a 404 (not found) response is encountered.',
   'export.rest.maxCountPath':
     'Some APIs return the total number of resources available in their response to resource requests. This optional field can be used to tell integrator.io how many resources to expect. Set the value to the JSON path of the field containing the total resource count count. If omitted, integrator.io will continue to make requests until no resources are returned, or a 404 (not found) response is encountered.',
   'export.rest.skipArgument':
-    "This optional field can be used when the 'Paging Method' is set to 'Skip Argument'.  Set this field's value to the name of the query string argument that tells the API how many records to 'skip' past when returning subsequent page results.  The default query argument used by integator.io is 'skip'; you can leave this field blank if the API uses this default query argument name.",
-  'export.rest.lastPageStatusCode':
-    'Some APIs will return an error status code (less than 200 or greater than 300) as the last page response.  This optional field can be used to tell integrator.io the response code to expect in these situations, and to not treat this response as an error.  This field can be used in conjunction with "lastPagePath" and "lastPageValue".  Note that error 404 is automatically treated as the last page response so it is not necessary to set this field for that case.',
-  'export.rest.lastPagePath':
-    'If "lastPageStatusCode" is set you can set this field to tell integrator.io to check a specific field in the response object to determine if paging is complete.  If "lastPageValue" is not set then paging will be considered complete if this field is present in the response object, otherwise this response will be considered an error.',
-  'export.rest.lastPageValue':
-    'If "lastPageStatusCode" and "lastPagePath" you can set this field to tell integrator.io to check a specific field\'s value in the response object to determine if paging is complete.  If the value in the response object matches this field then paging will be considered complete if  response object, otherwise this response will be considered an error.',
+    "This field only needs to be set if the skip number URL query parameter used by the API is not 'skip'. While the export is running, the skip number query parameter gets updated automatically  for each subsequent page request. Example: '/products?skip=100', '/products?skip=200', '/products?skip=300’.",
   'export.rest.once.relativeURI':
     'The relative URI that will be used to mark records as exported.',
   'export.rest.once.method':
     'The HTTP method that will be used to mark records as exported.',
-  'export.rest.once.postBody':
-    "This postBody will in most cases be a template modeling the record to update. The template should have named placeholders matching the JSON fields in the record being exported. The export record becomes the data source for the 'body' template. If not provided, the export record itself is used as the body of the request. Note that in both cases, the field described in 'booleanField' is added/set to 'true'.",
   'export.s3.keyStartsWith':
     'Enter the starting letters of the key using which the objects will be exported.\nA key is the unique identifier for an object within a bucket.\nFor example, in the URL http://doc.s3.amazonaws.com/2006-03-01/AmazonS3.wsdl, "doc" is the name of the bucket and "2006-03-01/AmazonS3.wsdl" is the key.',
   'export.s3.keyEndsWith':
     "Use this field to specify a key postfix that will be used to filter which files in the S3 bucket that will be exported (vs not). For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be exported (like myFile-test.csv). Please note that you must specify the file extension for this filter to work correctly.",
   'export.http.successMediaType':
-    'The success media type indicates the format of the data received from all successful (HTTP) requests.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats. Amazon MWS for example, is an XML service that returns CSV data for some of its reports.',
-  'export.http.requestMediaType': 'The request media type indicates the format of the content within the HTTP request body sent to the service. Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats. Ariba for example, has some endpoints that require multipart/form-data as request data, but sends zip of csv files as response.',
+    'Use this field to handle the use case where a successful HTTP response returns a different media type than the original HTTP request body sent.',
+  'export.http.requestMediaType': 'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
   'export.http.errorMediaType':
-    'The error media type indicates the format of the response data received from all unsuccessful (HTTP) requests.  This refers to all responses with non-2xx HTTP status codes.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats.  Amazon MWS for example, has some endpoints that return CSV data, but send error responses in XML.',
+    'Use this field to handle the use case where an unsuccessful HTTP response returns a different media type than the original HTTP request body sent.',
   'export.http.relativeURI':
     "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/products' or '/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this export. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to refine the set of resources an API endpoint returns.",
   'export.http.method':
@@ -1161,55 +1174,67 @@ export default {
   'export.http.headers':
     "In some cases, it may be necessary to include custom HTTP headers with your API requests. As with the 'body' field, any value from the connection or export models can be references using {{placeholders}} with a complete path matching either the connection or export field.",
   'export.http.paging.method':
-    "Some APIs offer paging functionality in order to limit their HTTP response to a manageable size if the total set of resources is large. Several different paging methods are supported by integrator.io. Choose 'token' if the API returns a token to the next page within the response body.  Choose 'page' if the API uses a page number parameter to paginate the results. Choose 'skip' if the API uses a skip-take style paging mechanism. Other names for this paging method would be offset and limit.",
+    "Many APIs use paging to limit the amount of data returned in a single HTTP response. Use this field to tell integrator.io the paging method used by the API. For example, choose 'Next page token’ if the API returns a token field in the HTTP response body that must be used to access the next page of data. Choose 'Page number parameter' if the API uses a page number parameter in the relative URI to paginate results. Etc...",
+  'export.delta':
+    "The {{lastExportDateTime}} field is automatically calculated based on the last time the flow ran and successfully exported data. This read-only datetime field can be referenced by other fields using handlebars. Example relative URI field: '/products?after={{lastExportDateTime}}'.",
+  'export.paging.token':
+  "While the export is running, the read-only {{export.http.paging.token}} field gets updated automatically for each subsequent page request. This read-only token field can be referenced by other fields using handlebars. Example relative URI field: '/products?token={{export.http.paging.token}}'.",
+  'export.paging.skip':
+  "While the export is running, the read-only {{export.http.paging.skip}} field gets updated automatically for each subsequent page request. This read-only counter field can be referenced by other fields using handlebars. Example relative URI field: '/products?offset={{export.http.paging.skip}}'.",
+  'export.paging.page':
+  "While the export is running, the read-only {{export.http.paging.page}} field gets updated automatically for each subsequent page request. This read-only counter field can be referenced by other fields using handlebars. Example relative URI field: '/products?page={{export.http.paging.page}}'.",
+  'export.http.paging.body':
+   'This field only needs to be set if subsequent page requests require a different HTTP request body than what is configured in the primary HTTP request body field.',
   'export.http.paging.skip':
-    "This optional field is used when paging method is set to 'skip'. It only needs to be set if the export should start at an offset from the first record. This value is automatically set on each subsequent page request. The value can be referenced as a placeholder in the body, headers, or relativeURI of the export request. Example: '/products?offset={{{export.http.paging.skip}}}'.",
+    'This field only needs to be set if the export should start at a specific skip number index other than 0.',
   'export.http.paging.page':
-    "This optional field is used when paging method is set to 'page'. It only needs to be set with an initial value if the export should start at a page offset. This value is automatically incremented on each subsequent page request. The value can be referenced as a placeholder in the body, headers, or relativeURI of the export request. Example: '/products?page={{{export.http.paging.page}}}'.",
+    'This field only needs to be set if the export should start at a specific page number other than 0.',
   'export.http.paging.token':
-    "This optional field is used when paging method is set to 'token'. It only needs to be set if the initial export should contain a token. This value is automatically set on each subsequent page request. The value can be referenced as a placeholder in the body, headers, or relativeURI of the export request. Example: '/products?token={{{export.http.paging.token}}}'.",
-  'export.http.paging.tokenPath':
-    'If the paging method is set to token, integrator.io needs to be able to find the token in the HTTP response of each page in order to construct the next page request. This field lets IO know where to look for the next page token. If no value is found at this path, then paging is terminated (final page reached).',
+    'This field only needs to be set if the initial export request should contain a specific token value.',
   'export.http.paging.relativeURI':
-    'This optional field can be used in combination with any paging method. In some cases subsequent page requests need to use a different relativeURI from the first page request.',
+    'This field only needs to be set if subsequent page requests require a different relative URI than what is configured in the primary relative URI field.',
   'export.http.paging.pathAfterFirstRequest':
-    'This is an optional override for the token path. It is only necessary if the next-page-token is found at a different location for subsequent page requests. Some APIs change their response structure after the first page request. This is a rare occurrence.',
+    'This field only needs to be set if subsequent page requests return a different response structure, and the next page token field is located in a different place than the original request.',
   'export.http.paging.resourcePath':
-    'This is an optional override to the resource path if subsequent page responses have a different response structure.  Note that the format of this path is specific to the media type. If the response is represented in JSON structure, then use "dot" notation to describe the path to your resources. Example: "results.customers". If the response is XML, then use XPATH style selectors. Example: "/SearchResults/Customers/Customer"',
+    'This field only needs to be set if subsequent page requests return a different response structure, and the records are located in a different place than the original request.',
   'export.http.paging.linkHeaderRelation':
     'When the paging method is set to "Link Header", by default IO uses HTTP conventions to look for the next page url within a dedicated "link" header value. It is possible, within this link header, to include multiple urls facilitating page navigation forward, back, or even first or last. In cases where multiple values are found, integrator.io needs to know which to use. The convention for these "rel" (Relation) values is "prev", "next", "last" and "first", where "next" is default in integrator.io. Some APIs that use this paging mechanism may not comply to these defaults. As such, this field allows you to overriding the default "next" relation to a value used by the application you are connecting too. For more information on link headers, please refer <a href="https://tools.ietf.org/html/rfc5988">https://tools.ietf.org/html/rfc5988</a>.',
   'export.http.paging.lastPageStatusCode':
-    'Some APIs will return an error status code (less than 200 or greater than 300) as the last page response. This optional field can be used to tell integrator.io the response code to expect in these situations and not to treat this response as an error. For example, if an API returns a generic "500" status code, set this value to 500. This field can be used in conjunction with "lastPagePath" and "lastPageValue". Note that error 404 is automatically treated as the last page response so it is not necessary to set this field for that case.',
+    'This field only needs to be set if the HTTP status code for the last page is not 404.  For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate no more pages are available.',
   'export.http.paging.lastPagePath':
-    'If "lastPageStatusCode" is set then you can set this field to tell integrator.io to check a specific field in the response object to determine if paging is complete. For example, the specified field can be "error.message". If "lastPagePath" is not set then paging will be considered complete otherwise this response will be considered an error.',
+    "This field only needs to be set if the API returns a field in the HTTP response body to indicate paging is complete. For example, if an API returns the field 'errorMessage' with the value 'No more pages' to indicate paging is done, then you would set this field to 'errorMessage' to tell integrator.io to check this field on each page response.",
   'export.http.paging.lastPageValues':
-    'If "lastPageStatusCode" and "lastPagePath" are set then you can set this field to tell integrator.io to check a specific field\'s value in the response object to determine if paging is complete. If the value in the response object matches this field then paging will be considered complete otherwise this response will be considered an error. Example: "No records found".',
+    "Use this field to limit the exact values in the HTTP response body field that should be used to determine if paging is complete. For example, if an API returns the field 'errorMessage' with the value 'No more pages' to indicate paging is done, then you would set this field to 'No more pages'. To provide multiple values, use a comma-separated list.",
   'export.http.paging.maxPagePath':
     'Some APIs return the total number of pages available in each of their page responses. This optional field can be used as a trigger to stop making page requests. This field tells integrator.io where to find the maximum page value within each page response, and when this page count is met, no more page requests will be made. If omitted, integrator.io will continue to make requests until no resources are returned, or a 404 (not found) response is encountered.',
   'export.http.paging.maxCountPath':
     'Some APIs return the total number of resources available in each of their page responses. This optional field can be used as a trigger to stop making page requests. This field tells integrator.io where to find the total resource count within each page response, and when this resource count is met, no more page requests will be made. If omitted, integrator.io will continue to make requests until no resources are returned, or a 404 (not found) response is encountered.',
-  'export.http.paging.path':
-    'If the paging method is set to token, integrator.io needs to be able to find the token in the HTTP response of each page in order to construct the next page request. This field lets integrator.io know where to look for the next page token. If no value is found at this path, then paging is terminated (final page reached). When the paging method is set to "nextPageUrl", this "path" field is used to tell integrator.io where in the HTTP response to look to find a URL to use when requesting the next page of data. The format of this path is dependent on the media-type (content-type) of the original (first) page response. For JSON responses, the path should be represented in "dot" notation. Example: "result.paging.nextPageUrl".In contrast, if the response contains XML, then an XPATH style path should be used. Example: "/result/paging/nextPageUrl".Paging is terminated when no URL is found at the specified path.',
+  'export.http.paging.urlPath':
+    'Use this field to tell integrator.io where in the HTTP response body to find the URL to use when requesting the next page of data.',
+  'export.http.paging.tokenPath':
+    'Use this field to tell integrator.io where in the HTTP response body to find the token to use when requesting the next page of data.',
   'export.http.once.relativeURI':
     'The relative URI that will be used to mark records as exported.',
   'export.http.once.method':
     'The HTTP method that will be used to mark records as exported.',
   'export.http.once.body':
-    'The HTTP request body that should be used to mark records as exported.  If no HTTP request body is configured, then integrator.io will simply re-submit the exported record itself, but with the once boolean field set to true.',
+    'The HTTP request body that will be used to mark records as exported.',
   'export.http.response.resourcePath':
-    'This optional field is used to help integrator.io locate the resource (or set of resources) returned from an API call.  If the HTTP response from an API contains the resource(s) at the root, then no value is necessary for this field.  If on the other hand, the response from an API contains a deeper response structure that for example contains paging information, it will be necessary for you to provide the path to the resource(s). If no value is provided, integrator.io assumes that the resources can be found at the root of the response. Note that the format of this path is specific to the media type. If the response is represented in JSON structure, then use "dot" notation to describe the path to your resources. Example: "results.customers". If the response is XML, then use XPATH style selectors. Example: "/SearchResults/Customers/Customer"',
+    "Use this field if the records returned by the API are not located at the root level of the HTTP response body. For example, an API could return records inside a container object like 'results.customers'.",
+  'export.http.response.file.resourcePath':
+    "Use this field if the file returned by the API is not located at the root level of the HTTP response body. For example, an API could return files inside a container object like 'file.content'.",
   'export.http.response.successPath':
-    'Not all services return http status codes that can be used to determine success or failure of a request.  If a service always returns 200 http status code, even for some failures, then this field can be used to tell integrator.io where to look for a success indicator. This field is used in unison with successValues to further refine how our platform can identify a successful response. If no success values are provided, any truthy value found in the response body at this path will be considered a success.',
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a successful request. For example, if the API always returns a 200 success HTTP status code, but then indicates success via a 'success' boolean field in the HTTP response body.",
   'export.http.response.successValues':
-    'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against the provided list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request succeeded. To provide multiple values, use a comma-separated list.',
   'export.http.response.blobFormat':
-    'Please specify the encoding type of the file that needs to be exported. Supported encoding types are: utf8, ucs2 / utf16-le, ascii, binary, base64, hex. We need this encoding type to have the file content properly transmitted as data is transmitted in binary format.',
+    'Use this field to specify the encoding type of the files being transferred. The encoding information is needed to process binary data correctly.',
   'export.http.response.failPath':
-    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a failed request. For example, if the API always returns a 200 success HTTP status code, but then indicates errors via an 'error.message' field in the HTTP response body.",
   'export.http.response.failValues':
-    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request failed. To provide multiple values, please use a comma separated list.',
   'export.http.response.errorPath':
-    'This optional field is used to help identify where in the body of a failed HTTP response integrator.io can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
+    'This optional field is used to specify which field in the HTTP response body contains the detailed error message for the purpose of displaying the error on the error management dashboard.  If this field is not set, then the full HTTP response body will be used as the error message in the error management dashboard.',
   'export.rdbms.query': 'Enter a SQL query that retrieves the records you want to export from your source database.</br><b>Note</b>: For Delta exports, include a comparison to lastExportDateTime or currentExportDateTime in the query, as in the following examples:</br>Oracle SQL</br>SELECT * FROM TABLE_NAME </br>WHERE COLUMN_NAME > TO_TIMESTAMP({{lastExportDateTime}}, \'YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"\')</br>MySQL</br>SELECT * FROM TABLE_NAME </br>WHERE COLUMN_NAME > {{lastExportDateTime}}',
   'snowflake.export.rdbms.query':
     'Build the query command to query the database and retrieves a set of rows.',
@@ -1246,8 +1271,13 @@ export default {
     'The stack that contains your preSavePage hook code.',
   'export.hooks.preSavePage._scriptId':
     'The script record that contains your preSavePage hook function.',
+  'export.file.rowsPerRecord': 'This setting has been deprecated in favor of the more powerful options in the <b>Sorting and grouping</b> section.',
+  'export.file.groupByFields': 'Select one or more fields to use for grouping records together.',
+  'export.file.sortByFields': 'Enter one or more fields to use for sorting records.',
   'export.file.filedefinition.rules':
     'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
+  'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected the parse file option. If it is unchecked, then decryption will not be performed when files are parsed.',
+  'export.file.decrypt': 'Select the algorithm to decrypt files. Make sure you choose the same algorithm that is used to encrypt the files.',
   'export.file.encoding':
     'The file encoding indicates how the individual characters in your data are represented on the file system. The default encoding is utf-8. Depending on the source system of the data, the encoding can take on different formats. Current supported formats are: utf-8, win-1254 and utf-16le. If you do not know what encoding your data is, in most cases it will be utf-8.',
   'export.file.output':
@@ -1260,12 +1290,11 @@ export default {
     "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'export.file.csv.columnDelimiter':
     'Either select a common character from the list or enter your own freeform value with multiple characters allowed – such as <b>||</b> – in this field, depending on how the columns are uniformly separated in your sample CSV file. The default value is <b>Comma (,)</b> simply by convention; integrator.io does not dynamically determine the column delimiter for you.',
-  'export.file.csv.rowDelimiter':
-    "The character, or set of characters used to identify the end of a row. If this field is left blank then integrator.io will attempt to identify the row delimiter itself. Some common row delimiters are: '\n', '\r\n', '\r'",
+  'export.file.csv.rowDelimiter': 'The characters used to identify the end of a row.',
   'export.file.csv.keyColumns':
     'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single transfer record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
   'export.file.csv.hasHeaderRow':
-    'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
+    'Check this checkbox if the files you are transferring contain a top level header row that is used for column names (and not actual data).',
   'export.file.csv.trimSpaces':
     'Set this field to true if you would like to remove all leading and trailing whitespaces in your column data. Please note that header row values are not affected by this setting. Leading and trailing whitespaces in the header row (if one is present) are always trimmed. For example:\nHeader1 , Header 2,Header3 \nCol 11 , Col 12 , Col 13\nCol21, Col22, Col23 \n\n Would look like:\n[\n{ "Header1": "Col 11", "Header 2": "Col 12", "Header3": "Col 13" },\n{ "Header1": "Col21", "Header 2": "Col22", "Header3": "Col23" }\n]',
   'export.file.csv.rowsToSkip':
@@ -1276,14 +1305,27 @@ export default {
     'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
   'export.exportData':
     'Over here you can specify how you would like to export data.',
+  'export.file.backupPath':
+    'Specify the directory path of the google drive folder where files will be backed up after the successful transfer.',
+  'export.azure.backupPath':
+    'Specify the directory path of the Azure blob storage container where files will be backed up after the successful transfer.',
   'export.ftp.directoryPath':
-    "Use this field to specify the directory path of the FTP folder containing the files that you want to transfer.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then transfer all files from the child folder 'Orders'.  Please note that by default integrator.io will transfer all files in the folder, and also delete them from the folder once the transfer completes.   Copies of the original files will be stored in integrator.io for a maximum of 30 days, and can be transferred from the jobs dashboard.  You can also (optionally) configure integrator.io to leave files on the FTP server, or to only transfer files that match a certain 'starts with' or 'ends with' name pattern.",
+    "Use this field to specify the directory path of the FTP folder containing the files that you want to transfer.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then transfer all files from the child folder 'Orders'.  integrator.io will transfer all files and also delete them from the folder once the transfer completes. Copies of the original files will be stored in integrator.io up to 30 days. You can also (optionally) configure integrator.io to leave files on the FTP server, or to only transfer files that match a certain 'starts with' or 'ends with' name pattern.",
   'export.ftp.fileNameStartsWith':
     "Use this field to specify a file name prefix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
   'export.ftp.fileNameEndsWith':
     "Use this field to specify a file name postfix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
-  'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
+  'export.file.fileNameStartsWith':
+    "Use this field to specify a file name prefix that will be used to filter which files in the google drive folder will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
+  'export.file.fileNameEndsWith':
+    "Use this field to specify a file name postfix that will be used to filter which files in the google drive folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
+  'export.azure.fileNameStartsWith':
+    "Use this field to specify a file name prefix that will be used to filter which files in the Azure blob storage container will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
+  'export.azure.fileNameEndsWith':
+    "Use this field to specify a file name postfix that will be used to filter which files in the Azure blob storage container will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
   'export.file.batchSize': 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
+  'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
+  'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'export.s3.region':
     "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
   'export.webhook.provider':
@@ -1291,7 +1333,7 @@ export default {
   'export.webhook.verify':
     'Please specify the method that should be used to verify the authenticity of the data being sent to this webhook export.',
   'export.webhook.token':
-    'Please provide a secret token that will be used to verify the authenticity of the data sent to this webhook export.  This token value should only be shared with the webhook provider, and ideally should be generated by some sort of industry standard password tool.',
+    'Generate a new token or enter your own token, which will be sent by the webhook origin so that integrator.io can authenticate that it is allowed to receive data from that endpoint. You should share this token only with the webhook provider.',
   'export.webhook.path':
     "Please use this field to specify the JSON path of the field in the request body that will contain the token value.  For example, 'myAuth.token'.",
   'export.webhook.algorithm':
@@ -1305,7 +1347,7 @@ export default {
   'export.webhook.username':
     'Basic auth requires both username and password. Please enter your username here. If you are not sure which username and password to use then please check with your webhook provider.',
   'export.webhook.password':
-    'Basic auth requires both username and password. Please enter your password here. Please note that there are multiple layers of protections in place (including AES 256 encryption) to keep your password safe.',
+    'Basic auth requires both username and password. Please enter your password here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'export.salesforce.soql.query':
     "Use the Salesforce Object Query Language (i.e. SOQL) to define what data you would like to export out of Salesforce.  For example: 'SELECT Id, Name FROM Account WHERE SendToBlah = TRUE'.  SOQL is an incredibly powerful query language with all sorts of capabilities, and lots of documentation and examples on the web.  If you need additional help understanding SOQL, or piecing together a specific query, then please contact Salesforce support.",
   'export.salesforce.id':
@@ -1318,6 +1360,8 @@ export default {
     'The name of the extension wrapper function in your code that needs to be invoked as part of the export process.',
   'export.wrapper.configuration':
     'This field can be used to provide custom information which will be passed to the wrapper function whenever it is invoked. This can be useful if the same wrapper function is used for different exports and it needs to be configured differently per export.',
+  'exports.previewData':
+    'This section allows you to verify that you have configured the request correctly and that the data is successfully retrieved. When exporting records, you can view the HTTP request, the HTTP response, and the number of records you specify in JSON format, along with any errors.',
   'flow._id':
     'System generated primary unique identifier for your connection.  For API users, this value should be used for GET and PUT requests.',
   'flow.name':
@@ -1340,7 +1384,8 @@ export default {
   'flow.timezone':
     'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
   'flow._runNextFlowIds':
-    'Select the flow that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.)',
+    'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
+  'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'iclient._id':
     'System generated primary unique identifier for your iClient.  For API users, this value should be used for GET and PUT requests.',
   'iclient.lastModified':
@@ -1363,6 +1408,8 @@ export default {
     'System generated datetime to track the last time this resource was modified.',
   'import.uploadFile':
     'Please provide a sample file that this transfer would need to process. We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step. The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the transfer will need to generate when running in a production capacity.',
+  'import.traceKeyTemplate':
+    'Define a <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> that integrator.io will use to identify a unique record for a parent-child record combination. You can use a single field such as {{{field1}}} or use a handlebar expression. When this field is set, you will override the platform default child record trace key field. The child record trace key template value will include the parent record trace key in the format ‘parent_record_trace_key - child_record_trace_key’.',
   'import.apiIdentifier':
     "Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':
@@ -1391,13 +1438,17 @@ export default {
     'Set this field to true if you would like to delete the blob content which is intermittently stored during the transit. On successful import, intermittently stored blob content will be deleted.',
   'import.filter.rules':
     'Important: only records where your filter expression evaluates to true will get processed by this import.  All other records will be marked as ignored.  Defining a filter on your import allows you to skip processing for specific records. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day you could add an import filter to instead only post orders that are above a certain amount. Please note that unlike export filters, import filters do not discard data traveling through your flow. Records that get ignored will still get passed along to subsequent processors in your flow.',
+  'import.pgpencrypt': 'Use this cryptographic system to encrypt generated files.  This option is enabled only when you have configured at least one cryptographic system in the connection. If it is unchecked, then encryption will not be performed on generated files.',
+  'import.file.encrypt': 'Select the algorithm to use to encrypt the files before transfer.',
+  'import.file.pgp.symmetricKeyAlgorithm': 'Select the symmetric key algorithm to use for encryption.',
+  'import.file.pgp.hashAlgorithm': 'The hashing algorithm to use when signing files. If this field is not set, then integrator.io will not sign files after encrypting them.',
   'import.file.filedefinition.rules':
     'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
-  'import.hooks.preMap': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preMapHook" target="_blank"/> Get more info</a>`,
-  'import.hooks.preSavePage': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preSavePageHook" target="_blank"/> Get more info</a>`,
+  'import.hooks.preMap': `You can use this hook to apply logic to the data within an import prior to going through the mapping process. Any manipulation of the data in this step only applies to the import that it is running on. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preMapHook" target="_blank"/> Get more info</a>`,
+  'import.hooks.preSavePage': `You can use this hook to format, filter, and perform logic on the data coming from your export before it moves on to the rest of your data flow. Logic that applies to the data at all steps of the integration should be done at this stage of the flow.<a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preSavePageHook" target="_blank"/> Get more info</a>`,
   'import.hooks.postResponseMap': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postResponseMapHook" target="_blank"/> Get more info</a>`,
-  'import.hooks.postMap': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postMapHook" target="_blank"/> Get more info</a>`,
-  'import.hooks.postSubmit': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postSubmitHook" target="_blank"/> Get more info</a>`,
+  'import.hooks.postMap': `This hook gets invoked after the fields in the source objects have been mapped to their respective fields in the object to be imported. Post map hooks run on the mapped data in the import before it is submitted to the target system. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postMapHook" target="_blank"/> Get more info</a>`,
+  'import.hooks.postSubmit': `This hook gets invoked after the records are processed by the import. You can use this hook to further process imported objects and modify the response data received from import for success and error cases. Post submit hooks run after the record has been successfully synced to the target system, and prior to the flow moving on to the next step of the integration. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postSubmitHook" target="_blank"/> Get more info</a>`,
   'import.hooks.postAggregate': `Invoke this function after the final aggregated file is uploaded to the destination app. Make sure to set the skipAggregation property to false for this hook to work. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postAggregateHook" target="_blank"/> Get more info</a>`,
   'import.hooks.preMap.function':
     "The name of the preMap hook function in your code that you want invoked. Please see <a href='https://github.com/celigo/integrator-extension/blob/master/README.md#hooks' target='_blank'>here</a> for the full documentation on hooks.",
@@ -1430,7 +1481,7 @@ export default {
   'import.netsuite_da.internalIdLookup.expression': 'Use this field to define a lookup that integrator.io will use to determine if a record already exists in NetSuite or not. For example, if you are importing contact records and you have a unique email for each contact, then you can use this field to define a lookup to see if any contacts with the same email already exists in NetSuite. If needed, you can also define more complex lookups using AND and OR. For example, if you are importing item records you can define a lookup to see if any items exist with a specific itemid (i.e. sku) AND also belong to a specific vendor (i.e. because maybe sku by itself is not guaranteed to be unique, but sku plus vendor always is unique).',
   'import.netsuite.recordTypeId':
     'Unique id associated with the recordType selected',
-  'import.netsuite_da.operation': 'Please select <b>Add</b> if you are only importing new records into NetSuite.</br></br> Please select <b>Update</b> if you are only importing changes to existing records in NetSuite.</br></br>Please select <b>Add or update</b> if you want your import to be more dynamic such that (1) if an existing record is found in NetSuite then that record will be updated, or (2) if an existing record cannot be found in NetSuite then a new record will be created. When using just \'Add\' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records. Probably the easiest way to add this protection is to use the \'Ignore Existing Records\' field. </br></br><b>Attach and Detach</b> can be used to define or remove a relationship between two records. For example, a Contact record can be associated with a Partner record, or an Opportunity record can be associated with a Customer record. You can also use the Attach/Detach operations to attach or detach a file to, or from, a record. Any file that is in the NetSuite file cabinet, for example a MS Word or Excel file or a PDF can be attached to any record other than a custom record.',
+  'import.netsuite_da.operation': 'Please select <b>Add</b> if you are only importing new records into NetSuite.</br></br> Please select <b>Update</b> if you are only importing changes to existing records in NetSuite.</br></br>Please select <b>Add or update</b> if you want your import to be more dynamic such that (1) if an existing record is found in NetSuite then that record will be updated, or (2) if an existing record cannot be found in NetSuite then a new record will be created. When using just \'Add\' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records. Probably the easiest way to add this protection is to use the \'Ignore Existing Records\' field. </br></br><b>Attach and Detach</b> can be used to define or remove a relationship between two records. For example, a Contact record can be associated with a Partner record, or an Opportunity record can be associated with a Customer record. You can also use the Attach/Detach operations to attach or detach a file to, or from, a record. Any file that is in the NetSuite file cabinet, for example a MS Word or Excel file or a PDF can be attached to any record other than a custom record.</br></br>The <b>Delete</b> operation will permanently delete records in your NetSuite account found using ”How can we find the records to delete?” lookup criteria. If a record is not found, an error will be thrown, which can be suppressed by marking the “Ignore missing records” checkbox. Typically no mappings are needed, but NetSuite Delete API supports “deletionreasoncode” and “deletionreasonmemo” to be set while deleting a record which can be set on the mappings. Note that NetSuite Delete operation is non-reversible and should be used with care. You can also choose to avoid accidental deletions by using the Update operation instead and make the record inactive.',
   'import.netsuite.retryUpdateAsAdd':
     'Boolean value if set, on failure of any record update on NS, it will be retried as a add operation',
   'import.netsuite.customFieldMetadata':
@@ -1439,29 +1490,12 @@ export default {
   'import.netsuite.internalIdLookup.searchField': '',
   'import.netsuite.internalIdLookup.expression':
     'Ex: \'[["email", "is", "{{email}}"], "AND", ["lastName", "is", "{{lastName}}"]]\'',
-  'import.rest.relativeURI':
-    "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/product' or '/bulkUpdate/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this import. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to pass extended information to an API endpoint.",
-  'import.rest.body': 'This optional override field can be used to customize the post-mapped destination record that gets sent as the default HTTP request body. If you simply need to wrap the post-mapped destination record with a container structure, then you can use the \'{{{jsonSerialize record}}}\' helper function. For example: { "request": {"items": [ {{{jsonSerialize record}}} ] } }',
-  'import.rest.method':
-    "The most common HTTP method used by APIs for the creating resources is 'POST'. Updates typically use 'PUT'. In some cases, RPC style or SOAP/XML APIs will always use the 'POST' HTTP method.  All of these scenarios are supported by integrator.io.",
-  'import.rest.headers':
-    'In some cases, it may be necessary to include custom HTTP headers with your API requests. Any value from the connection can be referenced using {{placeholders}} with a complete path matching the connection field you require.',
-  'import.rest.responseIdPath':
-    'This field is used to help integrator.io find the identifer (id) of the resource returned in the HTTP response. Use the complete path of the resource id within the response. If this field is left blank, integrator.io will try to find a property named id or _id anywhere in the response body.',
-  'import.rest.successPath':
-    "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails.  These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful.  For example, if you are working with Slack's API you would set this field to: 'ok'.",
-  'import.rest.successValues':
-    'This is an optional field which only needs to be configured if the application you are integrating with does not respect HTTP conventions that utilize HTTP status codes to convey success/failure. By default our platform will treat all HTTP responses with a status code in the 2xx range as successful. Conversely, responses with all other status codes are treated as failures. (401 auth failure, 404 resource not found, 500 server error, etc)\n\nIf the application you are integrating with always returns a 200 response, and instead, the body of the response has a property which indicates success/failure, you can use this field to tell our platform (in conjunction with the above "Success Path" field), what responses should be treated as successful. All others will be considered failed responses. For example the Slack API always returns a 200 response, and the body contains an "ok" property with a vale of \'true\' or \'false\'. In this case, the "Success Value" field should have a value of \'true\'.',
-  'import.rest.ignoreLookupName':
-    'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the lookup that will be used to test for the existence of a resource.',
-  'import.rest.ignoreExtract':
-    'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the json path of a field within the exported resource to be used to test for the existence of a resource. In other words, this is the path to an identifier or some other field that would only be present if a resource already exists in the import system.',
   'import.http.successMediaType':
-    'The success media type indicates the format of the data received from all successful (HTTP) requests.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats. Amazon MWS for example, is an XML service that returns CSV data for some of its reports.',
+    'Use this field to handle the use case where a successful HTTP response returns a different media type than the original HTTP request body sent.',
   'import.http.requestMediaType':
-    'The request media type indicates the format of the content within the HTTP request body sent to the service.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats.  Amazon MWS for example, has some endpoints that allow CSV request data, but send error responses in XML.',
+  'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
   'import.http.errorMediaType':
-    'The error media type indicates the format of the response data received from all unsuccessful (HTTP) requests.  This refers to all responses with non-2xx HTTP status codes.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats.  Amazon MWS for example, has some endpoints that return CSV data, but send error responses in XML.',
+    'Use this field to handle the use case where an unsuccessful HTTP response returns a different media type than the original HTTP request body sent.',
   'import.http.relativeURI':
     "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/product' or '/bulkUpdate/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this import. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to pass extended information to an API endpoint.",
   'import.http.method':
@@ -1470,36 +1504,38 @@ export default {
   'import.http.headers':
     "In some cases, it may be necessary to include custom HTTP headers with your API requests. As with the 'body' field, any value from the connection or import models can be referenced using {{placeholders}} with a complete path matching either the connection or import field you require.",
   'import.http.response.resourcePath':
-    'This field is used only when batchSizeLimit is > 1.  In this case, this path identifies where to find the set of resources returned in the HTTP response.',
+    "Use this field if the records returned by the API are not located at the root level of the HTTP response body. For example, an API could return records inside a container object like 'results.customers'.",
   'import.http.response.resourceIdPath':
-    'This field is used to help integrator.io find the identifer (id) of the resource(s) returned in the HTTP response. If the response is from a batch request (batchSizeLimit > 1), then this path is relative to the resourcePath, otherwise use the complete path of the resource id within the response. If this field is left blank, integrator.io will try to find a property named id or _id.',
+    'Use this field to tell integrator.io where in the HTTP response body to find the id field for the record submitted. For batch requests, this path field is relative to each individual record returned. If this field is left blank, then integrator.io will automatically try to pick an id field for you.',
+  'import.http.response.file.resourceIdPath':
+    'Use this field to tell integrator.io where in the HTTP response body to find the id field for the file submitted. If this field is left blank, then integrator.io will automatically try to pick an id field for you.',
   'import.http.response.successPath':
-    'Not all services return http status codes that can be used to determine success or failure of a request.  If a service always returns 200 http status code, even for some failures, then this field can be used to tell integrator.io where to look for a success indicator. This field is used in unison with successValues to further refine how our platform can identify a successful response. If no success values are provided, any truthy value found in the response body at this path will be considered a success.',
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a successful request. For example, if the API always returns a 200 success HTTP status code, but then indicates success via a 'success' boolean field in the HTTP response body.",
   'import.http.response.successValues':
-    'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against the provided list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request succeeded. To provide multiple values, use a comma-separated list.',
   'import.http.response.errorPath':
-    'This optional field is used to help identify where in the body of a failed HTTP response our platform can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
+    'This optional field is used to specify which field in the HTTP response body contains the detailed error message for the purpose of displaying the error on the error management dashboard.  If this field is not set, then the full HTTP response body will be used as the error message in the error management dashboard.',
   'import.http.batchSize':
-    "The HTTP adaptor supports batch and single resource endpoints. If left blank, this field defaults to 1 (non-batch endpoint). Use this field only if you are using an API endpoint that supports batch record processing. There may also be limits to the number of resources an API allows you to act on in a single HTTP request. Refer to their documentation for acceptable limits. Note that your 'body' field will need to have a handlebars template that can iterate over the set of resources provided in the data property of the model used to populate the template.",
+  'This field only needs to be set if the API endpoint supports receiving batches of records in a single HTTP request. If left blank, this field defaults to 1.',
   'import.http.ignoreLookupName':
     'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the lookup that will be used to test for the existence of a resource.',
   'import.http.ignoreExtract':
     'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the extract path of a field within the exported resource to be used to test for the existence of a resource. In other words, this is the path to an identifier or some other field that would only be present if a resource already exists in the import system.',
   'import.http.response.failPath':
-    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+    "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a failed request. For example, if the API always returns a 200 success HTTP status code, but then indicates errors via an 'error.message' field in the HTTP response body.",
   'import.http.response.failValues':
-    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
+    'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request failed. To provide multiple values, please use a comma separated list.',
   'import.http.ignoreEmptyNodes':
-    'IF this flag is set to true, then the XML or JSON that makes up the HTTP request body will be stripped of all nodes that do not have a value. For example, if the body template resolves to: <customer id="1"><phone></phone></customer> and this flag is set, then the actual XML that will be used in the HTTP request will be: <customer id="1"></customer>',
+    'Set this field to true if you want integrator.io to remove empty fields from the HTTP request body before submitting to the API.',
   'import.rdbms.bulkInsert.batchSize':
     'BatchSize indicates number of records that will be imported in one request. The default value is 100. Please note that there is a query limit of 1 MB in the Snowflake. So, for larger values of batchSize, the number of records getting imported in a single request will be adjusted to the 1MB size limit.',
   'import.file.skipAggregation':
     'By default, integrator.io will aggregate all the pages of data that get generated by an export into one (possibly large) file.  If you prefer multiple smaller files (vs one large file) then please set this field to true.',
   'import.file.type':
-    'Please specify the type of files that you want to generate. For example, if you are trying to generate CSV files (i.e. files containing Comma Separated Value data) then please choose CSV.  Please note also that you can name your files however you like (i.e. using the File Name field) without affecting the type of data being generated.',
+    'Choose the type of file that you want to generate. For example, choose CSV if you are importing a flat, delimited text file, or XLSX for a binary Microsoft Excel file. The file name you specify can include a file extension, although it does not affect this file type setting. You’ll then be able to choose a sample file to define the record structure. See <a href="https://docs.celigo.com/hc/en-us/articles/360045305492" target="_blank">Import files to an FTP server</a> more information.',
   'import.file.encoding': 'The file encoding indicates how the individual characters in your data are represented on the file system. Leave this field blank if you do not know what the encoding format is. The default encoding is UTF-8 and the other supported format is: UTF-8, Windows-1252 and UTF-16LE',
   'import.file.compressionFormat':
-    "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
+    "Currently 'gzip' and 'zip' are the only compression formats supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'import.file.csv.columnDelimiter':
     'Column delimiter to be used in the file. Ex: ",", "*", "|", etc...',
   'import.file.csv.rowDelimiter':
@@ -1515,7 +1551,7 @@ export default {
   'import.file.csv.replaceNewlineWithSpace':
     'Boolean value, when set new lines in the content of the data (except rowDelimiters) are replaced with a space (Default is false)',
   'import.as2.fileNameTemplate':
-    "Use this field to specify how the files being sent via AS2 should be named in the AS2 message header. You can type '{{{' to include a variable in your file name, such as timestamp, unique ID, and other AS2 metadata (consult the documentation for more details). For example, 'FileXYZ-{{{timestamp(YY-MM-DD)}}}.txt' will create files with the following pattern: 'FileXYZ-16-06-30.txt'. Or, 'FileXYZ-{{{random \"UUID\"}}}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+    "Use this field to specify how the files being sent via AS2 should be named in the AS2 message header. You can type '{{{' to include a variable in your file name, such as timestamp, unique ID, and other AS2 metadata (consult the documentation for more details). For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will create files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time. Or, 'FileXYZ-{{{random \"UUID\"}}}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.as2.messageIdTemplate':
     'This field is used to specify the format of a unique message identifier that can be automatically generated as part of the import and included in the AS2 message header. The field uses handlebars to access available variables. For example, {{dateFormat "ddMMyyyyHHmmssZ"-random@ connection.as2.as2Id _ connection.as2.partnerId',
   'import.as2.maxRetries':
@@ -1524,9 +1560,9 @@ export default {
     'An External ID field in Salesforce is a custom field that has the External ID attribute set to true.  External ID fields should be used to store unique record identifiers from systems outside Salesforce.  External ID is required to perform Upserts.  If you need additional help understanding External IDs or creating a new External ID field in Salesforce then please contact Salesforce support, or check the Salesforce developer guides.',
   'import.salesforce.sObjectType': 'Use this field to specify which Salesforce sObject type you would like to import.  You can choose any standard sObject type (i.e. account, opportunity, contact) or any custom sObject type as long as the sObject type supports Salesforce triggers. Please note that this list of sObject types is also dependent on the permissions associated with the Salesforce connection being used. Also, if you add any new custom sObject types to your Salesforce account, or if there are any changes to the permissions associated with the connection being used, you can use the refresh icon to regenerate the list.',
   'import.salesforce.operation':
-    "Please select 'Insert' if you are only importing new records into Salesforce.  Please select 'Update' if you are only importing changes to existing records in Salesforce.  Please select 'Upsert' if you want your import to be more dynamic such that (1) if an existing record exists in Salesforce then that record will be updated, or (2) if an existing record does not exist then a new record will be created.  When using just 'Insert' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records.  Probably the easiest way to add this protection is to use the 'Ignore Existing Records' field.",
+    "Please select <b>Insert</b> if you are only importing new records into Salesforce.  When using just Insert it is definitely a best practice to make sure you have some sort of protection in place against duplicate records.  Probably the easiest way to add this protection is to use the 'Ignore Existing Records' field.</br></br>  Please select <b>Update</b> if you are only importing changes to existing records in Salesforce.</br></br>  Please select <b>Upsert</b> if you want your import to be more dynamic such that (1) if an existing record exists in Salesforce then that record will be updated, or (2) if an existing record does not exist then a new record will be created.</br></br>  Please select the <b>Delete</b> operation which will permanently delete records in your Salesforce account found using ”How can we find existing records?” lookup criteria. If a record is not found, an error will be thrown, which can be suppressed by marking the “Ignore missing records” checkbox.",
   'import.salesforce.idLookup.whereClause':
-    'Use this field to define a WHERE clause that integrator.io will use (to execute a SOQL query against the SObject Type defined in this import) to determine if a record already exists in Salesforce or not.  For example, if you are importing contact records and you have a unique email for each contact, then you can use this field to define a WHERE clause to see if any contacts with the same email already exists in Salesforce.  If needed, you can also define more complex WHERE clauses using AND and OR.  For example, if you are importing product records you can define a WHERE clause to see if any products exist with a specific product name AND also belong to a specific product family (i.e. because maybe product name by itself is not guaranteed to be unique, but product name plus product family always is unique).',
+    'Use this field to define a WHERE clause that integrator.io will use (to execute a SOQL query against the sObject Type defined in this import) to determine if a record already exists in Salesforce or not.  For example, if you are importing contact records and you have a unique email for each contact, then you can use this field to define a WHERE clause to see if any contacts with the same email already exists in Salesforce.  If needed, you can also define more complex WHERE clauses using AND and OR.  For example, if you are importing product records you can define a WHERE clause to see if any products exist with a specific product name AND also belong to a specific product family (i.e. because maybe product name by itself is not guaranteed to be unique, but product name plus product family always is unique).',
   'import.salesforce.idLookup.extract':
     'Please specify which field from your export data should map to External ID.  It is very important to pick a field that is both unique, and guaranteed to always have a value when exported (otherwise the Salesforce Upsert operation will fail). If sample data is available then a select list should be displayed here to help you find the right field from your export data.  If sample data is not available then you will need to manually type the field id that should map to External ID.',
   'import.salesforce.contentVersion.title':
@@ -1564,11 +1600,23 @@ export default {
     "Use this field to specify the directory path of the FTP folder where you want files to be transferred.  For example, if you set this field to 'MySite/Items' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Items', and then transfer all files into this child folder 'Items'.",
   'import.ftp.fileExtension':
     "This field can be used to include a specific file name extension to all files being generated and transferred to an FTP site.  For example, if you choose '.csv' then all files being transferred to the FTP site will include the extension '.csv' in their file name (i.e. FileXYZ-16-06-30.csv). Please note that this field is only relates to the file's name, and does not dictate the type of data being generated (which is set via a different field).  Saying this another way, although not recommended you could generate json files but use a '.csv' extension for the file names.",
+  'import.file.fileName':
+    "Use this field to specify how the files being uploaded to the google drive site should be named. You can type '{{{' to include a predefined timestamp template in your file name. For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.ftp.fileName':
-    "Use this field to specify how the files being uploaded to the ftp site should be named.  You can type '{{{' to include a predefined timestamp template in your file name.  For example, 'FileXYZ-{{{timestamp(YY-MM-DD)}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt'.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+    "Use this field to specify how the files being uploaded to the ftp site should be named. You can type '{{{' to include a predefined timestamp or unique file identifier in your file name. For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time, Or, 'FileXYZ-{UUID}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.ftp.inProgressFileName':
     'If the destination folder where your file is being generated is also being watched by another service, it may be necessary to "hide" the file being generated by integrator.io until it completes.  This field is used to tell our platform to write the file under a temporary filename while the write opperation is in progress. Upon completion, integrator.io will rename this file to the intended filename defined by the "fileName" field.',
   'import.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
+  'import.gdrive.directoryPath':
+    'Specify google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
+  'import.azure.containerName':
+     'Specify the Azure blob storage container that has the files to be transferred. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes. You can also (optionally) configure <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder or transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
+  'import.azure.fileName':
+    "Use this field to specify how the files being uploaded to the Azure blob storage container should be named. You can type '{{{' to include a predefined timestamp template in your file name. For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+  'import.file.backupPath':
+    'Specify the directory path of the google drive folder where files will be backed up after the successful transfer.',
+  'import.azure.backupPath':
+    'Specify the directory path of the Azure blob storage container where files will be backed up after the successful transfer.',
   'import.s3.region':
     'Name of the nearest amazon s3 region to the location from where the request is being made. If not set, by default "us-east-1" is selected',
   'import.s3.bucket':
@@ -1596,7 +1644,7 @@ export default {
   'import.mongodb.ignoreLookupFilter':
     'If you are adding documents to your MongoDB instance and you have the Ignore Existing flag set to true please enter a filter object here to find existing documents in this collection. The value of this field must be a valid JSON string describing a MongoDB filter object in the correct format and with the correct operators. Refer to the <a href="https://docs.mongodb.com/manual/reference/operator/query/" target="_blank">MongoDB documentation</a> for the list of valid query operators and the correct filter object syntax.',
   'import.dynamodb.region': 'Name of the DynamoDB region to the location where the request is being made. If not set, by default \'us-east-1\' is selected.',
-  'import.dynamodb.method': '',
+  'import.dynamodb.method': '<b>putItem: </b>Creates an item or replaces an old item with a new item.<br><b> updateItem: </b>Edits an existing item’s attributes or adds a new item to the table if it does not already exist.',
   'import.dynamodb.tableName':
     'Enter the name of the DynamoDB collection in your database that you would like to query from. For example: orders, items, users, customers, etc..',
   'import.dynamodb.partitionKey':
@@ -1676,7 +1724,7 @@ export default {
     'For applications like NetSuite and Salesforce, integrator.io will by default try to generate links for any records that fail to export and then display those links in your job dashboard.  If you prefer to define your own custom links then please use this handlebars field to override the default functionality.  For example, if you are exporting sales orders but instead want the errors to link to customers, you could use the following.  "https://system.na1.netsuite.com/app/common/entity/custjob?id={{{entity}}}"',
   'export.csvFile':
     'Please select a file from your local computer that you would like to import. The maximum file size allowed is currently 100 MB. If you need to import anything larger than this please log a support ticket, or as a work around you can break your larger files into separate smaller ones.',
-  'export.salesforce.distributed.requiredTrigger': 'A Salesforce trigger is required per SObject type to facilitate real-time exports.  Please copy the base trigger code provided in this field, and then configure the trigger to run in your Salesforce account.  You can change the logic in the trigger however is needed to meet specific business requirements.',
+  'export.salesforce.distributed.requiredTrigger': 'A Salesforce trigger is required per sObject type to facilitate real-time exports.  Please copy the base trigger code provided in this field, and then configure the trigger to run in your Salesforce account.  You can change the logic in the trigger however is needed to meet specific business requirements.',
   'export.uploadFile':
     'Please provide a sample file that this transfer would need to parse when the flow runs.  This sample file will be used to help you configure the file parser options, and it will also be used to help you map data in subsequent steps in your flow.  The sample file does not need to be overly large, but it should contain all possible fields that your flow needs to work with.',
   'export.salesforce.distributed.referencedFields': 'Use this setting to add additional fields to the export data defined as lookup fields on the sObject on Salesforce. Ex: Account is a lookup field on Opportunity. This setting allows users to pull data from the reference fields (such as Name, AccountNumber) on the Account sObject.',
@@ -1702,6 +1750,7 @@ export default {
     'If the files you are exporting are in a compressed format then please set this field to true.',
   'export.netsuite.apiType': '',
   'export.netsuite.api.type': 'NetSuite supports two different API types: RESTlet and Web Services. The RESTlet API is recommended because it is newer, more user friendly, and much easier to get started with. It also supports greater levels of concurrency when using just a regular NetSuite license (i.e. a license that does not have NetSuite\'s SuiteCloud Plus enabled), and the RESTlet API enables more advanced capabilities like the ability to define a preSend hook in NetSuite using SuiteScript, or to support more performant and robust \'Once\' type exports. The Web Services API is a good fit when you\'ve purchased a NetSuite SuiteCloud Plus license and you also need to export very large amounts of data. The Web Services API is the only option available if you cannot install our integrator.io bundle in your NetSuite account. To completely maximize the amount of data that can be exported from a single NetSuite license you would use a combination of both RESTlet and Web Services API based exports.',
+  'export.netsuite.distributed.useSS2Framework': 'Select which NetSuite SuiteScript API version you’d like to configure your real-time export for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>.',
   'export.netsuite.restlet.useSS2Restlets': 'Select which NetSuite SuiteScript API version you’d like to configure your export for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>.',
   'import.netsuite_da.useSS2Restlets': 'Select which NetSuite SuiteScript API version you’d like to configure your import for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>',
   'export.netsuite.recordType':
@@ -1717,12 +1766,17 @@ export default {
   'export.netsuite.restlet.criteria':
     'This field can be used to specify any additional search criteria for the saved search that you want to execute for this flow. These will be added to the existing saved search criteria before records are exported out of NetSuite.',
   'export.netsuite.restlet.searchType':
-    'NetSuite Saved Searches are an incredibly powerful and super easy way to define the exact data that you want to extract out of NetSuite.  By default, integrator.io can see all the public Saved Searches in your NetSuite account, and we display them all below so that you can quickly select the search data that you want to export.  If you want to export the data from a private Saved Search that works too, but please specify that here so that we know to prompt you for one extra field needed to access the private Saved Search (i.e. because we cannot by default see the private searches in your account we need you to tell us one more detail).  For private Saved Searches also, please make sure that the credentials associated with the connection record set above have access to the search results data in NetSuite.',
-  'export.netsuite.restlet.searchInternalId':
-    "To use a private NetSuite Saved Search please tell us the Internal Id of the Saved Search here (should be a numeric value) .  One way to obtain this value is to navigate to the Saved Search in the NetSuite UI and then in the browser URL you should see a numeric searchId field (i.e. searchid=123456 and then just use the numeric part 123456).  Another way to obtain this value is by editing the Saved Search and then in the 'ID' field there should be a numeric value that you can extract (i.e. customsearch123456 and then just use the numeric part 123456).  Please contact NetSuite support if you need more guidance finding your Saved Search Internal Ids.",
+    'Select <b>Public</b> or <b>Private</b>, depending on how you defined your saved search in NetSuite. \n<br>When you export a record type from a saved search, all of the matching data is retrieved according to how you defined it in NetSuite. It’s a simple and popular option for populating your integration flow. (If you’re unfamiliar with NetSuite saved searches, see the NetSuite help guides, and then you can quickly become an expert by testing them in your NetSuite account.) \n<br>IMPORTANT: Always sort your NetSuite saved search results by the Internal Id and then explicitly include the Internal Id column in the results, which is required to group consecutive search rows with the same Internal Id into individual logical records. For example, a single sales order with multiple line items will output multiple rows on the order. integrator.io needs the Internal Id to group all rows belonging to the same sales order. If you cannot sort your NetSuite saved search by Internal Id, then you must leave <b>Group rows</b> (below) unchecked.',
+  'export.netsuite.restlet.searchInternalId': 'Enter either of the following IDs for the saved search you want to run: \n<br>&#8226; The Internal Id \n <br>&#8226; Your custom search Id \n<br>If you specify an Internal Id, you can click the launch shortcut button to go directly to the saved search in your NetSuite account. \n<br>Referencing the search Id is a best practice for being able to access the saved search even after you refresh the sandbox and the Internal Id changes.',
   'export.netsuite.hooks.preSend': '',
+  'export.gdrive.directoryPath':
+    'Specify  google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files from folder \'Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes.  You can also (optionally) configure <a href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder, or to transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
+  'export.azure.containerName':
+    'Specify the Azure blob storage container that has the files to be transferred. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes. You can also (optionally) configure <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder or transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
+  'export.azure.skipDelete':
+    'If this field is set to \'true\' then <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will NOT delete files from the transfer application after a transfer completes. The files will be left on the transfer application, and if the transfer process runs again the same files will be transferred again.\n <br> Note: Select this option, if the Azure connection has only read access to avoid failure in the flow',
+  'export.s3.bucket': 'Specify the Amazon S3 folder, such as: folder1. S3 bucket names cannot contain forward slashes or folder structure. If you have folder structure in the bucket such as folder1/subfolderA/topic1, the bucket name would be <b>folder1</b>. You would then put the remaining <b>subfolderA/topic1</b> in the <b>Key starts with</b> field.',
   'export.s3.backupBucket': 'Specify the bucket name where files will be backed up after successful transfer.',
-  'export.s3.bucket': 'The Amazon S3 folder path. For example, Mysite/Orders.',
   'export.salesforce.sObjectType': 'Use this field to specify which Salesforce sObject type you would like to export.  You can choose any standard sObject type (i.e. account, opportunity, contact) or any custom sObject type as long as the sObject type supports Salesforce triggers. Please note that this list of sObject types is also dependent on the permissions associated with the Salesforce connection being used. Also, if you add any new custom sObject types to your Salesforce account, or if there are any changes to the permissions associated with the connection being used, you can use the refresh icon to regenerate the list.',
   'export.webhook.url': 'If a URL has not been generated yet, please use the \'Generate URL\' link to generate a public URL for this webhook listener, and then you will need to share this URL with the webhook provider (i.e. through that provider\'s UI or API).  Saying this another way, each webhook provider like GitHub, Shopify, etc... will support a mechanism to configure a URL where you want webhook data sent, and please provide them with this generated URL here.',
   'export.webhook.sampledata': 'Use this field to provide sample data so that integrator.io can help you map your webhook data later. For brand new webhook exports, if you can trigger the webhook to send test data right now (against the URL above) then you can use the \'Click To Show\' link below to see the live data that actually got sent. If this is not a brand new export (in which case it is not possible anymore for integrator.io to intercept test data), or if the webhook provider does not support a test send, then you will need to manually copy and paste the expected webhook data into this field.',
@@ -1730,7 +1784,7 @@ export default {
     "Please select 'Script' if you want to use the native integrator.io JavaScript runtime engine (where all your code is managed and executed by integrator.io), or choose 'Stack' if you prefer to host your code outside integrator.io (either on your own servers, or on AWS Lambda).",
   'export.skipRetries': 'Check this box if you do NOT want <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590556088890000&amp;usg=AFQjCNFM_k8PAvITBLyHS0Wg3n3N_M_dNw">integrator.io</a> to store retry data for records that fail in your flow. Storing retry data can slow down your flow\'s overall performance if you are processing very large numbers of records that are failing. Storing retry data also means that anyone with access to your flow\'s dashboard can see the retry data in clear text.',
   'export.oneToMany':
-    'There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you are exporting Sales Order records out of NetSuite but you want to enhance each line item in the Sales Order with addition information stored in NetSuite (i.e. by running a dynamic search for each line item), then you will need to use this option.',
+    'Choose this option if the records being processed contain child records that should instead be treated as the main records (i.e. for this step only in the flow). For example, you could be processing order records but want to process the line items within the orders as the main records for this step.',
   'export.searchCriteria':
     'This field can be used to specify any additional search criteria for the saved search that you want to execute for this flow. These will be added to the existing saved search criteria before records are exported out of NetSuite.',
   'export.invoke-url':
@@ -1786,40 +1840,8 @@ export default {
     '<b>Fail Record:</b> If no results are found or the dynamic lookup fails, the lookup will silently fail (return empty string). Similarly, if multiple results are found  (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails. \n\n<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
   'import.salesforce.api':
     'Salesforce supports both SOAP and REST API types.  Salesforce actually supports a multitude of different API types, but SOAP and REST are the most relevant for importing data via integrator.io.  SOAP is recommended here because SOAP supports the ability to submit more than one record at a time (i.e. in a single API request).  Salesforce governs its API based on the total number of API requests per day, so it is important to batch up your data wherever possible; and with the REST API you are limited to only one record per API request.  The REST API can be a slightly better option when the data being imported is guaranteed to come in one record at a time, or if you are using the integrator.io API to invoke the import from your own application and you prefer the REST paradigm.\n\n<b>Composite:</b> This enables you to import a parent record along with its child record to leverage the composite requests of Salesforce.',
-  'import.rest.composite.type':
-    "Choose 'Create New and Update Existing' to dynamically create vs update records in the import application based on their existence in that application already. Choose 'Create New Data and Ignore Existing Data' to only create new records, and this option will ignore records that exist already. Choose 'Update Existing Data and Ignore New Data' to only update existing records, and this option will ignore records that cannot be found.\"",
-  'import.rest.composite.create.relativeURI':
-    "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/product' or '/bulkUpdate/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this import. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to pass extended information to an API endpoint.",
-  'import.rest.composite.create.method':
-    'Choose the HTTP method to use for requesting the endpoint. Most of the endpoints use POST method for creating new records. But some endpoints might be using PUT method for the same.',
-  'import.rest.composite.create.body':
-    'Click this button to specify handlebars expression which will be evaluated and the result is used as Http Request body while importing.',
-  'import.rest.composite.create.successPath':
-    "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails. These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful. For example, if you are working with Slack's API you would set this field to: 'ok'.",
-  'import.rest.composite.create.successValues':
-    'This field indicates the value(s) that represents the success of an HTTP response. For example, 0 or 0,2,3 . This field is used in unison with the Success Path field. The value found in the HTTP response at the path specified in Success Path is compared against the provided list of success values. If there is an exact case-sensitive match of any of the specified values, the request is considered successful.',
-  'import.rest.composite.create.responseIdPath':
-    'This field is used to help integrator.io find the identifer (id) of the resource returned in the HTTP response. Use the complete path of the resource id within the response. If this field is left blank, integrator.io will try to find a property named id or _id anywhere in the response body.',
-  'import.rest.composite.update.relativeURI':
-    "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/product' or '/bulkUpdate/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this import. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to pass extended information to an API endpoint.",
-  'import.rest.composite.update.method':
-    'Choose the HTTP method to use for requesting the endpoint. Most of the endpoints use PUT method for updating existing records. But some endpoints might be using POST method for the same.',
-  'import.rest.composite.update.body':
-    'Click this button to specify handlebars expression which will be evaluated and the result is used as Http Request body while importing.',
-  'import.rest.composite.update.successPath':
-    "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails. These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful. For example, if you are working with Slack's API you would set this field to: 'ok'.",
-  'import.rest.composite.update.successValues':
-    'This field indicates the value(s) that represents the success of an HTTP response. For example, 0 or 0,2,3 . This field is used in unison with the Success Path field. The value found in the HTTP response at the path specified in Success Path is compared against the provided list of success values. If there is an exact case-sensitive match of any of the specified values, the request is considered successful.',
-  'import.rest.composite.update.responseIdPath':
-    'This field is used to help integrator.io find the identifer (id) of the resource returned in the HTTP response. Use the complete path of the resource id within the response. If this field is left blank, integrator.io will try to find a property named id or _id anywhere in the response body.',
-  'import.rest.composite.ignore.resourceId':
-    'This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".Alternatively, identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup\'s name in this field.',
-  'import.rest.lookups.failFields':
-    '<b>Fail Record:</b> If no results are found or the dynamic lookup fails, the lookup will silently fail (return empty string). Similarly, if multiple results are found  (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails. \n\n<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
-  'import.rest.lookups.useNull':
-    "Please check this field if you want to use 'null' as the default lookup value. This value will be used if your lookup does not find anything.",
-  'import.rest.lookups.useEmptyString':
-    "Please check this field if you want to use '' (i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything.",
+  'import.http.compositeType':
+    "Choose 'Create New and Update Existing' to dynamically create vs update records in the import application based on their existence in that application already. Choose 'Create New Data and Ignore Existing Data' to only create new records, and this option will ignore records that exist already. Choose 'Update Existing Data and Ignore New Data' to only update existing records, and this option will ignore records that cannot be found.",
   'import.hooks.preMap.scriptFunction':
     'The name of the preMap hook function (in your script) that you want to invoke.',
   'import.hooks.postMap.scriptFunction':
@@ -1828,8 +1850,6 @@ export default {
     'The name of the postSubmit hook function (in your script) that you want to invoke.',
   'import.hooks.postAggregate.scriptFunction':
     'The name of the postAggregate hook function (in your script) that you want to invoke.',
-  'import.restImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.netsuiteImportFieldMappingSettings':
     `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.etailImportFieldMappingSettings':
@@ -1845,16 +1865,14 @@ export default {
     'When integrator.io runs this lookup it will read the column named in this field from the SQL result set and return that single value as the result of the lookup. Please make sure this field contains a valid column name from your database table.',
   'import.rdbms.lookups.query':
     'The query that fetches records to be exported.',
-  'import.rdbms.lookups.name':
-    'Name of the lookups that will be exposed to the mapping to refer.',
+  'import.lookups.name':
+    'Enter a unique name so that you can identify this lookup later.',
   'import.mongodb.lookupType':
     'There are two ways to identify existing records. Either by testing for the existence of a field value on the export record (such as id), or by performing a lookup against the destination application. Choose the option, "Records have a specific field populated" if you can identify existing records by examining the content of your export records. If on the other hand a lookup is necessary, select the "Run a dynamic search against MongoDB" option. After making this selection, other fields will become available to describe how to define your lookup.',
   'import.oneToMany':
-    "There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you're exporting Sales Order records out of NetSuite and importing them into Salesforce as Opportunity and Opportunity Line Item records, then you will need to import the Opportunity Line Item records using this option.",
+    "There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you're exporting Sales Order records out of NetSuite and importing them into Salesforce as Opportunity and Opportunity Line Item records, then you will need to import the Opportunity Line Item records using this option.<b>One to many</b> is used in cases where you have a single record which internally needs to create multiple records. This field cannot be used when importing a CSV file.",
   'import.pathToMany':
     "If the parent record is represented by a JSON object then this field should be used to specify the JSON path of the child records. If the parent record is represented by a JSON array (where each entry in the array is a child record) then this field does not need to be set. If you are unsure how parent records are being represented in your flow then please view the 'Sample Data' field for the 'Export' resource that is generating the data. Following are two examples also to hopefully help clarify how data can be represented differently depending on the export context. Example 1: If you are exporting Sales Orders out of NetSuite in real-time then NetSuite sends integrator.io a JSON object for each Sales Order, and if you want to process the line items in that Sales Order then you need to specify the JSON path for the line items field. There is no way to tell NetSuite to send an array for real-time data. Example 2: But, if you are exporting Sales Orders out of NetSuite via a scheduled flow then in this case NetSuite represents each order via an array where each entry in the array represents a line item in the order. There is no way to tell NetSuite to give you an object for batch data.",
-  'import.restImportFieldMappingLookupType':
-    'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
   'import.netsuiteImportFieldMappingLookupType':
     'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
   'import.invoke-url':
@@ -1885,8 +1903,6 @@ export default {
     'The file transfer protocol using which you want to establish the FTP connection.\nThe following protocols are available:\n<bold>FTP:</bold> Select FTP if the server that you are connecting to requires an FTP protocol.\nSFTP: Select SFTP if the server that you are connecting to requires an SFTP protocol.\nFTPS: Select FTPS if the sever that you are connecting to requires an FTPS protocol.',
   'connection.connMode':
     'Select Cloud if you are connecting to an application on the cloud and is publicly accessible. For example, Salesforce, NetSuite. Select On-premise if you are connecting to a server that is publicly inaccessible and has integrator.io Agent installed on it. For example, Production AWS VPC, MySQL server.',
-  'connection.rest.authType':
-    "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
   'connection.http.auth.revoke.uri':
@@ -1915,19 +1931,7 @@ export default {
   'connection.http.auth.token.revoke.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded, and the authorization header value is basic.',
   'connection.http.auth.token.revoke.uri':
     'integrator.io makes an HTTP post request to the token revocation endpoint URL to revoke a particular token.',
-  'connection.rest.pingMethod':
-    'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
-  'connection.rest.pingBody':
-    'This field is typically used in for HTTP requests not using the GET method. The value of this field becomes the HTTP body that is sent to the API endpoint. The format of the body is dependent on the API being used. It could be URL-encoded, JSON, or XML data. In either case, the metadata contained in this body will provide the API with the information needed to fulfill your ping request. Note that this field can contain {{{placeholders}}} that are populated from a model comprising of a connection and an export object. For example, if the export request body requires an authentication token to be embedded, you can use the placeholder {{connection.http.auth.token.token}}.',
   'connection.rest.threedcartSecureUrl': "3dcart merchant's Secure URL.",
-  'connection.rest.encrypted':
-    "Use this JSON field to store all the security sensitive fields needed by your imports and exportsto access the application being integrated. For example: {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}. Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
-  'connection.rest.unencrypted':
-    "Use this JSON field to store all the security insensitive fields needed by your imports and exports to access the application being integrated. For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
-  'connection.rest.storeName':
-    "Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is 'https://demo-store.myshopify.com/', then provide 'demo-store' as the store name.",
-  'connection.rest.applicationType':
-    "These are the OAuth 2.0 providers currently supported by integrator.io. Please contact support if you need an application that is not currently listed here, and it is also worth checking with the application provider to see if they have any other forms of API authentication available. For example, Shopify supports both OAuth 2.0 and Basic Auth (i.e. username and password). Keep in mind too that once a new OAuth 2.0 provider is supported by integrator.io you will likely be able to choose that application directly in the 'Connection Type' field (vs connecting at the technology level via HTTP or REST).",
   'connection.salesforce.sandbox':
     'Select Production or Sandbox from this field. You can then click on Save & Authorize that opens a Salesforce window where you can enter your Salesforce account credentials to connect to Salesforce.',
   'connection.salesforce.oauth2FlowType':
@@ -1942,8 +1946,6 @@ export default {
     "3dcart merchant's Secure URL.",
   'connection.threedcart.rest.encrypted.PrivateKey':
     "Your application's private key.",
-  'connection.shopify.rest.storeName':
-    "Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is 'https://demo-store.myshopify.com/', then provide 'demo-store' as the store name.",
   'connection.shopify.rest.basicAuth.username':
     "Login to your Shopify store and navigate to 'Apps' section. Click on the respective private app and the API key can be found next to the 'Authentication' section.",
   'connection.shopify.rest.basicAuth.password':
@@ -1955,12 +1957,20 @@ export default {
   'concurall.connection.http.encrypted.password': 'Please enter the Request token value which will be available in the URL after connecting to Concur App present at the App Center.',
   'concurall.connection.http.subdomain': 'Please enter the subdomain of your Concur account.',
   'concurall.connection.http.unencrypted.clientId': 'Please enter Client ID of your Concur account.',
-  'concurall.connection.http.encrypted.clientSecret': 'Please enter Client Secret of your Concur Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'concurall.connection.http.encrypted.clientSecret': 'Please enter Client Secret of your Concur Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'concurall.connection.http.unencrypted.credtype': 'For connections from the App Center, use authtoken. if omitted, oauth2 will assume the type is password.',
+  'azurestorageaccount.connecton.http.unencrypted.storageAccount':
+    'Specify the name of the Azure storage account which contains the data.',
+  'azurestorageaccount.connecton.http.unencrypted.tenantId':
+    'Specify the tenant ID that identifies the Azure Active Directory tenant used for authentication.',
   'connection.netsuite.authType':
-    `Please choose ‘Basic’ to use your NetSuite email and password for this connection, or choose 'Token Based Auth' to use NetSuite's Token Based Authentication. Token Based Auth is much more secure than email and password, and your tokens will never expire untill revoked in NetSuite, and is NetSuite’s recommended way of configuring a connection. There are two ways to configure Token Based Auth: </br><b>1.Token Based Auth(Manual) : </b>A user would have to manually create the Tokens in NetSuite and enter them in IO.Please read <a href=${HELP_CENTER_BASE_URL}/hc/en-us/articles/115000694991-NetSuite-2018-2-two-factor-authentication-2FA-requirement>here</a> on generating tokens manually. Once you generate the tokens, please keep them secure as they can be re-used for multiple connections.</br> <b>2.Token Based Auth(Automatic) :</b> [Recommended] Integrator will generate tokens on behalf of the user. Once you select this option, IO will redirect you to NetSuite login page and you can select the role for which you need to generate the tokens. Please note that authorising a connection generates a new set of tokens in NetSuite everytime, so anytime a connection is created/edited with this option will generate a new set of tokens.`,
+    `Token Based Auth is NetSuite’s recommended way of authentication a connection. Tokens generate while setting up the connection will never expire until revoked in NetSuite. There are two ways to configure Token Based Auth: </br><b>1.Token Based Auth(Manual) : </b>A user would have to manually create the Tokens in NetSuite and enter them in IO.Please read <a href=${HELP_CENTER_BASE_URL}/hc/en-us/articles/115000694991-NetSuite-2018-2-two-factor-authentication-2FA-requirement>here</a> on generating tokens manually. Once you generate the tokens, please keep them secure as they can be re-used for multiple connections.</br> <b>2.Token Based Auth(Automatic) :</b> [Recommended] Integrator will generate tokens on behalf of the user. Once you select this option, IO will redirect you to NetSuite login page and you can select the role for which you need to generate the tokens. Please note that authorising a connection generates a new set of tokens in NetSuite everytime, so anytime a connection is created/edited with this option will generate a new set of tokens. <br>Note 1: At a time there can be 25 active tokens for a user/role combination. <br>Note 2:  ‘Basic’ Auth can be used with your NetSuite email and password and it planned for deprecation by NetSuite. This is only supported for legacy integrations which should also move to TBA.`,
+  'connection.netsuite.wsdlVersion':
+    `The NetSuite WSDL version that this connection uses. It's always recommended to use the latest WSDL version. You can switch between different versions by editing the connection.
+  <br/>Note that Switching versions for an existing connection might have an impact on running flows, and it is recommended to review NetSuite’s release notes prior to making a change. 
+  <br/>Note that NetSuite WSDL 2020.2 and later versions only support token-based auth.`,
   'connection.netsuite.linkSuiteScriptIntegrator':
-    "Prior to integrator.io, NetSuite integrations built by Celigo ran directly inside your NetSuite account via a managed bundle. If you are still running any of these older integrations this field must be used to link integrator.io to your NetSuite account. Celigo's older UI that ran directly inside NetSuite has been deprecated, and users are required to use integrator.io going forward to manage and monitor all integrations.",
+    'Prior to integrator.io, NetSuite integrations built by Celigo ran directly inside your NetSuite account via a managed bundle. If you are still running any of these older integrations, check this box to link integrator.io to your NetSuite account. The older Celigo interface that ran directly inside NetSuite has been deprecated, and you must now use integrator.io to manage and monitor all integrations.',
   'connection.configureApiRateLimits':
     'By default the HTTP adaptor will treat all HTTP responses with status code 429 as being rate-limited and then look for a “retry-after” header to determine when our platform can retry the request. If the service you are connecting to respects these HTTP specifications, then you do not need any additional configuration. If however your service implements a custom rate-limit response structure, use these options to tell our platform how to identify and respond to a rate-limited response.',
   'connection.http.auth.oauth.applicationType':
@@ -1976,6 +1986,8 @@ export default {
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':
     'Please check this field if you want to establish a secure connection to the database. This ensures that data in transit is encrypted.',
+  'connection.as2.preventCanonicalization': '“Canonicalized” data has been transformed to its simplest essential form during HTTP requests. Check this box to skip canonicalization during signature verification, which avoids any risk of the signature’s getting invalidated when accompanying transformed binary data',
+  'connection.as2.concurrencyLevel': 'Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode. With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency. Some APIs are really great with burst mode, and can typically handle any types of volume. Conversely other APIs are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.',
   'connection.as2.userStationInfo.as2URL':
     'This is the URL to which your trading partners will send AS2 documents. Note that the same URL is used for all integrator.io users, which is why the above AS2 identifier must be unique. It is not editable but is provided here so that you can communicate it to your trading partners.',
   'connection.as2.userStationInfo.requireMDNsFromPartners':
@@ -1986,6 +1998,8 @@ export default {
     'These are the IP addresses of the various servers that comprise integrator.io. These should be shared with your trading partners if the trading partner has a firewall that needs to be configured to allow inbound AS2 traffic from integrator.io',
   'connection.as2.partnerStationInfo.requireAsynchronousMDNs':
     'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
+  'connection.rdbms.disableStrictSSL':
+    'An optional flag that (if set) skips verifying the SSL certificate, allowing self-signed or expired certs.  It is highly recommended (for hopefully obvious reasons) that you never set this flag for any production data connections.  In general, use at your own risk.',
   'notifications.jobErrors':
     "Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.",
   'notifications.connections':
@@ -2010,11 +2024,11 @@ export default {
   'flow.frequency':
     'This field dictates how often your integration flow is run. Please log a support ticket if there is a specific preset frequency that you would like to see added to this list.',
   'flow.startTime':
-    'This field lets you control the first scheduled execution time for your flow each day. \n\nPlease note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue, or other flows ahead of you in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time (i.e. this allows Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time).',
+    'Set the first time that you want your flow to run each day. <br>Note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue. The list of available start times is also subject to change to allow Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time.',
   'flow.endTime':
-    'This field lets you control the last scheduled execution time for your flow each day.',
+    'Set the final time that you want your flow to run each day.',
   'flow.daysToRunOn':
-    'This field lets you configure the specific day(s) you would like this integration flow to run on.',
+    'Choose the specific day when you would like this integration flow to run.',
   'flow.type':
     "Please select 'Use Presets' if you would like to use one of the more popular frequency options, and then the UI will guide you through the setup for each. If you need something more custom then please select 'Use Cron Expression', and then the UI will display a simple cron builder to help you define a custom frequency.",
   'asynchelper.rules':
@@ -2092,9 +2106,23 @@ export default {
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   'mapping.dataType':
-    'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
+    'Select the data type of the import field, such as Boolean, string, or number array.',
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
+  'mapping.useFirstRow':
+    `Check this box to update the destination sublist fields using only the value of the first sublist retrieved for the record. For example, if the source app contains the following two rows: 
+    <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+     <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">11</td> </tr>
+    </table>
+    When you select <b>Apply only the first row’s value and map the Visits</b>, the destination records will be synced as follows upon import, ignoring the second (or subsequent) rows.
+    <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+     <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+    </table>
+    `,
+  'mapping.isKey':
+    'Check this box to use this NetSuite sublist field to identify a NetSuite line with the same value as the external field. If a match is found, integrator.io will update the NetSuite sublist line; otherwise, it will insert a new line. \n For example, let’s say you are updating a sales order that has a custom field called VendorItemId in its line items. When the source app sends a VendorItemId in the line data, you can map that field to the NetSuite destination’s VendorItemId and select <b>Use as a key field to find existing lines.</b> Then, if NetSuite has the same VendorItemId value in that record’s sublist, <a href="https://www.celigo.com/ipaas-integration-platform/" target="_blank"/>integrator.io</a>will update the corresponding lines with the source value.',
   'mapping.fieldMappingType':
     `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'mapping.extract':
@@ -2123,11 +2151,11 @@ export default {
   'mapping.functions':
     `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">handlebars Helper Guide</a>`,
   'mapping.immutable':
-    'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
+    'Check to always import records, even if they generate errors from the destination app. By default, if a record fails to import, integrator.io will parse the error message from the destination app. If a specific field can be identified in the error message as the root cause for the import’s failure, then that field will be removed and the import will be retried again automatically.<br>For most fields, this behavior (when left unchecked) is intended, so that single fields do not prevent entire records from importing. However, for those fields where the import/sync is mission critical, check <b>Immutable</b> to tell integrator.io not to remove the field for an automatic retry. See the <a href="https://docs.celigo.com/hc/en-us/articles/360019506771" target="_blank">Import mapping settings</a> for an example record.',
   'mapping.useAsInitializeValue':
     'NetSuite allows certain fields to be initialized (preloaded on the NetSuite form) when the record is being created or transformed, known as record initialization. Check this box if you would like to add this field during record initialization. \nExample: To specify the subtype as Sale, Purchase, or Resale when creating a non-inventory item, you must set the mapping during the initialization process by checking this box.',
   'mapping.lookup.mode':
-    'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
+    'Use a dynamic search to look up data directly in the import application. For example, you can use this option if you have an email address in your export data and you want to run a search to find a system id value in the import application. Use a static value-to-value mapping when you already know all possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications, you can define them here. You can also use <a href="https://docs.celigo.com/hc/en-us/articles/115000924331-Use-handlebars-in-static-lookups" target="_blank">handlebars</a> for static lookups in this field.',
   'mapping.conditional.when':
     'Perform this mapping when <br> <b>Record is created </b> </br> Perform the field mapping only when the record is being created. Otherwise, ignore this mapping.</br> <b>Record is updated</b> </br>Perform the field mapping only when the record is being updated. Otherwise, ignore this mapping.</br><b>Source is not empty</b> </br>Perform the field mapping when the extract resolves to a truthy value. Otherwise, ignore this mapping.</br> <b>Lookup is not empty</b> </br>Perform the field mapping when the lookup defined finds a record and it the return field’s value is not empty. Otherwise, ignore this mapping.</br><b>Lookup is empty</b> </br>Perform the field mapping when the lookup defined does not find a record or the found records field value is empty. Otherwise, ignore this mapping.</br><b>Field is not set</b> </br>Perform this field mapping if the record to be updated in NS does not have a value set. Otherwise, ignore the mapping.</br>By default, if none of the condition is specified the mapping is always considered.',
   'mapping.relativeURI':
@@ -2142,7 +2170,7 @@ export default {
   'mapping.netsuite.lookup.resultField':
     'Field name that has to be extracted out using the lookups.searchField.',
   'mapping.salesforce.lookup.sObjectType':
-    'Enter the SObject type in Salesforce that you would like to query. If the SObject type you are looking for is not displayed then please click the refresh icon.',
+    'Enter the sObject type in Salesforce that you would like to query. If the sObject type you are looking for is not displayed then please click the refresh icon.',
   'mapping.salesforce.lookup.whereClauseText':
     'The SOQL where clause expression that will be executed when this lookup is run.',
   'mapping.salesforce.lookup.resultField':
@@ -2157,10 +2185,15 @@ export default {
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
   'users.user': 'All users who have access to your account and integrations, or who have been invited to join your account.',
-  'users.accesslevel': 'Users with manage level access can make changes to the integration. Users with monitor level access can only view the integration for the purpose of running flows and troubleshooting integration errors. The owner user is responsible for provisioning access to the integration. Find out more about role and permissions.',
+  'users.accesslevel': 'Users with administer-level access can perform all the same actions as an account Owner, with the exception of transferring account ownership to another user, and will have full access to all integrations in the account. Users with manage level access can make changes to the integration. Users with monitor level access can view the integration only for the purpose of running flows and troubleshooting integration errors. Owner and Administrator users are responsible for provisioning access to the integration. <a href="https://docs.celigo.com/hc/en-us/articles/115003929872" target="_blank">Find out more about role and permissions.</a>',
   'users.status': "'Pending' means the user has not yet accepted the invite to your account.  'Accepted' means the user has accepted the invite to your account.  'Dismissed' means the user dismissed the invite to your account.",
   'users.enable': 'This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.',
+  'users.accountSSOLinked': ' This field indicates whether the user has successfully signed in using the account’s SSO settings. If yes, the user can only sign in to integrator.io using this account’s SSO settings. If no, the user can sign in to integrator.io using other authentication methods.',
+  'users.requireAccountSSO': 'This field indicates whether the user is required to sign in with the account’s SSO settings.',
   'users.actions': 'These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.',
+  'accountdashboard.numRuns': 'The number of times the flow has completed for the selected date range.',
+  'accountdashboard.avgRuntime': 'The average time the flow takes to complete running. The run time includes the time the flow is “Waiting in queue” status.',
+  'accountdashboard.numResolvedByAuto': 'The number of errors that were auto-resolved, based on a match to another error’s <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a> (unique field identifier).',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':
@@ -2189,9 +2222,7 @@ export default {
   'file.csvParse':
     'The CSV parser helper can be used to visualize and experiment with how <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590834533735000&amp;usg=AFQjCNFu7ZCLXUvr9xFWTLIWM0LeXPlPwg">integrator.io</a> parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
-    'This resource can be invoked via an HTTP POST request to this unique url.',
-  oneToMany:
-    'Select this option if the records being processed contain child records that should instead be treated as the main records (i.e. for this step only in the flow).  For example, if you are processing order records, but for this step in the flow you want to process the line items within the orders as the main records.',
+    'This resource can be invoked via an HTTP request to this unique URL.',
   pathToMany:
     'If the records being processed are JSON objects, then use this field to specify the JSON path to the child records. This field does not need to be set for array/row based data.',
   'connection.debug':
@@ -2199,6 +2230,15 @@ export default {
   'stack.sharing':
     'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',
   parentSObjectType: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
+  'pageGenerator.application': 'Choose an application, database, or universal connector.',
+  'pageGenerator.type': 'The source options presented – or automatically selected for you – depend on the features available in the application that you chose.',
+  'pageGenerator.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
+  'pageGenerator.exportId': 'Select an existing export, listener, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
+  'pageProcessor.application': 'Choose an application, database, or universal connector.',
+  'pageProcessor.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
+  'pageProcessor.resourceType': 'The destination options presented – or automatically selected for you – depend on the features available in the application that you chose.',
+  'pageProcessor.importId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
+  'pageProcessor.exportId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
   referencedFields: 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
   childRelationship: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
   'salesforce.referencedFields': 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
@@ -2220,4 +2260,18 @@ export default {
   'parser.xml.excludeNodes': 'It may be easier to specify node to exclude than which to include. If you wish to exclude certain xml nodes from the final record, specify them here using a simplified xpath.',
   'fb.pp.inputFilter':
     'Define an \'input filter\' here to specify which source records should get processed. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  'afe.lookups': 'Lookups can be used to dynamically retrieve information from the destination application for the purpose of setting fields that cannot be set directly from the fields provided by the source application. For example, if the destination application requires \'customer_id\' values, but the source application only gives you email addresses, then you can define a lookup to search for \'customer_id\' values using the email addresses, and then inject the \'customer_id\' values into your final API requests.',
+  'listener.debugLogs': 'Enable debug logs to store all requests for the selected period of time. Debug log entries are kept for 30 days by default, and can be deleted manually as needed.',
+  autoMapFields: 'Auto-map populates known field mappings for destination fields that have not yet been configured. Auto-map doesn’t overwrite mapping values that you have already set up manually. For example, if you have already mapped firstName in the destination field, then auto-map will preserve your configuration for firstName and only add field mappings for the remaining destination fields.',
+  enableSSO: 'Use this toggle to enable single sign-on (SSO) for the account.',
+  'sso.issuerURL': 'Enter the domain-specific URL issued by your SSO provider',
+  'sso.clientId': 'Enter the  unique ID issued by your SSO provider.',
+  'sso.clientSecret': 'Enter the  secret key issued by your SSO provider ',
+  'sso.orgId': 'Enter a unique organization ID that integrator.io will use to generate a unique SSO URL for your account. This field only accepts alphanumeric characters and must be 3-20 characters in length.',
+  'sso.loginURL': 'Use this unique URL to sign in to your account with SSO. Use this URL  when configuring the integrator.io app in your SSO provider.',
+  'sso.redirectURL': 'Your SSO provider will send the authorization code tokens to this unique URL. Use this URL when configuring the integrator.io app in your SSO provider.',
+  classification: 'Errors are automatically categorized according to their properties, such as the code, message, and source fields. For more information, see <a href="https://docs.celigo.com/hc/en-us/articles/4403697564429" target="_blank">Error classifications</a>',
+  'import.lookup': 'Choose an existing lookup from the list or click <b>+</b> to define a new lookup. Lookups provide a way to dynamically search the destination application on the fly to find existing records.',
+  'import.lookupType': 'Choose the method that should be used to identify if a source record already exists in the destination application: <br><b>• Records have a specific field populated – </b> <br>This method checks if a specific field in the source record already has a value, and then if so, the source record will be considered an existing record.<br>  <b>• Run a dynamic lookup – </b>This method will run a search in the destination application to find a record on the fly, and then if a record is found, the source record will be considered an existing record.',
+  'import.ignoreExtract': 'Enter the path to the field in the source record that should be used to identify existing records. If a value is found for this field, then the source record will be considered an existing record.',
 };

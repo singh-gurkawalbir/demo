@@ -7,7 +7,6 @@ import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
-import SpinnerWrapper from '../SpinnerWrapper';
 import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 
@@ -71,9 +70,13 @@ const useStyles = makeStyles(theme => ({
     width: '7.5%',
     textAlign: 'center',
   },
+  tableContainer: {
+    overflowX: 'auto',
+    overflowY: 'hidden',
+  },
 }));
 
-function JobTable({
+export default function JobTable({
   onSelectChange,
   jobsInCurrentPage,
   selectedJobs,
@@ -161,8 +164,8 @@ function JobTable({
       setOpenedJobErrors(true);
     }
     // This logic is to handle the case when user tries to reload the page with viewErrors link
-    // ViewErrors drawer will work when user selectes a job error or from the error notification mail
-    // For reload case as there is no track of jobID, redirecting to the job table dashbaord
+    // ViewErrors drawer will work when user selects a job error or from the error notification mail
+    // For reload case as there is no track of jobID, redirecting to the job table dashboard
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
       const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
@@ -178,7 +181,9 @@ function JobTable({
     // this drawer and not the child retry drawer.
     // if (match.isExact) setShowErrorDialogFor({});
     /** Dirty fix, I don't see a better option. */
-    if (history?.location?.pathname?.endsWith(isFlowBuilderView ? '/viewErrors' : 'dashboard/viewErrors')) {
+    // TODO: Need to come up with proper fix to remount ErrorDrawer
+    // Updated with patch fix @IO-20793
+    if (history?.location?.pathname?.endsWith('/viewErrors')) {
       setShowErrorDialogFor({});
     }
   }
@@ -186,49 +191,51 @@ function JobTable({
   return (
     <>
       {isFlowJobsCollectionLoading ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+
+        <Spinner centerAll />
+
       ) : (
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.checkFlow}>
-                <Checkbox
-                  disabled={jobsInCurrentPage.length === 0}
-                  checked={isSelectAllChecked}
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                  inputProps={{ 'aria-label': 'Select all jobs' }}
+        <div className={classes.tableContainer}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.checkFlow}>
+                  <Checkbox
+                    disabled={jobsInCurrentPage.length === 0}
+                    checked={isSelectAllChecked}
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                    inputProps={{ 'aria-label': 'Select all jobs' }}
               />
-              </TableCell>
-              <TableCell className={classes.name}>Flow</TableCell>
-              <TableCell className={classes.status}>Status</TableCell>
-              <TableCell className={classes.success}>Success</TableCell>
-              <TableCell className={classes.ignore}>Ignored</TableCell>
-              <TableCell className={classes.error}>Errors</TableCell>
-              <TableCell className={classes.resolved}>Resolved</TableCell>
-              <TableCell className={classes.pages}>Pages</TableCell>
-              <TableCell className={classes.duration}>Duration</TableCell>
-              <TableCell className={classes.completed}>Completed</TableCell>
-              <TableCell className={classes.actions}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody data-test={`${integrationName}Dashboard`}>
-            {jobsInCurrentPage.map(job => (
-              <JobDetail
-                key={job._id}
-                job={job}
-                onSelectChange={handleSelectChange}
-                selectedJobs={selectedJobs}
-                userPermissionsOnIntegration={userPermissionsOnIntegration}
-                onViewErrorsClick={handleViewErrorsClick}
-                integrationName={integrationName}
-                isFlowBuilderView={isFlowBuilderView}
+                </TableCell>
+                <TableCell className={classes.name}>Flow</TableCell>
+                <TableCell className={classes.status}>Status</TableCell>
+                <TableCell className={classes.success}>Success</TableCell>
+                <TableCell className={classes.ignore}>Ignored</TableCell>
+                <TableCell className={classes.error}>Errors</TableCell>
+                <TableCell className={classes.resolved}>Resolved</TableCell>
+                <TableCell className={classes.pages}>Pages</TableCell>
+                <TableCell className={classes.duration}>Duration</TableCell>
+                <TableCell className={classes.completed}>Completed</TableCell>
+                <TableCell className={classes.actions}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody data-test={`${integrationName}Dashboard`}>
+              {jobsInCurrentPage.map(job => (
+                <JobDetail
+                  key={job._id}
+                  job={job}
+                  onSelectChange={handleSelectChange}
+                  selectedJobs={selectedJobs}
+                  userPermissionsOnIntegration={userPermissionsOnIntegration}
+                  onViewErrorsClick={handleViewErrorsClick}
+                  integrationName={integrationName}
+                  isFlowBuilderView={isFlowBuilderView}
             />
-            ))}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
       {(showErrorDialogFor?.jobId || _JobId) && (
       <ErrorDrawer
@@ -247,5 +254,3 @@ function JobTable({
     </>
   );
 }
-
-export default JobTable;

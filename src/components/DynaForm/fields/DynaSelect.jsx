@@ -7,8 +7,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
+import CeligoTruncate from '../../CeligoTruncate';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const AUTO_CLEAR_SEARCH = 500;
 
@@ -126,6 +127,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.lightest,
     transition: 'all .8s ease',
   },
+  dynaSelectMenuItem: {
+    wordBreak: 'break-word',
+  },
 }));
 
 const Row = ({ index, style, data }) => {
@@ -146,12 +150,11 @@ const Row = ({ index, style, data }) => {
       value={value}
       data-value={value}
       disabled={disabled}
-      className={clsx({
+      className={clsx(classes.dynaSelectMenuItem, {
         [classes.focusVisibleMenuItem]: matchMenuIndex === index,
       })}
       style={style}
       selected={value === finalTextValue}
-
       onClick={() => {
         if (value !== undefined) {
           onFieldChange(id, value);
@@ -159,7 +162,9 @@ const Row = ({ index, style, data }) => {
 
         setOpen(false);
       }}>
-      {label}
+      <CeligoTruncate placement="left" lines={2}>
+        {label}
+      </CeligoTruncate>
     </MenuItem>
   );
 };
@@ -177,11 +182,13 @@ export default function DynaSelect(props) {
     placeholder,
     required,
     className,
+    rootClassName,
     label,
     skipDefault = false,
     onFieldChange,
     skipSort,
     dataTest,
+    dataPublic,
   } = props;
 
   const listRef = React.createRef();
@@ -269,7 +276,7 @@ export default function DynaSelect(props) {
     : ITEM_SIZE * items.length;
 
   return (
-    <div className={classes.dynaSelectWrapper}>
+    <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
       <div className={classes.fieldWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
@@ -283,6 +290,7 @@ export default function DynaSelect(props) {
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
           data-test={dataTest || id}
+          data-public={!!dataPublic}
           value={finalTextValue}
           disableUnderline
           displayEmpty
@@ -309,7 +317,7 @@ export default function DynaSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      {!removeHelperText && <ErroredMessageComponent {...props} />}
+      {!removeHelperText && <FieldMessage {...props} />}
     </div>
   );
 }

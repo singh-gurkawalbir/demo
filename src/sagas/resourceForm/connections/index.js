@@ -19,12 +19,14 @@ import {
   newIAFrameWorkPayload,
 } from '../index';
 import { selectors } from '../../../reducers/index';
-import { commitStagedChanges } from '../../resources';
+import { commitStagedChangesWrapper } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../../utils/constants';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
+import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
+import { pingConnectionParentContext } from '../../../utils/requestOptions';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -144,11 +146,11 @@ export function* netsuiteUserRoles({ connectionId, values }) {
 
 export function* requestToken({ resourceId, fieldId, values }) {
   const resourceType = 'connections';
-  const { merged: connectionResource } = yield select(
+  const connectionResource = (yield select(
     selectors.resourceData,
     resourceType,
     resourceId
-  );
+  ))?.merged || emptyObject;
   let { assistant } = connectionResource;
 
   if (!assistant) throw new Error('Could not determine the assistant type');
@@ -200,7 +202,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
     yield put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     );
 
@@ -267,41 +269,52 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-function* pingConnection({ resourceId, values }) {
+export function* pingConnection({ resourceId, values, parentContext }) {
+  const asyncKey = getAsyncKey('connections', resourceId);
+
+  yield put(actions.asyncTask.start(asyncKey));
   const connectionPayload = yield call(createPayload, {
     values,
     resourceType: 'connections',
     resourceId,
   });
+
   let resp;
 
   try {
     resp = yield call(apiCallWithRetry, {
       path: pingConnectionParams.path,
       opts: {
-        body: connectionPayload,
+        body: {
+          ...connectionPayload,
+          ...pingConnectionParentContext(parentContext),
+        },
         ...pingConnectionParams.opts,
       },
       hidden: true,
     });
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     );
   }
 
   if (resp && resp.errors) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(resp)
+        inferErrorMessages(resp)
       )
     );
   }
-
+  yield put(actions.asyncTask.success(asyncKey));
   yield put(
     actions.resource.connections.testSuccessful(
       resourceId,
@@ -323,6 +336,9 @@ export function* pingConnectionWithAbort(params) {
 
   // perform submit cleanup
   if (abortPing) {
+    const asyncKey = getAsyncKey('connections', resourceId);
+
+    yield put(actions.asyncTask.success(asyncKey));
     yield put(
       actions.resource.connections.testCancelled(
         resourceId,
@@ -356,12 +372,13 @@ export function* openOAuthWindowForConnection(resourceId) {
   win.focus();
 }
 
-export function* saveAndAuthorizeConnection({ resourceId, values }) {
+export function* saveAndAuthorizeConnection({ resourceId, values, parentContext }) {
   try {
     yield call(submitFormValues, {
       resourceType: 'connections',
       resourceId,
       values,
+      parentContext,
     });
   } catch (e) {
     // could not save the resource...lets just return
@@ -420,11 +437,12 @@ function* saveAndAuthorizeConnectionForm(params) {
   if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
-function* commitAndAuthorizeConnection({ resourceId }) {
-  const resp = yield call(commitStagedChanges, {
+export function* commitAndAuthorizeConnection({ resourceId }) {
+  const resp = yield call(commitStagedChangesWrapper, {
     resourceType: 'connections',
     id: resourceId,
     scope: SCOPES.VALUE,
+    asyncKey: getAsyncKey('connections', resourceId),
   });
 
   // if there is conflict let conflict dialog show up
@@ -441,7 +459,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
-function* requestIClients({ connectionId }) {
+export function* requestIClients({ connectionId }) {
   let path;
   const newIAConnDoc = yield call(newIAFrameWorkPayload, {
     resourceId: connectionId,
@@ -458,7 +476,7 @@ function* requestIClients({ connectionId }) {
   }
 
   try {
-    const { iclients } = yield apiCallWithRetry({
+    const { iclients } = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'GET',
@@ -471,12 +489,20 @@ function* requestIClients({ connectionId }) {
   }
 }
 
-export function* pingAndUpdateConnection({ connectionId }) {
+export function* pingConnectionWithId({ connectionId, parentContext }) {
+  yield call(apiCallWithRetry, {
+    path: `/connections/${connectionId}/ping`,
+    hidden: true,
+    opts: {
+      body: pingConnectionParentContext(parentContext),
+      method: 'POST',
+    },
+  });
+}
+
+export function* pingAndUpdateConnection({ connectionId, parentContext }) {
   try {
-    yield call(apiCallWithRetry, {
-      path: `/connections/${connectionId}/ping`,
-      hidden: true,
-    });
+    yield call(pingConnectionWithId, { connectionId, parentContext });
 
     const connectionResource = yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}`,
@@ -486,6 +512,23 @@ export function* pingAndUpdateConnection({ connectionId }) {
     yield put(actions.resource.received('connections', connectionResource));
   } catch (error) {
     // do nothing
+  }
+}
+
+export function* requestTradingPartnerConnections({ connectionId }) {
+  const path = `/connections/${connectionId}/tradingPartner`;
+
+  try {
+    const conns = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.connection.receivedTradingPartnerConnections(connectionId, conns));
+  } catch (e) {
+    // exception handler
   }
 }
 
@@ -503,4 +546,5 @@ export default [
     commitAndAuthorizeConnection
   ),
   takeLatest(actionTypes.ICLIENTS, requestIClients),
+  takeLatest(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, requestTradingPartnerConnections),
 ];

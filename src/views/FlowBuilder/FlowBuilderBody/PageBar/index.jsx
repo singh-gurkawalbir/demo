@@ -1,8 +1,10 @@
 import { IconButton, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import actions from '../../../../actions';
+import Status from '../../../../components/Buttons/Status';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import EditableText from '../../../../components/EditableText';
@@ -13,9 +15,9 @@ import CalendarIcon from '../../../../components/icons/CalendarIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import RunFlowButton from '../../../../components/RunFlowButton';
-import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import { emptyObject } from '../../../../utils/constants';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
@@ -43,7 +45,7 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -81,7 +83,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const isNewFlow = isNewFlowFn(flowId);
 
@@ -122,27 +124,28 @@ const pageChildreUseStyles = makeStyles(theme => ({
   },
   flowToggle: {
     marginRight: 12,
-    marginLeft: theme.spacing(1),
+    marginLeft: 12,
     '& > div:first-child': {
-      padding: '8px 0px',
+      padding: '8px 0px 4px 0px',
     },
   },
+  chartsIcon: { marginRight: theme.spacing(3) },
 
 }));
 
-const RunFlowButtonWrapper = ({flowId, setTabValue}) => {
+const RunFlowButtonWrapper = ({flowId}) => {
   const [bottomDrawerHeight, setBottomDrawerHeight] = useBottomDrawer();
-
+  const dispatch = useDispatch();
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    setTabValue(0);
+    dispatch(actions.bottomDrawer.switchTab({ tabType: 'dashboard' }));
 
     // Raising bottom drawer in cases where console is minimized
     // and user can not see dashboard after running the flow
     if (bottomDrawerHeight < 225) {
       setBottomDrawerHeight(300);
     }
-  }, [setTabValue, bottomDrawerHeight, setBottomDrawerHeight]);
+  }, [bottomDrawerHeight, dispatch, setBottomDrawerHeight]);
 
   return (
 
@@ -153,7 +156,7 @@ const RunFlowButtonWrapper = ({flowId, setTabValue}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
+const PageBarChildren = ({integrationId, flowId}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -178,14 +181,14 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
     [handleDrawerOpen]
   );
 
-  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
+  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId, match.params?.childId);
 
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
 
-  const isIAType = useSelector(state => selectors.isIAType(state, flowId));
+  const isIAType = !!flowDetails?._connectorId;
   const handleExitClick = useHandleExitClick();
   const isNewFlow = isNewFlowFn(flowId);
 
@@ -195,11 +198,11 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
       <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
       {!isDataLoaderFlow && (
-        <div className={clsx(classes.chartsIcon, classes.flowToggle)}>
+        <div className={clsx(classes.flowToggle)}>
           <FlowToggle
             integrationId={integrationId}
             resource={flowDetails}
-            storeId={match.params?.childId}
+            childId={match.params?.childId}
             disabled={isNewFlow || isMonitorLevelAccess}
             isConnector={isIAType}
             data-test="switchFlowOnOff"
@@ -207,7 +210,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
         </div>
       )}
 
-      <RunFlowButtonWrapper flowId={flowId} setTabValue={setTabValue} />
+      <RunFlowButtonWrapper flowId={flowId} />
       {allowSchedule && (
         <IconButtonWithTooltip
           tooltipProps={tooltipSchedule}
@@ -240,23 +243,27 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
 };
 const pageBarUseStyles = makeStyles(({
   errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    display: 'flex',
-    alignItems: 'center',
     marginRight: 12,
-    fontSize: '12px',
   },
 
 }));
 
-export default function PageBar({flowId, integrationId, setTabValue}) {
+const TotalErrors = ({flowId}) => {
   const classes = pageBarUseStyles();
-  const {
+  const totalErrors = useSelector(state => selectors.totalOpenErrors(state, flowId));
 
-    total: totalErrors = 0,
-  } = useSelector(state => selectors.errorMap(state, flowId));
+  if (!totalErrors) {
+    return null;
+  }
 
+  return (
+    <Status variant="error" size="small" className={classes.errorStatus}>
+      <span>{totalErrors} errors</span>
+    </Status>
+  );
+};
+
+export default function PageBar({flowId, integrationId}) {
   const description = useSelector(state => {
     const flow = selectors.resourceData(state, 'flows',
       flowId
@@ -267,25 +274,15 @@ export default function PageBar({flowId, integrationId, setTabValue}) {
 
   return (
     <CeligoPageBar
-      title={(
-        <CalcPageBarTitle
-
-          flowId={flowId} integrationId={integrationId} />
-)}
+      title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
-      infoText={description}>
-      {totalErrors ? (
-        <span className={classes.errorStatus}>
-          <StatusCircle variant="error" size="small" />
-          <span>{totalErrors} errors</span>
-        </span>
-      ) : null}
+      infoText={description}
+      escapeUnsecuredDomains
+    >
+      <TotalErrors flowId={flowId} />
       <PageBarChildren
-
         flowId={flowId} integrationId={integrationId}
-        setTabValue={setTabValue}
-
-        />
+      />
     </CeligoPageBar>
   );
 }

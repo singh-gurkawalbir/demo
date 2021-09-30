@@ -57,7 +57,7 @@ export default function DynaNSSavedSearch(props) {
   const [searchType, setSearchType] = useState('public');
   // Use this state to set Search type for the first time
   const [isSearchTypeSet, setIsSearchTypeSet] = useState(false);
-  const [savedSearchUrl, setSavedSearchUrl] = useState();
+
   const {
     value,
     connectionId,
@@ -104,19 +104,11 @@ export default function DynaNSSavedSearch(props) {
       const savedSearch = data.find(option => option.value === defaultValue);
 
       setSearchType(savedSearch ? 'public' : 'private');
+
       setIsSearchTypeSet(true);
     }
   }, [data, defaultValue, isSearchTypeSet, resourceId, setSearchType]);
-
-  useEffect(() => {
-    if (value && netSuiteSystemDomain) {
-      setSavedSearchUrl(
-        `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value}`
-      );
-    } else {
-      setSavedSearchUrl();
-    }
-  }, [value, netSuiteSystemDomain]);
+  const savedSearchUrl = value && netSuiteSystemDomain ? `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value}` : null;
 
   return (
     <>
@@ -135,7 +127,7 @@ export default function DynaNSSavedSearch(props) {
                 name="searchType"
                 defaultValue="public"
                 value={searchType}
-                data-test={id}
+                data-test="netsuite.restlet.searchType"
                 onChange={handleChange}>
                 <FormControlLabel
                   value="public"
@@ -148,7 +140,7 @@ export default function DynaNSSavedSearch(props) {
                   label="Private"
                 />
               </RadioGroup>
-              <FieldHelp {...props} />
+              <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />
             </div>
           </div>
         </FormControl>
@@ -159,8 +151,10 @@ export default function DynaNSSavedSearch(props) {
             <DynaRefreshableSelect
               {...searchIdOptions}
               {...props}
+              ignoreValueUnset
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
+              helpKey="export.netsuite.restlet.searchId"
             />
           </div>
         ) : (
@@ -170,6 +164,7 @@ export default function DynaNSSavedSearch(props) {
               {...props}
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
+              helpKey="export.netsuite.restlet.searchInternalId"
             />
           </div>
         )}

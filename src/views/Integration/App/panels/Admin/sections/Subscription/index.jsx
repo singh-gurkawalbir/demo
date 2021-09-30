@@ -27,13 +27,10 @@ const useStyles = makeStyles(theme => ({
     padding: '30px 30px 30px 0',
   },
   container: {
-    padding: '0 0 30px 30px',
+    padding: '0 0 16px 16px',
   },
   button: {
     margin: theme.spacing(1),
-  },
-  item: {
-    float: 'left',
   },
   planContent: {
     margin: 0,
@@ -52,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SubscriptionSection({ storeId, integrationId }) {
+export default function SubscriptionSection({ childId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -61,9 +58,11 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  const plan = useSelector(state =>
+    selectors.integrationAppEdition(state, integrationId)
+  );
 
   const {
-    plan,
     createdText,
     expiresText,
     upgradeText,
@@ -90,22 +89,22 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           <div className={classes.planContent}>
             <Grid container className={classes.container}>
               <Grid item xs={2}>
-                <Typography data-test="iaPlan" className={classes.item}>
+                <Typography data-test="iaPlan" >
                   {' '}
                   {plan}{' '}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography data-test="iaVersion" className={classes.item}>
+                <Typography data-test="iaVersion">
                   {`Version ${integration.version}`}
                 </Typography>
-                <Typography data-test="integrationId" className={classes.item}>
+                <Typography data-test="integrationId" >
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
               <Grid item xs={3}>
-                <Typography className={classes.item}>{createdText}</Typography>
-                <Typography className={classes.item}>{expiresText}</Typography>
+                <Typography >{createdText}</Typography>
+                <Typography >{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
@@ -128,7 +127,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        <Addons storeId={storeId} integrationId={integrationId} />
+        <Addons childId={childId} integrationId={integrationId} />
       </div>
     </>
   );

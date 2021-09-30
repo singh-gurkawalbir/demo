@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -7,10 +7,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Chip from '@material-ui/core/Chip';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
 import Tag from '../../HomePageCard/Footer/Tag';
+import shouldUnmaskInLogRocket from '../../../utils/shouldUnmaskInLogRocket';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     padding: 0,
+    alignItems: 'center',
   },
   menuItems: {
     paddingRight: theme.spacing(1),
@@ -36,7 +38,7 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
-  multislectWrapper: {
+  multiselectWrapper: {
     width: '100%',
   },
 }));
@@ -63,7 +65,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      <Tag className={classes.tagWrapper} variant={tag} />
+      <Tag className={classes.tagWrapper} label={tag} />
     </>
   );
 };
@@ -85,6 +87,7 @@ export default function DynaMultiSelect(props) {
     disabled,
     id,
     name,
+    isLoading,
     options = [],
     value = [],
     label,
@@ -95,6 +98,7 @@ export default function DynaMultiSelect(props) {
     required,
     removeInvalidValues = false,
     selectAllIdentifier,
+    dataPublic,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -136,7 +140,7 @@ export default function DynaMultiSelect(props) {
                 />
               )}
               <ListItemText primary={item.label || item.value} />
-              {item.tag && <Tag className={classes.tagWrapper} variant={item.tag} />}
+              {item.tag && <Tag className={classes.tagWrapper} label={item.tag} />}
             </MenuItem>
           );
         })
@@ -147,7 +151,7 @@ export default function DynaMultiSelect(props) {
   /**
    * Get a list of option items to filter out invalid options from value, when removeInvalidValues prop is set
    */
-  const optionItems = options.reduce(
+  const optionItems = useMemo(() => options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -159,10 +163,10 @@ export default function DynaMultiSelect(props) {
         })
       ),
     []
-  );
+  ), [options]);
 
   useEffect(() => {
-    if (removeInvalidValues) {
+    if (removeInvalidValues && !isLoading) {
       // If the value contains any item not present in the options array, remove it.
       if (Array.isArray(processedValue) &&
        processedValue.length &&
@@ -171,18 +175,27 @@ export default function DynaMultiSelect(props) {
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, optionItems, processedValue, removeInvalidValues]);
+  }, [id, onFieldChange, optionItems, processedValue, removeInvalidValues]);
 
-  useEffect(() => {
-    // this is used to force 'multiselect' field act as a 'select' field temporarily.
-    // if selectAllIdentifier prop is passed, and user has selected that option, then we unselect all others.
-    if (selectAllIdentifier && value?.length > 1 && value?.includes(selectAllIdentifier)) {
-      onFieldChange(id, [selectAllIdentifier], true);
+  const onMultiSelectFieldChange = evt => {
+    const selectedValues = evt.target.value;
+
+    if (!selectAllIdentifier || !selectedValues.includes(selectAllIdentifier)) {
+      return onFieldChange(id, selectedValues);
     }
-  }, [id, onFieldChange, selectAllIdentifier, value]);
+
+    // When user selects selectAll option, deselect other options
+    if (selectedValues[selectedValues.length - 1] === selectAllIdentifier) {
+      return onFieldChange(id, [selectAllIdentifier]);
+    }
+    // When user selects other options, remove selectAll selection
+    const valuesExceptSelectAllIdentifier = selectedValues.filter(val => val !== selectAllIdentifier);
+
+    onFieldChange(id, valuesExceptSelectAllIdentifier);
+  };
 
   return (
-    <div className={classes.multislectWrapper}>
+    <div className={classes.multiselectWrapper}>
       <div className={classes.labelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
@@ -193,18 +206,17 @@ export default function DynaMultiSelect(props) {
         key={id}
         disabled={disabled}
         required={required}
-        className={classes.multislectWrapper}>
+        className={classes.multiselectWrapper}>
         <CeligoSelect
           multiple
+          data-public={shouldUnmaskInLogRocket(id, dataPublic)}
           data-test={id}
           disabled={disabled}
           value={processedValue}
           placeholder={placeholder}
           displayEmpty
           className={classes.wrapper}
-          onChange={evt => {
-            onFieldChange(id, evt.target.value);
-          }}
+          onChange={onMultiSelectFieldChange}
           input={<Input name={name} id={id} />}
           renderValue={selected =>
             !selected || !selected.length ? (
@@ -219,7 +231,7 @@ export default function DynaMultiSelect(props) {
                     return (fieldProps
                       ? (
                         <SelectedValueChip
-                          key={fieldProps.label}
+                          key={value}
                           {...fieldProps} />
                       ) : null
                     );
@@ -230,7 +242,7 @@ export default function DynaMultiSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </div>
   );
 }

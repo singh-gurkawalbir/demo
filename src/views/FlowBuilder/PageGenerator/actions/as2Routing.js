@@ -1,16 +1,14 @@
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@material-ui/core';
+import React, { useCallback, useState } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Icon from '../../../../components/icons/RoutingIcon';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import ModalDialog from '../../../../components/ModalDialog';
 import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../components/LoadResources';
-import ButtonGroup from '../../../../components/ButtonGroup';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
+import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import useFormOnCancelContext from '../../../../components/FormOnCancelContext';
 
 const getFieldMeta = defaultValue => ({
   fieldMap: {
@@ -22,6 +20,7 @@ const getFieldMeta = defaultValue => ({
       label:
         'Choose a script and function name to use for determining AS2 message routing',
       hookType: 'script',
+      hookStage: 'contentBasedFlowRouter',
       // we can "fake" sample data by piggy backing off the default hook and simply
       // override the sample data below.
       preHookData: {
@@ -42,6 +41,7 @@ const getFieldMeta = defaultValue => ({
     fields: ['as2.contentBasedFlowRouter'],
   },
 });
+const formKey = 'as2Routing';
 
 function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const dispatch = useDispatch();
@@ -49,75 +49,64 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
+
+  const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
   const handleSubmit = useCallback(
-    value => {
+    () => {
       const patchSet = [
         {
           op: 'replace',
           path: '/as2/contentBasedFlowRouter/_scriptId',
-          value: value.contentBasedFlowRouter._scriptId,
+          value: formValues?.contentBasedFlowRouter?._scriptId,
         },
         {
           op: 'replace',
           path: '/as2/contentBasedFlowRouter/function',
-          value: value.contentBasedFlowRouter.function,
+          value: formValues?.contentBasedFlowRouter?.function,
         },
       ];
 
       // using PATCH call here as other fields on the connection doc are not impacted
       dispatch(
-        actions.resource.patch('connections', connectionId, patchSet)
+        actions.resource.patch('connections', connectionId, patchSet, formKey)
       );
     },
-    [dispatch, connectionId]
+    [formValues?.contentBasedFlowRouter?._scriptId, formValues?.contentBasedFlowRouter?.function, dispatch, connectionId]
   );
   const value =
     connection && connection.as2 && connection.as2.contentBasedFlowRouter
       ? connection.as2.contentBasedFlowRouter
       : {};
   const fieldMeta = getFieldMeta(value);
-  const formKey = useFormInitWithPermissions({
+
+  const [count, setCount] = useState(0);
+
+  const remountAfterSaveFn = useCallback(() => {
+    setCount(count => count + 1);
+  }, []);
+
+  useFormInitWithPermissions({
     fieldMeta,
     disabled: isViewMode,
+    formKey,
+    remount: count,
   });
 
-  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
-    {
-      path: `/connections/${connectionId}`,
-      method: 'PATCH',
-      disabled: isViewMode,
-      onSave: handleSubmit,
-      onClose,
-    }
-  );
+  const {setCancelTriggered, disabled} = useFormOnCancelContext(formKey);
 
   return (
-    <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
+    <ModalDialog show={open} onClose={setCancelTriggered} disableClose={disabled}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-        <ButtonGroup>
-          <DynaSubmit
-            formKey={formKey}
-            disabled={disableSave}
-            data-test={`as2routing-${connectionId}`}
-            onClick={submitHandler()}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            disabled={disableSave}
-            color="secondary"
-            data-test={`as2routingsaveclose-${connectionId}`}
-            onClick={submitHandler(true)}>
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button
-            data-test={`cancelAs2routing-${connectionId}`}
-            onClick={onClose}>
-            Cancel
-          </Button>
-        </ButtonGroup>
+        <DynaForm formKey={formKey} />
+        <SaveAndCloseButtonGroupForm
+          disabled={isViewMode}
+          formKey={formKey}
+          onClose={onClose}
+          onSave={handleSubmit}
+          remountAfterSaveFn={remountAfterSaveFn}
+         />
       </LoadResources>
     </ModalDialog>
   );

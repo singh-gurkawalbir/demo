@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
@@ -7,8 +7,9 @@ export default {
       retValues['/http/auth/token/paramName'] = 'hapikey';
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
+      retValues['/http/_iClientId'] = undefined;
     } else {
-      const scopes = retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth');
+      const scopes = retValues['/http/auth/oauth/scope'] ? retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth') : [];
 
       retValues['/http/auth/oauth/authURI'] =
         `https://app.hubspot.com/oauth/authorize?optional_scope=${encodeURIComponent(scopes.join(' '))}`;
@@ -19,6 +20,16 @@ export default {
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       retValues['/http/auth/oauth/scope'] = ['oauth'];
+      retValues['/http/auth/token/location'] = undefined;
+      retValues['/http/auth/token/paramName'] = undefined;
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
     }
 
     return {
@@ -103,7 +114,19 @@ export default {
           return [...selectedScopes, ...scopes];
         }
       },
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visible: r => !(r?._connectorId),
+      visibleWhenAll: r => {
+        if (r?._connectorId) {
+          return [];
+        }
+        if (r?.http?._iClientId) {
+          return [{ field: 'http.auth.type', isNot: ['oauth'] },
+            { field: 'http.auth.type', isNot: ['token'] }];
+        }
+        if (!(r?._connectorId)) {
+          return [{ field: 'http.auth.type', is: ['oauth'] }];
+        }
+      },
     },
     application: {
       fieldId: 'application',
@@ -124,13 +147,8 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
         {
           field: 'http.auth.type',
           is: [''],
@@ -138,21 +156,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -161,11 +165,7 @@ export default {
       ],
     },
     {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'http.auth.type',

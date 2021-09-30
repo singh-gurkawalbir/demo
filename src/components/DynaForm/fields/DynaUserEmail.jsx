@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-function DynaUserEmail(props) {
+export default function DynaUserEmail(props) {
   const classes = useStyles();
   const [showChangeEmailModal, setShowChangeEmailModal] = useState(false);
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ function DynaUserEmail(props) {
   const handleModalClose = useCallback(() => {
     setShowChangeEmailModal(false);
   }, []);
-  const { id, value, label } = props;
+  const { id, value, label, readOnly = false } = props;
 
   return (
     <FormControl className={classes.field}>
@@ -54,6 +54,7 @@ function DynaUserEmail(props) {
           className={classes.field}
           variant="filled"
         />
+        {!readOnly && (
         <ActionButton
           data-test="editEmail"
           color="primary"
@@ -61,10 +62,9 @@ function DynaUserEmail(props) {
           onClick={handleModalOpen}>
           <EditIcon />
         </ActionButton>
+        )}
       </div>
       <ChangeEmail show={showChangeEmailModal} onClose={handleModalClose} />
     </FormControl>
   );
 }
-
-export default DynaUserEmail;

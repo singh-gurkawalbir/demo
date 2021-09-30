@@ -118,7 +118,7 @@ export default {
     'file.type': {
       id: 'file.type',
       name: '/file/type',
-      type: 'select',
+      type: 'filetypeselect',
       label: 'File type',
       required: true,
       defaultValue: r => (r && r.file && r.file.type) || '',
@@ -179,6 +179,11 @@ export default {
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
+    'file.sortByFields': { fieldId: 'file.sortByFields' },
+    'file.groupByFields': { fieldId: 'file.groupByFields' },
   },
   layout: {
     type: 'collapse',
@@ -213,8 +218,16 @@ export default {
       },
       {
         collapsed: true,
+        label: 'How would you like to group and sort records?',
+        fields: [
+          'file.sortByFields',
+          'file.groupByFields',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
-        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+        fields: ['file.encoding', 'pageSize', 'dataURITemplate', 'traceKeyTemplate'],
       },
     ],
   },

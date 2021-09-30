@@ -1,10 +1,15 @@
 import produce from 'immer';
+import shortid from 'shortid';
 import actionTypes from '../../../actions/types';
 
 const emptySet = [];
 
 function enableSearchValue2(val) {
   return val === 'between' || val === 'within' || val === 'notwithin';
+}
+
+function isFormulaField(field) {
+  return ['formuladate', 'formulanumeric', 'formulatext'].includes(field);
 }
 
 export default function reducer(state = {}, action) {
@@ -17,18 +22,15 @@ export default function reducer(state = {}, action) {
 
     switch (type) {
       case actionTypes.SEARCH_CRITERIA.INIT: {
-        const initChangeIdentifier =
-          (draft[id] && draft[id].initChangeIdentifier) || 0;
-
         draft[id] = {
           searchCriteria: (value || []).map(m => {
             const searchValue2Enabled = !!(
               m.operator && enableSearchValue2(m.operator)
             );
+            const showFormulaField = !!(m.formula && isFormulaField(m.field));
 
-            return { ...m, rowIdentifier: 0, searchValue2Enabled };
+            return { ...m, key: shortid.generate(), searchValue2Enabled, showFormulaField };
           }),
-          initChangeIdentifier: initChangeIdentifier + 1,
         };
         break;
       }
@@ -57,17 +59,23 @@ export default function reducer(state = {}, action) {
             }
           }
 
-          draft[id].searchCriteria[index].rowIdentifier += 1;
           draft[id].searchCriteria[index][field] = value;
 
           if (field === 'field') {
             draft[id].searchCriteria[index][field] = fieldValue;
             draft[id].searchCriteria[index].join = fieldJoin;
+            const showFormulaField = isFormulaField(value);
+
+            draft[id].searchCriteria[index].showFormulaField = showFormulaField;
+
+            if (!showFormulaField) {
+              delete draft[id].searchCriteria[index].formula;
+            }
           }
         } else if (value) {
           const newObj = {
             [field]: value,
-            rowIdentifier: 0,
+            key: shortid.generate(),
           };
 
           if (field === 'operator') {
@@ -79,6 +87,7 @@ export default function reducer(state = {}, action) {
           if (field === 'field') {
             newObj[field] = fieldValue;
             newObj.join = fieldJoin;
+            newObj.showFormulaField = isFormulaField(value);
           }
 
           draft[id].searchCriteria.push(newObj);
@@ -88,7 +97,6 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.SEARCH_CRITERIA.DELETE: {
-        draft[id].initChangeIdentifier += 1;
         draft[id].searchCriteria.splice(index, 1);
 
         break;

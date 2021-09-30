@@ -160,7 +160,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'delete':
           confirmDialog({
             title: 'Confirm delete',
-            message: 'Are you sure you want to delete this flow?',
+            message: 'Are you sure you want to delete this flow? Deleting a flow will cancel the run that is currently running.',
             buttons: [
               {
                 label: 'Delete',

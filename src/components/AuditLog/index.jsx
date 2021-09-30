@@ -1,103 +1,92 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
+import actions, { auditResourceTypePath } from '../../actions';
 import { selectors } from '../../reducers';
-import actions from '../../actions';
+import commKeyGenerator from '../../utils/commKeyGenerator';
 import LoadResources from '../LoadResources';
-import Filters from './Filters';
+import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
+import Filters from './Filters';
+import { isNewId } from '../../utils/resource';
 
-const mapStateToProps = state => {
-  const resourceDetails = selectors.resourceDetailsMap(state);
-
-  return {
-    resourceDetails,
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  clearAuditLogs: () => {
-    dispatch(actions.auditLogs.clear());
-  },
-  requestAuditLogs: (resourceType, resourceId) => {
-    dispatch(actions.auditLogs.request(resourceType, resourceId));
-  },
-});
-
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    width: '98%',
-    wordBreak: 'break-word',
+    width: '100%',
+    height: '100%',
   },
   title: {
     marginBottom: theme.spacing(2),
     float: 'left',
   },
-}))
-class AuditLog extends Component {
-  state = {
-    filters: {},
+  tableContainer: {
+    height: 'calc(100% - 69px)',
+  },
+}));
+
+export default function AuditLog({
+  className,
+  affectedResources,
+  users,
+  resourceType,
+  resourceId,
+  onClick,
+  isFixed,
+  childId,
+}) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const clearAuditLogs = () => {
+    dispatch(actions.auditLogs.clear());
+  };
+  const requestAuditLogs = (resourceType, resourceId) => {
+    dispatch(actions.auditLogs.request(resourceType, resourceId));
   };
 
-  componentDidMount() {
-    const {
-      clearAuditLogs,
-      requestAuditLogs,
-      resourceType,
-      resourceId,
-    } = this.props;
+  const [filters, handleFiltersChange] = useState({});
 
-    clearAuditLogs();
-    requestAuditLogs(resourceType, resourceId);
-  }
+  useEffect(() => {
+    if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
 
-  handleFiltersChange = filters => {
-    this.setState({ filters });
-  };
+    return clearAuditLogs;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  render() {
-    const {
-      classes,
-      className,
-      resourceDetails,
-      affectedResources,
-      users,
-      resourceType,
-      resourceId,
-      onClick,
-      childId,
-    } = this.props;
-    const { filters } = this.state;
+  const resourceDetails = useSelector(state => selectors.resourceDetailsMap(state));
 
-    return (
-      <LoadResources
-        required
-        resources="integrations, flows, exports, imports, connections">
-        <>
-          <div className={(classes.root, className)}>
-            <Filters
-              affectedResources={affectedResources}
-              resourceDetails={resourceDetails}
-              users={users}
-              onFiltersChange={this.handleFiltersChange}
-              resourceType={resourceType}
-              resourceId={resourceId}
+  const auditResourcePath = commKeyGenerator(`/${auditResourceTypePath(resourceType, resourceId)}`, 'GET');
+  const isLoadingAuditLog = useSelector(state => selectors.isLoading(state, auditResourcePath));
+
+  return (
+    <LoadResources
+      required
+      resources="integrations, flows, exports, imports, connections">
+      <>
+        {isLoadingAuditLog
+          ? <Spinner loading size="large" /> : (
+            <div className={clsx(classes.root, className)}>
+              <Filters
+                affectedResources={affectedResources}
+                resourceDetails={resourceDetails}
+                users={users}
+                onFiltersChange={handleFiltersChange}
+                resourceType={resourceType}
+                resourceId={resourceId}
             />
-            <AuditLogTable
-              resourceType={resourceType}
-              resourceId={resourceId}
-              filters={filters}
-              childId={childId}
-              onClick={onClick}
+              <AuditLogTable
+                resourceType={resourceType}
+                resourceId={resourceId}
+                filters={filters}
+                childId={childId}
+                onClick={onClick}
+                isFixed={isFixed}
+                className={classes.tableContainer}
             />
-          </div>
-        </>
-      </LoadResources>
-    );
-  }
+            </div>
+          )}
+      </>
+    </LoadResources>
+  );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AuditLog);

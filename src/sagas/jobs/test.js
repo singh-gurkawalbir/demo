@@ -10,6 +10,8 @@ import {
   select,
   all,
 } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
+import { throwError } from 'redux-saga-test-plan/providers';
 import { createMockTask } from '@redux-saga/testing-utils';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -19,6 +21,7 @@ import {
   getJobFamily,
   getInProgressJobsStatus,
   pollForInProgressJobs,
+  getJobDetails,
   startPollingForInProgressJobs,
   requestJobCollection,
   getJobCollection,
@@ -41,10 +44,21 @@ import {
   retrySelectedRetries,
   requestRetryData,
   updateRetryData,
+  retryProcessedErrors,
+  getDashboardRunningJobCollection,
+  getDashboardCompletedJobCollection,
+  requestRunningJobCollection,
+  requestCompletedJobCollection,
+  cancelDashboardJob,
+  pollForDashboardInProgressJobs,
+  getDasboardInProgressJobsStatus,
+  startPollingForDashboardInProgressJobs,
+  getDashboardJobFamily,
 } from '.';
 import { selectors } from '../../reducers';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
 import openExternalUrl from '../../utils/window';
+import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
 
 describe('job sagas', () => {
   describe('getJobFamily saga', () => {
@@ -163,6 +177,47 @@ describe('job sagas', () => {
     });
   });
 
+  describe('getJobDetails saga', () => {
+    const jobId = '123';
+    const path = `/jobs/${jobId}/family`;
+    const opts = {
+      method: 'GET',
+    };
+
+    test('should call jobs api and return result on successful api call', () => {
+      const jobResponse = {
+        _id: '1',
+        numSuccess: 1,
+      };
+
+      return expectSaga(getJobDetails, { jobId })
+        .provide([
+          [call(apiCallWithRetry, { path, opts }), jobResponse],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts,
+        })
+        .returns(jobResponse)
+        .run();
+    });
+
+    test('should return undefined if api call throws error', () => expectSaga(getJobDetails, { jobId })
+      .provide([
+        [call(apiCallWithRetry,
+          { path, opts }),
+        throwError({
+          status: 401,
+          message: '{"code":"error code"}',
+        })],
+      ])
+      .call(apiCallWithRetry, {
+        path,
+        opts,
+      })
+      .returns(undefined)
+      .run());
+  });
   describe('startPollingForInProgressJobs saga', () => {
     test('should fork pollForInProgressJobs, waits for job clear or no running jobs or request inprogress jobs status action and then cancels pollForInProgressJobs', () => {
       const saga = startPollingForInProgressJobs();
@@ -405,9 +460,11 @@ describe('job sagas', () => {
         { resourceId: jobId }
       );
 
+      opts.body = {fileIds: ['f1', 'f2']};
+
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
-          path: `${path}?fileId=f1&fileId=f2`,
+          path,
           opts,
         })
       );
@@ -622,6 +679,64 @@ describe('job sagas', () => {
       expect(saga.throw(new Error()).value).toEqual(true);
       expect(saga.next().done).toEqual(true);
     });
+
+    test('should call resolveCommit for filteredJobs if filtersJobsOnly is true', () => {
+      const opts = {
+        method: 'PUT',
+      };
+      const path = '/jobs/resolve';
+
+      return expectSaga(resolveAllCommit, { filteredJobsOnly: true })
+        .provide([
+          [select(selectors.allJobs, { type: 'flowJobs' }),
+            [{
+              _id: 1,
+              __original: {
+                numError: 5,
+              },
+            },
+            {
+              _id: 2,
+              __original: {
+                numError: 3,
+              },
+            }],
+          ],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            ...opts,
+            body: [1, 2],
+          },
+        })
+        .run();
+    });
+    test('should call resolveCommit for flows in the store', () => {
+      const opts = {
+        method: 'PUT',
+      };
+      const path = '/flows/jobs/resolve';
+
+      return expectSaga(resolveAllCommit, { childId: '123' })
+        .provide([
+          [select(
+            selectors.integrationAppFlowIds,
+            undefined,
+            '123'
+          ),
+          ['1', '2', '3'],
+          ],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            ...opts,
+            body: ['1', '2', '3'],
+          },
+        })
+        .run();
+    });
   });
 
   describe('resolveSelected saga', () => {
@@ -732,10 +847,11 @@ describe('job sagas', () => {
 
   describe('resolveAll saga', () => {
     const integrationId = 'i1';
+    const childId = 's1';
 
     describe('integration level resolve all', () => {
       test('should resolve all pending and init resolve all, wait for resolve all pending and then commit resolve all', () => {
-        const saga = resolveAll({ integrationId });
+        const saga = resolveAll({ integrationId, childId });
 
         expect(saga.next().value).toEqual(put(actions.job.resolveAllPending()));
         expect(saga.next().value).toEqual(put(actions.job.resolveAllInit()));
@@ -748,13 +864,13 @@ describe('job sagas', () => {
           ])
         );
         expect(saga.next(actions.job.resolveAllPending()).value).toEqual(
-          call(resolveAllCommit, { integrationId })
+          call(resolveAllCommit, { integrationId, childId })
         );
         expect(saga.next().done).toEqual(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all commit and then commit resolve all', () => {
-        const saga = resolveAll({ integrationId });
+        const saga = resolveAll({ integrationId, childId });
 
         expect(saga.next().value).toEqual(put(actions.job.resolveAllPending()));
         expect(saga.next().value).toEqual(put(actions.job.resolveAllInit()));
@@ -767,7 +883,7 @@ describe('job sagas', () => {
           ])
         );
         expect(saga.next(actions.job.resolveAllCommit()).value).toEqual(
-          call(resolveAllCommit, { integrationId })
+          call(resolveAllCommit, { integrationId, childId })
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -1724,5 +1840,334 @@ describe('job sagas', () => {
       expect(saga.throw(new Error()).value).toEqual(true);
       expect(saga.next().done).toEqual(true);
     });
+  });
+
+  describe('retryProcessedErrors saga', () => {
+    test('should call retry api and update jobs list once retried', () => expectSaga(retryProcessedErrors, { jobId: 'j1', flowJobId: 'fj1', errorFileId: 'ef1' })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/jobs/j1/retries/retry',
+          opts: {
+            method: 'POST',
+            body: { errorFile: { host: 's3', id: 'ef1' } },
+          },
+        }), {
+          success: true,
+        }],
+        [
+          call(getJobFamily, { jobId: 'fj1' }),
+          [{
+            _id: 'j1',
+            numError: 0,
+          }],
+        ],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/jobs/j1/retries/retry',
+        opts: {
+          method: 'POST',
+          body: { errorFile: { host: 's3', id: 'ef1' } },
+        },
+      })
+      .call(getJobFamily, { jobId: 'fj1' })
+      .put(actions.job.requestInProgressJobStatus())
+      .run());
+
+    test('should handle api error properly', () => expectSaga(retryProcessedErrors, { jobId: 'j1', flowJobId: 'fj1', errorFileId: 'ef1' })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/jobs/j1/retries/retry',
+          opts: {
+            method: 'POST',
+            body: { errorFile: { host: 's3', id: 'ef1' } },
+          },
+        }), throwError({
+          status: 401,
+          message: '{"code":"error code"}',
+        })],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/jobs/j1/retries/retry',
+        opts: {
+          method: 'POST',
+          body: { errorFile: { host: 's3', id: 'ef1' } },
+        },
+      })
+      .not.call(apiCallWithRetry, {
+        path: '/jobs/j1/retries/retry',
+        opts: {
+          method: 'POST',
+          body: { errorFile: { host: 's3', id: 'ef1' } },
+        },
+      })
+      .run());
+  });
+});
+describe('getDashboardRunningJobCollection saga', () => {
+  test('should fork requestRunningJobCollection, waits for job clear action and then cancels requestRunningJobCollection', () => {
+    const dataIn = {
+      nextPageURL: 'url',
+    };
+    const saga = getDashboardRunningJobCollection(dataIn);
+
+    expect(saga.next().value).toEqual(fork(requestRunningJobCollection, dataIn));
+
+    const watcherTask = createMockTask();
+
+    expect(saga.next(watcherTask).value).toEqual(take(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR));
+    expect(saga.next().value).toEqual(cancel(watcherTask));
+    expect(saga.next().done).toEqual(true);
+  });
+});
+describe('requestRunningJobCollection saga', () => {
+  test('should succeed on successful api call', () => {
+    const dataIn = {
+      nextPageURL: 'url',
+    };
+    const saga = requestRunningJobCollection(dataIn);
+
+    expect(saga.next().value).toEqual(
+      select(selectors.requestOptionsOfDashboardJobs, {
+        filterKey: FILTER_KEYS_AD.RUNNING, nextPageURL: dataIn.nextPageURL,
+      })
+    );
+    const reqOptions = {path: '/jobs/current', opts: {method: 'POST', body: {flowIds: [2, 3]}}};
+
+    expect(saga.next(reqOptions).value).toEqual(
+      call(apiCallWithRetry, {
+        path: reqOptions.path,
+        opts: reqOptions.opts,
+      })
+    );
+
+    const jobs = [{ _id: 'j1' }, { _id: 'j2' }];
+    const collection = {jobs, nextPageURL: 'urll'};
+
+    expect(saga.next(collection).value).toEqual(
+      put(actions.job.dashboard.running.receivedCollection({ collection: collection.jobs, nextPageURL: collection.nextPageURL, loadMore: !!dataIn.nextPageURL }))
+    );
+    expect(saga.next().value).toEqual(
+      put(actions.job.dashboard.running.requestInProgressJobStatus())
+    );
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should handle api error properly', () => {
+    const dataIn = {
+      nextPageURL: 'url',
+    };
+    const saga = requestRunningJobCollection(dataIn);
+
+    expect(saga.next().value).toEqual(
+      select(selectors.requestOptionsOfDashboardJobs, {
+        filterKey: FILTER_KEYS_AD.RUNNING, nextPageURL: dataIn.nextPageURL,
+      })
+    );
+    const reqOptions = {path: '/jobs/current', opts: {method: 'POST', body: {flowIds: [2, 3]}}};
+
+    expect(saga.next(reqOptions).value).toEqual(
+      call(apiCallWithRetry, {
+        path: reqOptions.path,
+        opts: reqOptions.opts,
+      })
+    );
+
+    expect(saga.throw(new Error()).value).toEqual(put(actions.job.dashboard.running.error()));
+    expect(saga.next().done).toEqual(true);
+  });
+});
+describe('cancelDashboardJob saga', () => {
+  test('should succeed on successful api call', () => {
+    const jobId = 'brj1';
+    const saga = cancelDashboardJob({ jobId });
+    const { path, opts } = getRequestOptions(actionTypes.JOB.CANCEL, {
+      resourceId: jobId,
+    });
+
+    expect(saga.next().value).toEqual(
+      call(apiCallWithRetry, {
+        path,
+        opts,
+      })
+    );
+    const response = { jobId, type: JOB_TYPES.FLOW };
+
+    expect(saga.next(response).value).toEqual(
+      put(actions.job.dashboard.running.canceled({ jobId }))
+    );
+    expect(saga.next().done).toEqual(true);
+  });
+
+  test('should handle api error properly', () => {
+    const jobId = 'brj1';
+    const saga = cancelDashboardJob({ jobId });
+    const { path, opts } = getRequestOptions(actionTypes.JOB.CANCEL, {
+      resourceId: jobId,
+    });
+
+    expect(saga.next().value).toEqual(
+      call(apiCallWithRetry, {
+        path,
+        opts,
+      })
+    );
+    expect(saga.throw(new Error()).value).toEqual(true);
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('pollForDashboardInProgressJobs saga', () => {
+  test('should call getDasboardInProgressJobsStatus after 10 seconds delay continuously', () => {
+    const saga = pollForDashboardInProgressJobs();
+
+    expect(saga.next().value).toEqual(delay(10000));
+    expect(saga.next().value).toEqual(call(getDasboardInProgressJobsStatus));
+    expect(saga.next().done).toEqual(false);
+  });
+});
+describe('startPollingForDashboardInProgressJobs saga', () => {
+  test('should fork pollForDashboardInProgressJobs, waits for job clear or no running jobs or request inprogress jobs status action and then cancels pollForInProgressJobs', () => {
+    const saga = startPollingForDashboardInProgressJobs();
+
+    expect(saga.next().value).toEqual(fork(pollForDashboardInProgressJobs));
+
+    const watcherTask = createMockTask();
+
+    expect(saga.next(watcherTask).value).toEqual(
+      take([
+        actionTypes.JOB.DASHBOARD.RUNNING.CLEAR,
+        actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS,
+        actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS,
+      ])
+    );
+    expect(saga.next().value).toEqual(cancel(watcherTask));
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('getDasboardInProgressJobsStatus saga', () => {
+  test('should dispatch no inprogress jobs action when there are no jobs in running state', () => {
+    const saga = getDasboardInProgressJobsStatus();
+
+    expect(saga.next().value).toEqual(select(selectors.dashboardInProgressJobIds));
+    expect(saga.next([]).value).toEqual(
+      put(actions.job.dashboard.running.noInProgressJobs())
+    );
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should call getJobFamily for jobs in running state', () => {
+    const saga = getDasboardInProgressJobsStatus();
+
+    expect(saga.next().value).toEqual(select(selectors.dashboardInProgressJobIds));
+    const inProgressJobIds = ['fj1', 'fj2'];
+
+    expect(saga.next(inProgressJobIds).value).toEqual(
+      call(getDashboardJobFamily, { inProgressJobIds })
+    );
+    expect(saga.next().done).toEqual(true);
+  });
+});
+describe('getDashboardJobFamily saga', () => {
+  test('should succeed on successful api call for flow job', () => {
+    const inProgressJobIds = ['fj1', 'fj1'];
+    const saga = getDashboardJobFamily({inProgressJobIds});
+    const requestOptions = {path: '/jobs/family', opts: { method: 'POST' } };
+
+    requestOptions.opts.body = [...inProgressJobIds];
+
+    expect(saga.next().value).toEqual(
+      call(apiCallWithRetry, requestOptions)
+    );
+    const jobs = [{ jobId: 'fj1' }, {jobId2: 'fj1' }];
+
+    expect(saga.next(jobs).value).toEqual(
+      put(actions.job.dashboard.running.receivedFamily({ collection: jobs }))
+    );
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should handle api error properly', () => {
+    const inProgressJobIds = ['fj1', 'fj1'];
+    const saga = getDashboardJobFamily({inProgressJobIds});
+    const requestOptions = {path: '/jobs/family', opts: { method: 'POST' } };
+
+    requestOptions.opts.body = [...inProgressJobIds];
+
+    expect(saga.next().value).toEqual(
+      call(apiCallWithRetry, requestOptions)
+    );
+
+    expect(saga.throw(new Error()).value).toEqual(true);
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('getDashboardCompletedJobCollection saga', () => {
+  test('should fork requestCompletedJobCollection, waits for job clear action and then cancels requestCompletedJobCollection', () => {
+    const dataIn = {
+      nextPageURL: 'url' };
+
+    const saga = getDashboardCompletedJobCollection(dataIn);
+
+    expect(saga.next().value).toEqual(fork(requestCompletedJobCollection, dataIn));
+
+    const watcherTask = createMockTask();
+
+    expect(saga.next(watcherTask).value).toEqual(take(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR));
+    expect(saga.next().value).toEqual(cancel(watcherTask));
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('requestCompletedJobCollection saga', () => {
+  test('should succeed on successful api call', () => {
+    const dataIn = {
+      nextPageURL: 'url',
+    };
+    const saga = requestCompletedJobCollection(dataIn);
+
+    expect(saga.next().value).toEqual(
+      select(selectors.requestOptionsOfDashboardJobs, {
+        filterKey: FILTER_KEYS_AD.COMPLETED, nextPageURL: dataIn.nextPageURL,
+      })
+    );
+    const reqOptions = {path: '/flows/runs/stats', opts: {method: 'POST', body: {flowIds: [2, 3]}}};
+
+    expect(saga.next(reqOptions).value).toEqual(
+      call(apiCallWithRetry, {
+        path: reqOptions.path,
+        opts: reqOptions.opts,
+      })
+    );
+
+    const stats = [{ _id: 'j1' }, { _id: 'j2' }];
+    const collection = {stats, nextPageURL: 'urll'};
+
+    expect(saga.next(collection).value).toEqual(
+      put(actions.job.dashboard.completed.receivedCollection({ collection: collection.stats, nextPageURL: collection.nextPageURL, loadMore: !!dataIn.nextPageURL }))
+    );
+
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should handle api error properly', () => {
+    const dataIn = {
+      nextPageURL: 'url',
+    };
+    const saga = requestCompletedJobCollection(dataIn);
+
+    expect(saga.next().value).toEqual(
+      select(selectors.requestOptionsOfDashboardJobs, {
+        filterKey: FILTER_KEYS_AD.COMPLETED, nextPageURL: dataIn.nextPageURL,
+      })
+    );
+    const reqOptions = {path: '/flows/runs/stats', opts: {method: 'POST', body: {flowIds: [2, 3]}}};
+
+    expect(saga.next(reqOptions).value).toEqual(
+      call(apiCallWithRetry, {
+        path: reqOptions.path,
+        opts: reqOptions.opts,
+      })
+    );
+
+    expect(saga.throw(new Error()).value).toEqual(put(actions.job.dashboard.completed.error()));
+    expect(saga.next().done).toEqual(true);
   });
 });

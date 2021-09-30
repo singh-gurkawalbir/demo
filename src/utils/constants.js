@@ -1,9 +1,22 @@
-export const emptyList = [];
-export const emptyObject = {};
+import invert from 'lodash/invert';
+
+export const emptyList = Object.freeze([]);
+export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
+export const AFE_SAVE_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  REQUESTED: 'requested',
+});
+export const FORM_SAVE_STATUS = Object.freeze({
+  COMPLETE: 'complete',
+  FAILED: 'failed',
+  ABORTED: 'aborted',
+  LOADING: 'loading',
+});
 export const USER_ACCESS_LEVELS = Object.freeze({
+  ACCOUNT_ADMIN: 'administrator',
   ACCOUNT_OWNER: 'owner',
   ACCOUNT_MANAGE: 'manage',
   ACCOUNT_MONITOR: 'monitor',
@@ -22,6 +35,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
+  URL: 'url',
   HIDDEN: 'hidden',
 });
 export const TILE_STATUS = Object.freeze({
@@ -39,6 +53,11 @@ export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
   UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
+});
+export const ACCOUNT_SSO_STATUS = Object.freeze({
+  NOT_LINKED: 'not_linked',
+  LINKED_TO_THIS_ACCOUNT: 'this_account',
+  LINKED_TO_OTHER_ACCOUNT: 'other_account',
 });
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView']);
@@ -141,8 +160,10 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
+export const GET_DOCS_MAX_LIMIT = process.env.GET_DOCS_MAX_LIMIT || 1500;
+export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
-export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
+export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite' };
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
@@ -253,15 +274,24 @@ export const JOB_STATUS = Object.freeze({
   QUEUED: 'queued',
   RUNNING: 'running',
   RETRYING: 'retrying',
+  CANCELING: 'canceling',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'ashares',
   'licenses',
   'preferences',
   'profile',
   'published',
   'shared/ashares',
 ];
+
+// email regex is used in our backend as well and is
+// referenced from this repo https://github.com/celigo/integrator-adaptor/blob/master/util/validator.js
+export const EMAIL_REGEX = /^[\w\-.+]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,10}$/;
+
+// Regular Expression to Simple multiple email addresses separated by commas from regextester.com
+export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
+// Regular Expression to absolute url, e.g: (https|http)://abc.com but not relative urls such as www.abc.com or abc.com
+export const ABS_URL_VALIDATION_PATTERN = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/i;
 // eslint-disable-next-line no-useless-escape
 // export const URI_VALIDATION_PATTERN = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|localhost|127\.0\.0\.1|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 export const URI_VALIDATION_PATTERN = /(?:(?:https?:)?\/\/)?(?:\S+(?::\S*)?@)?(?:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:1\d\d|2[0-4]\d|25[0-4]|[1-9]\d?)))|\[(?:(?:[\da-f]{1,4}:){7,7}[\da-f]{1,4}|(?:[\da-f]{1,4}:){1,4}:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:1\d\d|2[0-4]\d|25[0-4]|[1-9]\d?)))|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:1\d\d|2[0-4]\d|25[0-4]|[1-9]\d?)))|[\da-f]{1,4}:(?:(?::[\da-f]{1,4}){1,6})|(?:[\da-f]{1,4}:){1,2}(?::[\da-f]{1,4}){1,5}|(?:[\da-f]{1,4}:){1,3}(?::[\da-f]{1,4}){1,4}|(?:[\da-f]{1,4}:){1,4}(?::[\da-f]{1,4}){1,3}|(?:[\da-f]{1,4}:){1,5}(?::[\da-f]{1,4}){1,2}|(?:[\da-f]{1,4}:){1,6}:[\da-f]{1,4}|(?:[\da-f]{1,4}:){1,7}:|:(?:(?::[\da-f]{1,4}){1,7}|:))\]|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/i;
@@ -288,7 +318,6 @@ export const REST_ASSISTANTS = [
   'asana',
   'shopify',
   'slack',
-  // 'desk',
   'eventbrite',
   'smartsheet',
   'campaignmonitor',
@@ -401,6 +430,8 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
+export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
 export const AS2_URLS_STAGING = [
   {
@@ -543,14 +574,16 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'netsuite.distributed.sublists',
     'netsuite.distributed.forceReload',
     'netsuite.distributed.qualifier',
-    'salesforce.relatedLists.referencedFields,',
-    'salesforce.relatedLists.parentField,',
-    'salesforce.relatedLists.sObjectType,',
-    'salesforce.relatedLists.filter,',
-    'salesforce.relatedLists.orderBy,',
-    'salesforce.relatedLists.userDefined,',
+    'salesforce.relatedLists.referencedFields',
+    'salesforce.relatedLists.parentField',
+    'salesforce.relatedLists.sObjectType',
+    'salesforce.relatedLists.filter',
+    'salesforce.relatedLists.orderBy',
+    'salesforce.relatedLists.userDefined',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'salesforce.distributed.referencedFields',
+    'salesforce.distributed.relatedLists',
     'schedule',
     'timeZone',
     'activeTab',
@@ -579,6 +612,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.once.booleanField',
     'restlet.type',
     '_connectionId',
+    'settings',
+    'salesforce.distributed.qualifier',
   ],
   imports: [
     '_connectionId',
@@ -594,9 +629,11 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.idLookup.whereClause',
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
+    'settings',
   ],
   flows: [
     '_runNextFlowIds',
+    'autoResolveMatchingTraceKeys',
     'disabled',
     'schedule',
     'timeZone',
@@ -608,8 +645,102 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'dayToRunOn',
     '_keepDeltaBehindFlowId',
     '_keepDeltaBehindExportId',
+    'settings',
   ],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
+export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
+export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
+export const CONNECTORS_TO_IGNORE = [
+  'yammer',
+  'hybris',
+  'etsy',
+  'concur',
+  'concurall',
+  'concurv4',
+  'constantcontactv2',
+  'constantcontactv3',
+];
+
+export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
+  'box', 'segment'];
+
+export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];
+export const LINE_GRAPH_TYPES = Object.freeze({
+  SUCCESS: 'success',
+  AVERAGE_TIME_TAKEN: 'averageTimeTaken',
+  ERROR: 'error',
+  IGNORED: 'ignored',
+  RESOLVED: 'resolved',
+});
+export const LINE_GRAPH_CATEGORIES = [
+  LINE_GRAPH_TYPES.SUCCESS,
+  LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN,
+  LINE_GRAPH_TYPES.ERROR,
+  LINE_GRAPH_TYPES.IGNORED,
+  LINE_GRAPH_TYPES.RESOLVED,
+];
+export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
+  [LINE_GRAPH_TYPES.SUCCESS]: 's',
+  [LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN]: 'att',
+  [LINE_GRAPH_TYPES.ERROR]: 'e',
+  [LINE_GRAPH_TYPES.IGNORED]: 'i',
+  [LINE_GRAPH_TYPES.RESOLVED]: 'r',
+});
+export const LINE_GRAPH_TYPE_LONG = Object.freeze(
+  invert(LINE_GRAPH_TYPE_SHORTID)
+);
+export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
+
+export const SENSITIVE_DATA = ['token', 'password'];
+
+export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
+  'accesstokens',
+  'agents',
+  'iClients',
+  'scripts',
+  'stacks',
+  'templates',
+  'published',
+  'transfers',
+  'apis',
+  'connectors',
+]);
+
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+
+export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
+export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
+export const MAPPINGS_FORM_KEY = 'mappingsformkey';
+export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
+export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
+export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
+export const HOME_PAGE_PATH = '/home';
+export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
+
+export const MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+};
+
+export const CATEGORY_MAPPING_SAVE_STATUS = {
+  REQUESTED: 'requested',
+  SAVED: 'saved',
+  CLOSE: 'close',
+  FAILED: 'failed',
+};
+
+export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
+  'constantcontact',
+  'constantcontactv2',
+  'constantcontactv3',
+  'zoom',
+  'amazonmws',
+];
+
+export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

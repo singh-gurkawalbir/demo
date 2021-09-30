@@ -7,15 +7,17 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../../actions';
 import RightDrawer from '../../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import { selectors } from '../../../../../../reducers';
 import ResourceSetupDrawer from '../../../../../../components/ResourceSetup';
-import {
-  generateNewId,
-} from '../../../../../../utils/resource';
+import { generateNewId } from '../../../../../../utils/resource';
 import jsonUtil from '../../../../../../utils/json';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
+import ButtonGroup from '../../../../../../components/ButtonGroup';
 
 export default function ConnectionDrawer({
   connectorId,
@@ -128,36 +130,39 @@ export default function ConnectionDrawer({
   }, [account, confirmDialog, handleConnectionSubmit, linkedConnectionId, linkedConnectionName]);
   const formKey = useFormInitWithPermissions({
     fieldMeta,
-
   });
 
   return (
-    <RightDrawer
-      path="setConnection"
-      title="Please provide NetSuite account ID"
-      infoText="This is used to verify if there is an existing connection already linked to NetSuite."
-      height="tall"
-      width="medium"
-      onClose={handleDrawerClose}>
-      <div >
-        <>
-          <DynaForm
-            formKey={formKey}
-            fieldMeta={fieldMeta}
-           />
-          <DynaSubmit
-            formKey={formKey}
+    <>
+      <RightDrawer
+        path="setConnection"
+        height="tall"
+        width="medium"
+        onClose={handleDrawerClose}>
+        <DrawerHeader
+          title="Please provide NetSuite account ID"
+          infoText="This is used to verify if there is an existing connection already linked to NetSuite."
+      />
+        <DrawerContent>
+          <DynaForm formKey={formKey} />
+        </DrawerContent>
 
-            onClick={handleAccountSubmit}
-            color="primary"
-            variant="outlined">
-            Continue
-          </DynaSubmit>
-          <Button onClick={handleDrawerClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </>
-        {connection && (
+        <DrawerFooter>
+          <ButtonGroup>
+            <DynaSubmit
+              formKey={formKey}
+              onClick={handleAccountSubmit}
+              color="primary"
+              variant="outlined">
+              Continue
+            </DynaSubmit>
+            <Button onClick={handleDrawerClose} variant="text" color="primary">
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </DrawerFooter>
+      </RightDrawer>
+      {connection && (
         <ResourceSetupDrawer
           resourceId={connection.newId}
           resource={connection.doc}
@@ -167,8 +172,7 @@ export default function ConnectionDrawer({
           manageOnly
           addOrSelect
           />
-        )}
-      </div>
-    </RightDrawer>
+      )}
+    </>
   );
 }

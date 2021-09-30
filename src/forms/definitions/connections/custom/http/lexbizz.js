@@ -129,7 +129,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
         (r?.http?.unencrypted?.endpointVersion) ||
-        '18.200.001',
+        '20.200.001',
     },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
@@ -144,6 +144,7 @@ export default {
       type: 'text',
       inputType: 'password',
       label: 'Password',
+      defaultValue: '',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'lexbizz.connection.http.encrypted.password',
@@ -200,13 +201,8 @@ export default {
   },
   actions: [
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['cookie'],
-        },
         {
           field: 'http.auth.type',
           is: [''],
@@ -214,21 +210,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['cookie'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -237,11 +219,7 @@ export default {
       ],
     },
     {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'http.auth.type',

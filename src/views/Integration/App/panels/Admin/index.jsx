@@ -65,13 +65,13 @@ const allSections = [
 
 export default function AdminPanel({
   integrationId,
-  storeId,
+  childId,
   ...sectionProps
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const showAPITokens = useSelector(
-    state => selectors.resourcePermissions(state, 'accesstokens').view && !storeId
+    state => selectors.resourcePermissions(state, 'accesstokens').view && !childId
   );
   const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, integrationId));
   const filterTabs = [];
@@ -122,7 +122,7 @@ export default function AdminPanel({
               <Route key={path} path={`${match.url}/${path}`}>
                 <Section
                   integrationId={integrationId}
-                  storeId={storeId}
+                  childId={childId}
                   {...sectionProps}
                 />
               </Route>

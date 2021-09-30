@@ -29,8 +29,8 @@ const useStyles = makeStyles(theme => ({
 
 export const LoadingMask = ({message}) => (
   <Loader open>
-    <Typography variant="h4">{message}</Typography>
-    <Spinner color="primary" />
+    <Typography data-public variant="h4">{message}</Typography>
+    <Spinner />
   </Loader>
 );
 const defaultFilter = {
@@ -42,17 +42,22 @@ export default function RecycleBin(props) {
   const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
+  const filterKey = 'recycleBinTTL';
   const filter =
     useSelector(state =>
-      selectors.filter(state, 'recycleBinTTL') || defaultFilter);
+      selectors.filter(state, filterKey));
   const recycleBinFilterConfig = useMemo(
     () => ({
       type: 'recycleBinTTL',
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter]
   );
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch]);
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     recycleBinFilterConfig
@@ -83,8 +88,7 @@ export default function RecycleBin(props) {
         <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
           <div className={classes.actions}>
             <KeywordSearch
-              filterKey="recycleBinTTL"
-              defaultFilter={defaultFilter}
+              filterKey={filterKey}
             />
           </div>
         </CeligoPageBar>
@@ -102,7 +106,7 @@ export default function RecycleBin(props) {
           </LoadResources>
         </div>
         <ShowMoreDrawer
-          filterKey="recycleBinTTL"
+          filterKey={filterKey}
           count={list.count}
           maxCount={list.filtered}
         />

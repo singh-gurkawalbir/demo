@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -11,31 +11,38 @@ export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
+  // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
 
   useEffect(() => {
     if (!errors) return;
 
-    Object.keys(errors).forEach(key => {
+    Object.keys(errors).forEach(commKey => {
+      const message = errors[commKey];
+
       enqueueSnackbar({
-        message: <ErrorContent error={errors[key]} />,
+        message: <ErrorContent error={message} />,
         variant: 'error',
         persist: true,
+        key: commKey,
       });
     });
-    dispatch(actions.clearComms());
-  }, [errors, enqueueSnackbar, dispatch]);
 
+    dispatch(actions.clearComms());
+  }, [dispatch, enqueueSnackbar, errors]);
+
+  // Commented out the intermittent network issues warning snackbar
+  // TODO: Surya enable it after december MR
+  /*
   useEffect(() => {
     if (hasWarning) {
       enqueueSnackbar({
-        message: <ErrorContent error="You may be experience intermittent network connectivity, Please check your internet" />,
+        message: <ErrorContent error="You seem to be experiencing intermittent network connectivity, so may want to check your internet connection." />,
         variant: 'warning',
         persist: true,
         preventDuplicate: true,
       });
     }
   }, [enqueueSnackbar, hasWarning]);
-
+*/
   return null;
 }

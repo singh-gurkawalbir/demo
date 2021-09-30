@@ -54,10 +54,12 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
+import { emptyObject } from '../../../utils/constants';
 
-function* initFlowData({ flowId, resourceId, resourceType, refresh }) {
-  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId);
-  const clonedFlow = deepClone(flow);
+const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
+export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
+  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const clonedFlow = deepClone(flow || {});
 
   if (isNewId(flowId)) {
     clonedFlow._id = flowId;
@@ -65,12 +67,12 @@ function* initFlowData({ flowId, resourceId, resourceType, refresh }) {
 
   if (isNewId(resourceId)) {
     // For a new export/lookup/import initiating flow with this new temp id
-    const { merged: resource } = yield select(
+    const resource = (yield select(
       selectors.resourceData,
       resourceType,
       resourceId,
-      'value'
-    );
+      SCOPES.VALUE
+    ))?.merged || emptyObject;
     const isPageGenerator = resourceType === 'exports' && !resource.isLookup;
     const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
 
@@ -100,7 +102,7 @@ export function* requestSampleData({
   isInitialized,
   onSagaEnd,
 }) {
-  if (!flowId || !resourceId) return;
+  if (!flowId || !resourceId || !VALID_RESOURCE_TYPES_FOR_FLOW_DATA.includes(resourceType)) return;
 
   // TODO: @Raghu: I dont know where the best place for this code is to go...
   // probably the only time we need sample data for a connection is
@@ -114,7 +116,7 @@ export function* requestSampleData({
 
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
-    yield call(initFlowData, { flowId, resourceId, resourceType, refresh });
+    yield call(_initFlowData, { flowId, resourceId, resourceType, refresh });
   }
 
   if (refresh) {
@@ -139,7 +141,6 @@ export function* requestSampleData({
       yield call(requestSampleDataForImports, {
         flowId,
         resourceId,
-        resourceType,
         hidden: true,
         sampleDataStage,
       });
@@ -179,7 +180,7 @@ export function* fetchPageProcessorPreview({
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
-  const flowDataState = yield select(selectors.getFlowDataState, flowId) || {};
+  const flowDataState = yield select(selectors.getFlowDataState, flowId);
   let previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
@@ -187,20 +188,34 @@ export function* fetchPageProcessorPreview({
     resourceType,
     hidden,
     throwOnError: true,
-    refresh: refresh || flowDataState.refresh,
+    refresh: refresh || flowDataState?.refresh,
     runOffline: true,
   });
-  const { merged: resource = {} } = yield select(
+  const resource = (yield select(
     selectors.resourceData,
     resourceType,
     _pageProcessorId,
     'value'
-  );
+  ))?.merged;
 
   if (isOneToManyResource(resource)) {
     previewData = processOneToManySampleData(previewData, resource);
   }
 
+  const {data: existingPreviewData} = yield select(selectors.getSampleDataContext,
+    { flowId, resourceId: _pageProcessorId, resourceType, stage: previewType });
+
+  // in case on hard refresh and flow preview doesnt return data,
+  // dont empty the state, rather use old preview data
+  if (flowDataState?.refresh && existingPreviewData && !previewData) {
+    return yield put(
+      actions.flowData.setStatusReceived(
+        flowId,
+        _pageProcessorId,
+        previewType
+      )
+    );
+  }
   yield put(
     actions.flowData.receivedPreviewData(
       flowId,
@@ -216,14 +231,16 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   const { merged: resource = {} } = yield select(
     selectors.resourceData,
     'exports',
-    _pageGeneratorId
+    _pageGeneratorId,
+    SCOPES.VALUE
   );
   const { merged: connection } = yield select(
     selectors.resourceData,
     'connections',
-    resource._connectionId
+    resource._connectionId,
+    SCOPES.VALUE
   );
-  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId);
+  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
 
   let previewData;
 
@@ -249,6 +266,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       resourceId: _pageGeneratorId,
       runOffline: true,
       throwOnError: true,
+      flowId,
     });
     previewData = getPreviewStageData(previewData, 'parse');
   }
@@ -263,7 +281,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   );
 }
 
-function* processData({ flowId, resourceId, processorData, stage }) {
+export function* _processData({ flowId, resourceId, processorData, stage }) {
   const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
     processorData || {};
   const processedData = yield call(evaluateExternalProcessor, {
@@ -282,7 +300,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
 
 // Handles processing mappings against preProcessorData supplied
 // @TODO Raghu:  merge this in processData
-function* processMappingData({
+export function* _processMappingData({
   flowId,
   resourceId,
   mappings,
@@ -307,11 +325,8 @@ function* processMappingData({
     opts,
     hidden: true,
   });
-  const mappedObject =
-    processedMappingData &&
-    processedMappingData.data &&
-    processedMappingData.data[0] &&
-    processedMappingData.data[0].mappedObject;
+
+  const mappedObject = processedMappingData?.data?.[0]?.mappedObject;
   const processedData = {
     data: [mappedObject],
   };
@@ -373,7 +388,7 @@ export function* requestProcessorData({
         processorData = {
           data: preProcessedSampleData,
           rule,
-          processor: 'transform',
+          editorType: 'transform',
         };
       }
     } else if (transform.type === 'script') {
@@ -387,9 +402,11 @@ export function* requestProcessorData({
 
         processorData = {
           data: preProcessedData,
-          code: script && script.content,
-          entryFunction,
-          processor: 'javascript',
+          rule: {
+            code: script?.content,
+            entryFunction,
+          },
+          editorType: 'javascript',
           wrapInArrayProcessedData: true,
         };
       } else {
@@ -425,11 +442,13 @@ export function* requestProcessorData({
 
       processorData = {
         data: preProcessedData,
-        code,
+        rule: {
+          code,
+          entryFunction: hook.function,
+        },
         context,
-        entryFunction: hook.function,
         removeDataPropFromProcessedData: stage === 'preMap',
-        processor: 'javascript',
+        editorType: 'javascript',
       };
     } else {
       hasNoRulesToProcess = true;
@@ -451,7 +470,7 @@ export function* requestProcessorData({
       mappings &&
       (mappings.fields.length || mappings.lists.length)
     ) {
-      return yield call(processMappingData, {
+      return yield call(_processMappingData, {
         flowId,
         resourceId,
         mappings,
@@ -470,14 +489,14 @@ export function* requestProcessorData({
       resourceId,
       resourceType,
     });
-    const mappings = (flowNode && flowNode.responseMapping) || {};
+    const mappings = flowNode?.responseMapping;
     const preProcessedResponseMappingData = yield call(
       getPreProcessedResponseMappingData,
       { resourceType, preProcessedData, adaptorType: resource?.adaptorType}
     );
 
-    if (mappings && (mappings.fields.length || mappings.lists.length)) {
-      return yield call(processMappingData, {
+    if (mappings?.fields?.length || mappings?.lists?.length) {
+      return yield call(_processMappingData, {
         flowId,
         resourceId,
         mappings,
@@ -498,6 +517,7 @@ export function* requestProcessorData({
       resourceType,
       stage: 'flowInput',
       isInitialized: true,
+      noWrap: true,
     });
     const postResponseMapData = generatePostResponseMapData(
       flowData,
@@ -513,6 +533,8 @@ export function* requestProcessorData({
     );
 
     return;
+  } else {
+    hasNoRulesToProcess = true;
   }
 
   if (hasNoRulesToProcess) {
@@ -525,7 +547,7 @@ export function* requestProcessorData({
     });
   }
 
-  yield call(processData, {
+  yield call(_processData, {
     flowId,
     resourceId,
     processorData,
@@ -608,10 +630,6 @@ const takeLatestSampleData = (patternOrChannel, saga, ...args) =>
   });
 
 export default [
-  takeEvery(
-    actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
-    fetchPageProcessorPreview
-  ),
   takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
   takeLatestSampleData(
     actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST,

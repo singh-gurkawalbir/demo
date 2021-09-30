@@ -50,9 +50,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
+    lineHeight: 2,
     '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
     },
   },
   selectResourceItem: {
@@ -154,7 +155,7 @@ export default function SelectResource(props) {
                   )}
                   <FormGroup className={classes.formGroup}>
                     {flowResources.map(m => (
-                      <Tooltip key={m._id} title={getTooltip(m._id)} placement="left-start">
+                      <Tooltip data-public key={m._id} title={getTooltip(m._id)} placement="left-start">
                         <FormControlLabel
                           className={classes.selectResourceItem}
                           control={(

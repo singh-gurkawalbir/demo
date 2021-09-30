@@ -1,0 +1,147 @@
+import jsonComputePaths from '../../../../../../../utils/jsonPaths';
+import {
+  textAfterBracesMatchers,
+  insertMatchingResultAndRemovePreceedingBraces,
+  insertMatchingResult,
+} from './completerUtils';
+
+export const FunctionCompleter = {
+  functionsHints: [],
+  getCompletions(editor, session, pos, prefix, callback) {
+    const validText = textAfterBracesMatchers(editor);
+
+    if (!validText) return callback(null, []);
+
+    const insertMatch = (editor, completionMetaData) => {
+      const { matchingResult } = completionMetaData;
+
+      insertMatchingResultAndRemovePreceedingBraces(editor, matchingResult);
+    };
+
+    const textAfterBraces = validText[1];
+
+    return callback(
+      null,
+      Object.keys(this.functionsHints || [])
+        .filter(
+          helperFunction =>
+            textAfterBraces.length === 0 ||
+            helperFunction.toLowerCase().includes(textAfterBraces.toLowerCase())
+        )
+        .map(helperFunction => {
+          const matchingResult = this.functionsHints[helperFunction];
+
+          return {
+            caption: helperFunction,
+            value: helperFunction,
+            meta: 'function',
+            matchingResult,
+            completer: {
+              insertMatch,
+            },
+          };
+        })
+    );
+  },
+};
+
+export const LookupCompleter = {
+  lookupsHints: [],
+  getCompletions(editor, session, pos, prefix, callback) {
+    const validText = textAfterBracesMatchers(editor);
+
+    if (!validText) return callback(null, []);
+
+    const insertMatch = (editor, completionMetaData) => {
+      const { matchingResult } = completionMetaData;
+
+      insertMatchingResult(editor, matchingResult);
+    };
+
+    const textAfterBraces = validText[1];
+
+    return callback(
+      null,
+      this.lookupsHints
+        .filter(
+          hint =>
+            textAfterBraces.length === 0 ||
+            hint.name.toLowerCase().includes(textAfterBraces.toLowerCase())
+        )
+        .map(hint => ({
+          caption: hint.name,
+          value: hint.name,
+          meta: 'lookup',
+          matchingResult: this.useDotFormat ? `lookup.${hint.name}` : `lookup "${hint.name}" this`,
+          completer: {
+            insertMatch,
+          },
+        }))
+    );
+  },
+};
+
+export const JsonCompleter = {
+  identifierRegexps: [/[.*]/],
+  jsonHints: [],
+  getCompletions(editor, session, pos, prefix, callback) {
+    const validText = textAfterBracesMatchers(editor);
+
+    if (!validText) return callback(null, []);
+
+    const textAfterBraces = validText[1];
+
+    const insertMatch = (editor, completionMetaData) => {
+      const { matchingResult } = completionMetaData;
+
+      insertMatchingResult(editor, matchingResult, textAfterBraces);
+    };
+
+    return callback(
+      null,
+      this.jsonHints
+        .filter(
+          hint =>
+            textAfterBraces.length === 0 || hint.id.toLowerCase().includes(textAfterBraces.toLowerCase())
+        )
+        .map(hint => ({
+          caption: hint.id,
+          value: hint.id,
+          meta: 'field',
+          matchingResult: hint.id,
+          completer: {
+            insertMatch,
+          },
+        }))
+    );
+  },
+};
+
+export const loadJsonHints = value => {
+  try {
+    return jsonComputePaths(JSON.parse(value), null, {
+      wrapSpecialChars: true,
+      excludeArrayIndices: true,
+    });
+  } catch (e) {
+    return [];
+  }
+};
+
+export const handleBarsCompleters = {
+  setFunctionCompleter: helperFunctions => {
+    FunctionCompleter.functionsHints = helperFunctions;
+  },
+  setJsonCompleter: jsonData => {
+    JsonCompleter.jsonHints = loadJsonHints(jsonData);
+  },
+  setLookupCompleter: (lookups, useDotFormat) => {
+    LookupCompleter.lookupsHints = lookups;
+    LookupCompleter.useDotFormat = useDotFormat;
+  },
+  getCompleters: () => ({
+    JsonCompleter,
+    FunctionCompleter,
+    LookupCompleter,
+  }),
+};

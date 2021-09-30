@@ -11,19 +11,20 @@ import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
-  },
-  topHeading: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: theme.spacing(1),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    minHeight: 124,
   },
   heading: {
     paddingLeft: theme.spacing(1),
   },
   transferTableWrapper: {
     overflowX: 'auto',
+  },
+  description: {
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -45,8 +46,7 @@ export default function Transfers() {
         {!showInviteView && (
           <>
             <div className={classes.root}>
-              <div className={classes.topHeading}>
-                <PanelHeader title="Transfers" />
+              <PanelHeader title="Transfers" >
                 <IconTextButton
                   data-test="newTransfer"
                   variant="text"
@@ -55,28 +55,24 @@ export default function Transfers() {
                   <AddIcon />
                   Create transfer
                 </IconTextButton>
-              </div>
-            </div>
+              </PanelHeader>
 
-            {
-              // TODO: Ashok we don't have description in the mock. Please verify
-              /* <div>
+              <ResourceTable
+                resourceType="transfers"
+                resources={transfers}
+                className={classes.transferTableWrapper}
+            />
+            </div>
+            <div className={classes.description}>
               Transfer individual integrations between integrator.io accounts.
-              accounts. Send integrations by specifying the email of the owner
+              Send integrations by specifying the email of the owner
               of the integrator.io account you want to send the integration to.
               The receiving account owner needs to accept the transfer. Once
               accepted, the integration will be removed from your account and
               instead reside in the receiver’s account. Note: the receiver needs
               to be an account owner and cannot be part of the same organization
               as the sender.
-            </div> */
-            }
-
-            <ResourceTable
-              resourceType="transfers"
-              resources={transfers}
-              className={classes.transferTableWrapper}
-            />
+            </div>
           </>
         )}
         {showInviteView && <Invite setShowInviteView={setShowInviteView} />}
@@ -84,3 +80,4 @@ export default function Transfers() {
     </>
   );
 }
+

@@ -11,6 +11,7 @@ const PARSERS = {
   csv: 'csvParser',
   xlsx: 'csvParser',
   xml: 'xmlParser',
+  json: 'jsonParser',
 };
 
 /**
@@ -21,22 +22,39 @@ const PARSERS = {
 export const generateFileParserOptionsFromResource = (resource = {}) => {
   const fileType = resource?.file?.type;
   const fields = resource?.file?.[fileType] || {};
-  // console.log(fileType, resource);
+  const {sortByFields = [], groupByFields = []} = resource?.file || {};
+
+  if (!fileType) {
+    return;
+  }
 
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
   if (['csv', 'xlsx'].includes(fileType)) {
+    if (['HTTPExport', 'RESTExport'].includes(resource?.adaptorType)) {
+      return {
+        rowsToSkip: fields.rowsToSkip,
+        trimSpaces: fields.trimSpaces,
+        columnDelimiter: fields.columnDelimiter,
+        hasHeaderRow: fields.hasHeaderRow,
+        rowDelimiter: fields.rowDelimiter,
+        multipleRowsPerRecord:
+        fields.keyColumns &&
+        Array.isArray(fields.keyColumns) &&
+        fields.keyColumns.length,
+        keyColumns: fields.keyColumns,
+        ignoreSortAndGroup: true,
+      };
+    }
+
     return {
       rowsToSkip: fields.rowsToSkip,
       trimSpaces: fields.trimSpaces,
       columnDelimiter: fields.columnDelimiter,
       hasHeaderRow: fields.hasHeaderRow,
       rowDelimiter: fields.rowDelimiter,
-      multipleRowsPerRecord:
-        fields.keyColumns &&
-        Array.isArray(fields.keyColumns) &&
-        fields.keyColumns.length,
-      keyColumns: fields.keyColumns,
+      sortByFields,
+      groupByFields,
     };
   }
 
@@ -47,34 +65,47 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
     return {
       resourcePath: fields.resourcePath,
       ...rest,
-      // the export.parsers schema defines the following as arrays,
-      // while the processor logic uses strings.
-      listNodes: listNodes?.join('\n'),
-      includeNodes: includeNodes?.join('\n'),
-      excludeNodes: excludeNodes?.join('\n'),
+      listNodes,
+      includeNodes,
+      excludeNodes,
+      sortByFields,
+      groupByFields,
     };
   }
 
-  // no additional props for json and xml - Add in future if updated
+  // no additional props for json - Add in future if updated
   if (fileType === 'json') {
-    return {};
+    return {
+      resourcePath: fields.resourcePath,
+      sortByFields,
+      groupByFields,
+    };
   }
   // If not the above ones, it is of type file definition
-  const fileDefinitionRules = resource.file && resource.file.filedefinition && resource.file.filedefinition.rules;
+  const fileDefinitionRules = resource.file?.filedefinition?.rules;
 
   return {
     rule: fileDefinitionRules,
+    sortByFields,
+    groupByFields,
   };
 };
 
 export function* parseFileData({ sampleData, resource }) {
-  const { file } = resource;
-  const { type } = file;
+  if (!resource?.file?.type) {
+    return;
+  }
+  const fileType = resource.file.type;
+
+  if (!PARSERS[fileType]) {
+    // not supported for parsing
+    return;
+  }
   const options = generateFileParserOptionsFromResource(resource);
   const processorData = {
     data: sampleData,
-    processor: PARSERS[type],
-    ...options,
+    editorType: PARSERS[fileType],
+    rule: options,
   };
 
   // console.log('parseFileData', processorData);
@@ -88,7 +119,6 @@ export function* parseFileData({ sampleData, resource }) {
     return processedData;
   } catch (e) {
     // Handle errors
-    return {};
   }
 }
 
@@ -97,10 +127,10 @@ export function* parseFileData({ sampleData, resource }) {
  * @output: { data: parsedSampleData}
  */
 export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
-  const { file = {} } = resource;
-  const { _fileDefinitionId, resourcePath } = file.fileDefinition || {};
-
-  if (!_fileDefinitionId || !sampleData) return {};
+  if (!resource?.file?.type || !resource.file.fileDefinition?._fileDefinitionId || !sampleData) {
+    return;
+  }
+  const { _fileDefinitionId, resourcePath } = resource.file.fileDefinition || {};
 
   try {
     const parsedFileDefinitionData = yield call(apiCallWithRetry, {
@@ -139,6 +169,5 @@ export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
     return parsedFileDefinitionData;
   } catch (e) {
     // Handle errors
-    return {};
   }
 }

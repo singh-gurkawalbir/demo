@@ -4,35 +4,48 @@ import FlowStepStatus from './cells/FlowStepStatus';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'step',
       heading: 'Step',
-      value: r => <FlowStepName job={r} />,
+      Value: ({rowData: r}) => <FlowStepName job={r} />,
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: r => <FlowStepStatus job={r} />,
+      Value: ({rowData: r}) => <FlowStepStatus job={r} />,
     },
     {
+      key: 'success',
       heading: 'Success',
-      value: r => r.numSuccess,
+      Value: ({rowData: r}) => r.numSuccess,
     },
     {
+      key: 'ignored',
       heading: 'Ignored',
-      value: r => r.numIgnore,
+      Value: ({rowData: r}) => r.numIgnore,
     },
-    { heading: 'Errors', value: r => r.numError },
+    { key: 'errors',
+      heading: 'Errors',
+      Value: ({rowData: r}) => r.numOpenError },
     {
+      key: 'resolved',
+      heading: 'Resolved',
+      Value: ({rowData: r}) => r.numResolved },
+    {
+      key: 'pages',
       heading: 'Pages',
-      value: r => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,
+      Value: ({rowData: r}) => r.type === 'export' ? r.numPagesGenerated || r.numPagesProcessed : r.numPagesProcessed,
     },
     {
+      key: 'duration',
       heading: 'Duration',
-      value: r => r.duration,
+      Value: ({rowData: r}) => r.duration,
     },
     {
+      key: 'completed',
       heading: 'Completed',
-      value: r => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
     },
   ],
 };

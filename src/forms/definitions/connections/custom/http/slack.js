@@ -98,7 +98,6 @@ export default {
         'reminders:write',
         'remote_files:read',
         'remote_files:share',
-        'remote_files:write',
         'search:read',
         'stars:read',
         'stars:write',
@@ -139,8 +138,7 @@ export default {
   },
   actions: [
     {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -149,38 +147,17 @@ export default {
       ],
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
         {
           field: 'http.auth.type',
           is: [''],
         },
       ],
     },
+
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'http.auth.type',

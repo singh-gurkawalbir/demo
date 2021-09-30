@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo} from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager, useActiveTab } from '..';
+import { IAFormStateManager} from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
+import EditorDrawer from '../../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.appBarHeight,
   },
   settingsDrawerForm: {
+    overflowY: 'auto',
     padding: theme.spacing(2, 3),
     '& + div': {
       margin: theme.spacing(0, 3),
@@ -33,17 +34,16 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
       marginRight: theme.spacing(2),
-      minHeight: '100%',
+      '& > * button > span': {
+        justifyContent: 'flex-start',
+      },
     },
   },
   settingsDrawerCamForm: {
-    minHeight: 'calc(100% - 65px)',
-    marginBottom: theme.spacing(4),
     '& > div': {
       height: '100%',
       '& > div': {
-        height: '100%',
-        paddingBottom: theme.spacing(5),
+        paddingBottom: theme.spacing(3),
       },
     },
   },
@@ -52,13 +52,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SettingsDrawer({ integrationId, storeId, parentUrl }) {
+function SettingsDrawer({ integrationId, childId, parentUrl }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._id;
   // TODO: Fix this convoluted way of getting settings for a specific flow.
   // the data layer should have a simple, clean, selector api, that, given a flowId,
   // returns the flow settings. Right now to look up this info, i need to
@@ -68,7 +67,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   // We have a data-layer for a reason. There is absolutely no reason to proxy data-layer
   // results deeply through many nested components.
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, childId),
     shallowEqual
 
   );
@@ -91,8 +90,8 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
     null,
     parentUrl
   );
-  const activeTabProps = useActiveTab();
 
+  // Todo: Sravan, we should use Rightdrawer here
   return (
     <Drawer
       // variant="persistent"
@@ -101,21 +100,20 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
       classes={{
         paper: classes.drawerPaper,
       }}
-      onClose={handleClose}>
-      <DrawerTitleBar title={`Settings: ${flowName}`} />
+      >
 
       <IAFormStateManager
-        {...activeTabProps}
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
           [classes.settingsDrawerDetails]: !sections,
         })}
         integrationId={integrationId}
         flowId={flowId}
-        storeId={storeId}
-        onSubmitComplete={handleClose}
+        childId={childId}
         formState={formState}
         fieldMeta={flowSettingsMemo}
+        onCancel={handleClose}
+        isDrawer
 
       />
     </Drawer>
@@ -130,6 +128,7 @@ export default function SettingsDrawerRoute(props) {
       <LoadResources required resources="exports,imports,flows,connections">
         <SettingsDrawer {...props} parentUrl={match.url} />
       </LoadResources>
+      <EditorDrawer />
     </Route>
   );
 }

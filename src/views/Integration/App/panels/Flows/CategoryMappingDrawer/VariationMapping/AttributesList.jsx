@@ -1,9 +1,10 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles, List, ListItem } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { variationUrlName } from '.';
 
 const useStyles = makeStyles(theme => ({
   nested: {
@@ -22,14 +23,11 @@ export default function VariationAttributesList({
   integrationId,
   flowId,
   categoryId,
+  depth,
 }) {
   const classes = useStyles();
-  const { variation_themes = [] } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId: categoryId,
-      })
-    ) || {};
+  const memoizedOptions = useMemo(() => ({sectionId: categoryId, depth}), [categoryId, depth]);
+  const { variation_themes = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
   // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
   const { variation_attributes = [] } =
     variation_themes.find(theme => theme.id === 'variation_theme') || {};
@@ -41,7 +39,7 @@ export default function VariationAttributesList({
           <NavLink
             className={classes.listItem}
             activeClassName={classes.activeListItem}
-            to={attribute}
+            to={variationUrlName(attribute)}
             data-test={attribute}>
             {attribute}
           </NavLink>

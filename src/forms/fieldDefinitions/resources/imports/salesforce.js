@@ -20,7 +20,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'SOAP(Recomended)', value: 'soap' },
+          { label: 'SOAP (recommended)', value: 'soap' },
           { label: 'REST', value: 'rest' },
           { label: 'Composite', value: 'compositerecord' },
         ],
@@ -35,8 +35,10 @@ export default {
     },
   },
   'salesforce.document.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Document ID',
+    showExtract: false,
+    showLookup: false,
     required: true,
     visibleWhenAll: [
       {
@@ -54,8 +56,10 @@ export default {
     ],
   },
   'salesforce.attachment.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Attachment ID',
+    showExtract: false,
+    showLookup: false,
     required: true,
     visibleWhenAll: [
       {
@@ -73,9 +77,11 @@ export default {
     ],
   },
   'salesforce.document.name': {
-    type: 'text',
+    type: 'uri',
     label: 'Document name',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -92,9 +98,11 @@ export default {
     ],
   },
   'salesforce.attachment.name': {
-    type: 'text',
+    type: 'uri',
     label: 'Attachment name',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -129,9 +137,11 @@ export default {
     ],
   },
   'salesforce.document.folderId': {
-    type: 'text',
+    type: 'uri',
     label: 'Folder ID',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -148,8 +158,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.contentDocumentId': {
-    type: 'text',
+    type: 'uri',
     label: 'Content document ID',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -166,8 +178,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.title': {
-    type: 'text',
+    type: 'uri',
     label: 'Title',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -184,8 +198,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.tagCsv': {
-    type: 'text',
+    type: 'uri',
     label: 'Tag csv',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -228,8 +244,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.pathOnClient': {
-    type: 'text',
+    type: 'uri',
     label: 'Path on client',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -246,9 +264,11 @@ export default {
     ],
   },
   'salesforce.attachment.parentId': {
-    type: 'text',
+    type: 'uri',
     label: 'Parent ID',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -260,13 +280,15 @@ export default {
       },
       {
         field: 'salesforce.blobOperation',
-        isNot: [''],
+        isNot: ['', 'update'],
       },
     ],
   },
   'salesforce.document.contentType': {
-    type: 'text',
+    type: 'uri',
     label: 'Content type',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -283,8 +305,10 @@ export default {
     ],
   },
   'salesforce.attachment.contentType': {
-    type: 'text',
+    type: 'uri',
     label: 'Content type',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -376,7 +400,7 @@ export default {
   },
   'salesforce.blobsObjectType': {
     type: 'select',
-    label: 'SObject type',
+    label: 'sObject type',
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     visibleWhen: [
       {
@@ -396,7 +420,7 @@ export default {
     ],
   },
   'salesforce.sObjectType': {
-    label: 'SObject type',
+    label: 'sObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
     ignoreValidation: true,
@@ -404,7 +428,7 @@ export default {
       r && `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     connectionId: r => r && r._connectionId,
     required: true,
-    placeholder: 'Please select a sObject type',
+    placeholder: 'Please select an sObject type',
     helpKey: 'export.salesforce.sObjectType',
     visibleWhen: [
       {
@@ -477,6 +501,7 @@ export default {
           { label: 'Update', value: 'update' },
           { label: 'Insert/Update', value: 'addupdate' },
           { label: 'Upsert', value: 'upsert' },
+          { label: 'Delete', value: 'delete'},
         ],
       },
     ],
@@ -491,7 +516,7 @@ export default {
       },
     ],
     defaultValue: r => {
-      if (r && r.salesforce && r.salesforce.api !== 'compositerecord') {
+      if (r && r.salesforce && r.salesforce.api !== 'compositerecord' && !r.blob) {
         return r.salesforce.operation;
       }
 
@@ -536,6 +561,7 @@ export default {
   'salesforce.idLookup.whereClause': {
     type: 'salesforcelookup',
     label: 'How can we find existing records?',
+    required: true,
     visibleWhen: [
       {
         field: 'ignoreExisting',
@@ -543,7 +569,7 @@ export default {
       },
       {
         field: 'salesforce.operation',
-        is: ['update', 'addupdate'],
+        is: ['update', 'addupdate', 'delete'],
       },
       {
         field: 'salesforce.compositeOperation',

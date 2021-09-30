@@ -9,13 +9,13 @@ import { JOB_STATUS } from '../../../utils/constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import CommStatus from '../../CommStatus';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../../utils/routePaths';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
+import useCommStatus from '../../../hooks/useCommStatus';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -64,9 +64,9 @@ export default function JobActionsMenu({
   }
 
   if (!isJobInProgress) {
-    // if (flowDetails && flowDetails.isRunnable) {
-    menuOptions.push({ label: 'Run flow', action: 'runFlow' });
-    // }
+    if (flowDetails?.type && !flowDetails.type.includes('REALTIME')) {
+      menuOptions.push({ label: 'Run flow', action: 'runFlow' });
+    }
 
     if (job.exportedFileId) {
       menuOptions.push({
@@ -230,13 +230,14 @@ export default function JobActionsMenu({
     }
   }
 
+  useCommStatus({
+    actionsToMonitor,
+    autoClearOnComplete: true,
+    commStatusHandler: handleCommsStatus,
+  });
+
   return (
     <>
-      <CommStatus
-        actionsToMonitor={actionsToMonitor}
-        autoClearOnComplete
-        commStatusHandler={handleCommsStatus}
-      />
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

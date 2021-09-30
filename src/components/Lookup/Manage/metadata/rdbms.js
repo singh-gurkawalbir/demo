@@ -1,14 +1,16 @@
 import getFailedRecordDefault from './util';
 
 export default {
-  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData }) => {
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData, resourceId,
+    resourceType,
+    flowId }) => {
     const fieldMeta = {
       fieldMap: {
         _mode: {
           id: '_mode',
           name: '_mode',
           type: 'radiogroup',
-          label: 'Select',
+          label: 'Lookup type',
           required: true,
           helpKey: 'mapping.lookup.mode',
           defaultValue: lookup?.map ? 'static' : 'dynamic',
@@ -24,11 +26,14 @@ export default {
         _query: {
           id: '_query',
           name: '_query',
-          type: 'query',
-          label: 'Build SQL query',
+          type: 'sqlquerybuilder',
+          label: 'SQL query',
           required: true,
           helpText: 'The query that fetches records to be exported.',
           sampleData,
+          resourceId,
+          resourceType,
+          flowId,
           defaultValue: lookup.query,
           visibleWhen: [
             {
@@ -59,10 +64,11 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field',
+          valueLabel: 'Import field value',
           map: lookup && lookup.map,
+          required: true,
           visibleWhen: [
             {
               field: '_mode',
@@ -78,8 +84,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
-          helpText:
-            'Name of the lookups that will be exposed to the mapping to refer.',
+          helpKey: 'import.lookups.name',
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',
@@ -123,6 +128,7 @@ export default {
           type: 'text',
           label: 'Enter default value',
           defaultValue: lookup.default,
+          helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
           placeholder: 'Enter default value',
           visibleWhen: [
             {

@@ -1,8 +1,8 @@
 import isEqual from 'lodash/isEqual';
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
-import csvDataGenerator from './csvDataGenerator';
-import merge from './merge';
+import jsonParser from './jsonParser';
+import csvGenerator from './csvGenerator';
 import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
@@ -13,41 +13,56 @@ import sql from './sql';
 import filter from './filter';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
 import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
-import salesforceQualifier from './salesforceQualifier';
+import salesforceQualificationCriteria from './salesforceQualificationCriteria';
 import salesforceLookupFilter from './salesforceLookupFilter';
 import readme from './readme';
+import postResponseMapHook from './postResponseMapHook';
+import exportFilter from './exportFilter';
+import inputFilter from './inputFilter';
+import outputFilter from './outputFilter';
+import responseTransform from './responseTransform';
+import databaseMapping from './databaseMapping';
+import flowTransform from './flowTransform';
 
 const logicMap = {
-  xmlParser,
-  csvParser,
-  csvDataGenerator,
-  merge,
-  transform,
   handlebars,
+  filter,
   javascript,
+  csvParser,
+  xmlParser,
+  jsonParser,
+  sql,
   settingsForm,
+  transform,
+  postResponseMapHook,
+  exportFilter,
+  inputFilter,
+  outputFilter,
+  responseTransform,
+  databaseMapping,
+  flowTransform,
+  csvGenerator,
   structuredFileParser,
   structuredFileGenerator,
-  sql,
-  filter,
-  netsuiteLookupFilter,
-  netsuiteQualificationCriteria,
-  salesforceQualifier,
-  salesforceLookupFilter,
   readme,
+  netsuiteLookupFilter,
+  salesforceLookupFilter,
+  netsuiteQualificationCriteria,
+  salesforceQualificationCriteria,
 };
 
-function getLogic(editor) {
-  const logic = logicMap[editor.processor];
+export function getLogic(editor) {
+  const logic = logicMap[editor.editorType];
 
   if (!logic) {
-    throw new Error(`Processor [${editor.processor}] not supported.`);
+    throw new Error(`Type [${editor.editorType}] not supported.`);
   }
 
   return logic;
 }
 
 const validate = editor => {
+  if (!editor) return;
   const violations = getLogic(editor).validate(editor);
 
   if (!violations.ruleError && !violations.dataError) {
@@ -58,6 +73,7 @@ const validate = editor => {
 };
 
 const requestOptions = editor => {
+  if (!editor) return;
   const logic = getLogic(editor);
   const skipPreview = logic.skipPreview && logic.skipPreview(editor);
   const violations = validate(editor);
@@ -65,64 +81,166 @@ const requestOptions = editor => {
   if (violations || skipPreview) {
     return { violations, skipPreview };
   }
+  let processor;
+
+  if (typeof logic.processor === 'function') {
+    processor = logic.processor(editor);
+  } else {
+    processor = logic.processor;
+  }
+  processor = processor || editor.editorType;
 
   return {
-    processor: logic.processor || editor.processor,
+    processor,
     body: logic.requestBody(editor),
   };
 };
 
 // isDirty checks for changes in editor
 const isDirty = editor => {
+  if (!editor) return;
   const logic = getLogic(editor);
 
   // give precedence to dirty method if implemented by editor
   if (logic.dirty) {
     return logic.dirty(editor);
   }
-
-  const initKeys = Object.keys(editor).filter(key => key.indexOf('_init') !== -1);
-
-  // If there are no initKeys , return undefined
-  // as we return a boolean only incase of initKeys passed - refer @editorDrawer disableSave property
-  if (!initKeys.length) {
-    return;
-  }
-  for (let i = 0; i < initKeys.length; i += 1) {
-    const initKey = initKeys[i];
-    const originalKey = initKey.replace('_init_', '');
-
-    if (typeof editor[originalKey] === 'boolean' && !!editor[initKey] !== !!editor[originalKey]) {
-      return true;
-    }
-    if (
-      Array.isArray(editor[originalKey]) &&
-            !isEqual(editor[initKey], editor[originalKey])
-    ) return true;
-    if (
-      ['string', 'number'].includes(typeof editor[originalKey]) &&
-            editor[initKey] !== editor[originalKey]
-    ) return true;
+  // // If there is no originalRule , return undefined
+  // // as we return a boolean only incase of rule is passed - refer @editorDrawer disableSave property
+  // if (editor.originalRule) {
+  //   return;
+  // }
+  if (!isEqual(editor.originalRule, editor.rule)) {
+    return true;
   }
 
   return false;
 };
-const init = processor => {
-  const logic = getLogic({ processor });
+/**
+ * init is optional for processors and is called during EDITOR_INIT.
+ * data saved during EDITOR.INIT can be modified with it
+ */
+const init = editorType => {
+  if (!editorType) return;
+  const logic = getLogic({ editorType });
 
   return logic.init;
 };
 
+const buildData = editorType => {
+  if (!editorType) return;
+  const logic = getLogic({ editorType });
+
+  return logic.buildData;
+};
+
 const processResult = editor => {
+  if (!editor) return;
   const logic = getLogic(editor);
 
   return logic.processResult;
 };
 
-/**
- * init is optional for processors and is called during EDITOR_INIT.
- * data saved during EDITOR.INIT can be modified with it
- */
+const preSaveValidate = editor => {
+  if (!editor) return;
+  const logic = getLogic(editor);
+
+  return logic.preSaveValidate;
+};
+
+const getPatchSet = editor => getLogic(editor).patchSet?.(editor);
+
+export const featuresMap = options => ({
+  handlebars: {
+    autoEvaluate: false,
+    strict: false,
+    layout: 'compact',
+  },
+  csvParser: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  csvGenerator: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  xmlParser: {
+    layout: 'compact',
+  },
+  settingsForm: {
+    layout: `${options?.activeProcessor || 'json'}FormBuilder`,
+    autoEvaluate: true,
+    previewOnSave: true,
+  },
+  sql: {
+    layout: 'compact',
+  },
+  databaseMapping: {
+    layout: 'compact',
+  },
+  filter: {
+    autoEvaluate: false,
+    layout: 'compact',
+  },
+  javascript: {
+    autoEvaluate: false,
+    layout: 'compact',
+  },
+  transform: {
+    layout: 'compact',
+  },
+  flowTransform: {
+    layout: 'compact',
+    insertStubKey: 'transform',
+  },
+  responseTransform: {
+    layout: 'compact',
+    insertStubKey: 'transform',
+  },
+  exportFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  inputFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  outputFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  structuredFileParser: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  structuredFileGenerator: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  postResponseMapHook: {
+    layout: 'compact',
+    insertStubKey: 'postResponseMap',
+  },
+  readme: {
+    layout: 'readme',
+  },
+  netsuiteLookupFilter: {
+    layout: 'lookupFilter',
+    hidePreview: true,
+  },
+  salesforceLookupFilter: {
+    layout: 'lookupFilter',
+    hidePreview: true,
+  },
+  netsuiteQualificationCriteria: {
+    layout: 'lookupFilter',
+    hidePreview: true,
+  },
+  salesforceQualificationCriteria: {
+    layout: 'lookupFilter',
+    hidePreview: true,
+  },
+});
 
 export default {
   requestOptions,
@@ -130,4 +248,7 @@ export default {
   isDirty,
   init,
   processResult,
+  getPatchSet,
+  buildData,
+  preSaveValidate,
 };

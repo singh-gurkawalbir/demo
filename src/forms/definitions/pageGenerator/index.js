@@ -1,9 +1,11 @@
 import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
+  applicationsPlaceHolderText,
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
-import { RDBMS_TYPES } from '../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import {getFilterExpressionForAssistant} from '../../../utils/connections';
 
 export default {
   preSave: ({
@@ -53,7 +55,7 @@ export default {
       }
       // If there is no assistant for the export, we need to show generic adaptor form
       // we are patching useTechAdaptorForm field to not to show default assistant form
-      if (!app.export && app.assistant) {
+      if (!app.export && app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
         newValues['/useTechAdaptorForm'] = true;
       }
     }
@@ -67,8 +69,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       appType: 'export',
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: r => {
         if (!r) return '';
 
@@ -166,6 +167,11 @@ export default {
 
       if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
+      } else if (app.type === 'rest') {
+        expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+      } else if (app.type === 'http') {
+        expression.push({ 'http.formType': { $ne: 'rest' } });
+        expression.push({ type: app.type });
       } else {
         expression.push({ type: app.type });
       }
@@ -173,11 +179,10 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
 
       if (app.assistant) {
-        expression.push({ assistant: app.assistant });
-
-        const andingExpressions = { $and: expression };
-
-        return { filter: andingExpressions, appType: app.assistant };
+        return {
+          filter: getFilterExpressionForAssistant(app.assistant, expression),
+          appType: app.assistant,
+        };
       }
 
       const andingExpressions = { $and: expression };
@@ -201,7 +206,7 @@ export default {
       // Lookups are not shown in PG suggestions
       const expression = [{ isLookup: { $exists: false } }];
 
-      if (!adaptorTypePrefix) return { filter: {$and: expression}};
+      if (!adaptorTypePrefix) return { filter: { $and: expression }};
 
       if (isWebhook) {
         expression.push({
@@ -209,9 +214,25 @@ export default {
             appField.value === 'webhook' ? 'custom' : appField.value,
         });
       } else {
-        expression.push({
-          adaptorType: `${adaptorTypePrefix}Export`,
-        });
+        if (app.type === 'rest') {
+          expression.push({
+            $or: [
+              { adaptorType: 'RESTExport' },
+              { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'rest' }] },
+            ],
+          });
+        } else if (app.type === 'http') {
+          expression.push({
+            adaptorType: `${adaptorTypePrefix}Export`,
+          });
+          expression.push({
+            'http.formType': { $ne: 'rest' },
+          });
+        } else {
+          expression.push({
+            adaptorType: `${adaptorTypePrefix}Export`,
+          });
+        }
 
         if (app.assistant) {
           expression.push({ assistant: app.assistant });

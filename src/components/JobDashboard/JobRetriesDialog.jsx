@@ -21,6 +21,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const useColumns = () => [
+  {
+    key: 'retry',
+    heading: 'Retry #',
+    Value: ({rowData: r}) => r.index + 1,
+  },
+  {
+    key: 'duration',
+    heading: 'Duration',
+    Value: ({rowData: r}) => r.duration },
+  {
+    key: 'completed',
+    heading: 'Completed',
+    // eslint-disable-next-line react/display-name
+    Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.endedAt} />,
+  },
+];
+
 export default function JobRetriesDialog({
   job,
   integrationName,
@@ -59,15 +77,7 @@ export default function JobRetriesDialog({
       <DialogContent>
         <CeligoTable
           data={retries}
-          columns={[
-            { heading: 'Retry #', value: r => r.index + 1 },
-            { heading: 'Duration', value: r => r.duration },
-            {
-              heading: 'Completed',
-              // eslint-disable-next-line react/display-name
-              value: r => <DateTimeDisplay dateTime={r.endedAt} />,
-            },
-          ]}
+          useColumns={useColumns}
         />
       </DialogContent>
     </Dialog>

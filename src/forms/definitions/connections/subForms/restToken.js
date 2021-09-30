@@ -1,109 +1,50 @@
 export default {
   fieldMap: {
-    'rest.bearerToken': {
-      fieldId: 'rest.bearerToken',
+    'http.auth.token.token': {
+      fieldId: 'http.auth.token.token',
       label: 'Token',
       defaultValue: '',
       required: true,
     },
-    tokenHeader: {
-      id: 'tokenHeader',
-      label: 'How to send token?',
-      type: 'labeltitle',
+    'rest.tokenLocation': {
+      fieldId: 'rest.tokenLocation',
+      required: true,
+      defaultValue: r => r?.http?.auth?.token?.location,
     },
-    'rest.tokenLocation': { fieldId: 'rest.tokenLocation', required: true },
-    'rest.authHeader': {
-      fieldId: 'rest.authHeader',
+    'http.auth.token.headerName': {
+      fieldId: 'http.auth.token.headerName',
       visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['header'] }],
-      defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
+      defaultValue: r => r?.http?.auth?.token?.headerName || 'Authorization',
+      required: true,
     },
     'rest.authScheme': {
       fieldId: 'rest.authScheme',
       visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['header'] }],
-      defaultValue: r => (r && r.rest && r.rest.authScheme) || 'Bearer',
+      defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
     },
-    'rest.tokenParam': {
-      fieldId: 'rest.tokenParam',
+    'http.auth.token.paramName': {
+      fieldId: 'http.auth.token.paramName',
       visibleWhenAll: [{ field: 'rest.tokenLocation', is: ['url'] }],
+      defaultValue: r => r?.http?.auth?.token?.paramName || 'access_token',
     },
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure token refresh',
-      visibleWhen: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-      ],
-      defaultValue: r => !!(r && r.rest && r.rest.refreshTokenURI),
-    },
-    refreshTokenHeader: {
-      id: 'refreshTokenHeader',
-      label: 'How to refresh token?',
-      type: 'labeltitle',
+      label: 'Configure refresh token',
       visibleWhenAll: [
         { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
       ],
-    },
-    'rest.refreshTokenURI': {
-      fieldId: 'rest.refreshTokenURI',
-      visibleWhenAll: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'rest.refreshTokenMediaType': {
-      fieldId: 'rest.refreshTokenMediaType',
-      visibleWhenAll: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'rest.refreshTokenMethod': {
-      fieldId: 'rest.refreshTokenMethod',
-      visibleWhenAll: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'rest.refreshTokenBody': {
-      fieldId: 'rest.refreshTokenBody',
-      visibleWhenAll: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-        { field: 'rest.refreshTokenMethod', is: ['POST', 'PUT'] },
-      ],
-    },
-    'rest.refreshTokenPath': {
-      fieldId: 'rest.refreshTokenPath',
-      visibleWhenAll: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
-    },
-    'rest.refreshTokenHeaders': {
-      fieldId: 'rest.refreshTokenHeaders',
-      visibleWhenAll: [
-        { field: 'rest.tokenLocation', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
+      defaultValue: r => !!r?.http?.auth?.token?.refreshRelativeURI,
     },
   },
   layout: {
     fields: [
-      'rest.bearerToken',
-      'tokenHeader',
+      'http.auth.token.token',
       'rest.tokenLocation',
-      'rest.authHeader',
+      'http.auth.token.headerName',
       'rest.authScheme',
-      'rest.tokenParam',
+      'http.auth.token.paramName',
       'configureTokenRefresh',
-      'refreshTokenHeader',
-      'rest.refreshTokenURI',
-      'rest.refreshTokenMediaType',
-      'rest.refreshTokenMethod',
-      'rest.refreshTokenBody',
-      'rest.refreshTokenPath',
-      'rest.refreshTokenHeaders',
     ],
   },
 };

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
+import { emptyObject } from '../../../../utils/constants';
 
 export const useSetInitializeFormData = ({
   resourceType,
@@ -77,6 +78,10 @@ function DynaAssistantOptions(props) {
       ),
     [fields]
   );
+  const {
+    value: queryParams,
+    paramMeta: queryParamsMeta,
+  } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.queryParams'), shallowEqual) || emptyObject;
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: formContext.adaptorType,
@@ -168,11 +173,33 @@ function DynaAssistantOptions(props) {
           SCOPES.VALUE
         )
       );
+
       const allTouchedFields = fields
         .filter(field => !!field.touched)
         .map(field => ({ id: field.id, value: field.value }));
 
       allTouchedFields.push({ id, value });
+
+      if (id === 'assistantMetadata.exportType') {
+        const newParams = {};
+
+        if (value === 'delta') {
+          const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
+
+          if (!anyParamValuesSet) {
+            allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
+          }
+        } else {
+          Object.keys(queryParams || emptyObject).forEach(param => {
+            // When export type is changed to all, delete query params with delta attributes in them
+            if (!queryParams[param]?.includes?.('lastExportDateTime')) {
+              newParams[param] = queryParams[param];
+            }
+          });
+
+          allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
+        }
+      }
       dispatch(
         actions.resourceForm.init(
           resourceType,
@@ -196,12 +223,11 @@ function DynaAssistantOptions(props) {
   );
 }
 
-const WrappedContextConsumer = props => {
+export default function WrappedContextConsumer(props) {
   const form = useFormContext(props.formKey);
 
   if (!form) return null;
 
   return <DynaAssistantOptions {...form} {...props} />;
-};
+}
 
-export default WrappedContextConsumer;

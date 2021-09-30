@@ -29,6 +29,67 @@ export default {
       },
     },
   },
+  'file.fileNameStartsWith': {
+    type: 'uri',
+    label: 'File name starts with',
+    showExtract: false,
+    showLookup: false,
+    defaultValue: r => {
+      if (r?.file?.filter?.rules) {
+        if (r.file.filter.rules[0] === 'and') {
+          return r.file.filter.rules[1][2];
+        } if (r.file.filter.rules[0] === 'startswith') {
+          return r.file.filter.rules[2];
+        }
+      }
+    },
+    helpKey: r => {
+      if (r.assistant === 'azurestorageaccount') {
+        return 'export.azure.fileNameStartsWith';
+      }
+
+      return 'export.file.fileNameStartsWith';
+    },
+  },
+  'file.fileNameEndsWith': {
+    type: 'uri',
+    label: 'File name ends with',
+    showExtract: false,
+    showLookup: false,
+    defaultValue: r => {
+      if (r?.file?.filter?.rules) {
+        if (r.file.filter.rules[0] === 'and') {
+          return r.file.filter.rules[2][2];
+        } if (r.file.filter.rules[0] === 'endswith') {
+          return r.file.filter.rules[2];
+        }
+      }
+    },
+    helpKey: r => {
+      if (r?.assistant === 'azurestorageaccount') {
+        return 'export.azure.fileNameEndsWith';
+      }
+
+      return 'export.file.fileNameEndsWith';
+    },
+  },
+  'file.backupPath': {
+    type: 'uri',
+    label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Export') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPExport') {
+        return 'export.ftp.backupDirectoryPath';
+      }
+      if (r?.assistant === 'azurestorageaccount') {
+        return 'export.azure.backupPath';
+      }
+
+      return 'export.file.backupPath';
+    },
+    showLookup: false,
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
@@ -82,6 +143,7 @@ export default {
     type: 'checkbox',
     label: 'Leave file on server',
     defaultValue: r => (r && r.file && r.file.skipDelete) || false,
+    helpKey: r => r?.assistant === 'azurestorageaccount' ? 'export.azure.skipDelete' : 'export.file.skipDelete',
   },
   'file.compressionFormat': {
     type: 'select',
@@ -93,6 +155,39 @@ export default {
       },
     ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
+  },
+  'file.sortByFields': {
+    type: 'sortandgroup',
+    enableSorting: true,
+    keyName: 'field',
+    valueName: 'descending',
+    valueType: 'keyvalue',
+    showDelete: true,
+    sampleData: r => r && r.sampleData,
+    defaultValue: r => (r.file?.sortByFields) || '',
+    label: 'Sort records by fields',
+  },
+  'file.groupByFields': {
+    type: 'sortandgroup',
+    label: 'Group records by fields',
+    defaultValue: r => r.file?.groupByFields || r.file?.csv?.keyColumns || r.file?.xlsx?.keyColumns,
+  },
+  pgpdecrypt: {
+    type: 'fileencryptdecrypt',
+    label: 'Decrypt files',
+    connectionId: r => r && r._connectionId,
+    defaultValue: r => !!(r?.file?.decrypt),
+  },
+  'file.decrypt': {
+    type: 'select',
+    label: 'Decryption algorithm',
+    resourceType: 'exports',
+    defaultValue: 'pgp',
+    connectionId: r => r && r._connectionId,
+    options: [{ items: [{ label: 'pgp', value: 'pgp' }] }],
+    omitWhenHidden: true,
+    visibleWhen: [{ field: 'pgpdecrypt', is: [true] }],
+    requiredWhen: [{ field: 'pgpdecrypt', is: [true] }],
   },
   'file.purgeInternalBackup': {
     type: 'checkbox',
@@ -192,7 +287,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File parser helper',
-    helpkey: 'export.file.filedefinition.rules',
+    helpKey: 'export.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -225,7 +320,8 @@ export default {
       columnDelimiter: ',',
       rowDelimiter: '\n',
       hasHeaderRow: false,
-      keyColumns: [],
+      groupByFields: [],
+      sortByFields: [],
       rowsToSkip: 0,
       trimSpaces: true,
     },
@@ -259,6 +355,9 @@ export default {
   'file.xlsx.rowsPerRecord': {
     type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
+    showDeprecatedMessage: true,
+    helpKey: 'export.file.rowsPerRecord',
+    defaultDisabled: true,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -274,6 +373,7 @@ export default {
   },
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
+    defaultDisabled: true,
     label: 'Key columns',
     hasHeaderRow: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),

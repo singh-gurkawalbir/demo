@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 export default (state = {}, action) => {
   const { type, metadata, fieldName, fieldType, _integrationId } = action;
@@ -36,6 +37,18 @@ export default (state = {}, action) => {
       }
 
       return newState;
+    case actionTypes.CONNECTORS.PUBLISH.REQUEST:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.LOADING;
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH.SUCCESS:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.SUCCESS;
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH.ERROR:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.ERROR;
+
+      return newState;
     default:
       return state;
   }
@@ -54,14 +67,38 @@ selectors.connectorMetadata = (state, fieldName, id, _integrationId) => {
   if (typeof metadata === 'object') {
     return metadata;
   }
-  if (
-    Array.isArray(metadata) &&
-    metadata.length &&
-    typeof metadata[0] === 'object'
-  ) {
-    return metadata[0];
-  }
 
   return { isLoading: false };
 };
+
+selectors.connectorFieldOptions = (
+  state,
+  fieldName,
+  id,
+  _integrationId,
+  defaultFieldOptions
+) => {
+  const { data, isLoading } = selectors.connectorMetadata(
+    state,
+    fieldName,
+    id,
+    _integrationId
+  );
+
+  // should select options from either defaultOptions or the refreshed metadata options
+  return {
+    isLoading,
+    value: data && data.value,
+    options:
+      (data &&
+        data.options &&
+        data.options.map(option => ({
+          value: option[0],
+          label: option[1],
+        }))) ||
+      (defaultFieldOptions && defaultFieldOptions[0].items),
+  };
+};
+
+selectors.connectorPublishStatus = (state, _integrationId) => state?.[_integrationId]?.publishStatus || 'failed';
 // #endregion

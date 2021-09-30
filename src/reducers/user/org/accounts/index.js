@@ -1,4 +1,6 @@
 import moment from 'moment';
+import produce from 'immer';
+import { cloneDeep } from 'lodash';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
@@ -66,23 +68,14 @@ export default (state = [], action) => {
       }
 
       const { trialEndDate, tier } = action;
-      const updatedLicenses = ownAccount.ownerUser.licenses.map(l => {
-        if (l.type === 'integrator' || l.type === 'endpoint') {
-          return { ...l, trialEndDate, tier, trialStarted: true };
-        }
 
-        return l;
-      });
+      return produce(state, draft => {
+        const index = draft.findIndex(a => a._id === ACCOUNT_IDS.OWN);
+        const licenseIndex = draft[index].ownerUser.licenses.findIndex(l => l.type === 'integrator' || l.type === 'endpoint');
 
-      return state.map(a => {
-        if (a._id === ACCOUNT_IDS.OWN) {
-          return {
-            ...a,
-            ownerUser: { ...a.ownerUser, licenses: updatedLicenses },
-          };
-        }
-
-        return a;
+        draft[index].ownerUser.licenses[licenseIndex].trialEndDate = trialEndDate;
+        draft[index].ownerUser.licenses[licenseIndex].tier = tier;
+        draft[index].ownerUser.licenses[licenseIndex].trialStarted = true;
       });
     }
 
@@ -105,23 +98,11 @@ export default (state = [], action) => {
         return state;
       }
 
-      const updatedLicenses = ownAccount.ownerUser.licenses.map(l => {
-        if (l.type === 'integrator' || l.type === 'endpoint') {
-          return { ...l, upgradeRequested: true };
-        }
+      return produce(state, draft => {
+        const index = draft.findIndex(a => a._id === ACCOUNT_IDS.OWN);
+        const licenseIndex = draft[index].ownerUser.licenses.findIndex(l => l.type === 'integrator' || l.type === 'endpoint');
 
-        return l;
-      });
-
-      return state.map(a => {
-        if (a._id === ACCOUNT_IDS.OWN) {
-          return {
-            ...a,
-            ownerUser: { ...a.ownerUser, licenses: updatedLicenses },
-          };
-        }
-
-        return a;
+        draft[index].ownerUser.licenses[licenseIndex].upgradeRequested = true;
       });
     }
 
@@ -130,8 +111,7 @@ export default (state = [], action) => {
   }
 };
 
-const remainingDays = date =>
-  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+export const remainingDays = date => Math.ceil((moment(date).milliseconds(0) - moment().milliseconds(0)) / 1000 / 60 / 60 / 24);
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
@@ -147,9 +127,9 @@ selectors.platformLicense = (state, accountId) => {
     return null;
   }
 
-  const ioLicense = account.ownerUser.licenses.find(
+  const ioLicense = cloneDeep(account.ownerUser.licenses.find(
     l => (['integrator', 'endpoint', 'diy'].includes(l.type))
-  );
+  ));
 
   if (!ioLicense) {
     return null;
@@ -443,6 +423,7 @@ selectors.permissions = (
     'exports',
     'imports',
     'apis',
+    'eventreports',
   ];
   const permissions = {};
 
@@ -468,7 +449,7 @@ selectors.permissions = (
     'users',
   ];
 
-  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userAccessLevel)) {
     permissions.subscriptions.view = true;
     permissions.audits.view = true;
 
@@ -496,6 +477,7 @@ selectors.permissions = (
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(userAccessLevel)
   ) {
@@ -525,6 +507,7 @@ selectors.permissions = (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(userAccessLevel)
   ) {
     permissions.integrations.create = true;
@@ -643,4 +626,9 @@ selectors.permissions = (
   return Object.freeze(permissions);
 };
 
+selectors.isAccountSSORequired = (state, accountId) => {
+  const account = state?.find(a => a._id === accountId);
+
+  return !!account?.accountSSORequired;
+};
 // #endregion

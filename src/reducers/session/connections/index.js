@@ -1,7 +1,9 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { COMM_STATES } from '../../comms/networkComms';
 
 const emptySet = [];
+const emptyObject = {};
 const updateConnectionStatus = (
   allConnectionsStatus,
   connectionId,
@@ -24,7 +26,7 @@ const updateConnectionStatus = (
 };
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, queuedJobs, iClients } = action;
+  const { type, connectionId, queuedJobs, iClients, connections } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -36,17 +38,29 @@ export default (state = {}, action) => {
         });
 
         break;
-      case actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED:
-        draft.debugLogs = { ...draft.debugLogs, [connectionId]: debugLogs };
-        break;
-      case actionTypes.CONNECTION.DEBUG_LOGS_CLEAR:
-        if (draft.debugLogs && draft.debugLogs[connectionId]) {
-          delete draft.debugLogs[connectionId];
-        }
-
-        break;
       case actionTypes.CONNECTION.UPDATE_ICLIENTS:
         draft.iClients = { ...draft.iClients, [connectionId]: iClients };
+
+        break;
+
+      case actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST:
+        draft.tradingPartnerConnections = {
+          ...draft.tradingPartnerConnections,
+          [connectionId]: {
+            status: COMM_STATES.LOADING,
+          },
+        };
+
+        break;
+
+      case actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_RECEIVED:
+        draft.tradingPartnerConnections = {
+          ...draft.tradingPartnerConnections,
+          [connectionId]: {
+            status: COMM_STATES.SUCCESS,
+            connections,
+          },
+        };
 
         break;
 
@@ -81,6 +95,14 @@ selectors.iClients = (state, connectionId) => {
   }
 
   return state.iClients[connectionId] || emptySet;
+};
+
+selectors.tradingPartnerConnections = (state, connectionId) => {
+  if (!state || !state.tradingPartnerConnections || !connectionId) {
+    return emptyObject;
+  }
+
+  return state.tradingPartnerConnections[connectionId] || emptyObject;
 };
 
 selectors.queuedJobs = (state, connectionId) => {

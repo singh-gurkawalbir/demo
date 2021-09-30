@@ -10,8 +10,8 @@ import rdbmsMappingSettings from './rdbms';
 const getFormattedLookup = (lookup, formVal) => {
   const lookupTmp = {};
 
-  if (lookup && lookup.name) {
-    lookupTmp.name = lookup.name;
+  if (formVal.name) {
+    lookupTmp.name = formVal.name;
   } else {
     // generating random lookup name
     lookupTmp.name = shortid.generate();
@@ -74,7 +74,11 @@ export default {
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
-        fieldMeta = restMappingSettings.getMetaData(params);
+        if (importResource?.http?.type === 'file') {
+          fieldMeta = ftpMappingSettings.getMetaData(params);
+        } else {
+          fieldMeta = restMappingSettings.getMetaData(params);
+        }
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = netsuiteMappingSettings.getMetaData(params);
@@ -121,8 +125,9 @@ export default {
 
     if (formVal.dataType === 'date') {
       settings.dataType = 'string';
-    } else if (formVal.dataType) {
-      settings.dataType = formVal.dataType;
+    } else if ('dataType' in formVal) {
+      // for empty dataType, BE requires undefined to be sent
+      settings.dataType = formVal.dataType || undefined;
     }
 
     if ('isKey' in formVal) {

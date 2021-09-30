@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../index';
 import {
   getFileReaderOptions,
   getCsvFromXlsx,
-  getJSONContent,
+  getJSONContentFromString,
   getUploadedFileStatus,
 } from '../../utils/file';
 
@@ -65,9 +65,10 @@ export function* uploadRawData({
 
 export function* previewZip({ file, fileType = 'application/zip' }) {
   const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(file.name)}&file_type=${fileType}`;
+  let runKey;
 
   try {
-    const runKey = yield call(uploadFile, { file, fileType, uploadPath });
+    runKey = yield call(uploadFile, { file, fileType, uploadPath });
     const previewPath = `/integrations/template/preview?runKey=${runKey}`;
     const components = yield call(apiCallWithRetry, {
       path: previewPath,
@@ -76,12 +77,12 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
 
     yield put(actions.template.receivedPreview(components, runKey, true));
   } catch (e) {
-    // @TODO handle error
+    yield put(actions.template.failedPreview(runKey));
   }
 }
 
 // TODO @Raghu - Check for other file reader apis which suites better if any
-function configureFileReader(file, fileType) {
+export function configureFileReader(file, fileType) {
   const fileReaderOptions = getFileReaderOptions(fileType);
 
   // wrapped inside promise to handle the file content returned after onload callback
@@ -105,7 +106,7 @@ function configureFileReader(file, fileType) {
  * For JSON file, content should be parsed from String to JSON
  * @param fileProps contains any additional properties needed to be passed related to the uploaded file
  */
-function* processFile({ fileId, file, fileType, fileProps = {} }) {
+export function* processFile({ fileId, file, fileType, fileProps = {} }) {
   const { error } = getUploadedFileStatus(file, fileType, fileProps);
   const { name, size } = file;
 
@@ -119,7 +120,7 @@ function* processFile({ fileId, file, fileType, fileProps = {} }) {
     let out;
 
     if (fileType === 'json') {
-      out = getJSONContent(fileContent);
+      out = getJSONContentFromString(fileContent);
     } else {
       out = yield call(getCsvFromXlsx, fileContent);
     }

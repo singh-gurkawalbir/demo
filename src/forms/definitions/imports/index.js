@@ -14,6 +14,7 @@ import netsuiteDistributed from './netsuiteDistributed';
 import salesforce from './salesforce';
 import newImport from './new';
 import dynamodb from './dynamodb';
+import commonfileprovider from './commonfileprovider';
 
 export default {
   common,
@@ -32,4 +33,5 @@ export default {
   netsuiteDistributed,
   salesforce,
   dynamodb,
+  commonfileprovider,
 };

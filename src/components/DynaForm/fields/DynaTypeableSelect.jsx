@@ -3,7 +3,7 @@ import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
 import DynaText from './DynaText';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 // TODO: Aditya Replace the component with DynaSelectApplication
 const useStyles = makeStyles(theme => ({
@@ -115,7 +115,8 @@ const SelectStyle = theme => ({
       borderColor: theme.palette.primary.main,
     },
   }),
-  menu: () => ({
+  menu: provided => ({
+    ...provided,
     zIndex: 2,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -195,16 +196,18 @@ export default function DynaTypeableSelect(props) {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
+    showAllSuggestions = false,
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
+  const windowHeight = window.innerHeight;
   const suggestions = useMemo(() => options.map(option => ({
     label: option[labelName],
     value: option[valueName]?.toString(), // convert values to String
     filterType: option.filterType,
   })).filter(opt => opt.label && opt.value), [labelName, options, valueName]);
 
-  const [value, setValue] = useState(propValue?.toString());
+  const [value, setValue] = useState(propValue?.toString() || '');
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
@@ -292,11 +295,18 @@ export default function DynaTypeableSelect(props) {
   const inputVal = (!isTyping && selectedValue?.label) || value;
   const customStyles = SelectStyle(useTheme());
   const filterOption = (options, rawInput) => {
+    if (showAllSuggestions) return true;
     if (!options.label || !options.value) return false;
     const input = rawInput?.toString().toLowerCase();
+    const label = options.label.toString?.().toLowerCase?.();
+    const value = options.value.toString?.().toLowerCase?.();
 
-    return options.label.toLowerCase().includes(input) || options.value.toLowerCase().includes(input);
+    return label.includes(input) || value.includes(input);
   };
+
+  const {y: elementPosFromTop = 0} = ref?.current?.getBoundingClientRect() || {};
+
+  const menuPlacement = windowHeight - elementPosFromTop > 350 ? 'bottom' : 'top';
 
   return (
     <FormControl
@@ -320,6 +330,8 @@ export default function DynaTypeableSelect(props) {
         styles={customStyles}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
+        menuPlacement={menuPlacement}
+        menuPosition="fixed"
         autoFocus
         openOnFocus
         components={components}
@@ -354,7 +366,7 @@ export default function DynaTypeableSelect(props) {
           />
         ))}
 
-      {!removeHelperText && <ErroredMessageComponent {...props} />}
+      {!removeHelperText && <FieldMessage {...props} />}
     </FormControl>
   );
 }

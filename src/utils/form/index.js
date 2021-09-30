@@ -14,6 +14,16 @@ import { validateAllFields } from './validation';
 // each time, this is less efficient (when passing entire fieldDef arrays to the
 // form) but safer when children of forms are registering themselves
 
+// this is necessary to initialize the defaultRule state
+const adjustDefaultVisibleRequiredValue = field => {
+  if (typeof field.visible === 'boolean') {
+    field.defaultVisible = field.visible;
+  }
+  if (typeof field.required === 'boolean') {
+    field.defaultRequired = field.required;
+  }
+};
+
 export const registerField = (field, formValue = {}) => {
   const { defaultValue, name, value, valueDelimiter } = field;
   const initialValue = getFirstDefinedValue(
@@ -22,26 +32,19 @@ export const registerField = (field, formValue = {}) => {
     defaultValue
   );
 
+  adjustDefaultVisibleRequiredValue(field);
   field.value = splitDelimitedValue(initialValue, valueDelimiter);
 };
 
 export const registerFields = (fieldMapToValidate, formValue = {}) =>
   Object.keys(fieldMapToValidate).reduce((fieldsState, key) => {
-    const field = fieldMapToValidate[key];
+    const field = {...fieldMapToValidate[key]};
 
     if (fieldDefIsValidUpdated(field, fieldsState)) {
-      const { defaultValue, name, value, valueDelimiter, id } = field;
-      const initialValue = getFirstDefinedValue(
-        formValue[name],
-        value,
-        defaultValue
-      );
-      const fieldToRegister = {
-        ...field,
-        value: splitDelimitedValue(initialValue, valueDelimiter),
-      };
+      const { id } = field;
 
-      fieldsState[id] = fieldToRegister;
+      registerField(field, formValue);
+      fieldsState[id] = field;
     }
 
     return fieldsState;
@@ -155,9 +158,11 @@ export const getTouchedStateForField = (currentState, resetState) => {
 export const evaluateAnyAndAllRules = ({
   anyRules,
   allRules,
+  defaultState,
   fieldsById,
   defaultResult,
 }) => {
+  if (defaultState === false) { return false; }
   if (anyRules.length) {
     return evaluateSomeRules({
       rules: anyRules,
@@ -173,18 +178,20 @@ export const evaluateAnyAndAllRules = ({
       defaultResult,
     });
   }
+  if (defaultState === true) { return true; }
 
   return defaultResult;
 };
 
 export const isVisible = (field, fieldsById) => {
-  const { visible, visibleWhen = [], visibleWhenAll = [] } = field;
+  const { defaultVisible, visibleWhen = [], visibleWhenAll = [] } = field;
 
   return evaluateAnyAndAllRules({
     anyRules: visibleWhen,
     allRules: visibleWhenAll,
     fieldsById,
-    defaultResult: visible !== false,
+    defaultState: defaultVisible,
+    defaultResult: true,
   });
 };
 
@@ -195,18 +202,20 @@ export const isDisabled = (field, fieldsById) => {
     anyRules: disabledWhen,
     allRules: disabledWhenAll,
     fieldsById,
-    defaultResult: !!defaultDisabled,
+    defaultState: defaultDisabled,
+    defaultResult: false,
   });
 };
 
 export const isRequired = (field, fieldsById) => {
-  const { required, requiredWhen = [], requiredWhenAll = [] } = field;
+  const { defaultRequired, requiredWhen = [], requiredWhenAll = [] } = field;
 
   return evaluateAnyAndAllRules({
     anyRules: requiredWhen,
     allRules: requiredWhenAll,
     fieldsById,
-    defaultResult: !!required,
+    defaultState: defaultRequired,
+    defaultResult: false,
   });
 };
 
@@ -260,67 +269,12 @@ export const processOptions = ({
         parentContext
       );
 
-      if (handlerOptions instanceof Promise) {
-        field.options = [];
-        field.pendingOptions = handlerOptions;
-      } else if (handlerOptions) {
+      if (handlerOptions) {
         field.options = handlerOptions;
         field.pendingOptions = undefined;
       }
     }
   });
-
-// NOTE: Just used for test purposes...
-// TODO: Move to test file...
-export const createField = field => {
-  const {
-    id = '',
-    name = '',
-    type = '',
-    placeholder = '',
-    value = undefined,
-    visible = true,
-    required = false,
-    disabled = false,
-    visibleWhen = [],
-    visibleWhenAll = [],
-    requiredWhen = [],
-    requiredWhenAll = [],
-    disabledWhen = [],
-    disabledWhenAll = [],
-    validWhen = {},
-    isValid = true,
-    errorMessages = '',
-    touched = false,
-  } = field;
-
-  return {
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    visible,
-    required,
-    disabled,
-    visibleWhen,
-    visibleWhenAll,
-    requiredWhen,
-    requiredWhenAll,
-    disabledWhen,
-    disabledWhenAll,
-    isValid,
-    validWhen,
-    errorMessages,
-    touched,
-  };
-};
-
-export const updateFieldTouchedState = (field, touched) => {
-  field.touched = touched;
-
-  return field;
-};
 
 export const updateFieldValue = (field, value) => {
   const updateValue = typeof value !== 'undefined' && value;
@@ -460,3 +414,29 @@ export const getNextStateFromFields = formState => {
 
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
+
+export function getFieldIdsInLayoutOrder(layout) {
+  const fields = [];
+
+  if (!layout) return fields;
+  if (layout.fields?.length) {
+    // add the fields in this layout to the list
+    fields.push(...layout.fields);
+  }
+  if (layout.containers?.length) {
+    // traverse through each container and fetch the fields
+    layout.containers.forEach(container => {
+      fields.push(...getFieldIdsInLayoutOrder(container));
+    });
+  }
+
+  return fields;
+}
+
+export function getFirstErroredFieldId(formState) {
+  const { fields, fieldMeta } = formState || {};
+
+  const orderedFieldIds = getFieldIdsInLayoutOrder(fieldMeta?.layout);
+
+  return orderedFieldIds.find(fieldId => fields[fieldId] && fields[fieldId].visible && !fields[fieldId].isValid);
+}

@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
 import LookupDialog from '../../Lookup/index';
+import actions from '../../../actions';
 
 export default function DynaLookupEditor(props) {
+  const dispatch = useDispatch();
   const [showEditor, setShowEditor] = useState(false);
   const {
     id,
     onFieldChange,
+    formKey,
     value,
     label,
     connectionId,
@@ -19,7 +23,12 @@ export default function DynaLookupEditor(props) {
   };
 
   const handleUpdate = lookups => {
-    onFieldChange(id, lookups);
+    // TODO: @ashu remove this onfieldchange if no component is doing additional update
+    if (onFieldChange) {
+      onFieldChange(id, lookups);
+    } else {
+      dispatch(actions.form.fieldChange(formKey)(id, lookups));
+    }
   };
 
   return (

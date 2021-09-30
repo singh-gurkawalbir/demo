@@ -3,13 +3,13 @@ import {
   put,
   cancel,
   take,
+  takeLatest,
   takeEvery,
   delay,
   select,
   all,
   fork,
 } from 'redux-saga/effects';
-import qs from 'qs';
 import { map } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -18,6 +18,7 @@ import { selectors } from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
 
 export function* getJobFamily({ jobId, type }) {
   const requestOptions = getRequestOptions(
@@ -39,6 +40,21 @@ export function* getJobFamily({ jobId, type }) {
   }
 
   yield put(actions.job.receivedFamily({ job }));
+}
+export function* getDashboardJobFamily({ inProgressJobIds }) {
+  const requestOptions = {path: '/jobs/family', opts: { method: 'POST' } };
+
+  requestOptions.opts.body = [...inProgressJobIds];
+
+  let jobs;
+
+  try {
+    jobs = yield call(apiCallWithRetry, requestOptions);
+  } catch (error) {
+    return true;
+  }
+
+  yield put(actions.job.dashboard.running.receivedFamily({ collection: jobs }));
 }
 
 export function* getInProgressJobsStatus() {
@@ -67,6 +83,17 @@ export function* getInProgressJobsStatus() {
     );
   }
 }
+export function* getDasboardInProgressJobsStatus() {
+  const inProgressJobIds = yield select(selectors.dashboardInProgressJobIds);
+
+  if (
+    inProgressJobIds.length === 0
+  ) {
+    return yield put(actions.job.dashboard.running.noInProgressJobs());
+  }
+
+  return yield call(getDashboardJobFamily, { inProgressJobIds });
+}
 
 export function* pollForInProgressJobs() {
   while (true) {
@@ -76,8 +103,16 @@ export function* pollForInProgressJobs() {
   }
 }
 
+export function* pollForDashboardInProgressJobs() {
+  while (true) {
+    yield delay(10 * 1000);
+
+    yield call(getDasboardInProgressJobsStatus);
+  }
+}
+
 export function* getJobDetails({ jobId }) {
-  const path = `/jobs/${jobId}`;
+  const path = `/jobs/${jobId}/family`;
   const opts = { method: 'GET' };
   let job;
 
@@ -101,6 +136,17 @@ export function* startPollingForInProgressJobs() {
   yield cancel(watcher);
 }
 
+export function* startPollingForDashboardInProgressJobs() {
+  const watcher = yield fork(pollForDashboardInProgressJobs);
+
+  yield take([
+    actionTypes.JOB.DASHBOARD.RUNNING.CLEAR,
+    actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS,
+    actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS,
+  ]);
+  yield cancel(watcher);
+}
+
 export function* requestJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const jobFilters = { ...filters, integrationId };
   let requestedJob;
@@ -110,11 +156,11 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
   }
 
   if (!jobFilters.flowId) {
-    if (jobFilters.storeId) {
+    if (jobFilters.childId) {
       const flowIds = yield select(
         selectors.integrationAppFlowIds,
         integrationId,
-        jobFilters.storeId
+        jobFilters.childId
       );
 
       jobFilters.flowIds = flowIds;
@@ -138,7 +184,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
     }
   }
 
-  delete jobFilters.storeId;
+  delete jobFilters.childId;
   delete jobFilters.refreshAt;
 
   switch (jobFilters.status) {
@@ -171,6 +217,11 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
     return true;
   }
 
+  if (!Array.isArray(collection)) {
+    // the jobs collection must be an array
+    collection = [];
+  }
+
   // flowJobId is sent in options when user clicks a error notification email and jobId is in url request parameters
   // If user requested job is not in first 1000 results, fetch particular job and merge it in collection.
   if (options.flowJobId && !collection.find(j => j._id === options.flowJobId)) {
@@ -188,6 +239,54 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
   yield put(actions.job.requestInProgressJobStatus());
 }
 
+export function* requestCompletedJobCollection({nextPageURL}) {
+  let collection;
+
+  const reqOptions = yield select(
+    selectors.requestOptionsOfDashboardJobs,
+    {filterKey: FILTER_KEYS_AD.COMPLETED, nextPageURL}
+  );
+  const {path, opts} = reqOptions || {};
+
+  try {
+    collection = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (error) {
+    return yield put(actions.job.dashboard.completed.error());
+  }
+
+  if (!Array.isArray(collection?.stats)) {
+    collection = [];
+  }
+
+  yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats, nextPageURL: collection.nextPageURL, loadMore: !!nextPageURL }));
+}
+
+export function* requestRunningJobCollection({nextPageURL}) {
+  let collection;
+
+  const reqOptions = yield select(
+    selectors.requestOptionsOfDashboardJobs,
+    {filterKey: FILTER_KEYS_AD.RUNNING, nextPageURL}
+  );
+  const {path, opts} = reqOptions || {};
+
+  try {
+    collection = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (error) {
+    return yield put(actions.job.dashboard.running.error());
+  }
+  if (!Array.isArray(collection?.jobs)) {
+    collection = [];
+  }
+  yield put(actions.job.dashboard.running.receivedCollection({ collection: collection.jobs, nextPageURL: collection.nextPageURL, loadMore: !!nextPageURL}));
+  yield put(actions.job.dashboard.running.requestInProgressJobStatus());
+}
 export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const watcher = yield fork(requestJobCollection, {
     integrationId,
@@ -197,6 +296,18 @@ export function* getJobCollection({ integrationId, flowId, filters = {}, options
   });
 
   yield take(actionTypes.JOB.CLEAR);
+  yield cancel(watcher);
+}
+export function* getDashboardRunningJobCollection({nextPageURL}) {
+  const watcher = yield fork(requestRunningJobCollection, {nextPageURL});
+
+  yield take(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR);
+  yield cancel(watcher);
+}
+export function* getDashboardCompletedJobCollection({nextPageURL}) {
+  const watcher = yield fork(requestCompletedJobCollection, {nextPageURL});
+
+  yield take(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR);
   yield cancel(watcher);
 }
 
@@ -217,12 +328,14 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   const requestOptions = getRequestOptions(action, {
     resourceId: jobId,
   });
-  let { path } = requestOptions;
+  const { path } = requestOptions;
   const { opts } = requestOptions;
   let response;
 
   if (!fileType && fileIds.length > 0) {
-    path += `?${qs.stringify({ fileId: fileIds }, { indices: false })}`;
+    opts.body = {
+      fileIds,
+    };
   }
 
   try {
@@ -269,12 +382,24 @@ export function* cancelJob({ jobId }) {
   } catch (error) {
     return true;
   }
-
   if (job._flowJobId) {
     yield call(getJobFamily, { jobId: job._flowJobId });
   } else {
     yield put(actions.job.receivedFamily({ job }));
   }
+}
+export function* cancelDashboardJob({ jobId }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return true;
+  }
+  yield put(actions.job.dashboard.running.canceled({ jobId }));
 }
 
 export function* resolveCommit({ jobs = [] }) {
@@ -302,7 +427,7 @@ export function* resolveCommit({ jobs = [] }) {
   yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
 }
 
-export function* resolveAllCommit({ flowId, storeId, integrationId, filteredJobsOnly }) {
+export function* resolveAllCommit({ flowId, childId, integrationId, filteredJobsOnly }) {
   let flowIds = [];
   let jobIds = [];
 
@@ -312,11 +437,11 @@ export function* resolveAllCommit({ flowId, storeId, integrationId, filteredJobs
     jobIds = filteredJobs.filter(j => j?.__original?.numError > 0).map(j => j._id);
   } else if (flowId) {
     flowIds.push(flowId);
-  } else if (storeId) {
+  } else if (childId) {
     flowIds = yield select(
       selectors.integrationAppFlowIds,
       integrationId,
-      storeId
+      childId
     );
   }
 
@@ -372,7 +497,7 @@ export function* resolveSelected({ jobs }) {
   }
 }
 
-export function* resolveAll({ flowId, storeId, integrationId, filteredJobsOnly }) {
+export function* resolveAll({ flowId, childId, integrationId, filteredJobsOnly }) {
   yield put(actions.job.resolveAllPending());
 
   yield put(actions.job.resolveAllInit());
@@ -388,7 +513,7 @@ export function* resolveAll({ flowId, storeId, integrationId, filteredJobsOnly }
       actionTypes.JOB.RESOLVE_ALL_PENDING,
     ].includes(undoOrCommitAction.type)
   ) {
-    yield call(resolveAllCommit, { flowId, storeId, integrationId, filteredJobsOnly });
+    yield call(resolveAllCommit, { flowId, childId, integrationId, filteredJobsOnly });
   }
 }
 
@@ -463,18 +588,21 @@ export function* retryFlowJob({ jobId }) {
 
   const jobsToRetry = [];
 
-  job.children &&
-    job.children.forEach(cJob => {
+    job?.children?.forEach(cJob => {
       if (cJob.retriable) {
         jobsToRetry.push({ _id: cJob._id, _flowJobId: jobId });
       }
     });
 
-  if (jobsToRetry.length === 0) {
-    return true;
-  }
+    if (jobsToRetry.length === 0) {
+      if (!job) {
+        yield put(actions.api.failure('JOBS', 'PUT', 'Retry operation failed.', false));
+      }
 
-  yield call(retrySelected, { jobs: jobsToRetry });
+      return true;
+    }
+
+    yield call(retrySelected, { jobs: jobsToRetry });
 }
 
 export function* retryAllCommit({ flowIds }) {
@@ -501,7 +629,7 @@ export function* retryAllCommit({ flowIds }) {
   }
 }
 
-export function* retryAll({ flowId, storeId, integrationId }) {
+export function* retryAll({ flowId, childId, integrationId }) {
   yield put(actions.job.retryAllPending());
 
   let flowIds = [];
@@ -512,14 +640,10 @@ export function* retryAll({ flowId, storeId, integrationId }) {
     const allFlows = yield select(selectors.resourceList, { type: 'flows' });
 
     if (allFlows?.resources) {
-      if (storeId) {
-        const storeFlowIds = yield select(
-          selectors.integrationAppFlowIds,
-          integrationId,
-          storeId
-        );
+      if (childId) {
+        const childFlowIds = yield select(selectors.integrationAppFlowIds, integrationId, childId);
 
-        flowIds = allFlows.resources.filter(f => storeFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
+        flowIds = allFlows.resources.filter(f => childFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
       } else {
         flowIds = allFlows.resources.filter(f => (integrationId === 'none' ? !f._integrationId : (f._integrationId === integrationId)) && !f.disabled).map(f => f._id);
       }
@@ -684,7 +808,8 @@ export function* requestRetryData({ retryId }) {
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
-export function* updateRetryData({ retryId, retryData }) {
+export function* updateRetryData({ retryId, retryData, asyncKey }) {
+  if (asyncKey) yield put(actions.asyncTask.start(asyncKey));
   const { path, opts } = getRequestOptions(
     actionTypes.JOB.ERROR.UPDATE_RETRY_DATA,
     {
@@ -700,13 +825,38 @@ export function* updateRetryData({ retryId, retryData }) {
       opts,
     });
   } catch (e) {
+    if (asyncKey) yield put(actions.asyncTask.failed(asyncKey));
+
     return true;
   }
+  if (asyncKey) yield put(actions.asyncTask.success(asyncKey));
 
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
-function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
+export function* downloadRetryData({ retryId }) {
+  let response;
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA,
+    {
+      resourceId: retryId,
+    }
+  );
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return true;
+  }
+  if (response?.signedURL) {
+    openExternalUrl({url: response?.signedURL});
+  }
+}
+
+export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   try {
     const body = { errorFile: { host: 's3', id: errorFileId } };
 
@@ -728,13 +878,17 @@ function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
 
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
+  takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, getDashboardRunningJobCollection),
+  takeLatest(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, getDashboardCompletedJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
   takeEvery(
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
     startPollingForInProgressJobs
   ),
+  takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS, startPollingForDashboardInProgressJobs),
   takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
+  takeLatest(actionTypes.JOB.DASHBOARD.RUNNING.CANCEL, cancelDashboardJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
   takeEvery(actionTypes.JOB.RETRY_SELECTED, retrySelected),
@@ -745,5 +899,6 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.ERROR.RETRY_SELECTED, retrySelectedRetries),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, requestRetryData),
   takeEvery(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, updateRetryData),
+  takeLatest(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, downloadRetryData),
   takeEvery(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, retryProcessedErrors),
 ];

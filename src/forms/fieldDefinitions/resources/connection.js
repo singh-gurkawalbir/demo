@@ -1,7 +1,7 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isProduction, isEuRegion } from '../../utils';
-import { isNewId } from '../../../utils/resource';
-import { applicationsList } from '../../../constants/applications';
+import { isNewId, getDomainUrl, getAssistantFromResource } from '../../../utils/resource';
+import { applicationsList} from '../../../constants/applications';
+import { getConstantContactVersion } from '../../../utils/connections';
 
 export default {
   // #region common
@@ -18,7 +18,13 @@ export default {
         expression.push({ 'rdbms.type': r.type });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
-        expression.push({ type: ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type });
+        const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
+
+        if (r?.http?.formType === 'rest' || r.type === 'rest') {
+          expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+        } else {
+          expression.push({ type: destinationType });
+        }
         if (r.assistant) {
           expression.push({ assistant: r.assistant });
         }
@@ -65,230 +71,21 @@ export default {
     defaultValue: r => {
       const isNew = isNewId(r._id);
 
-      if (isNew) {
+      if (isNew && r.application) {
         return r.application;
       }
       const applications = applicationsList();
-      const application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      let application = getAssistantFromResource(r) ||
+      (r.type === 'rdbms' ? r.rdbms.type : r.type);
+
+      if (r.type === 'http' && r.http?.formType === 'rest') {
+        application = 'rest';
+      }
       const app = applications.find(a => a.id === application) || {};
 
       return app.name;
     },
     defaultDisabled: true,
-  },
-  assistant: {
-    type: 'select',
-    label: 'Assistant',
-    options: [
-      {
-        items: [
-          { label: '3dcart', value: '3dcart' },
-          { label: '3PL Central', value: '3plcentral' },
-          { label: 'Accelo', value: 'accelo' },
-          { label: 'Adp', value: 'adp' },
-          { label: 'Amazonaws', value: 'amazonaws' },
-          { label: 'Amazonmws', value: 'amazonmws' },
-          { label: 'Anaplan', value: 'anaplan' },
-          { label: 'SAP Ariba', value: 'ariba' },
-          { label: 'Asana', value: 'asana' },
-          { label: 'Atera', value: 'atera' },
-          { label: 'Authorize.net', value: 'authorize.net' },
-          { label: 'Avalara', value: 'avalara' },
-          { label: 'Banking', value: 'banking' },
-          { label: 'Bigcommerce', value: 'bigcommerce' },
-          { label: 'Bill.com', value: 'bill.com' },
-          { label: 'Box', value: 'box' },
-          { label: 'Braintree', value: 'braintree' },
-          { label: 'Campaignmonitor', value: 'campaignmonitor' },
-          { label: 'Certify', value: 'certify' },
-          { label: 'Chargebee', value: 'chargebee' },
-          { label: 'Chargify', value: 'chargify' },
-          { label: 'Clover', value: 'clover' },
-          { label: 'Dcl', value: 'dcl' },
-          // { label: 'Desk', value: 'desk' },
-          { label: 'Dnb', value: 'dnb' },
-          { label: 'Docusign', value: 'docusign' },
-          { label: 'Doubleclick', value: 'doubleclick' },
-          { label: 'Dropbox', value: 'dropbox' },
-          { label: 'Ebay', value: 'ebay' },
-          { label: 'Ebay-xml', value: 'ebay-xml' },
-          { label: 'Eloquent', value: 'eloquent' },
-          { label: 'Etsy', value: 'etsy' },
-          { label: 'Eventbrite', value: 'eventbrite' },
-          { label: 'Exacterp', value: 'exacterp' },
-          { label: 'Expensify', value: 'expensify' },
-          { label: 'Facebookads', value: 'facebookads' },
-          { label: 'Fieldaware', value: 'fieldaware' },
-          { label: 'Freshbooks', value: 'freshbooks' },
-          { label: 'Freshdesk', value: 'freshdesk' },
-          { label: 'Ftp', value: 'ftp' },
-          { label: 'Github', value: 'github' },
-          { label: 'Gorgias', value: 'gorgias' },
-          { label: 'Gooddata', value: 'gooddata' },
-          { label: 'Google', value: 'google' },
-          { label: 'Googleanalytics', value: 'googleanalytics' },
-          { label: 'Googlecontacts', value: 'googlecontacts' },
-          { label: 'Googledrive', value: 'googledrive' },
-          { label: 'Googlemail', value: 'googlemail' },
-          { label: 'Googlesheets', value: 'googlesheets' },
-          { label: 'Googleshopping', value: 'googleshopping' },
-          { label: 'Harvest', value: 'harvest' },
-          { label: 'Hoovers', value: 'hoovers' },
-          { label: 'Hubspot', value: 'hubspot' },
-          { label: 'Hybris', value: 'hybris' },
-          { label: 'Insightly', value: 'insightly' },
-          { label: 'Inspectorio', value: 'inspectorio' },
-          { label: 'Integratorio', value: 'integratorio' },
-          { label: 'Jet', value: 'jet' },
-          { label: 'Jira', value: 'jira' },
-          { label: 'Jobvite', value: 'jobvite' },
-          { label: 'Lightspeed', value: 'lightspeed' },
-          { label: 'Linkedin', value: 'linkedin' },
-          { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'LogiSense', value: 'logisense' },
-          { label: 'Loop Returns', value: 'loopreturns' },
-          { label: 'Magento 2', value: 'magento' },
-          { label: 'Mailchimp', value: 'mailchimp' },
-          { label: 'Mediaocean', value: 'mediaocean' },
-          { label: 'Namely', value: 'namely' },
-          { label: 'NetSuite', value: 'netsuite' },
-          { label: 'Newegg', value: 'newegg' },
-          { label: 'Newrelic', value: 'newrelic' },
-          { label: 'Okta', value: 'okta' },
-          { label: 'Openair', value: 'openair' },
-          { label: 'Osn', value: 'osn' },
-          { label: 'Other', value: 'other' },
-          { label: 'Paychex', value: 'paychex' },
-          { label: 'Paylocity', value: 'paylocity' },
-          { label: 'Paypal', value: 'paypal' },
-          { label: 'Pulseway', value: 'pulseway' },
-          { label: 'Quickbooks', value: 'quickbooks' },
-          { label: 'Recurly', value: 'recurly' },
-          { label: 'Replicon', value: 'replicon' },
-          { label: 'S3', value: 's3' },
-          { label: 'Sageone', value: 'sageone' },
-          { label: 'Salesforce', value: 'salesforce' },
-          { label: 'Servicenow', value: 'servicenow' },
-          { label: 'Shiphawk', value: 'shiphawk' },
-          { label: 'Shipstation', value: 'shipstation' },
-          { label: 'Shipwire', value: 'shipwire' },
-          { label: 'Shopify', value: 'shopify' },
-          { label: 'Skubana', value: 'skubana' },
-          { label: 'Slack', value: 'slack' },
-          { label: 'Smartsheet', value: 'smartsheet' },
-          { label: 'Snapfulfil', value: 'snapfulfil' },
-          { label: 'Splunk', value: 'splunk' },
-          { label: 'Spreecommerce', value: 'spreecommerce' },
-          { label: 'Squareup', value: 'squareup' },
-          { label: 'Steelbrick', value: 'steelbrick' },
-          { label: 'Stripe', value: 'stripe' },
-          { label: 'Surveymonkey', value: 'surveymonkey' },
-          { label: 'Svb', value: 'svb' },
-          { label: 'Tableau', value: 'tableau' },
-          { label: 'Tesco', value: 'tesco' },
-          { label: 'Travis', value: 'travis' },
-          { label: 'Tsheets', value: 'tsheets' },
-          { label: 'Twilio', value: 'twilio' },
-          { label: 'Walmart', value: 'walmart' },
-          { label: 'Wiser', value: 'wiser' },
-          { label: 'Woocommerce', value: 'woocommerce' },
-          { label: 'Wrike', value: 'wrike' },
-          { label: 'Xcart', value: 'xcart' },
-          { label: 'Yahoo', value: 'yahoo' },
-          { label: 'Yammer', value: 'yammer' },
-          { label: 'Zendesk', value: 'zendesk' },
-          { label: 'Zoho', value: 'zoho' },
-          { label: 'Zuora', value: 'zuora' },
-          { label: 'Coupa', value: 'coupa' },
-          { label: 'Taxjar', value: 'taxjar' },
-          { label: 'Quip', value: 'quip' },
-          { label: 'Allbound', value: 'allbound' },
-          { label: 'Zohocrm', value: 'zohocrm' },
-          { label: 'Zohodesk', value: 'zohodesk' },
-          { label: 'Microsoftoffice365', value: 'microsoftoffice365' },
-          { label: 'Microsoftdynamics365', value: 'microsoftdynamics365' },
-          { label: 'Pitneybowes', value: 'pitneybowes' },
-          { label: 'Mysql', value: 'mysql' },
-          { label: 'Oracle', value: 'oracle'},
-          { label: 'Postgresql', value: 'postgresql' },
-          { label: 'Mssql', value: 'mssql' },
-          { label: 'Snowflake', value: 'snowflake' },
-          { label: 'Greenhouse', value: 'greenhouse' },
-          { label: 'Shippo', value: 'shippo' },
-          { label: 'Gusto', value: 'gusto' },
-          { label: 'Easypost', value: 'easypost' },
-          { label: 'Segment', value: 'segment' },
-          { label: 'Zohobooks', value: 'zohobooks' },
-          {
-            label: 'Microsoftbusinesscentral',
-            value: 'microsoftbusinesscentral',
-          },
-          {
-            label: 'Microsoftoutlookcalendar',
-            value: 'microsoftoutlookcalendar',
-          },
-          { label: 'Microsoftoutlookmail', value: 'microsoftoutlookmail' },
-          {
-            label: 'Microsoftoutlookcontacts',
-            value: 'microsoftoutlookcontacts',
-          },
-          { label: 'Microsoftonenote', value: 'microsoftonenote' },
-          { label: 'Wish', value: 'wish' },
-          { label: 'Pdffiller', value: 'pdffiller' },
-          { label: 'Signnow', value: 'signnow' },
-          { label: 'Acton', value: 'acton' },
-          { label: 'Acumatica', value: 'acumatica' },
-          { label: 'MongoDB', value: 'mongodb' },
-          { label: 'DynamoDB', value: 'dynamodb' },
-          { label: 'Zohomail', value: 'zohomail' },
-          { label: 'Zoom', value: 'zoom' },
-          { label: 'Myobessentials', value: 'myobessentials' },
-          { label: 'Nimble', value: 'nimble' },
-          { label: 'Bronto', value: 'bronto' },
-          { label: 'Strata', value: 'strata' },
-          { label: 'Returnly', value: 'returnly' },
-          { label: 'Activecampaign', value: 'activecampaign' },
-          { label: 'Klaviyo', value: 'klaviyo' },
-          { label: 'Postmark', value: 'postmark' },
-          { label: 'Powerbi', value: 'powerbi' },
-          { label: 'Procurify', value: 'procurify' },
-          { label: 'Mailgun', value: 'mailgun' },
-          { label: 'Zimbra', value: 'zimbra' },
-          { label: 'Merchantesolutions', value: 'merchantesolutions' },
-          { label: 'Aptrinsic', value: 'aptrinsic' },
-          { label: 'Cardknox', value: 'cardknox' },
-          { label: 'Skuvault', value: 'skuvault' },
-          { label: 'Nextag', value: 'nextag' },
-          { label: 'Concur', value: 'concur' },
-          { label: 'Oandav20fxtrade', value: 'oandav20fxtrade' },
-          { label: 'Oandaexchangerates', value: 'oandaexchangerates' },
-          { label: 'Spreecommerce', value: 'spreecommerce' },
-          { label: 'Tophatter', value: 'tophatter' },
-          { label: 'Concurv4', value: 'concurv4' },
-          { label: 'Sugarcrm', value: 'sugarcrm' },
-          { label: 'Marketo', value: 'marketo' },
-          { label: 'Grms', value: 'grms' },
-          { label: 'Retailops', value: 'retailops' },
-          { label: 'Sharepoint', value: 'sharepoint' },
-          { label: 'Parseur', value: 'parseur' },
-          { label: 'Authorize.net', value: 'authorize.net' },
-          { label: 'Firstdata', value: 'firstdata' },
-          { label: 'Propack', value: 'propack' },
-          { label: 'Outreach', value: 'outreach' },
-          { label: 'Ramplogistics', value: 'ramplogistics' },
-          { label: 'Constantcontactv3', value: 'constantcontactv3' },
-          { label: 'Constantcontactv2', value: 'constantcontactv2' },
-          { label: 'Concurall', value: 'concurall' },
-          { label: 'Dunandbradstreet', value: 'dunandbradstreet' },
-          { label: 'Trinet', value: 'trinet' },
-          { label: 'Pacejet', value: 'pacejet' },
-          { label: 'Solidcommercxe', value: 'solidcommercxe' },
-          { label: 'Intercom', value: 'intercom' },
-          { label: 'Bamboohr', value: 'bamboohr' },
-          { label: 'Orderful', value: 'orderful' },
-        ],
-      },
-    ],
   },
   // #endregion common
   // #region rdbms
@@ -362,6 +159,7 @@ export default {
     options: [
       {
         items: [
+          { label: 'SQL Server 2008 R2 (Not supported by Microsoft)', value: 'SQL Server 2008 R2' },
           { label: 'SQL Server 2012', value: 'SQL Server 2012' },
           { label: 'SQL Server 2014', value: 'SQL Server 2014' },
           { label: 'SQL Server 2016', value: 'SQL Server 2016' },
@@ -424,11 +222,12 @@ export default {
   'rest.mediaType': {
     type: 'select',
     label: 'Media type',
+    helpKey: 'connection.http.mediaType',
     options: [
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'CSV', value: 'csv' },
         ],
       },
@@ -440,53 +239,40 @@ export default {
     type: 'text',
     label: 'Base URI',
     required: true,
+    helpKey: 'connection.http.baseURI',
   },
   'rest.bearerToken': {
     type: 'text',
     label: 'Token',
     inputType: 'password',
+    helpKey: 'connection.http.auth.token.token',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'rest.tokenLocation': {
     type: 'select',
-    label: 'Location',
+    label: 'Send token via',
+    helpKey: 'connection.http.auth.token.location',
     options: [
       {
         items: [
-          { label: 'Header', value: 'header' },
-          { label: 'URL Parameter', value: 'url' },
+          { label: 'HTTP header', value: 'header' },
+          { label: 'URL parameter', value: 'url' },
         ],
       },
     ],
   },
-  'rest.tokenParam': {
-    type: 'text',
-    label: 'REST token param',
-  },
+
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    helpKey: 'connection.http.auth.oauth.scope',
   },
-  'rest.scopeDelimiter': {
-    type: 'text',
-    label: 'REST scope delimiter',
-  },
-  'rest.refreshToken': {
-    type: 'text',
-    label: 'REST refresh token',
-  },
-  'rest.oauthTokenURI': {
-    type: 'text',
-    label: 'REST oauth token URI',
-  },
-  'rest.disableStrictSSL': {
-    type: 'checkbox',
-    label: 'Disable strict SSL',
-  },
+
   'rest.authType': {
     type: 'select',
-    label: 'Authentication type',
+    label: 'Auth type',
+    helpKey: 'connection.http.auth.type',
     options: [
       {
         items: [
@@ -498,24 +284,13 @@ export default {
       },
     ],
   },
-  'rest.authURI': {
-    type: 'text',
-    label: 'REST auth URI',
-  },
-  'rest.authHeader': {
-    type: 'text',
-    label: 'Header name',
-    defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
-  },
-  'rest.retryHeader': {
-    type: 'text',
-    label: 'REST retry header',
-  },
+
   'rest.authScheme': {
     type: 'select',
-    label: 'Scheme',
-    defaultValue: r =>
-      r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
+    label: 'Header scheme',
+    helpKey: 'connection.http.auth.token.scheme',
+    skipDefault: true,
+    defaultValue: r => r?.rest?.authScheme || ' ',
     options: [
       {
         items: [
@@ -532,207 +307,76 @@ export default {
     type: 'text',
     label: 'Username',
     required: true,
+    helpKey: 'connection.http.auth.basic.username',
   },
   'rest.basicAuth.password': {
     type: 'text',
     label: 'Password',
     inputType: 'password',
+    helpKey: 'connection.http.auth.basic.password',
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
     defaultValue: '',
   },
-  'rest.cookieAuth.uri': {
-    type: 'text',
-    label: 'Cookie URI',
-  },
-  'rest.cookieAuth.body': {
-    type: 'text',
-    label: 'Cookie body',
-  },
-  'rest.cookieAuth.method': {
-    type: 'select',
-    label: 'Cookie method',
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'POST', value: 'POST' },
-        ],
-      },
-    ],
-  },
-  'rest.cookieAuth.successStatusCode': {
-    type: 'text',
-    label: 'Cookie success status code',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
+
   'rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
+    helpKey: 'connection.http.headers',
   },
   'rest.encrypted': {
     type: 'editor',
     label: 'Encrypted',
     mode: 'json',
+    description: 'Note: for security reasons this field must always be re-entered.',
   },
   'rest.unencrypted': {
     type: 'editor',
     label: 'Unencrypted',
     mode: 'json',
   },
-  'rest.oauth.accessTokenPath': {
-    type: 'text',
-    label: 'REST oauth access token path',
-  },
-  'rest.oauth.grantType': {
-    type: 'radiogroup',
-    label: 'REST oauth grant type',
-    options: [
-      {
-        items: [
-          { label: 'Authorizecode', value: 'authorizecode' },
-          { label: 'Password', value: 'password' },
-        ],
-      },
-    ],
-  },
-  'rest.oauth.username': {
-    type: 'text',
-    label: 'REST oauth username',
-  },
-  'rest.oauth.password': {
-    type: 'text',
-    inputType: 'password',
-    label: 'REST oauth password',
-    description:
-      'Note: for security reasons this field must always be re-entered.',
-  },
   'rest.refreshTokenMethod': {
     type: 'select',
-    label: 'Refresh token method',
+    label: 'HTTP method',
+    helpKey: 'connection.http.auth.token.refreshMethod',
     options: [
       {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],
   },
   'rest.refreshTokenBody': {
-    type: 'text',
-    label: 'Refresh body',
-  },
-  'rest.refreshTokenURI': {
-    type: 'text',
-    label: 'REST refresh token URI',
-  },
-  'rest.refreshTokenPath': {
-    type: 'text',
-    label: 'Refresh token path',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
+    helpKey: 'connection.http.auth.token.refreshBody',
   },
   'rest.refreshTokenMediaType': {
     type: 'select',
-    label: 'Refresh token media type',
+    label: 'Override media type',
+    placeholder: 'Do not override',
+    helpKey: 'connection.http.auth.token.refreshMediaType',
     defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
         ],
       },
     ],
   },
-  'rest.refreshTokenHeaders': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Refresh token headers',
-  },
-  'rest.info': {
-    type: 'text',
-    label: 'REST info',
-  },
-  'rest.pingRelativeURI': {
-    type: 'text',
-    label: 'Ping URI',
-    required: true,
-  },
-  'rest.pingSuccessPath': {
-    type: 'text',
-    label: 'Ping success path',
-  },
-  'rest.pingSuccessValues': {
-    type: 'text',
-    delimiter: ',',
-    label: 'Ping success values',
-  },
-  'rest.pingFailurePath': {
-    type: 'text',
-    label: 'REST ping failure path',
-  },
-  'rest.pingFailureValues': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'REST ping failure values',
-  },
-  'rest.concurrencyLevel': {
-    type: 'select',
-    label: 'Concurrency level',
-    options: [
-      {
-        items: [
-          { label: '1', value: 1 },
-          { label: '2', value: 2 },
-          { label: '3', value: 3 },
-          { label: '4', value: 4 },
-          { label: '5', value: 5 },
-          { label: '6', value: 6 },
-          { label: '7', value: 7 },
-          { label: '8', value: 8 },
-          { label: '9', value: 9 },
-          { label: '10', value: 10 },
-          { label: '11', value: 11 },
-          { label: '12', value: 12 },
-          { label: '13', value: 13 },
-          { label: '14', value: 14 },
-          { label: '15', value: 15 },
-          { label: '16', value: 16 },
-          { label: '17', value: 17 },
-          { label: '18', value: 18 },
-          { label: '19', value: 19 },
-          { label: '20', value: 20 },
-          { label: '21', value: 21 },
-          { label: '22', value: 22 },
-          { label: '23', value: 23 },
-          { label: '24', value: 24 },
-          { label: '25', value: 25 },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: '_borrowConcurrencyFromConnectionId',
-        is: [''],
-      },
-    ],
-  },
+
   'rest.pingMethod': {
     type: 'select',
-    label: 'Ping method',
+    label: 'HTTP method',
+    helpKey: 'connection.http.ping.method',
     options: [
       {
         items: [
@@ -742,15 +386,11 @@ export default {
       },
     ],
   },
-  'rest.pingBody': {
-    type: 'text',
-    label: 'Ping body',
-  },
   // #endregion rest
   // #region http
   'http.auth.type': {
     type: 'select',
-    label: 'Authentication type',
+    label: 'Auth type',
     required: true,
     options: [
       {
@@ -776,16 +416,16 @@ export default {
         items: [
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
-          { label: 'Multipart/form-data', value: 'form-data' },
+          { label: 'URL encoded', value: 'urlencoded' },
+          { label: 'Multipart / form-data', value: 'form-data' },
         ],
       },
     ],
   },
   'http.successMediaType': {
     type: 'select',
-    label: 'Success media type',
-    helpKey: 'connection.http.successMediaType',
+    label: 'Override media type for success responses',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
@@ -798,8 +438,8 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error media type',
-    helpKey: 'connection.http.errorMediaType',
+    label: 'Override media type for error responses',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
@@ -821,6 +461,10 @@ export default {
     required: true,
   },
   'http.disableStrictSSL': {
+    type: 'checkbox',
+    label: 'Disable strict SSL',
+  },
+  'rdbms.disableStrictSSL': {
     type: 'checkbox',
     label: 'Disable strict SSL',
   },
@@ -867,15 +511,17 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Retry-after HTTP response header name',
+    label: 'Override retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
-    type: 'text',
-    label: 'Ping relative URI',
+    type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Relative URI',
   },
   'http.ping.method': {
     type: 'select',
-    label: 'Ping method',
+    label: 'HTTP method',
     options: [
       {
         items: [
@@ -887,21 +533,21 @@ export default {
     ],
   },
   'http.ping.body': {
-    type: 'text',
-    label: 'Ping body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'http.ping.successPath': {
     type: 'text',
-    label: 'Ping success path',
+    label: 'Path to success field in HTTP response body',
   },
   'http.ping.successValues': {
     type: 'text',
-    label: 'Ping success values',
+    label: 'Success values',
     delimiter: ',',
   },
   'http.ping.failPath': {
     type: 'text',
-    label: 'Ping fail path',
+    label: 'Path to error field in HTTP response body',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -912,7 +558,7 @@ export default {
   'http.ping.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Ping fail values',
+    label: 'Error values',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -922,11 +568,11 @@ export default {
   },
   'http.ping.errorPath': {
     type: 'text',
-    label: 'Ping error path',
+    label: 'Path to detailed error message field in HTTP response body',
   },
   'http.auth.failStatusCode': {
     type: 'text',
-    label: 'Authentication fail status code',
+    label: 'Override HTTP status code for auth errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -935,12 +581,12 @@ export default {
   },
   'http.auth.failPath': {
     type: 'text',
-    label: 'Authentication fail path',
+    label: 'Path to auth error field in HTTP response body',
   },
   'http.auth.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Authentication fail values',
+    label: 'Auth error values',
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -966,8 +612,7 @@ export default {
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom scope delimiter',
-    subSectionField: true,
+    label: 'Override default scope delimiter',
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -975,11 +620,11 @@ export default {
   },
   'http.auth.oauth.authURI': {
     type: 'text',
-    label: 'Authentication URL',
+    label: 'Authorization URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client authentication',
+    label: 'Send client credentials via',
     defaultValue: r =>
       (r &&
         r.http &&
@@ -990,8 +635,8 @@ export default {
     options: [
       {
         items: [
-          { label: 'Send as basic auth header', value: 'basicauthheader' },
-          { label: 'Send client credentials in body', value: 'body' },
+          { label: 'Basic auth header', value: 'basicauthheader' },
+          { label: 'HTTP body', value: 'body' },
         ],
       },
     ],
@@ -1001,12 +646,12 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access token headers',
+    label: 'Override access token HTTP headers',
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Build access token body',
+    label: 'Override access token HTTP request body',
   },
   'http._iClientId': {
     label: 'IClient',
@@ -1021,9 +666,9 @@ export default {
     options: [
       {
         items: [
-          { label: 'Authorization Code', value: 'authorizecode' },
+          { label: 'Authorization code', value: 'authorizecode' },
           // { label: 'Password', value: 'password' },
-          { label: 'Client Credentials', value: 'clientcredentials' },
+          { label: 'Client credentials', value: 'clientcredentials' },
         ],
       },
     ],
@@ -1055,19 +700,9 @@ export default {
   },
   'http.auth.oauth.callbackURL': {
     type: 'text',
-    label: 'Callback URL',
+    label: 'Redirect URL',
     defaultDisabled: true,
-    defaultValue: () => {
-      if (isProduction()) {
-        if (isEuRegion()) {
-          return 'https://eu.integrator.io/connection/oauth2callback';
-        }
-
-        return 'https://integrator.io/connection/oauth2callback';
-      }
-
-      return 'https://staging.integrator.io/connection/oauth2callback';
-    },
+    defaultValue: () => `${getDomainUrl()}/connection/oauth2callback`,
   },
   'http.auth.oauth.type': {
     defaultValue: 'custom',
@@ -1079,14 +714,14 @@ export default {
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Build revoke token body',
+    label: 'Override revoke token HTTP request body',
   },
   'http.auth.token.revoke.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Revoke token headers',
+    label: 'Override revoke token HTTP headers',
   },
   'http.auth.oauth.password': {
     type: 'text',
@@ -1107,20 +742,14 @@ export default {
   },
   'http.auth.token.location': {
     type: 'select',
-    label: 'Location',
+    label: 'Send token via',
     required: true,
-    defaultValue: r =>
-      r &&
-      r.http &&
-      r.http.auth &&
-      r.http.auth.token &&
-      r.http.auth.token.location,
     options: [
       {
         items: [
-          { label: 'URL Parameter', value: 'url' },
-          { label: 'Header', value: 'header' },
-          { label: 'Body', value: 'body' },
+          { label: 'URL parameter', value: 'url' },
+          { label: 'HTTP header', value: 'header' },
+          { label: 'HTTP body', value: 'body' },
         ],
       },
     ],
@@ -1138,15 +767,9 @@ export default {
   },
   'http.auth.token.scheme': {
     type: 'select',
-    label: 'Scheme',
-    required: true,
-    defaultValue: r =>
-      (r &&
-        r.http &&
-        r.http.auth &&
-        r.http.auth.token &&
-        r.http.auth.token.scheme) ||
-      'Bearer',
+    label: 'Header scheme',
+    skipDefault: true,
+    defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
     options: [
       {
         items: [
@@ -1165,7 +788,7 @@ export default {
   },
   'http.auth.token.refreshMethod': {
     type: 'select',
-    label: 'Refresh method',
+    label: 'HTTP method',
     defaultValue: r =>
       r &&
       r.http &&
@@ -1177,33 +800,33 @@ export default {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],
   },
   'http.auth.token.refreshRelativeURI': {
-    type: 'text',
-    label: 'Refresh relative URI',
-    required: true,
+    type: 'relativeuri',
+    showLookup: false,
+    showExtract: false,
+    label: 'Relative URI',
   },
   'http.auth.token.refreshBody': {
-    type: 'text',
-    label: 'Refresh body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'http.auth.token.refreshTokenPath': {
     type: 'text',
-    label: 'Refresh token path',
+    label: 'Path to token field in HTTP response body',
   },
   'http.auth.token.refreshMediaType': {
     type: 'select',
-    label: 'Refresh media type',
-    required: true,
+    label: 'Override media type',
+    placeholder: 'Do not override',
     options: [
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'XML', value: 'xml' },
         ],
       },
@@ -1214,7 +837,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Refresh token headers',
+    label: 'Configure HTTP headers',
   },
   'http.auth.token.refreshToken': {
     type: 'text',
@@ -1227,15 +850,17 @@ export default {
   },
   'http.auth.cookie.uri': {
     type: 'text',
-    label: 'Cookie URI',
+    // showLookup: false,
+    // showExtract: false,
+    label: 'Absolute URL',
   },
   'http.auth.cookie.body': {
-    type: 'text',
-    label: 'Cookie body',
+    type: 'httprequestbody',
+    label: 'HTTP request body',
   },
   'http.auth.cookie.method': {
     type: 'select',
-    label: 'Cookie method',
+    label: 'HTTP method',
     options: [
       {
         items: [
@@ -1247,20 +872,16 @@ export default {
   },
   'http.auth.cookie.successStatusCode': {
     type: 'text',
-    label: 'Cookie success status code',
+    label: 'Override HTTP status code for success',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  'http.rateLimits': {
-    type: 'labeltitle',
-    label: 'Nonstandard API rate limiter',
-  },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate-limit errors',
+    label: 'Override HTTP status code for rate-limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1269,7 +890,7 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate-limit errors in HTTP response body',
+    label: 'Path to rate-limit error field in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
@@ -1302,6 +923,7 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
+    description: 'Note: for security reasons this field must always be re-entered.',
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
@@ -1484,6 +1106,79 @@ export default {
     requiredWhen: [
       {
         field: 'ftp.pgpDecryptKey',
+        isNot: [''],
+      },
+    ],
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  usePgp: {
+    type: 'checkbox',
+    defaultValue: r =>
+      !!(r?.pgp?.publicKey || r?.pgp?.privateKey),
+    label: 'Enable PGP cryptographic',
+  },
+  'pgp.publicKey': {
+    type: 'text',
+    multiline: true,
+    label: 'PGP public key',
+    defaultValue: '',
+    requiredWhen: [
+      {
+        field: 'pgp.privateKey',
+        is: [''],
+      },
+    ],
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'pgp.compressionAlgorithm': {
+    type: 'select',
+    label: 'Compression algorithm',
+    skipSort: true,
+    options: [
+      {
+        items: [
+          { label: 'zip', value: 'zip' },
+          { label: 'zlib', value: 'zlib' },
+        ],
+      },
+    ],
+  },
+  'pgp.asciiArmored': {
+    label: 'ASCII armor',
+    type: 'radiogroup',
+    defaultValue: r => r?.pgp?.asciiArmored === false ? 'false' : 'true',
+    options: [
+      {
+        items: [
+          { value: 'true', label: 'Yes' },
+          { value: 'false', label: 'No' },
+        ],
+      },
+    ],
+  },
+  'pgp.privateKey': {
+    type: 'text',
+    label: 'PGP private key',
+    defaultValue: '',
+    multiline: true,
+    requiredWhen: [
+      {
+        field: 'pgp.publicKey',
+        is: [''],
+      },
+    ],
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'pgp.passphrase': {
+    type: 'text',
+    label: 'Private key passphrase',
+    defaultValue: '',
+    requiredWhen: [
+      {
+        field: 'pgp.privateKey',
         isNot: [''],
       },
     ],
@@ -1795,7 +1490,7 @@ export default {
       {
         items: [
           { label: 'JSON', value: 'json' },
-          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'URL encoded', value: 'urlencoded' },
           { label: 'XML', value: 'xml' },
         ],
       },
@@ -2158,19 +1853,6 @@ export default {
   },
   // #endregion as2
   // #region netsuite
-  'netsuite.authType': {
-    type: 'select',
-    label: 'Authentication type',
-    options: [
-      {
-        items: [
-          { label: 'Basic', value: 'basic' },
-          { label: 'Token Based Auth (Manual)', value: 'token' },
-          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
-        ],
-      },
-    ],
-  },
   'netsuite.account': {
     type: 'netsuiteuserroles',
     label: 'Account ID',
@@ -2262,7 +1944,7 @@ export default {
     ],
   },
   'netsuite.linkSuiteScriptIntegrator': {
-    label: 'Link suitescript integrator',
+    label: 'Link SuiteScript integrator',
     type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
@@ -2475,6 +2157,7 @@ export default {
         is: [''],
       },
     ],
+    required: true,
   },
   // #endregion salesforce
   // #region wrapper
@@ -2596,11 +2279,13 @@ export default {
     type: 'text',
     label: 'Access key ID',
     required: true,
+    helpKey: 'connection.dynamodb.aws.accessKeyId',
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret access key',
     required: true,
+    helpKey: 'connection.dynamodb.aws.secretAccessKey',
   },
   // #endregion dynamodb
   settings: {
@@ -2608,4 +2293,19 @@ export default {
     defaultValue: r => r && r.settings,
   },
   // #region custom connection
+  // #region constant contact
+  versionType: {
+    type: 'select',
+    label: 'Version type',
+    required: true,
+    defaultValue: r => getConstantContactVersion(r),
+    options: [
+      {
+        items: [
+          { label: 'V2', value: 'constantcontactv2' },
+          { label: 'V3', value: 'constantcontactv3' },
+        ],
+      },
+    ],
+  },
 };

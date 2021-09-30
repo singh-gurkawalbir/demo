@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
+import React, { useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
-import GripperIcon from '../../icons/GripperIcon';
+import SortableHandle from '../../Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -51,43 +50,41 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HomePageCardContainer({ children, onClick, drag, isCardSelected = false }) {
+export default function HomePageCardContainer({ children, onClick, isDragInProgress, isTileDragged }) {
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
 
+  useEffect(() => {
+    if (isTileDragged) {
+      setShowGripper(true);
+    }
+  }, [isTileDragged]);
+
+  const handleMouseEnter = () => {
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  };
+  const handleMouseLeave = () => {
+    if (!isDragInProgress) {
+      setShowGripper(false);
+    }
+  };
+
   return (
-    <>
-      {!isCardSelected
-        ? (
-          <>
-            <div
-              className={classes.tileGripperWrapper}
-              onMouseEnter={() => setShowGripper(true)}
-              onMouseLeave={() => setShowGripper(false)}>
-              <Paper
-                className={classes.wrapper}
-                elevation={0}
-                onClick={onClick} >
-                <div>
-                  {showGripper && (
-                  <div className={classes.gripper} ref={drag}>
-                    <GripperIcon />
-                  </div>
-                  )}
-                  {children}
-                </div>
-              </Paper>
-            </div>
-          </>
-        )
-        : (
-          <Paper
-            className={clsx(classes.wrapper, classes.wrapperPlaceholder)}
-            elevation={0}
-            onClick={onClick}>
-            <GripperIcon className={classes.gripper} />
-          </Paper>
-        )}
-    </>
+    <div
+      className={classes.tileGripperWrapper}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}>
+      <Paper
+        className={classes.wrapper}
+        elevation={0}
+        onClick={onClick} >
+        <div>
+          <SortableHandle className={classes.gripper} isVisible={showGripper} />
+          {children}
+        </div>
+      </Paper>
+    </div>
   );
 }

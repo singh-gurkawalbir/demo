@@ -14,7 +14,7 @@ import IconTextButton from '../../../../components/IconTextButton';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { HOME_PAGE_PATH, STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../../utils/messageStore';
 import getRoutePath from '../../../../utils/routePaths';
@@ -44,7 +44,7 @@ export default function PageBar() {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const availableTabs = useAvailableTabs();
-  const { integrationId, storeId: childId, tab} = match?.params;
+  const { integrationId, childId, tab} = match?.params;
 
   const {
     name,
@@ -140,7 +140,7 @@ export default function PageBar() {
     },
     [patchIntegration]
   );
-  const handleAddNewStore = useCallback(() => {
+  const handleAddNewChild = useCallback(() => {
     dispatch(actions.integrationApp.installer.initChild(integrationId));
   }, [integrationId, dispatch]);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -151,7 +151,7 @@ export default function PageBar() {
     );
 
     setIsDeleting(false);
-    history.push(getRoutePath('dashboard'));
+    history.push(getRoutePath(HOME_PAGE_PATH));
   }
 
   const handleDelete = useCallback(() => {
@@ -187,7 +187,7 @@ export default function PageBar() {
     enqueueSnackbar,
     integrationId,
   ]);
-  const handleStoreChange = useCallback(
+  const handleChildChange = useCallback(
     e => {
       const newChildId = e.target.value;
       let newTab = tab;
@@ -209,11 +209,11 @@ export default function PageBar() {
         }
       }
 
-      if (!availableTabs.find(tab => tab.path === tab)) {
+      if (!availableTabs.find(t => t.path === tab)) {
         newTab = availableTabs[0].path;
       }
 
-      // Redirect to current tab of new store
+      // Redirect to current tab of new child
       history.push(
         getRoutePath(
           `integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
@@ -289,11 +289,11 @@ export default function PageBar() {
         <CopyIcon /> Clone integration
       </IconTextButton>
       )}
-      {/* Sravan needs to move add store functionality to integrationApps */}
+      {/* Sravan needs to move add child functionality to integrationApps */}
       { supportsChild && (
       <>
         <IconTextButton
-          onClick={handleAddNewStore}
+          onClick={handleAddNewChild}
           variant="text"
           data-test="addNewStore">
           <CopyIcon /> Add new child
@@ -302,7 +302,7 @@ export default function PageBar() {
           displayEmpty
           data-test="select Child"
           className={classes.storeSelect}
-          onChange={handleStoreChange}
+          onChange={handleChildChange}
           IconComponent={ArrowDownIcon}
           value={childId}>
           <MenuItem disabled value="">

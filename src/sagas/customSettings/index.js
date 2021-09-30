@@ -4,26 +4,34 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import inferErrorMessage from '../../utils/inferErrorMessage';
+import inferErrorMessages from '../../utils/inferErrorMessages';
 
-export function* initSettingsForm({ resourceType, resourceId }) {
-  const resource = yield select(selectors.resource, resourceType, resourceId);
+export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
+  const resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
   if (!resource) return; // nothing to do.
+
   let initScriptId; let
     initFunc;
 
-  if (resource.settingsForm &&
-    resource.settingsForm.init) {
+  if (resource.settingsForm?.init) {
     initScriptId = resource.settingsForm.init._scriptId;
     initFunc = resource.settingsForm.init.function;
   }
-  let metadata = resource.settingsForm && resource.settingsForm.form;
+  let metadata = resource.settingsForm?.form;
 
   if (initFunc) {
     // If so, make an API call to initialize the form,
 
-    const path = `/${resourceType}/${resourceId}/settingsForm/init`;
+    let baseRoute = `/${resourceType}/${resourceId}`;
+
+    // sectionId is flowGroupingId...if it is defined then we will call the flowGrouping init
+    const isFlowGroupingRoute = sectionId && sectionId !== 'general';
+
+    if (isFlowGroupingRoute) {
+      baseRoute += `/flowGroupings/${sectionId}`;
+    }
+    const path = `${baseRoute}/settingsForm/init`;
 
     try {
       metadata = yield call(apiCallWithRetry, {
@@ -32,7 +40,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
       });
     } catch (error) {
       yield put(
-        actions.customSettings.formError(resourceId, inferErrorMessage(error))
+        actions.customSettings.formError(resourceId, inferErrorMessages(error))
       );
 
       return;

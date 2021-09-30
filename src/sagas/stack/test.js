@@ -7,6 +7,7 @@ import {
   generateToken,
   inviteStackShareUser,
   toggleUserStackSharing,
+  reInviteStackUser,
 } from '.';
 import { getResourceCollection } from '../resources/index';
 
@@ -183,6 +184,50 @@ describe('stack sharing sagas', () => {
             body: {},
           },
           message: 'Toggling User Stack Sharing',
+        })
+      );
+      expect(saga.throw(new Error()).value).toEqual(undefined);
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+  describe('reInviteStackUser sagas', () => {
+    const userId = '123';
+    const userInfo = { Email: 'abc@celigo.com' };
+    const path = `/sshares/${userId}`;
+
+    test('should succeed on successful api call', () => {
+      const saga = reInviteStackUser({ userInfo, userId });
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'PUT',
+            body: userInfo,
+          },
+          message: 'Re-inviting Stack User',
+        })
+      );
+      const effect = saga.next().value;
+
+      expect(effect).toEqual(
+        call(getResourceCollection, { resourceType: 'sshares' })
+      );
+      expect(saga.next().done).toBe(true);
+    });
+    test('should return undefined if api call fails', () => {
+      const saga = reInviteStackUser({ userInfo, userId });
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'PUT',
+            body: userInfo,
+          },
+          message: 'Re-inviting Stack User',
         })
       );
       expect(saga.throw(new Error()).value).toEqual(undefined);

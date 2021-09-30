@@ -4,7 +4,6 @@ import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
 import editors, { selectors as fromEditors } from './editors';
 import metadata, { selectors as fromMetadata } from './metadata';
-import editorSampleData, { selectors as fromEditorSampleData } from './editorSampleData';
 import connectors, { selectors as fromConnectors } from './connectors';
 import connections, { selectors as fromConnections } from './connections';
 import resourceForm, { selectors as fromResourceForm } from './resourceForm';
@@ -13,7 +12,7 @@ import stackSystemTokens, { selectors as fromStackSystemTokens } from './stackSy
 import apiAccessTokens, { selectors as fromApiAccessTokens } from './apiAccessTokens';
 import connectionToken, { selectors as fromConnectionToken } from './connectionToken';
 import netsuiteUserRole, { selectors as fromNetsuiteUserRoles } from './netsuiteUserRoles';
-import sampleData, { selectors as fromSampleData } from './sampleData';
+import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/imports';
 import flowData, { selectors as fromFlowData } from './sampleData/flows';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
@@ -33,9 +32,15 @@ import errorManagement, { selectors as fromErrorManagement } from './errorManage
 import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
+import logs, {selectors as fromLogs} from './logs';
+import sso, {selectors as fromSSO} from './sso';
+import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
+import integrations, {selectors as fromIntegrations} from './integrations';
+import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
 import { genSelectors } from '../util';
 
 export default combineReducers({
+  asyncTask,
   form,
   recycleBin,
   stage,
@@ -51,11 +56,11 @@ export default combineReducers({
   apiAccessTokens,
   resource,
   netsuiteUserRole,
-  sampleData,
   importSampleData,
   flowData,
   flowMetrics,
   integrationApps,
+  integrations,
   templates,
   oAuthAuthorize,
   mapping,
@@ -69,18 +74,21 @@ export default combineReducers({
   errorManagement,
   customSettings,
   exportData: exportDataReducer,
-  editorSampleData,
+  logs,
+  sso,
+  bottomDrawer,
+  resourceFormSampleData,
 });
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
 const subSelectors = {
+  asyncTask: fromAsyncTask,
   form: fromForm,
   stage: fromStage,
   filters: fromFilters,
   editors: fromEditors,
   metadata: fromMetadata,
-  editorSampleData: fromEditorSampleData,
   connectors: fromConnectors,
   connections: fromConnections,
   resourceForm: fromResourceForm,
@@ -89,10 +97,10 @@ const subSelectors = {
   apiAccessTokens: fromApiAccessTokens,
   connectionToken: fromConnectionToken,
   netsuiteUserRole: fromNetsuiteUserRoles,
-  sampleData: fromSampleData,
   importSampleData: fromImportSampleData,
   flowData: fromFlowData,
   integrationApps: fromIntegrationApps,
+  integrations: fromIntegrations,
   templates: fromTemplates,
   oAuthAuthorize: fromOAuthAuthorize,
   resource: fromResource,
@@ -106,9 +114,13 @@ const subSelectors = {
   suiteScript: fromSuiteScript,
   jobErrorsPreview: fromJobErrorsPreview,
   errorManagement: fromErrorManagement,
-  exportDataReducer: fromExportData,
+  exportData: fromExportData,
   customSettings: fromCustomSettings,
   recycleBin: fromRecycleBin,
+  logs: fromLogs,
+  sso: fromSSO,
+  bottomDrawer: fromBottomDrawer,
+  resourceFormSampleData: fromResourceFormSampleData,
 };
 
 genSelectors(selectors, subSelectors);

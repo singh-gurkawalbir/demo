@@ -44,22 +44,37 @@ export default {
           newValues['/salesforce/upsert'] = undefined;
           newValues['/salesforce/idLookup'] = undefined;
         }
-      } else if (newValues['/salesforce/operation'] === 'update') {
+      } else if (['update', 'delete'].includes(newValues['/salesforce/operation'])) {
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/extract'] = undefined;
+        newValues['/salesforce/upsert/externalIdField'] = undefined;
       } else if (newValues['/salesforce/operation'] === 'addupdate') {
         newValues['/ignoreMissing'] = false;
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/extract'] = undefined;
+        newValues['/salesforce/upsert/externalIdField'] = undefined;
       } else {
         newValues['/ignoreMissing'] = false;
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/whereClause'] = undefined;
       }
     }
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
     }
 
     delete newValues['/inputMode'];
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -71,7 +86,7 @@ export default {
       id: 'apiType',
       type: 'labeltitle',
       label: r => {
-        if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
+        if (r?.resourceType === 'transferFiles' || r?.blob) {
           return 'Where would you like to transfer the files?';
         }
 
@@ -98,7 +113,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
+        if (r.resourceType === 'transferFiles' || r.blob) return 'blob';
 
         return 'records';
       },
@@ -178,7 +193,7 @@ export default {
       fieldId: 'ignoreMissing',
       label: 'Ignore missing records',
       visibleWhen: [
-        { field: 'salesforce.operation', is: ['update'] },
+        { field: 'salesforce.operation', is: ['update', 'delete'] },
         { field: 'salesforce.compositeOperation', is: ['update'] },
       ],
     },
@@ -205,12 +220,6 @@ export default {
     },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
   },
   layout: {

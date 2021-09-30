@@ -1,19 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
 import ReactResizeDetector from 'react-resize-detector';
+import { useSelector } from 'react-redux';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
+import KeyColumnsDeprecationNotification from '../KeyColumnsDeprecationNotification';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
-  removeTopMargin: {
-    marginTop: theme.spacing(-1),
-  },
   form: {
     height: props =>
-      `calc(100vh - ${props.heightOffset || 150}px - ${
+      `calc(100vh - ${props.heightOffset || (155 + theme.appBarHeight)}px - ${
         props.notificationPanelHeight
       }px)`,
     width: props => {
@@ -25,40 +24,68 @@ const useStyles = makeStyles(theme => ({
     padding: '0px !important',
   },
   notification: {
-    margin: theme.spacing(2, 0),
+    paddingBottom: theme.spacing(2),
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 
+const notRedactAttr = {'data-public': 'true'};
+
+const emptyObj = {};
 export default function ResourceFormWithStatusPanel({ isFlowBuilderView, className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
   const { resourceType, resourceId } = props;
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
+
+  const isWebhookExport = useSelector(state =>
+     selectors.resourceData(state, resourceType, resourceId)?.merged?.adaptorType === 'WebhookExport');
+
+  // only webhooks should not be redacted
+  const shouldRedactLogRocket = isWebhookExport || resourceType === 'connections';
+
   const classes = useStyles({
     ...props,
     notificationPanelHeight,
   });
   const resize = useCallback((width, height) => {
-    setNotificationPanelHeight(height);
+    setNotificationPanelHeight(height + 16);
   }, []);
 
+  const shouldRedact = shouldRedactLogRocket ? emptyObj : notRedactAttr;
+
   return (
-    <div
-      className={clsx(className, {
-        [classes.removeTopMargin]: notificationPanelHeight,
-      })}>
+    <div className={className}>
       <div>
         {['exports', 'imports', 'connections'].includes(resourceType) && (
           <ConnectionStatusPanel
+            className={classes.notification}
             resourceType={resourceType}
             isFlowBuilderView={isFlowBuilderView}
             resourceId={resourceId}
           />
         )}
         {showNotificationToaster &&
-          <GenericAdaptorNotification className={classes.notification} onClose={onCloseNotificationToaster} />}
-        <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
+        (
+          <div className={classes.notification}>
+            <GenericAdaptorNotification onClose={onCloseNotificationToaster} />
+          </div>
+        )}
+        <div className={classes.notification}>
+          <NetSuiteBundleInstallNotification resourceType={resourceType} resourceId={resourceId} />
+        </div>
+        {
+          resourceType === 'exports' && (
+          <div className={classes.notification}>
+            <KeyColumnsDeprecationNotification resourceId={resourceId} />
+          </div>
+          )
+        }
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
-      <ResourceForm className={classes.form} {...props} />
+      <span {...shouldRedact}>
+        <ResourceForm className={classes.form} {...props} />
+      </span>
     </div>
   );
 }

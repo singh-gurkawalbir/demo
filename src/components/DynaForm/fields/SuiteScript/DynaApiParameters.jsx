@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { isEmpty } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
 import {
   convertToReactFormFields,
 } from './util';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import { isMetaRequiredValuesMet } from '../../../../utils/assistant';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -53,7 +54,7 @@ const ApiParametersModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <div>
         <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
         <Button
@@ -70,10 +71,9 @@ const ApiParametersModal = props => {
 
 export default function DynaApiParameters(props) {
   const classes = useStyles();
-  const { value, onFieldChange, id, required, apiMethod, _connectionId, ssLinkedConnectionId } = props;
+  const { value, disabled, isValid, formKey, onFieldChange, id, required, apiMethod, _connectionId, ssLinkedConnectionId } = props;
   const [showApiParametersModal, setShowApiParametersModal] = useState(false);
-  const isValid = !required ? true : !isEmpty(value);
-
+  const dispatch = useDispatch();
   const apiMethodMetadata = useSelector(state => {
     const connection = selectors.suiteScriptResource(state, {
       resourceType: 'connections',
@@ -83,6 +83,20 @@ export default function DynaApiParameters(props) {
 
     return connection?.apiMethods?.find(m => m.id === apiMethod);
   }, shallowEqual);
+  const isMetaValid = isMetaRequiredValuesMet(apiMethodMetadata, value);
+
+  useEffect(() => {
+    if (!required) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+
+      return;
+    }
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid}));
+  }, [dispatch, formKey, id, isMetaValid, required]);
+
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
 
   return (
     <>
@@ -100,21 +114,26 @@ export default function DynaApiParameters(props) {
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
         <div className={classes.dynaAssistantFormLabelWrapper}>
-          <FormLabel className={classes.dynaAssistantFormLabel}>
+          <FormLabel
+            disabled={disabled}
+            required={required}
+            error={!isValid}
+            className={classes.dynaAssistantFormLabel}>
             Define API parameters
           </FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
+          disabled={disabled}
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowApiParametersModal(true)}>
-          {'Launch'} {required && !isValid ? '*' : ''}
+          Launch
         </Button>
       </div>
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description=""
         errorMessages="Please enter required parameters"

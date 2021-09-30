@@ -25,35 +25,40 @@ const useStyles = makeStyles(theme => ({
   },
   threeAppImages: {
     '& img': {
-      maxWidth: '64px',
-      maxHeight: '64px',
+      maxWidth: theme.spacing(8),
+      maxHeight: theme.spacing(8),
+    },
+    '& > span': {
+      margin: '0px',
     },
   },
   fourAppImages: {
     '& img': {
-      maxWidth: '50px',
-      maxHeight: '50px',
+      maxWidth: '45px',
+      maxHeight: '45px',
+    },
+    '& > span': {
+      margin: '0px',
     },
   },
 
 }));
 
-function ApplicationImages(props) {
+export default function ApplicationImages({ children, className, noOfApps }) {
   const classes = useStyles();
-  const { children, noOfApps } = props;
 
   return (
     <div
       className={
         clsx(
+          className,
           classes.root,
           {[classes.threeAppImages]: noOfApps === 3},
-          {[classes.fourAppImages]: noOfApps === 4}
+          {[classes.fourAppImages]: noOfApps === 4},
+
         )
       }>
       {children}
     </div>
   );
 }
-
-export default ApplicationImages;

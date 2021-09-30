@@ -1,41 +1,19 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { IconButton, MenuItem, Menu, Tooltip } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import React, { useCallback, useState } from 'react';
+import ArrowPopper from '../../ArrowPopper';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
+import MultipleAction from './MultipleAction';
 
-const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
-  const handleActionClick = useCallback(() => {
-    selectAction(component);
-    handleMenuClose();
-  }, [component, handleMenuClose, selectAction]);
-  const hasAccess = useHasAccess({...actionProps, rowData });
+const useStyles = makeStyles(theme => ({
+  actionsMenuPopper: {
+    maxWidth: 250,
+    top: `${theme.spacing(1)}px !important`,
+  },
+}));
 
-  if (!hasAccess) {
-    return null;
-  }
-  const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
-  const actionIcon = Icon ? <Icon /> : null;
-
-  if (disabledActionTitle) {
-    return (
-      <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
-        <div>
-          <MenuItem disabled>
-            {actionIcon}
-            {label}
-          </MenuItem>
-        </div>
-      </Tooltip>
-    );
-  }
-
-  return (
-    <MenuItem key={label} onClick={handleActionClick}>
-      {actionIcon}
-      {label}
-    </MenuItem>
-  );
-};
-export default function ActionMenu({ rowActions, rowData, actionProps, selectAction }) {
+export default function ActionMenu({ useRowActions, rowData, setSelectedComponent}) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
   const open = Boolean(anchorEl);
@@ -43,37 +21,12 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
   const handleMenuClick = useCallback(
     event => {
       setAnchorEl(event.currentTarget);
-      selectAction(undefined);
+      setSelectedComponent(null);
     },
-    [selectAction]
+    [setSelectedComponent]
   );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-
-  const actions = useMemo(() => {
-    // rowActions may or may not be a fn. Sometimes
-    // the actions are static, other times they are
-    // determinant on the resource they apply to.
-    // Check on this later for the scope of refactor
-    const meta = typeof rowActions === 'function'
-      ? rowActions(rowData, actionProps)
-      : rowActions;
-
-    return meta.map(({ icon, label, disabledActionText, useHasAccess, component: Action }) => ({
-      Icon: icon,
-      disabledActionText,
-      selectAction,
-      handleMenuClose,
-      // if its not defined return true
-      useHasAccess: useHasAccess || (() => true),
-      rowData,
-      actionProps,
-      label:
-      typeof label === 'function'
-        ? label(rowData, actionProps)
-        : label,
-      component: <Action {...actionProps} rowData={rowData} />,
-    }));
-  }, [actionProps, handleMenuClose, rowActions, rowData, selectAction]);
+  const actions = useRowActions(rowData);
 
   if (!actions || !actions.length) return null;
 
@@ -88,16 +41,25 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
         onClick={handleMenuClick}>
         <EllipsisIcon />
       </IconButton>
-
-      <Menu
-        elevation={2}
-        variant="menu"
-        id={actionsPopoverId}
-        anchorEl={anchorEl}
+      {open && (
+      <ArrowPopper
+        placement="bottom-end"
+        restrictToParent={false}
+        classes={{ popper: classes.actionsMenuPopper }}
         open={open}
+        anchorEl={anchorEl}
+        id={actionsPopoverId}
         onClose={handleMenuClose}>
-        {actions.map(a => <Action key={a.label} {...a} />)}
-      </Menu>
+        {actions.map(meta => (
+          <MultipleAction
+            key={meta.key}
+            setSelectedComponent={setSelectedComponent}
+            handleMenuClose={handleMenuClose}
+            meta={meta}
+            rowData={rowData} />
+        ))}
+      </ArrowPopper>
+      )}
     </>
   );
 }

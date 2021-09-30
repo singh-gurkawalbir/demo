@@ -13,7 +13,7 @@ const emptyObj = {};
 export default function TabRedirection({children: componentChildren}) {
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId, templateName, storeId: childId, tab} = match?.params;
+  const { integrationId, templateName, childId, tab} = match?.params;
   const dispatch = useDispatch();
 
   const {
@@ -136,7 +136,7 @@ export default function TabRedirection({children: componentChildren}) {
         tab: redirectTo,
       });
 
-      dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+      dispatch(actions.resource.integrations.clearRedirect(integrationId));
       history.push(path);
     }
   }, [
@@ -175,7 +175,7 @@ export default function TabRedirection({children: componentChildren}) {
         <Redirect
           push={false}
           to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
-            'settings'}`)}
+            'flows'}`)}
         />
       );
     }
@@ -184,7 +184,7 @@ export default function TabRedirection({children: componentChildren}) {
     return (
       <Redirect
         push={false}
-        to={`${match.url}/${childId === integrationId ? 'settings' : 'flows'}`}
+        to={`${match.url}/flows`}
       />
     );
   }

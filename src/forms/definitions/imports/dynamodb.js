@@ -95,6 +95,7 @@ export default {
       ],
     },
     dataMappings: { formId: 'dataMappings' },
+    advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
     type: 'collapse',
@@ -123,6 +124,7 @@ export default {
           'dynamodb.updateExpression',
         ],
       },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
 };

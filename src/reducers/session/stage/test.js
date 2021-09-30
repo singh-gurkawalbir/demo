@@ -174,9 +174,14 @@ describe('stage reducers', () => {
 
 describe('stage selectors', () => {
   describe('stagedResource', () => {
-    test('should return empty object when no match found.', () => {
-      expect(selectors.stagedResource(undefined, 'key')).toEqual({});
-      expect(selectors.stagedResource({}, 'key')).toEqual({});
+    test('should return null when no match found.', () => {
+      expect(selectors.stagedResource(undefined, 'key')).toEqual(null);
+      expect(selectors.stagedResource({}, 'key')).toEqual(null);
+    });
+    test('should return empty object when invalid resourceId is sent.', () => {
+      expect(selectors.stagedResource({}, '')).toEqual(null);
+      expect(selectors.stagedResource({}, null)).toEqual(null);
+      expect(selectors.stagedResource({}, undefined)).toEqual(null);
     });
 
     test('should return staged resource when match found.', () => {
@@ -193,6 +198,24 @@ describe('stage selectors', () => {
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         conflict,
       });
+    });
+    test('should return cached result of the staged resource when match found.', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch));
+
+      state = reducer(state, actions.resource.commitConflict(id, conflict));
+      const res = selectors.stagedResource(state, id);
+
+      expect(res).toEqual({
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        conflict,
+      });
+      // check calling again with the same arguments would return the cached result
+      expect(selectors.stagedResource(state, id)).toBe(res);
     });
   });
 

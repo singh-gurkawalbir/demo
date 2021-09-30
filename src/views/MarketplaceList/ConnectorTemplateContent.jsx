@@ -1,29 +1,32 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Tooltip, Chip, Zoom } from '@material-ui/core';
-import Truncate from 'react-truncate';
+import { Typography, Chip } from '@material-ui/core';
 import ApplicationImg from '../../components/icons/ApplicationImg';
+import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   description: {
-    maxHeight: '60px',
+    minHeight: 115,
+    maxHeight: 115,
     overflowY: 'auto',
-    margin: theme.spacing(1, 0, 1, 0),
+    marginBottom: theme.spacing(1),
+    fontSize: 15,
   },
   name: {
-    marginTop: theme.spacing(2),
+    fontFamily: 'Roboto400',
+    marginTop: theme.spacing(1),
   },
-  floatRight: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(3),
+  imgChip: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: theme.spacing(2, 0),
   },
 }));
 
 export default function ConnectorTemplateContent({ resource, application }) {
   const { name, description, free, applications } = resource;
   const classes = useStyles();
-  const [isTruncated, setIsTruncated] = useState(false);
   let assistant = applications.length >= 2 && application === applications[0]
     ? applications[1]
     : applications[0];
@@ -36,36 +39,25 @@ export default function ConnectorTemplateContent({ resource, application }) {
   return (
     <>
       <div className={classes.content}>
-        <ApplicationImg
-          assistant={assistant}
-          size="large"
+        <Typography className={classes.name} variant="body2">
+          <CeligoTruncate lines={2} dataPublic placement="top" enterDelay={100}>
+            {name}
+          </CeligoTruncate>
+        </Typography>
+        <div className={classes.imgChip}>
+          <ApplicationImg
+            assistant={assistant}
+            size="small"
         />
-        {free && (
+          {free && (
           <Chip
             variant="outlined"
             color="primary"
             size="small"
             label="Free"
-            className={classes.floatRight}
           />
-        )}
-        <Typography className={classes.name} variant="h3">
-          {isTruncated ? (
-            <Tooltip
-              title={<span className={classes.tooltipNameFB}> {name}</span>}
-              TransitionComponent={Zoom}
-              placement="top"
-              enterDelay={100}>
-              <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                {name}
-              </Truncate>
-            </Tooltip>
-          ) : (
-            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-              {name}
-            </Truncate>
           )}
-        </Typography>
+        </div>
         <Typography variant="body2" className={classes.description}>
           {description}
         </Typography>

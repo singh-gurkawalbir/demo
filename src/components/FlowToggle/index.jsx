@@ -17,7 +17,7 @@ const useStyles = makeStyles({
 export default function FlowToggle({
   resource: flow,
   disabled,
-  storeId,
+  childId,
   integrationId,
 }) {
   // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isIntegrationApp
@@ -29,11 +29,7 @@ export default function FlowToggle({
     state => selectors.isOnOffInProgress(state, flow._id),
     (left, right) => left.onOffInProgress === right.onOffInProgress
   );
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
-  const istwoDotZeroFrameWork = integration && integration.installSteps &&
-  integration.installSteps.length;
+  const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   useEffect(() => {
     if (!onOffInProgress) {
@@ -64,14 +60,14 @@ export default function FlowToggle({
                 actions.integrationApp.settings.update(
                   flow._integrationId,
                   flow._id,
-                  storeId,
+                  childId,
                   null,
                   { '/flowId': flow._id, '/disabled': !enable },
                   { action: 'flowEnableDisable' }
                 )
               );
             } else {
-              if (enable && !flow.free && !flow.isSimpleImport) {
+              if (enable && !flow.free && !flow.isSimpleImport && !istwoDotZeroFrameWork) {
                 if (!isLicenseValidToEnableFlow.enable) {
                   return enqueueSnackbar({
                     message: isLicenseValidToEnableFlow.message,
@@ -114,9 +110,9 @@ export default function FlowToggle({
   if (flow.disableSlider) return null;
 
   return onOffInProgressStatus ? (
-    <Spinner size={20} color="primary" className={classes.spinnerFlowToggle} />
+    <Spinner className={classes.spinnerFlowToggle} />
   ) : (
-    <Tooltip title="Off/On" placement="bottom">
+    <Tooltip data-public title="Off/On" placement="bottom">
       <div>
         <CeligoSwitch
           disabled={disabled}

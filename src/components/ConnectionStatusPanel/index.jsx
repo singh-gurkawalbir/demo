@@ -11,11 +11,9 @@ import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(1, 0),
-  },
   fixConnectionBtn: {
     color: theme.palette.primary.main,
     fontSize: 15,
@@ -57,18 +55,17 @@ const getStatusVariantAndMessage = ({
   return {};
 };
 
-export default function ConnectionStatusPanel(props) {
-  const { resourceId, resourceType, isFlowBuilderView } = props;
+export default function ConnectionStatusPanel({ className, resourceId, resourceType, isFlowBuilderView }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { merged: resource } = useSelectorMemo(
+  const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
   const connectionId =
     resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
@@ -149,7 +146,7 @@ export default function ConnectionStatusPanel(props) {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={className}>
       <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
           <Typography variant="h6" className={classes.titleStatusPanel}>{message}</Typography>

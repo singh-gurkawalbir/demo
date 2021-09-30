@@ -18,11 +18,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DashboardPanel({ integrationId, storeId }) {
+export default function DashboardPanel({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const filterStoreId = useSelector(
-    state => selectors.filter(state, 'jobs').storeId
+  const filterChildId = useSelector(
+    state => selectors.filter(state, 'jobs').childId
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -34,25 +34,25 @@ export default function DashboardPanel({ integrationId, storeId }) {
   }
 
   // We may not have an IA that supports children, but those who do,
-  // we want to reset the jobs filter any time the store changes.
+  // we want to reset the jobs filter any time the child changes.
   useEffect(() => {
-    if (storeId && storeId !== filterStoreId) {
+    if (childId !== filterChildId) {
       dispatch(
         actions.patchFilter('jobs', {
-          storeId,
+          childId,
           flowId: '',
           currentPage: 0,
         })
       );
     }
-  }, [dispatch, filterStoreId, storeId]);
+  }, [dispatch, filterChildId, childId]);
 
   return (
     <div className={classes.root}>
       <LoadResources required resources="flows">
         <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
         {isUserInErrMgtTwoDotZero
-          ? <ChartsDrawer integrationId={integrationId} childId={storeId} />
+          ? <ChartsDrawer integrationId={integrationId} childId={childId} />
           : <JobDashboard integrationId={integrationId} />}
       </LoadResources>
     </div>

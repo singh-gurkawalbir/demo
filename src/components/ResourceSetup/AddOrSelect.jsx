@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import DynaForm from '../DynaForm';
 import { selectors } from '../../reducers';
 import LoadResources from '../LoadResources';
-import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { generateNewId } from '../../utils/resource';
+import SaveAndCloseMiniResourceForm from '../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
     padding: theme.spacing(3),
-    borderColor: 'rgb(0,0,0,0.1)',
-    borderStyle: 'solid',
-    borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
   },
   resourceFormRadioGroupWrapper: {
     marginBottom: theme.spacing(2),
+  },
+  doneBtn: {
+    margin: theme.spacing(0, 3),
   },
 }));
 
@@ -37,10 +37,11 @@ export default function AddOrSelect(props) {
     resourceType = 'connections',
     manageOnly = false,
     onClose,
+    formKey,
   } = props;
   const classes = useStyles();
-  const [newFormId] = useState(generateNewId());
   const [useNew, setUseNew] = useState(true);
+  const [remountCount, setRemountCount] = useState(0);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
     RESOURCE_TYPE_SINGULAR_TO_LABEL[
@@ -52,7 +53,6 @@ export default function AddOrSelect(props) {
   const options = resourceList.map(c => ({
     label: c.offline ? `${c.name} - Offline` : c.name,
     value: c._id,
-    disabled: !!c.offline,
   }));
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
@@ -68,6 +68,7 @@ export default function AddOrSelect(props) {
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
+    setRemountCount(remountCount => remountCount + 1);
   };
 
   const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
@@ -93,7 +94,8 @@ export default function AddOrSelect(props) {
       fields: [resourceName],
     },
   };
-  const handleSubmit = formVal => {
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const handleSubmit = () => {
     if (!formVal[resourceName]) {
       return false;
     }
@@ -101,9 +103,11 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
-  const formKey = useFormInitWithPermissions({
+  useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    formKey,
+    remount: remountCount,
   });
 
   return (
@@ -129,35 +133,44 @@ export default function AddOrSelect(props) {
         {/* div wrapping is imp. since child component is reusable component and it inherits parent top parent. Validate before removing */}
         <div>
           {useNew ? (
-            <>
-              <ResourceFormWithStatusPanel
-                formKey={newFormId}
-                heightOffset="250"
-                occupyFullWidth
-                resourceType={resourceType}
-                resourceId={resourceId}
-                onSubmitComplete={handleSubmitComplete}
+
+            <ResourceFormWithStatusPanel
+              formKey={formKey}
+              heightOffset="250"
+              occupyFullWidth
+              resourceType={resourceType}
+              resourceId={resourceId}
+              onSubmitComplete={handleSubmitComplete}
             />
-              <ResourceFormActionsPanel
-                formKey={newFormId}
-                resourceType={resourceType}
-                resourceId={resourceId}
-                submitButtonLabel="Save & close"
-                cancelButtonLabel="Cancel"
-                onSubmitComplete={handleSubmitComplete}
-                connectionType={connectionType}
-                onCancel={onClose} />
-            </>
+
           ) : (
-            <>
-              <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-              <DynaSubmit formKey={formKey} onClick={handleSubmit}>
-                Done
-              </DynaSubmit>
-            </>
+
+            <DynaForm formKey={formKey} />
+
           )}
         </div>
       </div>
+
+      {useNew ? (
+        <ResourceFormActionsPanel
+          formKey={formKey}
+          resourceType={resourceType}
+          resourceId={resourceId}
+          submitButtonLabel="Save & close"
+          cancelButtonLabel="Cancel"
+          onSubmitComplete={handleSubmitComplete}
+          connectionType={connectionType}
+          onCancel={onClose} />
+      ) : (
+        <SaveAndCloseMiniResourceForm
+          className={classes.doneBtn}
+          formKey={formKey}
+          submitButtonLabel="Done"
+          handleSave={handleSubmit}
+          shouldNotShowCancelButton
+          handleCancel={onClose}
+        />
+      )}
     </LoadResources>
   );
 }

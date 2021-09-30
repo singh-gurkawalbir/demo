@@ -69,7 +69,7 @@ export default {
           ignoreCache: true,
           filterKey: 'salesforce-sObjects',
           commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           connectionId: ssLinkedConnectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
@@ -134,9 +134,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
-          valueLabel: 'Import field (Salesforce)',
+          valueLabel: 'Import field value',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({

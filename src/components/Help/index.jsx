@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Help(props) {
+export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleMenu = useCallback(
     event => {
       event.stopPropagation();
@@ -41,11 +42,14 @@ function Help(props) {
     [anchorEl]
   );
   const handleClose = useCallback(event => {
-    // if clicking interacting with feedback text field do not close popper
-    if (event.target.name === 'feedbackText') return;
+    // if clicking interacting with feedback text field  or if clicking on No button
+    // do not close popper
+    if (event.target.name === 'feedbackText' ||
+    event.target.textContent === 'No'
+    ) return;
     setAnchorEl(null);
   }, []);
-  const { className, helpKey, helpText, ...rest } = props;
+
   const open = !!anchorEl;
   const helpTextValue = helpText || getHelpTextMap()[helpKey];
   // console.log('what help', helpText, helpKey, getHelpTextMap()[helpKey]);
@@ -67,7 +71,9 @@ function Help(props) {
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'b', 'i', 'br']}} />
+            <RawHtml
+              html={helpTextValue}
+              options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br'], escapeUnsecuredDomains}} />
           ) : (
             helpTextValue
           )}
@@ -76,5 +82,3 @@ function Help(props) {
     </>
   );
 }
-
-export default Help;

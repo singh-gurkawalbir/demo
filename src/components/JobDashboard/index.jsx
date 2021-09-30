@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,11 +10,11 @@ import Filters from './Filters';
 import JobTable from './JobTable';
 import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { UNDO_TIME } from './util';
+import { UNDO_TIME } from '../../utils/jobdashboard';
 import { hashCode } from '../../utils/string';
 import { isNewId } from '../../utils/resource';
+import useCommStatus from '../../hooks/useCommStatus';
 
 const useStyles = makeStyles(({
   jobTable: {
@@ -24,6 +24,30 @@ const useStyles = makeStyles(({
   },
 }));
 
+export const getSelectedJobsAndRetriableJobs = selectedJobs => {
+  let numJobsSelected = 0;
+  let numRetriableJobsSelected = 0;
+
+  Object.keys(selectedJobs).forEach(jobId => {
+    if (
+      selectedJobs[jobId].selectedChildJobIds &&
+      selectedJobs[jobId].selectedChildJobIds.length > 0
+    ) {
+      numJobsSelected += selectedJobs[jobId].selectedChildJobIds.length;
+      if (!selectedJobs[jobId].flowDisabled) {
+        numRetriableJobsSelected += selectedJobs[jobId].selectedChildJobIds.length;
+      }
+    } else if (selectedJobs[jobId].selected) {
+      numJobsSelected += 1;
+      if (!selectedJobs[jobId].flowDisabled) {
+        numRetriableJobsSelected += 1;
+      }
+    }
+  });
+
+  return {numJobsSelected,
+    numRetriableJobsSelected};
+};
 export default function JobDashboard({
   integrationId,
   flowId,
@@ -53,17 +77,7 @@ export default function JobDashboard({
   const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const numRetriableJobs = jobs ? jobs.filter(j => j.numError > 0 && !j.flowDisabled).length : 0;
   const [selectedJobs, setSelectedJobs] = useState({});
-  const [numJobsSelected, setNumJobsSelected] = useState(0);
-  const [numRetriableJobsSelected, setNumRetriableJobsSelected] = useState(0);
-  const [disableResolve, setDisableResolve] = useState(true);
-  const [disableRetry, setDisableRetry] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const patchFilter = useCallback(
-    (key, value) => {
-      dispatch(actions.patchFilter(filterKey, { [key]: value }));
-    },
-    [dispatch]
-  );
 
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
@@ -75,7 +89,7 @@ export default function JobDashboard({
     () => () => {
       dispatch(actions.job.clear());
     },
-    [dispatch, filterHash, patchFilter]
+    [dispatch, filterHash]
   );
 
   useEffect(
@@ -97,7 +111,7 @@ export default function JobDashboard({
   }, [dispatch, rowsPerPage]);
 
   useEffect(() => {
-    if (!isNewId(flowId) && jobs.length === 0) {
+    if (!isNewId(flowId)) {
       dispatch(
         actions.job.requestCollection({
           integrationId,
@@ -108,44 +122,15 @@ export default function JobDashboard({
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
+  }, [dispatch, integrationId, flowId, filterHash]);
 
-  useEffect(() => {
-    setDisableResolve(isBulkRetryInProgress || numJobsWithErrors === 0);
-  }, [isBulkRetryInProgress, numJobsWithErrors]);
+  const disableResolve = isBulkRetryInProgress || numJobsWithErrors === 0;
+  const disableRetry = isBulkRetryInProgress || numRetriableJobs === 0;
 
-  useEffect(() => {
-    setDisableRetry(isBulkRetryInProgress || numRetriableJobs === 0);
-  }, [isBulkRetryInProgress, numRetriableJobs]);
-
-  useEffect(() => {
-    let jobsSelected = 0;
-    let retriableJobsSelected = 0;
-
-    Object.keys(selectedJobs).forEach(jobId => {
-      if (
-        selectedJobs[jobId].selectedChildJobIds &&
-        selectedJobs[jobId].selectedChildJobIds.length > 0
-      ) {
-        jobsSelected += selectedJobs[jobId].selectedChildJobIds.length;
-        if (!selectedJobs[jobId].flowDisabled) {
-          retriableJobsSelected += selectedJobs[jobId].selectedChildJobIds.length;
-        }
-      } else if (selectedJobs[jobId].selected) {
-        jobsSelected += 1;
-        if (!selectedJobs[jobId].flowDisabled) {
-          retriableJobsSelected += 1;
-        }
-      }
-    });
-
-    if (jobsSelected !== numJobsSelected) {
-      setNumJobsSelected(jobsSelected);
-    }
-    if (retriableJobsSelected !== numRetriableJobsSelected) {
-      setNumRetriableJobsSelected(retriableJobsSelected);
-    }
-  }, [selectedJobs, numJobsSelected, numRetriableJobsSelected]);
+  const {
+    numRetriableJobsSelected,
+    numJobsSelected,
+  } = useMemo(() => getSelectedJobsAndRetriableJobs(selectedJobs), [selectedJobs]);
 
   function handleSelectChange(selJobs) {
     setSelectedJobs(selJobs);
@@ -183,7 +168,7 @@ export default function JobDashboard({
     closeSnackbar();
     const filteredJobsOnly = ![undefined, 'all', 'error'].includes(filters.status) || ![null, undefined, 'last30days'].includes(filters.dateRange?.[0]?.preset);
 
-    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, filteredJobsOnly, match }));
+    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, childId: filters.childId, integrationId, filteredJobsOnly, match }));
     enqueueSnackbar({
       message: `${numberOfJobsToResolve} jobs marked as resolved.`,
       showUndo: true,
@@ -215,7 +200,7 @@ export default function JobDashboard({
         });
       },
     });
-  }, [flowId, filters.flowId, filters.status, filters.dateRange, filters.storeId, jobs, closeSnackbar, dispatch, integrationId, match, enqueueSnackbar]);
+  }, [flowId, filters.flowId, filters.status, filters.dateRange, filters.childId, jobs, closeSnackbar, dispatch, integrationId, match, enqueueSnackbar]);
   const resolveSelectedJobs = useCallback(() => {
     const jobsToResolve = [];
 
@@ -295,7 +280,7 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.retryAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, match }));
+    dispatch(actions.job.retryAll({ flowId: selectedFlowId, childId: filters.childId, integrationId, match }));
     enqueueSnackbar({
       message: `${numberOfJobsToRetry} jobs retried.`,
       showUndo: true,
@@ -321,7 +306,7 @@ export default function JobDashboard({
         });
       },
     });
-  }, [closeSnackbar, dispatch, enqueueSnackbar, filters.flowId, filters.storeId, flowId, integrationId, jobs, match]);
+  }, [closeSnackbar, dispatch, enqueueSnackbar, filters.flowId, filters.childId, flowId, integrationId, jobs, match]);
   const retrySelectedJobs = useCallback(() => {
     const jobsToRetry = [];
 
@@ -407,24 +392,27 @@ export default function JobDashboard({
     [enqueueSnackbar]
   );
 
+  useCommStatus({
+    actionsToMonitor,
+    autoClearOnComplete: true,
+    commStatusHandler: handleCommsStatus,
+  });
+
   return (
     <LoadResources required resources="integrations,flows,exports,imports">
-      <CommStatus
-        actionsToMonitor={actionsToMonitor}
-        autoClearOnComplete
-        commStatusHandler={handleCommsStatus}
+      <span data-public>
+        <Filters
+          filterKey={filterKey}
+          integrationId={integrationId}
+          flowId={flowId}
+          numJobsSelected={numJobsSelected}
+          numRetriableJobsSelected={numRetriableJobsSelected}
+          onActionClick={handleActionClick}
+          disableResolve={disableResolve}
+          disableRetry={disableRetry}
+          isFlowBuilderView={isFlowBuilderView}
       />
-      <Filters
-        filterKey={filterKey}
-        integrationId={integrationId}
-        flowId={flowId}
-        numJobsSelected={numJobsSelected}
-        numRetriableJobsSelected={numRetriableJobsSelected}
-        onActionClick={handleActionClick}
-        disableResolve={disableResolve}
-        disableRetry={disableRetry}
-        isFlowBuilderView={isFlowBuilderView}
-      />
+      </span>
       <JobTable
         classes={classes.jobTable}
         onSelectChange={handleSelectChange}

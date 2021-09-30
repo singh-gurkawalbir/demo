@@ -70,6 +70,7 @@ export default {
         is: ['update', 'addupdate'],
       },
     ],
+    helpKey: 'import.netsuite.internalIdLookup.expression',
     ssLinkedConnectionId: r => r?.ssLinkedConnectionId,
     integrationId: r => r?._integrationId,
   },

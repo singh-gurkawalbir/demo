@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     height: '92%',
-    overflowY: 'auto',
   },
   btnGroup: {
 
@@ -35,8 +34,27 @@ export default function SalesforceSubListDialog() {
   const dispatch = useDispatch();
 
   const [selectedValues, setSelectedValues] = useState([]);
+  const salesforceConnectionId = useSelector(state => {
+    const {
+      ssLinkedConnectionId, integrationId, flowId,
+    } = selectors.suiteScriptMapping(state);
+    const flow = selectors.suiteScriptFlowDetail(state,
+      {
+        integrationId,
+        ssLinkedConnectionId,
+        flowId,
+      });
+
+    if (flow?.import?.type === 'salesforce') {
+      return flow.import._connectionId;
+    }
+    if (flow?.export?.type === 'salesforce') {
+      return flow.export._connectionId;
+    }
+  });
+
   const {relationshipName, sObjectType, ssLinkedConnectionId, relationshipType} = useSelector(state => {
-    const abcd = selectors.suiteScriptMappings(state);
+    const abcd = selectors.suiteScriptMapping(state);
     const {sfSubListExtractFieldName, ssLinkedConnectionId, integrationId, flowId} = abcd;
     const {data} = selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId});
     const childRelationshipField = data && data.find(field => field.value === sfSubListExtractFieldName);
@@ -67,7 +85,7 @@ export default function SalesforceSubListDialog() {
       <div className={classes.container}>
         <RefreshableTreeComponent
           ssLinkedConnectionId={ssLinkedConnectionId}
-          connectionId="SALESFORCE_CONNECTION"
+          connectionId={salesforceConnectionId}
           selectedRelationshipName={relationshipName}
           selectedReferenceTo={sObjectType}
           setSelectedValues={setSelectedValues}

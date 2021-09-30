@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import ReactResizeDetector from 'react-resize-detector';
 import { isEqual } from 'lodash';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,32 +10,45 @@ import InstallationStep from '../../../../../components/InstallStep';
 import {SUITESCRIPT_CONNECTORS } from '../../../../../utils/constants';
 import openExternalUrl from '../../../../../utils/window';
 import RightDrawer from '../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFactory';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import Spinner from '../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import getRoutePath from '../../../../../utils/routePaths';
 import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
+import ConnectionStatusPanel from '../../../../../components/SuiteScript/ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-    width: '100%',
+    // margin: theme.spacing(2),
+    // flexGrow: 1,
+    // width: '100%',
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
   },
   formHead: {
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: 29,
   },
+  formContainer: {
+    padding: theme.spacing(3),
+    paddingTop: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
+  },
   innerContent: {
     width: '100%',
     padding: theme.spacing(3),
+
   },
   stepTable: { maxWidth: 750 },
   floatRight: {
@@ -47,12 +61,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SuiteScriptIntegrationAppInstallation() {
-  const classes = useStyles();
+  const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
+  const classes = useStyles({
+    notificationPanelHeight,
+  });
   const dispatch = useDispatch();
   const match = useRouteMatch();
+
   const paramSSLinkedConnId = match.params.ssLinkedConnectionId;
   const suiteScriptConnectorId = match.params.integrationAppName;
   const { _id: connectorId, name, urlName, ssName } = useMemo(() => SUITESCRIPT_CONNECTORS.find(s => s._id === suiteScriptConnectorId), [suiteScriptConnectorId]);
+  const resize = (width, height) => {
+    setNotificationPanelHeight(height);
+  };
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [ssConnection, setSSConnection] = useState(null);
@@ -308,9 +329,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   }
   if (isInstallComplete && !setupDone) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 
@@ -326,9 +345,9 @@ export default function SuiteScriptIntegrationAppInstallation() {
       <div className={classes.root}>
         <div className={classes.innerContent}>
           { packageCommStatus === COMM_STATES.LOADING && (
-          <SpinnerWrapper>
-            <Spinner size={24} />
-          </SpinnerWrapper>
+
+            <Spinner />
+
           )}
           <ConnectionDrawer
             connectorId={connectorId}
@@ -336,16 +355,27 @@ export default function SuiteScriptIntegrationAppInstallation() {
           {ssConnection && (
           <RightDrawer
             path="editConnection"
-            type="legacy"
-            title="Set up connection"
             height="tall"
             width="medium">
-            <ResourceForm
-              ssLinkedConnectionId={ssLinkedConnectionId}
-              resourceId={ssConnection._id}
-              resourceType="connections"
-              onSubmitComplete={onSSConnSubmitComplete}
-        />
+            <DrawerHeader title="Set up connection" />
+            <DrawerContent>
+              <div className={classes.formContainer}>
+                <div>
+                  <ConnectionStatusPanel
+                    resourceType="connections"
+                    resourceId={ssConnection._id}
+                    ssLinkedConnectionId={ssLinkedConnectionId}
+                  />
+                  <ReactResizeDetector handleHeight onResize={resize} />
+                </div>
+                <ResourceForm
+                  ssLinkedConnectionId={ssLinkedConnectionId}
+                  resourceId={ssConnection._id}
+                  resourceType="connections"
+                  onSubmitComplete={onSSConnSubmitComplete}
+                  />
+              </div>
+            </DrawerContent>
           </RightDrawer>
           )}
 

@@ -9,10 +9,12 @@ import {
   isVisible,
 } from '../../../utils/form';
 import fields from './fields';
-import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/utils';
+import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta, getInvalidFields, isFormTouched} from '../../../forms/formFactory/utils';
+import trim from '../../../utils/trim';
 
 function form(state = {}, action) {
-  const { type, formKey, formSpecificProps = {} } = action;
+  // we can have the same form key but different remount keys
+  const { type, formKey, remountKey, formSpecificProps = {} } = action;
   const {
     showValidationBeforeTouched,
     conditionalUpdate,
@@ -26,6 +28,7 @@ function form(state = {}, action) {
       case actionTypes.FORM.INIT:
         draft[formKey] = {
           ...formSpecificProps,
+          remountKey,
           showValidationBeforeTouched: !!showValidationBeforeTouched,
           conditionalUpdate: !!conditionalUpdate,
           formIsDisabled: !!disabled,
@@ -51,6 +54,15 @@ function form(state = {}, action) {
           draft[
             formKey
           ].showValidationBeforeTouched = showValidationBeforeTouched;
+          if (showValidationBeforeTouched) {
+            const validationIdentifier = draft[formKey].validationOnSaveIdentifier;
+
+            if (!validationIdentifier) {
+              draft[formKey].validationOnSaveIdentifier = 1;
+            } else {
+              draft[formKey].validationOnSaveIdentifier += 1;
+            }
+          }
         }
 
         if (disabled !== undefined) draft[formKey].formIsDisabled = disabled;
@@ -80,6 +92,13 @@ selectors.formState = (state, formKey) => {
   return state[formKey];
 };
 
+selectors.formValueTrimmed = (state, formKey) => {
+  const formValue = selectors.formState(state, formKey)?.value;
+
+  return trim(formValue);
+};
+
+selectors.formRemountKey = (state, formKey) => state?.[formKey]?.remountKey;
 selectors.formParentContext = (state, formKey) => {
   const form = selectors.formState(state, formKey);
 
@@ -91,11 +110,12 @@ selectors.formParentContext = (state, formKey) => {
 selectors.fieldState = (state, formKey, fieldId) => {
   const form = selectors.formState(state, formKey);
 
-  if (!form) return null;
+  if (!form?.fields?.[fieldId]) return null;
 
-  return form.fields && form.fields[fieldId];
+  return form.fields[fieldId];
 };
 
+// TODO: we can delete this code
 selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
   const form = selectors.formState(state, formKey);
 
@@ -107,23 +127,29 @@ selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
 selectors.isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isAnyFieldVisibleForMeta(fieldMeta, fields);
+  return isAnyFieldVisibleForMeta(fieldMeta, fields || []);
 };
 
 selectors.isExpansionPanelRequiredForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isExpansionPanelRequired(fieldMeta, fields);
+  return isExpansionPanelRequired(fieldMeta, fields || []);
 };
 
 selectors.isExpansionPanelErroredForMetaForm = (
   state,
   formKey,
-  fieldMeta
+  fieldMeta,
+  shouldShowPurelyInvalid
 ) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isExpansionPanelErrored(fieldMeta, fields || []);
+  return isExpansionPanelErrored(fieldMeta, fields || [], shouldShowPurelyInvalid);
+};
+selectors.isFormPurelyInvalid = (state, formKey) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return getInvalidFields(fields || [], true).length !== 0;
 };
 
 selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
@@ -132,4 +158,24 @@ selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
 
+selectors.isFormDirty = (state, formKey) => {
+  const form = selectors.formState(state, formKey);
+
+  if (!form) {
+    return false;
+  }
+
+  return isFormTouched(Object.values(form?.fields)) || false;
+};
+
+selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) => {
+  const form = selectors.formState(state, formKey);
+
+  if (!form) return false;
+  const actionButtonMeta = form.fieldMeta.actions?.find?.(({id}) => id === actionButtonFieldId) || {};
+
+  if (!actionButtonMeta) { return true; }
+
+  return isVisible(actionButtonMeta, form.fields);
+};
 // #endregion

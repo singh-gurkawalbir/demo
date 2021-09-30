@@ -22,6 +22,7 @@ export default function DynaSelectOptionsGenerator(props) {
     connectionId,
     bundlePath,
     ignoreValidation,
+    ignoreValueUnset,
     bundleUrlHelp,
     options = {},
     filterKey,
@@ -77,7 +78,7 @@ export default function DynaSelectOptionsGenerator(props) {
   }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, disableOptionsLoad, dispatch, options.commMetaPath]);
 
   return (
-    <>
+    <div>
       <DynaGenericSelect
         resourceToFetch={options.commMetaPath || commMetaPath}
         resetValue={options.resetValue}
@@ -85,6 +86,7 @@ export default function DynaSelectOptionsGenerator(props) {
         onRefresh={onRefresh}
         fieldStatus={status}
         fieldData={data}
+        ignoreValueUnset={ignoreValueUnset}
         fieldError={errorMessage}
         disableOptionsLoad={disableOptionsLoad}
         {...props}
@@ -92,6 +94,6 @@ export default function DynaSelectOptionsGenerator(props) {
       {!ignoreValidation && !isOffline && (
         <RawHtml className={classes.validationError} html={validationError} />
       )}
-    </>
+    </div>
   );
 }

@@ -1,0 +1,40 @@
+import { Button } from '@material-ui/core';
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import Spinner from '../../../components/Spinner';
+import ActionGroup from '../../../components/ActionGroup';
+import withRouterAndDrawer from '../withRouterAndDrawer';
+
+<Meta 
+  title="Components/Right Drawer/Header" 
+  component={DrawerHeader}
+  decorators={[ withRouterAndDrawer ]}
+  parameters={{ previewTabs: { 'storybook/docs/panel': { hidden: true } } }}
+/>
+
+<Story name="No Frills">
+  <DrawerHeader title="Drawer title"  />
+</Story>
+
+<Story name="With back button">
+  <DrawerHeader title="Drawer with back button" />
+</Story>
+
+<Story name="With info text" >
+  <DrawerHeader title="Drawer with info text" infoText="This is info text" />
+</Story>
+
+<Story name="With help">
+  <DrawerHeader title="Drawer with help" helpTitle="Help title" helpKey="autoMapFields" />
+</Story>
+
+<Story name="With refresh and actions">
+  <DrawerHeader title="Refreshing and actions">
+    <Spinner size="small" />Refreshing
+    <ActionGroup position="right">
+      <Button variant="text">Text Action 1</Button>
+      <Button variant="text">Text Action 2</Button>
+    </ActionGroup>
+  </DrawerHeader>
+</Story>
+

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
@@ -6,8 +6,13 @@ import LoadResources from '../../components/LoadResources';
 import Mapping from '../../components/Mapping';
 import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
-import DatabaseMapping from './DatabaseMapping';
-import SelectQueryType from './DatabaseMapping/SelectQueryType';
+import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../components/drawer/Right/DrawerContent';
+import DatabaseMapping from './DatabaseMapping_afe';
+import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
+import EditorDrawer from '../../components/AFE/Drawer';
+import useFormOnCancelContext from '../../components/FormOnCancelContext';
+import { MAPPINGS_FORM_KEY } from '../../utils/constants';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -33,16 +38,25 @@ const MappingWrapper = ({integrationId}) => {
 export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
+  const { saveStatus } = useSelector(state => selectors.mapping(state));
+  const closeDisabled = saveStatus === 'requested';
+
+  const {setCancelTriggered} = useFormOnCancelContext(MAPPINGS_FORM_KEY);
+
+  let importId;
 
   const isMappingPreviewAvailable = useSelector(state => {
-    const importId = selectors.mapping(state)?.importId;
+    importId = selectors.mapping(state)?.importId;
 
     return !!selectors.mappingPreviewType(state, importId);
   });
 
-  return (
+  const importName = useSelector(state => selectors.resourceData(state, 'imports', importId).merged?.name);
+  const title = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
 
-    // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property. Also check for dummy route implementation on Right Drawer
+  return (
+    // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property.
+    // Also check for dummy route implementation on Right Drawer
     <LoadResources
       required="true"
       resources="imports, exports, connections">
@@ -56,7 +70,6 @@ export default function MappingDrawerRoute(props) {
         ]}
         height="tall"
         width={isMappingPreviewAvailable ? 'full' : 'default'}
-        title="Edit mapping"
         variant="persistent"
       >
         <Switch>
@@ -65,6 +78,7 @@ export default function MappingDrawerRoute(props) {
               `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
               `${match.url}/mapping/:flowId/:importId/view`,
             ]} >
+            <DrawerHeader title={title} handleClose={setCancelTriggered} disableClose={closeDisabled} />
             <MappingWrapper
               integrationId={integrationId}
               {...props} />
@@ -76,25 +90,30 @@ export default function MappingDrawerRoute(props) {
               `${match.url}/mapping/:flowId/:importId`,
             ]}
             >
+            <DrawerHeader title={title} />
             <SelectImport />
           </Route>
         </Switch>
       </RightDrawer>
+
       <RightDrawer
         height="tall"
         width="default"
-        title="Select query type"
         variant="temporary"
         hideBackButton
         path="dbMapping/:flowId/:importId">
-        <SelectQueryType />
+
+        <DrawerHeader title="Select query type" />
+
+        <DrawerContent>
+          <SelectQueryType />
+        </DrawerContent>
       </RightDrawer>
+
       <Route
         path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
-        <DatabaseMapping
-          integrationId={integrationId}
-          {...props}
-          />
+        <DatabaseMapping />
+        <EditorDrawer />
       </Route>
     </LoadResources>
   );

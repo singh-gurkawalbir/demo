@@ -1,16 +1,73 @@
+import { isNewId } from '../../../../utils/resource';
+
+const restPreSave = formValues => {
+  const retValues = { ...formValues };
+
+  const restToHttpFieldMap = {
+    '/rest/blobMethod': '/http/blobMethod',
+    '/rest/headers': '/http/headers',
+    '/rest/resourcePath': '/http/response/resourcePath',
+    '/rest/blobFormat': '/http/response/blobFormat',
+  };
+
+  Object.keys(restToHttpFieldMap).forEach(restField => {
+    const httpField = restToHttpFieldMap[restField];
+
+    if (retValues[httpField]) {
+      retValues[restField] = retValues[httpField];
+    } else {
+      retValues[restField] = undefined;
+    }
+    delete retValues[httpField];
+  });
+
+  retValues['/file/type'] = 'csv';
+  retValues['/rest/method'] = 'GET';
+
+  if (retValues['/outputMode'] === 'blob') {
+    retValues['/type'] = 'blob';
+    retValues['/rest/method'] = retValues['/rest/blobMethod'];
+  }
+
+  delete retValues['/outputMode'];
+
+  return {
+    ...retValues,
+  };
+};
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource, options = {}) => {
     const retValues = { ...formValues };
+    const { connection } = options;
+
+    // For Edit cases, if resource was originally created as REST export or if connection has isHTTP as false, save it as REST export
+    if ((resource?.adaptorType === 'RESTExport' && resource._id && !isNewId(resource._id)) || connection?.isHTTP === false) {
+      return restPreSave(formValues);
+    }
 
     retValues['/file/type'] = 'csv';
-    retValues['/rest/method'] = 'GET';
+    retValues['/http/method'] = 'GET';
 
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
-      retValues['/rest/method'] = retValues['/rest/blobMethod'];
+      retValues['/http/method'] = retValues['/http/blobMethod'];
+    }
+    retValues['/http/relativeURI'] = retValues['/rest/relativeURI'];
+    delete retValues['/rest/relativeURI'];
+
+    // set the successMediaType on Export according to the connection
+    // the request media-type is always json/urlencoded for REST, others are not supported in REST
+    // CSV/XML media type could be successMediaTypes for REST Export
+    retValues['/http/successMediaType'] = connection?.http?.successMediaType || connection?.rest?.mediaType || 'json';
+    if (retValues['/http/successMediaType'] === 'urlencoded') {
+      retValues['/http/successMediaType'] = 'json';
     }
 
+    retValues['/http/formType'] = 'rest';
+    retValues['/adaptorType'] = 'HTTPExport';
     delete retValues['/outputMode'];
+    delete retValues['/uploadFile'];
+    delete retValues['/rest'];
 
     return {
       ...retValues,
@@ -47,13 +104,16 @@ export default {
         return 'records';
       },
     },
-    'rest.blobMethod': {
-      fieldId: 'rest.blobMethod',
+    'http.blobMethod': {
+      fieldId: 'http.blobMethod',
     },
-    'rest.headers': { fieldId: 'rest.headers' },
-    'rest.relativeURI': { fieldId: 'rest.relativeURI' },
-    'rest.resourcePath': {
-      fieldId: 'rest.resourcePath',
+    'http.headers': { fieldId: 'http.headers' },
+    'rest.relativeURI': {
+      fieldId: 'rest.relativeURI',
+      defaultValue: r => r?._rest?.relativeURI,
+    },
+    'http.response.resourcePath': {
+      fieldId: 'http.response.resourcePath',
       visibleWhen: [
         {
           field: 'outputMode',
@@ -78,6 +138,7 @@ export default {
       type: 'csvparse',
       label: 'CSV parser helper',
       helpKey: 'file.csvParse',
+      ignoreSortAndGroup: true,
       defaultValue: r => r?.file?.csv || {
         columnDelimiter: ',',
         rowDelimiter: '\n',
@@ -93,16 +154,10 @@ export default {
         },
       ],
     },
-    'rest.blobFormat': { fieldId: 'rest.blobFormat' },
+    'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     formView: { fieldId: 'formView' },
   },
@@ -113,30 +168,30 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'Where would you like to transfer from?';
 
           return 'What would you like to export?';
         },
         containers: [
           {
             fields: [
-              'rest.blobMethod',
+              'http.blobMethod',
               'rest.relativeURI',
-              'rest.headers',
+              'http.headers',
               'uploadFile',
             ],
           },
           {
             type: 'indent',
             containers: [
-              {fields: [
+              { fields: [
                 'file.csv',
-              ]},
+              ] },
             ],
           },
           {
             fields: [
-              'rest.blobFormat',
+              'http.response.blobFormat',
             ],
           },
         ],
@@ -144,7 +199,7 @@ export default {
       {
         collapsed: true,
         label: 'Non-standard API response patterns',
-        fields: ['rest.resourcePath'],
+        fields: ['http.response.resourcePath'],
       },
       { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],

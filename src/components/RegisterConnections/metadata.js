@@ -1,32 +1,48 @@
 import React from 'react';
 import ResourceDrawerLink from '../ResourceDrawerLink';
 import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
-import OnlineStatus from '../ResourceTable/commonCells/OnlineStatus';
 import CeligoTimeAgo from '../CeligoTimeAgo';
+import { useGetTableContext } from '../CeligoTable/TableContext';
+import Status from '../Buttons/Status';
 
 export default {
-  columns: (r, { onClose }) => [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: r => (
-        <ResourceDrawerLink
-          resourceType="connections"
-          resource={r}
-          onClick={onClose}
+      Value: ({rowData: r}) => {
+        const {onClose} = useGetTableContext();
+
+        return (
+          <ResourceDrawerLink
+            resourceType="connections"
+            resource={r}
+            onClick={onClose}
           />
-      ),
+        );
+      },
       orderBy: 'name',
     },
-    { heading: 'Status',
-      value: r => <OnlineStatus offline={r.offline} />,
+    {
+      key: 'status',
+      heading: 'Status',
+      Value: ({rowData: r}) => (
+        <Status variant={r.offline ? 'error' : 'success'}>
+          {r.offline ? 'Offline' : 'online'}
+        </Status>
+      ),
+      width: '100px',
     },
     {
+      key: 'connector',
       heading: 'Connector',
-      value: r => <ConnectorName resource={r} />,
+      Value: ({rowData: r}) => <ConnectorName resource={r} />,
+      width: '200px',
     },
     {
+      key: 'api',
       heading: 'API',
-      value: r => {
+      Value: ({rowData: r}) => {
         if (r.type === 'rest') return r?.rest?.baseURI;
 
         if (r.type === 'http') return r?.http?.baseURI;
@@ -35,13 +51,17 @@ export default {
       },
     },
     {
+      key: 'lastModified',
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
+      width: '170px',
     },
     {
+      key: 'queueSize',
       heading: 'Queue size',
-      value: r => r.queueSize || 0,
+      Value: ({rowData: r}) => r.queueSize || 0,
+      width: '120px',
     },
   ],
 };

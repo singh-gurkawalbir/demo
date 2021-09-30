@@ -9,9 +9,10 @@ export default {
     ],
   },
   dataURITemplate: {
-    type: 'datauritemplate',
+    type: 'uri',
     label: 'Data URI template',
     refreshOptionsOnChangesTo: ['name'],
+    showLookup: false,
     connectionId: r => r && r._connectionId,
   },
 };

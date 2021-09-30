@@ -1,7 +1,7 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
 import isEqual from 'lodash/isEqual';
-import { adaptorTypeMap, isNetSuiteBatchExport } from '../resource';
+import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -9,19 +9,17 @@ import getJSONPaths, {
   getJSONPathArrayWithSpecialCharactersWrapped,
   pickFirstObject,
 } from '../jsonPaths';
+import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
-  const { adaptorType: resourceAdapterType, file } = resource;
-  const resourceFileType = file && file.type;
+  const { file } = resource;
+  const resourceFileType = file?.type;
 
-  if (
-    (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.FTPImport ||
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import) &&
-    (resourceFileType === 'xlsx' || resourceFileType === 'csv')
-  ) return true;
+  if (isFileAdaptor(resource) && (resourceFileType === 'xlsx' || resourceFileType === 'csv')) { return true; }
 
   return false;
 };
@@ -76,51 +74,75 @@ const setMappingData = (
   mappings,
   deleted = [],
   isParentDeleted,
-  deleteChildlessParent
+  deleteChildlessParent,
+  depth = 0
 ) => {
-  recordMappings.forEach(mapping => {
-    const key = `${flowId}-${mapping.id}`;
+  recordMappings.forEach(category => {
+    const key = `${flowId}-${category.id}-${depth}`;
     let allChildrenDeleted = false;
 
-    if (mapping.children && mapping.children.length) {
-      allChildrenDeleted = mapping.children.every(child =>
-        deleted.includes(child.id)
+    if (category.children?.length) {
+      allChildrenDeleted = category.children.every(child =>
+        deleted[depth + 1]?.includes(child.id)
       );
     }
 
     const mappingDeleted =
-      deleted.includes(mapping.id) ||
+      deleted[depth]?.includes(category.id) ||
       isParentDeleted ||
       (deleteChildlessParent && allChildrenDeleted);
 
     if (mappingDeleted) {
       // eslint-disable-next-line no-param-reassign
-      mapping.delete = true;
+      category.delete = true;
     }
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
-      mapping.fieldMappings = mappings[key].mappings
+      category.fieldMappings = (mappings[key].mappings || [])
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
         .map(
-          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+          ({ index, rowIdentifier, hardCodedValueTmp, key, name, description, showListOption, filterType, visible, ...rest }) => ({
             ...rest,
           })
         );
 
-      if (mappings[key].lookups && mappings[key].lookups.length) {
+      if (mappings[key].lookups?.length) {
+        const allLookups = [...mappings[key]?.lookups || []];
+
+        if (category.children?.length) {
+          category.children.forEach(child => {
+            const validLookups = mappings[`${flowId}-${child.id}-${depth + 1}`]?.mappings?.map(mapping => mapping.lookupName).filter(Boolean);
+
+            if (mappings[`${flowId}-${child.id}-${depth + 1}`]?.lookups?.length && validLookups.length) {
+              mappings[`${flowId}-${child.id}-${depth + 1}`].lookups.forEach(lookup => {
+                if (validLookups.includes(lookup.name)) {
+                  const lookupIndex = allLookups.findIndex(l => l.name === lookup.name);
+
+                  if (lookupIndex === -1) {
+                    allLookups.push(lookup);
+                  } else {
+                    allLookups[lookupIndex] = lookup;
+                  }
+                }
+              });
+            }
+          });
+        }
         // eslint-disable-next-line no-param-reassign
-        mapping.lookups = mappings[key].lookups;
+        category.lookups = allLookups;
       }
     }
 
-    if (mapping.children && mapping.children.length) {
+    if (category.children?.length) {
       setMappingData(
         flowId,
-        mapping.children,
+        category.children,
         mappings,
         deleted,
-        mappingDeleted
+        mappingDeleted,
+        deleteChildlessParent,
+        depth + 1
       );
     }
   });
@@ -135,27 +157,30 @@ const setVariationMappingData = (
 ) => {
   recordMappings.forEach(mapping => {
     const relation =
-      relationshipData &&
-      relationshipData.find(
+      relationshipData?.find(
         rel => rel.id === mapping.id && rel.depth === (options.depth || 0)
       );
 
     if (!relation) return;
 
     if (
-      relation.variation_attributes &&
-      !!relation.variation_attributes.length
+      relation.variation_attributes?.length
     ) {
-      const key = `${flowId}-${mapping.id}-variationAttributes`;
+      const key = `${flowId}-${mapping.id}-${options.depth}-variationAttributes`;
 
       if (mappings[key]) {
         // eslint-disable-next-line no-param-reassign
-        mapping.fieldMappings = mappings[key].mappings
+        mapping.fieldMappings = (mappings[key].mappings || [])
           .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
           .map(
             ({
               index,
               rowIdentifier,
+              description,
+              name,
+              key,
+              filterType,
+              showListOption,
               hardCodedValueTmp,
               visible,
               ...rest
@@ -164,23 +189,22 @@ const setVariationMappingData = (
             })
           );
 
-        if (mappings[key].lookups && mappings[key].lookups.length) {
+        if (mappings[key].lookups?.length) {
           // eslint-disable-next-line no-param-reassign
           mapping.lookups = mappings[key].lookups;
         }
       }
     } else {
       const variationTheme =
-        relation.variation_themes &&
-        relation.variation_themes.find(theme => theme.id === 'variation_theme');
+        relation.variation_themes?.find(theme => theme.id === 'variation_theme');
 
       if (variationTheme) {
         variationTheme.variation_attributes.forEach(vm => {
-          const key = `${flowId}-${mapping.id}-${vm}`;
+          const key = `${flowId}-${mapping.id}-${options.depth}-${vm}`;
 
           if (mappings[key]) {
             const stagedMappings =
-              mappings[key].staged || mappings[key].mappings;
+              mappings[key].staged || mappings[key].mappings || emptyList;
 
             if (
               !mapping.variation_themes.find(vt => vt.variation_theme === vm)
@@ -217,18 +241,18 @@ const setVariationMappingData = (
       }
     }
 
-    if (relation.children && relation.children.length) {
+    if (relation.children?.length) {
       const mappingKeys = Object.keys(mappings);
 
       relation.children.forEach(child => {
         const childExists = mapping.children.find(c => c.id === child.id);
         const isVariationAttributes =
-          child.variation_attributes && !!child.variation_attributes.length;
+          !!child.variation_attributes?.length;
 
         if (!childExists) {
           const mappingFound = mappingKeys.some(key =>
             isVariationAttributes
-              ? key === `${flowId}-${child.id}-variationAttributes`
+              ? key === `${flowId}-${child.id}-${options.depth}-variationAttributes`
               : key.startsWith(`${flowId}-${child.id}`)
           );
 
@@ -484,6 +508,19 @@ export default {
       ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
       : false;
   },
+  removeChildLookups: sessionMappings => {
+    if (!Array.isArray(sessionMappings?.basicMappings?.recordMappings)) {
+      return;
+    }
+    sessionMappings.basicMappings.recordMappings.forEach(category => {
+      if (category?.children?.length) {
+        category.children.forEach(childCategory => {
+          // eslint-disable-next-line no-param-reassign
+          delete childCategory.lookups;
+        });
+      }
+    });
+  },
   setCategoryMappingData: (
     flowId,
     sessionMappedData = {},
@@ -492,7 +529,7 @@ export default {
     relationshipData,
     deleteChildlessParent
   ) => {
-    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData || {};
 
     setMappingData(
       flowId,
@@ -568,7 +605,7 @@ export default {
     }
   },
   getDefaultExpression: value => {
-    if (value.extract && value.extract.indexOf('{{') !== -1) {
+    if (value.extract?.indexOf('{{') !== -1) {
       return value.extract;
     }
     if (value.extract) {
@@ -586,11 +623,7 @@ export default {
     const mappingData = response.find(sec => sec.operation === 'mappingData');
 
     if (
-      mappingData &&
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.variationMappings &&
-      mappingData.data.mappingData.variationMappings.recordMappings
+      mappingData?.data?.mappingData?.variationMappings?.recordMappings
     ) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
       const category = recordMappings.find(
@@ -652,9 +685,7 @@ export default {
       sec => sec.operation === 'generatesMetaData'
     );
     const categoryRelationshipData =
-      generatesMetaData &&
-      generatesMetaData.data &&
-      generatesMetaData.data.categoryRelationshipData;
+      generatesMetaData?.data?.categoryRelationshipData;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let childCategoryDetails;
     let grandchildCategoryDetails;
@@ -662,16 +693,15 @@ export default {
       rel => rel.id === category
     );
 
-    if (childCategory && categoryDetails.children) {
+    if (categoryDetails?.children) {
       childCategoryDetails = categoryDetails.children.find(
         child => child.id === childCategory
       );
     }
 
     if (
-      childCategoryDetails &&
       grandchildCategory &&
-      childCategoryDetails.children
+      childCategoryDetails?.children
     ) {
       grandchildCategoryDetails = childCategoryDetails.children.find(
         child => child.id === grandchildCategory
@@ -679,10 +709,7 @@ export default {
     }
 
     if (
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.basicMappings &&
-      mappingData.data.mappingData.basicMappings.recordMappings
+      mappingData.data?.mappingData?.basicMappings?.recordMappings
     ) {
       const { recordMappings } = mappingData.data.mappingData.basicMappings;
 
@@ -706,7 +733,7 @@ export default {
       if (!children.find(child => child.id === childCategory)) {
         children.push({
           id: childCategory,
-          name: childCategoryDetails.name,
+          name: childCategoryDetails?.name,
           children: [],
           fieldMappings: [],
         });
@@ -722,7 +749,7 @@ export default {
       if (!grandChildren.find(child => child.id === grandchildCategory)) {
         grandChildren.push({
           id: grandchildCategory,
-          name: grandchildCategoryDetails.name,
+          name: grandchildCategoryDetails?.name,
           children: [],
           fieldMappings: [],
         });
@@ -730,17 +757,12 @@ export default {
     }
   },
   addVariation: (draft, cKey, data) => {
-    const { categoryId, subCategoryId, isVariationAttributes } = data;
-    const { response = [] } = draft[cKey];
+    const { categoryId, subCategoryId, isVariationAttributes } = data || emptyObject;
+    const { response = [] } = draft[cKey] || emptyObject;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let categoryMappings;
 
-    if (
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.variationMappings &&
-      mappingData.data.mappingData.variationMappings.recordMappings
-    ) {
+    if (mappingData?.data?.mappingData?.variationMappings?.recordMappings) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
 
       categoryMappings = recordMappings.find(
@@ -801,6 +823,10 @@ export default {
       case adaptorTypeMap.SalesforceImport:
         return 'Salesforce';
       case adaptorTypeMap.HTTPImport:
+        if (resource?.http?.formType === 'rest') {
+          return 'REST API';
+        }
+
         return 'HTTP';
       case adaptorTypeMap.WrapperImport:
         return 'Wrapper';
@@ -810,13 +836,13 @@ export default {
         let toReturn;
 
         if (conn) {
-          if (conn.rdbms && conn.rdbms.type === 'mysql') {
+          if (conn.rdbms?.type === 'mysql') {
             toReturn = 'MySQL';
-          } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
+          } else if (conn.rdbms?.type === 'mssql') {
             toReturn = 'Microsoft SQL';
-          } else if (conn.rdbms && conn.rdbms.type === 'oracle') {
+          } else if (conn.rdbms?.type === 'oracle') {
             toReturn = 'Oracle DB (SQL)';
-          } else if (conn.rdbms && conn.rdbms.type === 'postgresql') {
+          } else if (conn.rdbms?.type === 'postgresql') {
             toReturn = 'PostgreSQL';
           } else {
             toReturn = 'Snowflake';
@@ -905,6 +931,7 @@ export default {
     importResource,
     isFieldMapping = false,
     isGroupedSampleData,
+    isPreviewSucess,
     netsuiteRecordType,
     options = {},
     exportResource,
@@ -945,6 +972,7 @@ export default {
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       isGroupedSampleData,
+      isPreviewSucess,
       resource: importResource,
       netsuiteRecordType,
       exportResource,
@@ -955,6 +983,7 @@ export default {
     mappings = {},
     resource = {},
     isGroupedSampleData,
+    isPreviewSucess,
     netsuiteRecordType,
     exportResource,
     options = {},
@@ -988,6 +1017,7 @@ export default {
           mappings: _mappings,
           recordType: netsuiteRecordType,
           isGroupedSampleData,
+          isPreviewSucess,
           exportResource,
           resource,
         });
@@ -1004,6 +1034,7 @@ export default {
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           isGroupedSampleData,
+          isPreviewSucess,
           useFirstRowSupported: true,
           exportResource,
           resource,
@@ -1022,6 +1053,7 @@ export default {
     mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
@@ -1039,6 +1071,7 @@ export default {
     return mappingUtil.generateMappingFieldsAndList({
       mappings,
       isGroupedSampleData,
+      isPreviewSuccess,
       useFirstRowSupported: importResource.adaptorType !== 'SalesforceImport',
       importResource,
       exportResource,
@@ -1047,6 +1080,7 @@ export default {
   getFieldsAndListMappings: ({
     mappings = {},
     isGroupedSampleData,
+    isPreviewSucess,
     useFirstRowSupported = false,
     resource = {},
     exportResource,
@@ -1054,16 +1088,28 @@ export default {
     let tempFm;
     const toReturn = [];
 
-    mappings.fields &&
-      mappings.fields.forEach(fm => {
+      mappings.fields?.forEach(fm => {
         const _fm = { ...fm };
 
-        if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) _fm.useFirstRow = true;
+        if (isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+          if (isGroupedSampleData) {
+            _fm.useFirstRow = true;
+          } else if (!isPreviewSucess) {
+            // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
+            if (handlebarRegex.test(_fm.extract)) {
+              if (_fm.extract?.indexOf('*.') !== -1 || _fm.extract?.indexOf('[*].') !== -1) {
+                _fm.useIterativeRow = true;
+              }
+            } else if (/^\*\./.test(_fm?.extract)) {
+              _fm.useIterativeRow = true;
+            }
+          }
+        }
+
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
-    mappings.lists &&
-      mappings.lists.forEach(lm => {
+      mappings.lists?.forEach(lm => {
         lm.fields.forEach(fm => {
           tempFm = { ...fm };
           tempFm.generate = lm.generate
@@ -1071,25 +1117,41 @@ export default {
             : tempFm.generate;
 
           if (useFirstRowSupported && isGroupedSampleData) {
-            if (tempFm.extract && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
+            if (tempFm.extract?.indexOf('*.') !== 0) {
               tempFm.useFirstRow = true;
             }
           }
+
+          // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
+          if (!isPreviewSucess && /^\*\./.test(tempFm?.extract)) {
+            tempFm.useIterativeRow = true;
+          }
+
+          // adding support for multi-field list mappings for csv/NS only for now to reduce regression
+          if (!isPreviewSucess && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+            if (handlebarRegex.test(tempFm.extract)) {
+              if (tempFm.extract?.indexOf('*.') !== -1 || tempFm.extract?.indexOf('[*].') !== -1) {
+                tempFm.useIterativeRow = true;
+              }
+            }
+          }
+
           // remove *. if present after setting useFirstRow
-          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
+          if (tempFm.extract?.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
 
           tempFm.extract = unwrapTextForSpecialChars(tempFm.extract);
           toReturn.push(tempFm);
         });
       });
-    // removing duplicate items if present
-    const _toReturn = uniqBy(toReturn, item => item.generate);
+      // removing duplicate items if present
+      const _toReturn = uniqBy(toReturn, item => item.generate);
 
-    return _toReturn;
+      return _toReturn;
   },
   generateMappingFieldsAndList: ({
     mappings = [],
     isGroupedSampleData,
+    isPreviewSuccess,
     useFirstRowSupported = false,
     importResource = {},
     exportResource = {},
@@ -1109,7 +1171,7 @@ export default {
       generateParts = mapping.generate ? mapping.generate.split('[*].') : null;
       let list;
 
-      if (generateParts && generateParts.length > 1) {
+      if (generateParts?.length > 1) {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
@@ -1124,30 +1186,43 @@ export default {
         }
 
         if (
-          useFirstRowSupported &&
-          isGroupedSampleData &&
+          ((useFirstRowSupported && isGroupedSampleData) || mapping.useIterativeRow) &&
           !mapping.useFirstRow &&
-          mapping.extract &&
-          mapping.extract.indexOf('[*].') === -1 &&
+          mapping.extract?.indexOf('[*].') === -1 &&
           !handlebarRegex.test(mapping.extract)
         ) {
           mapping.extract = `*.${mapping.extract}`;
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(importResource) && isGroupedSampleData && isNetSuiteBatchExport(exportResource)) {
-        if (
-          !mapping.useFirstRow &&
-          mapping.extract &&
-          mapping.extract.indexOf('[*].') === -1 &&
-          !handlebarRegex.test(mapping.extract)
-        ) {
-          mapping.extract = `*.${mapping.extract}`;
+      } else if (isCsvOrXlsxResource(importResource) && isNetSuiteBatchExport(exportResource)) {
+        let isListMapping = false;
+        const listWithEmptyGenerate = lists.find(l => l.generate === '');
+
+        // for multi-field mappings, there is no concept of useFirstRow
+        if ((!isPreviewSuccess || isGroupedSampleData || mapping.useIterativeRow) && handlebarRegex.test(mapping.extract)) {
+          if (mapping.extract?.indexOf('*.') !== -1 || mapping.extract?.indexOf('[*].') !== -1) {
+            isListMapping = true;
+          }
         }
 
-        if (!mapping.useFirstRow) {
-          const listWithEmptyGenerate = lists.find(l => l.generate === '');
+        if (isGroupedSampleData || mapping.useIterativeRow) {
+          if (
+            !mapping.useFirstRow &&
+            mapping.extract?.indexOf('[*].') === -1 &&
+            !handlebarRegex.test(mapping.extract)
+          ) {
+            mapping.extract = `*.${mapping.extract}`;
+          }
 
+          // for csv/xl imports the mapping order matters
+          // so we maintain the order after a list with empty generate is found
+          if ((!handlebarRegex.test(mapping.extract) && !mapping.useFirstRow) || listWithEmptyGenerate?.fields?.length) {
+            isListMapping = true;
+          }
+        }
+
+        if (isListMapping) {
           if (!listWithEmptyGenerate) {
             list = {
               generate: '',
@@ -1161,8 +1236,7 @@ export default {
       }
 
       if (
-        mapping.extract &&
-        mapping.extract.indexOf('*.') === 0 &&
+        mapping.extract?.indexOf('*.') === 0 &&
         useFirstRowSupported &&
         !mapping.useFirstRow
       ) {
@@ -1223,8 +1297,7 @@ export default {
         }
 
         formattedGenerateFields =
-          formattedSampleData &&
-          formattedSampleData.map(sd => ({ ...sd, name: sd.id }));
+          formattedSampleData?.map(sd => ({ ...sd, name: sd.id }));
       }
     }
 
@@ -1238,8 +1311,7 @@ export default {
 
         if (fld.indexOf('[*].') > 0) {
           fldContainer =
-            mappings.lists &&
-            mappings.lists.find(l => l.generate === fld.split('[*].')[0]);
+            mappings.lists?.find(l => l.generate === fld.split('[*].')[0]);
 
           if (!fldContainer) {
             fldContainer = {
@@ -1256,9 +1328,7 @@ export default {
         }
 
         let field =
-          fldContainer &&
-          fldContainer.fields &&
-          fldContainer.fields.find(l => l.generate === fld);
+          fldContainer?.fields?.find(l => l.generate === fld);
 
         if (!field) {
           field = {
@@ -1281,14 +1351,12 @@ export default {
   ) => {
     const connectorMappingMetadata = mappingMetadata[connectorExternalId];
 
-    connectorMappingMetadata &&
-      connectorMappingMetadata.forEach(meta => {
+      connectorMappingMetadata?.forEach(meta => {
         let mappingContainer;
 
         if (meta.generateList) {
           mappingContainer =
-            mappings.lists &&
-            mappings.lists.find(list => list.generate === meta.generateList);
+            mappings.lists?.find(list => list.generate === meta.generateList);
         } else {
           mappingContainer = mappings;
         }
@@ -1313,7 +1381,7 @@ export default {
         }
       });
 
-    return mappings;
+      return mappings;
   },
 
   validateMappings: (mappings, lookups) => {
@@ -1381,14 +1449,14 @@ export default {
   },
   getExtractPaths: (fields, options = {}) => {
     const { jsonPath } = options;
-    const extractPaths = getJSONPaths(pickFirstObject(fields));
+    const extractPaths = getJSONPaths(pickFirstObject(fields), undefined, { wrapSpecialChars: true });
 
     if (!jsonPath || jsonPath === '$') {
       return extractPaths;
     }
 
     return extractPaths
-      .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+      .filter(f => f.id?.indexOf(`${jsonPath}[*].`) === 0)
       .map(f => ({
         ...f,
         id: f.id.replace(`${jsonPath}[*].`, ''),
@@ -1412,5 +1480,22 @@ export default {
       fields: [...fieldsWithoutSubRecord, ...fieldsWithSubRecord],
       lists: orderedLists,
     };
+  },
+  autoMapperRecordTypeForAssistant: resource => {
+    const relativeUri = resource?.rest?.relativeURI || resource?.http?.relativeURI;
+    const firstRelativeUri = Array.isArray(relativeUri) ? relativeUri[0] : relativeUri;
+
+    if (firstRelativeUri) {
+      return getRecordTypeForAutoMapper(firstRelativeUri);
+    }
+
+    return '';
+  },
+  getFormStatusFromMappingSaveStatus: saveStatus => {
+    switch (saveStatus) {
+      case MAPPING_SAVE_STATUS.COMPLETED: return FORM_SAVE_STATUS.COMPLETE;
+      case MAPPING_SAVE_STATUS.REQUESTED: return FORM_SAVE_STATUS.LOADING;
+      default: return FORM_SAVE_STATUS.FAILED;
+    }
   },
 };

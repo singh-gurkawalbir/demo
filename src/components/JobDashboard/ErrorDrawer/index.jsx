@@ -4,10 +4,11 @@ import {makeStyles} from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
-import SpinnerWrapper from '../../SpinnerWrapper';
 import { JOB_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles({
@@ -106,33 +107,34 @@ export default function ErrorDrawer({
       path="viewErrors"
       height={height}
       width="full"
-      // type="paper"
-      title={title}
       variant="temporary"
       helpKey="jobErrors.helpSummary"
       helpTitle="Job errors"
       onClose={handleClose}>
-      <div className={classes.wrapperErrorDrawer}>
-        {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
-          <SpinnerWrapper>
-            <Spinner /> <span>{anyChildJobsAreInProgress ? 'Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed.' : 'Loading child jobs...'}</span>
-          </SpinnerWrapper>
-        )}
-        {(flowJobChildrenLoaded && !anyChildJobsAreInProgress && !jobWithErrors) && (
-          <span>No jobs with errors</span>
-        )}
-        {job && (
-          <>
-            <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
-            <JobErrorTable
-              jobErrors={jobErrors}
-              errorCount={errorCount}
-              job={job}
-              onCloseClick={onClose}
+      <DrawerHeader data-public title={title} />
+      <DrawerContent>
+        <div className={classes.wrapperErrorDrawer}>
+          {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
+          <Spinner centerAll>
+            <span>{anyChildJobsAreInProgress ? 'Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed.' : 'Loading child jobs...'}</span>
+          </Spinner>
+          )}
+          {(flowJobChildrenLoaded && !anyChildJobsAreInProgress && !jobWithErrors) && (
+            <span>No jobs with errors</span>
+          )}
+          {job && (
+            <>
+              <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
+              <JobErrorTable
+                jobErrors={jobErrors}
+                errorCount={errorCount}
+                job={job}
+                onCloseClick={onClose}
           />
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      </DrawerContent>
     </RightDrawer>
   );
 }

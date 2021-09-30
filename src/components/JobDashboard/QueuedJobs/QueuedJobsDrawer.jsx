@@ -1,91 +1,83 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles, Divider } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
-import { getStatus, getPages } from '../util';
+import { getStatus, getPages } from '../../../utils/jobdashboard';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 
 const metadata = {
-  columns: [
+  useColumns: () => [
     {
+      key: 'integration',
       heading: 'Integration',
-      value: job => job._integrationId && job._integrationId.name,
+      Value: ({rowData: job}) => job._integrationId && job._integrationId.name,
     },
     {
+      key: 'flow',
       heading: 'Flow',
-      value: job => job._flowId && job._flowId.name,
+      Value: ({rowData: job}) => job._flowId && job._flowId.name,
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: job => getStatus({ ...job, uiStatus: job.status }),
+      Value: ({rowData: job}) => getStatus({ ...job, uiStatus: job.status }),
     },
     {
+      key: 'success',
       heading: 'Success',
-      value: job => job.numSuccess,
+      Value: ({rowData: job}) => job.numSuccess,
     },
     {
+      key: 'ignore',
       heading: 'Ignore',
-      value: job => job.numIgnore,
+      Value: ({rowData: job}) => job.numIgnore,
     },
     {
+      key: 'error',
       heading: 'Error',
-      value: job => job.numError,
+      Value: ({rowData: job}) => job.numError,
     },
     {
+      key: 'pages',
       heading: 'Pages',
-      value: job => getPages(job),
+      Value: ({rowData: job}) => getPages(job),
     },
   ],
-  rowActions: [
+  useRowActions: () => [
     {
+      key: 'cancel',
       label: 'Cancel',
       icon: CancelIcon,
-      component: function CancelQueuedJobAction({ rowData = {} }) {
+      useOnClick: rowData => {
         const dispatch = useDispatch();
         const resourceId = rowData?._id;
         const handleCancelJob = useCallback(() => {
           dispatch(actions.connection.cancelQueuedJob(resourceId));
         }, [dispatch, resourceId]);
 
-        useEffect(() => {
-          handleCancelJob();
-        }, [handleCancelJob]);
-
-        return null;
+        return handleCancelJob;
       },
     },
   ],
 };
+
 const useStyles = makeStyles(theme => ({
   content: {
-    padding: theme.spacing(1, 2),
+    paddingBottom: theme.spacing(1),
   },
   select: {
-    width: '300px',
-  },
-  drawerPaper: {
-    marginTop: theme.appBarHeight,
-    width: 824,
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.background.default,
-    zIndex: theme.zIndex.drawer + 1,
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    overflowX: 'hidden',
-  },
-  fullWidthDrawerClose: {
-    width: 'calc(100% - 60px)',
-  },
-  fullWidthDrawerOpen: {
-    width: `calc(100% - ${theme.drawerWidth}px)`,
+    width: 'auto',
+    minWidth: 230,
   },
   info: {
     padding: theme.spacing(1, 0),
@@ -96,6 +88,12 @@ const useStyles = makeStyles(theme => ({
   },
   infoBlock: {
     marginRight: 12,
+  },
+  queuedDrawerHeader: {
+    alignItems: 'center',
+  },
+  divider: {
+    height: 20,
   },
 }));
 
@@ -126,32 +124,29 @@ function QueuedJobs({ connectionId}) {
   }, [connectionId, dispatch]);
 
   return (
-    <>
-      <div className={classes.content}>
-        <div className={classes.info}>
-          <Typography variant="body1" component="div">
-            <span className={classes.infoBlock}>
-              Jobs in Queue:
-              <span className={classes.infoNumber}>
-                {connectionJobs && connectionJobs.length}
-              </span>
+    <div className={classes.content}>
+      <div className={classes.info}>
+        <Typography variant="body1" component="div">
+          <span className={classes.infoBlock}>
+            Jobs in Queue:
+            <span className={classes.infoNumber}>
+              {connectionJobs && connectionJobs.length}
             </span>
-            <span className={classes.infoBlock}>
-              Messages in Queue:
-              <span className={classes.infoNumber}>{queueSize}</span>
-            </span>
-          </Typography>
-        </div>
-        <div className={classes.info}>
-          {connectionJobs && connectionJobs.length > 0 ? (
-            <CeligoTable data={connectionJobs} {...metadata} />
-          ) : (
-            <Typography variant="body1">{NO_PENDING_QUEUED_JOBS}</Typography>
-          )}
-        </div>
+          </span>
+          <span className={classes.infoBlock}>
+            Messages in Queue:
+            <span className={classes.infoNumber}>{queueSize}</span>
+          </span>
+        </Typography>
       </div>
-
-    </>
+      <div className={classes.info}>
+        {connectionJobs && connectionJobs.length > 0 ? (
+          <CeligoTable data={connectionJobs} {...metadata} />
+        ) : (
+          <Typography variant="body1">{NO_PENDING_QUEUED_JOBS}</Typography>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -159,8 +154,10 @@ const connectionsFilterConfig = {
   type: 'connections',
 };
 const paths = ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'];
+const flowJobConnectionsOptions = { ignoreBorrowedConnections: true };
 
 export default function QueuedJobsDrawer() {
+  const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
   const history = useHistory();
@@ -174,7 +171,7 @@ export default function QueuedJobsDrawer() {
   const connectionName = connectionsResourceList.find(
     c => c._id === connectionId
   )?.name;
-  const connections = useSelectorMemo(selectors.flowJobConnections, flowId);
+  const connections = useSelectorMemo(selectors.flowJobConnections, flowId, flowJobConnectionsOptions);
 
   const handleConnectionChange = useCallback(
     (id, value) => {
@@ -192,40 +189,36 @@ export default function QueuedJobsDrawer() {
     history.goBack();
   }, [history]);
 
-  const rightActionsQueuedJobs = {
-    width: 250,
-  };
-  const action = useMemo(
-    () => (
-      <div style={rightActionsQueuedJobs}>
-        <DynaSelect
-          id="queuedJobs_connection"
-          value={connectionId}
-          skipDefault
-          onFieldChange={handleConnectionChange}
-          options={[
-            { items: connections.map(c => ({ label: c.name, value: c.id })) },
-          ]}
-        />
-      </div>
-    ),
-    [connectionId, connections, rightActionsQueuedJobs, handleConnectionChange]
-  );
-
   return (
     <LoadResources required resources="flows,connections">
       <RightDrawer
-        anchor="right"
-        title={`Queued Jobs:${connectionName}`}
         height="tall"
         width="full"
-        actions={action}
         variant="permanent"
         hideBackButton
         onClose={handleClose}
         path={paths}>
-        <QueuedJobs connectionId={connectionId} />
+        <DrawerHeader title={`Queued Jobs: ${connectionName}`} className={classes.queuedDrawerHeader}>
+          {/* TODO: as per the mock we need help component <Help /> beside the select field */}
+          <DynaSelect
+            rootClassName={classes.select}
+            id="queuedJobs_connection"
+            value={connectionId}
+            skipDefault
+            onFieldChange={handleConnectionChange}
+            options={[
+              { items: connections.map(c => ({ label: c.name, value: c.id })) },
+            ]}
+          />
+          {/* TODO: @Azhar need to create seperate component */}
+          <Divider orientation="vertical" className={classes.divider} />
+        </DrawerHeader>
+
+        <DrawerContent>
+          <QueuedJobs connectionId={connectionId} />
+        </DrawerContent>
       </RightDrawer>
     </LoadResources>
   );
 }
+

@@ -1,28 +1,66 @@
-import React, { useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useCallback, useEffect, Fragment, useState, useMemo } from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import NotificationToaster from '../../../components/NotificationToaster';
+import { platformLicenseActionDetails } from '../../../utils/license';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
+    borderRadius: 17,
+    fontSize: 13,
+    padding: '4px 16px',
+    fontFamily: 'source sans pro semibold',
   },
-});
+  inTrialDaysLeft: {
+    fontFamily: 'source sans pro',
+    paddingLeft: 3,
+  },
+  titleStatusPanel: {
+    fontSize: 15,
+    paddingTop: 3,
+  },
+  actionBtn: {
+    color: theme.palette.primary.main,
+  },
+  licenseActionDetailsWrapper: {
+    background: 'none',
+    border: '1px solid',
+    minHeight: 'unset',
+    boxShadow: 'none',
+    maxWidth: 'unset',
+    '&:before': {
+      display: 'none',
+    },
+    '& > * svg': {
+      fontSize: '17px !important',
+      alignSelf: 'center',
+    },
+    '& > div:first-child': {
+      padding: 0,
+      width: '100%',
+    },
+  },
+  licenseActionInfoWrapper: {
+    borderColor: theme.palette.primary.main,
+  },
+  licenseActionErrorWrapper: {
+    borderColor: theme.palette.error.main,
+  },
+}));
 
-export default function LicenseAction() {
+function LicenseAction() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
-  const licenseActionDetails = useSelector(
-    state => selectors.platformLicenseActionDetails(state),
-    (left, right) =>
-      left.action === right.action &&
-      left.label === right.label &&
-      left.upgradeRequested === right.upgradeRequested
-  );
+  const [upgradeRequested, setUpgradeRequested] = useState(false);
+  const platformLicense = useSelector(state => selectors.platformLicense(state));
+  const licenseActionDetails = platformLicenseActionDetails(platformLicense);
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)
   );
@@ -46,7 +84,17 @@ export default function LicenseAction() {
     }
 
     if (licenseActionDetails.action === 'upgrade') {
+      setUpgradeRequested(true);
+
       return dispatch(actions.user.org.accounts.requestLicenseUpgrade());
+    }
+    if (licenseActionDetails.action === 'resume') {
+      setUpgradeRequested(true);
+
+      return dispatch(actions.user.org.accounts.requestUpdate('ioResume'));
+    }
+    if (licenseActionDetails.action === 'expired') {
+      return dispatch(actions.user.org.accounts.requestUpdate('ioRenewal'));
     }
   }, [dispatch, licenseActionDetails.action]);
 
@@ -60,15 +108,42 @@ export default function LicenseAction() {
   }
 
   return (
-    <Button
-      data-test={licenseActionDetails.label}
-      className={
-        classes.inTrial
-      }
-      variant="contained"
-      color="secondary"
-      onClick={handleClick}>
-      {licenseActionDetails.label}
-    </Button>
+    <>
+      {['resume', 'expired'].includes(licenseActionDetails.action) ? (
+        <NotificationToaster
+          variant={licenseActionDetails.action === 'expired' ? 'error' : 'info'} className={clsx(classes.licenseActionDetailsWrapper,
+            {[classes.licenseActionErrorWrapper]: licenseActionDetails.action === 'expired'},
+            {[classes.licenseActionInfoWrapper]: licenseActionDetails.action !== 'expired' })}>
+
+          <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
+            {licenseActionDetails.action === 'expired' ? 'Your subscription has expired.' : 'Your subscription was renewed.'}
+          </Typography>
+          <Button
+            variant="text"
+            disabled={upgradeRequested}
+            data-test="renewOrResumeNow"
+            className={classes.actionBtn}
+            onClick={handleClick}>
+            {licenseActionDetails.action === 'expired' ? 'Renew now.' : 'Reactivate.'}
+          </Button>
+
+        </NotificationToaster>
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          disableElevation
+          className={classes.inTrial}
+          data-test={licenseActionDetails.label}
+          onClick={handleClick}>
+          {licenseActionDetails.label}
+          <span className={classes.inTrialDaysLeft}>{licenseActionDetails.daysLeft}</span>
+        </Button>
+      )}
+    </>
   );
+}
+
+export default function LicenseActionMemo() {
+  return useMemo(() => <LicenseAction />, []);
 }

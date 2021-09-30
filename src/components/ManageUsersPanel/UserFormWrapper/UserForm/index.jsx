@@ -1,30 +1,21 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  EMAIL_REGEX,
 } from '../../../../utils/constants';
-import LoadResources from '../../../LoadResources';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import LoadResources from '../../../LoadResources';
 import ButtonGroup from '../../../ButtonGroup';
+import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 
-const useStyles = makeStyles(theme => ({
-  factionButton: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(1),
-  },
-  btnGroupInviteUser: {
-    paddingLeft: theme.spacing(1),
-    position: 'absolute',
-    bottom: 150,
-  },
-}));
 const integrationsFilterConfig = {
   type: 'integrations',
   ignoreEnvironmentFilter: true,
@@ -35,13 +26,16 @@ export default function UserForm({
   onSaveClick,
   onCancelClick,
   disableSave,
+  dataPublic,
 }) {
-  const classes = useStyles();
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
   ).resources;
   const users = useSelector(state => selectors.usersList(state));
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];
@@ -53,7 +47,8 @@ export default function UserForm({
       USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
     ].includes(data.accessLevel) &&
-    data.integrationAccessLevel.length
+    // integrationAccessLevel is expected to be an array but can be undefined
+    data.integrationAccessLevel?.length
   ) {
     integrationsToManage = data.integrationAccessLevel
       .filter(ial => ial.accessLevel === INTEGRATION_ACCESS_LEVELS.MANAGE)
@@ -75,6 +70,12 @@ export default function UserForm({
         defaultDisabled: isEditMode,
         helpText:
           'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+        validWhen: {
+          matchesRegEx: {
+            pattern: EMAIL_REGEX,
+            message: 'Please enter a valid email address',
+          },
+        },
       },
       accessLevel: {
         id: 'accessLevel',
@@ -87,6 +88,10 @@ export default function UserForm({
         options: [
           {
             items: [
+              {
+                label: 'Administer account',
+                value: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
               {
                 label: 'Manage all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
@@ -172,6 +177,17 @@ export default function UserForm({
         helpText:
           'The invited user will have permissions to monitor the integrations selected here.',
       },
+      accountSSORequired: {
+        type: 'checkbox',
+        id: 'accountSSORequired',
+        name: 'accountSSORequired',
+        label: 'Require account Single sign-on(SSO)?',
+        defaultValue: isEditMode ? !!data.accountSSORequired : true,
+        visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
+        // Incase of invite, this field should not be passed if the owner has not enabled SSO
+        omitWhenHidden: !isEditMode,
+        helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
+      },
     },
     layout: {
       fields: [
@@ -179,32 +195,37 @@ export default function UserForm({
         'accessLevel',
         'integrationsToManage',
         'integrationsToMonitor',
+        'accountSSORequired',
       ],
     },
   };
   const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
-    <LoadResources required resources="integrations">
-      <DynaForm
-        formKey={formKey}
-        fieldMeta={fieldMeta} />
-      <ButtonGroup className={classes.btnGroupInviteUser}>
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test="submitUserForm"
-          onClick={onSaveClick}>
-          {disableSave ? 'Saving...' : 'Save'}
-        </DynaSubmit>
-        <Button
-          data-test="cancelUserForm"
-          onClick={onCancelClick}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </ButtonGroup>
+    <LoadResources required resources="integrations,ssoclients">
+      <DrawerContent>
+        <DynaForm
+          dataPublic={dataPublic}
+          formKey={formKey} />
+      </DrawerContent>
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            data-test="submitUserForm"
+            onClick={onSaveClick}>
+            {disableSave ? 'Saving...' : 'Save'}
+          </DynaSubmit>
+          <Button
+            data-test="cancelUserForm"
+            onClick={onCancelClick}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
     </LoadResources>
   );
 }

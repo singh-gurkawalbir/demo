@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
@@ -22,8 +23,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2),
     minHeight: 50,
     transition: 'max-height .5s ease',
+    alignItems: 'flex-start',
     '& > div:first-child': {
-      width: props => (props.fullWidth ? '100%' : '85%'),
+      // width: props => (props.fullWidth ? '100%' : '85%'),
       display: 'flex',
       justifyContent: 'center',
     },
@@ -104,9 +106,13 @@ const useStyles = makeStyles(theme => ({
   },
   actionButton: {
     padding: 0,
+    marginTop: theme.spacing(1),
     '& svg': {
       color: theme.palette.secondary.main,
     },
+  },
+  icon: {
+    alignSelf: 'flex-start',
   },
 }));
 const variantIcon = {
@@ -142,10 +148,10 @@ export default function NotificationToaster(props) {
       aria-describedby="client-snackbar"
       elevation={4}
       message={(
-        <div id="client-snackbar" className={classes.message}>
+        <Typography component="div" id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
           {children}
-        </div>
+        </Typography>
       )}
       action={
           // show Close Icon only when onClose function is passed.

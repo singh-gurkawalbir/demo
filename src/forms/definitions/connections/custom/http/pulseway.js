@@ -13,6 +13,7 @@ export default {
     name: { fieldId: 'name' },
     'http.baseURI': {
       fieldId: 'http.baseURI',
+      helpKey: 'pulseway.connection.http.baseURI',
       defaultValue: r => (r?.http?.baseURI) || 'https://api.pulseway.com',
     },
     'http.auth.basic.username': {

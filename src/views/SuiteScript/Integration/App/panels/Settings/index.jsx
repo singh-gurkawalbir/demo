@@ -15,7 +15,7 @@ import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import Spinner from '../../../../../../components/Spinner';
 import { selectors } from '../../../../../../reducers';
-import inferErrorMessage from '../../../../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../../../../utils/inferErrorMessages';
 import ConfigureSettings from './sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
@@ -43,7 +43,7 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   if (!hasSettingsMetadata) { return <Spinner />; }
   // if settings is of type string...quiet likely its an error
   if (typeof resource === 'string' || resource?.errors) {
-    return <Typography color="error">{inferErrorMessage(resource)[0]}</Typography>;
+    return <Typography color="error">{inferErrorMessages(resource)[0]}</Typography>;
   }
 
   return children;

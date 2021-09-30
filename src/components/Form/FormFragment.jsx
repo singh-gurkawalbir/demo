@@ -10,6 +10,9 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
     marginBottom: 16,
+    '& > div > div:last-child': {
+      marginBottom: 0,
+    },
   },
   fieldStyle: {
     flexGrow: '1',
@@ -75,7 +78,7 @@ export const FieldComponent = props => {
   );
 };
 
-export default function FormFragment({ defaultFields, formKey }) {
+export default function FormFragment({ defaultFields, formKey, dataPublic}) {
   const dispatch = useDispatch();
 
   const onFieldChange = useCallback(
@@ -116,6 +119,7 @@ export default function FormFragment({ defaultFields, formKey }) {
     <>
       {defaultFields.map(field => (
         <FieldComponent
+          dataPublic={dataPublic}
           {...field}
           key={field.id}
           id={field.id}

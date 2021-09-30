@@ -6,13 +6,13 @@ import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
-export default function MappingCell({flowId}) {
+export default function MappingCell({ flowId, childId }) {
   const history = useHistory();
   const showMapping = useSelector(state =>
-    selectors.flowSupportsMapping(state, flowId)
+    selectors.flowSupportsMapping(state, flowId, childId)
   );
   const showUtilityMapping = useSelector(state =>
-    selectors.flowUsesUtilityMapping(state, flowId)
+    selectors.flowUsesUtilityMapping(state, flowId, childId)
   );
   const handleClick = useCallback(() => {
     if (showUtilityMapping) {

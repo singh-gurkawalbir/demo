@@ -1,21 +1,22 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useRef } from 'react';
+import { useSelector } from 'react-redux';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import DynaFormGenerator from './DynaFormGenerator';
-import { generateSimpleLayout } from '../Form';
+import { selectors } from '../../reducers';
+import useAutoScrollErrors from './useAutoScrollErrors';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
     maxHeight: '100%',
-    overflowY: 'auto',
-    padding: theme.spacing(1),
     border: 'none',
   },
   details: {
     display: 'block',
     paddingRight: theme.spacing(1),
   },
-  expansionPanel: {
+  Accordion: {
     width: '100%',
     overflow: 'hidden',
   },
@@ -29,13 +30,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DynaForm = props => {
+const key = 'key';
+
+export default function DynaForm(props) {
   const {
     className,
-    children,
-    showValidationBeforeTouched,
-    fieldMeta,
-    full,
     formKey,
     autoFocus,
     ...rest
@@ -50,21 +49,14 @@ const DynaForm = props => {
   // useTraceUpdate(props);
   const formRef = useRef();
 
-  useEffect(() => {
-    if (!autoFocus) return;
+  useAutoScrollErrors({ formKey, formRef});
 
-    const firstInput = formRef.current?.querySelector?.('input');
+  const fieldMeta = useSelector(state => selectors.formState(state, formKey)?.fieldMeta, shallowEqual);
 
-    if (firstInput?.focus) {
-      setTimeout(() => firstInput.focus(), 100);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formRef.current]);
+  const remountKey = useSelector(state => selectors.formRemountKey(state, formKey)) || key;
 
-  const updatedFieldMeta = useMemo(() => generateSimpleLayout(fieldMeta), [fieldMeta]);
-
-  if (!formKey || !updatedFieldMeta) return null;
-  const {layout, fieldMap} = updatedFieldMeta;
+  if (!formKey || !fieldMeta) return null;
+  const {layout, fieldMap} = fieldMeta;
 
   if (!fieldMap) return null;
 
@@ -76,10 +68,10 @@ const DynaForm = props => {
           layout={layout}
           fieldMap={fieldMap}
           formKey={formKey}
+          key={remountKey}
         />
       </div>
     </>
   );
-};
+}
 
-export default DynaForm;

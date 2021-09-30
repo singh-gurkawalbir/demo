@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobErrorDialog({
+export default function JobErrorDialog({
   jobId,
   jobType,
   numError = 0,
@@ -127,5 +127,3 @@ function JobErrorDialog({
     </ModalDialog>
   );
 }
-
-export default JobErrorDialog;

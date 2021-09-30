@@ -75,11 +75,12 @@ function SubRecordDrawer(props) {
       subRecordJsonPathLabel:
         f.subRecordJsonPathLabel || 'Path to node that contains items data',
     }));
-  const { subrecords } = useSelectorMemo(
+  const subrecords = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'imports',
     resourceContext.resourceId
-  ).merged.netsuite_da;
+  // eslint-disable-next-line camelcase
+  )?.merged?.netsuite_da?.subrecords;
   const fieldMeta = getFormFieldMetadata(
     recordTypeLabel,
     subrecords,
@@ -170,7 +171,6 @@ function SubRecordDrawer(props) {
             <>
               <DynaForm
                 formKey={formKey}
-                fieldMeta={fieldMeta}
                 className={classes.subRecordDynaForm}
               />
               <DynaSubmit

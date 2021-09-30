@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { ClickAwayListener, Popper, Paper } from '@material-ui/core';
@@ -31,6 +31,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: '4px',
+    // adding this below to avoid jerking
+    top: `${theme.spacing(1)}px !important`,
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,
@@ -116,29 +118,39 @@ export default function ArrowPopper({
   classes: overrideClasses,
   onClose = () => {}, // default to noop.
   className,
+  restrictToParent = true,
   ...rest
 }) {
   const [arrowEl, setArrowEl] = useState(null);
   const classes = useStyles(rest);
+  const modifiers = useMemo(() => {
+    const _modifiers = {
+      flip: {
+        enabled: true,
+      },
+      arrow: {
+        enabled: true,
+        element: arrowEl,
+      },
+    };
+
+    if (restrictToParent) {
+      _modifiers.preventOverflow = {
+        enabled: true,
+        boundariesElement: 'scrollParent',
+      };
+    }
+
+    return _modifiers;
+  }, [arrowEl, restrictToParent]);
 
   return (
     <Popper
       {...rest}
       onClose={onClose}
       className={clsx(classes.popper, overrideClasses?.popper)}
-      modifiers={{
-        flip: {
-          enabled: true,
-        },
-        preventOverflow: {
-          enabled: true,
-          boundariesElement: 'scrollParent',
-        },
-        arrow: {
-          enabled: true,
-          element: arrowEl,
-        },
-      }}>
+      modifiers={modifiers}
+      >
       <span className={clsx(classes.arrow, overrideClasses?.arrow)} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose} mouseEvent="onMouseDown">
         <Paper className={clsx(classes.paper, overrideClasses?.paper)} elevation={1}>
@@ -148,3 +160,4 @@ export default function ArrowPopper({
     </Popper>
   );
 }
+

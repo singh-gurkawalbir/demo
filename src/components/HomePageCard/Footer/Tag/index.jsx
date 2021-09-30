@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -59,14 +60,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Tag({ variant, className }) {
+export default function Tag({ label, className }) {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.wrapper, className)}>
-      <span className={classes.label}>{variant}</span>
+      <span className={classes.label}>{label}</span>
     </div>
   );
 }
 
-export default Tag;
+Tag.propTypes = {
+  label: PropTypes.string.isRequired,
+};

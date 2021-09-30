@@ -4,8 +4,6 @@ export default {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
-    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> to enable Real-time export capabilities.',
     visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
@@ -74,6 +72,7 @@ export default {
           { label: 'Web Services', value: 'webservices' },
           { label: 'Web Store', value: 'webstore' },
           { label: 'Workflow', value: 'workflow' },
+          { label: 'Web Application', value: 'webapplication' },
         ],
       },
     ],
@@ -175,10 +174,10 @@ export default {
     options: [
       {
         items: [
-          { label: 'All', value: 'all' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
-          { label: 'Test', value: 'test' },
+          { label: 'All – always export all data', value: 'all' },
+          { label: 'Delta – export only modified data', value: 'delta' },
+          { label: 'Once – export records only once', value: 'once' },
+          { label: 'Test – export only 1 record', value: 'test' },
         ],
       },
     ],
@@ -238,9 +237,11 @@ export default {
     label: 'NetSuite stats only',
   },
   'netsuite.internalId': {
-    type: 'text',
+    type: 'uri',
     required: true,
     label: 'File internal id',
+    showExtract: false,
+    showLookup: false,
   },
   'netsuite.blob.purgeFileAfterExport': {
     type: 'checkbox',

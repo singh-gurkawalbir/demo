@@ -150,11 +150,8 @@ export default function LicenseTable() {
         usedCount={totalUsedResources}
         totalCount={totalResources}
         hideButton
-            />
-      <CeligoTable
-        data={resourceList}
-        {...metadata}
-            />
+      />
+      <CeligoTable data={resourceList} {...metadata} />
       <ResourceDrawer />
     </>
   );

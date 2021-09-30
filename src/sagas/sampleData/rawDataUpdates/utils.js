@@ -3,6 +3,7 @@ import actions from '../../../actions';
 import { uploadRawData } from '../../uploadFile';
 import { selectors } from '../../../reducers';
 import { EMPTY_RAW_DATA } from '../../../utils/constants';
+import { SCOPES } from '../../resourceForm';
 
 export function* saveSampleDataOnResource({
   resourceId,
@@ -20,8 +21,8 @@ export function* saveSampleDataOnResource({
 
   // Mocking delay to make sure stage is cleared for this resourceId
   yield delay(50);
-  yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-  yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.commitStaged(resourceType, resourceId, SCOPES.VALUE));
 }
 
 export function* saveRawDataOnResource({
@@ -45,8 +46,8 @@ export function* saveRawDataOnResource({
   ];
 
   // Save the resource
-  yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-  yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.commitStaged(resourceType, resourceId, SCOPES.VALUE));
 }
 
 /**
@@ -57,10 +58,10 @@ export function* removeRawDataOnResource({
   resourceId,
   resourceType = 'exports',
 }) {
-  const resourceObj = yield select(selectors.resource, resourceType, resourceId) || {};
+  const resourceObj = yield select(selectors.resource, resourceType, resourceId);
 
   // TODO: make a generic fix on raw data and not specific to netsuite. Ref: IO-18967 for netsuite specific fix
-  if (resourceObj.adaptorType === 'NetSuiteExport' || !resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
+  if (resourceObj?.adaptorType === 'NetSuiteExport' || !resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
     return;
   }
   // TODO @Raghu Remove this EMPTY_RAW_DATA and remove rawData prop once BE Fix is done
@@ -74,6 +75,6 @@ export function* removeRawDataOnResource({
   ];
 
   // Save the resource
-  yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-  yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.commitStaged(resourceType, resourceId, SCOPES.VALUE));
 }

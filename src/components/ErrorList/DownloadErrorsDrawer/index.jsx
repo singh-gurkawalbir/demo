@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
 import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import actions from '../../../actions';
@@ -11,6 +10,9 @@ import ButtonGroup from '../../ButtonGroup';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 
 const fieldMeta = {
   fieldMap: {
@@ -29,21 +31,8 @@ const fieldMeta = {
       closeOnSelect: true,
     },
   },
-  layout: {
-    fields: ['fromDate', 'toDate'],
-  },
 };
 
-const useStyles = makeStyles(theme => ({
-  footer: {
-    padding: theme.spacing(1),
-    position: 'absolute',
-    bottom: 120,
-    height: 60,
-    width: '90%',
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-}));
 const INVALID_DATE = 'Invalid date';
 const VALID_ERROR_TYPES = ['open', 'resolved'];
 
@@ -51,7 +40,6 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   const match = useRouteMatch();
   const {type: errorType} = match.params || {};
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
@@ -100,9 +88,12 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   }
 
   return (
-    <div>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-      <div className={classes.footer}>
+    <>
+      <DrawerContent>
+        <DynaForm formKey={formKey} />
+      </DrawerContent>
+
+      <DrawerFooter>
         <ButtonGroup>
           <Button
             variant="outlined"
@@ -116,8 +107,8 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
             Cancel
           </Button>
         </ButtonGroup>
-      </div>
-    </div>
+      </DrawerFooter>
+    </>
   );
 }
 export default function DownloadErrorsDrawer({ flowId, resourceId }) {
@@ -128,11 +119,17 @@ export default function DownloadErrorsDrawer({ flowId, resourceId }) {
   return (
     <RightDrawer
       path="download/:type"
-      title="Download errors"
       variant="temporary"
       width="small"
       hideBackButton>
+
+      <DrawerHeader title="Download errors" />
+
       <DownloadErrors
+       // TODO: @Raghu, this is not ideal..pls take to @Dave for details.
+       // It would be best if the error form and buttons were
+       // two separate components so that the DrawerContent and DrawerFooter components could
+       // be user here directly instead of being children of the DownloadErrors component.
         flowId={flowId}
         resourceId={resourceId}
         onClose={handleClose} />

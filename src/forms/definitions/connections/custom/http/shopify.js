@@ -175,15 +175,14 @@ export default {
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2020-07',
+        '2021-07',
       visible: r => !(r?._connectorId),
       options: [
         {
           items: [
-            { label: '2020-01', value: '2020-01' },
-            { label: '2020-04', value: '2020-04' },
-            { label: '2020-07', value: '2020-07' },
-            { label: '2020-10', value: '2020-10' },
+            { label: '2021-04', value: '2021-04' },
+            { label: '2021-07', value: '2021-07' },
+            { label: '2021-10', value: '2021-10' },
           ],
         },
       ],
@@ -289,8 +288,7 @@ export default {
   },
   actions: [
     {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -299,12 +297,8 @@ export default {
       ],
     },
     {
-      id: 'save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['basic'],
-        },
         {
           field: 'http.auth.type',
           is: [''],
@@ -312,24 +306,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['basic'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
+      id: 'testandsavegroup',
       label: 'Test',
       visibleWhen: [
         {

@@ -13,6 +13,12 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
     state => selectors.resourceFormState(state, resourceType, resourceId)
   );
 
+  const isRealTimeExport = useSelector(state => {
+    const { merged: resourceData} = selectors.resourceData(state, resourceType, resourceId);
+
+    return resourceType === 'exports' && (resourceData.resourceType === 'realtime' || resourceData.type === 'distributed');
+  });
+
   const handleClose = useCallback(() => {
     dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
   }, [dispatch, resourceId, resourceType]);
@@ -29,7 +35,7 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
             href={bundleUrl}>
             <u>install the integrator.io {bundleVersion === '1.0' ? 'SuiteBundle' : 'SuiteApp'}</u>
           </a>
-          {' '}in your NetSuite account to integrate with SuiteScript {bundleVersion} APIs.
+          {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ` to integrate with SuiteScript ${bundleVersion} APIs.`}
 
         </Typography>
       </NotificationToaster>

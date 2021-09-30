@@ -7,7 +7,7 @@ import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     alignItems: 'flex-start',
   },
 });
-const DynaTextWithFlowSuggestion = props => {
+export default function DynaTextWithFlowSuggestion(props) {
   const classes = useStyles();
   const {
     id,
@@ -168,7 +168,7 @@ const DynaTextWithFlowSuggestion = props => {
             showLookupModal={handleLookupModalShown}
           />
         )}
-        <ErroredMessageComponent
+        <FieldMessage
           isValid={isValid}
           description={description}
           errorMessages={errorMessages}
@@ -176,6 +176,5 @@ const DynaTextWithFlowSuggestion = props => {
       </div>
     </FormControl>
   );
-};
+}
 
-export default DynaTextWithFlowSuggestion;

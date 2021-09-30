@@ -124,7 +124,7 @@ function TreeViewComponent(props) {
   return (
     <>
       {status === 'refreshed' ? (
-        <Spinner size={24} />
+        <Spinner />
       ) : (
         (!skipNonReferencedFields &&
           nonReferenceFields &&
@@ -191,13 +191,15 @@ export default function RefreshableTreeComponent(props) {
       filterKey: 'salesforce-sObjects-referenceFields',
     })
   );
-  const onNodeToggle = (nodeId, expanded) => {
-    // check for node id
+  const onNodeToggle = (event, newExpandedNodes) => {
+    // get expanded node id
 
-    const referenceTo = nodeId.split(',')[1];
-    const { status } = statusSelector(referenceTo);
+    const newExpandedNode = newExpandedNodes.find(node => !expanded.includes(node));
 
-    if (expanded) {
+    if (newExpandedNode) {
+      const referenceTo = newExpandedNode.split(',')[1];
+      const { status } = statusSelector(referenceTo);
+
       if (status !== 'received') {
         dispatch(
           actions.metadata.refresh(
@@ -207,12 +209,8 @@ export default function RefreshableTreeComponent(props) {
           )
         );
       }
-      setExpanded(openNodes => [...openNodes, nodeId]);
-    } else {
-      setExpanded(openNodes =>
-        openNodes.filter(openNode => openNode !== nodeId)
-      );
     }
+    setExpanded(newExpandedNodes);
   };
 
   const [hasCalled, setHasCalled] = useState(false);

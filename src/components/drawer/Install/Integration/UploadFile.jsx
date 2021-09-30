@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
-import SpinnerWrapper from '../../../SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -44,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   defaultText: {
     margin: 0,
     marginLeft: theme.spacing(0.5),
-    color: '#b1c6d7',
+    color: theme.palette.secondary.contrastText,
   },
 }));
 
@@ -55,6 +54,10 @@ export default function UploadFile() {
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)
   );
+  const {previewFailedStatus, id} = useSelector(state =>
+    selectors.isPreviewStatusFailed(state)
+  );
+
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -65,6 +68,14 @@ export default function UploadFile() {
       dispatch(actions.template.clearUploaded(templateId));
     }
   }, [dispatch, isFileUploaded, location, history, templateId]);
+
+  useEffect(() => {
+    if (previewFailedStatus) {
+      setUploadInProgress(false);
+      dispatch(actions.template.clearUploaded(id));
+    }
+  }, [dispatch, previewFailedStatus, id]);
+
   const handleUploadFileChange = e => {
     const file = e.target.files[0];
 
@@ -74,9 +85,7 @@ export default function UploadFile() {
 
   if (uploadInProgress) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

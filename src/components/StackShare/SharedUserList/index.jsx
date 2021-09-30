@@ -1,6 +1,5 @@
 import { useRouteMatch } from 'react-router-dom';
 import {
-  makeStyles,
   Table,
   TableRow,
   TableHead,
@@ -14,19 +13,9 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../actions';
 import SharedUserRow from './SharedUserRow';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: `calc(100% - ${theme.spacing(1)}px)`,
-    overflowX: 'auto',
-  },
-  table: {
-    paddingTop: theme.spacing(1),
-  },
-}));
 const ssharesFilterConfig = { type: 'sshares' };
 
 export default function SharedUserList() {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { stackId } = match.params;
@@ -47,25 +36,25 @@ export default function SharedUserList() {
     dispatch(actions.resource.requestCollection('sshares'));
   }, [dispatch]);
 
+  // TODO: For consistent look and feel,
+  // this should be converted to a CeligoTable.. no?
   return (
-    <div className={classes.root}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Email</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Off/On</TableCell>
-            <TableCell>Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {stackShareCollectionById &&
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Email</TableCell>
+          <TableCell>Name</TableCell>
+          <TableCell>Status</TableCell>
+          <TableCell>Off/On</TableCell>
+          <TableCell>Action</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {stackShareCollectionById &&
             stackShareCollectionById.map(user => (
               <SharedUserRow key={user._id} user={user} />
             ))}
-        </TableBody>
-      </Table>
-    </div>
+      </TableBody>
+    </Table>
   );
 }

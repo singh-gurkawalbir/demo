@@ -2,15 +2,13 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import useForm from '../components/Form';
 import { selectors } from '../reducers';
-import { fieldIDsExceptClockedFields } from '../forms/utils';
+import { fieldIDsExceptClockedFields } from '../forms/formFactory/utils';
 import actions from '../actions';
 
 export default function useFormInitWithPermissions(props) {
   const dispatch = useDispatch();
-  const { resourceType, resourceId, integrationId, disabled, skipMonitorLevelAccessCheck } = props;
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
+  const { resourceType, resourceId, integrationId, disabled, skipMonitorLevelAccessCheck, fieldMeta } = props;
+  const resource = useSelector(state => selectors.resource(state, resourceType, resourceId));
   // pass in the integration Id to find access level of its associated forms
   const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
     state =>
@@ -19,7 +17,6 @@ export default function useFormInitWithPermissions(props) {
     shallowEqual
   );
   const formKey = useForm({ ...props, disabled: disableAllFields });
-  const { fieldMeta } = props;
 
   useEffect(() => {
     let disableFields;

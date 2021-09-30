@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import IconTextButton from '../../../../IconTextButton';
@@ -20,6 +20,7 @@ import Spinner from '../../../../Spinner';
 import ActionButton from '../../../../ActionButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import ButtonGroup from '../../../../ButtonGroup';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
@@ -82,15 +83,13 @@ function EditListItemModal(props) {
     options: selectedSObject,
     selectedElement,
   } = props;
-  const options = useSelector(state => {
-    const { data } = selectors.optionsFromMetadata(state, {
-      connectionId,
-      commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
-      filterKey: 'salesforce-sObjects-childReferenceTo',
-    });
 
-    return data || defaultValueOptions;
-  });
+  const options = useSelectorMemo(selectors.makeOptionsFromMetadata,
+    connectionId,
+    `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
+    'salesforce-sObjects-childReferenceTo',
+  )?.data || defaultValueOptions;
+
   const optionsHandler = (fieldId, fields) => {
     if (fieldId === 'referencedFields') {
       const { value: selectedValue } = fields.find(
@@ -116,7 +115,7 @@ function EditListItemModal(props) {
         id: 'childRelationship',
         name: 'childRelationship',
         helpKey: 'childRelationship',
-        label: 'Child SObject Type',
+        label: 'Child sObject Type',
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-childReferenceTo',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
@@ -150,7 +149,7 @@ function EditListItemModal(props) {
         helpKey: 'orderBy',
         id: 'orderBy',
         name: 'orderBy',
-        type: 'refreshableselect',
+        type: 'salesforcesortorderselect',
         filterKey: 'salesforce-sObjects-nonReferenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
@@ -173,7 +172,7 @@ function EditListItemModal(props) {
 
   return (
     <>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
 
       <DynaSubmit
         formKey={formKey}
@@ -213,13 +212,11 @@ function RelatedListView(props) {
   useEffect(() => {
     if (length) setCount(count => count + 1);
   }, [length]);
-  const { data: options } = useSelector(state =>
-    selectors.optionsFromMetadata(state, {
-      connectionId,
-      commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
-      filterKey: 'salesforce-sObjects-childReferenceTo',
-    })
-  );
+
+  const options = useSelectorMemo(selectors.makeOptionsFromMetadata,
+    connectionId,
+    `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
+    'salesforce-sObjects-childReferenceTo')?.data;
   const updatedValue = value
     ? value.map((eachValue, index) => {
       const { parentField, sObjectType } = eachValue;
@@ -346,15 +343,10 @@ export function useCallMetadataAndReturnStatus(props) {
   const { options: selectedSObject, connectionId } = props;
   const dispatch = useDispatch();
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`;
-  const { options, status } = useSelector(state => {
-    const { data, status } = selectors.optionsFromMetadata(state, {
-      connectionId,
-      commMetaPath,
-      filterKey: 'salesforce-sObjects-childReferenceTo',
-    });
 
-    return { options: data || defaultValueOptions, status };
-  });
+  const {data, status} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-sObjects-childReferenceTo');
+
+  const options = data || defaultValueOptions;
 
   useEffect(() => {
     if (!status && selectedSObject && typeof selectedSObject === 'string') {
@@ -397,7 +389,7 @@ export default function DynaRelatedList(props) {
           </div>
           <div>
             {status === 'refreshed' ? (
-              <Spinner size={24} />
+              <Spinner />
             ) : (
               <>
                 <ActionButton

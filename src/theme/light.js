@@ -75,18 +75,16 @@ export default {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto400',
+        padding: '6px 24px',
+        fontSize: '15px',
+        lineHeight: '19px',
         '&: disabled': {
           cursor: 'not-allowed',
         },
       },
       contained: {
-        borderRadius: '17px',
-        fontSize: '13px',
-        lineHeight: '15px',
         border: '1px solid',
-        textTransform: 'none',
         boxShadow: 'none',
-        padding: '6px 20px',
         '&:disabled': {
           background: 'none',
         },
@@ -184,6 +182,12 @@ export default {
           color: colors.celigoNeutral4,
         },
       },
+      textSecondary: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: colors.celigoAccent2,
+        },
+      },
     },
     MuiToolbar: {
       dense: {
@@ -211,38 +215,12 @@ export default {
       tooltip: {
         backgroundColor: colors.celigoNeutral7,
         fontFamily: 'source sans pro',
+        fontSize: 13,
         color: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral7,
-      },
-      tooltipPlacementBottom: {
-        margin: '0 !important',
-        '&:before': {
-          top: -7,
-          left: 0,
-          width: 8,
-          right: 0,
-          margin: 'auto',
-          content: '""',
-          zIndex: 1,
-          position: 'absolute',
-          borderLeft: '7px solid transparent',
-          borderRight: '7px solid transparent',
-          borderBottom: `7px solid ${colors.celigoNeutral7}`,
-        },
-        '&:after': {
-          top: -5,
-          left: 0,
-          right: 0,
-          width: 6,
-          margin: 'auto',
-          content: '""',
-          zIndex: 2,
-          position: 'absolute',
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent',
-          borderBottom: `6px solid ${colors.celigoNeutral7}`,
-        },
+        padding: [[6, 8, 4, 8]],
+        margin: '0px !important',
       },
     },
     MuiPickersDay: {
@@ -380,7 +358,6 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
-        fontFamily: 'Roboto400',
       },
       overline: {
         fontSize: '12px',
@@ -426,21 +403,22 @@ export default {
         position: 'relative',
         padding: [[10, 16]],
         borderBottomColor: colors.celigoNeutral3,
+        verticalAlign: 'top',
       },
       head: {
-        fontFamily: 'Roboto500',
-        color: colors.celigoNeutral6,
-        fontSize: 15,
+        fontFamily: 'source sans pro semibold',
+        color: colors.celigoNeutral8,
+        fontSize: 16,
       },
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
-        fontSize: 15,
+        fontSize: 16,
       },
     },
     MuiSelect: {
       icon: {
-        color: colors.celigoNeutral5,
+        color: colors.celigoNeutral8,
       },
       select: {
         '&:focus': {
@@ -463,10 +441,15 @@ export default {
     },
     MuiOutlinedInput: {
       root: {
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
         backgroundColor: colors.celigoWhite,
-        '&$focused': {
+        '&:hover': {
           borderColor: colors.celigoAccent2,
         },
+      },
+      notchedOutline: {
+        border: `${colors.celigoNeutral3} !important`,
       },
     },
     MuiFormLabel: {
@@ -476,7 +459,7 @@ export default {
         lineHeight: '24px',
         color: colors.celigoNeutral8,
         '&.Mui-required': {
-          fontWeight: 'bold',
+          fontFamily: 'source sans pro semibold',
         },
       },
     },
@@ -576,7 +559,7 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
-        marginTop: -4,
+        height: 20,
         '& svg': {
           fontSize: 18,
         },
@@ -624,52 +607,6 @@ export default {
         background: colors.celigoNeutral1,
       },
     },
-    MuiExpansionPanel: {
-      root: {
-        background: colors.celigoWhite,
-        border: '1px solid',
-        borderColor: colors.celigoNeutral3,
-        borderRadius: 4,
-        boxShadow: 'none',
-        marginBottom: 24,
-        '&.Mui-expanded': {
-          '&:last-child': {
-            marginBottom: '24px !important',
-          },
-        },
-
-      },
-    },
-    MuiExpansionPanelDetails: {
-      root: {
-        padding: [[10, 16, 0, 16]],
-        borderTop: `1px solid ${colors.celigoNeutral3}`,
-      },
-    },
-    MuiExpansionPanelSummary: {
-      root: {
-        padding: '0px 12px',
-        height: 42,
-        display: 'inline-flex',
-        minHeight: 'unset',
-        paddingLeft: 16,
-        flexDirection: 'row-reverse',
-        '&.Mui-expanded': {
-          minHeight: 0,
-        },
-      },
-      content: {
-        paddingTop: 3,
-        margin: 0,
-        '&.Mui-expanded': {
-          margin: 0,
-        },
-      },
-      expandIcon: {
-        padding: 0,
-        margin: [[0, 4, 0, 0]],
-      },
-    },
     MuiChip: {
       root: {
         backgroundColor: colors.celigoWhite,
@@ -706,6 +643,11 @@ export default {
           color: colors.celigoAccent2,
         },
       },
+      colorPrimary: {
+        '&.Mui-disabled': {
+          color: colors.celigoNeutral3,
+        },
+      },
     },
     MuiTabs: {
       root: {
@@ -740,7 +682,7 @@ export default {
       },
       textColorPrimary: {
         '&.Mui-selected': {
-          fontWeight: 'bold',
+          fontFamily: 'source sans pro semibold',
         },
       },
       labelIcon: {
@@ -758,7 +700,6 @@ export default {
         },
       },
     },
-    // Adding globally to fix the radio button and text alignment default is margin left -11,
     MuiFormControlLabel: {
       root: {
         marginLeft: 0,
@@ -804,8 +745,77 @@ export default {
         },
       },
     },
-  },
+    MuiAccordion: {
+      root: {
+        borderRadius: '4px',
+        padding: '1px 0px',
+        '&:before': {
+          backgroundColor: 'none',
+        },
+      },
+    },
+    MuiAccordionSummary: {
+      root: {
+        flexDirection: 'row-reverse',
+        display: 'inline-flex',
+        minHeight: 'unset',
+        '&.Mui-expanded': {
+          minHeight: '42px',
 
+        },
+      },
+      expandIcon: {
+        padding: 0,
+        margin: [[-2, 4, 0, 0]],
+      },
+
+      content: {
+        margin: [[10, 0, 8, 0]],
+        '&.Mui-expanded': {
+          margin: [[10, 0, 8, 0]],
+        },
+      },
+    },
+    MuiAccordionDetails: {
+      root: {
+        paddingBottom: 0,
+        borderTop: `1px solid ${colors.celigoNeutral3}`,
+      },
+    },
+    MuiAutocomplete: {
+      option: {
+        position: 'relative',
+        fontSize: '14px',
+        alignItems: 'flex-start',
+        borderBottom: `1px solid ${colors.celigoNeutral3}`,
+        '&:before': {
+          content: '""',
+          width: '6px',
+          height: '100%',
+          position: 'absolute',
+          background: 'transparent',
+          left: 0,
+          top: 0,
+        },
+        '&[data-focus="true"]': {
+          backgroundColor: colors.celigoNeutral2,
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:active': {
+          backgroundColor: colors.celigoNeutral2,
+        },
+      },
+      inputRoot: {
+        alignItems: 'flex-start',
+      },
+      listbox: {
+        padding: '2px 0px',
+      },
+    },
+
+  },
   props: {
     MuiCheckbox: {
       disableRipple: true,
@@ -822,6 +832,7 @@ export default {
     },
     MuiTooltip: {
       'data-public': true,
+      arrow: true,
     },
     MuiTabs: {
       'data-public': true,

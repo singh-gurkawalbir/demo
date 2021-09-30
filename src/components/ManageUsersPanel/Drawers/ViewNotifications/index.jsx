@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
 import RightDrawer from '../../../drawer/Right';
+import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import { selectors } from '../../../../reducers';
 import viewNotificationsMetadata from './metadata';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -9,7 +11,7 @@ import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptio
 import DynaForm from '../../../DynaForm';
 import LoadResources from '../../../LoadResources';
 
-function ViewNotifications({ integrationId, storeId, onClose }) {
+function ViewNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
   const [count, setCount] = useState(0);
   const { userEmail } = match.params;
@@ -19,7 +21,7 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
       return selectors.subscribedNotifications(state, userEmail);
     }
 
-    return selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail});
+    return selectors.integrationNotificationResources(state, integrationId, { childId, userEmail});
   },
   shallowEqual
   );
@@ -57,12 +59,14 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
 
   return (
     <LoadResources required resources="notifications,flows,connections">
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DrawerContent>
+        <DynaForm formKey={formKey} />
+      </DrawerContent>
     </LoadResources>
   );
 }
 
-export default function ViewNotificationsDrawer({ integrationId, storeId }) {
+export default function ViewNotificationsDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
@@ -70,11 +74,10 @@ export default function ViewNotificationsDrawer({ integrationId, storeId }) {
   return (
     <RightDrawer
       path=":userEmail/notifications"
-      title="View notifications"
       variant="temporary"
-      width="medium"
-      hideBackButton>
-      <ViewNotifications integrationId={integrationId} storeId={storeId} onClose={handleClose} />
+      width="medium">
+      <DrawerHeader title="View notifications" />
+      <ViewNotifications integrationId={integrationId} childId={childId} onClose={handleClose} />
     </RightDrawer>
   );
 }

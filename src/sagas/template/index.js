@@ -4,7 +4,8 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
-import { getResource } from '../resources';
+import { commitStagedChanges, getResource } from '../resources';
+import { SCOPES } from '../resourceForm';
 
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
@@ -153,6 +154,30 @@ export function* verifyBundleOrPackageInstall({
   }
 }
 
+export function* publishStatus({ templateId, isPublished }) {
+  const patchSet = [
+    {
+      op: 'replace',
+      path: '/published',
+      value: !isPublished,
+    },
+  ];
+
+  yield put(actions.resource.patchStaged(templateId, patchSet, SCOPES.value));
+
+  const resp = yield call(commitStagedChanges, {
+    resourceType: 'templates',
+    id: templateId,
+    scope: SCOPES.value,
+  });
+
+  if (resp?.error) {
+    yield put(actions.template.publish.error(templateId));
+  } else {
+    yield put(actions.template.publish.success(templateId));
+  }
+}
+
 export const templateSagas = [
   takeEvery(actionTypes.TEMPLATE.ZIP_GENERATE, generateZip),
   takeEvery(actionTypes.TEMPLATE.PREVIEW_REQUEST, requestPreview),
@@ -161,4 +186,5 @@ export const templateSagas = [
     verifyBundleOrPackageInstall
   ),
   takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
+  takeEvery(actionTypes.TEMPLATE.PUBLISH.REQUEST, publishStatus),
 ];

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
@@ -8,16 +8,21 @@ import { selectors } from '../../../../reducers';
 import { applicationsList, groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import SearchIcon from '../../../icons/SearchIcon';
 import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { isNewId } from '../../../../utils/resource';
+import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
   optionRoot: {
     display: 'flex',
-    borderBottom: `1px solid ${theme.palette.divider}`,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     wordBreak: 'break-word',
     padding: '0px',
   },
@@ -28,8 +33,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     borderRight: '1px solid',
-    borderColor: theme.palette.divider,
-    color: theme.palette.divider,
+    borderColor: theme.palette.secondary.lightest,
+    color: theme.palette.secondary.lightest,
     height: '100%',
   },
   optionLabel: {
@@ -43,8 +48,7 @@ const useStyles = makeStyles(theme => ({
     position: 'static',
   },
   img: {
-    maxWidth: '100%',
-    padding: '0px 16px',
+    maxWidth: '80px',
   },
   selectedContainer: {
     display: 'flex',
@@ -91,6 +95,7 @@ export default function SelectApplication(props) {
   const classes = useStyles();
   const theme = useTheme();
   const ref = useRef(null);
+  const [menuIsOpen, setMenuIsOpen] = useState(!value);
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
@@ -137,37 +142,28 @@ export default function SelectApplication(props) {
         color: theme.palette.secondary.light,
       },
     }),
-    control: () => ({
-      minWidth: 365,
-      height: '38px',
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '2px',
-      backgroundColor: theme.palette.background.paper,
-      alignItems: 'center',
-      cursor: 'default',
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      minHeight: '38px',
-      position: 'relative',
-      boxSizing: 'borderBox',
-      transition: 'all 100ms ease 0s',
-      outline: '0px !important',
+    control: provided => ({
+      ...provided,
+      borderColor: theme.palette.secondary.lightest,
+      boxShadow: 'none',
+      borderRadius: 2,
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
     }),
-    menu: () => ({
-      zIndex: 2,
+    menu: provided => ({
+      ...provided,
       border: '1px solid',
+      boxShadow: 'none',
       borderColor: theme.palette.secondary.lightest,
-      position: 'absolute',
-      backgroundColor: theme.palette.background.paper,
-      width: '100%',
+      marginTop: 0,
+      borderRadius: '0px 0px 2px 2px',
     }),
     input: () => ({
       color: theme.palette.secondary.light,
+      '& input': {
+        fontFamily: 'inherit',
+      },
       // marginLeft: 3,
     }),
     placeholder: () => ({
@@ -208,7 +204,11 @@ export default function SelectApplication(props) {
       const transition = 'opacity 300ms';
       const color = theme.palette.secondary.light;
 
-      return { ...provided, opacity, transition, color };
+      return { ...provided,
+        opacity,
+        transition,
+        color,
+        margin: 0 };
     },
   };
   const options = groupedApps.map(group => ({
@@ -231,6 +231,8 @@ export default function SelectApplication(props) {
   const Option = props => {
     const { type, icon, value } = props.data;
 
+    const {dataPublic} = props.selectProps || {};
+
     return (
       <div data-test={props.label} className={classes.optionRoot}>
         <components.Option {...props}>
@@ -242,7 +244,7 @@ export default function SelectApplication(props) {
               className={classes.img}
             />
           </span>
-          <span className={classes.optionLabel}>{props.label}</span>
+          <span data-public={!!dataPublic} className={classes.optionLabel}>{props.label}</span>
         </components.Option>
       </div>
     );
@@ -268,7 +270,7 @@ export default function SelectApplication(props) {
       ? ''
       : {
         value,
-        label: applications.find(a => a.id === value).name,
+        label: applications.find(a => a.id === value)?.name,
       };
 
   const dispatch = useDispatch();
@@ -276,6 +278,7 @@ export default function SelectApplication(props) {
     ref?.current?.select?.blur();
     const newValue = isMulti ? [...value, e.value] : e.value;
 
+    setMenuIsOpen(false);
     if (onFieldChange) {
       onFieldChange(id, newValue);
     }
@@ -307,6 +310,7 @@ export default function SelectApplication(props) {
     if (inputValue) {
       refState.inputValue = inputValue;
     }
+    setMenuIsOpen(true);
   }, []);
 
   function handleRemove(index) {
@@ -322,26 +326,30 @@ export default function SelectApplication(props) {
       key={id}
       disabled={disabled}
       className={classes.formControl}>
-      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
-        {label}
-      </InputLabel>
+      <div className={classes.fieldWrapper}>
+        <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+          {label}
+        </InputLabel>
+        <FieldHelp {...props} />
+      </div>
       <Select
+        dataPublic
         ref={ref}
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option, DropdownIndicator }}
         defaultValue={defaultValue}
-        defaultMenuIsOpen={!value}
+        menuIsOpen={menuIsOpen}
         options={options}
         onChange={handleChange}
         onFocus={handleFocus}
-        // onBlur={handleBlur}
+        onBlur={() => setMenuIsOpen(!value)}
         styles={customStyles}
         filterOption={filterOptions}
       />
 
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
 
       {isMulti && value.length > 0 && (
         <div className={classes.selectedContainer}>

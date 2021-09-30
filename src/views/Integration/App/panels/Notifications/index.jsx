@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import map from 'lodash/map';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -29,12 +28,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NotificationsSection({ integrationId, storeId }) {
+export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const classes = useStyles();
 
-  const notificationsConfig = useMemo(() => ({ storeId }), [storeId]);
+  const notificationsConfig = useMemo(() => ({ childId, ignoreUnusedConnections: true }), [childId]);
   const notifications = useSelectorMemo(
     selectors.mkIntegrationNotificationResources,
     integrationId,
@@ -46,12 +45,6 @@ export default function NotificationsSection({ integrationId, storeId }) {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
-
-  // TODO: Remove below hashing logic once mkIntegrationNotificationResources is optimised.
-  const flowHash = flowValues.sort().join('');
-  const connHash = connectionValues.sort().join('');
-  const connOptionsHash = map(connectionOps, 'value').join('');
-  const flowOptionsHash = map(flowOps, 'value').join('');
 
   const fieldMeta = {
     fieldMap: {
@@ -84,14 +77,14 @@ export default function NotificationsSection({ integrationId, storeId }) {
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [flowHash, connHash, connOptionsHash, flowOptionsHash]);
+  }, [flowValues, connectionValues, flows, connections]);
 
   const handleSubmit = useCallback(formVal => {
     const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};
 
-    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId }));
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId }));
     setCount(count => count + 1);
-  }, [integrationId, dispatch, storeId]);
+  }, [integrationId, dispatch, childId]);
 
   const infoTextNotifications =
 'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';
@@ -107,7 +100,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
 
       <LoadResources required resources="notifications,flows,connections,exports,imports">
         <div className={classes.form}>
-          <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+          <DynaForm formKey={formKey} />
           <DynaSubmit formKey={formKey} onClick={handleSubmit}>
             Save
           </DynaSubmit>

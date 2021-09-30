@@ -1,10 +1,12 @@
 /* global describe, test,  expect */
 import each from 'jest-each';
+import { deepClone } from 'fast-json-patch';
 import util, {
   checkExtractPathFoundInSampledata,
   unwrapTextForSpecialChars,
   wrapTextForSpecialChars,
   isMappingEqual,
+  extractMappingFieldsFromCsv,
 } from '.';
 
 describe('isEqual', () => {
@@ -725,6 +727,7 @@ describe('Field-list mapping to UI mapping utils', () => {
         extract: 'test test',
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
       },
       {
         generate: 'a[*].a2',
@@ -733,16 +736,19 @@ describe('Field-list mapping to UI mapping utils', () => {
         immutable: true,
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
       },
       {
         generate: 'a[*].a3',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
       },
       {
         generate: 'b[*].b1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
       },
     ];
 
@@ -947,10 +953,14 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'Amazon Product ASIN',
         generate: 'Test',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Description',
         generate: 'test field3',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Name',
@@ -1056,10 +1066,14 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'Amazon Product ASIN',
         generate: 'Test',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Description',
         generate: 'test field3',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Name',
@@ -1340,6 +1354,8 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'werfg',
         generate: 'asd[*].iuyt',
+        useIterativeRow: true,
+
       },
     ];
 
@@ -1504,6 +1520,8 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'werfg',
         generate: 'asd[*].iuyt',
+        useIterativeRow: true,
+
       },
     ];
 
@@ -1794,6 +1812,8 @@ describe('Field-list mapping to UI mapping utils', () => {
         extract: 'test test',
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a2',
@@ -1802,16 +1822,22 @@ describe('Field-list mapping to UI mapping utils', () => {
         immutable: true,
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a3',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'b[*].b1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
     ];
 
@@ -1916,6 +1942,8 @@ describe('Field-list mapping to UI mapping utils', () => {
         generate: 'a[*].a1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a2',
@@ -1923,16 +1951,22 @@ describe('Field-list mapping to UI mapping utils', () => {
         discardIfEmpty: true,
         immutable: true,
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a3',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'b[*].b1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
     ];
 
@@ -2524,13 +2558,7 @@ describe('UI mapping to field-list mapping utils', () => {
       },
     };
     const fieldListMapping = {
-      fields: [
-        {
-          generate: 'test test2',
-          useFirstRow: true,
-          hardCodedValue: null,
-        },
-      ],
+      fields: [],
       lists: [
         {
           generate: '',
@@ -2538,6 +2566,11 @@ describe('UI mapping to field-list mapping utils', () => {
             {
               extract: '*.[Base Price]',
               generate: 'test test',
+            },
+            {
+              generate: 'test test2',
+              useFirstRow: true,
+              hardCodedValue: null,
             },
           ],
         },
@@ -2561,6 +2594,187 @@ describe('UI mapping to field-list mapping utils', () => {
               generate: 'b1',
               extract: '*.[Display Name]',
               discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should consider handlebar mappings as list type for FTP import for grouped sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: 'Base Price',
+          generate: 'test test',
+        },
+        {
+          extract: 'Description',
+          generate: 'a[*].a1',
+        },
+        {
+          generate: 'a[*].a2',
+          extract: 'Type',
+          useFirstRow: true,
+        },
+        {
+          generate: 'b[*].b1',
+          extract: 'Display Name',
+          useFirstRow: false,
+          discardIfEmpty: true,
+        },
+        {
+          generate: 'test test2',
+          extract: '{{substring *.[some field] 0 100}}',
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: true,
+      importResource: {
+        _connectionId: '5f354102b2b91626b0e94d00',
+        distributed: false,
+        file: {
+          type: 'csv',
+          csv: {},
+        },
+        ftp: {},
+        adaptorType: 'FTPImport',
+      },
+      exportResource: {
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [],
+      lists: [
+        {
+          generate: '',
+          fields: [
+            {
+              extract: '*.[Base Price]',
+              generate: 'test test',
+            },
+            {
+              generate: 'test test2',
+              extract: '{{substring *.[some field] 0 100}}',
+            },
+          ],
+        },
+        {
+          generate: 'a',
+          fields: [
+            {
+              extract: '*.Description',
+              generate: 'a1',
+            },
+            {
+              generate: 'a2',
+              extract: 'Type',
+            },
+          ],
+        },
+        {
+          generate: 'b',
+          fields: [
+            {
+              generate: 'b1',
+              extract: '*.[Display Name]',
+              discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should maintain mappings order for FTP import for grouped sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          generate: 'header column1',
+          useFirstRow: true,
+          hardCodedValue: null,
+        },
+        {
+          extract: 'Base Price',
+          generate: 'List column1',
+        },
+        {
+          generate: 'List column2',
+          useFirstRow: true,
+          hardCodedValue: null,
+        },
+        {
+          generate: 'List column3',
+          extract: '{{substring *.[some field] 0 100}}',
+        },
+        {
+          generate: 'List column4',
+          extract: '{{substring [some field] 0 100}}',
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: true,
+      importResource: {
+        _connectionId: '5f354102b2b91626b0e94d00',
+        distributed: false,
+        file: {
+          type: 'csv',
+          csv: {},
+        },
+        ftp: {},
+        adaptorType: 'FTPImport',
+      },
+      exportResource: {
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [{
+        generate: 'header column1',
+        hardCodedValue: null,
+        useFirstRow: true,
+      }],
+      lists: [
+        {
+          generate: '',
+          fields: [
+            {
+              extract: '*.[Base Price]',
+              generate: 'List column1',
+            },
+            {
+              generate: 'List column2',
+              useFirstRow: true,
+              hardCodedValue: null,
+            },
+            {
+              generate: 'List column3',
+              extract: '{{substring *.[some field] 0 100}}',
+            },
+            {
+              generate: 'List column4',
+              extract: '{{substring [some field] 0 100}}',
             },
           ],
         },
@@ -3064,7 +3278,7 @@ describe('mapping utils', () => {
   });
   test('getApplicationName util', () => {
     const testCases = [
-      {resource: {assistant: 'trinet'}, connection: {}, appName: 'TriNet'},
+      {resource: {assistant: 'clover'}, connection: {}, appName: 'Clover'},
       {resource: {adaptorType: 'FTPImport'}, connection: {}, appName: 'FTP'},
       {resource: {adaptorType: 'S3Import'}, connection: {}, appName: 'Amazon S3'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mysql'}}, appName: 'MySQL'},
@@ -3321,24 +3535,2128 @@ describe('mapping utils', () => {
       expect(isMappingEqual(mapping1, mapping2)).toEqual(result);
     });
   });
-  // TODO after release branch merge to master
-  test('extractMappingFieldsFromCsv util', () => {
+  test('extractMappingFieldsFromCsv util tests', () => {
+    const testCases = [
+      {
+        data: null,
+        output: undefined,
+      },
+      {
+        data: '',
+        output: {},
+      },
+      {
+        data: `a,b,c
+        d,e,f`,
+        options: {includeHeader: false, columnDelimiter: ','},
+        output: {
+          Column0: 'Column0',
+          Column1: 'Column1',
+          Column2: 'Column2',
+        },
+      },
+      {
+        data: `a,b,c
+        d,e,f`,
+        output: {
+          a: 'a',
+          b: 'b',
+          c: 'c',
+        },
+      },
+      {
+        data: `a  ,b  ,c  
+        d,e,f`,
+        output: {
+          a: 'a',
+          b: 'b',
+          c: 'c',
+        },
+      },
+    ];
+
+    testCases.forEach(({data, options, output}) => {
+      expect(extractMappingFieldsFromCsv(data, options)).toEqual(output);
+    });
   });
-  // TODO
-  test('generateSubrecordMappingAndLookup util', () => {
+  describe('generateSubrecordMappingAndLookup and appendModifiedSubRecordToMapping util tests', () => {
+    const importObj1 = {
+      _id: 'i1',
+      name: 'bodylevel subrecord import',
+      _connectionId: 'c1',
+      distributed: true,
+      netsuite_da: {
+        useSS2Restlets: false,
+        operation: 'add',
+        recordType: 'assemblybuild',
+        mapping: {
+          fields: [
+            {
+              generate: 'celigo_inventorydetail',
+              subRecordMapping: {
+                recordType: 'inventorydetail',
+                jsonPath: '$',
+                mapping: {
+                  fields: [
+
+                  ],
+                  lists: [
+                    {
+                      generate: 'inventoryassignment',
+                      fields: [
+                        {
+                          generate: 'quantity',
+                          extract: '*.quantity',
+                          internalId: false,
+                        },
+                        {
+                          generate: 'internalid',
+                          extract: '*.inventory_internal_id',
+                          internalId: false,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                lookups: [{name: 'lookup1', map: {a: 'b'}}],
+              },
+            },
+          ],
+          lists: [
+          ],
+        },
+      },
+      adaptorType: 'NetSuiteDistributedImport',
+    };
+
+    const importObj2 = {
+      _id: 'i1',
+      name: 'ns linelevel subrecord import',
+      _connectionId: 'c1',
+      distributed: true,
+      lookups: [],
+      netsuite_da: {
+        useSS2Restlets: false,
+        operation: 'add',
+        recordType: 'salesorder',
+        lookups: [],
+        mapping: {
+          fields: [
+            {
+              extract: 'Name',
+              generate: 'entity',
+              internalId: false,
+            },
+          ],
+          lists: [
+            {
+              generate: 'item',
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    recordType: 'inventorydetail',
+                    jsonPath: '$',
+                    mapping: {
+                      fields: [
+                        {
+                          generate: 'item',
+                          extract: 'item',
+                          internalId: true,
+                        },
+                      ],
+                      lists: [
+                        {
+                          generate: 'inventoryassignment',
+                          fields: [
+                            {
+                              generate: 'quantity',
+                              extract: '*.quantity',
+                              internalId: false,
+                            },
+                            {
+                              generate: 'internalid',
+                              extract: '*.inventory_internal_id',
+                              internalId: false,
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    lookups: [{name: 'lookup1', map: {a: 'b'}}],
+                  },
+                  internalId: false,
+                },
+              ],
+            },
+          ],
+        },
+      },
+      adaptorType: 'NetSuiteDistributedImport',
+    };
+
+    test('should return mappings and lookups associated with subrecord for body level subrecord import', () => {
+      expect(util.generateSubrecordMappingAndLookup(importObj1, 'celigo_inventorydetail', false, 'assemblybuild')).toEqual({
+        lookups: [
+          {
+            map: {
+              a: 'b',
+            },
+            name: 'lookup1',
+          },
+        ],
+        mappings: [
+          {
+            extract: 'quantity',
+            generate: 'inventoryassignment[*].quantity',
+            internalId: false,
+            useIterativeRow: true,
+          },
+          {
+            extract: 'inventory_internal_id',
+            generate: 'inventoryassignment[*].internalid',
+            internalId: false,
+            useIterativeRow: true,
+          },
+        ],
+      });
+    });
+    test('should return mappings and lookups associated with subrecord for sublist\'s subrecord import', () => {
+      expect(util.generateSubrecordMappingAndLookup(importObj2, 'item[*].celigo_inventorydetail', true, 'salesorder')).toEqual({
+        lookups: [
+          {
+            map: {
+              a: 'b',
+            },
+            name: 'lookup1',
+          },
+        ],
+        mappings: [
+          {
+            extract: 'item',
+            generate: 'item.internalid',
+            internalId: true,
+            useAsAnInitializeValue: false,
+          },
+          {
+            extract: 'quantity',
+            generate: 'inventoryassignment[*].quantity',
+            internalId: false,
+            useIterativeRow: true,
+          },
+          {
+            extract: 'inventory_internal_id',
+            generate: 'inventoryassignment[*].internalid',
+            internalId: false,
+            useIterativeRow: true,
+          },
+        ],
+      });
+    });
+
+    test('should append provided mappings and lookups to the subrecord mapping', () => {
+      const lookups = [{
+        map: {
+          a: 'b',
+        },
+        name: 'lookup1',
+      }, {
+        name: 'lookup2',
+        expression: ['name', 'is', 'name'],
+        recordType: 'account',
+        resultField: 'id',
+      }];
+
+      const mappings = [{
+        extract: 'quantity',
+        generate: 'inventoryassignment[*].quantity',
+        internalId: false,
+        useIterativeRow: true,
+      },
+      {
+        extract: 'inventory_internal_id',
+        generate: 'inventoryassignment[*].internalid',
+        internalId: false,
+        useIterativeRow: true,
+      },
+      {
+        generate: 'inventoryassignment[*].name',
+        hardCodedValue: 'name',
+      }];
+
+      expect(util.appendModifiedSubRecordToMapping({
+        resource: importObj1,
+        subRecordMappingId: 'celigo_inventorydetail',
+        subRecordMapping: mappings,
+        subRecordLookups: lookups})).toEqual({
+        fields: [
+          {
+            generate: 'celigo_inventorydetail',
+            subRecordMapping: {
+              jsonPath: '$',
+              lookups: [
+                {
+                  map: {
+                    a: 'b',
+                  },
+                  name: 'lookup1',
+                },
+                {
+                  expression: [
+                    'name',
+                    'is',
+                    'name',
+                  ],
+                  name: 'lookup2',
+                  recordType: 'account',
+                  resultField: 'id',
+                },
+              ],
+              mapping: [
+                {
+                  extract: 'quantity',
+                  generate: 'inventoryassignment[*].quantity',
+                  internalId: false,
+                  useIterativeRow: true,
+                },
+                {
+                  extract: 'inventory_internal_id',
+                  generate: 'inventoryassignment[*].internalid',
+                  internalId: false,
+                  useIterativeRow: true,
+                },
+                {
+                  generate: 'inventoryassignment[*].name',
+                  hardCodedValue: 'name',
+                },
+              ],
+              recordType: 'inventorydetail',
+            },
+          },
+        ],
+        lists: [
+
+        ],
+      });
+    });
   });
-  // TODO
-  test('appendModifiedSubRecordToMapping util', () => {
+  describe('getFormattedGenerateData util tests', () => {
+    test('should format data correctly for salesforce import', () => {
+      const inputData = [
+        {value: 'a', type: 't', label: 'l', picklistValues: ['a1', 'a2'], childSObject: 'something', relationshipName: 'rel'},
+        {value: 'b1', type: 'b2', label: 'b3', picklistValues: [], childSObject: 'something', relationshipName: 'rel'},
+      ];
+      const result = [
+        {id: 'a', type: 't', name: 'l', options: ['a1', 'a2'], childSObject: 'something', relationshipName: 'rel'},
+        {id: 'b1', type: 'b2', name: 'b3', options: [], childSObject: 'something', relationshipName: 'rel'},
+      ];
+
+      expect(util.getFormattedGenerateData(inputData, 'salesforce'))
+        .toEqual(result);
+    });
+
+    test('should format data correctly for netsuite import', () => {
+      const inputData = [
+        {value: 'a', type: 't', label: 'l', sublist: []},
+        {value: 'b1', type: 'b2', label: 'b3', sublist: 'item'},
+      ];
+      const result = [
+        {id: 'a', type: 't', name: 'l', sublist: []},
+        {id: 'b1', type: 'b2', name: 'b3', sublist: 'item'},
+        {id: 'celigo_nlobjAttachToId', name: 'Attach To Internal ID'},
+        {id: 'celigo_nlobjAttachedType', name: 'Attached Record Type'},
+        {id: 'celigo_nlobjAttachedId', name: 'Attached Internal ID'},
+        {id: 'celigo_nlobjDetachFromId', name: 'Detach From Internal ID'},
+        {id: 'celigo_nlobjDetachedType', name: 'Detached Record Type'},
+        {id: 'celigo_nlobjDetachedId', name: 'Detached Internal ID'},
+        {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'Attribute Role'},
+        {id: 'celigo_nlobjAttachDetachAttributesField', name: 'Attribute Field'},
+      ];
+
+      expect(util.getFormattedGenerateData(inputData, 'netsuite'))
+        .toEqual(result);
+    });
+
+    const inputData =
+        {
+          something: 's',
+          value: 1,
+          booleanProp: true,
+          arr: [{
+            quantity: 5,
+            id: 3,
+          }],
+        };
+    const result =
+      [
+        {
+          id: 'booleanProp',
+          name: 'booleanProp',
+          type: 'boolean',
+        },
+        {
+          id: 'something',
+          name: 'something',
+          type: 'string',
+        },
+        {
+          id: 'value',
+          name: 'value',
+          type: 'number',
+        },
+        {
+          id: 'arr[*].id',
+          name: 'arr[*].id',
+          type: 'number',
+        },
+        {
+          id: 'arr[*].quantity',
+          name: 'arr[*].quantity',
+          type: 'number',
+        },
+      ];
+
+    test('should return formatted data for other import [except netsuite and salesforce]', () => {
+      expect(util.getFormattedGenerateData(inputData, 'rest'))
+        .toEqual(result);
+    });
+    test('should parse inputString and return formatted data for other import [except netsuite and salesforce]', () => {
+      expect(util.getFormattedGenerateData(JSON.stringify(inputData), 'rest'))
+        .toEqual(result);
+    });
   });
-  test('getFormattedGenerateData util', () => {
+  describe('addVariationMap util tests', () => {
+    const amazonCategoryMappings = {
+      uiAssistant: 'amazon',
+      response: [
+        {
+          operation: 'mappingData',
+          data: {
+            mappingData: {
+              basicMappings: {
+                recordMappings: [
+                  {
+                    id: 'commonAttributes',
+                    name: 'Common',
+                    children: [
+                      {
+                        id: 'Dimensions',
+                        name: 'Dimensions',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                    fieldMappings: [
+                      {
+                        extract: 'SKU',
+                        generate: 'item_sku',
+                        discardIfEmpty: true,
+                      },
+                    ],
+                    lookups: [
+
+                    ],
+                  },
+                ],
+              },
+              variationMappings: {
+                recordMappings: [{
+                  id: 'baby',
+                  variation_themes: [],
+                  children: [],
+                }, {
+                  id: 'babyproducts',
+                  variation_themes: [{
+                    id: 'variation_theme',
+                    variation_theme: 'var1',
+                  }],
+                  children: [],
+                }, {
+                  id: 'beauty',
+                  variation_themes: [],
+                  children: [{
+                    id: 'beautyproducts',
+                    variation_themes: [],
+                    children: [],
+                  }, {
+                    id: 'cream',
+                    children: [{
+                      id: 'grandchild',
+                      variation_themes: [],
+                    }],
+                  }],
+                }],
+              },
+            },
+          },
+        },
+        {
+          operation: 'extractsMetaData',
+          data: [
+            {
+              id: 'hits',
+              type: 'integer',
+              name: '# Times Viewed',
+            },
+          ],
+        },
+        {
+          operation: 'generatesMetaData',
+          data: {
+            categoryRelationshipData: [
+              {
+                id: 'baby',
+                name: 'Baby',
+                isLeafNode: true,
+                marketplace_domain: 'US',
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    test('should correctly add variation to the variation themes if category and subcategory provided are same', () => {
+      const state = deepClone(amazonCategoryMappings);
+
+      util.addVariationMap(state, 'baby', 'baby', 'high', false);
+
+      expect(state).toEqual({
+        response: [
+          {
+            data: {
+              mappingData: {
+                basicMappings: {
+                  recordMappings: [
+                    {
+                      children: [
+                        {
+                          children: [
+                          ],
+                          fieldMappings: [
+                          ],
+                          id: 'Dimensions',
+                          name: 'Dimensions',
+                        },
+                      ],
+                      fieldMappings: [
+                        {
+                          discardIfEmpty: true,
+                          extract: 'SKU',
+                          generate: 'item_sku',
+                        },
+                      ],
+                      id: 'commonAttributes',
+                      lookups: [
+
+                      ],
+                      name: 'Common',
+                    },
+                  ],
+                },
+                variationMappings: {
+                  recordMappings: [
+                    {
+                      children: [],
+                      id: 'baby',
+                      variation_themes: [
+                        {
+                          fieldMappings: [
+                          ],
+                          id: 'variation_theme',
+                          variation_theme: 'high',
+                        },
+                      ],
+                    },
+                    {
+                      id: 'babyproducts',
+                      variation_themes: [{
+                        id: 'variation_theme',
+                        variation_theme: 'var1',
+                      }],
+                      children: [],
+                    },
+                    {
+                      id: 'beauty',
+                      variation_themes: [],
+                      children: [{
+                        id: 'beautyproducts',
+                        variation_themes: [],
+                        children: [],
+                      }, {
+                        id: 'cream',
+                        children: [{
+                          id: 'grandchild',
+                          variation_themes: [],
+                        }],
+                      }],
+                    },
+                  ],
+                },
+              },
+            },
+            operation: 'mappingData',
+          },
+          {
+            data: [
+              {
+                id: 'hits',
+                name: '# Times Viewed',
+                type: 'integer',
+              },
+            ],
+            operation: 'extractsMetaData',
+          },
+          {
+            data: {
+              categoryRelationshipData: [
+                {
+                  id: 'baby',
+                  isLeafNode: true,
+                  marketplace_domain: 'US',
+                  name: 'Baby',
+                },
+              ],
+            },
+            operation: 'generatesMetaData',
+          },
+        ],
+        uiAssistant: 'amazon',
+      });
+    });
+
+    test('should correctly add variation to the variation themes for the subcategory of the specified category', () => {
+      const state = deepClone(amazonCategoryMappings);
+
+      util.addVariationMap(state, 'beauty', 'beautyproducts', 'medium', false);
+
+      expect(state).toEqual({
+        response: [
+          {
+            data: {
+              mappingData: {
+                basicMappings: {
+                  recordMappings: [
+                    {
+                      children: [
+                        {
+                          children: [
+                          ],
+                          fieldMappings: [
+                          ],
+                          id: 'Dimensions',
+                          name: 'Dimensions',
+                        },
+                      ],
+                      fieldMappings: [
+                        {
+                          discardIfEmpty: true,
+                          extract: 'SKU',
+                          generate: 'item_sku',
+                        },
+                      ],
+                      id: 'commonAttributes',
+                      lookups: [
+
+                      ],
+                      name: 'Common',
+                    },
+                  ],
+                },
+                variationMappings: {
+                  recordMappings: [
+                    {
+                      children: [],
+                      id: 'baby',
+                      variation_themes: [],
+                    },
+                    {
+                      id: 'babyproducts',
+                      variation_themes: [{
+                        id: 'variation_theme',
+                        variation_theme: 'var1',
+                      }],
+                      children: [],
+                    },
+                    {
+                      id: 'beauty',
+                      variation_themes: [],
+                      children: [{
+                        id: 'beautyproducts',
+                        children: [],
+                        variation_themes: [
+                          {
+                            fieldMappings: [],
+                            id: 'variation_theme',
+                            variation_theme: 'medium',
+                          },
+                        ],
+                      }, {
+                        id: 'cream',
+                        children: [{
+                          id: 'grandchild',
+                          variation_themes: [],
+                        }],
+                      }],
+                    },
+                  ],
+                },
+              },
+            },
+            operation: 'mappingData',
+          },
+          {
+            data: [
+              {
+                id: 'hits',
+                name: '# Times Viewed',
+                type: 'integer',
+              },
+            ],
+            operation: 'extractsMetaData',
+          },
+          {
+            data: {
+              categoryRelationshipData: [
+                {
+                  id: 'baby',
+                  isLeafNode: true,
+                  marketplace_domain: 'US',
+                  name: 'Baby',
+                },
+              ],
+            },
+            operation: 'generatesMetaData',
+          },
+        ],
+        uiAssistant: 'amazon',
+      });
+    });
+
+    test('should correctly add variation to the variation themes for the grandchild if subcategory exists as grandchild for the specified category', () => {
+      const state = deepClone(amazonCategoryMappings);
+
+      util.addVariationMap(state, 'beauty', 'grandchild', 'small', false);
+
+      expect(state).toEqual({
+        response: [
+          {
+            data: {
+              mappingData: {
+                basicMappings: {
+                  recordMappings: [
+                    {
+                      children: [
+                        {
+                          children: [
+                          ],
+                          fieldMappings: [
+                          ],
+                          id: 'Dimensions',
+                          name: 'Dimensions',
+                        },
+                      ],
+                      fieldMappings: [
+                        {
+                          discardIfEmpty: true,
+                          extract: 'SKU',
+                          generate: 'item_sku',
+                        },
+                      ],
+                      id: 'commonAttributes',
+                      lookups: [
+
+                      ],
+                      name: 'Common',
+                    },
+                  ],
+                },
+                variationMappings: {
+                  recordMappings: [
+                    {
+                      children: [],
+                      id: 'baby',
+                      variation_themes: [],
+                    },
+                    {
+                      id: 'babyproducts',
+                      variation_themes: [{
+                        id: 'variation_theme',
+                        variation_theme: 'var1',
+                      }],
+                      children: [],
+                    },
+                    {
+                      id: 'beauty',
+                      variation_themes: [],
+                      children: [{
+                        id: 'beautyproducts',
+                        variation_themes: [],
+                        children: [],
+                      }, {
+                        id: 'cream',
+                        children: [{
+                          id: 'grandchild',
+                          variation_themes: [{
+                            fieldMappings: [],
+                            id: 'variation_theme',
+                            variation_theme: 'small',
+                          }],
+                        }],
+                      }],
+                    },
+                  ],
+                },
+              },
+            },
+            operation: 'mappingData',
+          },
+          {
+            data: [
+              {
+                id: 'hits',
+                name: '# Times Viewed',
+                type: 'integer',
+              },
+            ],
+            operation: 'extractsMetaData',
+          },
+          {
+            data: {
+              categoryRelationshipData: [
+                {
+                  id: 'baby',
+                  isLeafNode: true,
+                  marketplace_domain: 'US',
+                  name: 'Baby',
+                },
+              ],
+            },
+            operation: 'generatesMetaData',
+          },
+        ],
+        uiAssistant: 'amazon',
+      });
+    });
+
+    test('should skip adding variation to the variation themes if theme already exists', () => {
+      const state = deepClone(amazonCategoryMappings);
+
+      util.addVariationMap(state, 'babyproducts', 'babyproducts', 'var1', false);
+
+      expect(state).toEqual({
+        response: [
+          {
+            data: {
+              mappingData: {
+                basicMappings: {
+                  recordMappings: [
+                    {
+                      children: [
+                        {
+                          children: [
+                          ],
+                          fieldMappings: [
+                          ],
+                          id: 'Dimensions',
+                          name: 'Dimensions',
+                        },
+                      ],
+                      fieldMappings: [
+                        {
+                          discardIfEmpty: true,
+                          extract: 'SKU',
+                          generate: 'item_sku',
+                        },
+                      ],
+                      id: 'commonAttributes',
+                      lookups: [
+
+                      ],
+                      name: 'Common',
+                    },
+                  ],
+                },
+                variationMappings: {
+                  recordMappings: [
+                    {
+                      children: [],
+                      id: 'baby',
+                      variation_themes: [],
+                    },
+                    {
+                      id: 'babyproducts',
+                      variation_themes: [{
+                        id: 'variation_theme',
+                        variation_theme: 'var1',
+                      }],
+                      children: [],
+                    },
+                    {
+                      id: 'beauty',
+                      variation_themes: [],
+                      children: [{
+                        id: 'beautyproducts',
+                        variation_themes: [],
+                        children: [],
+                      }, {
+                        id: 'cream',
+                        children: [{
+                          id: 'grandchild',
+                          variation_themes: [],
+                        }],
+                      }],
+                    },
+                  ],
+                },
+              },
+            },
+            operation: 'mappingData',
+          },
+          {
+            data: [
+              {
+                id: 'hits',
+                name: '# Times Viewed',
+                type: 'integer',
+              },
+            ],
+            operation: 'extractsMetaData',
+          },
+          {
+            data: {
+              categoryRelationshipData: [
+                {
+                  id: 'baby',
+                  isLeafNode: true,
+                  marketplace_domain: 'US',
+                  name: 'Baby',
+                },
+              ],
+            },
+            operation: 'generatesMetaData',
+          },
+        ],
+        uiAssistant: 'amazon',
+      });
+    });
   });
-  // TODO (Sravan)
-  test('addVariationMap util', () => {
+  describe('addCategory util tests', () => {
+    const amazonCategoryMappings = {
+      uiAssistant: 'amazon',
+      response: [
+        {
+          operation: 'mappingData',
+          data: {
+            mappingData: {
+              basicMappings: {
+                recordMappings: [
+                  {
+                    id: 'commonAttributes',
+                    name: 'Common',
+                    children: [
+                      {
+                        id: 'Dimensions',
+                        name: 'Dimensions',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                    fieldMappings: [
+                      {
+                        extract: 'SKU',
+                        generate: 'item_sku',
+                        discardIfEmpty: true,
+                      },
+                    ],
+                    lookups: [
+
+                    ],
+                  },
+                ],
+              },
+              variationMappings: {
+                recordMappings: [],
+              },
+            },
+          },
+        },
+        {
+          operation: 'extractsMetaData',
+          data: [
+            {
+              id: 'hits',
+              type: 'integer',
+              name: '# Times Viewed',
+            },
+          ],
+        },
+        {
+          operation: 'generatesMetaData',
+          data: {
+            categoryRelationshipData: [
+              {
+                id: 'baby',
+                name: 'Baby',
+                isLeafNode: false,
+                marketplace_domain: 'US',
+                children: [
+                  {
+                    id: 'babyproducts',
+                    name: 'babyProducts',
+                    children: [
+                      {
+                        id: 'grandchild1',
+                        name: 'Grand Child 1',
+                      },
+                      {
+                        id: 'grandchild2',
+                        name: 'Grand Child 2',
+                      },
+                    ],
+                    isLeafNode: false,
+                  },
+                  {
+                    id: 'infanttoddlercarseat',
+                    name: 'infanttoddlercarseat',
+                    isLeafNode: true,
+                  },
+                  {
+                    id: 'stroller',
+                    name: 'stroller',
+                    isLeafNode: true,
+                  },
+                ],
+              },
+              {
+                id: 'beauty',
+                name: 'Beauty',
+                isLeafNode: false,
+                marketplace_domain: 'US',
+                children: [
+                  {
+                    id: 'beautymisc',
+                    name: 'beautymisc',
+                    isLeafNode: true,
+                  },
+                  {
+                    id: 'bodycareproduct',
+                    name: 'bodycareproduct',
+                    isLeafNode: true,
+                  },
+                  {
+                    id: 'conditioner',
+                    name: 'conditioner',
+                    isLeafNode: true,
+                  },
+                ],
+              },
+              {
+                id: 'category 3',
+                name: 'Category 3',
+                isLeafNode: true,
+              },
+            ],
+            generatesMetaData: {
+              id: 'commonAttributes',
+              name: 'Common',
+              variation_themes: [],
+              variation_attributes: [],
+              fields: [
+                {
+                  id: 'item_sku',
+                  name: 'Seller SKU',
+                  description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                  filterType: 'required',
+                  type: 'input',
+                  options: [],
+                },
+              ],
+              children: [],
+              isLeafNode: false,
+              marketplace_domain: 'US',
+            },
+          },
+        },
+      ],
+    };
+
+    const integrationId = 'i1';
+    const flowId = 'f1';
+
+    test('should correctly add category and sub category to state when category does not have children', () => {
+      const state = {
+        [`${flowId}-${integrationId}`]: deepClone(amazonCategoryMappings),
+      };
+
+      util.addCategory(state, integrationId, flowId, {
+        category: 'category 3',
+        childCategory: 'category 3 child',
+      });
+
+      expect(state).toEqual({
+        'f1-i1': {
+          uiAssistant: 'amazon',
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'Common',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                            discardIfEmpty: true,
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'category 3',
+                        name: 'Category 3',
+                        children: [
+                          {
+                            id: 'category 3 child',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'extractsMetaData',
+              data: [
+                {
+                  id: 'hits',
+                  type: 'integer',
+                  name: '# Times Viewed',
+                },
+              ],
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyProducts',
+                        children: [
+                          {
+                            id: 'grandchild1',
+                            name: 'Grand Child 1',
+                          },
+                          {
+                            id: 'grandchild2',
+                            name: 'Grand Child 2',
+                          },
+                        ],
+                        isLeafNode: false,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'category 3',
+                    name: 'Category 3',
+                    isLeafNode: true,
+                  },
+                ],
+                generatesMetaData: {
+                  id: 'commonAttributes',
+                  name: 'Common',
+                  variation_themes: [
+
+                  ],
+                  variation_attributes: [
+
+                  ],
+                  fields: [
+                    {
+                      id: 'item_sku',
+                      name: 'Seller SKU',
+                      description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                      filterType: 'required',
+                      type: 'input',
+                      options: [
+
+                      ],
+                    },
+                  ],
+                  children: [
+
+                  ],
+                  isLeafNode: false,
+                  marketplace_domain: 'US',
+                },
+              },
+            },
+          ],
+        },
+      });
+    });
+
+    test('should correctly add category details to state when child category id passed is undefined', () => {
+      const state = {
+        [`${flowId}-${integrationId}`]: deepClone(amazonCategoryMappings),
+      };
+
+      util.addCategory(state, integrationId, flowId, {
+        category: 'category 3',
+        childCategory: undefined,
+      });
+
+      expect(state).toEqual({
+        'f1-i1': {
+          uiAssistant: 'amazon',
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'Common',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                            discardIfEmpty: true,
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'category 3',
+                        name: 'Category 3',
+                        children: [],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'extractsMetaData',
+              data: [
+                {
+                  id: 'hits',
+                  type: 'integer',
+                  name: '# Times Viewed',
+                },
+              ],
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyProducts',
+                        children: [
+                          {
+                            id: 'grandchild1',
+                            name: 'Grand Child 1',
+                          },
+                          {
+                            id: 'grandchild2',
+                            name: 'Grand Child 2',
+                          },
+                        ],
+                        isLeafNode: false,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'category 3',
+                    name: 'Category 3',
+                    isLeafNode: true,
+                  },
+                ],
+                generatesMetaData: {
+                  id: 'commonAttributes',
+                  name: 'Common',
+                  variation_themes: [
+
+                  ],
+                  variation_attributes: [
+
+                  ],
+                  fields: [
+                    {
+                      id: 'item_sku',
+                      name: 'Seller SKU',
+                      description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                      filterType: 'required',
+                      type: 'input',
+                      options: [
+
+                      ],
+                    },
+                  ],
+                  children: [
+
+                  ],
+                  isLeafNode: false,
+                  marketplace_domain: 'US',
+                },
+              },
+            },
+          ],
+        },
+      });
+    });
+    test('should correctly add category details for the mapping of the parent and child category', () => {
+      const state = {
+        [`${flowId}-${integrationId}`]: deepClone(amazonCategoryMappings),
+      };
+
+      util.addCategory(state, integrationId, flowId, {
+        category: 'baby',
+        childCategory: 'babyproducts',
+        grandChildCategory: undefined,
+      });
+      expect(state).toEqual({
+        'f1-i1': {
+          uiAssistant: 'amazon',
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'Common',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                            discardIfEmpty: true,
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'baby',
+                        name: 'Baby',
+                        children: [
+                          {
+                            id: 'babyproducts',
+                            name: 'babyProducts',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'extractsMetaData',
+              data: [
+                {
+                  id: 'hits',
+                  type: 'integer',
+                  name: '# Times Viewed',
+                },
+              ],
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyProducts',
+                        children: [
+                          {
+                            id: 'grandchild1',
+                            name: 'Grand Child 1',
+                          },
+                          {
+                            id: 'grandchild2',
+                            name: 'Grand Child 2',
+                          },
+                        ],
+                        isLeafNode: false,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'category 3',
+                    name: 'Category 3',
+                    isLeafNode: true,
+                  },
+                ],
+                generatesMetaData: {
+                  id: 'commonAttributes',
+                  name: 'Common',
+                  variation_themes: [
+
+                  ],
+                  variation_attributes: [
+
+                  ],
+                  fields: [
+                    {
+                      id: 'item_sku',
+                      name: 'Seller SKU',
+                      description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                      filterType: 'required',
+                      type: 'input',
+                      options: [
+
+                      ],
+                    },
+                  ],
+                  children: [
+
+                  ],
+                  isLeafNode: false,
+                  marketplace_domain: 'US',
+                },
+              },
+            },
+          ],
+        },
+      });
+    });
+
+    test('should correctly add category details for the mapping of the parent, child and grandchild category', () => {
+      const state = {
+        [`${flowId}-${integrationId}`]: deepClone(amazonCategoryMappings),
+      };
+
+      util.addCategory(state, integrationId, flowId, {
+        category: 'baby',
+        childCategory: 'babyproducts',
+        grandchildCategory: 'grandchild1',
+      });
+      expect(state).toEqual({
+        'f1-i1': {
+          uiAssistant: 'amazon',
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'Common',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                            discardIfEmpty: true,
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'baby',
+                        name: 'Baby',
+                        children: [
+                          {
+                            id: 'babyproducts',
+                            name: 'babyProducts',
+                            children: [
+                              {
+                                fieldMappings: [],
+                                children: [],
+                                id: 'grandchild1',
+                                name: 'Grand Child 1',
+                              },
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'extractsMetaData',
+              data: [
+                {
+                  id: 'hits',
+                  type: 'integer',
+                  name: '# Times Viewed',
+                },
+              ],
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyProducts',
+                        isLeafNode: false,
+                        children: [
+                          {
+                            id: 'grandchild1',
+                            name: 'Grand Child 1',
+                          },
+                          {
+                            id: 'grandchild2',
+                            name: 'Grand Child 2',
+                          },
+                        ],
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'category 3',
+                    name: 'Category 3',
+                    isLeafNode: true,
+                  },
+                ],
+                generatesMetaData: {
+                  id: 'commonAttributes',
+                  name: 'Common',
+                  variation_themes: [
+
+                  ],
+                  variation_attributes: [
+
+                  ],
+                  fields: [
+                    {
+                      id: 'item_sku',
+                      name: 'Seller SKU',
+                      description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                      filterType: 'required',
+                      type: 'input',
+                      options: [
+
+                      ],
+                    },
+                  ],
+                  children: [
+
+                  ],
+                  isLeafNode: false,
+                  marketplace_domain: 'US',
+                },
+              },
+            },
+          ],
+        },
+      });
+    });
   });
-  // TODO (Sravan)
-  test('addCategory util', () => {
+  describe('addVariation util', () => {
+    const amazonCategoryMappings = {
+      uiAssistant: 'amazon',
+      response: [
+        {
+          operation: 'mappingData',
+          data: {
+            mappingData: {
+              basicMappings: {
+                recordMappings: [
+                  {
+                    id: 'commonAttributes',
+                    name: 'Common',
+                    children: [
+                      {
+                        id: 'Dimensions',
+                        name: 'Dimensions',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                    fieldMappings: [
+                      {
+                        extract: 'SKU',
+                        generate: 'item_sku',
+                        discardIfEmpty: true,
+                      },
+                    ],
+                    lookups: [
+
+                    ],
+                  },
+                ],
+              },
+              variationMappings: {
+                recordMappings: [],
+              },
+            },
+          },
+        },
+        {
+          operation: 'extractsMetaData',
+          data: [
+            {
+              id: 'hits',
+              type: 'integer',
+              name: '# Times Viewed',
+            },
+          ],
+        },
+        {
+          operation: 'generatesMetaData',
+          data: {
+            categoryRelationshipData: [
+              {
+                id: 'baby',
+                name: 'Baby',
+                isLeafNode: true,
+                marketplace_domain: 'US',
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    const integrationId = 'i1';
+    const flowId = 'f1';
+
+    const key = `${flowId}-${integrationId}`;
+
+    test('should correctly add variation mappings for the provided category and subcategory', () => {
+      const state = {
+        [key]: deepClone(amazonCategoryMappings),
+      };
+
+      util.addVariation(state, key, {
+        categoryId: 'baby',
+        subCategoryId: 'babyproducts',
+        isVariationAttributes: false,
+      });
+
+      expect(state).toEqual({
+        'f1-i1': {
+          uiAssistant: 'amazon',
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'Common',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                            discardIfEmpty: true,
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+                      {
+                        id: 'baby',
+                        children: [
+                          {
+                            id: 'babyproducts',
+                            children: [
+
+                            ],
+                            variation_themes: [
+
+                            ],
+                          },
+                        ],
+                        variation_themes: [
+
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'extractsMetaData',
+              data: [
+                {
+                  id: 'hits',
+                  type: 'integer',
+                  name: '# Times Viewed',
+                },
+              ],
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: true,
+                    marketplace_domain: 'US',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      });
+    });
+
+    test('should correctly add variation mappings for the provided category and subcategory and if isVariationAttributes is true', () => {
+      const state = {
+        [key]: deepClone(amazonCategoryMappings),
+      };
+
+      util.addVariation(state, key, {
+        categoryId: 'baby',
+        subCategoryId: 'babyproducts',
+        isVariationAttributes: true,
+      });
+
+      expect(state).toEqual({
+        'f1-i1': {
+          uiAssistant: 'amazon',
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'Common',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                            discardIfEmpty: true,
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+                      {
+                        id: 'baby',
+                        children: [
+                          {
+                            id: 'babyproducts',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'extractsMetaData',
+              data: [
+                {
+                  id: 'hits',
+                  type: 'integer',
+                  name: '# Times Viewed',
+                },
+              ],
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: true,
+                    marketplace_domain: 'US',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      });
+    });
   });
-  // TODO (Sravan)
-  test('addVariation util', () => {
+
+  test('autoMapperRecordTypeForAssistant util', () => {
+    const testCases = [
+      {
+        resource: {
+          _id: 567,
+          name: 'B',
+          adaptorType: 'RESTImport',
+          assistant: 'zendesk',
+          _connectionId: 768,
+          rest: {
+            relativeURI: '/api/v2/organizations/{{{organizationId}}}.json',
+          },
+        },
+        result: 'organizations',
+      },
+      {
+        resource: {
+          _id: 567,
+          name: 'B',
+          adaptorType: 'RESTImport',
+          assistant: 'zendesk',
+          _connectionId: 768,
+          rest: {
+            relativeURI: '/api/v2/employee.json',
+          },
+        },
+        result: '',
+      },
+    ];
+
+    testCases.forEach(({resource, result}) => {
+      expect(util.autoMapperRecordTypeForAssistant(resource)).toEqual(result);
+    });
+  });
+  test('getFormStatusFromMappingSaveStatus util', () => {
+    const testCases = [
+      {
+        result: 'failed',
+      },
+      {
+        saveStatus: 'requested',
+        result: 'loading',
+      },
+      {
+        saveStatus: 'completed',
+        result: 'complete',
+      },
+      {
+        saveStatus: 'failed',
+        result: 'failed',
+      },
+    ];
+
+    testCases.forEach(({saveStatus, result}) => {
+      expect(util.getFormStatusFromMappingSaveStatus(saveStatus)).toEqual(result);
+    });
   });
 });

@@ -1,17 +1,15 @@
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import actions from '../../actions';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import DrawerContent from '../drawer/Right/DrawerContent';
+import DrawerFooter from '../drawer/Right/DrawerFooter';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import DynaForm from '../DynaForm';
-import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import ButtonGroup from '../ButtonGroup';
 
-const useStyles = makeStyles(() => ({
-  fieldContainer: {
-    height: 'calc(100vh - 202px)',
-  },
-}));
 const fieldMeta = {
   fieldMap: {
     email: {
@@ -28,7 +26,6 @@ const fieldMeta = {
 };
 
 export default function InviteUser() {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { stackId } = match.params;
@@ -40,9 +37,7 @@ export default function InviteUser() {
     formVal => {
       const shareWithUserEmail = formVal.email;
 
-      if (!shareWithUserEmail) {
-        return;
-      }
+      if (!shareWithUserEmail) return;
 
       dispatch(actions.stack.inviteStackShareUser(shareWithUserEmail, stackId));
       // TODO: currently we are closing instantly. We need to close one success
@@ -52,30 +47,35 @@ export default function InviteUser() {
   );
 
   const formKey = useFormInitWithPermissions({
-
     fieldMeta,
   });
 
   return (
     <>
-      <DynaForm
-        formKey={formKey}
-        fieldMeta={fieldMeta} className={classes.fieldContainer} />
-      <DynaSubmit
-        formKey={formKey}
-        data-test="saveInviteUser"
-        id="saveInviteUser"
-        onClick={handleInviteUser}>
-        Invite user & close
-      </DynaSubmit>
-      <Button
-        variant="text"
-        color="primary"
-        data-test="cancelInviteUser"
-        label="Cancel"
-        onClick={handleClose}>
-        Cancel
-      </Button>
+      <DrawerContent>
+        <DynaForm
+          formKey={formKey} />
+      </DrawerContent>
+
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            data-test="saveInviteUser"
+            id="saveInviteUser"
+            onClick={handleInviteUser}>
+            Invite user & close
+          </DynaSubmit>
+          <Button
+            variant="text"
+            color="primary"
+            data-test="cancelInviteUser"
+            label="Cancel"
+            onClick={handleClose}>
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
     </>
   );
 }

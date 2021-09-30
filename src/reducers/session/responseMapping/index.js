@@ -1,77 +1,79 @@
 import produce from 'immer';
 import { isEqual } from 'lodash';
+import shortid from 'shortid';
+import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
-import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
 
-const { deepClone } = require('fast-json-patch');
-
-const emptySet = [];
-
+const emptyObj = {};
 // TODO: Support error message display
 export default function reducer(state = {}, action) {
-  const { id, type, index, field, value } = action;
-
-  if (!id) return state;
+  const {
+    type,
+    mappings,
+    flowId,
+    resourceId,
+    resourceType,
+    field,
+    value,
+    key,
+  } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESPONSE_MAPPING.INIT: {
-        const { resourceIndex, flowId } = value;
-
-        draft[id] = {
-          mappings: [],
-          mappingsCopy: [],
-          changeIdentifier: 0,
-          resourceIndex,
+      case actionTypes.RESPONSE_MAPPING.INIT:
+        if (!draft.mapping) draft.mapping = {};
+        draft.mapping.status = 'requested';
+        break;
+      case actionTypes.RESPONSE_MAPPING.INIT_COMPLETE:
+        draft.mapping = {
+          mappings,
           flowId,
+          resourceId,
+          resourceType,
+          status: 'received',
+          mappingsCopy: deepClone(mappings),
         };
-
         break;
-      }
-
-      case actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING: {
-        const _tmp = value.map(m => ({
-          ...m,
-          rowIdentifier: 0,
-        }));
-
-        if (draft[id]) {
-          draft[id].mappings = _tmp;
-          draft[id].mappingsCopy = deepClone(_tmp);
-          draft[id].changeIdentifier += 1;
-        }
-
+      case actionTypes.RESPONSE_MAPPING.INIT_FAILED:
+        draft.mapping = {
+          status: 'error',
+        };
         break;
-      }
-
       case actionTypes.RESPONSE_MAPPING.PATCH_FIELD: {
-        if (draft[id].mappings[index]) {
-          const { rowIdentifier } = draft[id].mappings[index];
+        const index = draft.mapping.mappings.findIndex(m => m.key === key);
 
-          draft[id].mappings[index][field] = value;
-          draft[id].mappings[index].rowIdentifier = rowIdentifier + 1;
+        if (draft.mapping.mappings[index]) {
+          draft.mapping.mappings[index][field] = value;
         } else if (value) {
-          draft[id].mappings.push({ [field]: value, rowIdentifier: 0 });
+          const newKey = shortid.generate();
+          const newRow = {
+            key: newKey,
+          };
+
+          newRow[field] = value;
+          draft.mapping.mappings.push(newRow);
         }
-
         break;
       }
-
-      case actionTypes.RESPONSE_MAPPING.DELETE: {
-        draft[id].mappings.splice(index, 1);
-        draft[id].changeIdentifier += 1;
+      case actionTypes.RESPONSE_MAPPING.DELETE:
+        draft.mapping.mappings = draft.mapping.mappings.filter(m => m.key !== key);
         break;
-      }
-
       case actionTypes.RESPONSE_MAPPING.SAVE:
-        draft[id].saveStatus = PATCH_SAVE_STATUS.REQUESTED;
+        if (draft.mapping) {
+          draft.mapping.saveStatus = 'requested';
+        }
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE:
-        draft[id].saveStatus = PATCH_SAVE_STATUS.COMPLETED;
-        draft[id].mappingsCopy = deepClone(draft[id].mappings);
+        if (draft.mapping) {
+          draft.mapping.saveStatus = 'completed';
+          draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
+        }
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_FAILED:
-        draft[id].saveStatus = PATCH_SAVE_STATUS.FAILED;
+        if (draft.mapping) {
+          draft.mapping.saveStatus = 'failed';
+          draft.mapping.validationErrMsg = undefined;
+        }
         break;
 
       default:
@@ -82,26 +84,38 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.responseMappings = (state, id) => {
-  if (!state || !state[id]) {
-    return emptySet;
+selectors.responseMapping = state => {
+  if (!state || !state.mapping) {
+    return emptyObj;
   }
 
-  return state[id];
+  return state.mapping;
 };
 
 // #region PUBLIC SELECTORS
-selectors.responseMappingDirty = (state, id) => {
-  if (!state || !state[id]) {
+selectors.responseMappingChanged = state => {
+  if (!state || !state.mapping) {
     return false;
   }
-
-  // Response Mapping
-  const { mappings, mappingsCopy } = state[id];
-  const _mappings = mappings.map(({ rowIdentifier, ...other }) => other);
+  const { mappings, mappingsCopy } = state.mapping;
+  const _mappings = mappings.map(({ key, ...other }) => other);
   const _mappingsCopy = mappingsCopy.map(
-    ({ rowIdentifier, ...other }) => other
+    ({ key, ...other }) => other
   );
 
   return !isEqual(_mappings, _mappingsCopy);
+};
+
+selectors.responseMappingSaveStatus = state => {
+  if (!state || !state.mapping) {
+    return emptyObj;
+  }
+
+  const { saveStatus } = state.mapping;
+
+  return {
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
+    saveInProgress: saveStatus === 'requested',
+  };
 };

@@ -1,45 +1,34 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { components } from 'react-select';
-import { Tooltip } from '@material-ui/core';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import shortid from 'shortid';
+import { FixedSizeList } from 'react-window';
+import { InputAdornment, TextField } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import ListIcon from '@material-ui/icons/List';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
-import LockIcon from '../../../../../../../components/icons/LockIcon';
 import MappingSettings from '../../../../../../../components/Mapping/Settings/SettingsButton';
 import TrashIcon from '../../../../../../../components/icons/TrashIcon';
-import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import PreferredIcon from '../../../../../../../components/icons/PreferredIcon';
 import ConditionalIcon from '../../../../../../../components/icons/ConditionalIcon';
 import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
 import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
-import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 import Help from '../../../../../../../components/Help';
-import KnowledgeBaseIcon from '../../../../../../../components/icons/KnowledgeBaseIcon';
-import SettingsDrawer from '../../../../../../../components/Mapping/Settings';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import Spinner from '../../../../../../../components/Spinner';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
   root: {
     overflowY: 'off',
   },
-  header: {
-    display: 'flex',
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
   rowContainer: {
     display: 'block',
     padding: '0px',
-  },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
   },
   childHeader: {
     '& > div': {
@@ -54,10 +43,6 @@ const useStyles = makeStyles(theme => ({
   mappingsBody: {
     height: 'calc(100% - 32px)',
     overflow: 'visible',
-  },
-  childRow: {
-    display: 'flex',
-    position: 'relative',
   },
   disableChildRow: {
     cursor: 'not-allowed',
@@ -75,7 +60,8 @@ const useStyles = makeStyles(theme => ({
   filterTypeIcon: {
     width: 9,
     height: 9,
-    marginRight: 6,
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   PreferredIcon: {
     color: theme.palette.warning.main,
@@ -89,7 +75,6 @@ const useStyles = makeStyles(theme => ({
   RequiredIcon: {
     color: theme.palette.error.main,
   },
-
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: 38,
@@ -115,12 +100,10 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-
   mappingActionsCategory: {
     marginTop: theme.spacing(1),
     display: 'flex',
   },
-
   helpTextButtonCategroryMapping: {
     padding: 0,
     marginLeft: theme.spacing(1),
@@ -135,7 +118,321 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  fieldFilterIcon: {
+    marginRight: 0,
+  },
+  paper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }));
+
+const FieldHelp = ({id, name, description = 'No Description available.' }) => {
+  const classes = useStyles();
+
+  return (
+    <Help
+      title={name}
+      className={classes.helpTextButtonCategroryMapping}
+      helpKey={`categoryMappings-${id}`}
+      helpText={description}
+    />
+  );
+};
+
+const MappingRow = ({
+  mapping,
+  integrationId,
+  flowId,
+  editorId,
+  disabled,
+  extractFields,
+  generateFields,
+  depth,
+  sectionId,
+  options = {},
+}) => {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const {
+    extract,
+    generate,
+    name,
+    description,
+    isRequired,
+    key: mappingKey,
+    hardCodedValue,
+  } = mapping;
+  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  const generateLabel = generateFields.find(f => f.id === generate)?.name || generate;
+
+  const handleBlur = useCallback((field, value) => {
+    // check if value changes or user entered something in new row
+    if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
+      if (mappingKey && value === '') {
+        if (
+          (field === 'extract' && !generate) ||
+            (field === 'generate' &&
+              !extract &&
+              !('hardCodedValue' in mapping))
+        ) {
+          dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
+
+          return;
+        }
+      }
+      dispatch(actions.integrationApp.settings.categoryMappings.patchField(integrationId, flowId, editorId, field, mappingKey, value));
+    }
+  },
+  [dispatch, editorId, extract, flowId, generate, integrationId, mapping, mappingKey]
+  );
+
+  const handleExtractBlur = useCallback(e => {
+    let extract = e.target.value;
+
+    const field = extractFields.find(field => field.name === extract);
+
+    if (field) {
+      extract = field.id;
+    }
+
+    handleBlur('extract', extract);
+  }, [extractFields, handleBlur]);
+
+  const handleGenerateBlur = useCallback((_id, value) => {
+    let generate = value;
+
+    if (value?.id) {
+      generate = value.id;
+    } else if (typeof value === 'string') {
+      const field = generateFields.find(field => field.name === value);
+
+      if (field) {
+        generate = field.id;
+      }
+    }
+    handleBlur('generate', generate);
+  }, [generateFields, handleBlur]);
+
+  const handleDeleteClick = useCallback(() => {
+    dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
+  }, [dispatch, editorId, flowId, integrationId, mappingKey]);
+
+  const Option = ({filterType, name = ''}) => (
+    <>
+      <Icon filterType={filterType} />
+      {name}
+    </>
+  );
+
+  const Icon = ({ filterType }) => {
+    switch (filterType) {
+      case 'preferred':
+        return (
+          <PreferredIcon
+            className={clsx(
+              classes.filterTypeIcon,
+              classes.PreferredIcon
+            )}
+          />
+        );
+      case 'optional':
+        return (
+          <OptionalIcon
+            className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+          />
+        );
+      case 'conditional':
+        return (
+          <ConditionalIcon
+            className={clsx(
+              classes.filterTypeIcon,
+              classes.ConditionalIcon
+            )}
+          />
+        );
+      case 'required':
+        return (
+          <RequiredIcon
+            className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className={classes.rowContainer}>
+      <div className={classes.innerRow}>
+        <div
+          className={clsx(classes.childHeader, classes.mapField, {
+            [classes.disableChildRow]: isRequired || disabled,
+          })}>
+          <Autocomplete
+            id={`fieldMappingGenerate-${mappingKey}`}
+            options={generateFields}
+            value={generate}
+            disableClearable
+            disabled={disabled}
+            freeSolo
+            noOptionsText=""
+            size="small"
+            onChange={handleGenerateBlur}
+            classes={{paper: classes.paper}}
+            renderOption={Option}
+            getOptionLabel={option => option.name || generateFields.find(f => f.id === option)?.name || ''}
+            renderInput={params => (
+              <TextField
+                className={classes.dynaTextContainer}
+                {...params}
+                value={generateLabel}
+                variant="outlined"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start" className={classes.fieldFilterIcon}>
+                      <Icon filterType={mapping.filterType || generateFields.find(f => f.id === mapping.generate)?.filterType} />
+                    </InputAdornment>
+                  ),
+                }}
+               />
+            )}
+          />
+        </div>
+        <MappingConnectorIcon className={classes.mappingIcon} />
+        <div
+          key={extractValue}
+          className={clsx(classes.childHeader, classes.mapField, {
+            [classes.disableChildRow]:
+            mapping.isNotEditable || disabled,
+          })}>
+          <Autocomplete
+            id={`fieldMappingExtract-${mapping.key}`}
+            options={extractFields}
+            defaultValue={extractValue}
+            disableClearable
+            freeSolo
+            forcePopupIcon={false}
+            noOptionsText=""
+            classes={{paper: classes.paper}}
+            size="small"
+            disabled={disabled}
+            onBlur={handleExtractBlur}
+            getOptionLabel={option => option.name || extractFields.find(f => f.id === option)?.name || option || ''}
+            renderInput={params => (
+              <TextField
+                className={classes.dynaTextContainer}
+                {...params}
+                variant="outlined"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {mapping.showListOption ? <ListIcon /> : null }
+                    </InputAdornment>
+                  ),
+                }}
+               />
+            )}
+          />
+
+        </div>
+        <div className={classes.mappingActionsCategory}>
+          <div>
+            <MappingSettings
+              dataTest={`fieldMappingSettings-${mapping.key}`}
+              isCategoryMapping
+              disabled={mapping.isNotEditable || disabled}
+              mappingKey={mapping.key}
+              integrationId={integrationId}
+              flowId={flowId}
+              depth={depth}
+              sectionId={sectionId}
+              editorId={editorId}
+              {...options}
+          />
+          </div>
+          <div key="delete_button">
+            <ActionButton
+              data-test={`fieldMappingRemove-${mapping.key}`}
+              aria-label="delete"
+              disabled={
+              mapping.isNotEditable || disabled
+            }
+              onClick={handleDeleteClick}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
+          <div>
+            <FieldHelp
+              id={generate}
+              name={name}
+              description={description}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Row = ({index, isScrolling, style, data}) => {
+  const {
+    integrationId,
+    flowId,
+    editorId,
+    sectionId,
+    depth,
+    extractFields,
+    generateFields,
+    tableData,
+    disabled,
+    options,
+  } = data;
+
+  return (
+    <div key={tableData[index].key} style={style} >
+      {isScrolling ? <Spinner />
+        : (
+          <MappingRow
+            mapping={tableData[index]}
+            integrationId={integrationId}
+            flowId={flowId}
+            editorId={editorId}
+            sectionId={sectionId}
+            depth={depth}
+            extractFields={extractFields}
+            generateFields={generateFields}
+            disabled={disabled}
+            options={options} />
+        )}
+    </div>
+  );
+};
+
+function areEqual(prevProps, nextProps) {
+  const {
+    isScrolling: prevIsScrolling,
+    ...prevRest
+  } = prevProps;
+  const {
+    isScrolling: nextIsScrolling,
+    ...nextRest
+  } = nextProps;
+
+  const prev = prevRest.data?.tableData?.[prevRest.index];
+  const next = nextRest.data?.tableData?.[nextRest.index];
+
+  return (
+    prevRest?.data?.disabled === nextRest?.data?.disabled &&
+    prev?.generate === next?.generate &&
+    prev?.extract === next?.extract &&
+    prev?.hardCodedValue === next?.hardCodedValue &&
+    (nextIsScrolling === prevIsScrolling || nextIsScrolling)
+  );
+}
+const MemoizedRow = React.memo(Row, areEqual);
 
 export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
@@ -144,338 +441,79 @@ export default function ImportMapping(props) {
     integrationId,
     flowId,
     generateFields = [],
-    disabled,
     sectionId,
     options = {},
+    depth,
   } = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const { attributes = {}, mappingFilter = 'mapped' } =
-    useSelector(state =>
-      selectors.categoryMappingFilters(state, integrationId, flowId)
-    ) || {};
-  const { mappings, initChangeIdentifier } = useSelector(state =>
-    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
-  );
-  const { fields = [] } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId,
-      })
-    ) || {};
-  const { extractsMetadata: extractFields } = useSelector(state =>
-    selectors.categoryMappingMetadata(state, integrationId, flowId)
-  );
-  const mappingsCopy = mappings ? [...mappings] : [];
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
+  const { deleted: disabled = false } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedOptions) || {};
+  const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
+  const { mappings } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId, depth);
+  const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
 
-  mappingsCopy.push({});
-  const tableData = (mappingsCopy || []).map((value, index) => {
-    const obj = value;
+  const tableData = useMemo(() => {
+    const visibleAttributes = Object.keys(attributes).filter(key => attributes[key]);
+    const mappingsCopy = (mappings || [])
+      .filter(field => {
+        let visible = visibleAttributes.includes(field.filterType) || !field.filterType;
 
-    obj.index = index;
-    let visible = true;
-    const field = fields.find(f => f.id === obj.generate);
+        if (mappingFilter === 'mapped') {
+          visible = visible && (!!field.extract || !!field.hardCodedValue) && !!field.generate;
+        } else if (mappingFilter === 'unmapped') {
+          visible = visible && !field.extract && !field.hardCodedValue;
+        }
 
-    if (field) {
-      visible = visible && attributes[field.filterType];
+        return visible;
+      });
+
+    mappingsCopy.push({key: shortid.generate()});
+
+    return mappingsCopy;
+  }, [mappings, attributes, mappingFilter]);
+
+  const itemData = useMemo(() => (
+    {
+      integrationId,
+      flowId,
+      editorId,
+      sectionId,
+      depth,
+      extractFields,
+      generateFields,
+      tableData,
+      disabled,
+      options,
     }
-
-    if (mappingFilter === 'mapped') {
-      visible =
-        visible && (!!obj.extract || !!obj.hardCodedValue) && !!obj.generate;
-    } else if (mappingFilter === 'unmapped') {
-      visible = visible && !obj.extract;
-    }
-
-    if (obj.hardCodedValue) {
-      obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-    }
-
-    obj.visible = visible;
-
-    return obj;
-  });
-  const handleFieldUpdate = useCallback(
-    (rowIndex, event, field) => {
-      const { value } = event.target;
-
-      dispatch(
-        actions.integrationApp.settings.categoryMappings.patchField(
-          integrationId,
-          flowId,
-          editorId,
-          field,
-          rowIndex,
-          value
-        )
-      );
-    },
-    [dispatch, editorId]
-  );
-  const handleDelete = row => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.delete(
-        integrationId,
-        flowId,
-        editorId,
-        row
-      )
-    );
-  };
-
-  const handleGenerateUpdate = mapping => (id, val) => {
-    handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
-  };
-
-  const TextContainer = ({ options, onFieldChange, ...props }) => {
-    const [textvalue, setValue] = useState(props.value);
-    const handleValueChange = (id, val) => {
-      onFieldChange(id, val);
-      setValue(val);
-    };
-
-    const { filterType } =
-      options.find(option => option.name === textvalue) || {};
-    let icon;
-
-    switch (filterType) {
-      case 'preferred':
-        icon = (
-          <PreferredIcon
-            className={clsx(classes.filterTypeIcon, classes.PreferredIcon)}
-          />
-        );
-        break;
-      case 'optional':
-        icon = (
-          <OptionalIcon
-            className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
-          />
-        );
-        break;
-      case 'required':
-        icon = (
-          <RequiredIcon
-            className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
-          />
-        );
-        break;
-      case 'conditional':
-        icon = (
-          <ConditionalIcon
-            className={clsx(classes.filterTypeIcon, classes.ConditionalIcon)}
-          />
-        );
-        break;
-      default:
-        icon = null;
-        break;
-    }
-
-    return (
-      <DynaText
-        {...props}
-        startAdornment={icon}
-        onFieldChange={handleValueChange}
-        className={classes.dynaTextContainer}
-      />
-    );
-  };
-
-  const FieldHelp = ({ id }) => {
-    const field = generateFields.find(f => f.id === id);
-    const { name: title, description = 'No Description available.' } =
-      field || {};
-
-    return (
-      <Help
-        title={title}
-        disabled={!field}
-        className={classes.helpTextButtonCategroryMapping}
-        helpKey={`categoryMappings-${id}`}
-        helpText={description}
-      />
-    );
-  };
-
-  const ListIconComponent = ({ mapping, generateFields = [] }) => {
-    const { generate } = mapping;
-    const generateField = generateFields.find(f => f.id === generate);
-
-    return generateField &&
-      generateField.options &&
-      generateField.options.length ? (
-      // TODO: @Azhar should be replaced by a ListIcon
-        <KnowledgeBaseIcon />
-      ) : null;
-  };
-
-  const ValueContainer = ({ children, ...props }) => {
-    const value = props.selectProps.inputValue;
-    const { filterType } =
-      props.options.find(option => option.label === value) || {};
-
-    return (
-      <components.ValueContainer {...props}>
-        {(() => {
-          // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
-          switch (filterType) {
-            case 'preferred':
-              return (
-                <PreferredIcon
-                  className={clsx(
-                    classes.filterTypeIcon,
-                    classes.PreferredIcon
-                  )}
-                />
-              );
-            case 'optional':
-              return (
-                <OptionalIcon
-                  className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
-                />
-              );
-            case 'conditional':
-              return (
-                <ConditionalIcon
-                  className={clsx(
-                    classes.filterTypeIcon,
-                    classes.ConditionalIcon
-                  )}
-                />
-              );
-            case 'required':
-              return (
-                <RequiredIcon
-                  className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
-                />
-              );
-            default:
-              return null;
-          }
-        })()}
-        {children}
-      </components.ValueContainer>
-    );
-  };
+  ), [
+    integrationId,
+    flowId,
+    editorId,
+    sectionId,
+    disabled,
+    depth,
+    extractFields,
+    generateFields,
+    tableData,
+    options,
+  ]);
 
   return (
     <div
-      className={classes.root}
-      key={`mapping-${editorId}-${initChangeIdentifier}`}>
+      className={classes.root}>
       <div className={classes.mappingsBody}>
-        {tableData
-          .filter(mapping => mapping.visible)
-          .map(mapping => (
-            <div className={classes.rowContainer} key={mapping.index}>
-              <div className={classes.innerRow}>
-                <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]: mapping.isRequired || disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingGenerate-${mapping.index}`}
-                    value={mapping.generate}
-                    labelName="name"
-                    valueName="id"
-                    components={{
-                      ValueContainer,
-                    }}
-                    TextComponent={TextContainer}
-                    options={generateFields}
-                    disabled={mapping.isRequired || disabled}
-                    onBlur={handleGenerateUpdate(mapping)}
-                  />
-                  {mapping.isRequired && (
-                    <Tooltip
-                      title="This field is required by the application you are importing into"
-                      placement="top">
-                      <span className={classes.lockIcon}>
-                        <LockIcon />
-                      </span>
-                    </Tooltip>
-                  )}
-                </div>
-                <MappingConnectorIcon className={classes.mappingIcon} />
-                <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]:
-                      mapping.isNotEditable || disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingExtract-${mapping.index}`}
-                    labelName="name"
-                    valueName="id"
-                    endAdornment={(
-                      <ListIconComponent
-                        mapping={mapping}
-                        extractFields={extractFields}
-                        generateFields={generateFields}
-                      />
-                    )}
-                    value={mapping.extract || mapping.hardCodedValueTmp}
-                    options={extractFields}
-                    disabled={mapping.isNotEditable || disabled}
-                    components={{ ItemSeperator: () => null }}
-                    onBlur={(id, evt) => {
-                      handleFieldUpdate(
-                        mapping.index,
-                        { target: { value: evt } },
-                        'extract'
-                      );
-                    }}
-                  />
 
-                  {mapping.isNotEditable && (
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
-                  )}
-                </div>
-                <div className={classes.mappingActionsCategory}>
-                  <div>
-                    <MappingSettings
-                      dataTest={`fieldMappingSettings-${mapping.index}`}
-                      isCategoryMapping
-                      disabled={mapping.isNotEditable || disabled}
-                      mappingIndex={mapping.index}
-                      integrationId={integrationId}
-                      flowId={flowId}
-                      editorId={editorId}
-                      {...options}
-                    />
-                  </div>
-                  <div key="delete_button">
-                    <ActionButton
-                      data-test={`fieldMappingRemove-${mapping.index}`}
-                      aria-label="delete"
-                      disabled={
-                        mapping.isRequired || mapping.isNotEditable || disabled
-                      }
-                      onClick={() => {
-                        handleDelete(mapping.index);
-                      }}>
-                      <TrashIcon />
-                    </ActionButton>
-                  </div>
-                  <div>
-                    <FieldHelp id={mapping.generate} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+        <FixedSizeList
+          useIsScrolling
+          itemSize={60}
+          height={380}
+          itemCount={tableData.length}
+          itemData={itemData}
+          overscanCount={3}
+        >
+          {MemoizedRow}
+        </FixedSizeList>
       </div>
-      <SettingsDrawer
-        disabled={disabled}
-        integrationId={integrationId}
-        flowId={flowId}
-        sectionId={sectionId}
-        importId={options.importId}
-        editorId={editorId}
-      />
     </div>
   );
 }

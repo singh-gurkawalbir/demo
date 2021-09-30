@@ -1,4 +1,5 @@
-import { takeLatest, put, call } from 'redux-saga/effects';
+import { put, call, takeEvery, race, take } from 'redux-saga/effects';
+import { isEqual } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -63,13 +64,12 @@ function* getData({ kind, identifier: id, resource }) {
 
     yield put(actions.exportData.receive(kind, id, data));
   } catch (e) {
-    if (e.status === 403 || e.status === 401) return;
-
     if (e.status >= 400 && e.status < 500) {
       let parsedError;
 
       try {
         parsedError = JSON.parse(e.message);
+        parsedError = parsedError?.errors?.[0]?.message || parsedError;
       } catch (ex) {
         parsedError = String(e.message);
       }
@@ -83,4 +83,13 @@ function* getData({ kind, identifier: id, resource }) {
   }
 }
 
-export default [takeLatest(actionTypes.EXPORTDATA.REQUEST, getData)];
+function* takeLatestGetData(actionPayload) {
+  // Take latest of the getData and abort prior ones
+  yield race({
+    getData: call(getData, actionPayload),
+    abortGetData: take(
+      actPayload =>
+        isEqual(actPayload, actionPayload)),
+  });
+}
+export default [takeEvery(actionTypes.EXPORTDATA.REQUEST, takeLatestGetData)];

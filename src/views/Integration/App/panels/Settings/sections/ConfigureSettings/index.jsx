@@ -3,11 +3,12 @@ import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
-import { IAFormStateManager, useActiveTab } from '../../../Flows';
+import { IAFormStateManager } from '../../../Flows';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -28,17 +29,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConfigureSettings({ integrationId, storeId, sectionId }) {
+export default function ConfigureSettings({ integrationId, childId, sectionId }) {
   const classes = useStyles();
-
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId,
-    storeId);
-
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
   const section = useMemo(() => flowSections.find(s => s.titleId === sectionId), [flowSections, sectionId]);
   const flowSettingsMeta = useSelectorMemo(selectors.mkIntegrationAppSectionMetadata,
     integrationId,
     sectionId,
-    storeId);
+    childId);
 
   const translatedMeta = useMemo(
     () =>
@@ -59,23 +57,22 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId })
       ),
     shallowEqual
   );
-  const activeTabProps = useActiveTab();
 
   return (
     <LoadResources
       required
       resources={['flows', 'exports', 'imports', 'connections']}>
-      {formState?.saveStatus && <SavingMask />}
+      {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
       <IAFormStateManager
-        {...activeTabProps}
-        key={storeId}
+        key={childId}
+        dataPublic
         formState={formState}
         className={clsx(classes.configureform, {
           [classes.configureCamForm]: section.sections,
         })}
         isIAForm
         integrationId={integrationId}
-        storeId={storeId}
+        childId={childId}
         sectionId={sectionId}
         fieldMeta={translatedMeta}
         orientation="horizontal"

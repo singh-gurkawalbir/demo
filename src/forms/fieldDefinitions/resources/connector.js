@@ -1,4 +1,6 @@
-const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/; // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
+import { connectorsList } from '../../../constants/applications';
+import { isNewId } from '../../../utils/resource';
+import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
@@ -12,18 +14,12 @@ export default {
     maxRows: 5,
     label: 'Description',
   },
-  imageURL: {
-    type: 'text',
-    label: 'Image URL',
-    required: true,
-  },
   websiteURL: {
     type: 'text',
     label: 'Website URL',
     validWhen: {
       matchesRegEx: {
-        pattern:
-          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
+        pattern: ABS_URL_VALIDATION_PATTERN,
         message: 'Please enter a valid URL.',
       },
     },
@@ -40,95 +36,144 @@ export default {
       },
     },
   },
+  framework: {
+    type: 'text',
+    label: 'Framework',
+    defaultValue: r => (isNewId(r._id) || r.framework === 'twoDotZero') ? 'twoDotZero' : '',
+    visible: false,
+  },
   installerFunction: {
     type: 'text',
     label: 'Installer function',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+  },
+  _integrationId: {
+    type: 'selectresource',
+    label: 'Source integration',
+    placeholder: 'Choose integration',
+    resourceType: 'integrations',
+    filter: () => ({
+      _connectorId: { $exists: false },
+      _templateId: { $exists: false },
+    }),
+    requiredWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
   },
   _stackId: {
     type: 'selectresource',
     label: 'Stack',
     resourceType: 'stacks',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   uninstallerFunction: {
     type: 'text',
     label: 'Uninstaller function',
-    required: true,
+    required: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   updateFunction: {
     type: 'text',
     label: 'Update function',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   applications: {
-    type: 'multiselect',
+    type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
-    valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],
+    requiredWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
+    options: [
+      {
+        items: connectorsList(),
+      },
+    ],
+  },
+  trialEnabled: {
+    type: 'checkbox',
+    label: 'Enable trials',
+    defaultDisabled: r => isNewId(r._id),
+    helpKey: 'license.trialEnabled',
+  },
+  trialPeriod: {
+    type: 'select',
+    label: 'Trial period',
+    defaultValue: r => r?.trialPeriod || 30,
     options: [
       {
         items: [
-          { label: '3dCart', value: '3dcart' },
-          { label: '3PL Central', value: '3plcentral' },
-          { label: 'Google', value: 'google' },
-          { label: 'Asana', value: 'asana' },
-          { label: 'Box', value: 'box' },
-          { label: 'Dropbox', value: 'dropbox' },
-          { label: 'Twilio', value: 'twilio' },
-          { label: 'Facebook Ads', value: 'facebookads' },
-          { label: 'Docusign', value: 'docusign' },
-          { label: 'SurveyMonkey', value: 'surveymonkey' },
-          { label: 'Paychex', value: 'paychex' },
-          { label: 'X-Cart', value: 'xcart' },
-          { label: 'Amazon MWS', value: 'amazonmws' },
-          { label: 'Amazon AWS', value: 'amazonaws' },
-          { label: 'BigCommerce', value: 'bigcommerce' },
-          { label: 'Certify', value: 'certify' },
-          { label: 'Chargify', value: 'chargify' },
-          { label: 'Clover', value: 'clover' },
-          { label: 'eBay', value: 'ebay' },
-          { label: 'FTP', value: 'ftp' },
-          { label: 'Jet', value: 'jet' },
-          { label: 'Jira', value: 'jira' },
-          { label: 'Jobvite', value: 'jobvite' },
-          { label: 'LiquidPlanner', value: 'liquidplanner' },
-          { label: 'Loop Returns', value: 'loopreturns' },
-          { label: 'Magento 2', value: 'magento' },
-          { label: 'NetSuite', value: 'netsuite' },
-          { label: 'OpenAir', value: 'openair' },
-          { label: 'PayPal', value: 'paypal' },
-          { label: 'Salesforce', value: 'salesforce' },
-          { label: 'Shopify', value: 'shopify' },
-          { label: 'Skubana', value: 'skubana' },
-          { label: 'Square', value: 'squareup' },
-          { label: 'Stripe', value: 'stripe' },
-          { label: 'Silicon Valley Bank', value: 'svb' },
-          { label: 'Walmart', value: 'walmart' },
-          { label: 'WooCommerce', value: 'woocommerce' },
-          { label: 'Zendesk', value: 'zendesk' },
-          { label: 'Zendesk Sell', value: 'zendesksell' },
-          { label: 'Slack', value: 'slack' },
-          { label: 'DCL', value: 'dcl' },
-          { label: 'ShipStation', value: 'shipstation' },
-          { label: 'Wiser', value: 'wiser' },
-          { label: 'Shipwire', value: 'shipwire' },
-          { label: 'Travis CI', value: 'travis' },
-          { label: 'GitHub', value: 'github' },
-          { label: 'Banking', value: 'banking' },
-          { label: 'ADP', value: 'adp' },
-          { label: 'ServiceNow', value: 'servicenow' },
-          { label: 'Zuora', value: 'zuora' },
-          // { label: 'Desk', value: 'desk' },
-          { label: 'Other', value: 'other' },
-          { label: 'Braintree', value: 'braintree' },
-          { label: 'SAP Ariba', value: 'ariba' },
-          { label: 'Oracle Supplier Network', value: 'osn' },
-          { label: 'SkuVault', value: 'skuvault' },
-          { label: 'NexTag', value: 'nextag' },
-          { label: 'Newegg', value: 'newegg' },
+          { label: '14 days', value: 14 },
+          { label: '30 days', value: 30 },
+          { label: '60 days', value: 60 },
         ],
       },
     ],
+  },
+  _trialLicenseId: {
+    type: 'triallicense',
+    label: 'Trial license template',
+    resourceType: 'connectorLicenses',
+    allowNew: true,
+    allowEdit: true,
+    helpKey: 'license._trialLicenseId',
+    connectorId: r => r._id,
+    ignoreEnvironmentFilter: true,
   },
 };

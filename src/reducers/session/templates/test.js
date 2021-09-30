@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import reducer from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { INSTALL_STEP_TYPES } from '../../../utils/constants';
 
-describe('template reducer test cases', () => {
+describe('template test cases', () => {
   const installSteps = [
     {
       name: 'installStep',
@@ -48,7 +48,7 @@ describe('template reducer test cases', () => {
       _id: '590976d7534bbbfcaf656ca8',
       name: 'asdfas',
       description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
       imageURL: 'https://www.gstatic.com/webp/gallery/1.jpg',
       websiteURL: 'https://www.gstatic.com',
       applications: ['netsuite', 'zendesk'],
@@ -58,7 +58,7 @@ describe('template reducer test cases', () => {
       _id: '5d89f6c483ff843008ec9d37',
       name: 'Template Test',
       description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus at nisl interdum, cursus nibh et, ornare lorem. Donec ornare ullamcorper risus a cursus. Nullam pellentesque id lectus vitae placerat. In ipsum urna, convallis id odio quis, sollicitudin interdum arcu. Ut condimentum maximus arcu a placerat. Nulla congue volutpat sem. Nunc vestibulum, est eu porta hendrerit, purus ante egestas nunc, eget ullamcorper massa nulla sit amet turpis. Etiam ut venenatis nisl. Proin vehicula turpis ac bibendum aliquam. Duis sed consequat diam. Curabitur nec dignissim nunc.\n\nAenean mauris odio, interdum pulvinar bibendum ut, dapibus et dui. Donec dignissim suscipit arcu a tempus. Cras pellentesque, tortor eu placerat tincidunt, neque libero laoreet lacus, in luctus erat dui ut urna. Vivamus eleifend urna vitae sem volutpat, id finibus nunc consectetur. Pellentesque interdum, ipsum vel tincidunt faucibus, nisi augue venenatis augue, quis vehicula dui felis et neque. Duis posuere sollicitudin lectus quis sodales. Donec pellentesque, nisl ac pulvinar porttitor, odio libero dapibus turpis, quis porta ex turpis id ex. Suspendisse quis elit ligula. Donec eget nibh vitae nunc euismod mattis id at orci. Donec consequat magna eu est semper pretium. Nam in dui eu massa aliquam blandit.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus at nisl interdum, cursus nibh et, ornare lorem. Donec ornare ullamcorper risus a cursus. Nullam pellentesque id lectus vitae placerat. In ipsum urna, convallis id odio quis, sollicitudin interdum arcu. Ut condimentum maximus arcu a placerat. Nulla congue volutpat sem. Nunc vestibulum, est eu porta hendrerit, purus ante egestas nunc, eget ullamcorper massa nulla sit amet turpis. Etiam ut venenatis nisl. Proin vehicula turpis ac bibendum aliquam. Duis sed consequat diam. Curabitur nec dignissim nunc.\n\nAenean mauris odio, interdum pulvinar bibendum ut, dapibus et dui. Donec dignissim suscipit arcu a tempus. Cras pellentesque, tortor eu placerat tincidunt, neque libero laoreet lacus, in luctus erat dui ut urna. Vivamus eleifend urna vitae sem volutpat, id finibus nunc consectetur. Pellentesque interdum, ipsum vel tincidunt faucibus, nisi augue venenatis augue, quis vehicula dui felis et neque. Duis posuere sollicitudin lectus quis sodales. Donec pellentesque, nisl ac pulvinar porttitor, odio libero dapibus turpis, quis porta ex turpis id ex. Suspendisse quis elit ligula. Donec eget nibh vitae nunc euismod mattis id at orci. Donec consequat magna eu est semper pretium. Nam in dui eu massa aliquam blandit.',
       imageURL: 'https://www.gstatic.com/webp/gallery/1.jpg',
       websiteURL: 'https://www.gstatic.com',
       applications: ['netsuite', 'salesforce'],
@@ -306,54 +306,198 @@ describe('template reducer test cases', () => {
     stackProvided: false,
   };
   const testTemplateId = testTemplates[0]._id;
+  const testTemplateId2 = testTemplates[1]._id;
 
-  test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
+  describe('template reducer test cases', () => {
+    test('should return initial state when action is not matched', () => {
+      const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
-    expect(state).toEqual({});
-  });
-  describe('template received preview reducer', () => {
-    test('should find the template with template Id and set preview value', () => {
-      const state = reducer(
-        {},
-        actions.template.receivedPreview(testComponents, testTemplateId)
-      );
+      expect(state).toEqual({});
+    });
+    describe('template requested preview reducer', () => {
+      test('should find the template with template Id and set status as requested', () => {
+        const state = reducer(
+          {},
+          actions.template.requestPreview(testTemplateId)
+        );
 
-      expect(state).toEqual({
-        [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
+        expect(state).toEqual({
+          [testTemplateId]: { preview: {status: 'requested'}},
+        });
+      });
+
+      test('should find the template with template Id and reset the status value', () => {
+        const state = reducer(
+          { [testTemplateId]: {
+            preview: {
+              status: '',
+            },
+          },
+          anotherTemplate: {
+            preview: testComponents,
+            connectionMap: { abc: 'def' },
+          } },
+          actions.template.requestPreview(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { preview: { status: 'requested'} },
+          anotherTemplate: {
+            preview: testComponents,
+            connectionMap: { abc: 'def' },
+          },
+        });
       });
     });
 
-    test('should find the template with template Id and reset the existing  value', () => {
-      const state = reducer(
-        { [testTemplateId]: {} },
-        actions.template.receivedPreview(testComponents, testTemplateId)
-      );
+    describe('template received preview reducer', () => {
+      test('should find the template with template Id and set preview value', () => {
+        const state = reducer(
+          {},
+          actions.template.receivedPreview(testComponents, testTemplateId)
+        );
 
-      expect(state).toEqual({
-        [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
+        expect(state).toEqual({
+          [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
+        });
+      });
+
+      test('should find the template with template Id and reset the existing  value', () => {
+        const state = reducer(
+          { [testTemplateId]: {},
+            anotherTemplate: {
+              preview: testComponents,
+              connectionMap: { abc: 'def' },
+            } },
+
+          actions.template.receivedPreview(testComponents, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
+          anotherTemplate: {
+            preview: testComponents,
+            connectionMap: { abc: 'def' },
+          },
+        });
       });
     });
-  });
 
-  describe('template clear reducer', () => {
-    test('should find the template with template Id and clear its value', () => {
-      const state = reducer(
-        {
+    describe('template failed preview reducer', () => {
+      test('should find the template with template Id and set status as failed', () => {
+        const state = reducer(
+          {},
+          actions.template.failedPreview(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { preview: {status: 'failure'}},
+        });
+      });
+
+      test('should find the template with template Id and reset the status value', () => {
+        const state = reducer(
+          { [testTemplateId]: {
+            preview: {
+              status: 'success',
+            },
+          },
+          anotherTemplate: {
+            preview: {
+              status: 'requested',
+            },
+          } },
+          actions.template.failedPreview(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { preview: { status: 'failure'} },
+          anotherTemplate: {
+            preview: {
+              status: 'requested',
+            },
+          },
+        });
+      });
+    });
+    describe('template clear reducer', () => {
+      test('should find the template with template Id and clear its value', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              preview: testComponents,
+              connectionMap: { test: '123' },
+            },
+          },
+          actions.template.clearTemplate(testTemplateId)
+        );
+
+        expect(state).toEqual({});
+      });
+
+      test('should find the template with template Id clear it but shouldnt clear other templates', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              preview: testComponents,
+              connectionMap: { test: '123' },
+            },
+            anotherTemplate: {
+              preview: testComponents,
+              connectionMap: { abc: 'def' },
+            },
+          },
+          actions.template.clearTemplate(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          anotherTemplate: {
+            preview: testComponents,
+            connectionMap: { abc: 'def' },
+          },
+        });
+      });
+    });
+
+    describe('template clear uploaded reducer', () => {
+      test('should find the template with template Id and clear isInstallIntegration property', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              preview: testComponents,
+              connectionMap: { test: '123' },
+              isInstallIntegration: true,
+            },
+          },
+          actions.template.clearUploaded(testTemplateId)
+        );
+
+        expect(state).toEqual({
           [testTemplateId]: {
             preview: testComponents,
             connectionMap: { test: '123' },
           },
-        },
-        actions.template.clearTemplate(testTemplateId)
-      );
+        });
+      });
 
-      expect(state).toEqual({});
-    });
+      test('should find the template with template Id clear its isInstallIntegration property when multiple templates exist', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              preview: testComponents,
+              connectionMap: { test: '123' },
+              isInstallIntegration: true,
+            },
+            anotherTemplate: {
+              preview: testComponents,
+              connectionMap: { abc: 'def' },
+              isInstallIntegration: true,
+            },
+          },
+          actions.template.clearUploaded(testTemplateId)
+        );
 
-    test('should find the template with template Id clear it but shouldnt clear other templates', () => {
-      const state = reducer(
-        {
+        expect(state).toEqual({
           [testTemplateId]: {
             preview: testComponents,
             connectionMap: { test: '123' },
@@ -361,501 +505,184 @@ describe('template reducer test cases', () => {
           anotherTemplate: {
             preview: testComponents,
             connectionMap: { abc: 'def' },
+            isInstallIntegration: true,
           },
-        },
-        actions.template.clearTemplate(testTemplateId)
-      );
-
-      expect(state).toEqual({
-        anotherTemplate: {
-          preview: testComponents,
-          connectionMap: { abc: 'def' },
-        },
-      });
-    });
-  });
-
-  describe('template created components reducer', () => {
-    test('should find the template with template Id and set components value', () => {
-      const state = reducer(
-        {},
-        actions.template.createdComponents(
-          testCreatedComponents,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          createdComponents: [
-            { _id: 'integrationId', model: 'Integration' },
-            { _id: '_exportId', model: 'Export' },
-          ],
-        },
+        });
       });
     });
 
-    test('should not throw error when createdComponents returned is null', () => {
-      const state = reducer(
-        {},
-        actions.template.createdComponents(null, testTemplateId)
-      );
+    describe('template created components reducer', () => {
+      test('should find the template with template Id and set components value', () => {
+        const state = reducer(
+          {},
+          actions.template.createdComponents(
+            testCreatedComponents,
+            testTemplateId
+          )
+        );
 
-      expect(state).toEqual({
-        [testTemplateId]: {
-          createdComponents: null,
-        },
+        expect(state).toEqual({
+          [testTemplateId]: {
+            createdComponents: [
+              { _id: 'integrationId', model: 'Integration' },
+              { _id: '_exportId', model: 'Export' },
+            ],
+          },
+        });
       });
-    });
 
-    test('should find the correct template and set the value and should not affect other template data', () => {
-      const state = reducer(
-        {
-          [testTemplateId]: {},
+      test('should not throw error when createdComponents returned is null', () => {
+        const state = reducer(
+          {},
+          actions.template.createdComponents(null, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            createdComponents: null,
+          },
+        });
+      });
+
+      test('should find the correct template and set the value and should not affect other template data', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {},
+            secondTemplate: {
+              preview: testComponents,
+            },
+          },
+          actions.template.createdComponents(
+            testCreatedComponents,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            createdComponents: [
+              { _id: 'integrationId', model: 'Integration' },
+              { _id: '_exportId', model: 'Export' },
+            ],
+          },
           secondTemplate: {
             preview: testComponents,
           },
-        },
-        actions.template.createdComponents(
-          testCreatedComponents,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          createdComponents: [
-            { _id: 'integrationId', model: 'Integration' },
-            { _id: '_exportId', model: 'Export' },
-          ],
-        },
-        secondTemplate: {
-          preview: testComponents,
-        },
+        });
       });
-    });
-    test('should find the correct template and set the value and should not affect other properties', () => {
-      const state = reducer(
-        {
+      test('should find the correct template and set the value and should not affect other properties', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              connectionMap: { c1: 'c1', c2: 'c2' },
+              stackId: '_stackId',
+            },
+            secondTemplate: {
+              preview: testComponents,
+              connectionMap: { c1: 'c1', c2: 'c2' },
+            },
+          },
+          actions.template.createdComponents(
+            testCreatedComponents,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
           [testTemplateId]: {
             connectionMap: { c1: 'c1', c2: 'c2' },
             stackId: '_stackId',
+            createdComponents: [
+              { _id: 'integrationId', model: 'Integration' },
+              { _id: '_exportId', model: 'Export' },
+            ],
           },
           secondTemplate: {
             preview: testComponents,
             connectionMap: { c1: 'c1', c2: 'c2' },
           },
-        },
-        actions.template.createdComponents(
-          testCreatedComponents,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          connectionMap: { c1: 'c1', c2: 'c2' },
-          stackId: '_stackId',
-          createdComponents: [
-            { _id: 'integrationId', model: 'Integration' },
-            { _id: '_exportId', model: 'Export' },
-          ],
-        },
-        secondTemplate: {
-          preview: testComponents,
-          connectionMap: { c1: 'c1', c2: 'c2' },
-        },
-      });
-    });
-  });
-
-  describe('template steps received reducer', () => {
-    test('should find the template with template Id and set installSteps and connectionMap', () => {
-      const state = reducer(
-        {},
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps,
-          connectionMap,
-        },
+        });
       });
     });
 
-    test('should not throw error when steps returned is null', () => {
-      const state = reducer(
-        {},
-        actions.template.installStepsReceived(null, null, testTemplateId)
-      );
+    describe('template steps received reducer', () => {
+      test('should find the template with template Id and set installSteps and connectionMap', () => {
+        const state = reducer(
+          {},
+          actions.template.installStepsReceived(
+            installSteps,
+            connectionMap,
+            testTemplateId
+          )
+        );
 
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps: null,
-          connectionMap: null,
-        },
-      });
-    });
-
-    test('should find the correct template and set the value and should not affect other template data', () => {
-      const state = reducer(
-        {
-          [testTemplateId]: {},
-          secondTemplate: {
-            preview: testComponents,
-          },
-        },
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps,
-          connectionMap,
-        },
-        secondTemplate: {
-          preview: testComponents,
-        },
-      });
-    });
-    test('should find the correct template and set the value and should not affect other properties', () => {
-      const state = reducer(
-        {
-          [testTemplateId]: {
-            connectionMap: { c1: 'c1', c2: 'c2' },
-            stackId: '_stackId',
-          },
-          secondTemplate: {
-            preview: testComponents,
-            connectionMap: { c1: 'c1', c2: 'c2' },
-          },
-        },
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          connectionMap,
-          stackId: '_stackId',
-          installSteps,
-        },
-        secondTemplate: {
-          preview: testComponents,
-          connectionMap: { c1: 'c1', c2: 'c2' },
-        },
-      });
-    });
-  });
-
-  describe('template steps received reducer', () => {
-    test('should find the template with template Id and set installSteps and connectionMap', () => {
-      const state = reducer(
-        {},
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps,
-          connectionMap,
-        },
-      });
-    });
-
-    test('should not throw error when steps returned is null', () => {
-      const state = reducer(
-        {},
-        actions.template.installStepsReceived(null, null, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps: null,
-          connectionMap: null,
-        },
-      });
-    });
-
-    test('should find the correct template and set the value and should not affect other template data', () => {
-      const state = reducer(
-        {
-          [testTemplateId]: {},
-          secondTemplate: {
-            preview: testComponents,
-          },
-        },
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps,
-          connectionMap,
-        },
-        secondTemplate: {
-          preview: testComponents,
-        },
-      });
-    });
-    test('should find the correct template and set the value and should not affect other properties', () => {
-      const state = reducer(
-        {
-          [testTemplateId]: {
-            connectionMap: { c1: 'c1', c2: 'c2' },
-            stackId: '_stackId',
-          },
-          secondTemplate: {
-            preview: testComponents,
-            connectionMap: { c1: 'c1', c2: 'c2' },
-          },
-        },
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          testTemplateId
-        )
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          connectionMap,
-          stackId: '_stackId',
-          installSteps,
-        },
-        secondTemplate: {
-          preview: testComponents,
-          connectionMap: { c1: 'c1', c2: 'c2' },
-        },
-      });
-    });
-  });
-  describe('template update steps reducer', () => {
-    test('should not affect the existing state if invalid templateId is passed', () => {
-      const step = {
-        name: 'installStep',
-        description: 'something',
-        _connectionId: 'connectionId',
-        type: 'Connection',
-      };
-      const state = reducer(
-        {
-          [testTemplateId]: {},
-          secondTemplate: {
-            preview: testComponents,
-          },
-        },
-        actions.template.updateStep(step, 'invalidTemplateId')
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {},
-        invalidTemplateId: {},
-        secondTemplate: {
-          preview: testComponents,
-        },
-      });
-    });
-
-    test('should not affect the existing state if invalid step is passed', () => {
-      const step = {
-        name: 'installStep2',
-        description: 'something2',
-        _connectionId: 'connectionId2',
-        type: 'Connection',
-        status: 'failed',
-      };
-      const state = reducer(
-        {
-          [testTemplateId]: { installSteps },
-          secondTemplate: {
-            preview: testComponents,
-          },
-        },
-        actions.template.updateStep(step, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: { installSteps },
-        secondTemplate: {
-          preview: testComponents,
-        },
-      });
-    });
-    test('should find the template with template Id and set status details on the step', () => {
-      const step = {
-        name: 'installStep',
-        description: 'something',
-        _connectionId: 'connectionId',
-        type: 'Connection',
-        status: 'triggered',
-      };
-      const state = reducer(
-        { [testTemplateId]: { installSteps } },
-        actions.template.updateStep(step, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        '58e718fe160a77244b441a46': {
-          installSteps: [
-            { description: 'something', name: 'installStep', type: 'Stack' },
-            {
-              _connectionId: 'connectionId',
-              description: 'something',
-              isTriggered: true,
-              name: 'installStep',
-              type: 'Connection',
-            },
-            {
-              description: 'something',
-              installURL: 'connectionId',
-              name: 'installUrl',
-              type: 'installPackage',
-            },
-          ],
-        },
-      });
-    });
-    test('should find the template with template Id and set correct status details on the step', () => {
-      const step = {
-        name: 'installStep',
-        description: 'something',
-        _connectionId: 'connectionId',
-        type: 'Connection',
-        status: 'verifying',
-      };
-      const state = reducer(
-        { [testTemplateId]: { installSteps } },
-        actions.template.updateStep(step, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        '58e718fe160a77244b441a46': {
-          installSteps: [
-            { description: 'something', name: 'installStep', type: 'Stack' },
-            {
-              _connectionId: 'connectionId',
-              description: 'something',
-              isTriggered: true,
-              verifying: true,
-              name: 'installStep',
-              type: 'Connection',
-            },
-            {
-              description: 'something',
-              installURL: 'connectionId',
-              name: 'installUrl',
-              type: 'installPackage',
-            },
-          ],
-        },
-      });
-    });
-
-    test('should not affect the step if invalid status in passed', () => {
-      const step = {
-        name: 'installStep',
-        description: 'something',
-        _connectionId: 'connectionId',
-        type: 'Connection',
-        status: 'invalid_status',
-      };
-      const state = reducer(
-        { [testTemplateId]: { installSteps } },
-        actions.template.updateStep(step, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        '58e718fe160a77244b441a46': {
-          installSteps: [
-            { description: 'something', name: 'installStep', type: 'Stack' },
-            {
-              _connectionId: 'connectionId',
-              description: 'something',
-              name: 'installStep',
-              type: 'Connection',
-            },
-            {
-              description: 'something',
-              installURL: 'connectionId',
-              name: 'installUrl',
-              type: 'installPackage',
-            },
-          ],
-        },
-      });
-    });
-
-    test('should not throw error when step  is null', () => {
-      const state = reducer(
-        {},
-        actions.template.updateStep(undefined, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {},
-      });
-    });
-
-    test('should find the correct template and set the value and should not affect other template data', () => {
-      const step = {
-        name: 'installStep',
-        description: 'something',
-        _connectionId: 'connectionId',
-        type: 'Connection',
-        status: 'verifying2',
-      };
-      const state = reducer(
-        {
+        expect(state).toEqual({
           [testTemplateId]: {
             installSteps,
+            connectionMap,
+          },
+        });
+      });
+
+      test('should not throw error when steps returned is null', () => {
+        const state = reducer(
+          {},
+          actions.template.installStepsReceived(null, null, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            installSteps: null,
+            connectionMap: null,
+          },
+        });
+      });
+
+      test('should find the correct template and set the value and should not affect other template data', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {},
+            secondTemplate: {
+              preview: testComponents,
+            },
+          },
+          actions.template.installStepsReceived(
+            installSteps,
+            connectionMap,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            installSteps,
+            connectionMap,
           },
           secondTemplate: {
             preview: testComponents,
           },
-        },
-        actions.template.updateStep(step, testTemplateId)
-      );
-
-      expect(state).toEqual({
-        [testTemplateId]: {
-          installSteps,
-        },
-        secondTemplate: {
-          preview: testComponents,
-        },
+        });
       });
-    });
-    test('should find the correct template and set the value and should not affect other properties', () => {
-      const step = {
-        name: 'installStep',
-        description: 'something',
-        _connectionId: 'connectionId',
-        type: 'Connection',
-        status: 'verifying2',
-      };
-      const state = reducer(
-        {
+      test('should find the correct template and set the value and should not affect other properties', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              connectionMap: { c1: 'c1', c2: 'c2' },
+              stackId: '_stackId',
+            },
+            secondTemplate: {
+              preview: testComponents,
+              connectionMap: { c1: 'c1', c2: 'c2' },
+            },
+          },
+          actions.template.installStepsReceived(
+            installSteps,
+            connectionMap,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
           [testTemplateId]: {
             connectionMap,
             stackId: '_stackId',
@@ -865,20 +692,452 @@ describe('template reducer test cases', () => {
             preview: testComponents,
             connectionMap: { c1: 'c1', c2: 'c2' },
           },
-        },
-        actions.template.updateStep(step, testTemplateId)
+        });
+      });
+    });
+
+    describe('template steps received reducer', () => {
+      test('should find the template with template Id and set installSteps and connectionMap', () => {
+        const state = reducer(
+          {},
+          actions.template.installStepsReceived(
+            installSteps,
+            connectionMap,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            installSteps,
+            connectionMap,
+          },
+        });
+      });
+
+      test('should not throw error when steps returned is null', () => {
+        const state = reducer(
+          {},
+          actions.template.installStepsReceived(null, null, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            installSteps: null,
+            connectionMap: null,
+          },
+        });
+      });
+
+      test('should find the correct template and set the value and should not affect other template data', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {},
+            secondTemplate: {
+              preview: testComponents,
+            },
+          },
+          actions.template.installStepsReceived(
+            installSteps,
+            connectionMap,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            installSteps,
+            connectionMap,
+          },
+          secondTemplate: {
+            preview: testComponents,
+          },
+        });
+      });
+      test('should find the correct template and set the value and should not affect other properties', () => {
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              connectionMap: { c1: 'c1', c2: 'c2' },
+              stackId: '_stackId',
+            },
+            secondTemplate: {
+              preview: testComponents,
+              connectionMap: { c1: 'c1', c2: 'c2' },
+            },
+          },
+          actions.template.installStepsReceived(
+            installSteps,
+            connectionMap,
+            testTemplateId
+          )
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            connectionMap,
+            stackId: '_stackId',
+            installSteps,
+          },
+          secondTemplate: {
+            preview: testComponents,
+            connectionMap: { c1: 'c1', c2: 'c2' },
+          },
+        });
+      });
+    });
+    describe('template update steps reducer', () => {
+      test('should not affect the existing state if invalid templateId is passed', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+        };
+        const state = reducer(
+          {
+            [testTemplateId]: {},
+            secondTemplate: {
+              preview: testComponents,
+            },
+          },
+          actions.template.updateStep(step, 'invalidTemplateId')
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {},
+          invalidTemplateId: {},
+          secondTemplate: {
+            preview: testComponents,
+          },
+        });
+      });
+
+      test('should not affect the existing state if invalid step is passed', () => {
+        const step = {
+          name: 'installStep2',
+          description: 'something2',
+          _connectionId: 'connectionId2',
+          type: 'Connection',
+          status: 'failed',
+        };
+        const state = reducer(
+          {
+            [testTemplateId]: { installSteps },
+            secondTemplate: {
+              preview: testComponents,
+            },
+          },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { installSteps },
+          secondTemplate: {
+            preview: testComponents,
+          },
+        });
+      });
+      test('should find the template with template Id and set status details on the step', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'triggered',
+        };
+        const state = reducer(
+          { [testTemplateId]: { installSteps } },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          '58e718fe160a77244b441a46': {
+            installSteps: [
+              { description: 'something', name: 'installStep', type: 'Stack' },
+              {
+                _connectionId: 'connectionId',
+                description: 'something',
+                isTriggered: true,
+                name: 'installStep',
+                type: 'Connection',
+              },
+              {
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installUrl',
+                type: 'installPackage',
+              },
+            ],
+          },
+        });
+      });
+      test('should find the template with template Id and set correct status details on the step', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'verifying',
+        };
+        const state = reducer(
+          { [testTemplateId]: { installSteps } },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          '58e718fe160a77244b441a46': {
+            installSteps: [
+              { description: 'something', name: 'installStep', type: 'Stack' },
+              {
+                _connectionId: 'connectionId',
+                description: 'something',
+                isTriggered: true,
+                verifying: true,
+                name: 'installStep',
+                type: 'Connection',
+              },
+              {
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installUrl',
+                type: 'installPackage',
+              },
+            ],
+          },
+        });
+      });
+
+      test('should not affect the step if invalid status in passed', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'invalid_status',
+        };
+        const state = reducer(
+          { [testTemplateId]: { installSteps } },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          '58e718fe160a77244b441a46': {
+            installSteps: [
+              { description: 'something', name: 'installStep', type: 'Stack' },
+              {
+                _connectionId: 'connectionId',
+                description: 'something',
+                name: 'installStep',
+                type: 'Connection',
+              },
+              {
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installUrl',
+                type: 'installPackage',
+              },
+            ],
+          },
+        });
+      });
+
+      test('should not throw error when step  is null', () => {
+        const state = reducer(
+          {},
+          actions.template.updateStep(undefined, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {},
+        });
+      });
+
+      test('should find the correct template and set the value and should not affect other template data', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'verifying2',
+        };
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              installSteps,
+            },
+            secondTemplate: {
+              preview: testComponents,
+            },
+          },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            installSteps,
+          },
+          secondTemplate: {
+            preview: testComponents,
+          },
+        });
+      });
+      test('should find the correct template and set the value and should not affect other properties', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'verifying2',
+        };
+        const state = reducer(
+          {
+            [testTemplateId]: {
+              connectionMap,
+              stackId: '_stackId',
+              installSteps,
+            },
+            secondTemplate: {
+              preview: testComponents,
+              connectionMap: { c1: 'c1', c2: 'c2' },
+            },
+          },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: {
+            connectionMap,
+            stackId: '_stackId',
+            installSteps,
+          },
+          secondTemplate: {
+            preview: testComponents,
+            connectionMap: { c1: 'c1', c2: 'c2' },
+          },
+        });
+      });
+    });
+
+    describe('template failed preview reducer', () => {
+      test('should find the template with template Id and set isInstallFailed', () => {
+        const state = reducer(
+          {},
+          actions.template.failedInstall(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { isInstallFailed: true},
+        });
+      });
+
+      test('should find the template with template Id and set the isInstalled flag', () => {
+        const state = reducer(
+          { [testTemplateId]: {
+            installSteps,
+            isInstallFailed: false,
+          },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          } },
+          actions.template.failedInstall(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { installSteps, isInstallFailed: true },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          },
+        });
+      });
+    });
+  });
+
+  describe('template selector test cases', () => {
+    test('should return empty object if state does not exist', () => {
+      expect(selectors.template(undefined)).toEqual({});
+      expect(selectors.previewTemplate(undefined)).toEqual({});
+      expect(selectors.templateInstallSteps(undefined)).toEqual([]);
+      expect(selectors.connectionMap(undefined)).toEqual({});
+      expect(selectors.isFileUploaded(undefined)).toEqual({});
+      expect(selectors.isPreviewStatusFailed(undefined)).toEqual({previewFailedStatus: false});
+    });
+
+    test('should return template with selected id from the state', () => {
+      let state = reducer(
+        {},
+        actions.template.receivedPreview(testComponents, testTemplateId)
       );
 
-      expect(state).toEqual({
-        [testTemplateId]: {
-          connectionMap,
-          stackId: '_stackId',
+      state = reducer(
+        state,
+        actions.template.receivedPreview(testCreatedComponents, testTemplateId2)
+      );
+
+      expect(selectors.template(state, testTemplateId)).toEqual({
+        isInstallIntegration: undefined,
+        preview: {
+          components: testComponents,
+          status: 'success',
+        },
+      });
+
+      expect(selectors.previewTemplate(state, testTemplateId)).toEqual({
+        components: testComponents,
+        status: 'success',
+      });
+    });
+
+    test('should return install steps and connection map for selected template id', () => {
+      let state = reducer(
+        {},
+        actions.template.installStepsReceived(
           installSteps,
-        },
-        secondTemplate: {
-          preview: testComponents,
-          connectionMap: { c1: 'c1', c2: 'c2' },
-        },
+          connectionMap,
+          testTemplateId
+        )
+      );
+
+      state = reducer(
+        state,
+        actions.template.installStepsReceived(
+          null,
+          null,
+          testTemplateId2
+        )
+      );
+
+      expect(selectors.templateInstallSteps(state, testTemplateId)).toEqual(installSteps);
+      expect(selectors.connectionMap(state, testTemplateId)).toEqual(connectionMap);
+    });
+
+    test('should return uploaded template id with isFileUploaded flag', () => {
+      let state = reducer(
+        {},
+        actions.template.receivedPreview(testComponents, testTemplateId, true)
+      );
+
+      state = reducer(
+        state,
+        actions.template.receivedPreview(testCreatedComponents, testTemplateId2)
+      );
+
+      expect(selectors.isFileUploaded(state)).toEqual({
+        templateId: testTemplateId,
+        isFileUploaded: true,
+      });
+    });
+    test('should return uploaded template id with previewFailedStatus flag', () => {
+      const state = reducer(
+        {},
+        actions.template.failedPreview(testTemplateId)
+      );
+
+      expect(selectors.isPreviewStatusFailed(state)).toEqual({
+        id: testTemplateId,
+        previewFailedStatus: true,
       });
     });
   });

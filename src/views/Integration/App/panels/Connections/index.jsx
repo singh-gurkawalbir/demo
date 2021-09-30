@@ -8,15 +8,13 @@ import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/connections/metadata';
 import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
-import {
-  isTradingPartnerSupported,
-  generateNewId,
-} from '../../../../../utils/resource';
+import { isTradingPartnerSupported, generateNewId } from '../../../../../utils/resource';
+import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -28,20 +26,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionsPanel({ integrationId, storeId }) {
+const defaultFilter = { sort: {order: 'asc', orderBy: 'name'}};
+
+export default function ConnectionsPanel({ integrationId, childId }) {
   const classes = useStyles();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
   const history = useHistory();
-  const filterKey = `${integrationId}${`+${storeId}` || ''}+connections`;
-  const tableConfig = useSelector(state => selectors.filter(state, filterKey));
+  const filterKey = `${integrationId}${`+${childId}` || ''}+connections`;
+  const tableConfig = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const connections = useSelector(state =>
     selectors.integrationAppConnectionList(
       state,
       integrationId,
-      storeId,
+      childId,
       tableConfig
     )
   );
@@ -75,6 +75,10 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   );
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
     // For connections resource table, we need to poll the connection status and queueSize
@@ -155,6 +159,8 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
           }}
         />
       </LoadResources>
+
+      <ConfigConnectionDebugger />
     </div>
   );
 }

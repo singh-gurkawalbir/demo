@@ -1,5 +1,5 @@
 import { isNewId } from '../../../utils/resource';
-import { isProduction } from '../../utils';
+import { isProduction } from '../../formFactory/utils';
 
 export default {
   preSave: formValues => {
@@ -11,11 +11,9 @@ export default {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
 
-      newValues['/netsuite/wsdlVersion'] = 'next';
       newValues['/netsuite/email'] = undefined;
       newValues['/netsuite/password'] = undefined;
     } else if (newValues['/netsuite/authType'] === 'basic') {
-      newValues['/netsuite/wsdlVersion'] = 'current';
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/_iClientId'] = undefined;
@@ -51,8 +49,11 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'netsuite.authType': {
-      fieldId: 'netsuite.authType',
+      id: 'netsuite.authType',
+      label: 'Authentication type',
+      type: 'nsauthtype',
       required: true,
+      skipSort: true,
     },
     'netsuite.email': {
       fieldId: 'netsuite.email',
@@ -179,6 +180,21 @@ export default {
     application: {
       fieldId: 'application',
     },
+    'netsuite.wsdlVersion': {
+      id: 'netsuite.wsdlVersion',
+      type: 'select',
+      label: 'WSDL version',
+      skipSort: true,
+      defaultValue: r => {
+        const version = r?.netsuite?.wsdlVersion;
+
+        if (version === 'next') return '2018.1';
+        if (version === 'current') return '2016.2';
+
+        return version || '2020.2';
+      },
+      options: [{ items: ['2020.2', '2018.1', '2016.2'] }],
+    },
   },
   layout: {
     type: 'collapse',
@@ -217,19 +233,15 @@ export default {
           'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
+          'netsuite.wsdlVersion',
         ],
       },
     ],
   },
   actions: [
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclosegroup',
       visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
         {
           field: 'netsuite.authType',
           is: [''],
@@ -237,21 +249,7 @@ export default {
       ],
     },
     {
-      id: 'saveandclose',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-        {
-          field: 'netsuite.authType',
-          is: [''],
-        },
-      ],
-    },
-    {
-      id: 'oauth',
-      label: 'Save & authorize',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -260,7 +258,7 @@ export default {
       ],
     },
     {
-      id: 'testandsave',
+      id: 'testandsavegroup',
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -269,35 +267,11 @@ export default {
       ],
     },
     {
-      id: 'testsaveandclose',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
-    },
-    {
-      id: 'validate',
-      label: 'Validate',
-      mode: 'secondary',
+      id: 'validateandsave',
       visibleWhen: [
         {
           field: 'netsuite.authType',
           is: ['basic'],
-        },
-      ],
-    },
-    {
-      id: 'test',
-      mode: 'secondary',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token'],
         },
       ],
     },

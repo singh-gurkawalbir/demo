@@ -23,7 +23,6 @@ export default {
       generateFields,
       ssLinkedConnectionId,
       recordType,
-      isGroupedSampleData = false,
     } = params;
     const fieldId =
       generate && generate.indexOf('[*].') !== -1
@@ -60,15 +59,6 @@ export default {
 
     const fieldMeta = {
       fieldMap: {
-        useFirstRow: {
-          id: 'useFirstRow',
-          name: 'useFirstRow',
-          type: 'checkbox',
-          defaultValue: value.useFirstRow || false,
-          // helpText not present
-          label: 'Use first row',
-        },
-
         fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
@@ -91,6 +81,7 @@ export default {
           id: 'isKey',
           name: 'isKey',
           type: 'checkbox',
+          helpKey: 'mapping.isKey',
           label: 'Use as a key field to find existing lines',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
@@ -167,7 +158,7 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import field (NetSuite)',
+          valueLabel: 'Import field value',
           commMetaPath:
             fieldId &&
             getNetsuiteSelectFieldValueUrl({
@@ -181,7 +172,7 @@ export default {
           keyOptions:
             fieldOptions && fieldOptions.length ? fieldOptions : undefined,
           keyName: 'export',
-          keyLabel: 'Export field',
+          keyLabel: 'Export field value',
           valueName: 'import',
           defaultValue:
             lookup.map &&
@@ -297,7 +288,6 @@ export default {
       },
       layout: {
         fields: [
-          'useFirstRow',
           'fieldMappingType',
           'lookup.mode',
           'lookup.recordType',
@@ -364,11 +354,6 @@ export default {
     };
     const { fieldMap, layout } = fieldMeta;
     let { fields } = layout;
-
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
-      delete fieldMeta.fieldMap.useFirstRow;
-      fields = fields.filter(el => el !== 'useFirstRow');
-    }
 
     if (generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.isKey;

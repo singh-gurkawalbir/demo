@@ -1,8 +1,7 @@
 import React, { } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import FormGenerator from '..';
-// import ColorPalette from '../../../../styleguide/ColorPalette';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,6 +25,7 @@ export default function BoxComponents(props) {
 
       return (
         <Paper key={label} elevation={0} className={classes.root}>
+          {label && <Typography>{label}</Typography>}
           <FormGenerator {...props} layout={rest} fieldMap={fieldMap} />
         </Paper>
 

@@ -21,13 +21,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddonInstallerButton({ resource }) {
+export default function AddonInstallerButton({ resource, ...rest }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [isInProgress, setIsInProgressStatus] = useState(false);
-  const { installInprogress } = useSelector(
-    state => selectors.isAddOnInstallInProgress(state, resource.id),
-    (left, right) => left.installerInprogress === right.installerInprogress
+  const installInprogress = useSelector(
+    state => selectors.isAddOnInstallInProgress(state, resource.id)
   );
 
   useEffect(() => {
@@ -142,6 +141,7 @@ export default function AddonInstallerButton({ resource }) {
       variant="outlined"
       color="primary"
       className={clsx({[classes.unInstallBtn]: resource.status === 'installed'})}
+      {...rest}
       onClick={() => onClick(resource)}>
       {getLabel()}
     </Button>

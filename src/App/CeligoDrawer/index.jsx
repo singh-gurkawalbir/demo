@@ -1,25 +1,17 @@
-import React, { Fragment, useCallback, useMemo} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, useLocation, matchPath } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { ButtonBase, Chip } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
-import { List, Collapse, ButtonBase, Chip, Tooltip } from '@material-ui/core';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import CeligoLogo from '../../components/CeligoLogo';
-import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
-import menuItems from './menuItems';
-import getRoutePath from '../../utils/routePaths';
-import { selectors } from '../../reducers';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
-import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
-import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
+import CeligoLogo from '../../components/CeligoLogo';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
+import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
+import { selectors } from '../../reducers';
+import MenuList from './MenuList';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -80,62 +72,9 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.text.hint,
     },
   },
-  list: {
-    backgroundColor: 'rgb(255,255,255,0.1)',
-    paddingTop: 0,
-    paddingBottom: 0,
-    '& ul': {
-      '&:last-child': {
-        borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
-      },
-    },
-  },
-  listItem: {
-    backgroundColor: theme.palette.background.drawer2,
-    '& svg > *': {
-      color: theme.palette.common.white,
-    },
-    '&:hover': {
-      backgroundColor: theme.palette.background.drawer2,
-      color: theme.palette.background.paper,
-      '&:before': {
-        background: theme.palette.background.drawerActive,
-      },
-      '& svg > *': {
-        color: theme.palette.background.paper,
-      },
-    },
-    '&:not(:last-child)': {
-      borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
-    },
-    '&:before': {
-      content: '""',
-      width: 6,
-      height: '100%',
-      position: 'absolute',
-      background: 'transparent',
-      left: 0,
-    },
-  },
-  activeItem: {
-    backgroundColor: `${theme.palette.background.drawerActive} !important`,
-    color: theme.palette.common.white,
-    '& svg > *': {
-      color: theme.palette.background.paper,
-    },
-  },
-  itemIconRoot: {
-    minWidth: 45,
-    color: theme.palette.background.paper,
-  },
   menuList: {
     overflowY: 'auto',
     overflowX: 'hidden',
-  },
-  itemText: {
-    fontSize: 14,
-    fontFamily: 'unset',
-    color: 'inherit',
   },
   drawerToggle: {
     border: '1px solid',
@@ -144,11 +83,6 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(3),
     height: theme.spacing(3),
     padding: 0,
-  },
-  innerListItems: {
-    backgroundColor: theme.palette.background.drawer3,
-    '&:hover': {
-      backgroundColor: theme.palette.background.drawer3 },
   },
   logoContainer: {
     alignItems: 'center',
@@ -180,47 +114,12 @@ const useStyles = makeStyles(theme => ({
       padding: [[0, 5]],
     },
   },
-  collapsedArrowIcon: {
-    width: 18,
-  },
 }));
 
-function getHrefProps(href, path) {
-  return {
-    target: href && '_blank',
-    href,
-    to: !href ? getRoutePath(path) : undefined,
-  };
-}
-
-const integrationsFilterConfig = {
-  type: 'integrations',
-  ignoreEnvironmentFilter: true,
-};
-
-export default function CeligoDrawer() {
+function CeligoDrawer({drawerOpened, isSandbox}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const userProfile = useSelector(state => selectors.userProfile(state));
-  const accessLevel = useSelector(
-    state => selectors.resourcePermissions(state).accessLevel
-  );
-  const integrations = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    integrationsFilterConfig
-  ).resources;
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const environment = useSelector(
-    state => selectors.userPreferences(state).environment
-  );
-  const expand = useSelector(state => selectors.expandSelected(state));
-  const isSandbox = environment === 'sandbox';
-  const marketplaceConnectors = useSelectorMemo(
-    selectors.makeMarketPlaceConnectorsSelector,
-    undefined,
-    isSandbox
-  );
+
   const handleDrawerToggle = useCallback(() => {
     dispatch(
       actions.user.preferences.update({
@@ -228,31 +127,6 @@ export default function CeligoDrawer() {
       })
     );
   }, [dispatch, drawerOpened]);
-  const handleExpandClick = useCallback(
-    label => () => {
-      const selectedExpandValue = label === expand ? null : label;
-
-      dispatch(
-        actions.user.preferences.update({
-          expand: selectedExpandValue,
-        })
-      );
-    },
-    [dispatch, expand]
-  );
-
-  const listItemsMemo = useMemo(() => menuItems(
-    userProfile,
-    accessLevel,
-    integrations,
-    marketplaceConnectors),
-  [
-
-    userProfile,
-    accessLevel,
-    integrations,
-    marketplaceConnectors,
-  ]);
 
   // what is the active item? does it have a parent
   // that needs an active state as well?
@@ -303,105 +177,14 @@ export default function CeligoDrawer() {
             )}
           </div>
         </div>
-        <div className={classes.menuList}>
-          <List className={clsx(classes.list)}>
-            {listItemsMemo.map(({ label, Icon, path, routeProps, children, href, component }) => (
-              <Fragment key={label}>
-                <ListItem
-                  button
-                  className={clsx(classes.listItem, {
-                    [classes.activeItem]:
-                      expand !== label &&
-                      matchPath(location.pathname, routeProps || getRoutePath(`${path}`)),
-                  })}
-                  component={children ? undefined : component || Link}
-                  {...getHrefProps(href, path)}
-                  data-test={label}
-                  onClick={children ? handleExpandClick(label) : null}>
-                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    <>
-                      {drawerOpened ? <Icon />
-                        : (
-                          <Tooltip placement="right-end" enterDelay={0} title={label}>
-                            <div>
-                              <Icon />
-                            </div>
-                          </Tooltip>
-                        )}
-
-                      {(!drawerOpened && children) &&
-                    (expand === label && !drawerOpened ? <ArrowUpIcon className={classes.collapsedArrowIcon} /> : <ArrowDownIcon className={classes.collapsedArrowIcon} />)}
-                    </>
-                  </ListItemIcon>
-                  <ListItemText
-                    primaryTypographyProps={{
-                      className: classes.itemText,
-                    }}
-                    primary={label}
-                  />
-                  {children &&
-                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-                </ListItem>
-                {children && (
-                  <Collapse in={expand === label} unmountOnExit timeout="auto">
-                    <List className={clsx(classes.list)} disablePadding>
-                      {children.map(
-                        ({
-                          label,
-                          Icon,
-                          path,
-                          routeProps,
-                          href,
-                          component,
-                        }) => (
-                          <ListItem
-                            className={clsx(
-                              classes.listItem,
-                              classes.innerListItems,
-                              {
-                                [classes.activeItem]: matchPath(
-                                  location.pathname,
-                                  routeProps || getRoutePath(`${path}`)
-                                ),
-                              }
-                            )}
-                            data-test={label}
-                            key={label}
-                            component={component || Link}
-                            {...getHrefProps(href, path)}
-                            button>
-                            <ListItemIcon
-                              classes={{ root: classes.itemIconRoot }}>
-                              {drawerOpened
-                                ? <Icon />
-                                : (
-                                  <Tooltip placement="right-end" enterDelay={0} title={label}>
-                                    <div>
-                                      <Icon />
-                                    </div>
-                                  </Tooltip>
-                                )}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={label}
-                              primaryTypographyProps={{
-                                className: classes.itemText,
-                              }}
-                            />
-                          </ListItem>
-                        )
-                      )}
-                    </List>
-                  </Collapse>
-                )}
-              </Fragment>
-            ))}
-          </List>
+        <div className={classes.menuList} >
+          <MenuList />
         </div>
         <div>
           <div className={clsx(classes.toolbar, classes.toggleContainer)}>
             <IconButton
               data-test="celigoDrawerToggle"
+              aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
               className={classes.drawerToggle}>
@@ -411,5 +194,21 @@ export default function CeligoDrawer() {
         </div>
       </div>
     </Drawer>
+  );
+}
+
+export default function MemoCeligoDrawer() {
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const isSandbox = environment === 'sandbox';
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+
+  return useMemo(() => (
+    <CeligoDrawer
+      isSandbox={isSandbox}
+      drawerOpened={drawerOpened}
+    />
+  ), [drawerOpened, isSandbox]
   );
 }

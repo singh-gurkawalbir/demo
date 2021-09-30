@@ -52,6 +52,7 @@ const useStyles = makeStyles(theme => ({
   dialogContent: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
+    wordBreak: 'break-word',
   },
 }));
 
@@ -66,6 +67,7 @@ export default function ModalDialog({
   children,
   className,
   disableEnforceFocus,
+  disableClose,
 }) {
   const classes = useStyles();
 
@@ -87,6 +89,7 @@ export default function ModalDialog({
             <IconButton
               onClick={onClose}
               className={classes.closeButton}
+              disabled={disableClose}
               autoFocus>
               <CloseIcon />
             </IconButton>

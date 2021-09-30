@@ -37,17 +37,17 @@ export default {
     required: true,
   },
   'http.status.inProgressValues': {
-    type: 'text',
+    type: 'textlist',
     label: 'In progress values',
     required: true,
   },
   'http.status.doneValues': {
-    type: 'text',
+    type: 'textlist',
     label: 'Done values',
     required: true,
   },
   'http.status.doneWithoutDataValues': {
-    type: 'text',
+    type: 'textlist',
     label: 'Done without data values',
   },
   'http.submit.resourcePath': {

@@ -1,18 +1,20 @@
 import { useDispatch } from 'react-redux';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CancelIcon from '../../../../icons/CancelIcon';
 
 export default {
-  label: 'Cancel transfer',
+  key: 'cancelTransfer',
+  useLabel: () => 'Cancel transfer',
   icon: CancelIcon,
-  component: function Cancel({ rowData: transfer }) {
+  useOnClick: rowData => {
+    const { _id: transferId} = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const cancelTransfer = useCallback(() => {
-      dispatch(actions.transfer.cancel(transfer._id));
-    }, [dispatch, transfer._id]);
+      dispatch(actions.transfer.cancel(transferId));
+    }, [dispatch, transferId]);
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm cancel',
@@ -30,10 +32,6 @@ export default {
       });
     }, [confirmDialog, cancelTransfer]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

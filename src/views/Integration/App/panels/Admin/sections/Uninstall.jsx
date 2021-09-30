@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function UninstallSection({ storeId, integrationId }) {
+export default function UninstallSection({ childId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = isParentViewSelected(integration, storeId);
+  const isParentView = isParentViewSelected(integration, childId);
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
@@ -52,7 +52,7 @@ export default function UninstallSection({ storeId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(
@@ -88,7 +88,7 @@ export default function UninstallSection({ storeId, integrationId }) {
       <PanelHeader title="Uninstall" />
 
       <div className={classes.content}>
-        <Typography variant="h5">
+        <Typography>
           Use this page to uninstall this instance (i.e. this tile) of the
           Integration App. Uninstalling an Integration App will remove all
           components, including the integration tile, from your integrator.io
@@ -97,7 +97,7 @@ export default function UninstallSection({ storeId, integrationId }) {
           want to uninstall as this action cannot be undone.
         </Typography>
         <Divider className={classes.divider} />
-        <Typography variant="h5">
+        <Typography>
           Once you uninstall this Integration App there is no going back. Please
           be certain.
         </Typography>

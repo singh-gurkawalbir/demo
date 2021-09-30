@@ -5,7 +5,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../../CodeEditor';
 import ActionButton from '../../../ActionButton';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandModeEditor from './ExpandModeEditor';
 
@@ -62,6 +62,7 @@ export default function DynaEditor(props) {
     required,
     isValid,
     skipJsonParse,
+    customHandleUpdate,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -69,7 +70,12 @@ export default function DynaEditor(props) {
     setShowEditor(!showEditor);
   }, [showEditor]);
   const handleUpdate = useCallback(
-    (editorVal, isTouched = false) => {
+    editorVal => {
+      if (customHandleUpdate) {
+        customHandleUpdate(editorVal);
+
+        return;
+      }
       let sanitizedVal = editorVal;
 
       // convert to json if form value is an object
@@ -82,7 +88,7 @@ export default function DynaEditor(props) {
       ) {
         // user trying to remove the json. Handle removing the value during presave
         if (editorVal === '') {
-          onFieldChange(id, '', isTouched);
+          onFieldChange(id, '', false);
 
           return;
         }
@@ -94,9 +100,9 @@ export default function DynaEditor(props) {
         }
       }
 
-      onFieldChange(id, sanitizedVal, isTouched);
+      onFieldChange(id, sanitizedVal, false);
     },
-    [id, mode, onFieldChange, saveMode, value, skipJsonParse]
+    [customHandleUpdate, saveMode, mode, value, skipJsonParse, onFieldChange, id]
   );
   const handleUpdateOnDrawerSave = useCallback(
     editorVal => handleUpdate(editorVal, true),
@@ -154,7 +160,7 @@ export default function DynaEditor(props) {
             onChange={handleUpdate}
           />
         </div>
-        <ErroredMessageComponent
+        <FieldMessage
           description={description}
           errorMessages={errorMessages}
           isValid={isValid}

@@ -2,14 +2,14 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import JsonContent from '../JsonContent';
 import RawHtml from '../RawHtml';
-import { isJsonString } from '../../utils/string';
-
-const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
+import { isJsonString, isHTML} from '../../utils/string';
 
 const useStyles = makeStyles({
   errorText: {
     overflow: 'hidden',
     maxWidth: 500,
+    overflowY: 'auto',
+    maxHeight: 'calc(100vh - 118px)',
     paddingLeft: 12,
     wordBreak: 'break-word',
     '& > * ': {

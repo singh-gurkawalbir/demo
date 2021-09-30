@@ -15,6 +15,7 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
+import { USER_ACCESS_LEVELS } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -24,23 +25,24 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  storeSelect: {
+  // TODO: (Azhar) make all pagebar dropdown same without border.
+  childSelect: {
     fontFamily: 'Roboto500',
     fontSize: 13,
-    borderRadius: 4,
-    backgroundColor: 'rgb(0,0,0,0)',
     transition: theme.transitions.create('background-color'),
     paddingLeft: theme.spacing(1),
     height: 'unset',
     '&:hover': {
-      backgroundColor: 'rgb(0,0,0,0.05)',
+      backgroundColor: theme.palette.background.default,
+      borderRadius: theme.spacing(0.5),
     },
     '& > div': {
       paddingTop: theme.spacing(1),
     },
   },
-  storeErrorStatus: {
+  childErrorStatus: {
     display: 'grid',
+    minWidth: 250,
     width: '100%',
     gridColumnGap: '10px',
     gridTemplateColumns: '70% 30%',
@@ -49,45 +51,87 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-// TODO Surya : StoreMenuItems to go into the ArrowPopper.
-const StoreMenuItems = ({ integration, integrationId }) => {
+
+const AllChildren = ({integrationId, childLabel}) => {
   const classes = useStyles();
-  const integrationErrorsPerStore = useSelector(state =>
-    selectors.integrationErrorsPerStore(state, integrationId),
+  const integrationErrorsPerChild = useSelector(state =>
+    selectors.integrationErrorsPerChild(state, integrationId),
+  shallowEqual
+  );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const totalCount = Object.values(integrationErrorsPerChild).reduce(
+    (total, count) => total + count,
+    0);
+
+  if (!isUserInErrMgtTwoDotZero) {
+    return (
+      <MenuItem value="">
+        All {childLabel}s
+      </MenuItem>
+    );
+  }
+
+  if (totalCount === 0) {
+    return (
+      <MenuItem value="" className={classes.childErrorStatus}>
+        <div> All {childLabel}s</div>
+        <div>
+          <StatusCircle size="mini" variant="success" />
+        </div>
+      </MenuItem>
+    );
+  }
+
+  return (
+    <MenuItem value="" className={classes.childErrorStatus}>
+      <div> All {childLabel}s</div>
+      <div>
+        <StatusCircle size="mini" variant="error" />
+        <span>{totalCount > 9999 ? '9999+' : totalCount}</span>
+      </div>
+    </MenuItem>
+  );
+};
+// TODO Surya : ChildMenuItems to go into the ArrowPopper.
+const ChildMenuItems = ({ integration, integrationId }) => {
+  const classes = useStyles();
+  const integrationErrorsPerChild = useSelector(state =>
+    selectors.integrationErrorsPerChild(state, integrationId),
   shallowEqual
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
-  return integration?.stores?.map(store => {
+  return integration?.children?.map(child => {
     if (!isUserInErrMgtTwoDotZero) {
       return (
-        <MenuItem key={store.value} value={store.value}>
-          {store.label}
+        <MenuItem key={child.value} value={child.value}>
+          {child.label}
         </MenuItem>
       );
     }
-    const storeErrorCount = integrationErrorsPerStore[store.value];
+    const childErrorCount = integrationErrorsPerChild[child.value];
 
-    if (storeErrorCount === 0) {
+    if (childErrorCount === 0) {
       return (
-        <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
-          <div> {store.label}</div>
+        <MenuItem key={child.value} value={child.value} className={classes.childErrorStatus}>
+          <div> {child.label}</div>
           <div>
             <StatusCircle size="mini" variant="success" />
-            <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
           </div>
         </MenuItem>
       );
     }
 
     return (
-      <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
-        <div> {store.label}</div>
+      <MenuItem key={child.value} value={child.value} className={classes.childErrorStatus}>
+        <div> {child.label}</div>
         <div>
           <StatusCircle size="mini" variant="error" />
-          <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+          <span>{childErrorCount > 9999 ? '9999+' : childErrorCount}</span>
         </div>
       </MenuItem>
     );
@@ -98,7 +142,7 @@ export default function PageBar() {
   const classes = useStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { integrationId, storeId, tab } = match.params;
+  const { integrationId, childId, tab } = match.params;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
@@ -107,8 +151,7 @@ export default function PageBar() {
   const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const { supportsMultiStore, storeLabel } = integration?.settings || {};
 
@@ -126,15 +169,15 @@ export default function PageBar() {
     },
     [dispatch, integrationId]
   );
-  const handleStoreChange = useCallback(
+  const handleChildChange = useCallback(
     e => {
-      const newStoreId = e.target.value;
+      const newChildId = e.target.value;
 
-      if (newStoreId) {
-        // Redirect to current tab of new store
+      if (newChildId) {
+        // Redirect to current tab of new child
         history.push(
           getRoutePath(
-            `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+            `integrationapps/${integrationAppName}/${integrationId}/child/${newChildId}/${tab}`
           )
         );
       } else {
@@ -147,36 +190,39 @@ export default function PageBar() {
     },
     [history, integrationAppName, integrationId, tab]
   );
-  const handleAddNewStoreClick = useCallback(() => {
+  const handleAddNewChildClick = useCallback(() => {
     history.push(
       getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`)
     );
   }, [history, integrationAppName, integrationId]);
 
-  const renderStoreLabel = useCallback(selectedStoreId => {
-    if (selectedStoreId === '') {
+  const renderChildLabel = useCallback(selectedChildId => {
+    if (selectedChildId === '') {
       return `All ${storeLabel}s`;
     }
 
-    return integration.stores?.find(store => store.value === selectedStoreId)?.label || selectedStoreId;
+    return integration.children?.find(child => child.value === selectedChildId)?.label || selectedChildId;
   },
-  [integration]);
+  [integration.children, storeLabel]);
 
-  const storeItems = StoreMenuItems({ integration, integrationId });
+  const childItems = ChildMenuItems({ integration, integrationId });
+  const allChildren = AllChildren({integrationId, childLabel: storeLabel});
 
   return (
     <CeligoPageBar
       title={integration.name}
       titleTag={(
         <ChipInput
-          disabled={!['owner', 'manage'].includes(accessLevel)}
+          disabled={![USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)}
           value={integration.tag || 'tag'}
           className={classes.tag}
           variant="outlined"
           onChange={handleTagChangeHandler}
           />
         )}
-      infoText={integration.description}>
+      infoText={integration.description}
+      escapeUnsecuredDomains
+    >
       {isCloningSupported && integration && !supportsMultiStore && (
       <IconTextButton
         component={Link}
@@ -188,26 +234,26 @@ export default function PageBar() {
       )}
       {supportsMultiStore && (
       <div className={classes.actions}>
-        {(accessLevel === 'owner' || accessLevel === 'manage') && (
+        {([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)) && (
         <IconTextButton
           variant="text"
+          color="primary"
           data-test={`add${storeLabel}`}
-          onClick={handleAddNewStoreClick}>
+          onClick={handleAddNewChildClick}>
           <AddIcon /> Add {storeLabel}
         </IconTextButton>
         )}
         <Select
+          data-public
           displayEmpty
           data-test={`select${storeLabel}`}
-          className={classes.storeSelect}
-          onChange={handleStoreChange}
-          renderValue={renderStoreLabel}
+          className={classes.childSelect}
+          onChange={handleChildChange}
+          renderValue={renderChildLabel}
           IconComponent={ArrowDownIcon}
-          value={storeId || ''}>
-          <MenuItem value="">
-            All {storeLabel}s
-          </MenuItem>
-          {storeItems}
+          value={childId || ''}>
+          {allChildren}
+          {childItems}
         </Select>
       </div>
       )}

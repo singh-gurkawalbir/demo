@@ -1,9 +1,8 @@
-import { isNewId } from '../../../utils/resource';
-import { alterFileDefinitionRulesVisibility } from '../../utils';
+import { EXPORT_FILE_FIELD_MAP, getFileProviderExportsOptionsHandler, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
-    const newValues = { ...formValues };
+    const newValues = updateFileProviderFormValues(formValues);
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
 
@@ -13,84 +12,6 @@ export default {
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
-    }
-
-    if (newValues['/file/type'] === 'json') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/parsers'];
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'xml') {
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/json'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-      newValues['/file/xml/resourcePath'] = newValues['/parsers']?.resourcePath;
-    } else if (newValues['/file/type'] === 'xlsx') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-
-      delete newValues['/parsers'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-    } else if (newValues['/file/type'] === 'csv') {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/parsers'];
-      delete newValues['/file/fileDefinition/resourcePath'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-    } else {
-      newValues['/file/json'] = undefined;
-      newValues['/file/xlsx'] = undefined;
-      newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
-      delete newValues['/file/csv/rowsToSkip'];
-      delete newValues['/file/csv/trimSpaces'];
-      delete newValues['/file/csv/columnDelimiter'];
-      delete newValues['/file/csv/rowDelimiter'];
-      delete newValues['/file/csv/hasHeaderRow'];
-      delete newValues['/file/csv/rowsPerRecord'];
-      delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/json/resourcePath'];
-      delete newValues['/parsers'];
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
     }
 
     if (newValues['/outputMode'] === 'blob') {
@@ -114,229 +35,18 @@ export default {
     }
 
     delete newValues['/file/decompressFiles'];
+    newValues['/ftp/backupDirectoryPath'] = undefined; // TODO Ashok, This code can be removed once all backend issues are resolved.
+    if (!newValues['/file/decrypt']) {
+      newValues['/file/decrypt'] = undefined;
+    }
 
     return {
       ...newValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    const fileType = fields.find(field => field.id === 'file.type');
-
-    if (fieldId === 'file.xlsx.keyColumns') {
-      const keyColumnField = fields.find(
-        field => field.id === 'file.xlsx.keyColumns'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'file.xlsx.hasHeaderRow'
-      );
-
-      // resetting key columns when hasHeaderRow changes
-      if (
-        keyColumnField &&
-        keyColumnField &&
-        keyColumnField.hasHeaderRow !== hasHeaderRowField.value
-      ) {
-        keyColumnField.value = [];
-        keyColumnField.hasHeaderRow = hasHeaderRowField.value;
-      }
-
-      return {
-        hasHeaderRow: hasHeaderRowField.value,
-        fileType: fileType.value,
-      };
-    }
-
-    if (fieldId === 'uploadFile') {
-      return fileType.value;
-    }
-    if (fieldId === 'file.filedefinition.rules') {
-      let definitionFieldId;
-
-      // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
-      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
-      else definitionFieldId = 'edifact.format';
-      const definition = fields.find(field => field.id === definitionFieldId);
-      const resourcePath = fields.find(
-        field => field.id === 'file.fileDefinition.resourcePath'
-      );
-
-      alterFileDefinitionRulesVisibility(fields);
-
-      return {
-        format: definition && definition.format,
-        definitionId: definition && definition.value,
-        resourcePath: resourcePath && resourcePath.value,
-      };
-    }
-  },
+  optionsHandler: getFileProviderExportsOptionsHandler,
   fieldMap: {
-    common: { formId: 'common' },
-    outputMode: {
-      id: 'outputMode',
-      type: 'mode',
-      label: 'Parse files being transferred',
-      helpKey: 'export.outputMode',
-      options: [
-        {
-          items: [
-            { label: 'Yes', value: 'records' },
-            { label: 'No', value: 'blob' },
-          ],
-        },
-      ],
-      visible: r => !(r && r.isLookup),
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-
-      defaultValue: r => {
-        const isNew = isNewId(r._id);
-
-        if (r && r.isLookup) {
-          if (r?.resourceType === 'lookupRecords' || r?.file?.type) {
-            return 'records';
-          }
-
-          return 'blob';
-        }
-
-        // if its create
-        if (isNew) return 'records';
-
-        const output = r && r.file && r.file.type;
-
-        return output ? 'records' : 'blob';
-      },
-    },
-    'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
-    'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
-    'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
-    'ftp.backupDirectoryPath': {fieldId: 'ftp.backupDirectoryPath'},
-    'file.type': { fieldId: 'file.type' },
-    uploadFile: {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: 'file.type',
-      placeholder: 'Sample file (that would be parsed)',
-    },
-    'file.csv': { fieldId: 'file.csv',
-      uploadSampleDataFieldName: 'uploadFile',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-      ] },
-    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
-    'file.xlsx.rowsPerRecord': {
-      fieldId: 'file.xlsx.rowsPerRecord',
-      disabledWhenAll: r => {
-        if (isNewId(r._id)) {
-          return [{ field: 'uploadfile', is: [''] }];
-        }
-
-        return [];
-      },
-    },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    parsers: {
-      fieldId: 'parsers',
-      uploadSampleDataFieldName: 'uploadFile',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-        {
-          field: 'file.type',
-          is: ['xml'],
-        },
-      ],
-    },
-    'file.json.resourcePath': {
-      fieldId: 'file.json.resourcePath',
-    },
-    'edix12.format': { fieldId: 'edix12.format' },
-    'fixed.format': { fieldId: 'fixed.format' },
-    'edifact.format': { fieldId: 'edifact.format' },
-    'file.filedefinition.rules': {
-      fieldId: 'file.filedefinition.rules',
-      refreshOptionsOnChangesTo: [
-        'edix12.format',
-        'fixed.format',
-        'edifact.format',
-        'file.fileDefinition.resourcePath',
-        'file.type',
-      ],
-      required: true,
-    },
-    'file.fileDefinition.resourcePath': {
-      fieldId: 'file.fileDefinition.resourcePath',
-    },
-    fileMetadata: {
-      id: 'fileMetadata',
-      type: 'checkbox',
-      label: 'File metadata only',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['blob'],
-        },
-      ],
-      defaultValue: r => r && r.file && r.file.output === 'metadata',
-    },
-    'file.decompressFiles': {
-      id: 'file.decompressFiles',
-      type: 'checkbox',
-      label: 'Decompress files',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => !!(r && r.file && r.file.compressionFormat),
-    },
-    'file.compressionFormat': {
-      fieldId: 'file.compressionFormat',
-      visibleWhen: [{ field: 'file.decompressFiles', is: [true] }],
-    },
-    'file.skipDelete': { fieldId: 'file.skipDelete' },
-    'file.encoding': { fieldId: 'file.encoding' },
-    pageSize: {
-      fieldId: 'pageSize',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    dataURITemplate: {
-      fieldId: 'dataURITemplate',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    skipRetries: {
-      fieldId: 'skipRetries',
-    },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
-    exportOneToMany: { formId: 'exportOneToMany' },
-    'file.batchSize': {
-      fieldId: 'file.batchSize',
-    },
+    ...EXPORT_FILE_FIELD_MAP,
   },
   layout: {
     type: 'collapse',
@@ -377,34 +87,36 @@ export default {
       },
       {
         collapsed: true,
+        label: 'How would you like to group and sort records?',
+        fields: [
+          'file.sortByFields',
+          'file.groupByFields',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.decompressFiles',
           'file.compressionFormat',
           'file.skipDelete',
           'fileMetadata',
-          'ftp.backupDirectoryPath',
+          'file.backupPath',
           'file.encoding',
           'pageSize',
           'dataURITemplate',
           'skipRetries',
+          'traceKeyTemplate',
           'apiIdentifier',
-          'file.batchSize'],
+          'file.batchSize',
+        ],
       },
     ],
   },
   actions: [
     {
-      id: 'save',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'saveandclose',
+      id: 'saveandclosegroup',
       visibleWhen: [
         {
           field: 'file.type',
@@ -414,26 +126,13 @@ export default {
     },
     {
       // Button that saves file defs and then submit resource
-      id: 'savedefinition',
+      id: 'savefiledefinitions',
       visibleWhen: [
         {
           field: 'file.type',
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
-    },
-    {
-      // Button that saves file defs and then submit resource
-      id: 'saveandclosedefinition',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
-    },
-    {
-      id: 'cancel',
     },
   ],
 };

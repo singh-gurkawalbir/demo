@@ -1,20 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import actions from '../../../../../actions';
 import TradingPartnerIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import { selectors } from '../../../../../reducers';
+import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+
+const emptyArray = [];
 
 export default {
-  label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
+  key: 'tradingPartner',
+  useLabel: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
-  component: function TradingPartner({ rowData = {}}) {
+  Component: ({ rowData = {}}) => {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
-    const [openDialog, setOpenDialog] = useState(false);
+    const [tradingPartnerConnectionsRequested, setTradingPartnerConnectionsRequested] = useState(false);
     const { confirmDialog } = useConfirmDialog();
-    const connections = useSelector(state =>
+    const { connections = emptyArray, status } = useSelector(state =>
       selectors.tradingPartnerConnections(state, connectionId)
     );
     let connectionsList = '';
@@ -48,12 +51,13 @@ export default {
     }, [confirmDialog, rowData?.ftp?.tradingPartner, updateTradingPartner, connectionsList]);
 
     useEffect(() => {
-      if (!openDialog) {
-        dispatch(actions.resource.requestCollection('connections'));
+      if (!tradingPartnerConnectionsRequested) {
+        dispatch(actions.connection.requestTradingPartnerConnections(connectionId));
+        setTradingPartnerConnectionsRequested(true);
+      } else if (status === COMM_STATES.SUCCESS) {
         confirmTradingPartner();
-        setOpenDialog(true);
       }
-    }, [confirmTradingPartner, openDialog, dispatch]);
+    }, [confirmTradingPartner, dispatch, connectionId, status, tradingPartnerConnectionsRequested]);
 
     return null;
   },

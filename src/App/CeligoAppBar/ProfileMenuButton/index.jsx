@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -50,13 +50,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: 12,
   },
   bottomActions: {
-    background: theme.palette.background.paper2,
-    padding: theme.spacing(1),
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: theme.spacing(1),
-    height: 30,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+    borderRight: 'none',
+    borderLeft: 'none',
   },
   profileArea: {
     display: 'flex',
@@ -81,12 +78,14 @@ const useStyles = makeStyles(theme => ({
   },
   bottomActionsBtn: {
     fontFamily: 'source sans pro',
-    padding: 0,
-    paddingTop: 2,
+    background: theme.palette.background.paper2,
+    margin: '4px 0px',
+    borderRadius: 0,
+    height: 33,
   },
 }));
 
-export default function ProfileMenuButton() {
+function ProfileMenuButton() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -123,6 +122,7 @@ export default function ProfileMenuButton() {
         data-test="profileMenu"
         size="small"
         className={classes.avatarButton}
+        aria-label="avatar"
         aria-owns={open ? 'profileOptions' : null}
         aria-haspopup="true"
         onClick={handleMenu}
@@ -191,21 +191,16 @@ export default function ProfileMenuButton() {
             color="primary"
             href="mailto:product_feedback@celigo.com"
             target="_blank"
+            fullWidth
             >
-            Provide UX feedback
-          </IconTextButton>
-          <IconTextButton
-            data-test="switchLegacy"
-            component="a"
-            variant="text"
-            color="primary"
-            className={classes.bottomActionsBtn}
-            href="/legacy"
-            >
-            Switch to legacy UI
+            Provide feedback
           </IconTextButton>
         </div>
       </ArrowPopper>
     </>
   );
+}
+
+export default function ProfileMenuButtonMemo() {
+  return useMemo(() => <ProfileMenuButton />, []);
 }

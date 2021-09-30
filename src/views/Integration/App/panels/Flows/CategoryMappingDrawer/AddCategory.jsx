@@ -12,7 +12,6 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import Spinner from '../../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import DrawerTitleBar from './TitleBar';
 
@@ -49,17 +48,17 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
-  const { uiAssistant = '' } =
+  const uiAssistant =
     useSelector(state =>
-      selectors.categoryMapping(state, integrationId, flowId)
-    ) || {};
+      selectors.categoryMapping(state, integrationId, flowId)?.uiAssistant || ''
+    );
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
-        actions.integrationApp.settings.addCategory(integrationId, flowId, {
+        actions.integrationApp.settings.categoryMappings.addCategory(integrationId, flowId, {
           category,
           childCategory,
           grandchildCategory,
@@ -134,12 +133,15 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           !categoryData.children ||
           !categoryData.children.length
         ) {
+          childCategory.defaultVisible = false;
           childCategory.visible = false;
 
           return [];
         }
 
+        childCategory.defaultVisible = true;
         childCategory.visible = true;
+
         childCategory.value = undefined;
 
         return [
@@ -176,12 +178,15 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           !subcategoryData.children ||
           !subcategoryData.children.length
         ) {
+          grandchildCategory.defaultVisible = false;
           grandchildCategory.visible = false;
 
           return [];
         }
 
+        grandchildCategory.defaultVisible = true;
         grandchildCategory.visible = true;
+
         grandchildCategory.value = undefined;
 
         return [
@@ -220,7 +225,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         <>
           <DynaForm
             formKey={formKey}
-            fieldMeta={fieldMeta}
             className={classes.addCategoryDrawerForm} />
           <div className={classes.addCategoryDrawerFormActions}>
             <DynaSubmit
@@ -235,9 +239,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           </div>
         </>
       ) : (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+        <Spinner centerAll />
       )}
     </Drawer>
   );

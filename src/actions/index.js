@@ -1,6 +1,9 @@
+/* eslint-disable camelcase */
 import actionTypes from './types';
 import suiteScript from './suiteScript';
 
+export const auditResourceTypePath = (resourceType, resourceId) =>
+  resourceType && resourceId ? `${resourceType}/${resourceId}/audit` : 'audit';
 export const availableResources = [
   'exports',
   'imports',
@@ -14,6 +17,7 @@ export const availableResources = [
   'flows',
   'templates',
   'apis',
+  'eventreports',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -29,8 +33,8 @@ function action(type, payload = {}) {
 
 // #region this form specific source code, please be careful when making changes to the interface
 const form = {
-  init: (formKey, formSpecificProps) =>
-    action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
+  init: (formKey, remountKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, remountKey, formSpecificProps }),
   clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
   formUpdate: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
@@ -62,7 +66,7 @@ const form = {
       disabled,
       required,
       isValid,
-      errorMessages}
+      errorMessages }
   ) =>
     action(actionTypes.FORM.FIELD.FORCE_STATE, {
       formKey,
@@ -85,11 +89,13 @@ const form = {
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password, showAuthError) =>
-    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError}),
+    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError }),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
     action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  reSignInWithSSO: () =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
@@ -101,10 +107,10 @@ const auth = {
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
-  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, {accountToSwitchTo}),
+  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
+  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
 
-  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, {accountToResetTo}),
+  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, { accountToResetTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -113,9 +119,16 @@ const auth = {
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
+
+const asyncTask = {
+  start: key => action(actionTypes.ASYNC_TASK.START, { key }),
+  success: key => action(actionTypes.ASYNC_TASK.SUCCESS, { key }),
+  failed: key => action(actionTypes.ASYNC_TASK.FAILED, { key }),
+  clear: key => action(actionTypes.ASYNC_TASK.CLEAR, { key }),
+};
 const api = {
-  request: (path, method, message, hidden) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, method }),
+  request: (path, method, message, hidden, refresh) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
   retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
   complete: (path, method, message) =>
     action(actionTypes.API_COMPLETE, { path, method, message }),
@@ -163,23 +176,21 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: connectionId =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
-  receivedDebugLogs: (debugLogs, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
-      debugLogs,
+  receivedTradingPartnerConnections: (connectionId, connections) =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_RECEIVED, {
       connectionId,
+      connections,
     }),
-  clearDebugLogs: connectionId =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
+  requestTradingPartnerConnections: connectionId =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
   requestQueuedJobsPoll: connectionId =>
-    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, {connectionId}),
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, { connectionId }),
   cancelQueuedJobsPoll: connectionId =>
-    action(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL, {connectionId}),
+    action(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL, { connectionId }),
   receivedQueuedJobs: (queuedJobs, connectionId) =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
       queuedJobs,
@@ -229,10 +240,11 @@ const flowMetrics = {
       filters,
     }),
 
-  received: (resourceType, resourceId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  received: (resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
-  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
+  failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
+  updateLastRunRange: (resourceId, startDate, endDate) => action(actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE, { resourceId, startDate, endDate }),
 };
 const resource = {
   replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
@@ -245,12 +257,17 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  validate: (resourceType, resourceId) => action(actionTypes.RESOURCE.VALIDATE_RESOURCE, { resourceType, resourceId }),
   updateChildIntegration: (parentId, childId) =>
     action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
+  requestCollection: (resourceType, message, refresh) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  startCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
+  stopCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -269,8 +286,8 @@ const resource = {
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
-  patch: (resourceType, id, patchSet) =>
-    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
+  patch: (resourceType, id, patchSet, asyncKey) =>
+    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
 
@@ -303,13 +320,14 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options, context) =>
+  commitStaged: (resourceType, id, scope, options, context, asyncKey) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
       context,
+      asyncKey,
     }),
 
   commitConflict: (id, conflict, scope) =>
@@ -318,37 +336,38 @@ const resource = {
   clearConflict: (id, scope) =>
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
-  initCustomForm: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, {
-      resourceType,
-      resourceId,
-    }),
-
-  patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
-    action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
-      resourceType,
-      resourceId,
-      fieldId,
-      value,
-      op,
-      offset,
-    }),
+  integrations: {
+    fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
+    updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
+    delete: integrationId =>
+      action(actionTypes.INTEGRATION.DELETE, { integrationId }),
+    redirectTo: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
+      }),
+  },
   connections: {
-    pingAndUpdate: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
+    pingAndUpdate: (connectionId, parentContext) =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId, parentContext }),
     updateStatus: collection =>
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    test: (resourceId, values) =>
+    test: (resourceId, values, parentContext) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+        parentContext,
       }),
     requestStatusPoll: integrationId =>
-      action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, {integrationId}),
+      action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, { integrationId }),
     cancelStatusPoll: integrationId =>
-      action(actionTypes.CONNECTION.STATUS_CANCEL_POLL, {integrationId}),
+      action(actionTypes.CONNECTION.STATUS_CANCEL_POLL, { integrationId }),
     testErrored: (resourceId, message) =>
       action(actionTypes.CONNECTION.TEST_ERRORED, {
         resourceId,
@@ -369,10 +388,11 @@ const resource = {
         resourceId,
         retainStatus,
       }),
-    saveAndAuthorize: (resourceId, values) =>
+    saveAndAuthorize: (resourceId, values, parentContext) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
         resourceId,
         values,
+        parentContext,
       }),
     authorized: connectionId =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
@@ -429,24 +449,25 @@ const resource = {
     updateTile: (resourcesToUpdate, integrationId, options = {}) =>
       action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
     updateFlow: (flowId, isSubscribed) =>
-      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, { flowId, isSubscribed }),
+  },
+  eventreports: {
+    cancelReport: reportId => action(actionTypes.EVENT_REPORT.CANCEL, {
+      reportId,
+    }),
+    downloadReport: reportId => action(actionTypes.EVENT_REPORT.DOWNLOAD, {
+      reportId,
+    }),
+
   },
 };
 // #endregion
-const auditLogs = {
-  request: (resourceType, resourceId, message) => {
-    if (resourceType && resourceId) {
-      return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-        resourceType: `${resourceType}/${resourceId}/audit`,
-        message,
-      });
-    }
 
-    return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-      resourceType: 'audit',
-      message,
-    });
-  },
+const auditLogs = {
+  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+    resourceType: auditResourceTypePath(resourceType, resourceId),
+    message,
+  }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -484,6 +505,21 @@ const connectors = {
       action(actionTypes.CONNECTORS.INSTALLBASE.UPDATE, {
         _integrationIds,
         connectorId,
+      }),
+  },
+  publish: {
+    request: (_integrationId, isPublished) =>
+      action(actionTypes.CONNECTORS.PUBLISH.REQUEST, {
+        _integrationId,
+        isPublished,
+      }),
+    success: _integrationId =>
+      action(actionTypes.CONNECTORS.PUBLISH.SUCCESS, {
+        _integrationId,
+      }),
+    error: _integrationId =>
+      action(actionTypes.CONNECTORS.PUBLISH.ERROR, {
+        _integrationId,
       }),
   },
 };
@@ -586,13 +622,33 @@ const fileDefinitions = {
 const integrationApp = {
   settings: {
     categoryMappings: {
-      init: (integrationId, flowId, id, options) =>
-        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
-          integrationId,
-          flowId,
-          id,
-          options,
-        }),
+      requestMetadata: (
+        integrationId,
+        flowId,
+        categoryId,
+        options
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+          { integrationId, flowId, categoryId, options }
+        ),
+      receivedGeneratesMetadata: (
+        integrationId,
+        flowId,
+        metadata
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS
+            .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
+          { integrationId, flowId, metadata }
+        ),
+      init: opts => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, opts),
+      initComplete: (integrationId, flowId, id, options) => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_COMPLETE, {
+        integrationId,
+        flowId,
+        id,
+        options,
+      }),
       clear: (integrationId, flowId) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
           integrationId,
@@ -607,7 +663,7 @@ const integrationApp = {
             flowId,
           }
         ),
-      patchField: (integrationId, flowId, id, field, index, value) =>
+      patchField: (integrationId, flowId, id, field, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
           {
@@ -615,22 +671,22 @@ const integrationApp = {
             flowId,
             id,
             field,
-            index,
+            key,
             value,
           }
         ),
-      patchSettings: (integrationId, flowId, id, index, value) =>
+      patchSettings: (integrationId, flowId, id, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .PATCH_SETTINGS,
-          { integrationId, flowId, id, index, value }
+          { integrationId, flowId, id, key, value }
         ),
-      delete: (integrationId, flowId, id, row) =>
+      delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,
           flowId,
           id,
-          index: row,
+          key,
         }),
       collapseAll: (integrationId, flowId) =>
         action(
@@ -676,18 +732,6 @@ const integrationApp = {
             .UPDATE_GENERATES,
           { integrationId, flowId, id, generateFields }
         ),
-      patchIncompleteGenerates: (integrationId, flowId, id, index, value) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .PATCH_INCOMPLETE_GENERATES,
-          {
-            integrationId,
-            flowId,
-            id,
-            index,
-            value,
-          }
-        ),
       saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
@@ -730,6 +774,42 @@ const integrationApp = {
             id,
           }
         ),
+      loadFailed: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED,
+          { integrationId, flowId, id }
+        ),
+      setFilters: (integrationId, flowId, filters) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_FILTERS, {
+          integrationId,
+          flowId,
+          filters,
+        }),
+      addCategory: (integrationId, flowId, data) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.ADD_CATEGORY, {
+          integrationId,
+          flowId,
+          data,
+        }),
+      deleteCategory: (integrationId, flowId, sectionId, depth) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+          depth,
+        }),
+      restoreCategory: (integrationId, flowId, sectionId, depth) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+          depth,
+        }),
+      receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RECEIVED_UPDATED_MAPPING_DATA,
+          { integrationId, flowId, mappingData }
+        ),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
@@ -737,91 +817,17 @@ const integrationApp = {
         flowId,
         sectionId,
       }),
-    showFormValidations: (integrationId, flowId, sectionId) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SHOW_FORM_VALIDATION_ERRORS,
-        {
-          integrationId,
-          flowId,
-          sectionId,
-        }
-      ),
     requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integrationId,
         options,
       }),
-    redirectTo: (integrationId, redirectTo) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
-        integrationId,
-        redirectTo,
-      }),
-    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
-        { integrationId, flowId, mappingData }
-      ),
-    requestCategoryMappingMetadata: (
-      integrationId,
-      flowId,
-      categoryId,
-      options
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
-        { integrationId, flowId, categoryId, options }
-      ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    receivedCategoryMappingGeneratesMetadata: (
-      integrationId,
-      flowId,
-      metadata
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS
-          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
-        { integrationId, flowId, metadata }
-      ),
-    setCategoryMappingFilters: (integrationId, flowId, filters) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS, {
-        integrationId,
-        flowId,
-        filters,
-      }),
-    clearVariationMappings: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
-        integrationId,
-        flowId,
-        data,
-      }),
-
-    addCategory: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
-        integrationId,
-        flowId,
-        data,
-      }),
-    deleteCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
-    restoreCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
-    clearRedirect: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
-        integrationId,
-      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
@@ -864,11 +870,11 @@ const integrationApp = {
         integrationId,
         license,
       }),
-    update: (integrationId, flowId, storeId, sectionId, values, options) =>
+    update: (integrationId, flowId, childId, sectionId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
-        storeId,
+        childId,
         sectionId,
         values,
         options,
@@ -888,6 +894,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, {
+      id: integrationId,
+    }),
     setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
         connectionId, openOauthConnection, id,
@@ -895,12 +904,13 @@ const integrationApp = {
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
     }),
-    installStep: (integrationId, installerFunction, storeId, addOnId) =>
+    installStep: (integrationId, installerFunction, childId, addOnId, formVal) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
+        formVal,
       }),
     scriptInstallStep: (
       integrationId,
@@ -936,9 +946,9 @@ const integrationApp = {
       }),
   },
   uninstaller: {
-    preUninstall: (storeId, integrationId) =>
+    preUninstall: (childId, integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL, {
-        storeId,
+        childId,
         id: integrationId,
       }),
     clearSteps: integrationId =>
@@ -951,24 +961,23 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
+    stepUninstall: (childId, integrationId, uninstallerFunction, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
-        storeId,
+        childId,
         id: integrationId,
         uninstallerFunction,
         addOnId,
       }),
-    receivedUninstallSteps: (uninstallSteps, storeId, id) =>
+    receivedUninstallSteps: (uninstallSteps, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
         uninstallSteps,
         id,
-        storeId,
       }),
-    failedUninstallSteps: (id, error, storeId) =>
+    failedUninstallSteps: (id, error, childId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
         id,
         error,
-        storeId,
+        childId,
       }),
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
@@ -1013,35 +1022,37 @@ const integrationApp = {
         id: integrationId,
       }),
   },
-  store: {
+  child: {
     addNew: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
-    updateStep: (integrationId, installerFunction, update) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.UPDATE, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
+    updateStep: (integrationId, installerFunction, update, showForm) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        showForm,
       }),
     clearSteps: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.CLEAR, { id: integrationId }),
+      action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),
     completedStepInstall: (integrationId, installerFunction, steps) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.COMPLETE, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.COMPLETE, {
         id: integrationId,
         installerFunction,
         steps,
       }),
-    installStep: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.INSTALL, {
+    installStep: (integrationId, installerFunction, formVal) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
+        formVal,
       }),
-    failedNewStoreSteps: (integrationId, message) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.FAILURE, {
+    failedNewChildSteps: (integrationId, message) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {
         id: integrationId,
         message,
       }),
-    receivedNewStoreSteps: (integrationId, steps) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
+    receivedNewChildSteps: (integrationId, steps) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.RECEIVED, {
         id: integrationId,
         steps,
       }),
@@ -1066,6 +1077,12 @@ const integrationApp = {
       installInprogress,
       id,
     }),
+  license: {
+    resume: integrationId => action(actionTypes.INTEGRATION_APPS.LICENSE.RESUME, {
+      integrationId,
+    }),
+  },
+
 };
 const ashare = {
   receivedCollection: ashares =>
@@ -1115,6 +1132,21 @@ const template = {
       connection,
       templateId,
     }),
+  publish: {
+    request: (templateId, isPublished) =>
+      action(actionTypes.TEMPLATE.PUBLISH.REQUEST, {
+        templateId,
+        isPublished,
+      }),
+    success: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.SUCCESS, {
+        templateId,
+      }),
+    error: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.ERROR, {
+        templateId,
+      }),
+  },
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
@@ -1187,17 +1219,20 @@ const user = {
   org: {
     users: {
       requestCollection: message =>
-        resource.requestCollection('ashares', undefined, message),
-      create: user => action(actionTypes.USER_CREATE, { user }),
+        resource.requestCollection('ashares', message),
+      create: (user, asyncKey) => action(actionTypes.USER_CREATE, { user, asyncKey }),
       created: user => action(actionTypes.USER_CREATED, { user }),
-      update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
+      update: (_id, user, asyncKey) => action(actionTypes.USER_UPDATE, { _id, user, asyncKey }),
       updated: user => action(actionTypes.USER_UPDATED, { user }),
       delete: _id => action(actionTypes.USER_DELETE, { _id }),
       deleted: _id => action(actionTypes.USER_DELETED, { _id }),
       disable: (_id, disabled) =>
         action(actionTypes.USER_DISABLE, { _id, disabled }),
       disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
+      reinvited: _id => action(actionTypes.USER_REINVITED, { _id }),
       makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
+      reinvite: _id => action(actionTypes.USER_REINVITE, { _id }),
+      reinviteError: _id => action(actionTypes.USER_REINVITE_ERROR, { _id }),
     },
     accounts: {
       requestCollection: message =>
@@ -1210,7 +1245,7 @@ const user = {
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
       requestUpdate: (actionType, connectorId, licenseId) =>
-        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId}),
+        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId }),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
@@ -1247,31 +1282,6 @@ const user = {
       action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
-const sampleData = {
-  request: (resourceId, resourceType, values, stage, options = {}) =>
-    action(actionTypes.SAMPLEDATA.REQUEST, {
-      resourceId,
-      resourceType,
-      values,
-      stage,
-      options,
-    }),
-  requestLookupPreview: (resourceId, flowId, formValues) =>
-    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
-      resourceId,
-      flowId,
-      formValues,
-    }),
-  received: (resourceId, previewData) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
-  update: (resourceId, processedData, stage) =>
-    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
-  patch: (resourceId, patch) =>
-    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
-  receivedError: (resourceId, error, stage) =>
-    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
-  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
-};
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
     action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, {
@@ -1288,22 +1298,26 @@ const importSampleData = {
       _importId,
       metadata,
     }),
+  iaMetadataFailed: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_FAILED, {
+      _importId,
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestStage: (flowId, resourceId, stage) =>
     action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
-  requestPreviewData: (flowId, resourceId, previewType) =>
-    action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
-      flowId,
-      resourceId,
-      previewType,
-    }),
   receivedPreviewData: (flowId, resourceId, previewData, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
       flowId,
       resourceId,
       previewData,
+      previewType,
+    }),
+  setStatusReceived: (flowId, resourceId, previewType) =>
+    action(actionTypes.FLOW_DATA.SET_STATUS_RECEIVED, {
+      flowId,
+      resourceId,
       previewType,
     }),
   requestProcessorData: (flowId, resourceId, resourceType, processor) =>
@@ -1336,7 +1350,8 @@ const flowData = {
       refresh,
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
-    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
+  clearStages: flowId => action(actionTypes.FLOW_DATA.CLEAR_STAGES, { flowId }),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1353,9 +1368,22 @@ const flowData = {
       responseMapping,
     }),
 };
+const resourceFormSampleData = {
+  request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
+  setStatus: (resourceId, status) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS, { resourceId, status }),
+  receivedPreviewStages: (resourceId, previewStagesData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES, { resourceId, previewStagesData }),
+  receivedPreviewError: (resourceId, previewError) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR, { resourceId, previewError }),
+  setParseData: (resourceId, parseData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PARSE_DATA, { resourceId, parseData }),
+  setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
+  setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
+  setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
+  clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
+  clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
+};
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
-  updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, {version}),
+  updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
   reload: () => action(actionTypes.APP_RELOAD),
   deleteDataState: () => action(actionTypes.APP_DELETE_DATA_STATE),
   errored: () => action(actionTypes.APP_ERRORED),
@@ -1377,59 +1405,65 @@ const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
 const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
-//
+
 // #region Editor actions
 const editor = {
-  init: (id, processor, options) =>
-    action(actionTypes.EDITOR.INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id }),
-  patch: (id, patch) => action(actionTypes.EDITOR.PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR.RESET, { id }),
+  init: (id, editorType, options) =>
+    action(actionTypes.EDITOR.INIT, { id, editorType, options }),
+  initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
+  changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
+  patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
+  patchRule: (id, rulePatch) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
+  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
+  toggleVersion: (id, version) => action(actionTypes.EDITOR.TOGGLE_VERSION, { id, version }),
+  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes.EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
+  sampleDataFailed: (id, sampleDataError) => action(actionTypes.EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
+  toggleAutoPreview: (id, autoPreview) => action(actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  refreshHelperFunctions: () => action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  refreshHelperFunctions: () =>
-    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR.EVALUATE_REQUEST, { id }),
+  previewRequest: id => action(actionTypes.EDITOR.PREVIEW.REQUEST, { id }),
+  previewFailed: (id, error) =>
+    action(actionTypes.EDITOR.PREVIEW.FAILED, { id, error }),
+  previewResponse: (id, result) =>
+    action(actionTypes.EDITOR.PREVIEW.RESPONSE, { id, result }),
+  saveRequest: (id, context) => action(actionTypes.EDITOR.SAVE.REQUEST, { id, context }),
+  saveFailed: (id, saveMessage) => action(actionTypes.EDITOR.SAVE.FAILED, { id, saveMessage }),
+  saveComplete: id => action(actionTypes.EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
-  evaluateFailure: (id, error) =>
-    action(actionTypes.EDITOR.EVALUATE_FAILURE, { id, error }),
-  evaluateResponse: (id, result) =>
-    action(actionTypes.EDITOR.EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes.EDITOR.SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: ({ flowId, importId, subRecordMappingId}) =>
-    action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
+  init: ({ flowId, importId, subRecordMappingId }) =>
+    action(actionTypes.MAPPING.INIT, { flowId, importId, subRecordMappingId }),
   initComplete: (options = {}) =>
-    action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
+    action(actionTypes.MAPPING.INIT_COMPLETE, { ...options }),
   initFailed: () => action(actionTypes.MAPPING.INIT_FAILED, {}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
   patchGenerateThroughAssistant: value =>
     action(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
-  addLookup: ({value, isConditionalLookup}) =>
+  addLookup: ({ value, isConditionalLookup }) =>
     action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
-  updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
+  updateLookup: ({ oldValue, newValue, isConditionalLookup }) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { oldValue, newValue, isConditionalLookup }),
   patchSettings: (key, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
   setVisibility: value =>
     action(actionTypes.MAPPING.SET_VISIBILITY, { value }),
   patchIncompleteGenerates: (key, value) =>
-    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
+    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
   save: ({ match }) => action(actionTypes.MAPPING.SAVE, { match }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
   previewReceived: value =>
-    action(actionTypes.MAPPING.PREVIEW_RECEIVED, {value }),
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { value }),
   previewFailed: () => action(actionTypes.MAPPING.PREVIEW_FAILED, { }),
   setNSAssistantFormLoaded: value =>
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { value }),
@@ -1439,7 +1473,11 @@ const mapping = {
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
   setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
-
+  autoMapper: {
+    request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
+    received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, { value }),
+    failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, { failSeverity, failMsg }),
+  },
 };
 
 const searchCriteria = {
@@ -1503,7 +1541,8 @@ const resourceForm = {
     match,
     skipClose,
     isGenerate,
-    flowId
+    flowId,
+    parentContext
   ) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
@@ -1513,14 +1552,16 @@ const resourceForm = {
       skipClose,
       isGenerate,
       flowId,
+      parentContext,
     }),
-  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose, parentContext) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,
       match,
       skipClose,
+      parentContext,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
@@ -1541,9 +1582,9 @@ const resourceForm = {
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
   showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleVersion, bundleUrl, resourceType, resourceId}),
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, { bundleVersion, bundleUrl, resourceType, resourceId }),
   hideBundleInstallNotification: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, {resourceType, resourceId}),
+    action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
@@ -1558,6 +1599,40 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
+  dashboard: {
+    running: {
+      requestCollection: nextPageURL =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL }),
+      receivedCollection: ({ collection, nextPageURL, loadMore }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
+          collection,
+          nextPageURL,
+          loadMore,
+        }),
+      cancel: ({ jobId }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.CANCEL, { jobId }),
+      canceled: ({ jobId }) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.CANCELED, { jobId }),
+      requestInProgressJobStatus: () =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_IN_PROGRESS_JOBS_STATUS),
+      clear: () => action(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR),
+      error: () => action(actionTypes.JOB.DASHBOARD.RUNNING.ERROR),
+      noInProgressJobs: () => action(actionTypes.JOB.DASHBOARD.RUNNING.NO_IN_PROGRESS_JOBS),
+      receivedFamily: ({ collection }) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
+    },
+    completed: {
+      requestCollection: nextPageURL =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL }),
+      receivedCollection: ({ collection, nextPageURL, loadMore }) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
+          collection,
+          nextPageURL,
+          loadMore,
+        }),
+      clear: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR),
+      error: () => action(actionTypes.JOB.DASHBOARD.COMPLETED.ERROR),
+    },
+  },
   requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,
@@ -1589,8 +1664,8 @@ const job = {
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolveSelected: ({ jobs, match }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),
-  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly, match }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly, match }),
+  resolveAll: ({ flowId, childId, integrationId, filteredJobsOnly, match }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, childId, integrationId, filteredJobsOnly, match }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1610,8 +1685,8 @@ const job = {
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, storeId, integrationId, match }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId, match }),
+  retryAll: ({ flowId, childId, integrationId, match }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, childId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>
@@ -1651,8 +1726,9 @@ const job = {
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
   receivedRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
-  updateRetryData: ({ retryData, retryId }) =>
-    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  updateRetryData: ({ retryData, retryId, asyncKey }) =>
+    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId, asyncKey}),
+  downloadRetryData: ({retryId}) => action(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, {retryId}),
   retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
     action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
       jobId,
@@ -1712,7 +1788,7 @@ const errorManager = {
         integrationId,
         latestJobs,
       }),
-    error: ({integrationId}) =>
+    error: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.ERROR, {
         integrationId,
       }),
@@ -1725,15 +1801,15 @@ const errorManager = {
         flowId,
         refresh,
       }),
-    received: ({flowId, latestJobs}) =>
+    received: ({ flowId, latestJobs }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
         flowId, latestJobs,
       }),
-    requestJobFamily: ({ flowId, jobId}) =>
+    requestJobFamily: ({ flowId, jobId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
         flowId, jobId,
       }),
-    receivedJobFamily: ({ flowId, job}) =>
+    receivedJobFamily: ({ flowId, job }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
         flowId, job,
       }),
@@ -1748,7 +1824,12 @@ const errorManager = {
         flowId,
       }),
     cancelLatestJobs: ({ flowId, jobIds }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds}),
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds }),
+  },
+  runHistory: {
+    request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
+    received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
+    clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
   },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
@@ -1787,12 +1868,6 @@ const errorManager = {
         loadMore,
         isResolved,
       }),
-    error: ({ flowId, resourceId, isResolved = false }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
-        flowId,
-        resourceId,
-        isResolved,
-      }),
     selectErrors: ({
       flowId,
       resourceId,
@@ -1807,12 +1882,18 @@ const errorManager = {
         checked,
         isResolved,
       }),
-    selectAll: ({ flowId, resourceId, checked, options }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+    deselectAll: ({ flowId, resourceId, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DESELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    selectAllInCurrPage: ({ flowId, resourceId, checked, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS_IN_CURR_PAGE, {
         flowId,
         resourceId,
         checked,
-        options,
+        isResolved,
       }),
     saveAndRetry: ({ flowId, resourceId, retryId, retryData }) => action(
       actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY, {
@@ -1822,7 +1903,7 @@ const errorManager = {
         retryData,
       }
     ),
-    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
         {
@@ -1830,24 +1911,25 @@ const errorManager = {
           resourceId,
           retryIds,
           isResolved,
+          retryAll,
         }
       ),
-    resolve: ({ flowId, resourceId, errorIds = [] }) =>
+    resolve: ({ flowId, resourceId, errorIds = [], resolveAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
         {
           flowId,
           resourceId,
           errorIds,
+          resolveAll,
         }
       ),
-    retryReceived: ({ flowId, resourceId, retryCount, isResolved = false }) =>
+    retryReceived: ({ flowId, resourceId, retryCount }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
         {
           flowId,
           resourceId,
-          isResolved,
           retryCount,
         }
       ),
@@ -1867,11 +1949,10 @@ const errorManager = {
         isResolved,
         errorIds,
       }),
-    clear: ({ flowId, resourceId, isResolved = false }) =>
+    clear: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
         flowId,
         resourceId,
-        isResolved,
       }),
     notifyUpdate: ({ flowId, resourceId, diff }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {
@@ -1907,6 +1988,12 @@ const errorManager = {
         retryId,
         error,
       }),
+    download: ({ flowId, resourceId, retryDataKey }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, {
+        flowId,
+        resourceId,
+        retryDataKey,
+      }),
     updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
         flowId,
@@ -1919,8 +2006,24 @@ const errorManager = {
     requestPoll: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL, { flowId, resourceId }),
     clear: flowId => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR, { flowId }),
+    stopPoll: () => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL),
     request: ({ flowId, resourceId }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST, ({ flowId, resourceId })),
-    received: ({ flowId, resourceId, status }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED, ({ flowId, resourceId, status})),
+    received: ({ flowId, resourceId, status }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED, ({ flowId, resourceId, status })),
+  },
+  filterMetadata: {
+    request: () => action(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST),
+    received: (metadata = []) =>
+      action(actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED, { metadata }),
+  },
+  errorHttpDoc: {
+    request: (flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST, { flowId, resourceId, reqAndResKey }),
+    received: (reqAndResKey, errorHttpDoc) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED, { reqAndResKey, errorHttpDoc }),
+    error: (reqAndResKey, error) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR, { reqAndResKey, error }),
+    downloadBlobDoc: (flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, reqAndResKey }),
   },
 };
 const flow = {
@@ -1935,6 +2038,11 @@ const flow = {
       fileName,
     }),
   runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
+  runActionStatus: (runStatus, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS, {
+      runStatus,
+      flowId,
+    }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,
@@ -1968,35 +2076,33 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: (id, value) =>
+  init: ({ flowId, resourceId }) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
-      id,
-      value,
+      resourceId,
+      flowId,
     }),
-  setFormattedMapping: (id, value) =>
-    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
-      id,
-      value,
-    }),
-  patchField: (id, field, index, value) =>
+  initComplete: (options = {}) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),
+  initFailed: () => action(actionTypes.RESPONSE_MAPPING.INIT_FAILED, {}),
+  patchField: (field, key, value) =>
     action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
-      id,
-      field,
-      index,
-      value,
+      field, key, value,
     }),
-  delete: (id, index) =>
-    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
-  save: ({ id, match, resourceType, resourceId }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { id, match, resourceType, resourceId }),
-  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
-  saveComplete: id =>
-    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
+  delete: key =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { key }),
+  save: ({ match }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { match }),
+  saveFailed: () => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, {}),
+  saveComplete: () =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, {}),
+  clear: () => action(actionTypes.RESPONSE_MAPPING.CLEAR, {}),
+
 };
 const customSettings = {
-  formRequest: (resourceType, resourceId) =>
+  formRequest: (resourceType, resourceId, sectionId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, {
       resourceType,
       resourceId,
+      sectionId,
     }),
   formReceived: (resourceId, formMeta, scriptId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED, {
@@ -2081,7 +2187,89 @@ const hooks = {
   save: context => action(actionTypes.HOOKS.SAVE, context),
 };
 
+const bottomDrawer = {
+  init: flowId => action(actionTypes.BOTTOM_DRAWER.INIT, { flowId }),
+  initComplete: value => action(actionTypes.BOTTOM_DRAWER.INIT_COMPLETE, { value }),
+  addTab: ({ tabType, label, resourceId }) => action(actionTypes.BOTTOM_DRAWER.ADD_TAB, { tabType, resourceId, label }),
+  removeTab: ({ tabType, resourceId }) => action(actionTypes.BOTTOM_DRAWER.REMOVE_TAB, { tabType, resourceId }),
+  switchTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SWITCH_TAB, { index, tabType }),
+  setActiveTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB, { index, tabType }),
+  clear: () => action(actionTypes.BOTTOM_DRAWER.CLEAR),
+};
+
+const logs = {
+  scripts: {
+    request: ({ scriptId, flowId, isInit }) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId, isInit }),
+    received: ({ logs, nextPageURL, scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.RECEIVED, { logs, nextPageURL, scriptId, flowId }),
+    requestFailed: ({ flowId, scriptId, errorMsg }) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST_FAILED, { scriptId, flowId, errorMsg }),
+    getDependency: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.GET_DEPENDENCY, { scriptId, flowId }),
+    setDependency: ({ resourceReferences, scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.SET_DEPENDENCY, { resourceReferences, scriptId, flowId }),
+    patchFilter: ({ scriptId, flowId, field, value }) =>
+      action(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, { scriptId, flowId, field, value }),
+    refresh: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.REFRESH, { scriptId, flowId }),
+    clear: ({ flowId, scriptId }) =>
+      action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
+    loadMore: ({ flowId, scriptId, fetchNextPage }) =>
+      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, fetchNextPage }),
+    startDebug: (scriptId, value) =>
+      action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
+    setFetchStatus: ({ scriptId, flowId, fetchStatus }) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, { scriptId, flowId, fetchStatus }),
+    pauseFetch: ({ scriptId, flowId }) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, { scriptId, flowId }),
+  },
+  connections: {
+    request: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REQUEST, { connectionId }),
+    requestFailed: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
+    received: (connectionId, logs) =>
+      action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
+    pause: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.PAUSE, { connectionId }),
+    refresh: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
+    clear: ({ connectionId, clearAllLogs }) =>
+      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId, clearAllLogs }),
+    delete: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.DELETE, { connectionId }),
+    download: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, { connectionId }),
+    startDebug: (connectionId, value) =>
+      action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
+  },
+  listener: {
+    startDebug: (flowId, exportId, minutes) => action(actionTypes.LOGS.LISTENER.DEBUG.START, { flowId, exportId, minutes }),
+    stopDebug: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.DEBUG.STOP, { flowId, exportId }),
+    requestLogDetails: (flowId, exportId, logKey) => action(actionTypes.LOGS.LISTENER.LOG.REQUEST, { flowId, exportId, logKey }),
+    receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
+    removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
+    logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
+    request: ({ flowId, exportId, loadMore }) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
+    received: ({ exportId, logs, nextPageURL, loadMore }) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
+    failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
+    clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
+    startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
+    stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
+    setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
+    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
+    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
+  },
+};
+
+const sso = {
+  validateOrgId: orgId => action(actionTypes.SSO.ORG_ID.VALIDATION_REQUEST, { orgId }),
+  validationSuccess: () => action(actionTypes.SSO.ORG_ID.VALIDATION_SUCCESS),
+  validationError: error => action(actionTypes.SSO.ORG_ID.VALIDATION_ERROR, { error }),
+  clearValidations: () => action(actionTypes.SSO.ORG_ID.VALIDATION_CLEAR),
+};
+
 export default {
+  asyncTask,
   form,
   postFeedback,
   app,
@@ -2115,7 +2303,7 @@ export default {
   file,
   assistantMetadata,
   stack,
-  sampleData,
+  resourceFormSampleData,
   importSampleData,
   flowData,
   connection,
@@ -2131,4 +2319,7 @@ export default {
   exportData,
   editorSampleData,
   hooks,
+  logs,
+  sso,
+  bottomDrawer,
 };

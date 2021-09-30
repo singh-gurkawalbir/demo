@@ -1,4 +1,4 @@
-import { alterFileDefinitionRulesVisibility } from '../../../utils';
+import { alterFileDefinitionRulesVisibility } from '../../../formFactory/utils';
 
 export default {
   optionsHandler: (fieldId, fields) => {

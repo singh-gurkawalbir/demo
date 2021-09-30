@@ -15,13 +15,15 @@ export const stringCompare = (sortProperty, isDescending) => (a, b) => {
   const secondEl = sortProperty && isObject(b) ? get(b, sortProperty) || '' : b;
 
   if (isNumber(firstEl) && isNumber(secondEl)) {
-    return parseInt(firstEl, 10) - parseInt(secondEl, 10);
+    const compareValue = +firstEl - +secondEl;
+
+    return isDescending ? -compareValue : compareValue;
   }
   if (isNumber(firstEl)) {
-    return -1;
+    return isDescending ? 1 : -1;
   }
   if (isNumber(secondEl)) {
-    return 1;
+    return isDescending ? -1 : 1;
   }
 
   if (typeof firstEl !== 'string' || typeof secondEl !== 'string') {
@@ -29,25 +31,22 @@ export const stringCompare = (sortProperty, isDescending) => (a, b) => {
   }
 
   return isDescending
-    ? -firstEl.localeCompare(secondEl)
-    : firstEl.localeCompare(secondEl);
+    ? -firstEl.trim().localeCompare(secondEl.trim())
+    : firstEl.trim().localeCompare(secondEl.trim());
 };
 
 export const celigoListCompare = (a, b) => {
-  if (
-    (a.id && b.id && a.id.indexOf('[*]') > -1 && b.id.indexOf('[*]') > -1) ||
-    (a.id && b.id && a.id.indexOf('[*]') === -1 && b.id.indexOf('[*]') === -1)
-  ) {
-    return a.id > b.id ? 1 : -1;
+  // If a.id contains "[*]" and b.id doesnot contain "[*]"
+  if (/\[\*\]/.test(a.id) && !/\[\*\]/.test(b.id)) {
+    return 1;
   }
-
-  if (a.id && b.id && a.id.indexOf('[*]') === -1 && b.id.indexOf('[*]') > -1) {
+  // If a.id doesnt contain "[*]" and b.id contains "[*]"
+  if (!/\[\*\]/.test(a.id) && /\[\*\]/.test(b.id)) {
     return -1;
   }
 
-  if (a.id && b.id && a.id.indexOf('[*]') > -1 && b.id.indexOf('[*]') === -1) {
-    return 1;
-  }
-
-  return 0;
+  return stringCompare('id')(a, b);
 };
+
+export const comparer = ({ order, orderBy }) =>
+  order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);

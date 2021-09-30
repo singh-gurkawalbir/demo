@@ -1,3 +1,4 @@
+import { deepClone } from 'fast-json-patch';
 import { put, select, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
 import { selectors } from '../../../reducers';
@@ -16,6 +17,8 @@ import {
 } from '../../../utils/flowData';
 import { isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
+import { emptyObject } from '../../../utils/constants';
+import { isFileAdaptor } from '../../../utils/resource';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -24,12 +27,12 @@ import { isJsonString } from '../../../utils/string';
  */
 export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
   // get flow on flowId base
-  const { merged: flow = {} } = yield select(
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
-  );
+  ))?.merged || emptyObject;
   // check if resource is a pg/pp
   const isPageGeneratorExport = yield select(
     selectors.isPageGenerator,
@@ -51,7 +54,10 @@ export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
 /*
  * Given a flow, filters out all the pending PGs and PPs without resourceId
  */
-export function filterPendingResources({ flow = {} }) {
+export function filterPendingResources({ flow }) {
+  if (!flow) {
+    return;
+  }
   const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
   const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
   const filteredPageProcessors = pps.filter(
@@ -73,29 +79,32 @@ export function* fetchResourceDataForNewFlowResource({
   resourceId,
   resourceType,
 }) {
-  const { merged: newResource = {} } = yield select(
+  if (!resourceId) {
+    return;
+  }
+  let newResource = (yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    'value'
-  );
+    SCOPES.VALUE
+  ))?.merged || emptyObject;
 
   // TODO @Raghu: Should handle in metadata to pass boolean instead of string
   // eslint-disable-next-line no-param-reassign
   if (newResource.oneToMany) {
     const oneToMany = newResource.oneToMany === 'true';
 
-    return { ...newResource, oneToMany };
+    newResource = { ...newResource, oneToMany };
   }
 
   return getFormattedResourceForPreview(newResource);
 }
 
-export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refresh, runOffline }) {
+export function* fetchFlowResources({ flow, type, refresh, runOffline }) {
   const resourceMap = {};
-  const resourceList = flow[type];
+  const resourceList = flow?.[type];
 
-  if (flow && resourceList && resourceList.length) {
+  if (resourceList?.length) {
     for (let index = 0; index < resourceList.length; index += 1) {
       const resourceInfo = resourceList[index];
       const resourceType =
@@ -114,22 +123,15 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
         const {sampleData, ...resourceWithoutSampleData} = resource;
 
         // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
-        // Example: type: once should not be sent while previewing
-        if (eliminateDataProcessors) {
-          resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(rest, resourceType, type),
-          };
-        } else {
-          // pgs have eliminateDataProcessors as false, but incase of connectors with sampledata on resource it should be true
-          // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
-          resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(
-              isIntegrationApp(flow) && resource.sampleData ? rest : resourceWithoutSampleData,
-              resourceType,
-              type
-            ),
-          };
-        }
+        // Incase of connectors with sampledata on resource it should be true
+        // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
+        resourceMap[resourceId] = {
+          doc: getFormattedResourceForPreview(
+            (isIntegrationApp(flow) && resource.sampleData) ? rest : resourceWithoutSampleData,
+            resourceType,
+            type
+          ),
+        };
 
         resourceMap[resourceId].options = {};
 
@@ -147,26 +149,9 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
   return resourceMap;
 }
 
-export function* refreshResourceData({ flowId, resourceId, resourceType }) {
-  // Stage to update incase of node reset
-  // Incase of exports, stage is transform so that it updates raw and transform stage
-  // Incase of imports, we refresh raw data
-  const stageToUpdate = resourceType === 'exports' ? 'transform' : 'raw';
-
-  yield put(
-    actions.flowData.requestProcessorData(
-      flowId,
-      resourceId,
-      resourceType,
-      stageToUpdate
-    )
-  );
-}
-
 export function* requestSampleDataForImports({
   flowId,
   resourceId,
-  resourceType,
   hidden = true,
   sampleDataStage,
 }) {
@@ -175,46 +160,33 @@ export function* requestSampleDataForImports({
       yield call(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId: resourceId,
-        resourceType,
+        resourceType: 'imports',
         hidden,
-        previewType: sampleDataStage,
+        previewType: 'flowInput',
       });
       break;
     }
 
     case 'sampleResponse': {
-      const { merged: resource } = yield select(
+      const sampleResponseData = (yield select(
         selectors.resourceData,
         'imports',
         resourceId,
         SCOPES.VALUE
+      ))?.merged?.sampleResponseData || '';
+
+      const sampleResponse = isJsonString(sampleResponseData)
+        ? JSON.parse(sampleResponseData)
+        : sampleResponseData;
+
+      yield put(
+        actions.flowData.receivedPreviewData(
+          flowId,
+          resourceId,
+          sampleResponse,
+          'sampleResponse'
+        )
       );
-
-      try {
-        // @TODO Raghu: Handle sample response as a XML
-        const { sampleResponseData = '' } = resource;
-        const sampleResponse = isJsonString(sampleResponseData)
-          ? JSON.parse(sampleResponseData)
-          : sampleResponseData;
-
-        yield put(
-          actions.flowData.receivedPreviewData(
-            flowId,
-            resourceId,
-            sampleResponse,
-            'sampleResponse'
-          )
-        );
-      } catch (e) {
-        yield put(
-          actions.flowData.receivedPreviewData(
-            flowId,
-            resourceId,
-            {},
-            'sampleResponse'
-          )
-        );
-      }
 
       break;
     }
@@ -253,7 +225,9 @@ export function* requestSampleDataForExports({
   );
 
   if (['flowInput', 'raw'].includes(sampleDataStage)) {
-    if (isPageGeneratorExport) {
+    const resourceObj = yield select(selectors.resource, resourceType, resourceId);
+
+    if (isPageGeneratorExport || isFileAdaptor(resourceObj)) {
       yield call(fetchPageGeneratorPreview, {
         flowId,
         _pageGeneratorId: resourceId,
@@ -283,24 +257,21 @@ export function* updateStateForProcessorData({
   wrapInArrayProcessedData,
   removeDataPropFromProcessedData,
 }) {
+  const resultantProcessedData = processedData && deepClone(processedData);
+
   // wrapInArrayProcessedData: Incase of Transform scripts , data is not inside an array as in other stages
   // So this prop wraps data to extract the same in the reducer
-  if (wrapInArrayProcessedData && processedData && processedData.data) {
-    // eslint-disable-next-line no-param-reassign
-    processedData.data = [processedData.data];
+  if (wrapInArrayProcessedData && resultantProcessedData?.data) {
+    resultantProcessedData.data = [resultantProcessedData.data];
   }
 
   // Incase of preMap u get sampleData wrapped against 'data' prop
   // This replaces [{data: {}}] to direct [{}], so that receivedProcessorData reducer extract the same
   if (
     removeDataPropFromProcessedData &&
-    processedData &&
-    processedData.data &&
-    processedData.data[0] &&
-    processedData.data[0].data
+    resultantProcessedData?.data?.[0]?.data
   ) {
-    // eslint-disable-next-line no-param-reassign
-    processedData.data[0] = processedData.data[0].data;
+    resultantProcessedData.data[0] = resultantProcessedData.data[0].data;
   }
 
   yield put(
@@ -308,7 +279,7 @@ export function* updateStateForProcessorData({
       flowId,
       resourceId,
       stage,
-      processedData
+      resultantProcessedData
     )
   );
 }
@@ -321,13 +292,13 @@ export function* handleFlowDataStageErrors({
   flowId,
   resourceId,
   stage,
-  error,
+  error = {},
 }) {
   if (error.status === 403 || error.status === 401) {
     return;
   }
 
-  if (error.status >= 400 && error.status < 500) {
+  if (error.status >= 400 && error.status < 500 && isJsonString(error.message)) {
     const errorsJSON = JSON.parse(error.message);
     const { errors } = errorsJSON;
 
@@ -347,6 +318,9 @@ export function getPreProcessedResponseMappingData({
   preProcessedData,
   adaptorType,
 }) {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return;
+  }
   const extractsObj = generateDefaultExtractsObject(resourceType, adaptorType);
 
   // Incase of lookups , add preProcessedData as part of data if exists else no data from lookup is passed
@@ -368,8 +342,14 @@ export function* getFlowStageData({
   resourceType,
   stage,
   isInitialized,
+  noWrap,
 }) {
-  let flowStageData = yield select(selectors.sampleDataWrapper, {
+  let selector = selectors.sampleDataWrapper;
+
+  if (noWrap) {
+    selector = selectors.getSampleDataContext;
+  }
+  let flowStageData = yield select(selector, {
     flowId,
     resourceId,
     resourceType,
@@ -386,7 +366,7 @@ export function* getFlowStageData({
       stage,
       isInitialized,
     });
-    flowStageData = yield select(selectors.sampleDataWrapper, {
+    flowStageData = yield select(selector, {
       flowId,
       resourceId,
       resourceType,

@@ -1,4 +1,4 @@
-import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Typography, Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,18 +8,27 @@ import {
 } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import EditorDrawer from '../../../AFE/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
-import Close from '../../../icons/CloseIcon';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
+import {applicationsList} from '../../../../constants/applications';
+import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
+import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
+import DebugIcon from '../../../icons/DebugIcon';
+import IconTextButton from '../../../IconTextButton';
+import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import { VALID_REPORT_TYPES } from '../../../../views/Reports';
+import CloseButton from './CloseButton';
+import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-const isNestedDrawer = url => !!matchPath(url, {
+export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
   strict: false});
@@ -39,53 +48,50 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
-  baseForm: {
+  baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '1fr auto',
-    paddingTop: theme.spacing(3),
+    gridTemplateColumns: '50% 48%',
+    gridColumnGap: theme.spacing(1),
+    padding: theme.spacing(3),
     '& > div:first-child': {
-      paddingTop: 0,
+      padding: 0,
+      paddingRight: theme.spacing(2),
     },
   },
   resourceFormWrapper: {
-    flexDirection: 'row',
     width: '100%',
-    padding: theme.spacing(3, 3, 0, 3),
-  },
-  exportsPanel: {
-    flexDirection: 'row',
+    padding: theme.spacing(3),
+    overflowY: 'auto',
+
   },
   appLogo: {
-    paddingRight: theme.spacing(2),
-    marginTop: theme.spacing(-0.5),
-    marginRight: theme.spacing(4),
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-
+    padding: theme.spacing(0, 1),
+    margin: theme.spacing(-0.5, 0),
+  },
+  guideWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  guideLink: {
+    marginRight: theme.spacing(2),
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
+  },
+  guideLinkIcon: {
+    marginRight: theme.spacing(0.5),
   },
   title: {
     display: 'flex',
     padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
   },
   titleText: {
     wordBreak: 'break-word',
     paddingRight: theme.spacing(2),
     color: theme.palette.secondary.main,
   },
-
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(2),
-    top: theme.spacing(2),
-    padding: 0,
-    '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
-    },
-  },
-
   backButton: {
     marginRight: theme.spacing(1),
     padding: 0,
@@ -103,7 +109,23 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-
+  debugLogButton: {
+    padding: '0px 8px',
+    borderRadius: 0,
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  appLogoWrapper: {
+    position: 'relative',
+    display: 'flex',
+    marginRight: theme.spacing(3),
+  },
+  divider: {
+    height: 24,
+    width: 1,
+  },
+  resourcePanelFooter: {
+    background: theme.palette.common.white,
+  },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
   const resourceType = [];
@@ -128,6 +150,9 @@ const useDetermineRequiredResources = type => useMemo(() => {
 }, [type]);
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
+  if (resourceType === 'eventreports') {
+    return 'Run report';
+  }
   if (resourceType === 'pageGenerator') {
     return 'Create source';
   }
@@ -136,47 +161,59 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
     return `${opTitle} ${resourceLabel}`;
   }
 
+  if (!resourceLabel) { return ''; }
+
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
-const useRedirectionToParentRoute = (resourceType, id) => {
+export const redirectURlToParentListing = url => url.split('/')
+  .slice(0, -3)
+  .join('/');
+export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
   const match = useRouteMatch();
-  const { initFailed } = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, id)
-  );
 
   useEffect(() => {
     if (initFailed) {
       // remove the last 3 segments from the route ...
       // /:operation(add|edit)/:resourceType/:id
-      const stripedRoute = match.url
-        .split('/')
-        .slice(0, -3)
-        .join('/');
+      const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);
     }
   }, [history, initFailed, match.url]);
 };
 
+const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
+  const initFailed = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, id)?.initFailed
+  );
+
+  useRedirectToParentRoute(initFailed);
+};
+
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
-  const [newId] = useState(generateNewId());
-
+  const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const match = useRouteMatch();
+  const applications = applicationsList();
+
   const { id, resourceType, operation } = match.params;
+  const { parentType, parentId } = getParentResourceContext(match.url);
+  const formKey = getAsyncKey(resourceType, id);
+
   const isNew = operation === 'add';
 
-  useRedirectionToParentRoute(resourceType, id);
+  useResourceFormRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,
     occupyFullWidth,
     match,
   });
 
+  const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -203,10 +240,17 @@ export default function Panel(props) {
   }
 
   );
+
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
+
+  const app = applications.find(a => a.id === applicationType) || {};
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+  let submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+
+  if (resourceType === 'eventreports') {
+    submitButtonLabel = 'Run report';
+  }
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
   const handleSubmitComplete = useHandleSubmitCompleteFn(resourceType, id, onClose);
   const showApplicationLogo =
@@ -248,6 +292,11 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
+  const listenerDrawerHandler = useCallback(() => {
+    history.push(`${match.url}/logs`);
+  }, [match.url, history]);
+  const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
+
   return (
     <>
       <div className={classes.root}>
@@ -260,40 +309,64 @@ export default function Panel(props) {
             <Back />
           </IconButton>
           )}
+
           <div data-public className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>
             {showApplicationLogo && (
-            <ApplicationImg
-              className={classes.appLogo}
-              size="small"
-              type={applicationType}
-              alt={applicationType || 'Application image'}
+            <div className={classes.guideWrapper}>
+              {resourceType === 'connections' && (app.helpURL || KBDocumentation[applicationType]) && (
+              <a className={classes.guideLink} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
+                <InstallationGuideIcon className={classes.guideLinkIcon} />
+                {app.name || applicationType} connection guide
+              </a>
+              )}
+              {hasListenerLogsAccess && (
+                <IconTextButton
+                  onClick={listenerDrawerHandler}
+                  color="primary"
+                  className={classes.debugLogButton}
+                  data-test="listenerLogs">
+                  <DebugIcon />
+                  View debug logs
+                </IconTextButton>
+              )}
+              <div className={classes.appLogoWrapper}>
+                <ApplicationImg
+                  className={classes.appLogo}
+                  size="small"
+                  type={applicationType}
+                  alt={applicationType || 'Application image'}
+                  assistant={app?.assistant}
             />
+                <Divider orientation="vertical" className={classes.divider} />
+              </div>
+            </div>
             )}
           </div>
-          <IconButton
-            data-test="closeDrawer"
-            className={classes.closeButton}
-            onClick={onClose}>
-            <Close />
-          </IconButton>
+          <CloseButton
+            formKey={formKey}
+          />
         </div>
         <LoadResources required resources={requiredResources}>
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',
-            })}
+            },
+            {[classes.baseFormWithPreview]: showPreviewPanel }
+            )}
           >
             <ResourceFormWithStatusPanel
-              formKey={newId}
+              formKey={formKey}
               className={classes.resourceFormWrapper}
               variant={variant}
               isNew={isNew}
               resourceType={resourceType}
               resourceId={id}
               flowId={flowId}
+              // All users have access to reports
+              skipMonitorLevelAccessCheck={isReportType}
               integrationId={integrationId}
               isFlowBuilderView={!!flowId}
               onSubmitComplete={handleSubmitComplete}
@@ -302,28 +375,33 @@ export default function Panel(props) {
           />
             {showPreviewPanel && (
               <ExportsPreviewPanel
-                className={classes.exportsPanel}
                 resourceId={id}
-                formKey={newId}
+                formKey={formKey}
                 resourceType={resourceType}
                 flowId={flowId}
           />
             )}
           </div>
-          <ResourceFormActionsPanel
-            formKey={newId}
-            isNew={isNew}
-            resourceType={resourceType}
-            resourceId={id}
-            flowId={flowId}
-            integrationId={integrationId}
-            cancelButtonLabel="Cancel"
-            submitButtonLabel={submitButtonLabel}
-            submitButtonColor={submitButtonColor}
-            onCancel={abortAndClose}
+          <div className={classes.resourcePanelFooter}>
+            <ResourceFormActionsPanel
+              formKey={formKey}
+              isNew={isNew}
+              resourceType={resourceType}
+              resourceId={id}
+              flowId={flowId}
+              integrationId={integrationId}
+              parentType={parentType}
+              parentId={parentId}
+              cancelButtonLabel="Cancel"
+              submitButtonLabel={submitButtonLabel}
+              submitButtonColor={submitButtonColor}
+              onCancel={abortAndClose}
           />
+          </div>
         </LoadResources>
       </div>
+      <EditorDrawer />
+      <ListenerRequestLogsDrawer flowId={flowId} exportId={id} />
     </>
   );
 }

@@ -5,6 +5,7 @@ import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
+import { emptyObject } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 
@@ -36,7 +37,7 @@ export const useHandleDelete = flowId => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || {};
 
   const patchFlow = usePatchFlow(flowId);
   const { pageProcessors = [], pageGenerators = [] } = flow;
@@ -84,16 +85,15 @@ export const useHandleMovePP = flowId => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || {};
 
   const { pageProcessors = [] } = flow;
   const handleMovePP = useCallback(
-    (dragIndex, hoverIndex) => {
-      const dragItem = pageProcessors[dragIndex];
+    ({oldIndex, newIndex}) => {
       const newOrder = [...pageProcessors];
+      const [removed] = newOrder.splice(oldIndex, 1);
 
-      newOrder.splice(dragIndex, 1);
-      newOrder.splice(hoverIndex, 0, dragItem);
+      newOrder.splice(newIndex, 0, removed);
       patchFlow('/pageProcessors', newOrder);
     },
     [pageProcessors, patchFlow]
@@ -108,16 +108,15 @@ export const useHandleMovePG = flowId => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const { pageGenerators = [] } = flow;
   const handleMovePG = useCallback(
-    (dragIndex, hoverIndex) => {
-      const dragItem = pageGenerators[dragIndex];
+    ({oldIndex, newIndex}) => {
       const newOrder = [...pageGenerators];
+      const [removed] = newOrder.splice(oldIndex, 1);
 
-      newOrder.splice(dragIndex, 1);
-      newOrder.splice(hoverIndex, 0, dragItem);
+      newOrder.splice(newIndex, 0, removed);
       patchFlow('/pageGenerators', newOrder);
     },
     [pageGenerators, patchFlow]
@@ -180,15 +179,29 @@ export const useHandleExitClick = () => {
     // Note that our App init must do some internal redirects since
     // a new browser tab session always has a history depth of 2!
     // if depth is more than 2, we are safe to just go back in the history queue.
+    const parts = location.pathname.split('/');
+    const isIARoute = parts[1].toLowerCase() === 'integrationapps';
+
+    // /integrationapps/ShopifyNetSuite/{integrationId}/flowBuilder/{flowId}
+    // 6 route segements
+
+    const isRouteInSettingsOrSchedule = parts.some(part => ['settings', 'schedule'].includes(part));
+
+    // if there is history and you are accessing other routes within the flowbuilder such as schedule or settings
+    // you should go back twice..the base flowbuilder for IA route has 6 parts..for other Integrations it is 5 parts
+    const shouldGoBackTwice = isRouteInSettingsOrSchedule && history.length > 3 && (isIARoute ? parts.length > 6 : parts.length > 5);
+
+    if (shouldGoBackTwice) {
+      return history.go(-2);
+    }
     if (history.length > 2) {
       return history.goBack();
     }
 
-    // Otherwise parse the location and return the user to the integration
+    // in a no history stack parse the location and return the user to the integration
     // details page.
-    const parts = location.pathname.split('/');
 
-    if (parts[1].toLowerCase() === 'integrationapps') {
+    if (isIARoute) {
       // if user is editing an IA flow, the url is 1 segment longer.
       return history.push(parts.slice(0, 4).join('/'));
     }

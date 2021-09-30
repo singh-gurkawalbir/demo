@@ -18,14 +18,19 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
+import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH} from '../../utils/constants';
+import { capitalizeFirstLetter } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(2),
+    padding: theme.spacing(4, 2),
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
+    position: 'relative',
+    bottom: theme.spacing(2),
     '& > div': {
       maxWidth: '100%',
       minWidth: '100%',
@@ -37,6 +42,18 @@ const useStyles = makeStyles(theme => ({
       gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
+  pageCenter: {
+    padding: theme.spacing(3, 0),
+    width: '500px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    margin: '0 auto',
+    '& p': {
+      margin: theme.spacing(2, 0),
+    },
+  },
   card: {
     height: '318px',
     border: '1px solid',
@@ -44,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     margin: '0 auto',
     borderRadius: '4px',
-    padding: theme.spacing(2),
+    padding: [[14, 18]],
     wordBreak: 'break-word',
   },
   connectorCard: {
@@ -70,26 +87,14 @@ const useStyles = makeStyles(theme => ({
   },
   cardFooter: {
     marginBottom: theme.spacing(1),
-    display: 'grid',
+    display: 'flex',
     paddingTop: theme.spacing(1),
-    gridTemplateColumns: '1fr 1fr',
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.secondary.light,
     position: 'absolute',
     bottom: 0,
     width: 'calc(100% - 32px)',
-  },
-  title: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    maxWidth: '88%',
-    textOverflow: 'ellipsis',
-  },
-  user: {
-    textAlign: 'right',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
+    justifyContent: 'space-between',
   },
   cardAction: {
     margin: theme.spacing(1, 0),
@@ -97,8 +102,14 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     bottom: theme.spacing(5),
   },
+  user: {
+    maxWidth: '60%',
+  },
   link: {
     paddingLeft: theme.spacing(1),
+  },
+  rightSubtitle: {
+    paddingTop: theme.spacing(1),
   },
 }));
 
@@ -120,12 +131,13 @@ export default function MarketplaceList() {
     application,
     sandbox
   );
+  const marketPlaceConnectAppUrl = `${process.env.CDN_BASE_URI}images/react/marketplace-connect-app.png`;
   const templates = useSelector(state =>
     selectors.marketplaceTemplatesByApp(state, application)
   );
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
-  const applicationName = connector ? connector.name : application;
+  const applicationName = connector?.name || capitalizeFirstLetter(application);
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -155,7 +167,7 @@ export default function MarketplaceList() {
                   tag
                 )
               );
-              history.push(getRoutePath('/dashboard'));
+              history.push(getRoutePath(HOME_PAGE_PATH));
             },
           },
           {
@@ -166,7 +178,7 @@ export default function MarketplaceList() {
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
-      history.push(getRoutePath('/dashboard'));
+      history.push(getRoutePath(HOME_PAGE_PATH));
     }
   };
 
@@ -174,18 +186,63 @@ export default function MarketplaceList() {
     dispatch(actions.marketplace.contactSales(connector.name, connector._id));
     setShowMessage(true);
   };
+  const handletrialEnabledClick = connector => {
+    if (connector.usedTrialLicenseExists) {
+      confirmDialog({
+        title: 'You have already used up your trial license',
+        isHtml: true,
+        allowedTags: ['b'],
+        message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
+        buttons: [
+          {
+            label: 'Request a demo',
+            onClick: () => {
+              handleContactSalesClick(connector);
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    } else {
+      confirmDialog({
+        title: `This will start your ${connector.trialPeriod} days free trial plan`,
+        isHtml: true,
+        allowedTags: ['b'],
+        message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
+        buttons: [
+          {
+            label: 'Start free trial',
+            onClick: () => {
+              handleConnectorInstallClick(connector);
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    }
+  };
 
   return (
     <LoadResources required resources="integrations">
       <InstallTemplateDrawer />
 
-      <CeligoPageBar
-        title={`${
-          applicationName
-            ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
-            : ''
-        } Integrations`}
-      />
+      <CeligoPageBar title={`${applicationName} Integrations`}>
+        <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
+      </CeligoPageBar>
+
+      {(!templates.length && !connectors.length) && (
+        <div className={classes.pageCenter}>
+          <Typography variant="h4">Connect this app to anything</Typography>
+          <Typography variant="body2">Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create new custom flows using the prebuilt connector available for this application.<br /><br />Need help? Check out our <a target="blank" href="https://docs.celigo.com/hc/en-us/categories/360002670492-Connectors">documentation</a> or <a target="blank" href="https://docs.celigo.com/hc/en-us/community/topics" >join our community</a>.</Typography>
+          <img src={marketPlaceConnectAppUrl} alt="Marketplace Connect App" />
+        </div>
+      )}
       <div className={classes.root}>
         {connectors.map(connector => (
           <Card
@@ -199,7 +256,7 @@ export default function MarketplaceList() {
               type="connector"
             />
             <CardActions className={classes.cardAction}>
-              {connector.canInstall ? (
+              {connector.canInstall && (
                 <Button
                   data-test="installConnector"
                   onClick={() => handleConnectorInstallClick(connector)}
@@ -207,7 +264,17 @@ export default function MarketplaceList() {
                   color="primary">
                   Install
                 </Button>
-              ) : (
+              )}
+              {connector.canStartTrial && (
+                <Button
+                  data-test="startFreeTrial"
+                  onClick={() => handletrialEnabledClick(connector)}
+                  variant="outlined"
+                  color="primary">
+                  Start free trial
+                </Button>
+              )}
+              {connector.canRequestDemo && (
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}
@@ -221,7 +288,7 @@ export default function MarketplaceList() {
               <Typography className={classes.title} variant="body2">
                 Integration app
               </Typography>
-              <Typography className={classes.user} variant="body2">
+              <Typography className={classes.user} variant="body2" noWrap>
                 { connector?.user?.company || connector?.user?.name || connector?.user?.email || 'Celigo'}
               </Typography>
             </div>
@@ -249,14 +316,14 @@ export default function MarketplaceList() {
                 color="primary"
                 component={Link}
                 to={`${location.pathname}/installTemplate/preview/${template._id}`}>
-                Install
+                Preview
               </Button>
             </CardActions>
             <div className={classes.cardFooter}>
               <Typography className={classes.title} variant="body2">
                 Template
               </Typography>
-              <Typography className={classes.user} variant="body2">
+              <Typography className={classes.user} variant="body2" noWrap>
                 { template?.user?.company || template?.user?.name || template?.user?.email || 'Celigo'}
               </Typography>
             </div>

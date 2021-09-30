@@ -8,7 +8,6 @@ import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import SpinnerWrapper from '../SpinnerWrapper';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -37,6 +36,12 @@ export default function NetSuiteMappingAssistant({
 
   const netSuiteRecordMetadata = useMemo(() => {
     if (recordTypes) {
+      // although componentinventorydetail is a valid sub-record type,
+      // it is not valid from BE Apis and has same metadata as inventorydetail
+      if (netSuiteRecordType === 'componentinventorydetail') {
+        return recordTypes.find(r => r.value === 'inventorydetail');
+      }
+
       return recordTypes.find(r => r.value === netSuiteRecordType);
     }
   }, [netSuiteRecordType, recordTypes]);
@@ -180,18 +185,14 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <SpinnerWrapper>
-        <Spinner color="primary" />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-        <SpinnerWrapper>
-          <Spinner color="primary" />
-        </SpinnerWrapper>
+      <Spinner centerAll />
       )}
       {suiteletUrl && (
         <Iframe
@@ -215,7 +216,7 @@ export default function NetSuiteMappingAssistant({
               color="primary">
               Launch NetSuite assistant
             </Button>
-            <ol>
+            <ol data-public>
               <li>
                 Please make sure that you have &quot;Celigo integrator.io&quot;
                 bundle (ID: 20038) version 1.7.4.5 or higher.

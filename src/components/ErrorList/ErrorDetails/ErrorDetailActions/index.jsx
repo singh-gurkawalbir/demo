@@ -1,9 +1,13 @@
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
+import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -14,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function Actions({
   errorId,
-  retryData,
+  updatedRetryData,
   flowId,
   resourceId,
   onClose,
@@ -23,28 +27,45 @@ export default function Actions({
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+
   const isFlowDisabled = useSelector(state =>
     !!(selectors.resource(state, 'flows', flowId)?.disabled)
   );
-  const retryId = useSelector(state =>
-      selectors.resourceError(state, {
-        flowId,
-        resourceId,
-        errorId,
-      })?.retryDataKey
+
+  const {retryDataKey: retryId, reqAndResKey} = useSelector(state =>
+    selectors.resourceError(state, {
+      flowId,
+      resourceId,
+      errorId,
+      isResolved,
+    }),
+  shallowEqual
   );
+
+  const s3BlobKey = useSelector(state => {
+    if (!['request', 'response'].includes(mode)) {
+      return;
+    }
+    const isHttpRequestMode = mode === 'request';
+
+    return selectors.s3HttpBlobKey(state, reqAndResKey, isHttpRequestMode);
+  });
+
+  const retryData = useSelector(state => selectors.retryData(state, retryId));
+
   const updateRetry = useCallback(() => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
         flowId,
         resourceId,
         retryId,
-        retryData,
+        retryData: updatedRetryData,
       })
     );
 
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryData, retryId]);
+  }, [dispatch, flowId, onClose, resourceId, updatedRetryData, retryId]);
+
   const resolve = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.resolve({
@@ -63,30 +84,43 @@ export default function Actions({
         flowId,
         resourceId,
         retryId,
-        retryData,
+        retryData: updatedRetryData,
       })
     );
 
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId, retryData]);
+  }, [dispatch, flowId, onClose, resourceId, retryId, updatedRetryData]);
 
-  if (isResolved) {
-    return null;
-  }
-  if (mode === 'edit' && !isFlowDisabled) {
+  const handleDownloadBlob = useCallback(
+    () => {
+      dispatch(actions.errorManager.errorHttpDoc.downloadBlobDoc(flowId, resourceId, reqAndResKey));
+    },
+    [flowId, resourceId, reqAndResKey, dispatch],
+  );
+
+  const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
+  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
+
+  if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <div className={classes.action}>
-        <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>
+        <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
         </Button>
-        <Button variant="outlined" color="secondary" onClick={resolve}>
-          Mark resolved
-        </Button>
-        <Button variant="outlined" color="secondary" disabled={!retryData} onClick={updateRetry}>
-          Save &amp; close
-        </Button>
-        <Button variant="text" color="primary" onClick={onClose}>
-          Cancel
+        <SaveAndCloseMiniButtonGroup
+          isDirty={isRetryDataChanged}
+          handleSave={updateRetry}
+          handleClose={onClose}
+          shouldNotShowCancelButton
+          asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY}
+        />
+        { !isResolved && (
+          <Button variant="outlined" color="secondary" onClick={resolve}>
+            Resolve
+          </Button>
+        )}
+        <Button variant="text" color="primary" onClick={handleCancel}>
+          Close
         </Button>
       </div>
     );
@@ -94,11 +128,20 @@ export default function Actions({
 
   return (
     <div className={classes.action}>
-      <Button variant="outlined" color="primary" onClick={resolve}>
-        Mark resolved
-      </Button>
+      {!isResolved && (
+        <Button variant="outlined" color="primary" onClick={resolve}>
+          Resolve
+        </Button>
+      )}
+      {
+        !!s3BlobKey && (
+        <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>
+          Download file
+        </Button>
+        )
+      }
       <Button variant="text" color="primary" onClick={onClose}>
-        Cancel
+        Close
       </Button>
     </div>
   );

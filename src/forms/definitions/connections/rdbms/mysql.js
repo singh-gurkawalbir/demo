@@ -69,6 +69,7 @@ export default {
       fieldId: 'application',
     },
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+    'rdbms.disableStrictSSL': {fieldId: 'rdbms.disableStrictSSL'},
   },
   layout: {
     type: 'collapse',
@@ -96,7 +97,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['rdbmsAdvanced'],
+        fields: ['rdbms.disableStrictSSL', 'rdbmsAdvanced'],
       },
     ],
   },

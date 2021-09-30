@@ -1,9 +1,8 @@
 import produce from 'immer';
-import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
 import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
-import { isEuRegion } from '../../../forms/utils';
+import { isEuRegion } from '../../../forms/formFactory/utils';
 
 const emptySet = [];
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
@@ -35,7 +34,7 @@ export const selectors = {};
 
 selectors.marketPlaceState = state => state;
 
-selectors.connectors = (state, application, sandbox, licenses) => {
+selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrAdmin) => {
   if (!state) {
     return emptySet;
   }
@@ -48,23 +47,43 @@ selectors.connectors = (state, application, sandbox, licenses) => {
     if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }
-    let hasLicense = false;
+    const connectorLicenses = licenses.filter(l => (((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) && l._connectorId === conn._id && (l.expires || l.trialEndDate) && (!!l.sandbox === sandbox)));
 
-    licenses &&
-      licenses.forEach(l => {
-        if (
-          !hasLicense &&
-          moment(l.expires) - moment() > 0 &&
-          ((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) &&
-          l._connectorId === conn._id &&
-          !l._integrationId &&
-          !!l.sandbox === sandbox
-        ) {
-          hasLicense = true;
+    let unusedPaidLicenseExists = false;
+    let usedTrialLicenseExists = false;
+    let usedPaidLicenseExists = false;
+
+    connectorLicenses &&
+    connectorLicenses.forEach(l => {
+      if (!l._integrationId) {
+        if (l.expires) {
+          if (new Date(l.expires).getTime() > Date.now()) {
+            unusedPaidLicenseExists = true;
+          } else {
+            usedPaidLicenseExists = true;
+          }
+        } else if (new Date(l.trialEndDate).getTime() <= Date.now()) {
+          usedTrialLicenseExists = true;
         }
-      });
+      } else if (l.expires) {
+        usedPaidLicenseExists = true;
+      } else {
+        usedTrialLicenseExists = true;
+      }
+    });
+    let canRequestDemo = false;
+    let canInstall = false;
+    let canStartTrial = false;
 
-    return { ...conn, canInstall: hasLicense };
+    if (unusedPaidLicenseExists) {
+      canInstall = true;
+    } else if (!usedPaidLicenseExists && conn.trialEnabled && isAccountOwnerOrAdmin) {
+      canStartTrial = true;
+    } else {
+      canRequestDemo = true;
+    }
+
+    return { ...conn, canInstall, usedTrialLicenseExists, canStartTrial, canRequestDemo };
   });
 
   if (application) {

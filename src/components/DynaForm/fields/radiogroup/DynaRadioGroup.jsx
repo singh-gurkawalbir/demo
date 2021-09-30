@@ -8,7 +8,7 @@ import {
   RadioGroup,
   Radio,
 } from '@material-ui/core';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -63,6 +63,7 @@ export default function DynaRadio(props) {
     label,
     isValid,
     onFieldChange,
+    dataPublic,
   } = props;
   const classes = useStyles();
   const items = options.reduce(
@@ -84,6 +85,7 @@ export default function DynaRadio(props) {
             <FormControlLabel
               key={item.value}
               value={item.value}
+              data-test={item.value}
               control={<Radio color="primary" />}
               label={item.label || item.value}
             />
@@ -110,6 +112,7 @@ export default function DynaRadio(props) {
             />
           </div>
           <RadioGroup
+            data-public={!!dataPublic}
             data-test={id}
             aria-label={label}
             className={clsx(classes.radioGroup, {
@@ -127,7 +130,7 @@ export default function DynaRadio(props) {
 
         </div>
       </FormControl>
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </div>
   );
 }

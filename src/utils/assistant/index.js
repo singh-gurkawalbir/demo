@@ -12,6 +12,7 @@ import {
   assign,
   unionBy,
   isNumber,
+  get,
 } from 'lodash';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -106,6 +107,20 @@ export const DEFAULT_PROPS = Object.freeze({
   },
 });
 
+export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
+  [
+    'shopify',
+    'zendesk',
+    'magento',
+    'acumatica',
+    'bigcommerce',
+    'stripe',
+    'hubspot',
+    'jira',
+    'quickbooks',
+    'microsoftbusinesscentral',
+  ]
+);
 export function routeToRegExp(route) {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
@@ -204,6 +219,7 @@ export function populateDefaults({
   const childWithDefaults = { ...child };
 
   if (isArray(childWithDefaults.headers)) {
+    childWithDefaults.headersMetadata = childWithDefaults.headers;
     childWithDefaults.headers = childWithDefaults.headers.reduce(
       (obj, h) => ({ ...obj, [h.name]: h.value }),
       {}
@@ -218,6 +234,12 @@ export function populateDefaults({
             parent[prop],
             childWithDefaults[prop]
           );
+          if (Array.isArray(parent.headers)) {
+            if (!childWithDefaults.headersMetadata) {
+              childWithDefaults.headersMetadata = [];
+            }
+            childWithDefaults.headersMetadata = [...parent.headers, ...childWithDefaults.headersMetadata];
+          }
         } else if (prop === 'queryParameters') {
           childWithDefaults[prop] = mergeQueryParameters(
             parent[prop],
@@ -409,7 +431,7 @@ export function getResourceDetails({ version, resource, assistantData }) {
     }
   }
 
-  return { ...resourceDetails };
+  return { ...resourceDetails, headersMetadata: versionDetails.headersMetadata };
 }
 
 export function getExportOperationDetails({
@@ -446,11 +468,21 @@ export function getExportOperationDetails({
     }
   }
 
+  const headersMetadata = [];
+
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
+  }
+
   return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
+    headersMetadata,
   });
 }
 
@@ -547,11 +579,21 @@ export function getImportOperationDetails({
     }
   }
 
+  const headersMetadata = [];
+
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
+  }
+
   return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
+    headersMetadata,
   });
 }
 
@@ -718,7 +760,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToExport({ assistantConfig, assistantData }) {
+export function convertToExport({ assistantConfig, assistantData, headers = [] }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -904,8 +946,14 @@ export function convertToExport({ assistantConfig, assistantData }) {
     }
   }
 
+  const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
+
   Object.keys(operationDetails.headers).forEach(headerName => {
-    if (operationDetails.headers[headerName] !== null) {
+    if (userHeaders.includes(headerName) && Array.isArray(headers)) {
+      const header = headers.find(header => header.name === headerName && !!header.value);
+
+      if (header) { exportDoc.headers.push(header); }
+    } else if (operationDetails.headers[headerName] !== null) {
       exportDoc.headers.push({
         name: headerName,
         value: operationDetails.headers[headerName],
@@ -1056,6 +1104,30 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\[/g, '*_*')
     .replace(/\]/g, '*__*');
 }
+// ids look like this AmazonOrderId.Id and keys AmazonOrderId.Id.1
+const isRepeatIndexedKey = (k, fieldId
+) => k && k.startsWith(fieldId) && k.split('.').length > 1 && !isNaN(parseInt(last(k.split('.')), 10));
+export const isMetaRequiredValuesMet = (meta, value) => {
+  if (!meta.fields) return true;
+  const requiredFields = meta.fields.filter(field => field.required);
+
+  if (!requiredFields || !requiredFields.length) return true;
+
+  return requiredFields.every(({id, type, indexed}) => {
+    if (type === 'repeat' && indexed) {
+      const repeatIndexedKeys = value && Object.keys(value)
+        .filter(key => isRepeatIndexedKey(key, id));
+
+      if (!repeatIndexedKeys || !repeatIndexedKeys.length) {
+        return false;
+      }
+
+      return repeatIndexedKeys.every(key => get(value, key));
+    }
+
+    return get(value, id);
+  });
+};
 
 export function convertToReactFormFields({
   paramMeta = {},
@@ -1074,12 +1146,7 @@ export function convertToReactFormFields({
       const fieldValue = [];
 
       each(value, (v, k) => {
-        if (
-          k &&
-          k.startsWith(field.id) &&
-          k.split('.').length > 1 &&
-          !isNaN(parseInt(last(k.split('.')), 10))
-        ) {
+        if (isRepeatIndexedKey(k, field.id)) {
           fieldValue.push(v);
         }
       });
@@ -1161,6 +1228,7 @@ export function convertToReactFormFields({
       if (
         !anyParamValuesSet &&
         paramValue === undefined &&
+        paramMeta.isDeltaExport &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
           paramMeta.defaultValuesForDeltaExport,
@@ -1593,6 +1661,13 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreLookupName;
           }
         }
+        /*
+        Fix for https://celigo.atlassian.net/browse/IO-22027
+        If ignoreExtract has url parameter delimiters(? and /) in them, it will not be extracted from url
+        */
+        if (importAdaptorSubSchema.ignoreExtract && /(\?|\/)/.test(importAdaptorSubSchema.ignoreExtract)) {
+          pathParams[p.id] = importAdaptorSubSchema.ignoreExtract;
+        }
       }
 
       if (p.isIdentifier && pathParams[p.id]) {
@@ -1689,7 +1764,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToImport({ assistantConfig, assistantData }) {
+export function convertToImport({ assistantConfig, assistantData, headers }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -1804,7 +1879,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   if (operationDetails.parameters) {
     identifiers = operationDetails.parameters.filter(p => !!p.isIdentifier);
 
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       importDoc.lookups = importDoc.lookups.filter(
         lu => lu.name !== identifiers[0].id
       );
@@ -1887,7 +1962,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   }
 
   if (ignoreExisting) {
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       }
@@ -1897,7 +1972,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     lookupType === 'lookup' ||
     ignoreMissing
   ) {
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       } else if (lookupType === 'lookup') {
@@ -1967,8 +2042,12 @@ export function convertToImport({ assistantConfig, assistantData }) {
   }
 
   if (operationDetails.headers) {
+    const userHeaders = Object.keys(operationDetails.headers || {}).filter(headerName => !operationDetails.headers[headerName]);
+
     Object.keys(operationDetails.headers).forEach(h => {
-      if (operationDetails.headers[h] !== null) {
+      if (userHeaders.includes(h) && Array.isArray(headers)) {
+        importDoc.headers.push(headers.find(header => header.name === h && !!header.value));
+      } else if (operationDetails.headers[h] !== null) {
         const hv = operationDetails.headers[h].replace(
           /RECORD_IDENTIFIER/gi,
           (!isEmpty(identifiers) && pathParams[identifiers[0]?.id]) || ''
@@ -2027,4 +2106,29 @@ export function convertToImport({ assistantConfig, assistantData }) {
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
   };
+}
+
+// this is a temporary util to calculate record type for assistants while fetching mapping auto suggestions.
+// The same is used in prometheus stack.
+// This util should be deleted after recordtype calculation is moved from frontent to backend layer
+export function getRecordTypeForAutoMapper(uri) {
+  const temp = uri.split('/');
+  const arr = [];
+  const pattern = '^[A-Za-z_-]*$';
+  const removable = '{|}|:|#|custbody|search|^api$|^$|^admin$|^id$|.*[cC]ustom[A-Z_].*';
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const s of temp) {
+    let str = s;
+
+    if (s.includes('?')) {
+      // eslint-disable-next-line prefer-destructuring
+      str = s.split('?')[0];
+    }
+    if (str.match(pattern) && !str.match(removable)) {
+      arr.push(str);
+    }
+  }
+
+  return arr.join('/');
 }
