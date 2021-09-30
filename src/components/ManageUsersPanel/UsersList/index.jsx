@@ -25,6 +25,8 @@ export default function UsersList({ integrationId, childId, className }) {
   useEffect(() => {
     if (integrationId && !isIntegrationUsersRequested) {
       dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    } else {
+      dispatch(actions.user.org.users.requestCollection('Retrieving org users'));
     }
   }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
