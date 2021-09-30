@@ -156,7 +156,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               onBlur={(_id, _value) => {
                 handleFieldUpdate(index, _value, 'searchValue2');
               }}
-              isValid={!r.searchValue2Enabled || r.searchValue2}
+              isValid={!invalidFields?.includes('searchValue2')}
               errorMessages="Please enter a value"
               value={r.searchValue2}
               />
