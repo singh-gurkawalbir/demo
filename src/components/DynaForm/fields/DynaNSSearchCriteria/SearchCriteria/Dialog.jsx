@@ -67,7 +67,7 @@ export default function SearchCriteriaDialog(props) {
     filterKey,
   } = props;
   const classes = useStyles();
-  const [fullScreen, setFullScreeen] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
   const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
@@ -88,6 +88,9 @@ export default function SearchCriteriaDialog(props) {
       if (!criteria.searchValue) {
         result[index] = [...result[index] || [], 'searchValue'];
       }
+      if (criteria.showFormulaField && !criteria.formula) {
+        result[index] = [...result[index] || [], 'formula'];
+      }
     });
     if (isEmpty(result)) {
       return emptyObject;
@@ -100,7 +103,7 @@ export default function SearchCriteriaDialog(props) {
     if (onSave) {
       if (searchCriteria && searchCriteria.length) {
         const _criteria = searchCriteria.map(s => {
-          const { searchValue2Enabled, rowIdentifier, ...sc } = s;
+          const { searchValue2Enabled, rowIdentifier, showFormulaField, ...sc } = s;
 
           return sc;
         });
@@ -114,7 +117,7 @@ export default function SearchCriteriaDialog(props) {
   }, [onSave, searchCriteria]);
 
   const size = fullScreen ? { height } : { height, width };
-  const handleFullScreenClick = () => setFullScreeen(!fullScreen);
+  const handleFullScreenClick = () => setFullScreen(!fullScreen);
 
   return (
     <Dialog
