@@ -16,7 +16,11 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
   },
   actions: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(2),
+  },
+  sampleDataContent: {
+    flex: 1,
   },
   dynaWebhookWrapper: {
     display: 'flex',
@@ -72,7 +76,7 @@ export default function DynaWebHookSampleData(props) {
 
   return (
     <div className={classes.dynaWebhookWrapper}>
-      <div>
+      <div className={classes.sampleDataContent}>
         <FormLabel error={!isValid} >{label}</FormLabel>
         <div className={classes.container}>
           <CodeEditor
