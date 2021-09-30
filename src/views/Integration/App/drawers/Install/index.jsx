@@ -103,7 +103,6 @@ export default function ConnectorInstallation(props) {
     _connectorId,
     initChild,
     parentId,
-    templateId,
   } = useMemo(() => integration ? {
     name: integration.name,
     initChild: integration.initChild,
@@ -114,9 +113,9 @@ export default function ConnectorInstallation(props) {
     _connectorId: integration._connectorId,
     integrationInstallSteps: integration.installSteps,
     parentId: integration._parentId,
-    templateId: integration._templateId,
   } : emptyObject, [integration]);
 
+  const isTemplate = !_connectorId;
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -146,6 +145,39 @@ export default function ConnectorInstallation(props) {
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
+  const templateInstallSteps = useMemo(() => {
+    const bundleInstallationForNetsuiteConnections = [];
+    const bundleInstallationForSalesforceConnections = [];
+
+    return installSteps.map(step => {
+      if (step.sourceConnection?.type === 'netsuite') {
+        bundleInstallationForNetsuiteConnections.push(step);
+      } else if (step.sourceConnection?.type === 'salesforce') {
+        bundleInstallationForSalesforceConnections.push(step);
+      }
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connStep = bundleInstallationForNetsuiteConnections.shift();
+
+          return {
+            ...step,
+            connectionId: connStep._connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connStep = bundleInstallationForSalesforceConnections.shift();
+
+          return {
+            ...step,
+            connectionId: connStep._connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }, [installSteps]);
   const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
     installSteps,
   ]);
@@ -617,13 +649,13 @@ export default function ConnectorInstallation(props) {
             <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
-            {installSteps.map((step, index) => (
+            {(isTemplate ? templateInstallSteps : installSteps).map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
-                templateId={templateId}
+                isTemplate={isTemplate}
                 integrationId={integrationId}
                 isFrameWork2={isFrameWork2}
               />

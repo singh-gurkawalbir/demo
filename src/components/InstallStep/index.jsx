@@ -144,7 +144,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isFrameWork2 } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isTemplate, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const connection = useSelector(state => {
@@ -160,58 +160,49 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
-    if (
-      connection &&
-      step &&
-      step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE &&
-      !step.completed &&
-      !verified
-    ) {
-      dispatch(
-        actions.template.updateStep(
-          { ...step, status: 'verifying' },
-          templateId
-        )
-      );
-      dispatch(
-        actions.template.verifyBundleOrPackageInstall(
-          step,
-          connection,
-          templateId
-        )
-      );
-      setVerified(true);
-    } else if (
-      step &&
-      step.isCurrentStep &&
-      (step.installURL || step.url) &&
-      !step.completed &&
-      !verified &&
-      templateId && !templateId.includes('flows-')
-    ) {
-      dispatch(
-        actions.integrationApp.installer.updateStep(
-          integrationId,
-          step.installerFunction,
-          'verify'
-        )
-      );
-
-      if (isFrameWork2) {
+    if (step && !step.completed && !verified) {
+      if (
+        connection &&
+        step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE
+      ) {
         dispatch(
-          actions.integrationApp.installer.scriptInstallStep(integrationId)
-        );
-      } else {
-        dispatch(
-          actions.integrationApp.installer.installStep(
-            integrationId,
-            step.installerFunction
+          actions.template.updateStep(
+            { ...step, status: 'verifying' },
+            templateId
           )
         );
+        dispatch(
+          actions.template.verifyBundleOrPackageInstall(
+            step,
+            connection,
+            templateId
+          )
+        );
+        setVerified(true);
+      } else if (
+        step.isCurrentStep &&
+        (step.installURL || step.url) &&
+        isTemplate
+      ) {
+        dispatch(
+          actions.integrationApp.installer.updateStep(
+            integrationId,
+            step.installerFunction,
+            'verify'
+          )
+        );
+        dispatch(
+          actions.integrationApp.templates.intsaller.verifyBundleOrPackageInstall(
+            integrationId,
+            step.connectionId,
+            step.installerFunction,
+            isFrameWork2
+          )
+        );
+        setVerified(true);
       }
-      setVerified(true);
     }
-  }, [connection, dispatch, integrationId, isFrameWork2, step, templateId, verified]);
+  }, [connection, dispatch, integrationId, isFrameWork2, isTemplate, step, templateId, verified]);
 
   if (!step) {
     return null;
