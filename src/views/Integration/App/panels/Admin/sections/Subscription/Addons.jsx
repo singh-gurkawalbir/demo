@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import moment from 'moment';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
@@ -9,6 +9,7 @@ import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 const metadata = {
   useColumns: () => {
@@ -21,7 +22,7 @@ const metadata = {
         Value: ({rowData: r}) => (
           <>
             {r?.name}
-            <InfoIconButton info={r.description} disableHtml size="xs" />
+            <InfoIconButton info={r.description} escapeUnsecuredDomains size="xs" />
           </>
         ),
       },
@@ -160,14 +161,12 @@ export default function AddOns({integrationId, childId}) {
           </Typography>
         </div>
         <div>
-          <Button
-            variant="outlined"
-            color="primary"
+          <FilledButton
             className={classes.button}
             component={Link}
             to={match.url.replace('admin/subscription', 'addons')}>
             GET ADD-ONS
-          </Button>
+          </FilledButton>
         </div>
       </div>
       )}

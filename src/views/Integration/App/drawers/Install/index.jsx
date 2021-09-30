@@ -33,12 +33,12 @@ import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
-import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
+import { TextButton } from '../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -536,34 +536,32 @@ export default function ConnectorInstallation(props) {
         >
         <div className={classes.actions}>
           {helpUrl && (
-            <IconTextButton
+            <TextButton
               data-test="viewHelpGuide"
               component={Link}
-              variant="text"
               onClick={handleHelpUrlClick}
-              color="primary">
-              <HelpIcon />
+              startIcon={<HelpIcon />}
+              >
               View help guide
-            </IconTextButton>
+            </TextButton>
           )}
           {_connectorId ? (
-            <IconTextButton
+            <TextButton
               data-test="uninstall"
               component={Link}
-              variant="text"
               onClick={handleUninstall}
-              color="primary">
-              <CloseIcon />
+              startIcon={<CloseIcon />}
+             >
               Uninstall
-            </IconTextButton>
+            </TextButton>
           )
             : (
-              <IconTextButton
-                variant="text"
+              <TextButton
                 data-test="deleteIntegration"
-                onClick={handleUninstall}>
-                <TrashIcon /> Delete integration
-              </IconTextButton>
+                onClick={handleUninstall}
+                startIcon={<TrashIcon />}>
+                Delete integration
+              </TextButton>
             )}
 
         </div>

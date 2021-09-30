@@ -22,11 +22,9 @@ export default function reducer(state, action) {
     type,
     value,
     rowIndex,
-    colIndex,
     field,
     optionsMap,
     onRowChange,
-    heightOfCell,
   } = action;
 
   return produce(state, draft => {
@@ -34,12 +32,6 @@ export default function reducer(state, action) {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.UPDATE_CELL_HEIGHT:
-        if (!tableStateValue[rowIndex].sizeMap) {
-          tableStateValue[rowIndex].sizeMap = {};
-        }
-        tableStateValue[rowIndex].sizeMap[colIndex] = heightOfCell;
-        break;
       case actionTypes.REMOVE_TABLE_ROW:
         tableStateValue.splice(rowIndex, 1);
         draft.touched = true;
@@ -75,19 +67,6 @@ export default function reducer(state, action) {
     }
   });
 }
-const ITEM_SIZE = 46;
-const PADDING = 5;
-export const getRowHeight = (state, rowIndex) => {
-  const {sizeMap } = state.tableStateValue?.[rowIndex] || {};
-
-  return Object.values(sizeMap || {}).reduce((acc, curr) => {
-    if (curr > acc) {
-      return curr;
-    }
-
-    return acc;
-  }, ITEM_SIZE) + PADDING;
-};
 export const preSubmit = (stateValue = [], optionsMap, ignoreEmptyRow) =>
   stateValue.map(val => val.value).filter((val, index) => {
     if (ignoreEmptyRow) {

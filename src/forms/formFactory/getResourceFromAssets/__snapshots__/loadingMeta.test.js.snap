@@ -2927,7 +2927,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -3577,14 +3577,12 @@ Object {
       },
       "pageSize": Object {
         "fieldId": "pageSize",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
+        "validWhen": Object {
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
           },
-        ],
+        },
       },
       "parsers": Object {
         "fieldId": "parsers",
@@ -5305,14 +5303,12 @@ Object {
       },
       "pageSize": Object {
         "fieldId": "pageSize",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
+        "validWhen": Object {
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
           },
-        ],
+        },
       },
       "parsers": Object {
         "fieldId": "parsers",
@@ -7026,7 +7022,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -9111,6 +9107,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "unencrypted.apiType": Object {
+        "fieldId": "unencrypted.apiType",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -9205,6 +9204,7 @@ Object {
                 },
               ],
               "fields": Array [
+                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.compositeType",
@@ -10012,9 +10012,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "unencrypted.apiType": Object {
-        "fieldId": "unencrypted.apiType",
-      },
       "upateExistingData": Object {
         "id": "upateExistingData",
         "label": "Upate existing data",
@@ -10103,7 +10100,6 @@ Object {
                 },
               ],
               "fields": Array [
-                "unencrypted.apiType",
                 "http.method",
                 "http.blobMethod",
                 "http.compositeType",
@@ -10562,7 +10558,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -12569,7 +12565,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -12693,7 +12689,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

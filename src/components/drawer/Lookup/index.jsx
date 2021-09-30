@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-handler-names */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import {
-  Button,
   makeStyles,
   TableCell,
   TableRow,
@@ -17,9 +16,10 @@ import DrawerFooter from '../Right/DrawerFooter';
 import AddEditLookup from './Manage';
 import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
-import IconTextButton from '../../IconTextButton';
 import AddIcon from '../../icons/AddIcon';
+import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
+import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
 
 const useStyles = makeStyles(theme => ({
@@ -46,13 +46,22 @@ const useStyles = makeStyles(theme => ({
 
 const rootPath = 'lookup';
 
-export default function LookupDrawer({lookups, onSave, options, disabled, resourceId, resourceType, flowId, hideBackButton = true }) {
+export default function LookupDrawer({
+  lookups,
+  onSave,
+  options,
+  disabled,
+  resourceId,
+  resourceType,
+  flowId,
+  hideBackButton = true }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const location = useLocation();
   const [error, setError] = useState();
   const [value, setValue] = useState(lookups || []);
+  const lookupsHash = hashCode(lookups);
 
   // used to remount the form on save
   const [remountCount, setRemountCount] = useState(0);
@@ -132,6 +141,13 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
   const {setCancelTriggered} = useFormOnCancelContext(LOOKUP_DRAWER_FORM_KEY);
   const handleClose = isExact ? history.goBack : setCancelTriggered;
 
+  useEffect(() => {
+    // update the state if the lookups are modified
+    // from parent component
+    setValue(lookups);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lookupsHash]);
+
   return (
     <RightDrawer
       path={rootPath}
@@ -161,15 +177,13 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
           </Route>
           <Route path={`${match.url}/${rootPath}`}>
             <>
-              <IconTextButton
-                variant="text"
-                color="primary"
+              <TextButton
                 className={classes.actionButton}
                 onClick={handleAdd}
+                startIcon={<AddIcon />}
                 data-test="Create lookup">
-                <AddIcon />
                 Create lookup
-              </IconTextButton>
+              </TextButton>
               <div className={classes.listing}>
                 <Table
                   classes={{
@@ -200,13 +214,11 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       </DrawerContent>
       <DrawerFooter>
         {isExact ? (
-          <Button
+          <OutlinedButton
             data-test="closeLookupListing"
-            variant="outlined"
-            color="primary"
             onClick={history.goBack}>
             Close
-          </Button>
+          </OutlinedButton>
         ) : (
           <SaveButtonGroup
             value={selectedLookup}

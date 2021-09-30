@@ -37,7 +37,7 @@ export default {
       disabled: colors.celigoNeutral4,
       primary: colors.celigoNeutral8,
       hint: colors.celigoNeutral5,
-      secondary: colors.celigoNeutral7,
+      secondary: colors.celigoNeutral6,
     },
     info: {
       main: colors.celigoAccent2,
@@ -124,34 +124,35 @@ export default {
       },
       outlined: {
         borderRadius: '4px',
-        textTransform: 'none',
-        fontSize: '13px',
-        lineHeight: '15px',
-        padding: '6px 20px',
+        backgroundColor: colors.celigoWhite,
+        borderColor: colors.celigoNeutral3,
+        color: colors.celigoNeutral3,
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,
-          background: colors.celigoNeutral2,
           borderColor: colors.celigoNeutral2,
         },
       },
       outlinedPrimary: {
-        backgroundColor: colors.celigoAccent2,
         borderColor: colors.celigoAccent2,
-        color: colors.celigoWhite,
+        color: colors.celigoAccent2,
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
           borderColor: colors.celigoAccent3,
+          color: colors.celigoWhite,
         },
       },
       outlinedSecondary: {
-        backgroundColor: colors.celigoWhite,
-        borderColor: colors.celigoAccent2,
-        color: colors.celigoAccent2,
+        borderColor: colors.celigoNeutral3,
+        color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
+        },
+        '&:disabled': {
+          color: colors.celigoNeutral4,
+          borderColor: colors.celigoNeutral2,
         },
       },
       text: {
@@ -170,12 +171,12 @@ export default {
         },
       },
       textPrimary: {
-        color: colors.celigoNeutral8,
+        color: colors.celigoAccent2,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
         '&:hover': {
-          color: colors.celigoAccent2,
+          color: colors.celigoAccent1,
           backgroundColor: 'inherit',
         },
         '&:disabled': {
@@ -183,9 +184,16 @@ export default {
         },
       },
       textSecondary: {
+        color: colors.celigoNeutral8,
+        '&:focus': {
+          color: colors.celigoNeutral8,
+        },
         '&:hover': {
-          backgroundColor: 'transparent',
           color: colors.celigoAccent2,
+          backgroundColor: 'inherit',
+        },
+        '&:disabled': {
+          color: colors.celigoNeutral4,
         },
       },
     },
@@ -360,9 +368,15 @@ export default {
         letterSpacing: 'normal',
       },
       overline: {
-        fontSize: '12px',
+        fontFamily: 'source sans pro',
+        fontWeight: '700',
+        fontSize: '14px',
         lineHeight: '16px',
-        letterSpacing: '1px',
+        letterSpacing: 0.5,
+      },
+      caption: {
+        fontFamily: 'source sans pro',
+        fontSize: '13px',
       },
     },
     MuiListItem: {
@@ -575,6 +589,7 @@ export default {
         fontSize: '15px',
         '&$disabled': {
           backgroundColor: colors.celigoNeutral2,
+          borderColor: `${colors.celigoNeutral3} !important`,
           color: fade(colors.celigoNeutral6, 0.8),
           '& >.MuiSelect-icon': {
             display: 'none',
@@ -722,6 +737,8 @@ export default {
         color: colors.celigoNeutral8,
       },
       message: {
+        overflow: 'auto',
+        maxHeight: 300,
         color: colors.celigoNeutral8,
         '& svg': {
           fontSize: '32px !important',
@@ -823,6 +840,7 @@ export default {
     },
     MuiButton: {
       'data-public': true,
+      disableElevation: true,
     },
     MuiFormLabel: {
       'data-public': true,

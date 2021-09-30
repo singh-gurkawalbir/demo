@@ -6,8 +6,8 @@ import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import RawHtml from '../../../../../../../components/RawHtml';
 import actions from '../../../../../../../actions';
-import IconTextButton from '../../../../../../../components/IconTextButton';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
+import { TextButton } from '../../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,14 +58,13 @@ export default function ReadmeSection({ integrationId }) {
   return (
     <>
       <PanelHeader title="Readme" className={classes.panelHeaderReadme}>
-        <IconTextButton
+        <TextButton
           className={classes.editReadmebutton}
           data-test="form-editor-action"
-          variant="text"
           disabled={!canEditIntegration}
           onClick={handleEditorClick}>
           Edit readme
-        </IconTextButton>
+        </TextButton>
       </PanelHeader>
       <div className={classes.root}>
         <RawHtml className={classes.previewContainer} html={readmeValue} />

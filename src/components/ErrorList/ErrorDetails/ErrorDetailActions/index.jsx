@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
 import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
+import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -104,9 +104,9 @@ export default function Actions({
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <div className={classes.action}>
-        <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
+        <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
-        </Button>
+        </FilledButton>
         <SaveAndCloseMiniButtonGroup
           isDirty={isRetryDataChanged}
           handleSave={updateRetry}
@@ -115,13 +115,13 @@ export default function Actions({
           asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY}
         />
         { !isResolved && (
-          <Button variant="outlined" color="secondary" onClick={resolve}>
+          <OutlinedButton onClick={resolve} color="secondary">
             Resolve
-          </Button>
+          </OutlinedButton>
         )}
-        <Button variant="text" color="primary" onClick={handleCancel}>
+        <TextButton variant="text" color="primary" onClick={handleCancel}>
           Close
-        </Button>
+        </TextButton>
       </div>
     );
   }
@@ -129,20 +129,20 @@ export default function Actions({
   return (
     <div className={classes.action}>
       {!isResolved && (
-        <Button variant="outlined" color="primary" onClick={resolve}>
+        <OutlinedButton onClick={resolve}>
           Resolve
-        </Button>
+        </OutlinedButton>
       )}
       {
         !!s3BlobKey && (
-        <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>
+        <OutlinedButton color="secondary" onClick={handleDownloadBlob}>
           Download file
-        </Button>
+        </OutlinedButton>
         )
       }
-      <Button variant="text" color="primary" onClick={onClose}>
+      <TextButton onClick={onClose}>
         Close
-      </Button>
+      </TextButton>
     </div>
   );
 }

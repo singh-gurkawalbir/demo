@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import { FormLabel, makeStyles } from '@material-ui/core';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
 import FieldMessage from './FieldMessage';
+import { OutlinedButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -19,8 +18,8 @@ const useStyles = makeStyles(theme => ({
   actions: {
     marginTop: theme.spacing(2),
   },
-  inlineActions: {
-    display: 'inline',
+  dynaWebhookWrapper: {
+    display: 'flex',
   },
 }));
 
@@ -72,30 +71,28 @@ export default function DynaWebHookSampleData(props) {
   );
 
   return (
-    <div>
-      <FormLabel error={!isValid} >{label}</FormLabel>
-
-      <div className={classes.container}>
-        <CodeEditor
-          name="sampleData"
-          value={sampleData}
-          mode="json"
-          onChange={handleSampleDataChange}
+    <div className={classes.dynaWebhookWrapper}>
+      <div>
+        <FormLabel error={!isValid} >{label}</FormLabel>
+        <div className={classes.container}>
+          <CodeEditor
+            name="sampleData"
+            value={sampleData}
+            mode="json"
+            onChange={handleSampleDataChange}
+        />
+        </div>
+        <FieldMessage
+          description={description}
+          errorMessages={errorMessages}
+          isValid={isValid}
         />
       </div>
-      <FieldMessage
-        description={description}
-        errorMessages={errorMessages}
-        isValid={isValid}
-        />
       <div className={classes.actions}>
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.inlineActions}
+        <OutlinedButton
           onClick={generateSampleData}>
           Click to show
-        </Button>
+        </OutlinedButton>
       </div>
     </div>
   );

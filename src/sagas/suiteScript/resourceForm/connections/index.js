@@ -26,7 +26,7 @@ function getPingConnectionParams(ssLinkedConnectionId) {
   };
 }
 
-function* createPayload({ values, resourceId, ssLinkedConnectionId }) {
+export function* createPayload({ values, resourceId, ssLinkedConnectionId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
   let connectionResource = yield select(selectors.suiteScriptResourceData, {
@@ -56,7 +56,7 @@ function* createPayload({ values, resourceId, ssLinkedConnectionId }) {
   return returnData;
 }
 
-function* pingConnection({ resourceId, values, ssLinkedConnectionId }) {
+export function* pingConnection({ resourceId, values, ssLinkedConnectionId }) {
   const connectionPayload = yield call(createPayload, {
     values,
     resourceId,

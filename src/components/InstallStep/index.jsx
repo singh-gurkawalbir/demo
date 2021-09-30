@@ -10,8 +10,8 @@ import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import InfoIconButton from '../InfoIconButton';
-import IconTextButton from '../IconTextButton';
 import Spinner from '../Spinner';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -263,16 +263,14 @@ export default function InstallationStep(props) {
           </div>
           <div className={classes.installActionBtnWrapper}>
             {!step.completed && (
-            <IconTextButton
+            <TextButton
               data-test={stepText}
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
-              variant="text"
-              color="primary"
               className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
               >
               {showSpinner && <Spinner size="small" />} {stepText}
-            </IconTextButton>
+            </TextButton>
             )}
             {step.completed && (
             <>

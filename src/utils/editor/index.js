@@ -1,5 +1,6 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
+import { isOldRestAdaptor } from '../resource';
 
 export const FLOW_STAGES = [
   'outputFilter',
@@ -41,9 +42,53 @@ export function dataAsString(data) {
     : JSON.stringify(data, null, 2);
 }
 
-export const getUniqueFieldId = (fieldId, resource) => {
+export const getUniqueFieldId = (fieldId, resource, connection) => {
   if (!fieldId) { return ''; }
   const { ignoreExisting, ignoreMissing } = resource || {};
+  const isOldRestResource = isOldRestAdaptor(resource, connection);
+
+  if (isOldRestResource) {
+    switch (fieldId) {
+      case 'http.bodyCreate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
+        return 'rest.body.1';
+
+      case 'http.bodyUpdate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
+        return 'rest.body.0';
+      case 'http.relativeURIUpdate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
+        return 'rest.relativeURI.0';
+      case 'http.relativeURICreate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
+        return 'rest.relativeURI.1';
+      case 'http.relativeURI':
+        return 'rest.relativeURI';
+      case 'http.body':
+        return 'rest.body';
+      case 'http.once.relativeURI':
+        return 'rest.once.relativeURI';
+      default:
+    }
+  } else {
+    switch (fieldId) {
+      case 'rest.pagingPostBody':
+        return 'http.paging.body';
+      case 'rest.nextPageRelativeURI':
+        return 'http.paging.relativeURI';
+      case 'rest.postBody':
+        return 'http.body';
+      case 'rest.relativeURI':
+        return 'http.relativeURI';
+      case 'rest.once.postBody':
+        return 'http.once.body';
+      default:
+    }
+  }
 
   // some field types have same field ids
   switch (fieldId) {
@@ -76,20 +121,26 @@ export const getUniqueFieldId = (fieldId, resource) => {
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
     default:
-      return fieldId;
   }
+
+  // returns same fieldId if it does not match
+  return fieldId;
 };
+
+export const PAGING_FIELD_IDS = [
+  'http.paging.body',
+  'http.paging.relativeURI',
+  'rest.pagingPostBody',
+  'rest.nextPageRelativeURI',
+];
 
 // fieldIds that show previewData when paging is configured
 export const previewDataDependentFieldIds = [
-  'http.paging.body',
-  'rest.pagingPostBody',
-  'rest.nextPageRelativeURI',
-  'http.paging.relativeURI',
-  'rest.relativeURI',
+  ...PAGING_FIELD_IDS,
   'http.relativeURI',
-  'rest.postBody',
   'http.body',
+  'rest.relativeURI',
+  'rest.postBody',
 ];
 
 // DO NOT DELETE below utils

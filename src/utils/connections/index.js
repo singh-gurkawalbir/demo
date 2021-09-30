@@ -1,5 +1,30 @@
 import { matchPath } from 'react-router-dom';
-import { RDBMS_TYPES } from '../constants';
+import { CONSTANT_CONTACT_VERSIONS, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
+
+export const getFilterExpressionForAssistant = (assistant, expression) => {
+  if (!assistant ||
+      typeof assistant !== 'string' ||
+      !expression ||
+      !Array.isArray(expression)) {
+    return emptyObject;
+  }
+
+  if (assistant.includes('constantcontact')) {
+    const resultExpression = { $or: [] };
+
+    CONSTANT_CONTACT_VERSIONS.forEach(version => {
+      const finalExpression = [...expression, {assistant: `constantcontact${version}`}];
+
+      resultExpression.$or.push({$and: finalExpression});
+    });
+
+    return resultExpression;
+  }
+
+  expression.push({assistant});
+
+  return { $and: expression };
+};
 
 export const getReplaceConnectionExpression = (connection, isFrameWork2, childId, integrationId, connectorId, hideOwnConnection) => {
   let options = {};
@@ -32,11 +57,9 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   }
 
   if (assistant) {
-    expression.push({ assistant });
+    const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
-    const andingExpressions = { $and: expression };
-
-    options = { filter: andingExpressions, appType: assistant };
+    options = { filter: filterExpression, appType: assistant };
   } else {
     const andingExpressions = { $and: expression };
 
@@ -44,6 +67,18 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   }
 
   return options;
+};
+export const getConstantContactVersion = connection =>
+  connection?.http?.baseURI?.includes('api.cc.email') ? 'constantcontactv3' : 'constantcontactv2';
+
+export const getAssistantFromConnection = (assistant, connection) => {
+  if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
+
+  if (assistant?.includes('constantcontact')) {
+    return getConstantContactVersion(connection);
+  }
+
+  return assistant;
 };
 export const KBDocumentation = {
   http: 'https://docs.celigo.com/hc/en-us/sections/360007388192-HTTP-',

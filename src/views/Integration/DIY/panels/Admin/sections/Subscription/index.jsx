@@ -4,7 +4,7 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { Button, Grid, Divider, Typography } from '@material-ui/core';
+import { Grid, Divider, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
@@ -13,6 +13,7 @@ import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 const emptyObject = {};
 const metadata = {
@@ -26,7 +27,7 @@ const metadata = {
         Value: ({rowData: r}) => (
           <>
             {r && r.name}
-            <InfoIconButton info={r.description} disableHtml size="xs" />
+            <InfoIconButton info={r.description} escapeUnsecuredDomains size="xs" />
           </>
         ),
       },
@@ -211,14 +212,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
-                  <Button
-                    variant="contained"
-                    color="primary"
+                  <FilledButton
                     className={classes.button}
                     disabled={upgradeRequested}
                     onClick={handleUpgrade}>
                     {upgradeText}
-                  </Button>
+                  </FilledButton>
                 )}
               </Grid>
             </Grid>
@@ -242,14 +241,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
             <div>
-              <Button
-                variant="outlined"
-                color="primary"
+              <FilledButton
                 className={classes.button}
                 component={Link}
                 to={match.url.replace('admin/subscription', 'addons')}>
                 GET ADD-ONS
-              </Button>
+              </FilledButton>
             </div>
           </div>
         )}
