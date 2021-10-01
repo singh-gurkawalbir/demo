@@ -53,8 +53,8 @@ export default function MarketingContentWithImages(props) {
         <div direction={direction}>
           <a
             href={targetUrl}
-            target="blank"
-            rel="noopener noreferer"
+            target="_blank"
+            rel="noopener noreferrer"
             data-test="loginMarketingContent"
             title={targetUrl}>
             <img
