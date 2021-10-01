@@ -1,36 +1,20 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FormControl, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import DynaKeyValue from './DynaKeyValue';
+import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 
 const emptySet = [];
-const useStyles = makeStyles(theme => ({
-  keyColumnFormWrapper: {
-    display: 'flex',
-    flexDirection: 'row !important',
-  },
-  spinnerWrapper: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(4),
-    alignSelf: 'flex-start',
-  },
-}));
-
 export default function DynaSortAndGroup(props) {
   const {
     resourceId,
     formKey,
-    id,
-    disabled,
     value = emptySet,
     enableSorting,
   } = props;
   const dispatch = useDispatch();
-  const classes = useStyles();
 
   const { data, status} = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse'),
@@ -83,14 +67,10 @@ export default function DynaSortAndGroup(props) {
   }
 
   return (
-    <FormControl
-      key={id}
-      disabled={disabled}
-      className={classes.keyColumnFormWrapper}>
-      <DynaMultiSelect
-        {...props}
-        options={multiSelectOptions}
-    />
-    </FormControl>
+    <DynaSelectMultiApplication
+      {...props}
+      creatableMultiSelect
+      hideApplicationImg
+      options={multiSelectOptions} />
   );
 }
