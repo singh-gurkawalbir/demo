@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
-import ButtonsGroup from '../ButtonGroup';
+import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   message: {
@@ -95,7 +95,7 @@ export const ConfirmDialog = (
         <div className={classes.message}>{message}</div>
       )}
       <div className={classes.containerButtons}>
-        <ButtonsGroup>
+        <ActionGroup>
           {buttons.map(button => (
             <Button
               data-test={button.dataTest || button.label}
@@ -106,7 +106,7 @@ export const ConfirmDialog = (
               {button.label}
             </Button>
           ))}
-        </ButtonsGroup>
+        </ActionGroup>
       </div>
 
     </ModalDialog>

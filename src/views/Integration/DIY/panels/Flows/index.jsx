@@ -3,12 +3,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
+import ActionGroup from '../../../../../components/ActionGroup';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import { TextButton } from '../../../../../components/Buttons';
 import Status from '../../../../../components/Buttons/Status';
 import CeligoTable from '../../../../../components/CeligoTable';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
-import IconTextButton from '../../../../../components/IconTextButton';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import LoadResources from '../../../../../components/LoadResources';
@@ -31,9 +32,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-  },
-  actions: {
-    display: 'flex',
   },
   divider: {
     width: 1,
@@ -364,35 +362,38 @@ export default function FlowsPanel({ integrationId, childId }) {
       <QueuedJobsDrawer />
 
       <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
-        <div className={classes.actions}>
+        <ActionGroup>
           <KeywordSearch
             filterKey={filterKey}
         />
           {canCreate && !isIntegrationApp && (
-          <IconTextButton
+          <TextButton
             component={Link}
+            startIcon={<AddIcon />}
             to={`${basePath}/flowBuilder/new`}
             data-test="createFlow">
-            <AddIcon /> Create flow
-          </IconTextButton>
+            Create flow
+          </TextButton>
           )}
           {canAttach && !isStandalone && !isIntegrationApp && (
-          <IconTextButton
+          <TextButton
+            startIcon={<AttachIcon />}
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
-            <AttachIcon /> Attach flow
-          </IconTextButton>
+            Attach flow
+          </TextButton>
           )}
           {/* check if this condition is correct */}
           {canEdit && !isIntegrationApp && (
-          <IconTextButton
+          <TextButton
+            startIcon={<AddIcon />}
             component={Link}
             to={`${basePath}/dataLoader/new`}
             data-test="loadData">
-            <AddIcon /> Load data
-          </IconTextButton>
+            Load data
+          </TextButton>
           )}
-        </div>
+        </ActionGroup>
       </PanelHeader>
 
       <LoadResources required resources="flows, exports">

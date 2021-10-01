@@ -34,14 +34,10 @@ import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
-    '& > .MuiSnackbarContent-message': {
-      maxHeight: 300,
-      overflow: 'auto',
-    },
   },
 });
 
-const useSnackbarStyles = makeStyles({
+export const useSnackbarStyles = makeStyles({
   variantInfo: {
     backgroundColor: colors.celigoWhite,
     '&:before': {

@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import IconTextButton from '../../../IconTextButton';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   textColor: {
-    color: theme.palette.primary.main,
     paddingLeft: 10,
   },
   rowClicked: {
@@ -35,12 +34,13 @@ export default function LogDetailsLink({ logKey, exportId, time }) {
   }, [dispatch, exportId, logKey]);
 
   return (
-    <IconTextButton
+    <TextButton
+      color="primary"
       className={clsx(classes.textColor, {
         [classes.rowClicked]: activeLogKey === logKey,
       })}
       onClick={handleActionClick}>
       <CeligoTimeAgo date={time} />
-    </IconTextButton>
+    </TextButton>
   );
 }

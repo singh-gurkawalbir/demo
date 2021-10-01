@@ -1,5 +1,7 @@
 /* global describe, test, expect */
-
+import { expectSaga } from 'redux-saga-test-plan';
+import * as matchers from 'redux-saga-test-plan/matchers';
+import { throwError } from 'redux-saga-test-plan/providers';
 import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -27,6 +29,9 @@ import {
   makeOwner,
   requestTrialLicense,
   reinviteUser,
+  unlinkWithGoogle,
+  requestLicenseUpgrade,
+  requestSharedStackNotifications,
 } from '.';
 import { APIException } from '../api/index';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
@@ -821,5 +826,72 @@ describe('all modal sagas', () => {
         expect(saga.next().done).toEqual(true);
       });
     });
+  });
+  describe('unlinkWithGoogle saga', () => {
+    const path = '/unlink/google';
+    const method = 'post';
+
+    test('should succeed on successful api call', () => expectSaga(unlinkWithGoogle)
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), {}],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.user.profile.unlinkedWithGoogle())
+      .run());
+    test('should handle api error properly', () => {
+      const error = new Error('error');
+
+      return expectSaga(unlinkWithGoogle)
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .call.fn(apiCallWithRetry)
+        .put(actions.api.failure(path, method, 'Could not unlink with Google'))
+        .run();
+    });
+  });
+  describe('requestLicenseUpgrade saga', () => {
+    const response = {
+      _id: 'something',
+    };
+
+    test('should succeed on successful api call', () => expectSaga(requestLicenseUpgrade)
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response))
+      .run());
+    test('should handle api error properly', () => {
+      const error = new Error('error');
+
+      return expectSaga(requestLicenseUpgrade)
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .call.fn(apiCallWithRetry)
+        .returns(true)
+        .run();
+    });
+  });
+  describe('requestSharedStackNotifications saga', () => {
+    const response1 = {
+      defaultAShareId: ACCOUNT_IDS.OWN,
+    };
+    const response2 = {
+      defaultAShareId: 'admin',
+    };
+
+    test('should handle if it is account owner', () => expectSaga(requestSharedStackNotifications)
+      .provide([
+        [select(selectors.userPreferences), response1],
+      ])
+      .put(actions.resource.requestCollection('shared/sshares'))
+      .run());
+    test('should handle if it is not account owner', () => expectSaga(requestSharedStackNotifications)
+      .provide([
+        [select(selectors.userPreferences), response2],
+      ])
+      .run());
   });
 });

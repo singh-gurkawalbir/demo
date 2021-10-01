@@ -1,6 +1,6 @@
 import produce from 'immer';
 import url from 'url';
-import qs from 'querystring';
+import qs from 'query-string';
 import invert from 'lodash/invert';
 import { keys, map, uniq } from 'lodash';
 import { deepClone } from 'fast-json-patch/lib/core';
@@ -953,7 +953,7 @@ export function populateRestSchema(exportDoc = {}) {
           if (skipArgument) {
             restSubDoc.skipArgument = skipArgument;
             uriObj.query[restSubDoc.skipArgument] = http.paging.skip;
-            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, { encode: false })}`;
           } else {
             const skipArgRegex = /\{\{#compare export.http.paging.skip.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.skip\}{2,3}\{\{\/compare\}\}/;
             const path = http.relativeURI.replace(skipArgRegex, '');
@@ -976,7 +976,7 @@ export function populateRestSchema(exportDoc = {}) {
           if (pageArgument) {
             restSubDoc.pageArgument = pageArgument;
             uriObj.query[restSubDoc.pageArgument] = http.paging.page;
-            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, undefined, undefined, {encodeURIComponent: a => a})}`;
+            restSubDoc.relativeURI = `${path}?${qs.stringify(uriObj.query, { encode: false })}`;
           } else {
             const pagingArgRegex = /\{\{#compare export.http.paging.page.*\}\}(&|\?)(.*)=\{{2,3}export.http.paging.page\}{2,3}\{\{\/compare\}\}/;
             const path = http.relativeURI.replace(pagingArgRegex, '');
@@ -996,7 +996,7 @@ export function populateRestSchema(exportDoc = {}) {
 
     exportDoc._rest = restSubDoc;
   } catch (e) {
-    console.warn('exception occured while forming REST document', e);
+    // console.warn('exception occured while forming REST document', e);
     // TODO: should we change formType to http when conversion fails, so the export can open in HTTP form?
   }
 

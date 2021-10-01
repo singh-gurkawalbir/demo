@@ -429,6 +429,7 @@ export const SUBMIT_TICKET_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
+export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics';
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
@@ -654,13 +655,16 @@ export const ALLOWED_HTML_TAGS =
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
-export const CONNECTORS_TO_IGNORE = ['yammer',
+export const CONNECTORS_TO_IGNORE = [
+  'yammer',
   'hybris',
   'etsy',
   'concur',
   'concurall',
   'concurv4',
-  'constantcontact'];
+  'constantcontactv2',
+  'constantcontactv3',
+];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
@@ -712,6 +716,7 @@ export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', '
 
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
 export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
+export const LOOKUP_FORM_KEY = 'LOOKUP_FORM_KEY';
 export const MAPPINGS_FORM_KEY = 'mappingsformkey';
 export const MANAGE_NOTIFICATIONS_FORM_KEY = 'manageusernotifications';
 export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
@@ -731,3 +736,13 @@ export const CATEGORY_MAPPING_SAVE_STATUS = {
   CLOSE: 'close',
   FAILED: 'failed',
 };
+
+export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
+  'constantcontact',
+  'constantcontactv2',
+  'constantcontactv3',
+  'zoom',
+  'amazonmws',
+];
+
+export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
