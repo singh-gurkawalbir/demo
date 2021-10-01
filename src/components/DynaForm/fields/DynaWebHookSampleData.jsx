@@ -27,9 +27,6 @@ const useStyles = makeStyles(theme => ({
   dynaWebhookWrapper: {
     display: 'flex',
   },
-  karthik: {
-    backgroundColor: 'red',
-  },
 }));
 
 export default function DynaWebHookSampleData(props) {
@@ -88,7 +85,6 @@ export default function DynaWebHookSampleData(props) {
           value={sampleData}
           mode="json"
           onChange={handleSampleDataChange}
-          className={classes.karthik}
         />
         <FieldMessage
           description={description}
