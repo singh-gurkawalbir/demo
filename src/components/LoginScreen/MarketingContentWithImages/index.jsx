@@ -72,7 +72,6 @@ export default function MarketingContentWithImages(props) {
         </div>
       </div>
     </>
-
   );
 }
 

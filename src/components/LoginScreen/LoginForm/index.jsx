@@ -143,18 +143,15 @@ const useStyles = makeStyles(theme => ({
     background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
     padding: theme.spacing(2),
     backgroundOrigin: 'content-box, padding-box',
-
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
   },
-
 }));
 export default function LoginForm() {
   const classes = useStyles();
 
   return (
-
     <div className={classes.signUpForm}>
       <div className={classes.formContainer}>
         <div className={classes.logo}>
@@ -169,8 +166,7 @@ export default function LoginForm() {
             variant="filled"
             placeholder="Email*"
             name="email"
-            className={classes.fieldWrapper}
-              />
+            className={classes.fieldWrapper} />
           <TextField
             className={classes.fieldWrapper}
             htmlFor="password"
@@ -207,8 +203,7 @@ export default function LoginForm() {
           Don&apos;t have an account?
           <Button
             href="#"
-            className={classes.signUpLink}
-                 >
+            className={classes.signUpLink}>
             Sign up
           </Button>
         </Typography>
