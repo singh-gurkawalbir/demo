@@ -10,20 +10,25 @@ import FieldMessage from './FieldMessage';
 import { OutlinedButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    height: '15vh',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
+  sampleDataContent: {
+    flex: 1,
+    height: theme.spacing(20),
+    display: 'flex',
+    flexDirection: 'column',
+    '&>.ace_editor': {
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+    },
   },
   actions: {
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(2),
   },
-  sampleDataContent: {
-    flex: 1,
-  },
   dynaWebhookWrapper: {
     display: 'flex',
+  },
+  karthik: {
+    backgroundColor: 'red',
   },
 }));
 
@@ -78,14 +83,13 @@ export default function DynaWebHookSampleData(props) {
     <div className={classes.dynaWebhookWrapper}>
       <div className={classes.sampleDataContent}>
         <FormLabel error={!isValid} >{label}</FormLabel>
-        <div className={classes.container}>
-          <CodeEditor
-            name="sampleData"
-            value={sampleData}
-            mode="json"
-            onChange={handleSampleDataChange}
+        <CodeEditor
+          name="sampleData"
+          value={sampleData}
+          mode="json"
+          onChange={handleSampleDataChange}
+          className={classes.karthik}
         />
-        </div>
         <FieldMessage
           description={description}
           errorMessages={errorMessages}
