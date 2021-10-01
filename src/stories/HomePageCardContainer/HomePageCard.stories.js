@@ -13,7 +13,7 @@ import CardTitle from '../../components/HomePageCard/Content/CardTitle/index';
 import ApplicationImages from '../../components/HomePageCard/Content/ApplicationImages';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import Footer from '../../components/HomePageCard/Footer/index';
-import IntegrationTag from '../../components/HomePageCard/Footer/IntegrationTag/index';
+import IntegrationTag from '../../components/tags/IntegrationTag/index';
 import FooterActions from '../../components/HomePageCard/Footer/FooterActions/index';
 import Info from '../../components/HomePageCard/Footer/Info/index';
 import Manage from '../../components/HomePageCard/Footer/Manage/index';
