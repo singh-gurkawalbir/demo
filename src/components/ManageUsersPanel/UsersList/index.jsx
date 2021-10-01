@@ -23,8 +23,10 @@ export default function UsersList({ integrationId, childId, className }) {
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   useEffect(() => {
-    if (integrationId && !isIntegrationUsersRequested) {
-      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    if (integrationId) {
+      if (!isIntegrationUsersRequested) {
+        dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+      }
     } else {
       dispatch(actions.user.org.users.requestCollection('Retrieving org users'));
     }
