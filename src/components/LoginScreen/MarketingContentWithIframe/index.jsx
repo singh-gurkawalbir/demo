@@ -22,7 +22,6 @@ export default function MarketingContentWithIframe({contentUrl}) {
     <div className={classes.container}>
       <iframe src={contentUrl} title="Marketing Content" />
     </div>
-
   );
 }
 
