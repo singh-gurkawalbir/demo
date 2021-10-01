@@ -223,13 +223,13 @@ describe('Mappings region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selector()).toEqual([]);
     });
-    test('should not throw any exception for invalid arguments', () => {
+    test('should return empty array if importId and flowId are undefined ', () => {
       expect(selector(state)).toEqual([]);
     });
-    test('should return correct import if importId is passed', () => {
+    test('should return correct import if importId is passed and flowId is undefined', () => {
       expect(selector(state, undefined, 1)).toEqual([{ _id: 1 }]);
     });
-    test('should return correct import if importId is passed', () => {
+    test('should return correct import if importId and flowId are passed', () => {
       expect(selector(state, 1, 1)).toEqual([{ _id: 1 }]);
     });
     test('should return all imports used in the flow which have import mapping available', () => {
@@ -250,7 +250,7 @@ describe('Mappings region selector testcases', () => {
         { _id: 11, adaptorType: 'MongodbExport' },
       ]);
     });
-    test('should return empty array pageprocessor imports are not in state', () => {
+    test('should return empty array if pageprocessor imports are not in state', () => {
       expect(selectors.getAllPageProcessorImports(state, flows[1].pageProcessors)).toEqual([]);
     });
   });
@@ -652,7 +652,7 @@ describe('Mappings region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.responseMappingExtracts()).toEqual([]);
     });
-    test('should return empty array if flow does not contain pageprocessor for resource', () => {
+    test('should return empty array if flow does not contain pageprocessor for given resource', () => {
       expect(selectors.responseMappingExtracts(state, 2, 2)).toEqual([]);
     });
     test('should return empty array if resource with given resourceId does not exist', () => {
