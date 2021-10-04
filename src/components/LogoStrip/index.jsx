@@ -1,31 +1,34 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
+import ApplicationImg from '../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   logoStripWrapper: {
     display: 'grid',
     margin: 10,
     maxWidth: 500,
-    boxSizing: 'content-box',
-    gridTemplateColumns: 'repeat(5, minmax(100px, 1fr))',
+    gridTemplateColumns: count => count < 5 ? `repeat(${count}, minmax(40px, 1fr))` : 'repeat(5, minmax(40px, 1fr))',
     '& > *': {
       justifyContent: 'center',
       position: 'relative',
       display: 'flex',
       height: 40,
       border: '1px solid',
-      borderColor: theme.palette.secondary.light,
+      borderColor: theme.palette.secondary.lightest,
       alignItems: 'center',
+      '& > img': {
+        maxWidth: '75%',
+      },
       '&:nth-child(n)': {
         borderLeft: 'none',
         '&:first-child': {
           borderLeft: '1px solid',
-          borderColor: theme.palette.secondary.light,
+          borderColor: theme.palette.secondary.lightest,
         },
       },
       '&:nth-child(5n+1)': {
         borderLeft: '1px solid',
-        borderColor: theme.palette.secondary.light,
+        borderColor: theme.palette.secondary.lightest,
       },
       '&:nth-child(n+6)': {
         borderTop: 'none',
@@ -36,37 +39,72 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function LogoStrip({count}) {
-  console.log(count);
-
-  const convertToNumber = num => {
-    Number(num);
-  };
-  const totalCount = Array.from(String(count), convertToNumber);
-
-  console.log('***TOTAL COUNT', totalCount);
-
-  const classes = useStyles();
+  const classes = useStyles(count);
+  // This will get replaced with the applications
+  const APPS = [
+    {
+      id: 1,
+      name: 'docusign',
+    },
+    {
+      id: 2,
+      name: 'salesforce',
+    },
+    {
+      id: 3,
+      name: 'rest',
+    },
+    {
+      id: 4,
+      name: 'http',
+    },
+    {
+      id: 5,
+      name: 'oracle',
+    },
+    {
+      id: 6,
+      name: '4castplus',
+    },
+    {
+      id: 7,
+      name: 'asana',
+    },
+    {
+      id: 8,
+      name: 'magento',
+    },
+    {
+      id: 9,
+      name: 'surveymonkey',
+    },
+    {
+      id: 10,
+      name: 'amazonmws',
+    },
+    {
+      id: 11,
+      name: '3dcart',
+    },
+    {
+      id: 12,
+      name: 'accelo',
+    },
+  ];
+  const Applications = APPS ? APPS.slice(0, count) : 'No Images';
 
   return (
-
     <ul className={classes.logoStripWrapper}>
-
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
+      {Applications.map(application => (
+        <li key={application.id}>
+          <ApplicationImg
+            markOnly
+            className={classes.appLogo}
+            type="export"
+            assistant={application.name}
+           />
+        </li>
+      ))}
     </ul>
   );
 }
