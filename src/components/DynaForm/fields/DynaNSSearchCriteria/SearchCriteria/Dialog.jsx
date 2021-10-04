@@ -91,6 +91,9 @@ export default function SearchCriteriaDialog(props) {
       if (criteria.showFormulaField && !criteria.formula) {
         result[index] = [...result[index] || [], 'formula'];
       }
+      if (criteria.searchValue2Enabled && !criteria.searchValue2) {
+        result[index] = [...result[index] || [], 'searchValue2'];
+      }
     });
     if (isEmpty(result)) {
       return emptyObject;
