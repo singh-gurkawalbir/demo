@@ -91,7 +91,7 @@ export default function LogoStrip({count}) {
       name: 'accelo',
     },
   ];
-  const Applications = APPS ? APPS.slice(0, count) : 'No Images';
+  const Applications = APPS.slice(0, count);
 
   return (
     <ul className={classes.logoStripWrapper}>
