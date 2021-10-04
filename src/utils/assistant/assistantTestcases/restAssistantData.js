@@ -58,6 +58,34 @@ export default {
           },
         ],
       },
+      {
+        version: 'v1',
+        resources: [{
+          id: 'projects',
+          name: 'Projects',
+          endpoints: [{
+            id: 'get_projects',
+            url: '/api/workspaces/:_workspace_id/projects',
+            name: 'Get Projects',
+            resourcePath: '',
+            pathParameters: [
+              {
+                id: 'workspace_id',
+                name: 'Workspace Id',
+                fieldType: 'integer',
+              },
+            ],
+            queryParameters: [
+              {
+                id: 'filter[]=name',
+                name: 'Name',
+                fieldType: 'input',
+              },
+            ],
+          }],
+        }],
+
+      },
     ],
   },
   import: {
@@ -69,6 +97,8 @@ export default {
       '/v3/contacts/:_contactId',
       '/v3/contacts',
       '/v3/contacts/:_contactId',
+      '/api/workspaces/:_workspace_id/projects',
+      '/api/workspaces/:_workspace_id/projects/:_project_id',
     ],
     versions: [
       {
@@ -258,6 +288,49 @@ export default {
                     isIdentifier: true,
                   },
                 ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        version: 'v1',
+        resources: [
+          {id: 'projects',
+            name: 'Projects',
+            operations: [
+              {
+                id: 'create_or_update_a_project',
+                name: 'Create or Update a Project',
+                url: [
+                  '/api/workspaces/:_workspace_id/projects/:_project_id',
+                  '/api/workspaces/:_workspace_id/projects',
+                ],
+                method: [
+                  'PUT',
+                  'POST',
+                ],
+                parameters: [
+                  {
+                    id: 'workspace_id',
+                    name: 'Workspace Id',
+                    in: 'path',
+                    required: true,
+                  },
+                  {
+                    id: 'project_id',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+                howToFindIdentifier: {
+                  lookup: {
+                    url: '/api/workspaces/:_workspace_id/projects',
+                    extract: 'id',
+                    id: 'get_projects',
+                  },
+                },
               },
             ],
           },

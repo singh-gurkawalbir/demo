@@ -1449,7 +1449,7 @@ export default {
   },
   getExtractPaths: (fields, options = {}) => {
     const { jsonPath } = options;
-    const extractPaths = getJSONPaths(pickFirstObject(fields));
+    const extractPaths = getJSONPaths(pickFirstObject(fields), undefined, { wrapSpecialChars: true });
 
     if (!jsonPath || jsonPath === '$') {
       return extractPaths;

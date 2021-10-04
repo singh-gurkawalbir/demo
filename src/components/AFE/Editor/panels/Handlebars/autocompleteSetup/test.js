@@ -43,7 +43,8 @@ describe('Handlebars autocomplete', () => {
       editor.execCommand('insertstring', '{{ad');
 
       utils.removePreceedingUncompletedText(editor, '{{ad');
-      expect(editor.getValue()).toEqual('{{');
+
+      expect(editor.getValue()).toEqual('');
     });
 
     test('should insert the matching result with completing braces', () => {
@@ -93,13 +94,13 @@ describe('Handlebars autocomplete', () => {
     editor.execCommand('insertstring', '{{a');
     const prevOp = editor.prevOp.command;
 
-    expect(editor.completer.completions.all.length).toEqual(3);
+    expect(editor.completer.completions.all.length).toEqual(4);
 
     const matchingResults = editor.completer.completions.all.map(
       result => result.matchingResult
     );
 
-    expect(matchingResults).toEqual(['a.d', 'a.e', '{{add}}']);
+    expect(matchingResults).toEqual(['a.d', 'a.e', '{{add}}', '{{substract}}']);
     expect(prevOp.name).toEqual('startAutocomplete');
   });
 
