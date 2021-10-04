@@ -143,7 +143,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               }}
               isValid={!invalidFields?.includes('searchValue')}
               errorMessages="Please enter a value"
-              disabled={disabled}
+              disabled={disabled || r.operator === 'isempty' || r.operator === 'isnotempty'}
               value={r.searchValue} />
           </div>
           <div

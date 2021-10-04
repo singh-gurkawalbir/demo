@@ -85,7 +85,7 @@ export default function SearchCriteriaDialog(props) {
       if (!criteria.operator) {
         result[index] = [...result[index] || [], 'operator'];
       }
-      if (!criteria.searchValue) {
+      if (criteria.operator !== 'isempty' && criteria.operator !== 'isnotempty' && !criteria.searchValue) {
         result[index] = [...result[index] || [], 'searchValue'];
       }
       if (criteria.showFormulaField && !criteria.formula) {
