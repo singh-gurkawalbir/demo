@@ -99,7 +99,6 @@ export default function LogoStrip({count}) {
         <li key={application.id}>
           <ApplicationImg
             markOnly
-            className={classes.appLogo}
             type="export"
             assistant={application.name}
            />
