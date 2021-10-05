@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 export default function LogoStrip({count}) {
   const classes = useStyles(count);
   // This will get replaced with the applications
-  const APPS = [
+  const Apps = [
     {
       id: 1,
       name: 'docusign',
@@ -91,11 +91,10 @@ export default function LogoStrip({count}) {
       name: 'accelo',
     },
   ];
-  const Applications = APPS.slice(0, count);
 
   return (
     <ul className={classes.logoStripWrapper}>
-      {Applications.map(application => (
+      {Apps.slice(0, count).map(application => (
         <li key={application.id}>
           <ApplicationImg
             markOnly
