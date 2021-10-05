@@ -26,10 +26,6 @@ const useStyles = makeStyles(theme => ({
   settingsDrawerForm: {
     overflowY: 'auto',
     padding: theme.spacing(2, 3),
-    '& + div': {
-      margin: theme.spacing(0, 3),
-      paddingLeft: 0,
-    },
     '& > * div.MuiTabs-vertical': {
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
@@ -48,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   settingsDrawerDetails: {
-    minHeight: 'calc(100% - 138px)',
+    minHeight: 'calc(100% - 123px)',
   },
 }));
 
