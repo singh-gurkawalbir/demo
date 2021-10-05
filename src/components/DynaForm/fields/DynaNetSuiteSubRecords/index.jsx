@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     marginLeft: 12,
     marginRight: theme.spacing(4),
-    marginTop: theme.spacing(-3),
     '&:before': {
       position: 'absolute',
       content: '""',
