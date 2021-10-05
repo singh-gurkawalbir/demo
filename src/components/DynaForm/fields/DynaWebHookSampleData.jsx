@@ -15,10 +15,11 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(20),
     display: 'flex',
     flexDirection: 'column',
-    '&>.ace_editor': {
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
+  },
+  container: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    height: '100%',
   },
   actions: {
     marginTop: theme.spacing(3),
@@ -80,12 +81,14 @@ export default function DynaWebHookSampleData(props) {
     <div className={classes.dynaWebhookWrapper}>
       <div className={classes.sampleDataContent}>
         <FormLabel error={!isValid} >{label}</FormLabel>
-        <CodeEditor
-          name="sampleData"
-          value={sampleData}
-          mode="json"
-          onChange={handleSampleDataChange}
+        <div className={classes.container}>
+          <CodeEditor
+            name="sampleData"
+            value={sampleData}
+            mode="json"
+            onChange={handleSampleDataChange}
         />
+        </div>
         <FieldMessage
           description={description}
           errorMessages={errorMessages}
