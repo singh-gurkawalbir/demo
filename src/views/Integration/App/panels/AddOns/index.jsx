@@ -89,6 +89,24 @@ export default function AddOnsPanel({ integrationId, childId }) {
     selectors.integrationAppAddOnState(state, integrationId)
   );
   const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => supportsMultiStore && childId ? model.storeId === childId : true);
+
+  if (subscribedAddOns) {
+    subscribedAddOns.forEach((f, i) => {
+      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
+
+      subscribedAddOns[i]._id = i;
+      subscribedAddOns[i].integrationId = integrationId;
+      subscribedAddOns[i].name = addon ? addon.name : f.id;
+      subscribedAddOns[i].description = addon ? addon.description : '';
+      subscribedAddOns[i].uninstallerFunction = addon
+        ? addon.uninstallerFunction
+        : '';
+      subscribedAddOns[i].installerFunction = addon
+        ? addon.installerFunction
+        : '';
+    });
+  }
+
   const subscribedAddOn = metadata => subscribedAddOns?.find(sa => sa.id === metadata.id);
   const addOnMetadata = addOnState?.addOns?.addOnMetaData;
   const licenseId = useSelector(state => {
