@@ -27,7 +27,7 @@ import {
 } from '.';
 import { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS, EMPTY_RAW_DATA } from '../../utils/constants';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '..';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -349,6 +349,10 @@ describe('resourceForm sagas', () => {
         [call(newIAFrameWorkPayload, {
           resourceId,
         }), null],
+        [
+          select(selectors.resourceData, 'exports', resourceId),
+          { merged: {rawData: 'someValue', somepath: '123'} },
+        ],
         [matchers.call.fn(deleteUISpecificValues), {'/rawData': 'someValue', '/somepath': '123' }],
       ])
       .call(deleteFormViewAssistantValue, {
@@ -362,7 +366,7 @@ describe('resourceForm sagas', () => {
       .call(saveDataLoaderRawData, {
         resourceType: 'exports',
         resourceId,
-        values: {'/somepath': '123'},
+        values: {'/rawData': EMPTY_RAW_DATA, '/somepath': '123'},
       })
       .run());
     test('should dispatch submitFailed action and return if createFormValuesPatchSet failed with exception', () => expectSaga(submitFormValues, { resourceType, resourceId})

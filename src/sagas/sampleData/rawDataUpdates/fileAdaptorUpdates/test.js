@@ -1,6 +1,6 @@
 /* global describe, test */
 
-import { select, call } from 'redux-saga/effects';
+import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { selectors } from '../../../../reducers';
 import { _fetchRawDataForFileAdaptors } from '.';
@@ -198,3 +198,4 @@ describe('fileAdaptorUpdates sagas', () => {
         .run();
     });
   });
+});

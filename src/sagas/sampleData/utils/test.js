@@ -2866,20 +2866,15 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should call parseFileData saga with the xml data from the resource and return the result', () => {
-        const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
         const sampleData = `<?xml version="1.0" encoding="UTF-8"?>
-          <letter>
-          </letter>`;
+        <letter>
+        </letter>`;
+        const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test', sampleData};
         const fileParserData = {mediaType: 'json', data: [{letter: {}}], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
           .provide([
-            [select(
-              selectors.getResourceSampleDataWithStatus,
-              newResourceId,
-              'raw'
-            ), { data: sampleData}],
             [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
           .returns(fileParserData.data[0])
