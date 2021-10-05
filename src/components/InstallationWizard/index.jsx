@@ -7,7 +7,6 @@ import {
   IconButton,
   Breadcrumbs,
 } from '@material-ui/core';
-import useTraceUpdate from 'use-trace-update';
 import ArrowBackIcon from '../icons/ArrowLeftIcon';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -75,9 +74,6 @@ export default function InstallationWizard(props) {
     variant,
   } = props;
 
-  console.log('InstallationWizard init');
-  useTraceUpdate({...props});
-
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
@@ -101,8 +97,6 @@ export default function InstallationWizard(props) {
       templateId,
     })
   );
-
-  useTraceUpdate({...props, redirectTo, isInstallFailed, destinationEnvironment, connectionMap, data, isSetupComplete});
 
   useEffect(() => {
     if (isSetupComplete) {
