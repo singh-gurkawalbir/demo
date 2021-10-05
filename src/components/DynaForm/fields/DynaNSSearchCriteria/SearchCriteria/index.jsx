@@ -112,6 +112,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               }}
               isValid={!invalidFields?.includes('formula')}
               errorMessages="Please add formula"
+              disabled={disabled}
           />
             )}
 
