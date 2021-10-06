@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     margin: 10,
     maxWidth: 500,
-    gridTemplateColumns: count => count < 5 ? `repeat(${count}, minmax(40px, 1fr))` : 'repeat(5, minmax(40px, 1fr))',
+    gridTemplateColumns: count => count < 5 ? `repeat(${count}, minmax(40px, 60px))` : 'repeat(5, minmax(40px, 60px))',
     '& > *': {
       justifyContent: 'center',
       position: 'relative',
