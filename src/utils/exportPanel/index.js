@@ -73,7 +73,7 @@ export const isPreviewPanelAvailable = (resource, resourceType) => {
   if (resourceType !== 'exports') return false;
 
   // for blob exports, preview panel is not applicable
-  if (resource.type === 'blob' || resource.resourceType === 'lookupFiles') {
+  if (resource.type === 'blob' || resource.file?.output === 'blobKeys' || resource.resourceType === 'lookupFiles') {
     return false;
   }
 

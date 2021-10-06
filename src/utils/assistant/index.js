@@ -2201,3 +2201,6 @@ export function getRecordTypeForAutoMapper(uri) {
 
   return arr.join('/');
 }
+export function isAppConstantContact(application) {
+  return application === 'constantcontact';
+}

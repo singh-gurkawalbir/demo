@@ -182,7 +182,7 @@ export default {
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
     defaultValue: r =>
-      Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
+      Array.isArray(((r || {}).http || {}).body) ? (r.http.body[0] || '') : '',
     label: 'HTTP request body',
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
