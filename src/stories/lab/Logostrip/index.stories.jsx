@@ -22,21 +22,21 @@ const Template = args => <LogoStrip {...args} />;
 export const withFourImages = Template.bind({});
 
 withFourImages.args = {
-  count: 4,
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento'],
 };
 withFourImages.parameters = designParameters;
 
 export const withSixImages = Template.bind({});
 
 withSixImages.args = {
-  count: 6,
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus'],
 };
 withSixImages.parameters = designParameters;
 
 export const withTwelveImages = Template.bind({});
 
 withTwelveImages.args = {
-  count: 12,
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'surveymonkey', 'amazonmws', 'accelo', 'asana', 'http', 'rest'],
 };
 withTwelveImages.parameters = designParameters;
 

@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     margin: 10,
     maxWidth: 500,
-    gridTemplateColumns: count => count < 5 ? `repeat(${count}, minmax(40px, 60px))` : 'repeat(5, minmax(40px, 60px))',
+    gridTemplateColumns: applicationsLength => `repeat(${applicationsLength > 5 ? 5 : applicationsLength}, minmax(40px, 60px))`,
     '& > *': {
       justifyContent: 'center',
       position: 'relative',
@@ -38,68 +38,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LogoStrip({count}) {
-  const classes = useStyles(count);
-  // This will get replaced with the applications
-  const Apps = [
-    {
-      id: 1,
-      name: 'docusign',
-    },
-    {
-      id: 2,
-      name: 'salesforce',
-    },
-    {
-      id: 3,
-      name: 'rest',
-    },
-    {
-      id: 4,
-      name: 'http',
-    },
-    {
-      id: 5,
-      name: 'oracle',
-    },
-    {
-      id: 6,
-      name: '4castplus',
-    },
-    {
-      id: 7,
-      name: 'asana',
-    },
-    {
-      id: 8,
-      name: 'magento',
-    },
-    {
-      id: 9,
-      name: 'surveymonkey',
-    },
-    {
-      id: 10,
-      name: 'amazonmws',
-    },
-    {
-      id: 11,
-      name: '3dcart',
-    },
-    {
-      id: 12,
-      name: 'accelo',
-    },
-  ];
+export default function LogoStrip({applications}) {
+  const applicationsLength = applications?.length;
+  const classes = useStyles(applicationsLength);
 
   return (
     <ul className={classes.logoStripWrapper}>
-      {Apps.slice(0, count).map(application => (
+      {applications.map(application => (
         <li key={application.id}>
           <ApplicationImg
             markOnly
             type="export"
-            assistant={application.name}
+            assistant={application}
            />
         </li>
       ))}
