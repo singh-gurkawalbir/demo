@@ -719,6 +719,20 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
       queryParams = qs.parse(urlMatch.urlParts[urlMatch.urlParts.length - 1], {
         delimiter: /[?&]/,
         depth: 0,
+        decoder(str, defaultDecoder) {
+          if (exportDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+          // a unique case where query name contains '=' operator
+          // IO-1683
+          if (str === 'filter[]') {
+            return 'filter[]=name';
+          }
+          if (str.startsWith('name=')) {
+            return defaultDecoder(str.substring(5));
+          }
+
+          return defaultDecoder(str);
+        },
       }); /* depth should be 0 to handle IO-1683 */
     }
   }
@@ -1732,7 +1746,23 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           ) {
             lookupQueryParams = qs.parse(
               lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1],
-              { delimiter: /[?&]/, depth: 0 }
+              { delimiter: /[?&]/,
+                depth: 0,
+                decoder(str, defaultDecoder) {
+                  if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+                  // a unique case where query name contains '=' operator
+                  // IO-1683
+                  if (str === 'filter[]') {
+                    return 'filter[]=name';
+                  }
+                  if (str.startsWith('name=')) {
+                    return defaultDecoder(str.substring(5));
+                  }
+
+                  return defaultDecoder(str);
+                },
+              }
             ); /* depth should be 0 to handle IO-1683 */
           }
 
@@ -1752,6 +1782,20 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
       queryParams = qs.parse(url1Info.urlParts[url1Info.urlParts.length - 1], {
         delimiter: /[?&]/,
         depth: 0,
+        decoder(str, defaultDecoder) {
+          if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+          // a unique case where query name contains '=' operator
+          // IO-1683
+          if (str === 'filter[]') {
+            return 'filter[]=name';
+          }
+          if (str.startsWith('name=')) {
+            return defaultDecoder(str.substring(5));
+          }
+
+          return defaultDecoder(str);
+        },
       }); /* depth should be 0 to handle IO-1683 */
       url1Info.urlParts.splice(
         url1Info.urlParts.length - 1
@@ -2156,4 +2200,7 @@ export function getRecordTypeForAutoMapper(uri) {
   }
 
   return arr.join('/');
+}
+export function isAppConstantContact(application) {
+  return application === 'constantcontact';
 }

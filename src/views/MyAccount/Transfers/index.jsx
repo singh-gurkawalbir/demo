@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'auto',
   },
   description: {
-    marginTop: theme.spacing(1),
+    padding: theme.spacing(2),
   },
 }));
 

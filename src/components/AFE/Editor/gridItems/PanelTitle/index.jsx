@@ -19,9 +19,6 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     margin: -1,
   },
-  titleText: {
-    marginBottom: -2,
-  },
 }));
 
 export default function PanelTitle({ title, children, className, helpKey}) {
@@ -29,7 +26,7 @@ export default function PanelTitle({ title, children, className, helpKey}) {
 
   return (
     <div data-public className={clsx(classes.titleContainer, className)}>
-      {title ? <Typography variant="body1" component="div" className={clsx(classes.titleText, className)}>{title}</Typography> : children}
+      {title ? <Typography variant="body1" component="div" className={className}>{title}</Typography> : children}
       {helpKey && (
         <Help
           title={helpKey}

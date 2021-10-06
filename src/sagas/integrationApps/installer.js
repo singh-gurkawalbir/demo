@@ -233,6 +233,60 @@ export function* installScriptStep({
   );
 }
 
+export function* verifyBundleOrPackageInstall({
+  id,
+  connectionId,
+  installerFunction,
+  isFrameWork2,
+}) {
+  const path = `/connections/${connectionId}/distributed`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      message: 'Verifying Bundle/Package Installation...',
+    });
+  } catch (error) {
+    yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        '',
+        'failed'
+      )
+    );
+
+    return undefined;
+  }
+
+  if (response?.success) {
+    if (isFrameWork2) {
+      yield put(
+        actions.integrationApp.installer.scriptInstallStep(id)
+      );
+    } else {
+      yield put(
+        actions.integrationApp.installer.installStep(
+          id,
+          installerFunction,
+        )
+      );
+    }
+  } else if (
+    response &&
+      !response.success &&
+      (response.resBody || response.message)
+  ) {
+    yield put(
+      actions.api.failure(
+        path,
+        'GET',
+        response.resBody || response.message,
+        false
+      )
+    );
+  }
+}
 export function* installChildStep({ id, installerFunction, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
@@ -363,6 +417,7 @@ export function* getCurrentStep({ id, step }) {
 
 export default [
   takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, installStep),
+  takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST,
     installScriptStep
