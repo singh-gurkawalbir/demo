@@ -56,6 +56,7 @@ export default function SalesforceLookupFilterPanel({
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors.editorRule(state, editorId));
   const unsortedFilters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
+  const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
 
   const filters = useMemo(() => unsortedFilters.sort(stringCompare('label')), [unsortedFilters]);
 
@@ -69,10 +70,10 @@ export default function SalesforceLookupFilterPanel({
         dispatch(actions.editor.patchRule(editorId, formattedVal || ''));
       }
       if (onFieldChange) {
-        onFieldChange(id, formattedVal);
+        onFieldChange(id, formattedVal, !isEditorDirty);
       }
     },
-    [dispatch, editorId, id, onFieldChange, ssLinkedConnectionId]
+    [dispatch, editorId, id, isEditorDirty, onFieldChange, ssLinkedConnectionId]
   );
   const jsonPathsFromData = useMemo(
     () =>
@@ -144,6 +145,12 @@ export default function SalesforceLookupFilterPanel({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patchEditor, salesforceFilterDataTypes]);
+
+  useEffect(() => {
+    isEditorDirty && handleFilterRulesChange();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditorDirty]);
+
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };

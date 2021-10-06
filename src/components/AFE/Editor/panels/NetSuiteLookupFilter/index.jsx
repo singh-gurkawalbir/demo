@@ -48,6 +48,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors.editorRule(state, editorId));
   const filters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
+  const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
@@ -56,10 +57,10 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
         dispatch(actions.editor.patchRule(editorId, value || []));
       }
       if (onFieldChange) {
-        onFieldChange(id, JSON.stringify(value));
+        onFieldChange(id, JSON.stringify(value), !isEditorDirty);
       }
     },
-    [dispatch, editorId, id, onFieldChange]
+    [dispatch, editorId, id, isEditorDirty, onFieldChange]
   );
   const jsonPathsFromData = useMemo(
     () =>
@@ -117,6 +118,12 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       patchEditor(rule);
     }
   }, [patchEditor]);
+
+  useEffect(() => {
+    isEditorDirty && handleFilterRulesChange();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditorDirty]);
+
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
