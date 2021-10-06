@@ -45,7 +45,7 @@ export default function LogoStrip({applications}) {
   return (
     <ul className={classes.logoStripWrapper}>
       {applications.map(application => (
-        <li key={application.id}>
+        <li key={application}>
           <ApplicationImg
             markOnly
             type="export"
