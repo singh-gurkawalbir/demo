@@ -30,6 +30,8 @@ import {
   isNetSuiteBatchExport,
   isQueryBuilderSupported,
   getUserAccessLevelOnConnection,
+  getAssistantFromResource,
+  isOldRestAdaptor,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -2103,5 +2105,71 @@ describe('resource util tests', () => {
       ], '555')).toEqual(undefined);
     });
   });
+  describe('getAssistantFromResource test cases', () => {
+    test('should return the same assistant if it is not constantcontact', () => {
+      expect(getAssistantFromResource({assistant: 'square'})).toEqual('square');
+      expect(getAssistantFromResource({assistant: 'amazonmws'})).toEqual('amazonmws');
+      expect(getAssistantFromResource({assistant: 'zoom'})).toEqual('zoom');
+      expect(getAssistantFromResource({assistant: 'hubspot'})).toEqual('hubspot');
+      expect(getAssistantFromResource({assistant: 'zendesk'})).toEqual('zendesk');
+    });
+    test('should return constantcontact if the assistant is constantcontactv2', () => {
+      expect(getAssistantFromResource({assistant: 'constantcontactv2'})).toEqual('constantcontact');
+    });
+    test('should return constantcontact if the assistant is constantcontactv3', () => {
+      expect(getAssistantFromResource({assistant: 'constantcontactv3'})).toEqual('constantcontact');
+    });
+    test('should not throw error if resource is undefined', () => {
+      expect(getAssistantFromResource()).toBeUndefined();
+    });
+    test('should not throw error if resource does not contain assistant', () => {
+      expect(getAssistantFromResource({id: 123})).toBeUndefined();
+    });
+  });
 });
 
+describe('isOldRestAdaptor test cases', () => {
+  test('should return false in case of invalid resource ', () => {
+    const resource = {
+      _id: '123',
+      adaptorType: 'HTTPExport',
+    };
+
+    expect(isOldRestAdaptor()).toBeFalsy();
+    expect(isOldRestAdaptor({}, null)).toBeFalsy();
+    expect(isOldRestAdaptor(resource)).toBeFalsy();
+  });
+  test('should return true when the resource is Rest Export or Rest Import', () => {
+    const restExp = {
+      _id: '123',
+      adaptorType: 'RESTExport',
+    };
+    const restImp = {
+      _id: '123',
+      adaptorType: 'RESTImport',
+    };
+
+    expect(isOldRestAdaptor(restExp)).toBeTruthy();
+    expect(isOldRestAdaptor(restImp)).toBeTruthy();
+  });
+  test('should return true when the resource is Http Export but connection doc has isHTTP as false', () => {
+    const resource = {
+      _id: '123',
+      adaptorType: 'HTTPExport',
+    };
+    const connection = {
+      _id: 'conn-123',
+      isHTTP: false,
+    };
+
+    expect(isOldRestAdaptor(resource, connection)).toBeTruthy();
+  });
+  test('should return false for new resource', () => {
+    const newResource = {
+      _id: 'new-123',
+      adaptorType: 'RESTExport',
+    };
+
+    expect(isOldRestAdaptor(newResource)).toBeFalsy();
+  });
+});

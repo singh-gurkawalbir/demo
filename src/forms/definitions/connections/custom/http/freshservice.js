@@ -10,6 +10,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/method': 'GET',
     '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 10,
+    '/http/auth/basic/password': '',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -30,13 +31,15 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'Username',
+      label: 'API key',
+      inputType: 'password',
+      defaultValue: '',
       helpKey: 'freshservice.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'Password',
-      helpKey: 'freshservice.connection.http.auth.basic.password',
+      visible: false,
     },
     application: {
       fieldId: 'application',

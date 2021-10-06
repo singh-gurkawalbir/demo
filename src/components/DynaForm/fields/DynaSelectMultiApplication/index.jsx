@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
+import CreatableSelect from 'react-select/creatable';
 import Select, { components } from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
@@ -53,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
   optionLabel: {
-    width: '600px',
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     paddingLeft: '10px',
@@ -142,18 +143,21 @@ const DropdownIndicator = props => (
 const Option = props => {
   const classes = useStyles();
   const { type, icon, value, label } = props.data;
+  const {hideApplicationImg} = props.selectProps;
 
   return (
     <div data-test={value} className={classes.menuItems}>
       <components.Option {...props}>
-        <span className={classes.optionImg}>
-          <ApplicationImg
-            markOnly
-            type={type === 'webhook' ? value : type}
-            assistant={icon}
-            className={classes.img}
+        {!hideApplicationImg ? (
+          <span className={classes.optionImg}>
+            <ApplicationImg
+              markOnly
+              type={type === 'webhook' ? value : type}
+              assistant={icon}
+              className={classes.img}
           />
-        </span>
+          </span>
+        ) : ''}
         <span className={classes.optionLabel}>{label}</span>
         <span className={classes.optionCheckBox}>
           <Checkbox
@@ -216,9 +220,13 @@ export default function MultiSelectApplication(props) {
     placeholder,
     isValid,
     onFieldChange,
+    creatableMultiSelect,
+    hideApplicationImg,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
+  const ref = useRef(null);
+  const windowHeight = window.innerHeight;
   const defaultValue = useMemo(() => value.map(val => options[0].items.find(opt => opt.value === val)), [options, value]);
   const handleChange = useCallback(selectedOptions => {
     onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
@@ -270,13 +278,12 @@ export default function MultiSelectApplication(props) {
       display: 'flex',
       alignItems: 'center',
     }),
-    menu: () => ({
-      zIndex: 2,
+    menu: provided => ({
+      ...provided,
       border: '1px solid',
       borderColor: theme.palette.secondary.lightest,
-      position: 'absolute',
       backgroundColor: theme.palette.background.paper,
-      width: '100%',
+      margin: 0,
     }),
     input: () => ({
       color: theme.palette.secondary.light,
@@ -349,9 +356,13 @@ export default function MultiSelectApplication(props) {
       },
     }),
   };
+  const CustomSelect = creatableMultiSelect ? CreatableSelect : Select;
+  const {y: elementPosFromTop = 0} = ref?.current?.getBoundingClientRect() || {};
+
+  const menuPlacement = windowHeight - elementPosFromTop > 479 ? 'bottom' : 'top';
 
   return (
-    <div className={classes.multiSelectWrapper}>
+    <div className={classes.multiSelectWrapper} ref={ref}>
       <div className={classes.labelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
@@ -363,8 +374,9 @@ export default function MultiSelectApplication(props) {
         disabled={disabled}
         required={required}
         className={classes.multiSelectWrapper}>
-        <Select
+        <CustomSelect
           isMulti
+          hideApplicationImg={hideApplicationImg}
           placeholder={placeholder}
           components={{ Option, MultiValueLabel, DropdownIndicator, Menu }}
           defaultValue={defaultValue}
@@ -375,6 +387,7 @@ export default function MultiSelectApplication(props) {
           className={classes.wrapper}
           filterOption={filterOptions}
           styles={customStylesMultiselect}
+          menuPlacement={menuPlacement}
         />
 
         {!removeHelperText && <FieldMessage {...props} />}

@@ -7,6 +7,7 @@ import actions from '../../../actions';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
+import { MULTIPLE_AUTH_TYPE_ASSISTANTS } from '../../../utils/constants';
 
 const emptyObj = {};
 export default function DynaReplaceConnection(props) {
@@ -65,6 +66,15 @@ export default function DynaReplaceConnection(props) {
       value: newConnectionId,
     });
 
+    // assistantMetadata is removed on connection replace because the metadata changes on
+    // switching between different versions of constant contact i.e. v2 & v3
+    if (MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(connection?.assistant)) {
+      patch.push({
+        op: 'remove',
+        path: '/assistantMetadata',
+      });
+    }
+
     dispatch(
       actions.resource.patchStaged(
         resourceId,
@@ -94,7 +104,7 @@ export default function DynaReplaceConnection(props) {
         allTouchedFields,
       )
     );
-  }, [dispatch, resourceId, formContext.fields, parentResourceType, flowId]);
+  }, [connection?.assistant, dispatch, resourceId, formContext.fields, parentResourceType, flowId]);
 
   return (
     <DynaSelectResource

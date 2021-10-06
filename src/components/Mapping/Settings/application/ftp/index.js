@@ -37,6 +37,7 @@ export default {
               items: [
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
+                { label: 'Absolute number', value: 'absolutenumber' },
                 { label: 'Boolean', value: 'boolean' },
                 { label: 'Date', value: 'date' },
                 { label: 'Number array', value: 'numberarray' },

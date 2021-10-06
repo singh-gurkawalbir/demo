@@ -67,7 +67,7 @@ export default function SearchCriteriaDialog(props) {
     filterKey,
   } = props;
   const classes = useStyles();
-  const [fullScreen, setFullScreeen] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
   const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
@@ -85,8 +85,14 @@ export default function SearchCriteriaDialog(props) {
       if (!criteria.operator) {
         result[index] = [...result[index] || [], 'operator'];
       }
-      if (!criteria.searchValue) {
+      if (criteria.operator !== 'isempty' && criteria.operator !== 'isnotempty' && !criteria.searchValue) {
         result[index] = [...result[index] || [], 'searchValue'];
+      }
+      if (criteria.showFormulaField && !criteria.formula) {
+        result[index] = [...result[index] || [], 'formula'];
+      }
+      if (criteria.searchValue2Enabled && !criteria.searchValue2) {
+        result[index] = [...result[index] || [], 'searchValue2'];
       }
     });
     if (isEmpty(result)) {
@@ -100,7 +106,7 @@ export default function SearchCriteriaDialog(props) {
     if (onSave) {
       if (searchCriteria && searchCriteria.length) {
         const _criteria = searchCriteria.map(s => {
-          const { searchValue2Enabled, rowIdentifier, ...sc } = s;
+          const { searchValue2Enabled, rowIdentifier, showFormulaField, ...sc } = s;
 
           return sc;
         });
@@ -114,7 +120,7 @@ export default function SearchCriteriaDialog(props) {
   }, [onSave, searchCriteria]);
 
   const size = fullScreen ? { height } : { height, width };
-  const handleFullScreenClick = () => setFullScreeen(!fullScreen);
+  const handleFullScreenClick = () => setFullScreen(!fullScreen);
 
   return (
     <Dialog
