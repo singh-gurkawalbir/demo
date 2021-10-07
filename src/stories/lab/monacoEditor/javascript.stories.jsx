@@ -39,23 +39,25 @@ const Template = args => {
 
   useEffect(() => {
     if (monaco) {
-      const opts = monaco.languages.typescript.javascriptDefaults.getCompilerOptions();
-
-      console.log(monaco, opts);
-
       monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-        ...opts,
-        lib: ['es2015'],
+        // ...opts,
+        target: monaco.languages.typescript.ScriptTarget.ES2015,
+        allowJs: true,
         allowNonTsExtensions: true,
+        lib: ['es2015'],
       });
+
+      // console.log(monaco, opts);
 
       monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
       // When resolving definitions and references, the editor will try to use created models.
       // Creating a model for the library allows "peek definition/references" commands to work with the library.
       const model = monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri));
 
+      // an editor can only have 1 model. we need to dispose of it so that the next
+      // init will be able to create a new one.
       return () => {
-        console.log('disposing editor model', model);
+        // console.log('disposing editor model', model);
         model.dispose();
       };
     }
@@ -97,9 +99,9 @@ for (let i=0; i<count; i++) {
 }
 `;
 
-export const basicEditor = Template.bind({});
+export const scriptEditor = Template.bind({});
 
-basicEditor.args = {
+scriptEditor.args = {
   defaultLanguage: 'javascript',
   defaultValue: sampleJS,
 };
