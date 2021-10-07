@@ -1,7 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { jsxDecorator } from 'storybook-addon-jsx';
 import Editor from '@monaco-editor/react';
 
 const useStyles = makeStyles({
@@ -11,12 +9,6 @@ const useStyles = makeStyles({
     overflow: 'hidden',
   },
 });
-
-export default {
-  title: 'Lab / Monaco Editor',
-  component: Editor,
-  decorators: [jsxDecorator],
-};
 
 const Template = args => {
   const classes = useStyles();

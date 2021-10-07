@@ -1,7 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { jsxDecorator } from 'storybook-addon-jsx';
 import {DiffEditor} from '@monaco-editor/react';
 
 const useStyles = makeStyles({
@@ -11,12 +9,6 @@ const useStyles = makeStyles({
     overflow: 'hidden',
   },
 });
-
-export default {
-  title: 'Lab / Monaco Editor',
-  component: DiffEditor,
-  decorators: [jsxDecorator],
-};
 
 const Template = args => {
   const classes = useStyles();
@@ -75,7 +67,6 @@ for (let i=0; i<count; i++) {
 export const diffEditor = Template.bind({});
 
 diffEditor.args = {
-  // defaultLanguage: 'javascript',
   original,
   modified,
 };
