@@ -196,7 +196,7 @@ export default function Subscription() {
           </Typography>
           <div className={classes.wrapper}>
             <FilledButton onClick={onStartFreeTrialClick}>
-              Go Unlimited For 30 Days!
+              Get unlimited flows
             </FilledButton>
             <Typography varaint="body2" className={classes.description}>
               Start a 30 day free trial to explore the full capabilities of
@@ -324,7 +324,7 @@ export default function Subscription() {
                         'start-free-trial'
                       ) > -1 && (
                         <FilledButton onClick={onStartFreeTrialClick} >
-                          Go unlimited for 30 days!
+                          Get unlimited flows
                         </FilledButton>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
