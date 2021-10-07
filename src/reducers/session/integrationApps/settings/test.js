@@ -10612,5 +10612,62 @@ describe('integrationApps selectors test cases', () => {
       expect(selectors.checkUpgradeRequested(state, 'licenseId2')).toEqual(false);
     });
   });
+  describe('integrationApps settings subscribedAddOns test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.subscribedAddOns()).toEqual(null);
+      expect(selectors.subscribedAddOns({})).toEqual(undefined);
+      expect(selectors.subscribedAddOns(null)).toEqual(null);
+    });
+
+    test('should return correct subscribedAddOns value for valid integrationid', () => {
+      const state = reducer({
+        '1-3': { initComplete: true},
+        '1-2': { formSaveStatus: 'loading'},
+        'integrationId-addOns': { status: 'requested'},
+      }, actions.integrationApp.settings.addOnLicenseMetadataUpdate('integrationId', {
+        addOns: {
+          addOnMetaData: [{ data: 'dummy', id: 'a'}],
+          addOnLicenses: [{_id: 'license', id: 'a'}],
+        },
+      }));
+
+      const expectedState = [{_id: 0, id: 'a', integrationId: 'integrationId'}];
+
+      expect(selectors.subscribedAddOns(state, 'integrationId')).toEqual(expectedState);
+    });
+
+    test('should return empty array if it supports multiStore and does not find store id', () => {
+      const state = reducer({
+        '1-3': { initComplete: true},
+        '1-2': { formSaveStatus: 'loading'},
+        'integrationId-addOns': { status: 'requested'},
+      }, actions.integrationApp.settings.addOnLicenseMetadataUpdate('integrationId', {
+        addOns: {
+          addOnMetaData: [{ data: 'dummy', id: 'a'}],
+          addOnLicenses: [{_id: 'license', id: 'a'}],
+        },
+      }));
+
+      const expectedState = [];
+
+      expect(selectors.subscribedAddOns(state, 'integrationId', true, '123')).toEqual(expectedState);
+    });
+    test('should return correct subscribedAddOns value if it supports multiStore and does not find store id', () => {
+      const state = reducer({
+        '1-3': { initComplete: true},
+        '1-2': { formSaveStatus: 'loading'},
+        'integrationId-addOns': { status: 'requested'},
+      }, actions.integrationApp.settings.addOnLicenseMetadataUpdate('integrationId', {
+        addOns: {
+          addOnMetaData: [{ data: 'dummy', id: 'a'}],
+          addOnLicenses: [{_id: 'license', id: 'a', storeId: '123'}],
+        },
+      }));
+
+      const expectedState = [{_id: 0, id: 'a', integrationId: 'integrationId', storeId: '123' }];
+
+      expect(selectors.subscribedAddOns(state, 'integrationId', true, '123')).toEqual(expectedState);
+    });
+  });
 });
 
