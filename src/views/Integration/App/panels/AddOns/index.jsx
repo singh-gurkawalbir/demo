@@ -88,7 +88,10 @@ export default function AddOnsPanel({ integrationId, childId }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => supportsMultiStore && childId ? model.storeId === childId : true);
+  const subscribedAddOns = useSelector(state =>
+    selectors.subscribedAddOns(state, integrationId, supportsMultiStore, childId)
+  );
+
   const subscribedAddOn = metadata => subscribedAddOns?.find(sa => sa.id === metadata.id);
   const addOnMetadata = addOnState?.addOns?.addOnMetaData;
   const licenseId = useSelector(state => {
