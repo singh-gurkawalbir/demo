@@ -18,6 +18,7 @@ import {
 } from '../../../../utils/resource';
 import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   subrecords: {
@@ -56,9 +57,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: theme.spacing(2),
-  },
-  actionBtns: {
-    display: 'flex',
   },
 }));
 
@@ -225,7 +223,7 @@ export default function DynaNetSuiteSubRecords(props) {
               <Typography component="span">
                 {getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}
               </Typography>
-              <div className={classes.actionBtns}>
+              <ActionGroup>
                 <ActionButton
                   fontSize="small"
                   data-test="edit-subrecord"
@@ -239,7 +237,7 @@ export default function DynaNetSuiteSubRecords(props) {
                   onClick={() => handleDeleteClick(sr.fieldId)}>
                   <DeleteIcon />
                 </ActionButton>
-              </div>
+              </ActionGroup>
             </div>
           ))}
       </div>
