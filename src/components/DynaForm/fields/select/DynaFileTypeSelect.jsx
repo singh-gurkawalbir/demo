@@ -31,7 +31,9 @@ const FileTypeSelect = props => {
     } else if (fileType === 'xlsx') {
       filePropValues = formValues['/file/xlsx/hasHeaderRow'];
     } else if (fileType === 'xml') {
-      filePropValues = JSON.stringify(formValues['/parsers']);
+      // formValues['/parsers'] has a JSON structure with [Array, resourcePath]
+      // As JSON.stringify does not consider resourcePath it does not trigger change, we explicitly provide the same
+      filePropValues = JSON.stringify(formValues['/parsers']) + formValues['/parsers']?.resourcePath;
     }
     filePropValues = `${filePropValues}${formValues['/file/groupByFields']}`;
 
