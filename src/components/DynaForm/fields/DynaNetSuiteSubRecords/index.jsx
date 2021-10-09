@@ -19,7 +19,7 @@ import {
 import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
-const useStyles = makeStyles(theme => ({
+export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
   subrecords: {
     padding: theme.spacing(2),
     background: theme.palette.background.default,
@@ -74,7 +74,7 @@ export default function DynaNetSuiteSubRecords(props) {
     value,
     flowId,
   } = props;
-  const classes = useStyles();
+  const classes = UseDynaNetsuiteSubRecordsStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
