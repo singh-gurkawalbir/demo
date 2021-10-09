@@ -1,9 +1,11 @@
-import { put, takeLatest, select, fork, take, call, delay, cancel, all } from 'redux-saga/effects';
+import { put, takeLatest, select, fork, take, call, cancel, all } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 import {getErrorMapWithTotal, getErrorCountDiffMap} from '../../../utils/errorManagement';
+
+import {pollApiRequests} from '../../app';
 
 export function* _notifyErrorListOnUpdate({ flowId, newFlowErrors }) {
   const prevOpenErrorsDetails = yield select(selectors.openErrorsDetails, flowId);
@@ -82,17 +84,12 @@ export function* _requestIntegrationErrors({ integrationId }) {
 
 export function* _pollForIntegrationErrors({ integrationId }) {
   yield put(actions.errorManager.integrationErrors.request({ integrationId }));
-  while (true) {
-    yield call(_requestIntegrationErrors, { integrationId });
-    yield delay(5 * 1000);
-  }
+  yield call(pollApiRequests, {pollSaga: _requestIntegrationErrors, pollSagaArgs: {integrationId}, duration: 5 * 1000});
 }
 export function* _pollForOpenErrors({ flowId }) {
   yield put(actions.errorManager.openFlowErrors.request({ flowId }));
-  while (true) {
-    yield call(_requestFlowOpenErrors, { flowId });
-    yield delay(5 * 1000);
-  }
+
+  yield call(pollApiRequests, {pollSaga: _requestFlowOpenErrors, pollSagaArgs: { flowId }, duration: 5 * 1000});
 }
 
 export function* startPollingForOpenErrors({ flowId }) {

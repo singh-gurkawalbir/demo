@@ -1391,6 +1391,13 @@ const resourceFormSampleData = {
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
+  polling: {
+    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.POLLING.SLOW),
+    resume: () => action(actionTypes.POLLING.RESUME),
+    stop: () => action(actionTypes.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+  },
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
   reload: () => action(actionTypes.APP_RELOAD),

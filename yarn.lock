@@ -13649,6 +13649,11 @@ react-helmet-async@^1.0.7:
     react-fast-compare "^3.2.0"
     shallowequal "^1.1.0"
 
+react-idle-timer@4.6.4:
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-4.6.4.tgz#71ba954ba6f464df24d46a94e63c5ef19f7319dc"
+  integrity sha512-iq61dPud8fgj7l1KOJEY5pyiD532fW0KcIe/5XUe/0lB/4Vytoy4tZBlLGSiYodPzKxTL6HyKoOmG6tyzjD7OQ==
+
 react-iframe@1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/react-iframe/-/react-iframe-1.8.0.tgz#8c78f2c59b894ca5605fa7e45e61e27e57e96091"

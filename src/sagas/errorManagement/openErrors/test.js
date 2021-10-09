@@ -1,6 +1,6 @@
 /* global expect,describe, test */
 
-import { call, select, put, delay, take, cancel, fork } from 'redux-saga/effects';
+import { call, select, put, take, cancel, fork } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { createMockTask } from '@redux-saga/testing-utils';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -18,6 +18,7 @@ import {
   startPollingForOpenErrors,
   startPollingForIntegrationErrors,
 } from '.';
+import { pollApiRequests } from '../../app';
 
 const flowId = 'flow-1234';
 const integrationId = 'integration-1234';
@@ -198,25 +199,23 @@ describe('openErrors info related sagas', () => {
     });
   });
   describe('_pollForOpenErrors saga', () => {
-    test('should dispatch request action and call _requestFlowOpenErrors after 5 seconds delay continuously', () => {
+    test('should call _requestFlowOpenErrors within pollApiRequests saga with a polling duration of 5 seconds', () => {
       const saga = _pollForOpenErrors({ flowId });
 
       expect(saga.next().value).toEqual(put(actions.errorManager.openFlowErrors.request({ flowId })));
-      expect(saga.next().value).toEqual(call(_requestFlowOpenErrors, { flowId }));
-      expect(saga.next().value).toEqual(delay(5000));
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: _requestFlowOpenErrors, pollSagaArgs: { flowId }, duration: 5000}));
 
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().done).toEqual(true);
     });
   });
   describe('_pollForIntegrationErrors saga', () => {
-    test('should dispatch request action and call _requestIntegrationErrors after 5 seconds delay continuously', () => {
+    test('should call _requestIntegrationErrors within pollApiRequests with a polling duration of 5 seconds', () => {
       const saga = _pollForIntegrationErrors({ integrationId });
 
       expect(saga.next().value).toEqual(put(actions.errorManager.integrationErrors.request({ integrationId })));
-      expect(saga.next().value).toEqual(call(_requestIntegrationErrors, { integrationId }));
-      expect(saga.next().value).toEqual(delay(5000));
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: _requestIntegrationErrors, pollSagaArgs: { integrationId }, duration: 5000 }));
 
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().done).toEqual(true);
     });
   });
   describe('startPollingForOpenErrors saga', () => {

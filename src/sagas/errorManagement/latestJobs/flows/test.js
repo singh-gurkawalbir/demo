@@ -19,6 +19,7 @@ import {
   cancelLatestJobs,
   startPollingForInProgressJobs,
 } from './index';
+import { pollApiRequests } from '../../../app';
 
 describe('refreshForMultipleFlowJobs saga', () => {
   const flowId = 'f1';
@@ -354,20 +355,12 @@ describe('getInProgressJobsStatus saga', () => {
 });
 
 describe('pollForInprogressJobs saga', () => {
-  test('should repeatedly call getInProgressJobStatus', () => {
+  test('should call getInProgressJobStatus within apiPollRequests saga with a polling duration of 5 seconds', () => {
     const flowId = 'f1';
 
     testSaga(pollForInProgressJobs, {flowId})
       .next()
-      .delay(5 * 1000)
-      .next()
-      .call(getInProgressJobsStatus, {flowId})
-      .next()
-      .delay(5 * 1000)
-      .next()
-      .call(getInProgressJobsStatus, {flowId})
-      .next()
-      .delay(5 * 1000);
+      .call(pollApiRequests, {pollSaga: getInProgressJobsStatus, pollSagaArgs: {flowId}, duration: 5 * 1000});
   });
 });
 

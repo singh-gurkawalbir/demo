@@ -26,7 +26,7 @@ import CeligoAppBar from './CeligoAppBar';
 import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
 import { FormOnCancelProvider } from '../components/FormOnCancelContext';
-
+import UserActivityMonitor from './UserActivityMonitor';
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
 // <MuiThemeProvider>. That component is what injects the theme into
@@ -94,6 +94,7 @@ function NonSigninHeaderComponents() {
       <CeligoAppBar />
       <AppErroredModal />
       <AlertDialog />
+      <UserActivityMonitor />
       <CeligoDrawer />
     </>
   );

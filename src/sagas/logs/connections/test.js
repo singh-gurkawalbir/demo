@@ -1,6 +1,6 @@
 /* global describe, test, jest, expect */
 import { expectSaga } from 'redux-saga-test-plan';
-import { call, select, delay, fork, cancel } from 'redux-saga/effects';
+import { call, select, fork, cancel } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { createMockTask } from '@redux-saga/testing-utils';
 import moment from 'moment';
@@ -19,7 +19,9 @@ import {
   deleteConnectionDebugLogs,
   downloadConnectionDebugLogs,
   startDebug,
+  pollToGetConnectionLogs,
 } from '.';
+import { pollApiRequests } from '../../app';
 
 describe('Connection debugger log sagas', () => {
   describe('getConnectionDebugLogs saga', () => {
@@ -53,17 +55,39 @@ describe('Connection debugger log sagas', () => {
     });
   });
   describe('pollForConnectionLogs saga', () => {
-    test('should call getConnectionDebugLogs after 5 seconds delay continuously', () => {
+    test('should call pollApiRequests within pollApiRequests saga with a polling duration of 5 seconds', () => {
       const connectionId = 'c1';
-      const dateStrAfter15Mins = moment().add(15, 'm').toISOString();
+
       const saga = pollForConnectionLogs({ connectionId });
 
-      saga.next();
-      expect(saga.next({debugDate: dateStrAfter15Mins}).value).toEqual(call(getConnectionDebugLogs, { connectionId }));
-      expect(saga.next().value).toEqual(delay(5000));
+      expect(saga.next().value).toEqual(call(getConnectionDebugLogs, { connectionId }));
 
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: pollToGetConnectionLogs, pollSagaArgs: { connectionId }, duration: 5000}));
+      expect(saga.next().done).toEqual(true);
     });
+  });
+  describe('pollToGetConnectionLogs', () => {
+    test('should terminate polling since the debug date has expired', () => {
+      const connectionId = 'c1';
+      const dateStrBefore15Mins = moment().subtract(15, 'm').toISOString();
+      const saga = pollToGetConnectionLogs({ connectionId });
+
+      expect(saga.next().value).toEqual(select(selectors.resource, 'connections', connectionId));
+      expect(saga.next({debugDate: dateStrBefore15Mins})).toEqual({value: {terminatePolling: true}, done: true});
+    });
+    test('should not ternminate polling since debug time hasn`t expired yet', () => {
+      const connectionId = 'c1';
+      const dateStrAfter15Mins = moment().add(15, 'm').toISOString();
+      const saga = pollToGetConnectionLogs({ connectionId });
+
+      expect(saga.next().value).toEqual(select(selectors.resource, 'connections', connectionId));
+      expect(saga.next({debugDate: dateStrAfter15Mins}).value).toEqual(call(getConnectionDebugLogs, { connectionId }));
+
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('startPollingForConnectionDebugLogs', () => {
     test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
       const connectionId = 'c1';
       const saga = startPollingForConnectionDebugLogs({connectionId});

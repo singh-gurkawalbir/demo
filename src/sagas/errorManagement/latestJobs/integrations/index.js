@@ -1,6 +1,7 @@
-import { put, takeLatest, fork, take, call, delay, cancel } from 'redux-saga/effects';
+import { put, takeLatest, fork, take, call, cancel } from 'redux-saga/effects';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
+import { pollApiRequests } from '../../../app';
 import { apiCallWithRetry } from '../../../index';
 
 export function* requestLatestJobs({ integrationId }) {
@@ -30,10 +31,8 @@ export function* requestLatestJobs({ integrationId }) {
 
 export function* pollForLatestJobs({ integrationId }) {
   yield put(actions.errorManager.integrationLatestJobs.request({ integrationId }));
-  while (true) {
-    yield call(requestLatestJobs, { integrationId });
-    yield delay(5 * 1000);
-  }
+
+  yield call(pollApiRequests, {pollSaga: requestLatestJobs, pollSagaArgs: {integrationId}, duration: 5 * 1000});
 }
 
 export function* startPollingForLatestJobs({ integrationId }) {

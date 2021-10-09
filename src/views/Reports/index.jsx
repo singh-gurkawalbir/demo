@@ -82,16 +82,12 @@ const usePollLatestResourceCollection = resourceType => {
   const isReportTypeRunningOrQueued = useSelector(state => selectors.isAnyReportRunningOrQueued(state, resourceType));
 
   useEffect(() => {
-    let timerId;
-
     if (resourceType && isReportTypeRunningOrQueued) {
-      timerId = setInterval(() => {
-        dispatch(actions.resource.requestCollection(resourceType, null, true));
-      }, REPORTS_REFRESH_TIMER);
+      dispatch(actions.app.polling.start(actions.resource.requestCollection(resourceType, null, true), REPORTS_REFRESH_TIMER));
     }
 
     return () => {
-      clearInterval(timerId);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.requestCollection(resourceType, null, true)));
     };
   }, [dispatch, isReportTypeRunningOrQueued, resourceType]);
 };

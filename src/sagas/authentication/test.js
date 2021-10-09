@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest,afterEach  */
+/* global describe, test, expect, jest,afterEach, fail  */
 import { call, put, all, select } from 'redux-saga/effects';
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -30,6 +30,147 @@ import {
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
+import { pollApiRequests, POLL_SAMPLE_INTERVAL } from '../app';
+import { POLLING_STATUS } from '../../reducers/app';
+
+describe('pollApiRequests', () => {
+  // eslint-disable-next-line no-empty-function
+  function* somePollSaga() {
+  }
+  const pollAction = {type: 'someAction'};
+  const pollDuration = 100;
+
+  describe('for pollAction', () => {
+    test('should throw an error when both a pollAction and a poll saga provided', () => {
+      const saga = pollApiRequests({pollAction: {type: 'someAction'}, pollSaga: somePollSaga, duration: pollDuration});
+
+      try {
+        saga.next();
+        fail('should throw error for incorrect arguments');
+      } catch (e) {
+        expect(e).toEqual(new Error('Cannot have both pollAction and pollSaga provided, the poll saga supports either one'));
+      }
+    });
+    const pollOnceRegularly = saga => saga.select(selectors.pollingStatus)
+      .next()
+      .put(pollAction)
+      .next()
+      .delay(pollDuration);
+
+    test('should keep polling when polling status is not stop', () => {
+      const startThePolling = testSaga(pollApiRequests, {pollAction, duration: pollDuration});
+
+      const afterPollingOnce = pollOnceRegularly(startThePolling.next());
+
+      // poll again
+      pollOnceRegularly(afterPollingOnce.next());
+    });
+    test('should stop polling when polling status is stop and should sample state to check for polling status', () => {
+      const startThePolling = testSaga(pollApiRequests, {pollAction, duration: pollDuration});
+      const afterPollingOnce = pollOnceRegularly(startThePolling.next());
+
+      // stop polling inbetween
+      afterPollingOnce.next().select(selectors.pollingStatus)
+        .next(POLLING_STATUS.STOP)
+        .delay(POLL_SAMPLE_INTERVAL)
+        .next()
+      // keep sampling when polling status is set to STOP
+        .select(selectors.pollingStatus)
+        .next(POLLING_STATUS.STOP)
+        .delay(POLL_SAMPLE_INTERVAL);
+    });
+    test('should resume polling status when the polling status is set to resume from a stop status', () => {
+      const startThePolling = testSaga(pollApiRequests, {pollAction, duration: pollDuration});
+      const afterPollingOnce = pollOnceRegularly(startThePolling.next());
+
+      // stop polling inbetween
+      const stoppedPollingInbetween = afterPollingOnce.next().select(selectors.pollingStatus)
+        .next(POLLING_STATUS.STOP)
+        .delay(POLL_SAMPLE_INTERVAL);
+
+      // resume polling from here
+      const afterResumingPolling = stoppedPollingInbetween.next().select(selectors.pollingStatus)
+        .next(POLLING_STATUS.RESUME)
+        .put(pollAction)
+        .next()
+        .delay(pollDuration);
+
+      // should continue to poll regularly
+      pollOnceRegularly(afterResumingPolling.next());
+    });
+    test('should slow down polling by decreasing polling frequency by half when polling status is set to slow', () => {
+      const startThePolling = testSaga(pollApiRequests, {pollAction, duration: pollDuration});
+      const afterPollingOnce = pollOnceRegularly(startThePolling.next());
+
+      // slow polling inbetween
+      afterPollingOnce.next().select(selectors.pollingStatus)
+        .next(POLLING_STATUS.SLOW)
+        .put(pollAction)
+        .next()
+        .delay(pollDuration * 2)
+        .next()
+      // slow polling inbetween again
+        .select(selectors.pollingStatus)
+        .next(POLLING_STATUS.SLOW)
+        .put(pollAction)
+        .next()
+        .delay(pollDuration * 2);
+    });
+    test('should resume polling with the regular polling frequency when polling status is set resume', () => {
+      const startThePolling = testSaga(pollApiRequests, {pollAction, duration: pollDuration});
+      const afterPollingOnce = pollOnceRegularly(startThePolling.next());
+
+      // slow polling inbetween
+      const afterPollingStatusSetToSlow = afterPollingOnce.next().select(selectors.pollingStatus)
+        .next(POLLING_STATUS.SLOW)
+        .put(pollAction)
+        .next()
+        .delay(pollDuration * 2);
+        // resume polling inbetween
+      const afterResumingPolling = afterPollingStatusSetToSlow
+        .next()
+        .select(selectors.pollingStatus)
+        .next(POLLING_STATUS.RESUME)
+        .put(pollAction)
+        .next()
+        .delay(pollDuration);
+
+      // should be able to poll regularly
+      pollOnceRegularly(afterResumingPolling.next());
+    });
+  });
+
+  describe('for pollSaga', () => {
+    const pollSagaArgs = {};
+    const pollRegularly = saga => saga.select(selectors.pollingStatus)
+      .next()
+      .call(somePollSaga, pollSagaArgs)
+      .next()
+      .delay(pollDuration);
+
+    test('should poll with the poll saga', () => {
+      const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, duration: pollDuration});
+
+      const afterPollingOnce = pollRegularly(startTheSaga.next());
+
+      // after polling again
+      pollRegularly(afterPollingOnce.next());
+    });
+    test('should terminate the polling with the poll saga returns terminatePolling ', () => {
+      const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, duration: pollDuration});
+      const afterPollingOnce = pollRegularly(startTheSaga.next());
+
+      // poll again with the saga returning terminatePolling set to true
+      afterPollingOnce.next()
+        .select(selectors.pollingStatus)
+        .next()
+        .call(somePollSaga, pollSagaArgs)
+        .next({terminatePolling: true})
+        // exit the saga
+        .isDone();
+    });
+  });
+});
 
 describe('initialize all app relevant resources sagas', () => {
   describe('retrievingOrgDetails sagas', () => {

@@ -1,4 +1,4 @@
-import { call, takeEvery, put, select, takeLatest, take, fork, cancel, delay, race} from 'redux-saga/effects';
+import { call, takeEvery, put, select, delay, takeLatest, take, fork, cancel, race} from 'redux-saga/effects';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -6,6 +6,7 @@ import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import getRequestOptions from '../../../utils/requestOptions';
 import { FILTER_KEY } from '../../../utils/listenerLogs';
+import {pollApiRequests} from '../../app';
 
 export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   const opts = {
@@ -38,12 +39,12 @@ export function* pollForLatestLogs({ flowId, exportId }) {
   const logsList = yield select(selectors.logsSummary, exportId);
   // the first poll should start from latest log captured time
   let timeGt = logsList[0]?.time;
+  const POLLING_DURATION = 15000;
 
-  while (true) {
-    yield call(fetchNewLogs, { flowId, exportId, timeGt });
-    timeGt = '';
-    yield delay(15 * 1000);
-  }
+  yield call(fetchNewLogs, { flowId, exportId, timeGt });
+  yield delay(POLLING_DURATION);
+  timeGt = '';
+  yield call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId, timeGt }, duration: POLLING_DURATION});
 }
 
 export function* startPollingForRequestLogs({flowId, exportId}) {

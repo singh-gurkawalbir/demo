@@ -21,6 +21,7 @@ import {
   removeLogs,
 } from './index';
 import { FILTER_KEY } from '../../../utils/listenerLogs';
+import { pollApiRequests } from '../../app';
 
 const flowId = 'flow-123';
 const exportId = 'exp-123';
@@ -106,14 +107,14 @@ describe('Listener logs sagas', () => {
         expect(effects.call[0]).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: 45678 }));
       }));
 
-    test('should call fetchNewLogs after 15 seconds delay continuously', () => {
+    test('should call fetchNewLogs within pollApiRequests with a 15 second polling duration', () => {
       const saga = pollForLatestLogs({ flowId, exportId });
 
       saga.next();
       expect(saga.next([{time: ''}]).value).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: '' }));
       expect(saga.next().value).toEqual(delay(15000));
-
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId, timeGt: '' }, duration: 15000}));
+      expect(saga.next().done).toEqual(true);
     });
   });
 

@@ -1,11 +1,12 @@
 import { deepClone } from 'fast-json-patch';
-import { put, takeLatest, take, call, delay, fork, cancel, select } from 'redux-saga/effects';
+import { put, takeLatest, take, call, fork, cancel, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 import { safeParse } from '../../../utils/string';
+import { pollApiRequests } from '../../app';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -133,13 +134,9 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
     // errors
   }
 }
-
 export function* _pollForRetryStatus({ flowId, resourceId }) {
   yield put(actions.errorManager.retryStatus.request({ flowId, resourceId }));
-  while (true) {
-    yield call(_requestRetryStatus, { flowId, resourceId });
-    yield delay(5 * 1000);
-  }
+  yield call(pollApiRequests, {pollSaga: _requestRetryStatus, pollSagaArgs: { flowId, resourceId }, duration: 5 * 1000});
 }
 
 export function* startPollingForRetryStatus({ flowId, resourceId }) {

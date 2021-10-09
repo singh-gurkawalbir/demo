@@ -1,10 +1,11 @@
-import { put, takeLatest, all, call, delay, fork, take, cancel, select } from 'redux-saga/effects';
+import { put, takeLatest, all, call, fork, take, cancel, select } from 'redux-saga/effects';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
 import { apiCallWithRetry } from '../../../index';
 import getRequestOptions from '../../../../utils/requestOptions';
 import { selectors } from '../../../../reducers';
 import { JOB_STATUS } from '../../../../utils/constants';
+import { pollApiRequests } from '../../../app';
 
 const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED];
 const IN_PROGRESS_JOB_STATUSES = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING];
@@ -57,11 +58,7 @@ export function* getInProgressJobsStatus({ flowId }) {
 }
 
 export function* pollForInProgressJobs({ flowId }) {
-  while (true) {
-    yield delay(5 * 1000);
-
-    yield call(getInProgressJobsStatus, { flowId });
-  }
+  yield call(pollApiRequests, {pollSaga: getInProgressJobsStatus, pollSagaArgs: {flowId}, duration: 5 * 1000});
 }
 
 export function* startPollingForInProgressJobs({ flowId }) {
