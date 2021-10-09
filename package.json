@@ -45,7 +45,7 @@
     "flat": "5.0.2",
     "ga-4-react": "0.1.281",
     "hookrouter": "1.2.3",
-    "immer": "^3.2.0",
+    "immer": "^9.0.6",
     "jQuery-QueryBuilder": "2.5.2",
     "js-sql-parser": "1.2.1",
     "lodash": "^4.17.21",

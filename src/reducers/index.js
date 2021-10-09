@@ -5459,13 +5459,12 @@ selectors.transferListWithMetadata = state => {
       type: 'transfers',
     }).resources || [];
 
-  const updatedTransfers = [...transfers];
-
-  updatedTransfers.forEach((transfer, i) => {
+  const updatedTransfers = transfers.map(transfer => {
     let integrations = [];
+    const updatedTransfer = {...transfer};
 
     if (transfer.ownerUser && transfer.ownerUser._id) {
-      updatedTransfers[i].isInvited = true;
+      updatedTransfer.isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -5487,7 +5486,9 @@ selectors.transferListWithMetadata = state => {
     }
 
     integrations = integrations.join('\n');
-    updatedTransfers[i].integrations = integrations;
+    updatedTransfer.integrations = integrations;
+
+    return updatedTransfer;
   });
 
   return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');

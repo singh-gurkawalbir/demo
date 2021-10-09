@@ -2,11 +2,14 @@
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
+import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
+
+const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
 
 describe('marketplace reducers', () => {
   describe('connectors received action', () => {
-    const testConnectors = [{ _id: '123' }, { _id: '456' }];
-    const updatedTestConnectors = [{ _id: '789' }, { _id: '432' }];
+    const testConnectors = [{ _id: '123' }, { _id: '456' }, {...sfConnector, canInstall: true}];
+    const updatedTestConnectors = [{ _id: '789' }, { _id: '432' }, {...sfConnector, canInstall: true}];
 
     test('should store connectors succesfully on state', () => {
       const state = reducer(
@@ -233,6 +236,7 @@ describe('marketplace selectors', () => {
     const connectors = [
       { _id: '123', applications: ['some application'] },
       { _id: '456', applications: ['some application'] },
+      {...sfConnector, canInstall: true},
     ];
 
     test('should return empty array on empty/undefined state', () => {

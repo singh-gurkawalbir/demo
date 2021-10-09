@@ -656,9 +656,11 @@ selectors.flowJobs = createSelector(
         additionalProps.uiStatus = JOB_STATUS.RETRYING;
       }
 
+      let jobChildren = job.children;
+
       if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-        job.children = job.children.filter(cJob => !!cJob).map(cJob => {
+        jobChildren = job.children.filter(cJob => !!cJob).map(cJob => {
           const additionalChildProps = {
             uiStatus: cJob.status,
             duration: getJobDuration(cJob),
@@ -711,7 +713,7 @@ selectors.flowJobs = createSelector(
         });
       }
 
-      return { ...job, ...additionalProps };
+      return { ...job, children: jobChildren, ...additionalProps };
     });
   }
 );

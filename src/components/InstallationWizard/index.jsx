@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import jsonPatch from 'fast-json-patch';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -90,12 +90,19 @@ export default function InstallationWizard(props) {
         resourceId,
       })
     ) || emptyObject;
-  const { redirectTo, isInstallFailed, environment: destinationEnvironment } = useSelector(state =>
-    selectors.redirectToOnInstallationComplete(state, {
+  const { redirectTo, isInstallFailed, destinationEnvironment } = useSelector(state => {
+    const redirectOptions = selectors.redirectToOnInstallationComplete(state, {
       resourceType,
       resourceId,
       templateId,
-    })
+    });
+
+    return {
+      redirectTo: redirectOptions.redirectTo,
+      isInstallFailed: redirectOptions.isInstallFailed,
+      destinationEnvironment: redirectOptions.destinationEnvironment,
+    };
+  }, shallowEqual
   );
 
   useEffect(() => {

@@ -152,19 +152,14 @@ describe('jobs reducer', () => {
             {
               type: JOB_TYPES.EXPORT,
               status: JOB_STATUS.COMPLETED,
-              uiStatus: JOB_STATUS.COMPLETED,
             },
             {
               type: JOB_TYPES.IMPORT,
               status: JOB_STATUS.COMPLETED,
-              uiStatus: JOB_STATUS.COMPLETED,
-              percentComplete: 0,
             },
             {
               type: JOB_TYPES.IMPORT,
               status: JOB_STATUS.RUNNING,
-              uiStatus: JOB_STATUS.RUNNING,
-              percentComplete: 0,
             },
           ],
         },
@@ -225,19 +220,14 @@ describe('jobs reducer', () => {
             {
               type: JOB_TYPES.EXPORT,
               status: JOB_STATUS.COMPLETED,
-              uiStatus: JOB_STATUS.COMPLETED,
             },
             {
               type: JOB_TYPES.IMPORT,
               status: JOB_STATUS.COMPLETED,
-              uiStatus: JOB_STATUS.COMPLETED,
-              percentComplete: 0,
             },
             {
               type: JOB_TYPES.IMPORT,
               status: JOB_STATUS.RUNNING,
-              uiStatus: JOB_STATUS.RUNNING,
-              percentComplete: 0,
             },
           ],
         },
@@ -274,7 +264,7 @@ describe('Running jobs selectors', () => {
       expect(selectors.runningJobs()).toEqual({jobs: []});
     });
 
-    describe('should return correct details when there are jobs in state', () => {
+    test('should return correct details when there are jobs in state', () => {
       const jobsReceivedAction = actions.job.dashboard.running.receivedCollection({
         collection: jobs,
       });
@@ -340,7 +330,7 @@ describe('Running jobs selectors', () => {
       expect(selectors.dashboardInProgressJobIds()).toEqual([]);
     });
 
-    describe('should return correct details when there are jobs in state', () => {
+    test('should return correct details when there are jobs in state', () => {
       const jobsReceivedAction = actions.job.dashboard.running.receivedCollection({
         collection: jobs,
       });
@@ -356,7 +346,7 @@ describe('Running jobs selectors', () => {
       expect(selectors.isRunningJobsCollectionLoading()).toEqual(false);
     });
 
-    describe('should return true when state contains status as loading', () => {
+    test('should return true when state contains status as loading', () => {
       const jobsRequestedAction = actions.job.dashboard.running.requestCollection();
       const state = reducer(undefined, jobsRequestedAction);
 

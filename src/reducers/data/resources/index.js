@@ -141,13 +141,13 @@ selectors.resource = (state, resourceType, id) => {
   // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
   // the components) using this property should be smart enough to work with an undefined prop.
   // Could you find the best solution for this? I favour the latter if that approach is easy.
-  if (['exports', 'imports'].includes(resourceType)) {
-    if (match.assistant && !match.assistantMetadata) {
-      // TODO:mutating a reference of the redux state..we have to fix this
-      // if this reducer was implemented in immer ...it would have pointed this error
-      match.assistantMetadata = {};
-    }
-  }
+  // if (['exports', 'imports'].includes(resourceType)) {
+  //   if (match.assistant && !match.assistantMetadata) {
+  //     // TODO:mutating a reference of the redux state..we have to fix this
+  //     // if this reducer was implemented in immer ...it would have pointed this error
+  //     match.assistantMetadata = {};
+  //   }
+  // }
 
   return match;
 };
