@@ -309,7 +309,7 @@ export default function Endpoint() {
             <FilledButton
               onClick={onStartFreeTrialClick}
               className={classes.subscriptionUpgradeBtn}>
-              Go unlimited for 30 days!
+              Get unlimited flows
             </FilledButton>
             )}
             {(licenseActionDetails.subscriptionActions.actions.indexOf(
@@ -322,7 +322,7 @@ export default function Endpoint() {
               disabled={upgradeRequested}
               className={classes.subscriptionUpgradeBtn}
              >
-              Upgrade
+              Upgrade now
             </FilledButton>
             )}
             {licenseActionDetails.subscriptionActions.actions.indexOf(
