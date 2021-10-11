@@ -917,8 +917,19 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
   return accessLevelOnConnection;
 };
 
-export const isOldRestExport = (resource, connection) => {
+export const getAssistantFromResource = resource => {
+  if (!resource) return;
+  const {assistant} = resource;
+
+  if (assistant?.includes('constantcontact')) {
+    return 'constantcontact';
+  }
+
+  return assistant;
+};
+
+export const isOldRestAdaptor = (resource, connection) => {
   const { adaptorType, _id } = resource || {};
 
-  return (adaptorType === 'RESTExport' && _id && !isNewId(_id)) || connection?.isHTTP === false;
+  return (['RESTExport', 'RESTImport'].includes(adaptorType) && _id && !isNewId(_id)) || connection?.isHTTP === false;
 };

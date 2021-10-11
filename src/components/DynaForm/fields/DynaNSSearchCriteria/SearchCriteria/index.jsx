@@ -9,6 +9,7 @@ import RefreshIcon from '../../../../icons/RefreshIcon';
 import ActionButton from '../../../../ActionButton';
 import DynaTypeableSelect from '../../DynaTypeableSelect';
 import DynaSelect from '../../DynaSelect';
+import DynaText from '../../DynaText';
 import {operators, operatorsByFieldType} from './operators';
 import Spinner from '../../../../Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -57,6 +58,14 @@ const useStyles = makeStyles(theme => ({
   deleteButton: {
     marginTop: theme.spacing(1),
   },
+  formulaTextField: {
+    flexDirection: 'column',
+  },
+  formulaField: {
+    marginBottom: 0,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingLeft: theme.spacing(1),
+  },
 }));
 
 const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index}) =>
@@ -75,7 +84,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
       <div className={classes.rowContainer} key={r.key}>
         <div className={classes.innerRow}>
           <div
-            className={clsx(classes.childHeader, {
+            className={clsx(classes.childHeader, classes.formulaTextField, {
               [classes.disabled]: disabled,
             })}>
             <DynaTypeableSelect
@@ -92,6 +101,21 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
                 handleFieldUpdate(index, _value, 'field');
               }}
               />
+            {r.showFormulaField && (
+            <DynaText
+              id={`formula-${index}`}
+              value={r.formula}
+              multiline
+              className={classes.formulaField}
+              onFieldChange={(id, _value) => {
+                handleFieldUpdate(index, _value, 'formula');
+              }}
+              isValid={!invalidFields?.includes('formula')}
+              errorMessages="Please add formula"
+              disabled={disabled}
+          />
+            )}
+
           </div>
           <div
             className={clsx(classes.childHeader, {
@@ -120,7 +144,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               }}
               isValid={!invalidFields?.includes('searchValue')}
               errorMessages="Please enter a value"
-              disabled={disabled}
+              disabled={disabled || r.operator === 'isempty' || r.operator === 'isnotempty'}
               value={r.searchValue} />
           </div>
           <div
@@ -133,7 +157,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               onBlur={(_id, _value) => {
                 handleFieldUpdate(index, _value, 'searchValue2');
               }}
-              isValid={!r.searchValue2Enabled || r.searchValue2}
+              isValid={!invalidFields?.includes('searchValue2')}
               errorMessages="Please enter a value"
               value={r.searchValue2}
               />

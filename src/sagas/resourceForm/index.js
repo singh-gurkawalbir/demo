@@ -19,6 +19,7 @@ import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, fl
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
 
 export const SCOPES = {
@@ -788,11 +789,18 @@ export function* initFormValues({
     return; // nothing to do.
   }
   const { assistant, assistantMetadata, _connectionId } = resource;
-  const adaptorType = getAssistantConnectorType(resource.assistant);
+
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+
+  const connectionAssistant = getAssistantFromConnection(assistant, connection);
+
+  const newResource = {...resource, assistant: connectionAssistant};
+
+  const adaptorType = getAssistantConnectorType(connectionAssistant);
 
   let assistantData;
 
-  if (['exports', 'imports'].includes(resourceType) && assistant) {
+  if (['exports', 'imports'].includes(resourceType) && connectionAssistant) {
     if (!assistantMetadata) {
       yield put(
         actions.resource.patchStaged(
@@ -805,23 +813,20 @@ export function* initFormValues({
 
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
-      assistant,
+      assistant: connectionAssistant,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
-        assistant,
+        assistant: connectionAssistant,
       });
     }
   }
-
-  const connection = yield select(selectors.resource, 'connections', _connectionId);
-
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
-      resource,
+      resource: newResource,
       isNew,
       assistantData,
       connection,
@@ -832,7 +837,7 @@ export function* initFormValues({
     const fieldMeta = getFieldsWithDefaults(
       form,
       resourceType,
-      resource,
+      newResource,
       { developerMode, flowId, integrationId }
     );
     let finalFieldMeta = fieldMeta;
@@ -840,7 +845,7 @@ export function* initFormValues({
     if (typeof defaultFormAssets.init === 'function') {
       // standard form init fn...
 
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);

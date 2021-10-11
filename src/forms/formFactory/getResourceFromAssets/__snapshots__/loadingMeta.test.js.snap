@@ -2927,7 +2927,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7026,7 +7026,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -10562,7 +10562,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -12569,7 +12569,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -12693,7 +12693,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 40+ applications",
+        "placeholder": "Choose application or start typing to browse 50+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

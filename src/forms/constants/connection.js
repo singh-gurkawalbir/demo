@@ -126,6 +126,8 @@ export default {
     'sapsuccessfactors',
     'braintree',
     'zenefits',
+    'saphana',
+    'mixpanel',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -187,6 +189,7 @@ export default {
     'powerbi',
     'sharepoint',
     'outreach',
+    'constantcontact',
     'constantcontactv3',
     'constantcontactv2',
     'skubana',

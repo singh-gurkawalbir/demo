@@ -1,6 +1,7 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isNewId, getDomainUrl } from '../../../utils/resource';
-import { applicationsList } from '../../../constants/applications';
+import { isNewId, getDomainUrl, getAssistantFromResource } from '../../../utils/resource';
+import { applicationsList} from '../../../constants/applications';
+import { getConstantContactVersion } from '../../../utils/connections';
 
 export default {
   // #region common
@@ -74,7 +75,8 @@ export default {
         return r.application;
       }
       const applications = applicationsList();
-      let application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      let application = getAssistantFromResource(r) ||
+      (r.type === 'rdbms' ? r.rdbms.type : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
@@ -2291,4 +2293,19 @@ export default {
     defaultValue: r => r && r.settings,
   },
   // #region custom connection
+  // #region constant contact
+  versionType: {
+    type: 'select',
+    label: 'Version type',
+    required: true,
+    defaultValue: r => getConstantContactVersion(r),
+    options: [
+      {
+        items: [
+          { label: 'V2', value: 'constantcontactv2' },
+          { label: 'V3', value: 'constantcontactv3' },
+        ],
+      },
+    ],
+  },
 };

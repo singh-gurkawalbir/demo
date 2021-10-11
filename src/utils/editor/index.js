@@ -1,6 +1,6 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
-import { isOldRestExport } from '../resource';
+import { isOldRestAdaptor } from '../resource';
 
 export const FLOW_STAGES = [
   'outputFilter',
@@ -45,7 +45,50 @@ export function dataAsString(data) {
 export const getUniqueFieldId = (fieldId, resource, connection) => {
   if (!fieldId) { return ''; }
   const { ignoreExisting, ignoreMissing } = resource || {};
-  const isNewRestExport = !isOldRestExport(resource, connection);
+  const isOldRestResource = isOldRestAdaptor(resource, connection);
+
+  if (isOldRestResource) {
+    switch (fieldId) {
+      case 'http.bodyCreate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
+        return 'rest.body.1';
+
+      case 'http.bodyUpdate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
+        return 'rest.body.0';
+      case 'http.relativeURIUpdate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
+        return 'rest.relativeURI.0';
+      case 'http.relativeURICreate':
+        if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
+        return 'rest.relativeURI.1';
+      case 'http.relativeURI':
+        return 'rest.relativeURI';
+      case 'http.body':
+        return 'rest.body';
+      case 'http.once.relativeURI':
+        return 'rest.once.relativeURI';
+      default:
+    }
+  } else {
+    switch (fieldId) {
+      case 'rest.pagingPostBody':
+        return 'http.paging.body';
+      case 'rest.nextPageRelativeURI':
+        return 'http.paging.relativeURI';
+      case 'rest.postBody':
+        return 'http.body';
+      case 'rest.relativeURI':
+        return 'http.relativeURI';
+      case 'rest.once.postBody':
+        return 'http.once.body';
+      default:
+    }
+  }
 
   // some field types have same field ids
   switch (fieldId) {
@@ -80,35 +123,22 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
     default:
   }
 
-  if (isNewRestExport) {
-    // field mappings for the new Rest exports with http sub schema
-    switch (fieldId) {
-      case 'rest.pagingPostBody':
-        return 'http.paging.body';
-      case 'rest.nextPageRelativeURI':
-        return 'http.paging.relativeURI';
-      case 'rest.postBody':
-        return 'http.body';
-      case 'rest.relativeURI':
-        return 'http.relativeURI';
-      case 'rest.once.postBody':
-        return 'http.once.body';
-      default:
-    }
-  }
-
   // returns same fieldId if it does not match
   return fieldId;
 };
 
-// fieldIds that show previewData when paging is configured
-export const previewDataDependentFieldIds = [
+export const PAGING_FIELD_IDS = [
   'http.paging.body',
   'http.paging.relativeURI',
-  'http.relativeURI',
-  'http.body',
   'rest.pagingPostBody',
   'rest.nextPageRelativeURI',
+];
+
+// fieldIds that show previewData when paging is configured
+export const previewDataDependentFieldIds = [
+  ...PAGING_FIELD_IDS,
+  'http.relativeURI',
+  'http.body',
   'rest.relativeURI',
   'rest.postBody',
 ];

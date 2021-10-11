@@ -64,19 +64,6 @@ describe('Connection debugger log sagas', () => {
 
       expect(saga.next().done).toEqual(false);
     });
-  });
-  describe('startPollingForConnectionDebugLogs saga', () => {
-    test('should dispatch request failed action and not call pollForConnectionLogs if connection logs are not supported', () => {
-      const connectionId = 'c1';
-
-      return expectSaga(startPollingForConnectionDebugLogs, { connectionId })
-        .provide([
-          [select(selectors.isConnectionLogsNotSupported, connectionId), true],
-        ])
-        .put(actions.logs.connections.requestFailed(connectionId))
-        .not.fork.fn(pollForConnectionLogs)
-        .run();
-    });
     test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
       const connectionId = 'c1';
       const saga = startPollingForConnectionDebugLogs({connectionId});

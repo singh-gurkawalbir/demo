@@ -64,12 +64,6 @@ export default function DynaNSSearchCriteria(props) {
           title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
-          // fieldOptions={{
-          //   fields: savedSearches,
-          //   status,
-          //   valueName: 'value',
-          //   labelName: 'label',
-          // }}
           connectionId={connectionId}
           commMetaPath={commMetaPath}
           filterKey={filterKey}

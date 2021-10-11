@@ -648,12 +648,12 @@ export default {
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
             return Array.isArray(r?.http?.body)
-              ? r.http.body[1]
+              ? r.http.body[1] || ''
               : undefined;
           }
 
           return Array.isArray(r?.http?.body)
-            ? r.http.body[0]
+            ? r.http.body[0] || ''
             : undefined;
         }
 
@@ -892,7 +892,7 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           return Array.isArray(r?.http?.body)
-            ? r.http?.body[0]
+            ? r.http?.body[0] || ''
             : undefined;
         }
 

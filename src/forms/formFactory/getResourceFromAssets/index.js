@@ -3,7 +3,7 @@ import produce from 'immer';
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
-import { getResourceSubType, isNewId } from '../../../utils/resource';
+import { getAssistantFromResource, getResourceSubType, isNewId } from '../../../utils/resource';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -199,18 +199,19 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         meta = formMeta.connections.custom.http['authorize.net'];
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
+        const assistant = getAssistantFromResource(resource);
 
         /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
         perspective and when all assistant metadata files are moved over to HTTP adaptor */
         if (
-          resource.assistant &&
-            REST_ASSISTANTS.includes(resource.assistant)
+          assistant &&
+            REST_ASSISTANTS.includes(assistant)
         ) {
           meta = formMeta.connections.custom.http;
         }
 
         if (meta) {
-          meta = meta[resource.assistant];
+          meta = meta[assistant];
         }
       } else if (resource && resource.type === 'rdbms') {
         const rdbmsSubType = resource.rdbms.type;

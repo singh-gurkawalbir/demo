@@ -17,7 +17,7 @@ export const getEditorTitle = adaptorType => {
 
 export default {
   processor: 'handlebars',
-  init: ({ resource, connection, isPageGenerator, options }) => {
+  init: ({ resource, connection, isPageGenerator, isStandaloneExport, options }) => {
     let adaptorSpecificOptions = {};
     let query;
 
@@ -45,7 +45,7 @@ export default {
     const formattedRule = typeof options.arrayIndex === 'number' && Array.isArray(query) ? query[options.arrayIndex] : query;
     const rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
 
-    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId: options.fieldId, connection, isPageGenerator});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId: options.fieldId, connection, isPageGenerator, isStandaloneExport});
     let v1Rule;
     let v2Rule;
 

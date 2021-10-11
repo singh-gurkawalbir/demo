@@ -2,25 +2,22 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/type': 'http',
-    '/assistant': 'freshservice',
-    '/http/auth/type': 'Basic',
-    '/http/baseURI': `https://${
-      formValues['/http/unencrypted/subdomain']}.freshservice.com/api/v2`,
-    '/http/ping/relativeURI': '/tickets',
+    '/assistant': 'saphana',
+    '/http/auth/type': 'basic',
     '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/sap/opu/odata/sap/API_SALES_ORDER_SRV',
     '/http/ping/method': 'GET',
-    '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 10,
-    '/http/auth/basic/password': '',
+    '/http/baseURI': `https://${formValues['/http/unencrypted/host']}-api.s4hana.ondemand.com`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.unencrypted.subdomain': {
-      fieldId: 'http.unencrypted.subdomain',
+    'http.unencrypted.host': {
+      id: 'http.unencrypted.host',
       startAdornment: 'https://',
-      endAdornment: '.freshservice.com',
+      endAdornment: '-api.s4hana.ondemand.com',
       type: 'text',
-      label: 'Subdomain',
-      helpKey: 'freshservice.connection.http.unencrypted.subdomain',
+      label: 'Host',
+      helpKey: 'saphana.connection.http.unencrypted.host',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -31,15 +28,13 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'API key',
-      inputType: 'password',
-      defaultValue: '',
-      helpKey: 'freshservice.connection.http.auth.basic.username',
+      label: 'Username',
+      helpKey: 'saphana.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'Password',
-      visible: false,
+      helpKey: 'saphana.connection.http.auth.basic.password',
     },
     application: {
       fieldId: 'application',
@@ -52,8 +47,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: [
-          'http.unencrypted.subdomain',
+        fields: ['http.unencrypted.host',
           'http.auth.basic.username',
           'http.auth.basic.password'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },

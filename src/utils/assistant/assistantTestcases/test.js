@@ -24,6 +24,7 @@ import {
   convertFromImport,
   convertToImport,
   isMetaRequiredValuesMet,
+  isAppConstantContact,
 } from '..';
 
 describe('getMatchingRoute', () => {
@@ -3603,6 +3604,17 @@ describe('isMetaRequiredValuesMet', () => {
       ]},
       {}
       )).toEqual(false);
+    });
+  });
+  describe('isAppConstantContact test cases', () => {
+    test('should return false if application is undefined', () => {
+      expect(isAppConstantContact()).toBeFalsy();
+    });
+    test('should return true if application is constant contact', () => {
+      expect(isAppConstantContact('constantcontact')).toBeTruthy();
+    });
+    test('should return false if application is not constant contact', () => {
+      expect(isAppConstantContact('square')).toBeFalsy();
     });
   });
 });
