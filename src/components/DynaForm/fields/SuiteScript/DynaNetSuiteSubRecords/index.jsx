@@ -128,7 +128,7 @@ export default function DynaNetSuiteSubRecords(props) {
             <Typography component="span">
               {getNetSuiteSubrecordLabel(sr.referenceFieldId, referenceFields ?? [])}
             </Typography>
-            <div className={classes.actionBtns}>
+            <ActionGroup>
               <ActionButton
                 fontSize="small"
                 data-test="edit-subrecord"
@@ -142,7 +142,7 @@ export default function DynaNetSuiteSubRecords(props) {
                 onClick={() => handleDeleteClick(sr.referenceFieldId)}>
                 <DeleteIcon />
               </ActionButton>
-            </div>
+            </ActionGroup>
           </div>
         ))}
       </div>
