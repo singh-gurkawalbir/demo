@@ -119,6 +119,8 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
     }
   }, [patchEditor]);
 
+  // useEffect to call handleFilterRulesChange with the updated value of isEditorDirty
+  // when the filter has changed, to make the form dirty
   useEffect(() => {
     isEditorDirty && handleFilterRulesChange();
   // eslint-disable-next-line react-hooks/exhaustive-deps
