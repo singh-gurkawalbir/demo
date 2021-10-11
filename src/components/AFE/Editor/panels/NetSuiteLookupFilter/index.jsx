@@ -138,8 +138,10 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
         );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
+          const expressionValue = rulesState[ruleId].data.lhs.expression;
+
           expressionField
-            .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
+            .val(typeof expressionValue !== 'string' ? JSON.stringify(expressionValue) : expressionValue)
             .trigger('change');
         }
 
@@ -377,6 +379,11 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
             lhsValue = rule.$el
               .find('.rule-filter-container [name=expression]')
               .val();
+          } else if (r.lhs.type !== 'value') {
+            r.lhs.type = 'field';
+            lhsValue = rule.$el
+              .find('.rule-filter-container [name=field]')
+              .val();
           }
 
           let rhsValue = rule.$el
@@ -393,7 +400,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
             rhsValue = r.rhs[r.rhs.type];
           }
 
-          r.lhs[r.lhs.type || 'field'] = lhsValue;
+          r.lhs[r.lhs.type || 'field'] = lhsValue || r.lhs[r.lhs.type || 'field'];
           r.rhs[r.rhs.type || 'value'] = rhsValue;
           rule.data = r;
 
@@ -423,7 +430,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
                 .val();
             }
 
-            r.lhs[r.lhs.type || 'field'] = lhsValue;
+            r.lhs[r.lhs.type || 'field'] = lhsValue || r.lhs[r.lhs.type || 'field'];
             r.rhs[r.rhs.type || 'value'] = rhsValue;
             rule.data = r;
 
@@ -468,6 +475,15 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
           handleFilterRulesChange();
         });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const ruleId in rulesState) {
+        if (Object.hasOwnProperty.call(rulesState, ruleId) && rulesState[ruleId]?.rule) {
+          if (rulesState[ruleId].data?.lhs?.type === 'expression') {
+            updateUIForLHSRule({rule: rulesState[ruleId].rule});
+          }
+        }
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
