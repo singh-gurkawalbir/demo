@@ -8,7 +8,7 @@ export default function UserName({ userId, flowId }) {
     selectors.getIntegrationUserNameById(state, userId, flowId)
   );
 
-  if (userId === 'autopilot' || userId === 'auto') {
+  if (userId === 'auto') {
     return 'Auto-resolved';
   }
 
