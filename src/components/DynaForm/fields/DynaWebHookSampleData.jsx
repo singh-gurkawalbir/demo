@@ -10,13 +10,20 @@ import FieldMessage from './FieldMessage';
 import { OutlinedButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
+  sampleDataContent: {
+    flex: 1,
+    height: theme.spacing(20),
+    display: 'flex',
+    flexDirection: 'column',
+  },
   container: {
-    height: '15vh',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    height: '100%',
   },
   actions: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(2),
   },
   dynaWebhookWrapper: {
     display: 'flex',
@@ -72,7 +79,7 @@ export default function DynaWebHookSampleData(props) {
 
   return (
     <div className={classes.dynaWebhookWrapper}>
-      <div>
+      <div className={classes.sampleDataContent}>
         <FormLabel error={!isValid} >{label}</FormLabel>
         <div className={classes.container}>
           <CodeEditor
