@@ -8,8 +8,8 @@ import AttachFlowsDialog from '../../../../../components/AttachFlows';
 import { TextButton } from '../../../../../components/Buttons';
 import Status from '../../../../../components/Buttons/Status';
 import CeligoTable from '../../../../../components/CeligoTable';
+import ActionMenu from '../../../../../components/CeligoTable/ActionMenu';
 import AddIcon from '../../../../../components/icons/AddIcon';
-import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import LoadResources from '../../../../../components/LoadResources';
@@ -26,6 +26,9 @@ import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import SectionTitle from '../../../common/FlowSectionTitle';
+import Attach from '../../../../../components/ResourceTable/flows/actions/Attach';
+import CreateFlowGroup from '../../../../../components/ResourceTable/flows/actions/CreateFlowGroup';
+import EditFlowGroup from '../../../../../components/ResourceTable/flows/actions/EditFlowGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -261,6 +264,22 @@ const Title = ({flows, integrationId}) => {
     </div>
   );
 };
+
+const useRowActions = resource => {
+  let actions = [];
+
+  if (resource && !resource._connectorId && resource.canAttach) {
+    actions.push(Attach);
+  }
+
+  actions = [...actions, CreateFlowGroup];
+
+  if (resource.flowGroupings.length > 0) {
+    actions.push(EditFlowGroup);
+  }
+
+  return actions;
+};
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -277,6 +296,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
   }, [dispatch, filterKey]);
+  const [selectedComponent, setSelectedComponent] = useState(null);
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
 
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
@@ -284,6 +304,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, flowFilter);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
@@ -347,9 +368,11 @@ export default function FlowsPanel({ integrationId, childId }) {
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
   const basePath = getBasePath(match);
+  const rowData = { ...integration, canAttach };
 
   return (
     <div className={classes.root}>
+      {selectedComponent}
       {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
@@ -375,14 +398,6 @@ export default function FlowsPanel({ integrationId, childId }) {
             Create flow
           </TextButton>
           )}
-          {canAttach && !isStandalone && !isIntegrationApp && (
-          <TextButton
-            startIcon={<AttachIcon />}
-            onClick={() => setShowDialog(true)}
-            data-test="attachFlow">
-            Attach flow
-          </TextButton>
-          )}
           {/* check if this condition is correct */}
           {canEdit && !isIntegrationApp && (
           <TextButton
@@ -392,6 +407,14 @@ export default function FlowsPanel({ integrationId, childId }) {
             data-test="loadData">
             Load data
           </TextButton>
+          )}
+          {!isStandalone && !isMonitorLevelUser && (
+            <ActionMenu
+              setSelectedComponent={setSelectedComponent}
+              useRowActions={useRowActions}
+              rowData={rowData}
+              isIntegrationPage
+            />
           )}
         </ActionGroup>
       </PanelHeader>

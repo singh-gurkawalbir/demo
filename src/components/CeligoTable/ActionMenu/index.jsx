@@ -4,6 +4,7 @@ import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../../ArrowPopper';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import MultipleAction from './MultipleAction';
+import TextButton from '../../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
   actionsMenuPopper: {
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionMenu({ useRowActions, rowData, setSelectedComponent}) {
+export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, isIntegrationPage}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -32,15 +33,25 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
 
   return (
     <>
-      <IconButton
-        data-test="openActionsMenu"
-        aria-label="more"
-        aria-controls={actionsPopoverId}
-        aria-haspopup="true"
-        size="small"
-        onClick={handleMenuClick}>
-        <EllipsisIcon />
-      </IconButton>
+      {isIntegrationPage
+        ? (
+          <TextButton
+            startIcon={<EllipsisIcon />}
+            data-test="openActionsMenu"
+            onClick={handleMenuClick}>
+            More
+          </TextButton>
+        ) : (
+          <IconButton
+            data-test="openActionsMenu"
+            aria-label="more"
+            aria-controls={actionsPopoverId}
+            aria-haspopup="true"
+            size="small"
+            onClick={handleMenuClick}>
+            <EllipsisIcon />
+          </IconButton>
+        )}
       {open && (
       <ArrowPopper
         placement="bottom-end"
