@@ -8,6 +8,7 @@ import { pollForLatestJobs, requestLatestJobs, startPollingForLatestJobs } from 
 import { apiCallWithRetry } from '../../..';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
+import { pollApiRequests } from '../../../app';
 
 describe('requestLatestJobs saga', () => {
   const integrationId = 'i1';
@@ -65,15 +66,7 @@ describe('pollForLatestJobs saga', () => {
       .next()
       .put(actions.errorManager.integrationLatestJobs.request({ integrationId }))
       .next()
-      .call(requestLatestJobs, {integrationId})
-      .next()
-      .delay(5 * 1000)
-      .next()
-      .call(requestLatestJobs, {integrationId})
-      .next()
-      .delay(5 * 1000)
-      .next()
-      .call(requestLatestJobs, {integrationId});
+      .call(pollApiRequests, {pollSaga: requestLatestJobs, pollSagaArgs: {integrationId}, duration: 5 * 1000});
   });
 });
 
