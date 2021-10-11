@@ -2992,8 +2992,22 @@ Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
       },
+      "apiIdentifier": Object {
+        "fieldId": "apiIdentifier",
+      },
       "common": Object {
         "formId": "common",
+      },
+      "dataURITemplate": Object {
+        "fieldId": "dataURITemplate",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "edifact.format": Object {
         "fieldId": "edifact.format",
@@ -3004,8 +3018,66 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
+      "file.compressionFormat": Object {
+        "fieldId": "file.compressionFormat",
+        "visibleWhen": Array [
+          Object {
+            "field": "file.decompressFiles",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
+        "uploadSampleDataFieldName": "uploadFile",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "csv",
+            ],
+          },
+        ],
+      },
+      "file.decompressFiles": Object {
+        "defaultValue": [Function],
+        "id": "file.decompressFiles",
+        "label": "Decompress files",
+        "type": "checkbox",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "file.encoding": Object {
+        "fieldId": "file.encoding",
+      },
+      "file.fileDefinition.resourcePath": Object {
+        "fieldId": "file.fileDefinition.resourcePath",
+      },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
       },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
@@ -3024,6 +3096,9 @@ Object {
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
       },
+      "file.skipDelete": Object {
+        "fieldId": "file.skipDelete",
+      },
       "file.sortByFields": Object {
         "fieldId": "file.sortByFields",
       },
@@ -3037,23 +3112,120 @@ Object {
         "fieldId": "file.xlsx.keyColumns",
       },
       "file.xlsx.rowsPerRecord": Object {
+        "disabledWhenAll": [Function],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
-      "file.xml.resourcePath": Object {
-        "fieldId": "file.xml.resourcePath",
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
+      "fileMetadata": Object {
+        "defaultValue": [Function],
+        "id": "fileMetadata",
+        "label": "File metadata only",
+        "type": "checkbox",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "blob",
+            ],
+          },
+        ],
       },
       "fixed.format": Object {
         "fieldId": "fixed.format",
       },
+      "ftp.directoryPath": Object {
+        "fieldId": "ftp.directoryPath",
+      },
+      "ftp.fileNameEndsWith": Object {
+        "fieldId": "ftp.fileNameEndsWith",
+      },
+      "ftp.fileNameStartsWith": Object {
+        "fieldId": "ftp.fileNameStartsWith",
+      },
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
+        "helpKey": [Function],
+        "label": [Function],
+        "required": true,
+        "type": "uri",
+      },
       "outputMode": Object {
-        "defaultValue": "records",
+        "defaultDisabled": [Function],
+        "defaultValue": [Function],
+        "helpKey": "export.outputMode",
         "id": "outputMode",
         "label": "Parse files being transferred",
-        "type": "text",
-        "visible": false,
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "Yes",
+                "value": "records",
+              },
+              Object {
+                "label": "No",
+                "value": "blob",
+              },
+            ],
+          },
+        ],
+        "type": "mode",
+      },
+      "pageSize": Object {
+        "fieldId": "pageSize",
+        "validWhen": Object {
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
+          },
+        },
+      },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "uploadSampleDataFieldName": "uploadFile",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "xml",
+            ],
+          },
+        ],
+      },
+      "s3.bucket": Object {
+        "fieldId": "s3.bucket",
+      },
+      "s3.keyEndsWith": Object {
+        "fieldId": "s3.keyEndsWith",
+      },
+      "s3.keyStartsWith": Object {
+        "fieldId": "s3.keyStartsWith",
+      },
+      "s3.region": Object {
+        "fieldId": "s3.region",
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "skipRetries": Object {
+        "fieldId": "skipRetries",
+      },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
+      "uploadFile": Object {
+        "fieldId": "uploadFile",
+        "placeholder": "Sample file (that would be parsed)",
+        "refreshOptionsOnChangesTo": "file.type",
       },
     },
     "layout": Object {
@@ -3073,6 +3245,7 @@ Object {
               "containers": Array [
                 Object {
                   "fields": Array [
+                    "parsers",
                     "file.csv",
                   ],
                 },
@@ -3080,7 +3253,7 @@ Object {
               "fields": Array [
                 "outputMode",
                 "file.type",
-                "file.xml.resourcePath",
+                "uploadFile",
                 "file.json.resourcePath",
                 "file.xlsx.hasHeaderRow",
                 "file.xlsx.rowsPerRecord",
@@ -3119,7 +3292,7 @@ Object {
       ],
     },
   },
-  "init": [Function],
+  "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
