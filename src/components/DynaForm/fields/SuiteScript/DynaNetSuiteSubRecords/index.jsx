@@ -13,6 +13,7 @@ import ActionButton from '../../../../ActionButton';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import { getNetSuiteSubrecordLabel } from './SubRecordDrawer/util';
 import AddIcon from '../../../../icons/AddIcon';
+import ActionGroup from '../../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   subrecords: {
@@ -23,7 +24,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     marginLeft: 12,
     marginRight: theme.spacing(4),
-    marginTop: theme.spacing(-3),
     '&:before': {
       position: 'absolute',
       content: '""',
@@ -52,9 +52,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: theme.spacing(2),
-  },
-  actionBtns: {
-    display: 'flex',
   },
 }));
 
@@ -172,7 +169,7 @@ export default function DynaNetSuiteSubRecords(props) {
             <Typography component="span">
               {getNetSuiteSubrecordLabel(sr.referenceFieldId, referenceFields ?? [])}
             </Typography>
-            <div className={classes.actionBtns}>
+            <ActionGroup>
               <ActionButton
                 fontSize="small"
                 data-test="edit-subrecord"
@@ -186,7 +183,7 @@ export default function DynaNetSuiteSubRecords(props) {
                 onClick={() => handleDeleteClick(sr.referenceFieldId)}>
                 <DeleteIcon />
               </ActionButton>
-            </div>
+            </ActionGroup>
           </div>
         ))}
       </div>

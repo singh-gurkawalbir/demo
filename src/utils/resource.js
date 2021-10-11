@@ -833,10 +833,8 @@ export function getConnectionType(resource) {
 
   if (assistant) return assistant;
 
-  if (resource?.type === 'netsuite') {
-    if (resource?.netsuite?.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
+  if (resource?.netsuite?.authType === 'token-auto') {
+    return 'netsuite-oauth';
   }
 
   return type;
