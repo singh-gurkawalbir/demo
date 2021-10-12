@@ -27,6 +27,7 @@ import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 import { pingConnectionParentContext } from '../../../utils/requestOptions';
+import { safeParse } from '../../../utils/string';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -135,13 +136,13 @@ export function* netsuiteUserRoles({ connectionId, values }) {
       return;
     }
 
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
+    const errorsJSON = safeParse(e.message);
+    const {errors} = errorsJSON || {};
 
     yield put(
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
-        errors[0].message
+        errors ? errors[0].message : e.message
       )
     );
   }
