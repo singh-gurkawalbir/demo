@@ -23,19 +23,19 @@ const tabs = [
   { label: 'HTTP response', value: 'response' },
 ];
 
-export default function PreviewLogDetails({ flowId, exportId }) {
+export default function PreviewLogDetails({ flowId, resourceId }) {
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const activeLogKey = useSelector(state => selectors.activeLogKey(state, exportId));
-  const logDetails = useSelector(state => selectors.logDetails(state, exportId, activeLogKey), shallowEqual);
-  const {changeIdentifier, key: errorKey, error: errorMsg} = useSelector(state => selectors.listenerErrorMsg(state, exportId), shallowEqual);
+  const activeLogKey = useSelector(state => selectors.activeLogKey(state, resourceId));
+  const logDetails = useSelector(state => selectors.logDetails(state, resourceId, activeLogKey), shallowEqual);
+  const {changeIdentifier, key: errorKey, error: errorMsg} = useSelector(state => selectors.listenerErrorMsg(state, resourceId), shallowEqual);
 
   useEffect(() => {
     if (activeLogKey) {
-      dispatch(actions.logs.flowStep.requestLogDetails(flowId, exportId, activeLogKey));
+      dispatch(actions.logs.flowStep.requestLogDetails(flowId, resourceId, activeLogKey));
     }
-  }, [dispatch, exportId, flowId, activeLogKey]);
+  }, [dispatch, resourceId, flowId, activeLogKey]);
 
   useEffect(() => {
     if (errorKey && errorMsg) {

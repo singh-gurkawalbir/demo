@@ -21,7 +21,7 @@ import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
-import FlowRequestLogsDrawer from '../../FlowStepRequestLogs';
+import FlowStepRequestLogsDrawer from '../../FlowStepRequestLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import CloseButton from './CloseButton';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
@@ -292,7 +292,7 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
-  const listenerDrawerHandler = useCallback(() => {
+  const flowStepDrawerHandler = useCallback(() => {
     history.push(`${match.url}/logs`);
   }, [match.url, history]);
   const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
@@ -324,7 +324,7 @@ export default function Panel(props) {
               )}
               {hasFlowStepLogsAccess && (
                 <TextButton
-                  onClick={listenerDrawerHandler}
+                  onClick={flowStepDrawerHandler}
                   startIcon={<DebugIcon />}
                   className={classes.debugLogButton}
                   data-test="listenerLogs">
@@ -400,7 +400,7 @@ export default function Panel(props) {
         </LoadResources>
       </div>
       <EditorDrawer />
-      <FlowRequestLogsDrawer flowId={flowId} exportId={id} />
+      <FlowStepRequestLogsDrawer flowId={flowId} resourceType={resourceType} resourceId={id} />
     </>
   );
 }

@@ -47,11 +47,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LogsTable({ flowId, exportId }) {
+export default function LogsTable({ flowId, resourceType, resourceId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const debugUntil = useSelector(state => {
-    const resource = selectors.resource(state, 'exports', exportId);
+    const resource = selectors.resource(state, resourceType, resourceId);
     const {debugUntil} = resource || {};
 
     if (!debugUntil) {
@@ -64,7 +64,7 @@ export default function LogsTable({ flowId, exportId }) {
     return debugUntil;
   });
   const { hasNextPage, logsStatus, fetchStatus } = useSelector(state => {
-    const l = selectors.listenerLogs(state, exportId);
+    const l = selectors.listenerLogs(state, resourceId);
 
     return {
       hasNextPage: !!l.nextPageURL,
@@ -73,19 +73,19 @@ export default function LogsTable({ flowId, exportId }) {
     };
   }, shallowEqual);
 
-  const hasDebugLogs = useSelector(state => !!selectors.logsSummary(state, exportId).length);
-  const logsInCurrPage = useSelectorMemo(selectors.mkLogsInCurrPageSelector, exportId);
+  const hasDebugLogs = useSelector(state => !!selectors.logsSummary(state, resourceId).length);
+  const logsInCurrPage = useSelectorMemo(selectors.mkLogsInCurrPageSelector, resourceId);
   const currPageFirstKey = logsInCurrPage[0]?.key;
 
   useEffect(() => () => {
-    dispatch(actions.logs.flowStep.clear(exportId));
+    dispatch(actions.logs.flowStep.clear(resourceId));
     dispatch(actions.clearFilter(FILTER_KEY));
-  }, [dispatch, exportId]);
+  }, [dispatch, resourceId]);
 
   useEffect(() => {
-    dispatch(actions.logs.flowStep.request({flowId, exportId}));
+    dispatch(actions.logs.flowStep.request({flowId, resourceId}));
     if (debugUntil) {
-      dispatch(actions.logs.flowStep.startLogsPoll(flowId, exportId));
+      dispatch(actions.logs.flowStep.startLogsPoll(flowId, resourceId));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -93,11 +93,11 @@ export default function LogsTable({ flowId, exportId }) {
   useEffect(() => {
     // set the first key on the current page as default when user navigates b/w pages
     if (currPageFirstKey) {
-      dispatch(actions.logs.flowStep.setActiveLog(exportId, currPageFirstKey));
+      dispatch(actions.logs.flowStep.setActiveLog(resourceId, currPageFirstKey));
     }
-  }, [currPageFirstKey, dispatch, exportId]);
+  }, [currPageFirstKey, dispatch, resourceId]);
 
-  const actionProps = useMemo(() => ({ flowId, exportId }), [exportId, flowId]);
+  const actionProps = useMemo(() => ({ flowId, resourceId }), [resourceId, flowId]);
 
   if (!logsStatus || logsStatus === 'requested') {
     return (
@@ -129,7 +129,7 @@ export default function LogsTable({ flowId, exportId }) {
         </div>
         {hasDebugLogs && (
           <div className={classes.previewWrapper}>
-            <PreviewLogDetails flowId={flowId} exportId={exportId} />
+            <PreviewLogDetails flowId={flowId} resourceId={resourceId} />
           </div>
         )}
       </div>
