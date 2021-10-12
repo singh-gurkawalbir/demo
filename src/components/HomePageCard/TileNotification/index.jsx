@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     display: 'flex',
     width: '89%',
-    height: 45,
+    maxHeight: 45,
     overflowY: 'auto',
     wordBreak: 'break-word',
   },

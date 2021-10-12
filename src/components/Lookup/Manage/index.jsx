@@ -76,7 +76,7 @@ export default function ManageLookup({
         lookupTmp.expression = formVal._expression;
       } else {
         lookupTmp.map = {};
-        formVal._mapList.forEach(obj => {
+        (formVal._mapList || []).forEach(obj => {
           if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
         });
       }
@@ -90,7 +90,7 @@ export default function ManageLookup({
         lookupTmp.expression = formVal._expression;
       } else {
         lookupTmp.map = {};
-        formVal._mapList.forEach(obj => {
+        (formVal._mapList || []).forEach(obj => {
           if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
         });
       }
@@ -99,7 +99,7 @@ export default function ManageLookup({
     } else {
       if (formVal._mode === 'static') {
         lookupObj.map = {};
-        formVal._mapList.forEach(obj => {
+        (formVal._mapList || []).forEach(obj => {
           lookupObj.map[obj.export] = obj.import;
         });
       } else {

@@ -85,7 +85,7 @@ export const multiStepSaveResourceTypes = [
   'pageProcessor',
 ];
 
-const inferResourceType = adaptorType => {
+export const inferResourceType = adaptorType => {
   if (!adaptorType) return 'connections';
 
   if (adaptorType.toLowerCase().indexOf('import') > 0) {
@@ -833,10 +833,8 @@ export function getConnectionType(resource) {
 
   if (assistant) return assistant;
 
-  if (resource?.type === 'netsuite') {
-    if (resource?.netsuite?.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
+  if (resource?.netsuite?.authType === 'token-auto') {
+    return 'netsuite-oauth';
   }
 
   return type;

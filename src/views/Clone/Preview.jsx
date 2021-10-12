@@ -21,7 +21,8 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import { emptyObject, HOME_PAGE_PATH } from '../../utils/constants';
+import { CLONE_DESCRIPTION } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -91,8 +92,6 @@ const useColumns = () => [
 ];
 export default function ClonePreview(props) {
   const classes = useStyles(props);
-  const cloningDescription = `
-  Cloning can be used to create a copy of a flow, export, import, orchestration, or an entire integration. Cloning is useful for testing changes without affecting your production integrations (i.e. when you clone something you can choose a different set of connection records). Cloning supports both sandbox and production environments.`;
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
   const [cloneRequested, setCloneRequested] = useState(false);
@@ -101,11 +100,8 @@ export default function ClonePreview(props) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const showIntegrationField = resourceType === 'flows';
-  const resource =
-    useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
-    {};
-  const isIAIntegration =
-    !!(resourceType === 'integrations' && resource._connectorId);
+  const resource = useSelector(state => selectors.resource(state, resourceType, resourceId)) || emptyObject;
+  const isIAIntegration = !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
       selectors.template(state, `${resourceType}-${resourceId}`)
@@ -135,7 +131,7 @@ export default function ClonePreview(props) {
     selectors.previewTemplate(state, `${resourceType}-${resourceId}`)
   );
 
-  const remountKey = useMemo(() => hashCode(components), [components]);
+  const remountKey = useMemo(() => hashCode({components, resource, integrationsLength: integrations.length}), [components, resource, integrations.length]);
 
   useEffect(() => {
     if (resourceType === 'integrations') {
@@ -452,7 +448,7 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
-      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={cloningDescription} />
+      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={CLONE_DESCRIPTION} />
       <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>

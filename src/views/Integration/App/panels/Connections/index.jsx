@@ -16,6 +16,7 @@ import { isTradingPartnerSupported, generateNewId } from '../../../../../utils/r
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
+import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -101,7 +102,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       )}
 
       <PanelHeader title="Connections">
-        <>
+        <ActionGroup>
           {permission.create && (
             <TextButton
               startIcon={<AddIcon />}
@@ -148,7 +149,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
               Register connections
             </TextButton>
           )}
-        </>
+        </ActionGroup>
       </PanelHeader>
 
       <LoadResources required resources="connections,flows,exports,imports">
