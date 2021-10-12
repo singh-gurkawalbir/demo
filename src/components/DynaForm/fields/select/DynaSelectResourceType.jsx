@@ -1,8 +1,9 @@
 import React, { useMemo, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DynaSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers';
 import { destinationOptions, sourceOptions } from '../../../../forms/formFactory/utils';
+import actions from '../../../../actions';
 
 const webhookOnlyOptions = [
   {
@@ -64,7 +65,8 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
 
 export default function DynaSelectResourceType(props) {
   const { options = {}, mode, flowId, ...rest } = props;
-  const { id, onFieldChange } = rest;
+  const { id, onFieldChange, formKey} = rest;
+  const dispatch = useDispatch();
   const isDataloader = useSelector(state => selectors.isDataLoader(state, flowId));
   const availableOptions = useMemo(
     () =>
@@ -83,6 +85,7 @@ export default function DynaSelectResourceType(props) {
     ],
     [availableOptions]
   );
+  const resourceType = useSelector(state => selectors.formValueTrimmed(state, props.formKey)?.resourceType);
 
   useEffect(() => {
     if (options.selectedApplication) {
@@ -93,6 +96,13 @@ export default function DynaSelectResourceType(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.selectedApplication]);
+  useEffect(() => {
+    if (resourceType === 'lookupFiles') {
+      dispatch(actions.form.forceFieldState(formKey)('connection', {required: false}));
+    } else {
+      dispatch(actions.form.clearForceFieldState(formKey)('connection'));
+    }
+  }, [dispatch, formKey, resourceType]);
 
   return (
     <DynaSelect
