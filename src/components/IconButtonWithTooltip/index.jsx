@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   actionButtonWithTooltip: {
@@ -16,6 +17,7 @@ export default function IconButtonWithTooltip({
   tooltipProps = {},
   children,
   buttonSize,
+  className,
   ...buttonProps
 }) {
   const classes = useStyles();
@@ -27,7 +29,7 @@ export default function IconButtonWithTooltip({
 
       <span>
         <IconButton
-          className={classes.actionButtonWithTooltip}
+          className={clsx(classes.actionButtonWithTooltip, className)}
           {...buttonProps}
           size={buttonSize?.size || 'medium'}>
           {children}

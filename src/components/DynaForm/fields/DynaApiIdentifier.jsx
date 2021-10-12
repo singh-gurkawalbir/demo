@@ -4,7 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import DynaText from './DynaText';
 import { getApiUrl } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { OutlinedButton } from '../../Buttons';
+import CopyIcon from '../../icons/CopyIcon';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   dynaAPIWrapper: {
@@ -15,8 +16,11 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   copyInvokeUrlBtn: {
-    marginTop: 26,
+    marginTop: theme.spacing(4),
     marginLeft: theme.spacing(1),
+  },
+  copyIconButton: {
+    padding: 0,
   },
 }));
 
@@ -42,12 +46,12 @@ export default function DynaApiIdentifier(props) {
         <CopyToClipboard
           onCopy={handleCopy}
           text={invokeUrl}>
-          <OutlinedButton
-            data-test="copyToClipboard"
-            title="Copy to clipboard"
-            color="secondary">
-            Copy URL
-          </OutlinedButton>
+          <IconButtonWithTooltip
+            tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+            buttonSize={{size: 'small'}}
+            className={classes.copyIconButton}>
+            <CopyIcon />
+          </IconButtonWithTooltip>
         </CopyToClipboard>
       </div>
 

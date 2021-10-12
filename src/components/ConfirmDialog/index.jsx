@@ -28,11 +28,11 @@ const getButtonProps = ({ variant, color }) => {
   const buttonVariantProps = {
     primary: {
       color: 'primary',
-      variant: 'outlined',
+      variant: 'contained',
     },
     secondary: {
       color: 'secondary',
-      variant: 'outlined',
+      variant: 'contained',
     },
     tertiary: {
       variant: 'text',
@@ -47,7 +47,7 @@ const getButtonProps = ({ variant, color }) => {
     // NOTE: This "else" block should be deleted when we update
     // all instances of this component to use the new variant prop.
     buttonProps = {
-      variant: color === 'secondary' ? 'text' : 'outlined',
+      variant: color === 'secondary' ? 'text' : 'contained',
       color: color === 'secondary' ? '' : 'primary',
     };
   }

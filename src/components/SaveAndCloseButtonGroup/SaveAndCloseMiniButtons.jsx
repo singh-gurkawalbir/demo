@@ -16,7 +16,7 @@ export default function SaveAndCloseMiniButtons({
   return (
     <>
       <Button
-        variant="outlined"
+        variant="filled"
         data-test="save"
         disabled={!isDirty || inProgress || disabled}
         color="primary"
