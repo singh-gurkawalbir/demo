@@ -1,6 +1,7 @@
 import { select } from 'redux-saga/effects';
 import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
+import {} from '../utils';
 
 export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   if (!resourceId) return;
