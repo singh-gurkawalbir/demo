@@ -32,6 +32,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   INSTALL_PACKAGE: 'installPackage',
   STACK: 'Stack',
   FORM: 'form',
+  URL: 'url',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
