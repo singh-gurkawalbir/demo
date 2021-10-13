@@ -97,12 +97,17 @@ export default function DynaSelectResourceType(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.selectedApplication]);
   useEffect(() => {
-    if (resourceType === 'lookupFiles') {
+    if (resourceType === 'lookupFiles' && options?.selectedApplication?.id === 'http') {
+      // for blob type http export/import, connection should not be required
       dispatch(actions.form.forceFieldState(formKey)('connection', {required: false}));
     } else {
       dispatch(actions.form.clearForceFieldState(formKey)('connection'));
     }
-  }, [dispatch, formKey, resourceType]);
+  }, [dispatch, formKey, options.selectedApplication.id, resourceType]);
+
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)('connection'));
+  }, [dispatch, formKey]);
 
   return (
     <DynaSelect
