@@ -467,6 +467,7 @@ describe('Netsuite user roles saga', () => {
     success: true, accounts: [{account: {type: 'production'}}],
   }};
   const error = {message: '{"errors":[{"message":"Error message"}]}'};
+  const errorMessageNotJson = {message: 'Error message'};
   const errorsJSON = JSON.parse(error.message);
   const { errors } = errorsJSON;
   const unSuccessfulResp = {};
@@ -520,6 +521,18 @@ describe('Netsuite user roles saga', () => {
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
         errors[0].message
+      ))
+    .run());
+
+  test('should handle api error properly if api error response message is not JSON', () => expectSaga(netsuiteUserRoles, { connectionId, values })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), throwError(errorMessageNotJson)],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(
+      actions.resource.connections.netsuite.requestUserRolesFailed(
+        connectionId,
+        errorMessageNotJson.message
       ))
     .run());
 
