@@ -18,7 +18,7 @@ const getFormattedLookup = (lookup, formVal) => {
     lookupTmp.searchField = formVal.searchField;
   } else {
     lookupTmp.map = {};
-    formVal._mapList.forEach(obj => {
+    (formVal._mapList || []).forEach(obj => {
       if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
     });
   }
