@@ -21,12 +21,9 @@ import InfoIconButton from '../../components/InfoIconButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import Spinner from '../../components/Spinner';
 import { TextButton } from '../../components/Buttons';
+import ActionGroup from '../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
-  emptySpace: {
-    flexGrow: 1,
-    minWidth: theme.spacing(10),
-  },
   actions: {
     display: 'flex',
     padding: theme.spacing(2),
@@ -53,7 +50,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(0, 2),
     overflowX: 'auto',
   },
   reportsTable: {
@@ -265,18 +261,18 @@ export default function Reports() {
               >
               {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
             </Typography>
-            <div className={classes.emptySpace} />
-
-            <TextButton
-              data-test="addNewResource"
-              component={Link}
-              to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
-              startIcon={<AddIcon />}>
-              Run report
-            </TextButton>
-            <RefreshPaginationComponent
-              isLoadingResource={isLoadingResource}
-              resourceType={resourceType} />
+            <ActionGroup position="right">
+              <TextButton
+                data-test="addNewResource"
+                component={Link}
+                to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
+                startIcon={<AddIcon />}>
+                Run report
+              </TextButton>
+              <RefreshPaginationComponent
+                isLoadingResource={isLoadingResource}
+                resourceType={resourceType} />
+            </ActionGroup>
           </div>
           {!isDataReadyAfterUserRefresh && <Spinner centerAll />}
           <div className={classes.reportsTable}>
