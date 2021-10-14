@@ -4,6 +4,7 @@ import Editor from '@monaco-editor/react';
 import { diffEditor } from './diff';
 import { scriptEditor } from './script';
 import { graphQlEditor } from './graphQL';
+import { customTheme } from './customTheme';
 
 export default {
   title: 'Lab / Monaco Editor',
@@ -14,6 +15,7 @@ export default {
 export const DiffEditor = diffEditor;
 export const ScriptEditor = scriptEditor;
 export const GraphQlEditor = graphQlEditor;
+export const CustomTheme = customTheme;
 
 // TODOs: Add stories for:
 // 1. Altering theme colors. Not a deal breaker, but surely we would want some
