@@ -13,7 +13,7 @@ import LogsTable from './LogsTable';
 import Help from '../../Help';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
-import FilledButton from '../../Buttons/FilledButton';
+import { FilledButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {

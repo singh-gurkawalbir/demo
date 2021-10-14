@@ -1,6 +1,5 @@
 import React from 'react';
-import { IconButton, Tooltip } from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import { IconButton, Tooltip, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
