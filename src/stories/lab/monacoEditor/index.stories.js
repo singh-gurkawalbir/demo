@@ -5,6 +5,7 @@ import { diffEditor } from './diff';
 import { scriptEditor } from './script';
 import { graphQlEditor } from './graphQL';
 import { customTheme } from './customTheme';
+import { customAutoComplete } from './customAutoComplete';
 
 export default {
   title: 'Lab / Monaco Editor',
@@ -16,6 +17,7 @@ export const DiffEditor = diffEditor;
 export const ScriptEditor = scriptEditor;
 export const GraphQlEditor = graphQlEditor;
 export const CustomTheme = customTheme;
+export const CustomAutoComplete = customAutoComplete;
 
 // TODOs: Add stories for:
 // 1. Altering theme colors. Not a deal breaker, but surely we would want some
