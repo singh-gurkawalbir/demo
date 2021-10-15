@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Editor, { useMonaco } from '@monaco-editor/react';
 
