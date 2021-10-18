@@ -9,9 +9,10 @@ export default {
   icon: AddIcon,
   useOnClick: () => {
     const history = useHistory();
+    const { pathname } = history.location;
     const openCreateFlowGroup = useCallback(() => {
-      history.push(getRoutePath('/flowgroups/add'));
-    }, [history]);
+      history.push(getRoutePath(`${pathname}/flowgroups/add`));
+    }, [history, pathname]);
 
     return openCreateFlowGroup;
   },

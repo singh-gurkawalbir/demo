@@ -847,20 +847,20 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
 
   return createSelector(
     state => resourceListSel(state, flowsFilter).resources,
-    (_1, parentIntegration) => parentIntegration,
-    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
-    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
-    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
+    (_1, parentIntegrationId) => parentIntegrationId,
+    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
+    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
+    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
     (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegration, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
-      if (!flows || !parentIntegration) return null;
+    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
+      if (!flows || !parentIntegrationId) return null;
 
-      if (parentIntegration === STANDALONE_INTEGRATION.id) {
+      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
         return flows.filter(({_integrationId}) => !_integrationId);
       }
 
       if (isV2 || isDiy) {
-        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
+        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
 
         return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
       }

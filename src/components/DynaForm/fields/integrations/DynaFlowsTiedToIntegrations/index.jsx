@@ -14,6 +14,7 @@ const OptionCheckbox = props => {
     checked,
     label,
   } = props;
+  const { flowGroupName } = props.data;
 
   return (
     <>
@@ -23,6 +24,7 @@ const OptionCheckbox = props => {
         color="primary"
       />
       <span >{label}</span>
+      <span >{flowGroupName}</span>
     </>
   );
 };
@@ -45,20 +47,26 @@ const TypeableSelect = props => (
 export default function DynaFlowsTiedToIntegration(props) {
   const {formKey, id, onFieldChange} = props;
 
-  const selectedIntegration = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
-  const childIntegrations = useSelector(state => selectors.formState(state, formKey)?.fields?.childIntegrations?.value);
+  const selectedIntegrationId = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
+  const childIntegrationsIds = useSelector(state => selectors.formState(state, formKey)?.fields?.childIntegrations?.value);
 
-  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, selectedIntegration, childIntegrations);
+  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, selectedIntegrationId, childIntegrationsIds);
+
+  const { flowGroupings = [] } = useSelectorMemo(selectors.makeResourceSelector, 'integrations', selectedIntegrationId);
 
   // reset flows list when either integration or childIntegrations changes
   useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
   useResetWhenParentIntegrationChanges(formKey, 'childIntegrations', onFieldChange, id);
-  const options = useMemo(() => flowsTiedToIntegrations?.map(({_id, name}) => ({ label: name, value: _id}) || []), [flowsTiedToIntegrations]);
+  const options = useMemo(() => flowsTiedToIntegrations?.map(({_id, name, _flowGroupingId}) => {
+    const flowGroupName = flowGroupings.find(flowGroup => flowGroup._id === _flowGroupingId)?.name;
+
+    return { label: name, value: _id, flowGroupName};
+  }), [flowGroupings, flowsTiedToIntegrations]);
 
   return (
 
     <LoadResources required resources="flows" >
-      <TypeableSelect {...props} disabled={!selectedIntegration} options={options} />
+      <TypeableSelect {...props} disabled={!selectedIntegrationId} options={options} />
     </LoadResources>
 
   );

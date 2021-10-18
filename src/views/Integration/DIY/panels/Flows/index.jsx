@@ -29,6 +29,7 @@ import SectionTitle from '../../../common/FlowSectionTitle';
 import Attach from '../../../../../components/ResourceTable/flows/actions/Attach';
 import CreateFlowGroup from '../../../../../components/ResourceTable/flows/actions/CreateFlowGroup';
 import EditFlowGroup from '../../../../../components/ResourceTable/flows/actions/EditFlowGroup';
+import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -274,7 +275,7 @@ const useRowActions = resource => {
 
   actions = [...actions, CreateFlowGroup];
 
-  if (resource.flowGroupings.length > 0) {
+  if (resource.flowGroupings?.length > 0) {
     actions.push(EditFlowGroup);
   }
 
@@ -383,6 +384,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
       <ScheduleDrawer />
       <QueuedJobsDrawer />
+      <FlowgroupDrawer integrationId={integrationId} />
 
       <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
         <ActionGroup>

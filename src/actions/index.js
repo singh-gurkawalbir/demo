@@ -348,6 +348,16 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    flowGroups: {
+      createOrUpdate: (integration, groupName, flowIds) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
+          integration,
+          groupName,
+          flowIds,
+        }),
+      createFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_FAILED, {error}),
+    },
   },
   connections: {
     pingAndUpdate: (connectionId, parentContext) =>

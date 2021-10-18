@@ -37,7 +37,7 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
         ? (
           <TextButton
             startIcon={<EllipsisIcon />}
-            data-test="openActionsMenu"
+            data-test="openHeaderActionsMenu"
             onClick={handleMenuClick}>
             More
           </TextButton>
