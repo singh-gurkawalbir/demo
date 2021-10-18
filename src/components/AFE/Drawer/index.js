@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
+import { useIdleTimer } from 'react-idle-timer';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -39,6 +40,52 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
+const DEBOUNCE_DURATION = 1000 * 1;
+
+const SESSION_DURATION_BEFORE_ALERT = Number(process.env.SESSION_EXPIRATION_INTERVAL) - Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION);
+
+const getTimeElapsedDuringSession = sessionValidTimestamp => Date.now() - sessionValidTimestamp;
+
+const useKeepUserSessionAlive = () => {
+  const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
+  const isSessionExpiredOrInWarning = useSelector(state => !!selectors.showSessionStatus(state));
+  const dispatch = useDispatch();
+  const [timeoutValue, setTimeoutValue] = useState(SESSION_DURATION_BEFORE_ALERT);
+
+  const onActive = useCallback(() => {
+    if (isSessionExpiredOrInWarning) {
+      return;
+    }
+
+    const timeSessionElapsed = getTimeElapsedDuringSession(sessionValidTimestamp);
+
+    // set the time out for the remaining session duration
+    setTimeoutValue(SESSION_DURATION_BEFORE_ALERT - timeSessionElapsed);
+  }, [isSessionExpiredOrInWarning, sessionValidTimestamp]);
+  const onIdle = useCallback(() => {
+    if (isSessionExpiredOrInWarning) {
+      return;
+    }
+
+    dispatch(actions.user.profile.request('Refreshing session'));
+    // reset the timeout for the full session duration
+
+    setTimeoutValue(SESSION_DURATION_BEFORE_ALERT);
+  }, [dispatch, isSessionExpiredOrInWarning]);
+
+  const {reset} = useIdleTimer({
+    timeout: timeoutValue,
+    throttle: DEBOUNCE_DURATION,
+    onIdle,
+    onAction: onActive,
+  });
+
+  useEffect(() => {
+    reset();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionValidTimestamp, timeoutValue]);
+};
+
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
 function RouterWrappedContent({ hideSave }) {
@@ -63,11 +110,11 @@ function RouterWrappedContent({ hideSave }) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useKeepUserSessionAlive();
 
   if (!editorType) {
     return null;
   }
-
   const { label } = editorMetadata[editorType] || {};
   const handleClose = () => {
     dispatch(actions.editor.clear(editorId));
