@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme => ({
   drawerFooter: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     background: theme.palette.common.white,
-    padding: theme.spacing(3),
+    padding: theme.spacing(2, 3),
     display: 'flex',
   },
 }));

@@ -49,7 +49,7 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
-const AUTO_PILOT = 'autopilot';
+const AUTO_PILOT = ['autopilot', 'auto'];
 
 selectors.flowMetricsData = createSelector(
   state => state,
@@ -76,7 +76,7 @@ selectors.mkLineGraphData = () => createSelector(
     if (Array.isArray(data)) {
       if (attribute === LINE_GRAPH_TYPES.RESOLVED) {
         RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
-          flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
+          flowData[user] = data.filter(d => ((AUTO_PILOT.includes(user) ? AUTO_PILOT.includes(d.by) : !AUTO_PILOT.includes(d.by)) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
           flowData[user] = sortBy(flowData[user], ['timeInMills']);
         });
       } else {

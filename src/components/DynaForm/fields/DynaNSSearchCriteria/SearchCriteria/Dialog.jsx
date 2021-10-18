@@ -85,11 +85,14 @@ export default function SearchCriteriaDialog(props) {
       if (!criteria.operator) {
         result[index] = [...result[index] || [], 'operator'];
       }
-      if (!criteria.searchValue) {
+      if (criteria.operator !== 'isempty' && criteria.operator !== 'isnotempty' && !criteria.searchValue) {
         result[index] = [...result[index] || [], 'searchValue'];
       }
       if (criteria.showFormulaField && !criteria.formula) {
         result[index] = [...result[index] || [], 'formula'];
+      }
+      if (criteria.searchValue2Enabled && !criteria.searchValue2) {
+        result[index] = [...result[index] || [], 'searchValue2'];
       }
     });
     if (isEmpty(result)) {

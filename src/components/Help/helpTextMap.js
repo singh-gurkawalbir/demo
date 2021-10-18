@@ -607,8 +607,7 @@ export default {
   'paylocity.connection.http.unencrypted.environment': 'Please select the environment of your Paylocity account.',
   'paylocity.connection.http.unencrypted.companyId': 'Enter the Company ID.<br><br><b>Steps to get the Company ID:</b><br> 1. Sign in to the Paylocity account.<br>2.On the Dashboard, select <b>Help</b> → <b>About/Copyright</b>.<br>3. Copy the Company ID.',
   'freshservice.connection.http.unencrypted.subdomain': 'Enter the subdomain of your Freshservice account. For example, if https://mycompany.freshservice.com is the login URL, then \'mycompany\' is the subdomain.',
-  'freshservice.connection.http.auth.basic.username': 'Enter the username of your Freshservice account.',
-  'freshservice.connection.http.auth.basic.password': 'Enter the password of your Freshservice account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'freshservice.connection.http.auth.basic.username': 'Enter the API key of your Freshservice account.<br><b>Steps to get API key:</b><br>1. Login to your Support Portal.<br>2. Click on your profile picture on the top right corner of your portal.<br>3. Go to <b>Profile settings</b> Page.<br>4. Your API key will be available below the change password section to your right.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':

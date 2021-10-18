@@ -17,15 +17,14 @@ const useStyles = makeStyles(theme => ({
     borderRadius: [4, 4, 0, 0],
   },
   message: {
-    paddingBottom: theme.spacing(2),
+    padding: theme.spacing(0, 2, 2),
     textAlign: 'left',
-    paddingLeft: theme.spacing(2),
   },
   heading: {
     paddingBottom: theme.spacing(1),
   },
   content: {
-    padding: '30px 30px 30px 0',
+    paddingBottom: theme.spacing(2),
   },
   container: {
     padding: '0 0 16px 16px',

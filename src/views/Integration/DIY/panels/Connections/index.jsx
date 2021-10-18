@@ -15,6 +15,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
+import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -149,22 +150,22 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       )}
 
       <PanelHeader title="Connections">
-        <>
+        <ActionGroup>
           {permission.create && (
-            <TextButton
-              startIcon={<AddIcon />}
-              onClick={handleClick}>
-              Create connection
-            </TextButton>
+          <TextButton
+            startIcon={<AddIcon />}
+            onClick={handleClick}>
+            Create connection
+          </TextButton>
           )}
           {permission.register && !isStandalone && (
-            <TextButton
-              startIcon={<ConnectionsIcon />}
-              onClick={() => setShowRegister(true)}>
-              Register connections
-            </TextButton>
+          <TextButton
+            startIcon={<ConnectionsIcon />}
+            onClick={() => setShowRegister(true)}>
+            Register connections
+          </TextButton>
           )}
-        </>
+        </ActionGroup>
       </PanelHeader>
 
       <LoadResources required resources="connections">

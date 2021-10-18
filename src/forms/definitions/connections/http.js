@@ -23,6 +23,10 @@ export default {
       newValues['/http/ping/body'] = undefined;
     }
 
+    if (!newValues['/http/ping/method']) {
+      newValues['/http/ping/method'] = undefined;
+    }
+
     if (newValues['/http/encrypted']) {
       try {
         newValues['/http/encrypted'] = JSON.parse(newValues['/http/encrypted']);

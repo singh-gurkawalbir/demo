@@ -13,6 +13,7 @@ import {
   initInstall,
   installStep,
   installScriptStep,
+  verifyBundleOrPackageInstall,
   getCurrentStep,
   addNewChild,
   installChildStep,
@@ -565,6 +566,120 @@ describe('installer saga', () => {
         )
         .put(actions.integrationApp.installer.updateStep(id, '', 'failed'))
         .put(actions.api.failure(path, 'PUT', error.message, false))
+        .run();
+    });
+  });
+  describe('verifyBundleOrPackageInstall genretaor', () => {
+    const id = '1234';
+    const connectionId = '5678';
+    const path = `/connections/${connectionId}/distributed`;
+    const installerFunction = 'Installer_Function';
+
+    test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = { success: true };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .not.put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful and the response is success, should dispatch integrationApp installStep if isFrameWork2 false', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = false;
+      const response = { success: true };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful but response is not true, should dispatch api.failure', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = {
+        success: false,
+        message: 'something',
+      };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch integrationApp installer update step', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = true;
+      const error = {
+        code: '400',
+        message: 'something',
+      };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'failed'
+          )
+        )
         .run();
     });
   });

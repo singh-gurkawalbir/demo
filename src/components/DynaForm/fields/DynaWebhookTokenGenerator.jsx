@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { deepClone } from 'fast-json-patch';
 import {v4} from 'uuid';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
-import { getWebhookUrl } from '../../../utils/resource';
+import { isNewId, getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import CopyIcon from '../../icons/CopyIcon';
@@ -41,7 +40,6 @@ export default function DynaWebhookTokenGenerator(props) {
     value,
     buttonLabel,
     setFieldIds = [],
-    name,
     formKey,
     provider: webHookProvider,
   } = props;
@@ -66,22 +64,11 @@ export default function DynaWebhookTokenGenerator(props) {
     setFieldIds.forEach(fieldId => {
       onFieldChange(fieldId, '', true);
     });
-    const formValuesCopy = deepClone(formValues);
 
-    formValuesCopy[name] = tokenValue;
     if (formValues?.['/webhook/verify'] !== 'token' || formValues?.['/webhook/path']) {
-      dispatch(
-        actions.resourceForm.submit(
-          'exports',
-          resourceId,
-          formValuesCopy,
-          null,
-          true
-        )
-      );
       setUrl(true);
     }
-  }, [dispatch, formValues, id, name, onFieldChange, resourceId, setFieldIds]);
+  }, [formValues, id, onFieldChange, setFieldIds]);
 
   useEffect(() => {
     value && setToken(value);
@@ -104,7 +91,10 @@ export default function DynaWebhookTokenGenerator(props) {
   }, [dispatch, finalResourceId, token]);
 
   useEffect(() => {
-    if (url) {
+    // we update the url only if its an existing resource
+    // for new resource, since the url was never generated, user should manually click generate url
+    // (which will in turn submit the resource as well to generate export Id)
+    if (!isNewId(resourceId) && url) {
       const whURL = getWebhookUrl(
         { webHookProvider, webHookToken: value },
         resourceId

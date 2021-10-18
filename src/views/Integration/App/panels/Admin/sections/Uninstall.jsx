@@ -12,15 +12,14 @@ import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
-  content: {
-    marginLeft: theme.spacing(2),
-  },
   button: {
-    margin: theme.spacing(3, 0),
+    margin: theme.spacing(3, 0, 3, 2),
   },
   divider: {
-    marginTop: '30px',
-    marginBottom: '30px',
+    margin: theme.spacing(2, 0),
+  },
+  message: {
+    padding: theme.spacing(0, 2),
   },
 }));
 
@@ -80,7 +79,7 @@ export default function UninstallSection({ childId, integrationId }) {
       <PanelHeader title="Uninstall" />
 
       <div className={classes.content}>
-        <Typography>
+        <Typography className={classes.message}>
           Use this page to uninstall this instance (i.e. this tile) of the
           Integration App. Uninstalling an Integration App will remove all
           components, including the integration tile, from your integrator.io
@@ -89,7 +88,7 @@ export default function UninstallSection({ childId, integrationId }) {
           want to uninstall as this action cannot be undone.
         </Typography>
         <Divider className={classes.divider} />
-        <Typography>
+        <Typography className={classes.message}>
           Once you uninstall this Integration App there is no going back. Please
           be certain.
         </Typography>

@@ -478,20 +478,16 @@ selectors.installSetup = (state, { resourceType, resourceId, templateId }) => fr
 
 selectors.templateSetup = (state, templateId) => fromSession.template(state && state.session, templateId);
 
-selectors.templateInstallSteps = (state, templateId) => {
-  const templateInstallSteps = fromSession.templateInstallSteps(
-    state && state.session,
-    templateId
-  );
-
-  return produce(templateInstallSteps, draft => {
+selectors.templateInstallSteps = createSelector(
+  (state, templateId) => state?.session?.templates?.[templateId]?.installSteps,
+  (templateInstallSteps = emptyArray) => produce(templateInstallSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
-  });
-};
+  })
+);
 
 selectors.cloneInstallSteps = (state, resourceType, resourceId) => selectors.templateInstallSteps(state, `${resourceType}-${resourceId}`);
 

@@ -72,6 +72,9 @@ describe('marketplace selectors', () => {
       { _id: '567', applications: ['some application'] },
       { _id: '789', applications: ['some application'], framework: 'twoDotZero' },
       { _id: 'abc', applications: ['some application'], framework: 'twoDotZero' },
+      { _id: '1', applications: ['constantcontactv2'] },
+      { _id: '2', applications: ['constantcontactv3'] },
+      { _id: '3', applications: ['constantcontact'] },
     ];
     const licenses = [
       {
@@ -121,18 +124,39 @@ describe('marketplace selectors', () => {
         _connectorId: 'abc',
         _integrationId: '765',
       },
+      {
+        trialEndDate: moment()
+          .subtract(1, 'days')
+          .toISOString(),
+        type: 'connector',
+        _connectorId: '1',
+      },
+      {
+        trialEndDate: moment()
+          .subtract(1, 'days')
+          .toISOString(),
+        type: 'connector',
+        _connectorId: '2',
+      },
+      {
+        trialEndDate: moment()
+          .subtract(1, 'days')
+          .toISOString(),
+        type: 'connector',
+        _connectorId: '3',
+      },
     ];
 
     test('should return empty array on empty/undefined state', () => {
       expect(selectors.connectors(undefined)).toEqual([]);
       expect(selectors.connectors({})).toEqual([]);
     });
-    test('should return connectors on valid state', () => {
-      const state = reducer(
-        undefined,
-        actions.marketplace.receivedConnectors({ connectors: testConnectors })
-      );
+    const state = reducer(
+      undefined,
+      actions.marketplace.receivedConnectors({ connectors: testConnectors })
+    );
 
+    test('should return connectors on valid state', () => {
       expect(
         selectors.connectors(state, 'some application', false, licenses)
       ).toEqual([
@@ -143,25 +167,44 @@ describe('marketplace selectors', () => {
         { _id: 'abc', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
       ]);
     });
+    test('should return all constant contact connectors if application is constant contact', () => {
+      expect(
+        selectors.connectors(state, 'constantcontact', false, licenses)
+      ).toEqual([
+        { _id: '1', applications: ['constantcontactv2'], canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
+        { _id: '2', applications: ['constantcontactv3'], canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
+        { _id: '3', applications: ['constantcontact'], canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
+      ]);
+    });
   });
   describe('marketplaceTemplatesByApp', () => {
     const testTemplates = [
       { _id: '123' },
       { _id: '456', applications: ['some application'] },
+      { _id: '1', applications: ['constantcontactv2'] },
+      { _id: '2', applications: ['constantcontactv3'] },
+      { _id: '3', applications: ['constantcontact'] },
     ];
 
     test('should return empty array on empty/undefined state', () => {
       expect(selectors.marketplaceTemplatesByApp(undefined)).toEqual([]);
       expect(selectors.marketplaceTemplatesByApp({})).toEqual([]);
     });
-    test('should return templates on valid state', () => {
-      const state = reducer(
-        undefined,
-        actions.marketplace.receivedTemplates({ templates: testTemplates })
-      );
+    const state = reducer(
+      undefined,
+      actions.marketplace.receivedTemplates({ templates: testTemplates })
+    );
 
+    test('should return templates on valid state', () => {
       expect(selectors.marketplaceTemplatesByApp(state, 'some application')).toEqual([
         state.templates[1],
+      ]);
+    });
+    test('should return constant contact v2 and v3 templates if application is constantcontact', () => {
+      expect(selectors.marketplaceTemplatesByApp(state, 'constantcontact')).toEqual([
+        { _id: '1', applications: ['constantcontactv2'] },
+        { _id: '2', applications: ['constantcontactv3'] },
+        { _id: '3', applications: ['constantcontact'] },
       ]);
     });
   });
