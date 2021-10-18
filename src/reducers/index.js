@@ -544,7 +544,7 @@ selectors.mkTileApplications = () => createSelector(
       return emptyArray;
     }
     if (!isIAV2) {
-      applications = tile?.connector?.applications || emptyArray;
+      applications = [...(tile?.connector?.applications || [])] || emptyArray;
       // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
       if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
         applications[0] = 'magento1';
