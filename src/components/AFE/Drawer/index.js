@@ -42,7 +42,10 @@ const useStyles = makeStyles(theme => ({
 
 const DEBOUNCE_DURATION = 1000 * 1;
 
-const SESSION_DURATION_BEFORE_ALERT = Number(process.env.SESSION_EXPIRATION_INTERVAL) - Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION);
+const SESSION_DURATION_BEFORE_ALERT = Number(process.env.SESSION_EXPIRATION_INTERVAL) -
+Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION) -
+// To prevent a race condition with the isSessionExpiredOrInWarning lets set the timeout 5 seconds prior to the alert
+ 1000 * 5;
 
 const getTimeElapsedDuringSession = sessionValidTimestamp => Date.now() - sessionValidTimestamp;
 
