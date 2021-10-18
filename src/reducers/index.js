@@ -5763,7 +5763,8 @@ selectors.isEditorDisabled = (state, editorId) => {
 
   // if we are on FB actions, below logic applies
   // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
-  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
+  if (editorType === 'mappings' ||
+  (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter'))) {
     const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
     return isMonitorLevelAccess;
