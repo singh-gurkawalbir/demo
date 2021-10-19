@@ -29,9 +29,8 @@ import {
   fetchUIVersion,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../utils/constants';
 import { pollApiRequests, POLL_SAMPLE_INTERVAL } from '../app';
-import { POLLING_STATUS } from '../../reducers/app';
 
 describe('pollApiRequests', () => {
   // eslint-disable-next-line no-empty-function

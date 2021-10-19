@@ -2,8 +2,8 @@
 import { put, select, delay, call, race, takeEvery, take } from 'redux-saga/effects';
 import {isEqual} from 'lodash';
 import { selectors } from '../../reducers';
-import { POLLING_STATUS } from '../../reducers/app';
 import actionTypes from '../../actions/types';
+import { POLLING_STATUS } from '../../utils/constants';
 
 export const POLL_SAMPLE_INTERVAL = 1000;
 
@@ -16,7 +16,6 @@ export function* pollApiRequests({pollAction, pollSaga, pollSagaArgs, duration})
 
     // if polling status is set to stop ..stop making polling calls and allow the session to expire
     if (pollingStatus === POLLING_STATUS.STOP) {
-      // if polling status is set to stop ..stop making polling calls and allow the session to expire
       yield delay(POLL_SAMPLE_INTERVAL);
     } else {
       if (pollAction) {

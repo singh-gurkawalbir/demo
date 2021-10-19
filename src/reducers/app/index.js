@@ -1,18 +1,12 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
+import { POLLING_STATUS } from '../../utils/constants';
 
 export const defaultState = {
   appErrored: false,
   bannerOpened: true,
   count: 1,
 };
-export const POLLING_STATUS = {
-  SLOW: 'slow down polling',
-  RESUME: 'resume polling',
-  STOP: 'stop polling',
-};
-
-Object.freeze(POLLING_STATUS);
 // #region Reducers
 export default function (state = defaultState, action) {
   const {version, type } = action;
