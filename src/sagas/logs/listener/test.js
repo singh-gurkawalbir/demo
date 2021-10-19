@@ -113,7 +113,7 @@ describe('Listener logs sagas', () => {
       saga.next();
       expect(saga.next([{time: ''}]).value).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: '' }));
       expect(saga.next().value).toEqual(delay(15000));
-      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId, timeGt: '' }, duration: 15000}));
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, duration: 15000}));
       expect(saga.next().done).toEqual(true);
     });
   });

@@ -6,7 +6,7 @@ import { POLLING_STATUS } from '../../utils/constants';
 
 export const POLL_SAMPLE_INTERVAL = 1000;
 
-export function* pollApiRequests({pollAction, pollSaga, pollSagaArgs, duration}) {
+export function* pollApiRequests({pollAction, pollSaga, pollSagaArgs, duration, disableSlowPolling}) {
   if (pollAction && pollSaga) {
     throw new Error('Cannot have both pollAction and pollSaga provided, the poll saga supports either one');
   }
@@ -20,14 +20,16 @@ export function* pollApiRequests({pollAction, pollSaga, pollSagaArgs, duration})
       if (pollAction) {
         yield put(pollAction);
       } else {
-        const {terminatePolling} = (yield call(pollSaga, pollSagaArgs)) || {};
+        const pollingLastStoppedAt = yield select(selectors.pollingLastStoppedAt);
+
+        const {terminatePolling} = (yield call(pollSaga, {...pollSagaArgs, pollingLastStoppedAt})) || {};
 
         if (terminatePolling) {
           return;
         }
       }
 
-      yield delay(pollingStatus === POLLING_STATUS.SLOW ? duration * 2 : duration);
+      yield delay(!disableSlowPolling && pollingStatus === POLLING_STATUS.SLOW ? duration * 2 : duration);
     }
   }
 }

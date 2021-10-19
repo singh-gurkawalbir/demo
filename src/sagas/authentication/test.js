@@ -141,9 +141,13 @@ describe('pollApiRequests', () => {
 
   describe('for pollSaga', () => {
     const pollSagaArgs = {};
+    // pollingLastStoppedAt is initially undefined
+    const pollingLastStoppedAt = undefined;
     const pollRegularly = saga => saga.select(selectors.pollingStatus)
       .next()
-      .call(somePollSaga, pollSagaArgs)
+      .select(selectors.pollingLastStoppedAt)
+      .next(pollingLastStoppedAt)
+      .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
       .next()
       .delay(pollDuration);
 
@@ -155,7 +159,38 @@ describe('pollApiRequests', () => {
       // after polling again
       pollRegularly(afterPollingOnce.next());
     });
-    test('should terminate the polling with the poll saga returns terminatePolling ', () => {
+    test('should slow down polling when the polling status is slow', () => {
+      const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, duration: pollDuration});
+      const afterPollingOnce = pollRegularly(startTheSaga.next());
+
+      // poll again with the saga returning terminatePolling set to true
+      afterPollingOnce.next()
+        .select(selectors.pollingStatus)
+        .next(POLLING_STATUS.SLOW)
+        .select(selectors.pollingLastStoppedAt)
+        .next(pollingLastStoppedAt)
+        .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
+        .next()
+        .delay(2 * pollDuration);
+    });
+
+    test('should ignore slow down polling when the polling status is slow and disableSlowPolling is set to true ', () => {
+      const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, disableSlowPolling: true, duration: pollDuration});
+      const afterPollingOnce = pollRegularly(startTheSaga.next());
+
+      // poll again with the saga returning terminatePolling set to true
+      afterPollingOnce.next()
+        .select(selectors.pollingStatus)
+        .next(POLLING_STATUS.SLOW)
+        .select(selectors.pollingLastStoppedAt)
+        .next(pollingLastStoppedAt)
+        .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
+        .next()
+        // continue polling with the regular polling duration
+        .delay(pollDuration);
+    });
+
+    test('should poll with  ', () => {
       const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, duration: pollDuration});
       const afterPollingOnce = pollRegularly(startTheSaga.next());
 
@@ -163,7 +198,9 @@ describe('pollApiRequests', () => {
       afterPollingOnce.next()
         .select(selectors.pollingStatus)
         .next()
-        .call(somePollSaga, pollSagaArgs)
+        .select(selectors.pollingLastStoppedAt)
+        .next(pollingLastStoppedAt)
+        .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
         .next({terminatePolling: true})
         // exit the saga
         .isDone();
