@@ -141,13 +141,9 @@ describe('pollApiRequests', () => {
 
   describe('for pollSaga', () => {
     const pollSagaArgs = {};
-    // pollingLastStoppedAt is initially undefined
-    const pollingLastStoppedAt = undefined;
     const pollRegularly = saga => saga.select(selectors.pollingStatus)
       .next()
-      .select(selectors.pollingLastStoppedAt)
-      .next(pollingLastStoppedAt)
-      .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
+      .call(somePollSaga, pollSagaArgs)
       .next()
       .delay(pollDuration);
 
@@ -167,9 +163,7 @@ describe('pollApiRequests', () => {
       afterPollingOnce.next()
         .select(selectors.pollingStatus)
         .next(POLLING_STATUS.SLOW)
-        .select(selectors.pollingLastStoppedAt)
-        .next(pollingLastStoppedAt)
-        .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
+        .call(somePollSaga, pollSagaArgs)
         .next()
         .delay(2 * pollDuration);
     });
@@ -182,25 +176,20 @@ describe('pollApiRequests', () => {
       afterPollingOnce.next()
         .select(selectors.pollingStatus)
         .next(POLLING_STATUS.SLOW)
-        .select(selectors.pollingLastStoppedAt)
-        .next(pollingLastStoppedAt)
-        .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
+        .call(somePollSaga, pollSagaArgs)
         .next()
         // continue polling with the regular polling duration
         .delay(pollDuration);
     });
 
-    test('should poll with  ', () => {
+    test('should terminate polling when the pollSaga return terminatePolling set to true  ', () => {
       const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, duration: pollDuration});
       const afterPollingOnce = pollRegularly(startTheSaga.next());
 
-      // poll again with the saga returning terminatePolling set to true
       afterPollingOnce.next()
         .select(selectors.pollingStatus)
         .next()
-        .select(selectors.pollingLastStoppedAt)
-        .next(pollingLastStoppedAt)
-        .call(somePollSaga, {...pollSagaArgs, pollingLastStoppedAt})
+        .call(somePollSaga, pollSagaArgs)
         .next({terminatePolling: true})
         // exit the saga
         .isDone();

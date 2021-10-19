@@ -20,9 +20,7 @@ export function* pollApiRequests({pollAction, pollSaga, pollSagaArgs, duration, 
       if (pollAction) {
         yield put(pollAction);
       } else {
-        const pollingLastStoppedAt = yield select(selectors.pollingLastStoppedAt);
-
-        const {terminatePolling} = (yield call(pollSaga, {...pollSagaArgs, pollingLastStoppedAt})) || {};
+        const {terminatePolling} = (yield call(pollSaga, pollSagaArgs)) || {};
 
         if (terminatePolling) {
           return;

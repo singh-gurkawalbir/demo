@@ -25,7 +25,6 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.POLLING.STOP:
         draft.pollingStatus = POLLING_STATUS.STOP;
-        draft.pollingLastStoppedAt = Date.now();
         break;
 
       case actionTypes.APP_TOGGLE_BANNER:
@@ -77,7 +76,6 @@ selectors.appErrored = state => {
 };
 
 selectors.pollingStatus = state => state?.pollingStatus;
-selectors.pollingLastStoppedAt = state => state?.pollingLastStoppedAt;
 selectors.initVersion = state => state?.initVersion;
 selectors.version = state => state?.version;
 selectors.isUiVersionDifferent = state => state?.initVersion !== state?.version;
