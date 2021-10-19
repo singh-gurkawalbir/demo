@@ -1,67 +1,58 @@
-import { call, put, all, select, takeEvery } from 'redux-saga/effects';
+import { call, put, all, takeEvery } from 'redux-saga/effects';
+import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { selectors } from '../../reducers';
-import { SCOPES } from '../resourceForm';
-import { commitStagedChanges } from '../resources';
 
-export function* createOrUpdateFlowGroup({ integration, groupName, flowIds }) {
+export function* updateResource({ flow, flowGroupId }) {
+  const path = `/flows/${flow?._id}`;
+
+  const payload = {
+    ...flow,
+    _flowGroupingId: flowGroupId,
+  };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'put',
+        body: payload,
+      },
+      hidden: false,
+      message: 'Updating flow group',
+    });
+  } catch (error) {
+    yield put(actions.resource.integrations.flowGroups.createFailed(error));
+  }
+}
+export function* createOrUpdateFlowGroup({ integration, groupName, flows }) {
   if (!integration) {
     return;
   }
-  const { _id: integrationId, flowGroupings = [] } = integration;
+  const path = `/integrations/${integration._id}`;
+  const payload = { ...integration };
+  let response;
 
-  const isGroupPresent = flowGroupings.find(flowGroup => flowGroup.name === groupName);
+  payload.flowGroupings.push({ name: groupName});
 
-  if (!isGroupPresent) {
-    const patchSet = [{
-      op: 'replace',
-      path: '/flowGroupings',
-      value: [
-        ...flowGroupings,
-        {
-          name: groupName,
-        },
-      ],
-    }];
-
-    yield put(actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE));
-
-    const resp = yield call(commitStagedChanges, {
-      resourceType: 'integrations',
-      id: integrationId,
-      scope: SCOPES.VALUE,
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'put',
+        body: payload,
+      },
+      hidden: false,
+      message: 'Updating flow group',
     });
-
-    if (resp?.error) {
-      yield put(actions.resource.integrations.flowGroups.createFailed(resp.error));
-    }
+  } catch (error) {
+    yield put(actions.resource.integrations.flowGroups.createFailed(error));
   }
 
-  const updatedIntegration = yield select(selectors.resource, 'integrations', integrationId);
+  if (response) {
+    const { _id: flowGroupId } = response.flowGroupings?.find(flowGroup => flowGroup.name === groupName);
 
-  if (updatedIntegration) {
-    const { _id: flowGroupId } = updatedIntegration.flowGroupings?.find(flowGroup => flowGroup.name === groupName);
-
-    try {
-      yield all(flowIds.map(flowId => {
-        const patchSet = [{
-          op: 'replace',
-          path: '/_flowGroupingId',
-          value: flowGroupId,
-        }];
-
-        put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
-
-        return call(commitStagedChanges, {
-          resourceType: 'flows',
-          id: flowId,
-          scope: SCOPES.VALUE,
-        });
-      }));
-    } catch (error) {
-      console.log(error);
-    }
+    yield all(flows.map(flow => call(updateResource, { flow, flowGroupId })));
   }
 }
 

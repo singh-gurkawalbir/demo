@@ -349,11 +349,11 @@ const resource = {
         integrationId,
       }),
     flowGroups: {
-      createOrUpdate: (integration, groupName, flowIds) =>
+      createOrUpdate: (integration, groupName, flows) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
           integration,
           groupName,
-          flowIds,
+          flows,
         }),
       createFailed: error =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_FAILED, {error}),

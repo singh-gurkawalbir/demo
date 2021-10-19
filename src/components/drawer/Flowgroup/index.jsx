@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../../actions';
@@ -13,6 +13,7 @@ import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCl
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const formKey = 'flow-flowgroup';
 const paths = ['flowgroups/add', 'flowgroups/edit'];
@@ -27,8 +28,9 @@ const getFieldMeta = integrationId => ({
     },
     name: {
       id: 'name',
-      type: 'text',
+      type: 'flowgroupname',
       label: 'Name',
+      integrationId,
       required: true,
     },
     _flowIds: {
@@ -46,22 +48,31 @@ const getFieldMeta = integrationId => ({
 function FlowgroupForm({ integrationId }) {
   const history = useHistory();
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const [remountCount, setRemountCount] = useState(0);
   const handleClose = history.goBack;
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const values = useSelector(state => selectors.formState(state, formKey)?.fields);
+  const fieldMeta = getFieldMeta(integrationId);
+  const flowGroupSaveStatus = useSelector(state => selectors.flowGroupSaveStatus(state, integrationId));
+  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []);
+
+  useFormInitWithPermissions({formKey, fieldMeta, remount: remountCount});
+
+  useEffect(() => {
+    if (flowGroupSaveStatus === 'Failed') {
+      enquesnackbar({ message: 'Flow goup failed to save' });
+    }
+  }, [enquesnackbar, flowGroupSaveStatus]);
   const handleSave = useCallback(() => {
     const { name, _flowIds } = values;
+    const selectedFlows = flowsTiedToIntegrations.filter(flow => _flowIds.value.find(Id => Id === flow._id));
 
-    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integration, name.value, _flowIds.value));
-  }, [dispatch, integration, values]);
-
-  const fieldMeta = getFieldMeta(integrationId);
+    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integration, name.value, selectedFlows));
+  }, [dispatch, flowsTiedToIntegrations, integration, values]);
   const remountForm = useCallback(() => {
     setRemountCount(remountCount => remountCount + 1);
   }, []);
-
-  useFormInitWithPermissions({formKey, fieldMeta, remount: remountCount});
 
   return (
     <LoadResources required resources="flows">

@@ -139,6 +139,7 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
+import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -274,6 +275,7 @@ export default {
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor_afe,
   as2Mode: DynaAs2Mode,
   childlicenses: DynaChildLicenses,
+  flowgroupname: DynaFlowGroupName,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
