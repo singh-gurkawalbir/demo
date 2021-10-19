@@ -53,40 +53,42 @@ const useKeepUserSessionAlive = () => {
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
   const isSessionExpiredOrInWarning = useSelector(state => !!selectors.showSessionStatus(state));
   const dispatch = useDispatch();
-  const [timeoutValue, setTimeoutValue] = useState(SESSION_DURATION_BEFORE_ALERT);
+  const [isUserActive, setIsUserActive] = useState(false);
 
   const onActive = useCallback(() => {
-    if (isSessionExpiredOrInWarning) {
-      return;
-    }
-
-    const timeSessionElapsed = getTimeElapsedDuringSession(sessionValidTimestamp);
-
-    // set the time out for the remaining session duration
-    setTimeoutValue(SESSION_DURATION_BEFORE_ALERT - timeSessionElapsed);
-  }, [isSessionExpiredOrInWarning, sessionValidTimestamp]);
-  const onIdle = useCallback(() => {
-    if (isSessionExpiredOrInWarning) {
-      return;
-    }
-
-    dispatch(actions.user.profile.request('Refreshing session'));
-    // reset the timeout for the full session duration
-
-    setTimeoutValue(SESSION_DURATION_BEFORE_ALERT);
-  }, [dispatch, isSessionExpiredOrInWarning]);
-
+    setIsUserActive(true);
+  }, []);
   const {reset} = useIdleTimer({
-    timeout: timeoutValue,
+    timeout: SESSION_DURATION_BEFORE_ALERT,
     throttle: DEBOUNCE_DURATION,
-    onIdle,
     onAction: onActive,
   });
 
   useEffect(() => {
-    reset();
+    let timeoutId;
+
+    if (isUserActive && !isSessionExpiredOrInWarning) {
+      const remainingSessionDuration = SESSION_DURATION_BEFORE_ALERT -
+      getTimeElapsedDuringSession(sessionValidTimestamp);
+
+      // set timeout to refresh the session almost at the very end of the session window
+      // do not refresh for every user update
+      timeoutId = setTimeout(() => {
+        dispatch(actions.user.profile.request('Refreshing session'));
+        setIsUserActive(false);
+      }, [remainingSessionDuration]);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionValidTimestamp, timeoutValue]);
+  }, [isUserActive, isSessionExpiredOrInWarning]);
+  useEffect(() => {
+    reset();
+    setIsUserActive(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionValidTimestamp]);
 };
 
 // hideSave: This is currently only used for the playground where we do not
