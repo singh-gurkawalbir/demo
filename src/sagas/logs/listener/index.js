@@ -38,13 +38,12 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
 export function* pollForLatestLogs({ flowId, exportId }) {
   const logsList = yield select(selectors.logsSummary, exportId);
   // the first poll should start from latest log captured time
-  let timeGt = logsList[0]?.time;
+  const timeGt = logsList[0]?.time;
   const POLLING_DURATION = 15000;
 
   yield call(fetchNewLogs, { flowId, exportId, timeGt });
   yield delay(POLLING_DURATION);
-  timeGt = '';
-  yield call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId, timeGt }, duration: POLLING_DURATION});
+  yield call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, duration: POLLING_DURATION});
 }
 
 export function* startPollingForRequestLogs({flowId, exportId}) {

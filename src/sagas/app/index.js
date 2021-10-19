@@ -1,4 +1,3 @@
-
 import { put, select, delay, call, race, takeEvery, take } from 'redux-saga/effects';
 import {isEqual} from 'lodash';
 import { selectors } from '../../reducers';
