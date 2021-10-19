@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, FormControlLabel, Checkbox } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -46,6 +46,9 @@ const useStyles = makeStyles(theme => ({
   },
   hideWrapper: {
     display: 'none',
+  },
+  hideEmptyLabel: {
+    marginTop: theme.spacing(0.5),
   },
 }));
 
@@ -123,6 +126,18 @@ export default function RunHistory({ flowId, className }) {
     [dispatch, fetchFlowRunHistory, filter],
   );
 
+  const handleHideEmptyJobs = useCallback(
+    value => {
+      dispatch(
+        actions.patchFilter(FILTER_KEYS.RUN_HISTORY, {
+          hideEmpty: value,
+        })
+      );
+      fetchFlowRunHistory();
+    },
+    [dispatch, fetchFlowRunHistory],
+  );
+
   const handleChangePage = useCallback((event, newPage) => {
     setCurrentPage(newPage);
   }, []);
@@ -147,6 +162,21 @@ export default function RunHistory({ flowId, className }) {
               fromDate={startOfDay(addDays(new Date(), -29))}
               showTime={false}
          />
+            <div className={classes.hideLabel}>
+              <FormControlLabel
+                data-test="hideEmptyJobsFilter"
+                label="Hide empty jobs"
+                classes={{ label: classes.hideEmptyLabel }}
+                control={(
+                  <Checkbox
+                    checked={filter?.hideEmpty}
+                    data-test="hideEmptyJobs"
+                    color="primary"
+                    onChange={e => handleHideEmptyJobs(e.target.checked)}
+            />
+            )}
+        />
+            </div>
           </div>
           <div className={classes.actions}>
             { hasFlowRunHistory && (

@@ -4,7 +4,7 @@ import { getJobDuration, FILTER_KEYS } from '../../../utils/errorManagement';
 import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import {COMPLETED_STATUS_OPTIONS} from '../../../utils/accountDashboard';
+import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 import JobStatusWithTag from './JobStatusWithTag';
 
 export default {
@@ -18,7 +18,7 @@ export default {
             title="Status"
             filterBy="status"
             filterKey={FILTER_KEYS.RUN_HISTORY}
-            options={COMPLETED_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
+            options={RUN_HISTORY_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
         );
       },
       Value: ({rowData: r}) => <JobStatusWithTag job={r} />,
