@@ -46,13 +46,14 @@ export default {
         buttons: [
           {
             label: 'Retry',
+            variant: 'filled',
             onClick: () => {
               handleRetry();
             },
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

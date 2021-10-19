@@ -29,11 +29,12 @@ export default {
         buttons: [
           {
             label: 'Purge',
+            variant: 'filled',
             onClick: purgeResource,
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

@@ -39,6 +39,7 @@ export default function DynaSemiAssistantOperationSelect(props) {
       buttons: [
         {
           label: 'Yes',
+          variant: 'filled',
           onClick: () => {
             const assistantConfig = semiAssistantExportConfig(assistantData, value);
             const flattenedAssistantConfig = flatten(assistantConfig);
@@ -57,7 +58,7 @@ export default function DynaSemiAssistantOperationSelect(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

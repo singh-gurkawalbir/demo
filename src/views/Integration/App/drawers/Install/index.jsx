@@ -367,6 +367,7 @@ export default function ConnectorInstallation(props) {
       buttons: [
         {
           label: 'Uninstall',
+          variant: 'filled',
           onClick: () => {
             if (!_connectorId) {
               dispatch(actions.resource.integrations.delete(integrationId));
@@ -409,7 +410,7 @@ export default function ConnectorInstallation(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

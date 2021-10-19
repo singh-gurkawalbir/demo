@@ -22,11 +22,12 @@ export default {
         buttons: [
           {
             label: 'Revoke',
+            variant: 'filled',
             onClick: revokeConnection,
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

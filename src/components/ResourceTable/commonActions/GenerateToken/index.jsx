@@ -34,11 +34,12 @@ export default {
         buttons: [
           {
             label: 'Generate',
+            variant: 'filled',
             onClick: generateSystemToken,
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

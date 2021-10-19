@@ -22,11 +22,12 @@ export default {
         buttons: [
           {
             label: 'Yes, cancel',
+            variant: 'filled',
             onClick: cancelTransfer,
           },
           {
             label: 'No, go back',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

@@ -27,13 +27,14 @@ export default {
         buttons: [
           {
             label: 'Make owner',
+            variant: 'filled',
             onClick: () => {
               dispatch(actions.user.org.users.makeOwner(email));
             },
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

@@ -126,11 +126,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             buttons: [
               {
                 label: 'Detach',
+                variant: 'filled',
                 onClick: detachFlow,
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });
@@ -164,11 +165,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             buttons: [
               {
                 label: 'Delete',
+                variant: 'filled',
                 onClick: deleteFlow,
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });

@@ -143,13 +143,14 @@ export default function ClonePreview(props) {
             buttons: [
               {
                 label: 'Yes, switch',
+                variant: 'filled',
                 onClick: () => {
                   props.history.push(getRoutePath('/'));
                 },
               },
               {
                 label: 'No, go back',
-                color: 'secondary',
+                variant: 'text',
                 onClick: () => {
                   dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
                   props.history.push(

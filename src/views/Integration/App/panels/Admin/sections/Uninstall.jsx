@@ -37,6 +37,7 @@ export default function UninstallSection({ childId, integrationId }) {
       buttons: [
         {
           label: 'Uninstall',
+          variant: 'filled',
           onClick: () => {
             if (
               integration.settings &&
@@ -54,7 +55,7 @@ export default function UninstallSection({ childId, integrationId }) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

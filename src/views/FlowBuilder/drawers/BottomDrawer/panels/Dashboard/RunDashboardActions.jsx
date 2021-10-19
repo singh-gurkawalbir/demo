@@ -97,13 +97,14 @@ export default function RunDashboardActions({ flowId }) {
       buttons: [
         {
           label: 'Cancel run',
+          variant: 'filled',
           onClick: () => {
             dispatch(actions.errorManager.latestFlowJobs.cancelLatestJobs({flowId, jobIds: cancellableJobIds }));
           },
         },
         {
           label: 'No, go back',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

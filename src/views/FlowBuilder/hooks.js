@@ -49,7 +49,7 @@ export const useHandleDelete = flowId => {
         buttons: [
           {
             label: 'Remove',
-            color: 'primary',
+            variant: 'filled',
             onClick: () => {
               if (type === itemTypes.PAGE_PROCESSOR) {
                 const newOrder = [...pageProcessors];
@@ -68,7 +68,7 @@ export const useHandleDelete = flowId => {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

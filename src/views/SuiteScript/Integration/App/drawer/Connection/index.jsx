@@ -116,11 +116,12 @@ export default function ConnectionDrawer({
         buttons: [
           {
             label: 'Yes, confirm',
+            variant: 'filled',
             onClick: handleConnectionSubmit,
           },
           {
             label: 'No, go back',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

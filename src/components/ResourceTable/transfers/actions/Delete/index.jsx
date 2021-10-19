@@ -22,13 +22,14 @@ export default {
         buttons: [
           {
             label: 'Delete',
+            variant: 'filled',
             onClick: () => {
               deleteTransfer();
             },
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

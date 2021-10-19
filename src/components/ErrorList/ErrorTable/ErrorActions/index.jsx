@@ -100,13 +100,14 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearc
       buttons: [
         {
           label: 'Retry',
+          variant: 'filled',
           onClick: () => {
             onClick(e);
           },
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -168,13 +169,14 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApp
       buttons: [
         {
           label: 'Resolve',
+          variant: 'filled',
           onClick: () => {
             onClick(e);
           },
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -248,13 +250,14 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
       buttons: [
         {
           label: 'Retry',
+          variant: 'filled',
           onClick: () => {
             retryErrors(e.target.value);
           },
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

@@ -43,6 +43,7 @@ export default function AddonInstallerButton({ resource }) {
         buttons: [
           {
             label: 'Uninstall',
+            variant: 'filled',
             onClick: () => {
               dispatch(
                 actions.integrationApp.isAddonInstallInprogress(
@@ -63,7 +64,7 @@ export default function AddonInstallerButton({ resource }) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

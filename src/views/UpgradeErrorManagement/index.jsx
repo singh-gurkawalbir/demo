@@ -66,6 +66,7 @@ export default function UpgradeErrorManagement() {
         buttons: [
           {
             label: 'Yes, upgrade',
+            variant: 'filled',
             dataTest: 'em2.0_confirm_upgrade',
             onClick: () => {
               dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
@@ -74,7 +75,7 @@ export default function UpgradeErrorManagement() {
           },
           {
             label: 'No, cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -96,6 +97,7 @@ export default function UpgradeErrorManagement() {
       buttons: [
         {
           label: 'Let me start managing errors!',
+          variant: 'filled',
           onClick: () => {
             redirectToDashboard();
           },

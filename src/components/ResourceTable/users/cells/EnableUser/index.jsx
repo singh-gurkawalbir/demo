@@ -22,13 +22,14 @@ export default function EnableUser({ user }) {
       buttons: [
         {
           label: disabled ? 'Enable' : 'Disable',
+          variant: 'filled',
           onClick: () => {
             dispatch(actions.user.org.users.disable(userId, disabled));
           },
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

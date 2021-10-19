@@ -44,10 +44,11 @@ export default function DynaFeatureCheck(props) {
           buttons: [
             {
               label: 'No',
-              color: 'secondary',
+              variant: 'text',
             },
             {
               label: 'Yes',
+              variant: 'filled',
               onClick: () => {
                 fieldChange(id, value);
               },

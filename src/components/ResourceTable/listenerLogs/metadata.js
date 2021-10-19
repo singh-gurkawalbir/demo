@@ -93,11 +93,12 @@ export default {
             buttons: [
               {
                 label: 'Delete',
+                variant: 'filled',
                 onClick: handleClick,
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });

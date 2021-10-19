@@ -74,6 +74,7 @@ export default function DynaNetSuiteSubRecords(props) {
         buttons: [
           {
             label: 'Remove',
+            variant: 'filled',
             onClick: () => {
               const updatedSubrecords = subRecordImports.filter(
                 sr => sr.referenceFieldId !== fieldId
@@ -98,7 +99,7 @@ export default function DynaNetSuiteSubRecords(props) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

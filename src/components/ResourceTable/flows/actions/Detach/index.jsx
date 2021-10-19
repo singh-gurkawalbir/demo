@@ -45,11 +45,12 @@ export default {
         buttons: [
           {
             label: 'Detach',
+            variant: 'filled',
             onClick: detachFlow,
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
