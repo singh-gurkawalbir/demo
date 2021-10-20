@@ -160,7 +160,6 @@ export default function MarketplaceList() {
         buttons: [
           {
             label: 'Install',
-            variant: 'filled',
             onClick: tag => {
               dispatch(
                 actions.marketplace.installConnector(
@@ -198,7 +197,6 @@ export default function MarketplaceList() {
         buttons: [
           {
             label: 'Request a demo',
-            variant: 'filled',
             onClick: () => {
               handleContactSalesClick(connector);
             },
@@ -218,7 +216,6 @@ export default function MarketplaceList() {
         buttons: [
           {
             label: 'Start free trial',
-            variant: 'filled',
             onClick: () => {
               handleConnectorInstallClick(connector);
             },

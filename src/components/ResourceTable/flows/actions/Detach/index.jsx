@@ -45,7 +45,6 @@ export default {
         buttons: [
           {
             label: 'Detach',
-            variant: 'filled',
             onClick: detachFlow,
           },
           {

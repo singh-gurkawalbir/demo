@@ -39,7 +39,6 @@ export default {
         buttons: [
           {
             label: 'Confirm',
-            variant: 'filled',
             onClick: () => {
               updateTradingPartner();
             },

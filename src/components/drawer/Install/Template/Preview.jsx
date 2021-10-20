@@ -169,7 +169,6 @@ export default function TemplatePreview() {
       buttons: [
         {
           label: 'Ok',
-          variant: 'filled',
         },
       ],
     });
@@ -196,7 +195,6 @@ export default function TemplatePreview() {
       buttons: [
         {
           label: 'Proceed',
-          variant: 'filled',
           onClick: installTemplate,
         },
         {

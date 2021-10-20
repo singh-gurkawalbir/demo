@@ -22,7 +22,6 @@ export default {
         buttons: [
           {
             label: 'Delete',
-            variant: 'filled',
             onClick: () => {
               dispatch(actions.user.org.users.delete(userId));
             },

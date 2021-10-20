@@ -67,7 +67,6 @@ export default function IntegrationPreview() {
       buttons: [
         {
           label: 'Proceed',
-          variant: 'filled',
           onClick: installTemplate,
         },
         {

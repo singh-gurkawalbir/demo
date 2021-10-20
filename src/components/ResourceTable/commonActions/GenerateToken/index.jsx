@@ -34,7 +34,6 @@ export default {
         buttons: [
           {
             label: 'Generate',
-            variant: 'filled',
             onClick: generateSystemToken,
           },
           {

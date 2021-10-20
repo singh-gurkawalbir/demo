@@ -170,7 +170,6 @@ export default function PageBar() {
       buttons: [
         {
           label: 'Delete',
-          variant: 'filled',
           onClick: () => {
             dispatch(actions.resource.delete('integrations', integrationId));
             setIsDeleting(true);

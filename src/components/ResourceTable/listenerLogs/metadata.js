@@ -93,7 +93,6 @@ export default {
             buttons: [
               {
                 label: 'Delete',
-                variant: 'filled',
                 onClick: handleClick,
               },
               {

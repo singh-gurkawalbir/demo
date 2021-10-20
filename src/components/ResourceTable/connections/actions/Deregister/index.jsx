@@ -42,7 +42,6 @@ export default {
         buttons: [
           {
             label: 'Deregister',
-            variant: 'filled',
             onClick: deregisterConnection,
           },
           {

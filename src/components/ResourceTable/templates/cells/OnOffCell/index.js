@@ -34,7 +34,6 @@ export default function OnOffCell({
       buttons: [
         {
           label: isPublished ? 'Unpublish' : 'Publish',
-          variant: 'filled',
           onClick: () => dispatch(actions.template.publish.request(resourceId, isPublished)),
         },
         {

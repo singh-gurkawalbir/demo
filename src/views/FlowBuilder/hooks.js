@@ -49,7 +49,6 @@ export const useHandleDelete = flowId => {
         buttons: [
           {
             label: 'Remove',
-            variant: 'filled',
             onClick: () => {
               if (type === itemTypes.PAGE_PROCESSOR) {
                 const newOrder = [...pageProcessors];

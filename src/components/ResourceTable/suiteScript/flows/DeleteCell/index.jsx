@@ -36,7 +36,6 @@ export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderVie
       buttons: [
         {
           label: 'Delete',
-          variant: 'filled',
           onClick: deleteResource,
         },
         {

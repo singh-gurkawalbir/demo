@@ -71,7 +71,6 @@ export default function SaveAndClose(props) {
           buttons: [
             {
               label: 'Replace',
-              variant: 'filled',
               onClick: () => {
                 if (integration?._id) {
                   const registeredConnections = integration?._registeredConnectionIds || [];

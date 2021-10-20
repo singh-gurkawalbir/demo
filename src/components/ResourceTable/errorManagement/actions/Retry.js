@@ -46,7 +46,6 @@ export default {
         buttons: [
           {
             label: 'Retry',
-            variant: 'filled',
             onClick: () => {
               handleRetry();
             },

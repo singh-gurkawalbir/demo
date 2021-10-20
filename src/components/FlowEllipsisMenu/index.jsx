@@ -126,7 +126,6 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             buttons: [
               {
                 label: 'Detach',
-                variant: 'filled',
                 onClick: detachFlow,
               },
               {
@@ -165,7 +164,6 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             buttons: [
               {
                 label: 'Delete',
-                variant: 'filled',
                 onClick: deleteFlow,
               },
               {

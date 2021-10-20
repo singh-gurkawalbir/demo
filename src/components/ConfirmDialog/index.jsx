@@ -71,9 +71,8 @@ export const ConfirmDialog = (
               className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
               onClick: handleButtonClick(button),
             };
-            const {variant} = button;
+            const {variant = 'filled'} = button;
 
-            console.log('variant', variant, 'button', button);
             if (variant === 'filled') {
               return (
                 <FilledButton {...buttonProps}>
@@ -136,7 +135,7 @@ export default function useConfirmDialog() {
         title: 'Confirm',
         message: `Are you sure you want to ${message}`,
         buttons: [
-          { label: 'Yes', variant: 'filled', onClick: callback },
+          { label: 'Yes', onClick: callback },
           { label: 'Cancel', variant: 'text' },
         ],
       });
@@ -150,7 +149,7 @@ export default function useConfirmDialog() {
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',
         buttons: [
-          { label: 'Save changes', variant: 'filled', onClick: onSave },
+          { label: 'Save changes', onClick: onSave },
           { label: 'Discard changes', variant: 'outlined', onClick: onDiscard },
         ],
       });

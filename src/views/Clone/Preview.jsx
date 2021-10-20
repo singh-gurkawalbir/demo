@@ -143,7 +143,6 @@ export default function ClonePreview(props) {
             buttons: [
               {
                 label: 'Yes, switch',
-                variant: 'filled',
                 onClick: () => {
                   props.history.push(getRoutePath('/'));
                 },

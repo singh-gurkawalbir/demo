@@ -22,7 +22,6 @@ export default {
         buttons: [
           {
             label: 'Revoke',
-            variant: 'filled',
             onClick: revokeConnection,
           },
           {

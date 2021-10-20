@@ -177,7 +177,6 @@ export default function JobErrorTable({
         buttons: [
           {
             label: 'Upload',
-            variant: 'filled',
             onClick: () => {
               dispatch(
                 actions.file.processFile({ fileId, file, fileType: 'csv' })
@@ -347,7 +346,6 @@ export default function JobErrorTable({
         buttons: [
           {
             label: 'Proceed',
-            variant: 'filled',
             onClick: () => {
               // dispatch action that retries this current job with uploaded file stored at s3Key
               dispatch(

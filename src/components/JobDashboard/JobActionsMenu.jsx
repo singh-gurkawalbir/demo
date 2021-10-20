@@ -208,7 +208,6 @@ export default function JobActionsMenu({
         buttons: [
           {
             label: 'Yes, cancel',
-            variant: 'filled',
             onClick: () => {
               if (job.status === JOB_STATUS.RETRYING) {
                 if (isFlowJob) {

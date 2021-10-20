@@ -22,7 +22,6 @@ export default {
         buttons: [
           {
             label: 'Delete',
-            variant: 'filled',
             onClick: () => {
               deleteTransfer();
             },

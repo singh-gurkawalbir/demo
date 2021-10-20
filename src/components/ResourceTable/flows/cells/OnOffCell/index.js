@@ -73,7 +73,6 @@ export default function OnOffCell({
       buttons: [
         {
           label: `${disabled ? 'Enable' : 'Disable'}`,
-          variant: 'filled',
           onClick: () => {
             if (isIntegrationApp && !istwoDotZeroFrameWork) {
               dispatch(actions.flow.isOnOffActionInprogress(true, flowId));

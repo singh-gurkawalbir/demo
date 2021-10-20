@@ -160,7 +160,6 @@ export default function Endpoint() {
       buttons: [
         {
           label: 'Close',
-          variant: 'filled',
         },
       ],
     });
@@ -179,7 +178,6 @@ export default function Endpoint() {
       buttons: [
         {
           label: 'Close',
-          variant: 'filled',
         },
       ],
     });

@@ -165,7 +165,6 @@ export default function DynaNetSuiteSubRecords(props) {
         buttons: [
           {
             label: 'Remove',
-            variant: 'filled',
             onClick: () => {
               const updatedSubrecords = subrecords.filter(
                 sr => sr.fieldId !== fieldId

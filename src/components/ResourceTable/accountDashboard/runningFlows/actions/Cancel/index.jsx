@@ -20,7 +20,6 @@ export default {
         buttons: [
           {
             label: 'Yes, cancel',
-            variant: 'filled',
             onClick: () => {
               dispatch(actions.job.dashboard.running.cancel({ jobId: rowData._id }));
             },

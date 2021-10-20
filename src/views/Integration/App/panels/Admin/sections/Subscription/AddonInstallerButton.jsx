@@ -28,7 +28,6 @@ export default function AddonInstallerButton({ resource, ...rest }) {
         buttons: [
           {
             label: 'Uninstall',
-            variant: 'filled',
             onClick: () => {
               dispatch(
                 actions.integrationApp.isAddonInstallInprogress(

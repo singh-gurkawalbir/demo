@@ -42,7 +42,6 @@ export default function UninstallSection({ childId, integrationId }) {
       buttons: [
         {
           label: 'Uninstall',
-          variant: 'filled',
           onClick: () => {
             if (isFrameWork2) {
               const {url} = match;

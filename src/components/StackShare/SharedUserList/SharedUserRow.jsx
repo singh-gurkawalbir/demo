@@ -22,7 +22,6 @@ export default function SharedUserRow({ user }) {
       buttons: [
         {
           label: 'Remove',
-          variant: 'filled',
           onClick: () => {
             dispatch(actions.resource.delete('sshares', user._id));
           },
@@ -43,7 +42,6 @@ export default function SharedUserRow({ user }) {
       buttons: [
         {
           label: user.disabled ? 'Enable' : 'Disable',
-          variant: 'filled',
           onClick: () => {
             dispatch(actions.stack.toggleUserStackSharing(user._id));
           },

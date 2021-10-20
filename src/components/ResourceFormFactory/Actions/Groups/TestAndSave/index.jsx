@@ -28,7 +28,6 @@ const ConfirmDialog = props => {
         buttons: [
           {
             label: 'Save',
-            variant: 'filled',
             onClick: () => {
               handleSubmit(formValues);
               handleCloseAndClearForm();

@@ -102,7 +102,6 @@ export default function TileNotification({ content, expired, connectorId, licens
         buttons: [
           {
             label: 'Uninstall',
-            variant: 'filled',
             onClick: () => {
               history.push(
                 getRoutePath(

@@ -48,7 +48,6 @@ export default function DynaFeatureCheck(props) {
             },
             {
               label: 'Yes',
-              variant: 'filled',
               onClick: () => {
                 fieldChange(id, value);
               },

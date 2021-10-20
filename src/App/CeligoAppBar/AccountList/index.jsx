@@ -154,7 +154,6 @@ function AccountList() {
         buttons: [
           {
             label: 'Leave',
-            variant: 'filled',
             onClick: () => {
               if (userPreferences.defaultAShareId === account.id) {
                 history.push(getRoutePath('/'));

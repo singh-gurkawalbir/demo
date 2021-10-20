@@ -52,7 +52,6 @@ export default function FlowToggle({
       buttons: [
         {
           label: `${enable ? 'Enable' : 'Disable'}`,
-          variant: 'filled',
           onClick: () => {
             if (flow._connectorId && !istwoDotZeroFrameWork) {
               dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
