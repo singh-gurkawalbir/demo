@@ -47,6 +47,7 @@ export default function DynaApiIdentifier(props) {
           onCopy={handleCopy}
           text={invokeUrl}>
           <IconButtonWithTooltip
+            data-test="copyToClipboard"
             tooltipProps={{title: 'Copy to clipboard'}}
             buttonSize={{size: 'small'}}
             className={classes.copyIconButton}>
