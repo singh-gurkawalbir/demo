@@ -107,13 +107,7 @@ describe('Listener logs sagas', () => {
       const saga = pollForLatestLogs({ flowId, exportId });
       const raceBetweenApiCallAndStop = race({
         pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: 15000}),
-        abortPoll: take(
-          action => {
-            if (action.type === actionTypes.POLLING.STOP) {
-              return true;
-            }
-          }
-        ),
+        abortPoll: take(actionTypes.POLLING.STOP),
       });
 
       expect(saga.next().value).toEqual(
@@ -129,18 +123,9 @@ describe('Listener logs sagas', () => {
     test('should be able to race between pollApiRequests and stop action and abort api call', () => {
       const saga = pollForLatestLogs({ flowId, exportId });
       const response = {abortPoll: true};
-      let pollingLastStoppedAt;
       const raceBetweenApiCallAndStop = race({
         pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: 15000}),
-        abortPoll: take(
-          action => {
-            if (action.type === actionTypes.POLLING.STOP) {
-              pollingLastStoppedAt = Date.now();
-
-              return true;
-            }
-          }
-        ),
+        abortPoll: take(actionTypes.POLLING.STOP),
       });
 
       expect(saga.next().value).toEqual(
@@ -152,6 +137,7 @@ describe('Listener logs sagas', () => {
       expect(JSON.stringify(saga.next().value)).toEqual(
         JSON.stringify(raceBetweenApiCallAndStop)
       );
+      const pollingLastStoppedAt = Date.now();
 
       expect(saga.next(response).value).toEqual(
         take(actionTypes.POLLING.RESUME)
