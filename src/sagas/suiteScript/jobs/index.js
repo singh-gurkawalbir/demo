@@ -2,7 +2,6 @@ import {
   all,
   call,
   cancel,
-  delay,
   fork,
   put,
   select,
@@ -15,6 +14,7 @@ import actionTypes from '../../../actions/types';
 import getRequestOptions from '../../../utils/requestOptions';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
+import { pollApiRequests } from '../../app';
 
 export function* getJob({
   ssLinkedConnectionId,
@@ -188,14 +188,10 @@ export function* pollForInProgressJobs({
   ssLinkedConnectionId,
   integrationId,
 }) {
-  while (true) {
-    yield delay(5 * 1000);
-
-    yield call(getInProgressJobsStatus, {
-      ssLinkedConnectionId,
-      integrationId,
-    });
-  }
+  yield call(pollApiRequests, {pollSaga: getInProgressJobsStatus,
+    pollSagaArgs: { ssLinkedConnectionId,
+      integrationId },
+    duration: 5 * 1000});
 }
 
 export function* startPollingForInProgressJobs({

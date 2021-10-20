@@ -113,8 +113,6 @@ export default function ResourceList(props) {
   [dispatch, resourceType]);
 
   useEffect(() => {
-    let int;
-
     dispatch(actions.resource.connections.refreshStatus());
 
     // TODO: discus with team how to best handle this feature (and as future feature pattern)...
@@ -127,13 +125,11 @@ export default function ResourceList(props) {
     // user activity and stop polling if there is none, etc?
     // For connections resource table, we need to poll the connection status and queueSize
     if (resourceType === 'connections') {
-      int = setInterval(() => {
-        dispatch(actions.resource.connections.refreshStatus());
-      }, 10 * 1000);
+      dispatch(actions.app.polling.start(actions.resource.connections.refreshStatus(), 10 * 1000));
     }
 
     return () => {
-      clearInterval(int);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus()));
     };
   }, [dispatch, resourceType]);
 
