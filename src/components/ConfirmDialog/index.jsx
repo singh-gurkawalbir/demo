@@ -33,7 +33,7 @@ export const ConfirmDialog = (
     maxWidth,
     buttons = [
       { label: 'No', variant: 'text' },
-      { label: 'Yes', variant: 'filled' },
+      { label: 'Yes' },
     ],
     onDialogClose,
   }) => {
