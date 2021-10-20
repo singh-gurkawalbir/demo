@@ -76,6 +76,9 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
         k = /\W/.test(k)
           ? `[${k.replace(/]/g, options.expression ? '\\\\]' : '\\]')}]`
           : k;
+      } else if (/^".*"$/.test(k)) {
+        // If extract is wrapped in " and ", it has to be escaped
+        k = `[${k.replace(/]/g, options.expression ? '\\\\]' : '\\]')}]`;
       }
 
       type = Object.prototype.toString.apply(v);
