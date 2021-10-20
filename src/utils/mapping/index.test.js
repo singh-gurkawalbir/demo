@@ -3168,6 +3168,11 @@ describe('mapping utils', () => {
         result: 'abc',
       },
       {
+        extract: '["abc"]',
+        flowSampleData: undefined,
+        result: '["abc"]',
+      },
+      {
         extract: '[[abc]]',
         flowSampleData: undefined,
         result: '[abc]',
@@ -3200,7 +3205,12 @@ describe('mapping utils', () => {
       {
         extract: '[[abc]]',
         flowSampleData: undefined,
-        result: '[[[abc\\]\\]]',
+        result: '[[abc]]',
+      },
+      {
+        extract: '["abc"]',
+        flowSampleData: undefined,
+        result: '["abc"]',
       },
       {
         extract: 'abc[*].ab',

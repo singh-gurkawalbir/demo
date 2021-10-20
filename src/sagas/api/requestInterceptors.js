@@ -42,7 +42,7 @@ export function* isCurrentUserAndLatestUserTheSame() {
   return true;
 }
 export function* onRequestSaga(request) {
-  const { path, opts = {}, message = path, hidden = false, refresh = false } = request.args;
+  const { path, opts = {}, message = path, hidden = false, refresh = false, shouldNotUpdateAuthTimestamp = false } = request.args;
   const method = (opts && opts.method) || 'GET';
 
   const shouldMakeRequest = yield call(isCurrentUserAndLatestUserTheSame);
@@ -80,6 +80,7 @@ export function* onRequestSaga(request) {
       path,
       method,
       origReq: request,
+      shouldNotUpdateAuthTimestamp,
     },
     responseType: 'text',
   };
@@ -90,7 +91,7 @@ export function* onRequestSaga(request) {
 export function* onSuccessSaga(response, action) {
   // the path is an additional attribute proxied in the request action
   // we could use the uri but some of them have api prefixed some dont
-  const { path, method } = action.request.meta;
+  const { path, method, shouldNotUpdateAuthTimestamp } = action.request.meta;
 
   // if error in response
 
@@ -109,7 +110,7 @@ export function* onSuccessSaga(response, action) {
   if (response.data === '') {
     response.data = undefined;
     yield put(actions.api.complete(path, method));
-    yield put(actions.auth.sessionTimestamp());
+    if (!shouldNotUpdateAuthTimestamp) { yield put(actions.auth.sessionTimestamp()); }
 
     return response;
   }
@@ -119,7 +120,9 @@ export function* onSuccessSaga(response, action) {
     : response.data;
 
   yield put(actions.api.complete(path, method));
-  yield put(actions.auth.sessionTimestamp());
+  if (!shouldNotUpdateAuthTimestamp) {
+    yield put(actions.auth.sessionTimestamp());
+  }
 
   return response;
 }
