@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { select, call, fork, delay, take, cancel } from 'redux-saga/effects';
+import { select, call, fork, delay, take, cancel, race } from 'redux-saga/effects';
 import { createMockTask } from '@redux-saga/testing-utils';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -96,26 +96,71 @@ describe('Listener logs sagas', () => {
   });
 
   describe('pollForLatestLogs saga', () => {
-    test('should call fetchNewLogs with timeGt as latest log time for the first time', () => expectSaga(pollForLatestLogs, { flowId, exportId })
-      .provide([
-        [select(selectors.logsSummary, exportId), [{time: 45678}, {time: 45670}]],
-      ])
+    test('should call fetchNewLogs with timeGt as passed in the args', () => expectSaga(pollForLatestLogs, { flowId, exportId, timeGt: 1234 })
       .silentRun()
       .then(result => {
         const { effects } = result;
 
-        expect(effects.call[0]).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: 45678 }));
+        expect(effects.call[0]).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: 1234 }));
       }));
-
-    test('should call fetchNewLogs within pollApiRequests with a 15 second polling duration', () => {
+    test('should make pollApiRequests call without abort if stop action is not triggered', () => {
       const saga = pollForLatestLogs({ flowId, exportId });
+      const raceBetweenApiCallAndStop = race({
+        pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: 15000}),
+        abortPoll: take(
+          action => {
+            if (action.type === actionTypes.POLLING.STOP) {
+              return true;
+            }
+          }
+        ),
+      });
 
-      saga.next();
-      expect(saga.next([{time: ''}]).value).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: '' }));
-      expect(saga.next().value).toEqual(delay(15000));
-      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, duration: 15000}));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().value).toEqual(
+        call(fetchNewLogs, { flowId, exportId })
+      );
+      expect(saga.next().value).toEqual(
+        delay(15000)
+      );
+      expect(JSON.stringify(saga.next().value)).toEqual(
+        JSON.stringify(raceBetweenApiCallAndStop)
+      );
     });
+    test('should be able to race between pollApiRequests and stop action and abort api call', () => {
+      const saga = pollForLatestLogs({ flowId, exportId });
+      const response = {abortPoll: true};
+      let pollingLastStoppedAt;
+      const raceBetweenApiCallAndStop = race({
+        pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: 15000}),
+        abortPoll: take(
+          action => {
+            if (action.type === actionTypes.POLLING.STOP) {
+              pollingLastStoppedAt = Date.now();
+
+              return true;
+            }
+          }
+        ),
+      });
+
+      expect(saga.next().value).toEqual(
+        call(fetchNewLogs, { flowId, exportId })
+      );
+      expect(saga.next().value).toEqual(
+        delay(15000)
+      );
+      expect(JSON.stringify(saga.next().value)).toEqual(
+        JSON.stringify(raceBetweenApiCallAndStop)
+      );
+
+      expect(saga.next(response).value).toEqual(
+        take(actionTypes.POLLING.RESUME)
+      );
+      expect(saga.next(response).value).toEqual(
+        call(pollForLatestLogs, { flowId, exportId, timeGt: pollingLastStoppedAt })
+      );
+    });
+    test('should call pollForLatestLogs if poll resume action is dispatch with last stop time', () => {});
   });
 
   describe('startPollingForRequestLogs saga', () => {
@@ -124,7 +169,9 @@ describe('Listener logs sagas', () => {
 
       const saga = startPollingForRequestLogs({flowId, exportId});
 
-      expect(saga.next().value).toEqual(fork(pollForLatestLogs, {flowId, exportId}));
+      saga.next();
+
+      expect(saga.next([{time: 1234}]).value).toEqual(fork(pollForLatestLogs, {flowId, exportId, timeGt: 1234}));
 
       expect(saga.next(mockTask).value).toEqual(
         take([
@@ -141,7 +188,9 @@ describe('Listener logs sagas', () => {
 
       const saga = startPollingForRequestLogs({flowId, exportId});
 
-      expect(saga.next().value).toEqual(fork(pollForLatestLogs, {flowId, exportId}));
+      saga.next();
+
+      expect(saga.next([{time: 1234}]).value).toEqual(fork(pollForLatestLogs, {flowId, exportId, timeGt: 1234}));
 
       expect(saga.next(mockTask).value).toEqual(
         take([
