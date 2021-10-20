@@ -66,6 +66,7 @@ import ssoSagas from './sso';
 import { APIException } from './api';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { appSagas } from './app';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -140,6 +141,7 @@ export function* apiCallWithRetry(args) {
 
 export function* allSagas() {
   yield all([
+    ...appSagas,
     ...resourceSagas,
     ...connectorSagas,
     ...templateSagas,

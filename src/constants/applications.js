@@ -410,7 +410,7 @@ export const applicationsList = () => {
     // once constantcontactv2 & v3 are migrated to constantcontact in db
     // this should be removed https://celigo.atlassian.net/browse/IO-23182
     if (asst.id.includes('constantcontact')) {
-      name = 'Constant contact';
+      name = 'Constant Contact';
     }
     applications.push({
       id: asst.id,
