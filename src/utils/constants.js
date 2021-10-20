@@ -746,3 +746,10 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
+export const POLLING_STATUS = {
+  SLOW: 'slow down polling',
+  RESUME: 'resume polling',
+  STOP: 'stop polling',
+};
+
+Object.freeze(POLLING_STATUS);
