@@ -1,11 +1,11 @@
 import { Chip, makeStyles } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import { ChevronRight } from '@material-ui/icons';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { components } from 'react-select';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
+import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
 import LoadResources from '../../../../LoadResources';
 import { useResetWhenParentIntegrationChanges } from '../hooks';
 import { GenericTypeableSelect } from './GenericTypeableSelect';
@@ -68,7 +68,7 @@ const MenuListImpl = props => {
 
 const DropdownIndicator = props => (
   <components.DropdownIndicator {...props}>
-    <ChevronRight />
+    <ArrowDownIcon />
   </components.DropdownIndicator>
 );
 

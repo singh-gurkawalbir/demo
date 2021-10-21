@@ -9,10 +9,16 @@ import { TextButton } from '../../../Buttons';
 import TrashIcon from '../../../icons/TrashIcon';
 import DynaText from '../DynaText';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   textFieldWithDeleteSupport: {
+    display: 'flex',
   },
-  deleteFlowGroupBtn: {
+  dynaTextField: {
+    flex: 1,
+  },
+  deleteFlowBtn: {
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -52,15 +58,13 @@ export default function TextFieldWithDeleteSupport(props) {
 
   return isEdit ? (
     <div className={classes.textFieldWithDeleteSupport}>
-      <DynaText {...props} />
-      <div className={classes.deleteFlowGroupBtn}>
-        <TextButton
-          onClick={handleDelete}
-          startIcon={<TrashIcon />}
-          >
-          Delete flow group
-        </TextButton>
-      </div>
+      <DynaText {...props} className={classes.dynaTextField} />
+      <TextButton
+        onClick={handleDelete}
+        startIcon={<TrashIcon />}
+        className={classes.deleteFlowBtn}>
+        Delete flow group
+      </TextButton>
     </div>
   ) : (
     <DynaText {...props} />
