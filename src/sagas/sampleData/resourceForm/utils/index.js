@@ -4,6 +4,24 @@ import {
   constructSuiteScriptResourceFromFormValues,
 } from '../../../utils';
 import { selectors } from '../../../../reducers';
+import { generateFileParserOptionsFromResource } from '../../utils/fileParserUtils';
+import { safeParse } from '../../../../utils/string';
+
+export const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
+export const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
+export const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
+export const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
+export const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
+
+function extractResourcePath(value, initialResourcePath) {
+  if (value) {
+    const jsonValue = safeParse(value) || {};
+
+    return jsonValue.resourcePath;
+  }
+
+  return initialResourcePath;
+}
 
 export function* _fetchResourceInfoFromFormKey({ formKey }) {
   const formState = yield select(selectors.formState, formKey);
@@ -60,6 +78,50 @@ export function* _hasSampleDataOnResource({ formKey }) {
   return bodyFileType === resourceFileType;
 }
 
-export function* extractResourceFormFileSampleData() {
-  // common code to fetch sample data for file adaptors goes here
+// common code to fetch sample data for file adaptors goes here
+// given a form key - it should return the sample data of the resource
+//  it could be uploaded file / sample data on the resource
+// it could be the data fetched from the selectors incase of file definitions
+export function* extractFileSampleDataProps({ formKey }) {
+  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+
+  const resourceObj = { ...resourceInfo };
+
+  if (ssLinkedConnectionId && SUITESCRIPT_FILE_RESOURCE_TYPES.includes(resourceObj.type)) {
+    resourceObj.file.type = 'csv';
+  }
+  const fileType = resourceObj?.file?.type;
+  const fileProps = resourceObj.file[fileType] || {};
+  const fileId = `${resourceId}-uploadFile`;
+  const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
+  const { file: uploadedFile } = uploadedFileObj || {};
+  const hasSampleData = yield call(_hasSampleDataOnResource, { formKey });
+  const parserOptions = generateFileParserOptionsFromResource(resourceObj);
+
+  if (FILE_DEFINITION_TYPES.includes(fileType)) {
+    const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
+    const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
+    const { format, definitionId } = fieldOptions || {};
+    const resourcePath = extractResourcePath(fieldValue, fileDefinitionResourcePath);
+
+    const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {
+      userDefinitionId,
+      resourceType: 'exports',
+      options: { format, definitionId, resourcePath },
+    });
+
+    return {
+      sampleData: fileDefinitionData?.sampleData || resourceObj.sampleData,
+      parserOptions: fieldValue || fileDefinitionData?.rule,
+      fileProps: parserOptions,
+    };
+  }
+  if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
+    return { sampleData: uploadedFile, isNewSampleData: true, parserOptions };
+  }
+  if (hasSampleData) {
+    return { sampleData: resourceObj.sampleData, fileProps, parserOptions};
+  }
+
+  return {};
 }

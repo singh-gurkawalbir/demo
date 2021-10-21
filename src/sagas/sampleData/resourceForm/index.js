@@ -11,20 +11,21 @@ import {
   isAS2Resource,
 } from '../../../utils/resource';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
-import { _fetchResourceInfoFromFormKey, _hasSampleDataOnResource } from './utils';
+import {
+  _fetchResourceInfoFromFormKey,
+  extractFileSampleDataProps,
+  SUITESCRIPT_FILE_RESOURCE_TYPES,
+  FILE_DEFINITION_TYPES,
+  IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES,
+  VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA,
+} from './utils';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData } from '../../../utils/sampleData';
-import { generateFileParserOptionsFromResource } from '../utils/fileParserUtils';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { safeParse } from '../../../utils/string';
 
-const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
-const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
-const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
-const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
-const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -38,16 +39,6 @@ const PARSERS = {
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
-
-function extractResourcePath(value, initialResourcePath) {
-  if (value) {
-    const jsonValue = safeParse(value) || {};
-
-    return jsonValue.resourcePath;
-  }
-
-  return initialResourcePath;
-}
 
 export function* _getProcessorOutput({ processorData }) {
   try {
@@ -218,7 +209,6 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 }
 
 export function* _requestFileSampleData({ formKey }) {
-  // file related sample data is handled here
   const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const resourceObj = { ...resourceInfo };
@@ -231,43 +221,20 @@ export function* _requestFileSampleData({ formKey }) {
   if (!fileType) {
     return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
+  const { sampleData, isNewSampleData, parserOptions, fileProps } = yield call(extractFileSampleDataProps, { formKey });
 
-  const fileProps = resourceObj.file[fileType] || {};
-  const fileId = `${resourceId}-uploadFile`;
-  const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
-  const { file: uploadedFile } = uploadedFileObj || {};
-  const hasSampleData = yield call(_hasSampleDataOnResource, { formKey });
-  const parserOptions = generateFileParserOptionsFromResource(resourceObj);
-
-  if (FILE_DEFINITION_TYPES.includes(fileType)) {
-    const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
-    const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
-    const { format, definitionId } = fieldOptions || {};
-    const resourcePath = extractResourcePath(fieldValue, fileDefinitionResourcePath);
-
-    const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {
-      userDefinitionId,
-      resourceType: 'exports',
-      options: { format, definitionId, resourcePath },
-    });
-
-    yield call(_parseFileData, {
+  if (sampleData) {
+    return yield call(_parseFileData, {
       resourceId,
-      fileContent: fileDefinitionData?.sampleData || resourceObj.sampleData,
-      parserOptions: fieldValue || fileDefinitionData?.rule,
-      fileType: 'fileDefinitionParser',
-      fileProps: parserOptions,
+      fileContent: sampleData,
+      fileType: FILE_DEFINITION_TYPES.includes(fileType) ? 'fileDefinitionParser' : fileType,
+      fileProps,
+      parserOptions,
+      isNewSampleData,
     });
-  } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
-    // parse through the file and update state
-    yield call(_parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions, isNewSampleData: true});
-  } else if (hasSampleData) {
-    // fetch from sample data and update state
-    yield call(_parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
-  } else {
-    // no sample data - so clear sample data from state
-    yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
+  // no sample data - so clear sample data from state
+  yield put(actions.resourceFormSampleData.clearStages(resourceId));
 }
 
 export function* _requestPGExportSampleData({ formKey, refreshCache }) {
