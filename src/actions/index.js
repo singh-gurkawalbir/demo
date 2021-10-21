@@ -1350,13 +1350,14 @@ const flowData = {
       stage,
       error,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh, formKey) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
       refresh,
+      formKey,
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),

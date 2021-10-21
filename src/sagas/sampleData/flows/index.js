@@ -55,9 +55,10 @@ import {
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../utils/constants';
+import { getConstructedResourceObj } from './utils';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
-export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
+export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
   const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const clonedFlow = deepClone(flow || {});
 
@@ -89,7 +90,9 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
     ];
   }
   clonedFlow.refresh = !!refresh;
-
+  if (formKey) {
+    clonedFlow.formKey = formKey;
+  }
   yield put(actions.flowData.init(clonedFlow));
 }
 
@@ -99,6 +102,7 @@ export function* requestSampleData({
   resourceType,
   stage,
   refresh = false,
+  formKey,
   isInitialized,
   onSagaEnd,
 }) {
@@ -116,7 +120,7 @@ export function* requestSampleData({
 
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
-    yield call(_initFlowData, { flowId, resourceId, resourceType, refresh });
+    yield call(_initFlowData, { flowId, resourceId, resourceType, refresh, formKey });
   }
 
   if (refresh) {
@@ -228,12 +232,11 @@ export function* fetchPageProcessorPreview({
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
-  const { merged: resource = {} } = yield select(
-    selectors.resourceData,
-    'exports',
-    _pageGeneratorId,
-    SCOPES.VALUE
-  );
+  const resource = yield call(getConstructedResourceObj, {
+    flowId,
+    resourceId: _pageGeneratorId,
+    resourceType: 'exports',
+  });
   const { merged: connection } = yield select(
     selectors.resourceData,
     'connections',

@@ -3,10 +3,6 @@ import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import {
-  constructResourceFromFormValues,
-  constructSuiteScriptResourceFromFormValues,
-} from '../../utils';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import {
@@ -15,6 +11,7 @@ import {
   isAS2Resource,
 } from '../../../utils/resource';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import { _fetchResourceInfoFromFormKey, _hasSampleDataOnResource } from './utils';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData } from '../../../utils/sampleData';
@@ -67,39 +64,6 @@ export function* _getProcessorOutput({ processorData }) {
       return {error: parsedError};
     }
   }
-}
-
-export function* _fetchResourceInfoFromFormKey({ formKey }) {
-  const formState = yield select(selectors.formState, formKey);
-  const parentContext = (yield select(selectors.formParentContext, formKey)) || {};
-  const { resourceId, resourceType, integrationId, ssLinkedConnectionId } = parentContext;
-
-  if (ssLinkedConnectionId) {
-    const ssResourceObj = (yield call(constructSuiteScriptResourceFromFormValues, {
-      formValues: formState?.value || {},
-      resourceId,
-      resourceType,
-      ssLinkedConnectionId,
-      integrationId,
-    })) || {};
-
-    return {
-      formState,
-      ...parentContext,
-      resourceObj: resourceType === 'exports' ? ssResourceObj.export : ssResourceObj.import,
-    };
-  }
-  const resourceObj = (yield call(constructResourceFromFormValues, {
-    formValues: formState?.value || {},
-    resourceId,
-    resourceType,
-  })) || {};
-
-  return {
-    formState,
-    ...parentContext,
-    resourceObj,
-  };
 }
 
 export function* _handlePreviewError({ e, resourceId }) {
@@ -157,28 +121,6 @@ export function* _requestExportPreviewData({ formKey }) {
   } catch (e) {
     yield call(_handlePreviewError, { e, resourceId });
   }
-}
-
-/**
- * Checks if the constructed body from formValues has same file type as saved resource
- * and if body has sampleData
- */
-export function* _hasSampleDataOnResource({ formKey }) {
-  const { resourceObj, resourceId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
-  const resource = yield select(selectors.resource, resourceType, resourceId);
-
-  if (!resource || !resourceObj?.sampleData) return false;
-  const resourceFileType = resource?.file?.type;
-  const bodyFileType = resourceObj?.file?.type;
-
-  if (
-    ['filedefinition', 'fixed', 'delimited/edifact'].includes(bodyFileType) &&
-      resourceFileType === 'filedefinition'
-  ) {
-    return true;
-  }
-
-  return bodyFileType === resourceFileType;
 }
 
 export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {

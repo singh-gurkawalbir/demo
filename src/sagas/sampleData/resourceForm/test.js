@@ -19,10 +19,9 @@ import {
   _requestImportFileSampleData,
   _parseFileData,
   _handlePreviewError,
-  _fetchResourceInfoFromFormKey,
-  _hasSampleDataOnResource,
   _getProcessorOutput,
 } from '.';
+import { _fetchResourceInfoFromFormKey, _hasSampleDataOnResource } from './utils';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
