@@ -466,6 +466,12 @@ const auditLogs = {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     message,
   }),
+  download: (resourceType, resourceId, childId, message) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
+    resourceType,
+    resourceId,
+    childId,
+    message,
+  }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -1855,7 +1861,7 @@ const errorManager = {
     cancelPoll: () =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL),
   },
-  flowErrorDetails: {
+  flowErrorDetails: { // this one
     request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST, {
         flowId,

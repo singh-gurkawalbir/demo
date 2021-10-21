@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
+import { OutlinedButton } from '../Buttons';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -34,6 +36,10 @@ const useStyles = makeStyles(theme => ({
   filterWrapper: {
     padding: 0,
   },
+  paginationWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
   filterContainer: {
     padding: theme.spacing(2, 0),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
@@ -52,7 +58,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Filters(props) {
-  const {resourceType, resourceId, resourceDetails, onFiltersChange} = props;
+  const {resourceType, resourceId, resourceDetails, onFiltersChange, childId} = props;
+  const match = useRouteMatch();
+  const history = useHistory();
   const classes = useStyles();
   const {
     users,
@@ -72,6 +80,17 @@ export default function Filters(props) {
       source: OPTION_ALL.id,
     }
   );
+  const { totalCount } = useSelector(state =>
+    selectors.auditLogs(
+      state,
+      resourceType,
+      resourceId,
+      undefined,
+      {childId}
+    ));
+  const handleDownload = useCallback(() => { // this one
+    history.push(`${match.url}/download/open`);
+  }, [history, match.url]);
 
   const getResource = () => {
     const resource =
@@ -165,6 +184,17 @@ export default function Filters(props) {
             ))}
           </CeligoSelect>
         </FormControl>
+        <div className={classes.paginationWrapper}>
+
+          {totalCount ? (
+            <OutlinedButton
+              color="secondary"
+              onClick={handleDownload}>
+              Download
+            </OutlinedButton>
+          ) : ''}
+
+        </div>
       </form>
     </div>
   );
