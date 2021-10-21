@@ -35,19 +35,27 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   }
 }
 
-export function* pollForLatestLogs({ flowId, exportId }) {
-  const logsList = yield select(selectors.logsSummary, exportId);
-  // the first poll should start from latest log captured time
-  const timeGt = logsList[0]?.time;
+export function* pollForLatestLogs({ flowId, exportId, timeGt }) {
   const POLLING_DURATION = 15000;
 
   yield call(fetchNewLogs, { flowId, exportId, timeGt });
   yield delay(POLLING_DURATION);
-  yield call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, duration: POLLING_DURATION});
+
+  yield race({
+    pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: POLLING_DURATION}),
+    abortPoll: take(actionTypes.POLLING.STOP),
+  });
+  const pollingLastStoppedAt = Date.now();
+
+  yield take(actionTypes.POLLING.RESUME);
+  yield call(pollForLatestLogs, { flowId, exportId, timeGt: pollingLastStoppedAt });
 }
 
 export function* startPollingForRequestLogs({flowId, exportId}) {
-  const watcher = yield fork(pollForLatestLogs, {flowId, exportId});
+  const logsList = yield select(selectors.logsSummary, exportId);
+  // the first poll should start from latest log captured time
+  const timeGt = logsList[0]?.time;
+  const watcher = yield fork(pollForLatestLogs, {flowId, exportId, timeGt});
 
   const stopAction = yield take([
     actionTypes.LOGS.LISTENER.DEBUG.STOP,

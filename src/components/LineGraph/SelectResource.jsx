@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useMemo } from 'react';
 import ActionGroup from '../ActionGroup';
 import ArrowPopper from '../ArrowPopper';
-import { OutlinedButton, TextButton } from '../Buttons';
+import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -175,9 +175,9 @@ export default function SelectResource(props) {
               </div>
               <div className={classes.actions}>
                 <ActionGroup>
-                  <OutlinedButton onClick={handleSave}>
+                  <FilledButton onClick={handleSave}>
                     Apply
-                  </OutlinedButton>
+                  </FilledButton>
                   <TextButton onClick={handleClose}>
                     Cancel
                   </TextButton>
