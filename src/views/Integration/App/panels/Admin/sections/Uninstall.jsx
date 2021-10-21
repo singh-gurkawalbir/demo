@@ -54,7 +54,7 @@ export default function UninstallSection({ childId, integrationId }) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

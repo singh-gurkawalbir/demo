@@ -199,7 +199,7 @@ export default function TemplatePreview() {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
