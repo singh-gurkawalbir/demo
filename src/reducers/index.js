@@ -2724,7 +2724,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
           // If no childId is passed, return all sections from all children
           allSections = [];
           sections.forEach(sec => {
-            allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
+            if (!sec.mode || sec.mode === 'settings') {
+              allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
+            }
           });
         }
       }

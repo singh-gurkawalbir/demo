@@ -8,7 +8,7 @@ import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
-import { TextButton, OutlinedButton } from '../Buttons';
+import { TextButton, FilledButton } from '../Buttons';
 import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
@@ -255,9 +255,9 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
               </div>
               <div className={classes.actions}>
                 <ActionGroup>
-                  <OutlinedButton onClick={handleSave} disabled={isEqual(checked, selected)}>
+                  <FilledButton onClick={handleSave} disabled={isEqual(checked, selected)}>
                     Apply
-                  </OutlinedButton>
+                  </FilledButton>
                   <TextButton onClick={handleClose}>
                     Cancel
                   </TextButton>

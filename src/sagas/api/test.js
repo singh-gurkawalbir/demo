@@ -169,6 +169,7 @@ describe('request interceptors...testing the various stages of an api request on
           path,
           method: 'POST',
           origReq: request,
+          shouldNotUpdateAuthTimestamp: false,
         },
       };
 
@@ -216,6 +217,7 @@ describe('request interceptors...testing the various stages of an api request on
           path,
           method: 'POST',
           origReq: request,
+          shouldNotUpdateAuthTimestamp: false,
         },
       };
 

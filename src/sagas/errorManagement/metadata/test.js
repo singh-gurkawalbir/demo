@@ -1,7 +1,7 @@
 /* global expect,describe, test */
 import { expectSaga } from 'redux-saga-test-plan';
 import { createMockTask } from '@redux-saga/testing-utils';
-import { select, call, delay, put, fork, take, cancel } from 'redux-saga/effects';
+import { select, call, put, fork, take, cancel } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../../actions';
@@ -21,6 +21,7 @@ import {
 import { selectors } from '../../../reducers';
 import { getMockHttpErrorDoc } from '../../../utils/errorManagement';
 import openExternalUrl from '../../../utils/window';
+import { pollApiRequests } from '../../app';
 
 const flowId = 'flow-123';
 const resourceId = 'id-123';
@@ -460,14 +461,14 @@ describe('EM2.0 metadata sagas', () => {
     });
   });
   describe('_pollForRetryStatus saga', () => {
-    test('should dispatch request action and call _requestRetryStatus after 5 seconds delay continuously', () => {
+    test('should call _requestRetryStatus within pollApiRequests saga with a polling duration of 5 seconds ', () => {
       const saga = _pollForRetryStatus({ flowId, resourceId });
 
       expect(saga.next().value).toEqual(put(actions.errorManager.retryStatus.request({ flowId, resourceId })));
-      expect(saga.next().value).toEqual(call(_requestRetryStatus, { flowId, resourceId }));
-      expect(saga.next().value).toEqual(delay(5000));
 
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: _requestRetryStatus, pollSagaArgs: { flowId, resourceId }, duration: 5 * 1000}));
+
+      expect(saga.next().done).toEqual(true);
     });
   });
   describe('startPollingForRetryStatus saga', () => {

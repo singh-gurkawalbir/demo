@@ -112,7 +112,7 @@ export default function TileNotification({ content, expired, connectorId, licens
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
