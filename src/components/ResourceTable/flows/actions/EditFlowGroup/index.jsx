@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../../icons/EditIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
@@ -9,9 +9,10 @@ export default {
   icon: EditIcon,
   useOnClick: () => {
     const history = useHistory();
+    const match = useRouteMatch();
     const openEditFlowGroup = useCallback(() => {
-      history.push(getRoutePath('/flowgroups/edit'));
-    }, [history]);
+      history.push(getRoutePath(`${match.url}/flowgroups/edit`));
+    }, [history, match.url]);
 
     return openEditFlowGroup;
   },

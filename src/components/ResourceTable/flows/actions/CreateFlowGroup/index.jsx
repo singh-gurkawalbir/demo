@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import AddIcon from '../../../../icons/AddIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
@@ -9,10 +9,10 @@ export default {
   icon: AddIcon,
   useOnClick: () => {
     const history = useHistory();
-    const { pathname } = history.location;
+    const match = useRouteMatch();
     const openCreateFlowGroup = useCallback(() => {
-      history.push(getRoutePath(`${pathname}/flowgroups/add`));
-    }, [history, pathname]);
+      history.push(getRoutePath(`${match.url}/flowgroups/add`));
+    }, [history, match.url]);
 
     return openCreateFlowGroup;
   },

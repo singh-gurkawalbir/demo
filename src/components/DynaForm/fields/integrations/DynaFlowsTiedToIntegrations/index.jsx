@@ -1,7 +1,9 @@
 import { Chip, makeStyles } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
+import { ChevronRight } from '@material-ui/icons';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { components } from 'react-select';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../LoadResources';
@@ -52,32 +54,61 @@ const SelectedValueChips = ({value, label}) => (
   />
 );
 
-const TypeableSelect = props => (
+const MenuListImpl = props => {
+  const {children} = props;
 
-  <GenericTypeableSelect
-    {...props}
-    SelectedOptionImpl={OptionCheckbox}
-    SelectedValueImpl={SelectedValueChips}
-  />
+  return (
+    <>
+      <components.MenuList {...props}>
+        {children}
+      </components.MenuList>
+    </>
+  );
+};
+
+const DropdownIndicator = props => (
+  <components.DropdownIndicator {...props}>
+    <ChevronRight />
+  </components.DropdownIndicator>
 );
+
+const TypeableSelect = props => {
+  const { isFlowGroupForm } = props;
+
+  return isFlowGroupForm ? (
+    <GenericTypeableSelect
+      {...props}
+      SelectedOptionImpl={OptionCheckbox}
+      SelectedValueImpl={SelectedValueChips}
+      dropdownIndicator={DropdownIndicator}
+      menuListImpl={MenuListImpl}
+    />
+  ) : (
+    <GenericTypeableSelect
+      {...props}
+      SelectedOptionImpl={OptionCheckbox}
+      SelectedValueImpl={SelectedValueChips}
+    />
+  );
+};
 export default function DynaFlowsTiedToIntegration(props) {
-  const {formKey, id, onFieldChange} = props;
+  const {formKey, id, onFieldChange, isFlowGroupForm} = props;
 
   const selectedIntegrationId = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
   const childIntegrationsIds = useSelector(state => selectors.formState(state, formKey)?.fields?.childIntegrations?.value);
 
   const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, selectedIntegrationId, childIntegrationsIds);
 
-  const { flowGroupings } = useSelectorMemo(selectors.makeResourceSelector, 'integrations', selectedIntegrationId) || {};
+  const { flowGroupings } = useSelectorMemo(selectors.makeResourceSelector, 'integrations', selectedIntegrationId) || [];
 
   // reset flows list when either integration or childIntegrations changes
   useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
   useResetWhenParentIntegrationChanges(formKey, 'childIntegrations', onFieldChange, id);
   const options = useMemo(() => flowsTiedToIntegrations?.map(({_id, name, _flowGroupingId}) => {
-    const flowGroupName = flowGroupings?.find(flowGroup => flowGroup._id === _flowGroupingId)?.name;
+    const flowGroupName = isFlowGroupForm ? flowGroupings?.find(flowGroup => flowGroup._id === _flowGroupingId)?.name : '';
 
     return { label: name, value: _id, flowGroupName};
-  }), [flowGroupings, flowsTiedToIntegrations]);
+  }), [flowGroupings, flowsTiedToIntegrations, isFlowGroupForm]);
 
   return (
 
