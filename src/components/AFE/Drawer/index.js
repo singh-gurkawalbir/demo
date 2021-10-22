@@ -102,6 +102,7 @@ function RouterWrappedContent({ hideSave }) {
   const { onClose } = useDrawerContext();
   const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors.editor(state, editorId).editorTitle);
+  const { flowId, resourceId, formKey } = useSelector(state => selectors.editor(state, editorId));
 
   useEffect(() => {
     if (!editorType) {
@@ -123,6 +124,9 @@ function RouterWrappedContent({ hideSave }) {
   const { label } = editorMetadata[editorType] || {};
   const handleClose = () => {
     dispatch(actions.editor.clear(editorId));
+    if (formKey) {
+      dispatch(actions.flowData.resetStages(flowId, resourceId));
+    }
     onClose();
   };
   const CloseButton = <CloseIconButton editorId={editorId} onClose={handleClose} hideSave={hideSave} />;

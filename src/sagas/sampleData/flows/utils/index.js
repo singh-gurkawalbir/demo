@@ -9,15 +9,23 @@ import {
   isAS2Resource,
   isRestCsvMediaTypeExport,
 } from '../../../../utils/resource';
+import { extractFileSampleDataProps } from '../../resourceForm/utils';
 
-function* updateResourceFormFileSampleData() {
+function* updateResourceFormFileSampleData({ resourceObj, formKey }) {
   /*
     * This saga  deals with all file types
     * checks if resource's sampleData property needs to be updated
     * check for xlsx to update csv format data on the resource's sample data prop
     * check for file defs and handle use cases as we did  in resourceForm Sample data
     */
+  if (formKey) {
+    const { sampleData } = yield call(extractFileSampleDataProps, { formKey });
 
+    // eslint-disable-next-line no-param-reassign
+    resourceObj.sampleData = sampleData;
+  }
+
+  return resourceObj;
 }
 export function* getConstructedResourceObj({ flowId, resourceId, resourceType }) {
   // TODO - check for suitescript - do we need to add support at all?
@@ -58,7 +66,7 @@ export function* getConstructedResourceObj({ flowId, resourceId, resourceType })
   ) {
     resourceObj = yield call(updateResourceFormFileSampleData, {
       resourceObj,
-      resourceType,
+      formKey,
     });
   }
   // HANDLE ASSISTANTS
