@@ -135,13 +135,10 @@ export function* netsuiteUserRoles({ connectionId, values }) {
       return;
     }
 
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
-
     yield put(
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
-        errors[0].message
+        inferErrorMessages(e.message)?.[0]
       )
     );
   }

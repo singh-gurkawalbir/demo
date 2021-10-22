@@ -29,7 +29,7 @@ export default function OnOffCell({
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

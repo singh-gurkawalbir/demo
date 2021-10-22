@@ -96,6 +96,7 @@ export default function SelectApplication(props) {
   const theme = useTheme();
   const ref = useRef(null);
   const [menuIsOpen, setMenuIsOpen] = useState(!value);
+  const [inputValue, setInputValue] = useState();
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
@@ -278,6 +279,7 @@ export default function SelectApplication(props) {
     ref?.current?.select?.blur();
     const newValue = isMulti ? [...value, e.value] : e.value;
 
+    setInputValue(value.label);
     setMenuIsOpen(false);
     if (onFieldChange) {
       onFieldChange(id, newValue);
@@ -308,7 +310,7 @@ export default function SelectApplication(props) {
     const inputValue = refState.value?.label;
 
     if (inputValue) {
-      refState.inputValue = inputValue;
+      setInputValue(inputValue);
     }
     setMenuIsOpen(true);
   }, []);
@@ -319,6 +321,22 @@ export default function SelectApplication(props) {
     newApps.splice(index, 1);
     onFieldChange(id, newApps);
   }
+
+  const handleInputChange = (newVal, event) => {
+    if (event.action === 'input-change') {
+      setInputValue(newVal);
+    }
+  };
+
+  const handleBlur = () => {
+    const refState = ref?.current?.state;
+    const selectedValue = refState.value?.label;
+
+    if (selectedValue) {
+      setInputValue(selectedValue);
+    }
+    setMenuIsOpen(!value);
+  };
 
   return (
     <FormControl
@@ -336,15 +354,17 @@ export default function SelectApplication(props) {
         dataPublic
         ref={ref}
         name={name}
+        inputValue={inputValue}
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option, DropdownIndicator }}
         defaultValue={defaultValue}
         menuIsOpen={menuIsOpen}
         options={options}
+        onInputChange={handleInputChange}
         onChange={handleChange}
         onFocus={handleFocus}
-        onBlur={() => setMenuIsOpen(!value)}
+        onBlur={handleBlur}
         styles={customStyles}
         filterOption={filterOptions}
       />

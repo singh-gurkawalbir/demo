@@ -51,6 +51,7 @@ import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
+import { pollApiRequests } from '../app';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -1574,9 +1575,9 @@ describe('pollForResourceCollection saga', () => {
   test('should call getResourceCollection after 5 seconds delay continously', () => {
     const saga = pollForResourceCollection({resourceType: 'connections'});
 
-    expect(saga.next().value).toEqual(call(getResourceCollection, {resourceType: 'connections'}));
-    expect(saga.next().value).toEqual(delay(5000));
-    expect(saga.next().done).toEqual(false);
+    expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType: 'connections'}, duration: 5000 }));
+
+    expect(saga.next().done).toEqual(true);
   });
 });
 

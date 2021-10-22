@@ -28,7 +28,7 @@ export default function EnableUser({ user }) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

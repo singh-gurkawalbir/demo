@@ -13662,6 +13662,11 @@ react-helmet-async@^1.0.7:
     react-fast-compare "^3.2.0"
     shallowequal "^1.1.0"
 
+react-idle-timer@4.6.4:
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-4.6.4.tgz#71ba954ba6f464df24d46a94e63c5ef19f7319dc"
+  integrity sha512-iq61dPud8fgj7l1KOJEY5pyiD532fW0KcIe/5XUe/0lB/4Vytoy4tZBlLGSiYodPzKxTL6HyKoOmG6tyzjD7OQ==
+
 react-iframe@1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/react-iframe/-/react-iframe-1.8.0.tgz#8c78f2c59b894ca5605fa7e45e61e27e57e96091"
@@ -14167,6 +14172,11 @@ regenerate@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
   integrity sha512-1G6jJVDWrt0rK99kBjvEtziZNCICAuvIPkSiUFIQxVP06RCVpq3dmDo2oi6ABpYaDYaTRr67BEhL8r1wgEZZKg==
+
+regenerator-runtime@0.13.9:
+  version "0.13.9"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
+  integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==
 
 regenerator-runtime@^0.11.0:
   version "0.11.1"
