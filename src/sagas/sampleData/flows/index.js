@@ -232,6 +232,9 @@ export function* fetchPageProcessorPreview({
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
+  const flowDataState = yield select(selectors.getFlowDataState, flowId);
+  const { formKey } = flowDataState || {};
+
   const resource = yield call(getConstructedResourceObj, {
     flowId,
     resourceId: _pageGeneratorId,
@@ -257,7 +260,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     isRestCsvMediaTypeExport(resource, connection)
   ) {
     // fetch data for file adaptors , AS2 and Rest CSV Media type resource and get parsed based on file type to JSON
-    previewData = yield call(requestFileAdaptorSampleData, { resource });
+    previewData = yield call(requestFileAdaptorSampleData, { resource, formKey });
   } else if (isRealTimeOrDistributedResource(resource)) {
     // fetch data from real time sample data
     previewData = yield call(requestRealTimeMetadata, { resource });

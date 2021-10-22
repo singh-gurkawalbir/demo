@@ -633,9 +633,9 @@ describe('flow sample data sagas', () => {
       return expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
           [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: ftpResource }],
-          [call(requestFileAdaptorSampleData, { resource: ftpResource }), fileSampleData],
+          [call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined }), fileSampleData],
         ])
-        .call(requestFileAdaptorSampleData, { resource: ftpResource })
+        .call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined })
         .put(
           actions.flowData.receivedPreviewData(
             flowId,

@@ -1,14 +1,25 @@
 import { call } from 'redux-saga/effects';
 import { parseFileData, parseFileDefinition } from '../utils/fileParserUtils';
+import { extractFileSampleDataProps, FILE_DEFINITION_TYPES } from '../resourceForm/utils';
+import { getCsvFromXlsx } from '../../../utils/file';
 
-export default function* requestFileAdaptorSampleData({ resource }) {
+export default function* requestFileAdaptorSampleData({ resource, formKey }) {
   if (!resource?.file?.type) return;
   const { file, sampleData } = resource;
   const { type } = file;
 
   if (['csv', 'xlsx', 'xml', 'json'].includes(type)) {
+    let fileContent = sampleData;
+
+    if (formKey) {
+      fileContent = (yield call(extractFileSampleDataProps, { formKey })).sampleData;
+      if (type === 'xlsx' && fileContent && typeof fileContent !== 'string') {
+        // convert its format to csv and pass further to process sampleData
+        fileContent = (yield call(getCsvFromXlsx, fileContent))?.result;
+      }
+    }
     const parsedData = yield call(parseFileData, {
-      sampleData,
+      sampleData: fileContent,
       resource,
     });
     const fileSampleData = parsedData?.data;
@@ -17,7 +28,7 @@ export default function* requestFileAdaptorSampleData({ resource }) {
   }
 
   // Below are possible file types incase of file definition
-  if (['filedefinition', 'fixed', 'delimited/edifact'].includes(type)) {
+  if (FILE_DEFINITION_TYPES.includes(type)) {
     const fileDefinitionSampleData = yield call(parseFileDefinition, {
       sampleData,
       resource,
