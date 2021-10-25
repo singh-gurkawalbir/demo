@@ -87,16 +87,20 @@ export default function MappingWrapper({ editorId }) {
     };
   }, shallowEqual);
   const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
-  const {data: flowSampleData} = useSelector(state => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    stage: 'importMappingExtract',
-    resourceType: 'imports',
-  }));
+  const sampleInput = useSelector(state => {
+    const {data} = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId: importId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
+    });
+
+    return dataAsString(data);
+  });
 
   useEffect(() => {
     if (mappingStatus === 'received') {
-      dispatch(actions.editor.sampleDataReceived(`mappings-${importId}`, dataAsString(flowSampleData)));
+      dispatch(actions.editor.sampleDataReceived(`mappings-${importId}`, sampleInput));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mappingStatus]);

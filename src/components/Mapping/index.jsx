@@ -28,7 +28,7 @@ export default function Mapping(props) {
         resourceType: 'imports',
         subRecordMappingId,
         stage: 'importMappingExtract',
-        data: {},
+        data: {}, // adding dummy data here. Actual data gets loaded once the mapping init is complete
       }));
     }
 
