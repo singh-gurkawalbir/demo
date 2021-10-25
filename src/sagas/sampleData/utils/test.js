@@ -40,6 +40,7 @@ import saveTransformationRulesForNewXMLExport, {
   _getXmlHttpAdaptorSampleData,
 } from './xmlTransformationRulesGenerator';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+import { commitStagedChanges } from '../../resources';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
@@ -1139,8 +1140,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const resourceType = 'exports';
         const flowResourcesMap = {
-          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined }},
-          'export-456': {doc: pg2, options: { uiData: undefined }},
+          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined, files: undefined }},
+          'export-456': {doc: pg2, options: { uiData: undefined, files: undefined }},
         };
 
         return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
@@ -2865,20 +2866,15 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should call parseFileData saga with the xml data from the resource and return the result', () => {
-        const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
         const sampleData = `<?xml version="1.0" encoding="UTF-8"?>
-          <letter>
-          </letter>`;
+        <letter>
+        </letter>`;
+        const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test', sampleData};
         const fileParserData = {mediaType: 'json', data: [{letter: {}}], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
           .provide([
-            [select(
-              selectors.getResourceSampleDataWithStatus,
-              newResourceId,
-              'raw'
-            ), { data: sampleData}],
             [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
           .returns(fileParserData.data[0])
@@ -3170,7 +3166,13 @@ describe('Flow sample data utility sagas', () => {
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
           .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
-          .put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
+          .call(commitStagedChanges,
+            {
+              resourceType: 'exports',
+              id: resourceId,
+              scope: SCOPES.VALUE,
+            }
+          )
           .run();
       });
     });

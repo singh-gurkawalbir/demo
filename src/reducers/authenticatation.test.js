@@ -261,15 +261,15 @@ describe('aunthentication region selector testcases', () => {
 
   describe('selectors.sessionValidTimestamp test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.sessionValidTimestamp()).toEqual(false);
+      expect(selectors.sessionValidTimestamp()).toBeUndefined();
     });
     test('should return false when there the authTimeStamp is not updated in state', () => {
-      expect(selectors.sessionValidTimestamp({})).toEqual(false);
+      expect(selectors.sessionValidTimestamp({})).toBeUndefined();
     });
     test('should return true when authTimeStamp is updated', () => {
       const state = reducer(undefined, actions.auth.sessionTimestamp());
 
-      expect(selectors.sessionValidTimestamp(state)).toEqual(true);
+      expect(selectors.sessionValidTimestamp(state)).toEqual(state.auth.authTimestamp);
     });
   });
 });

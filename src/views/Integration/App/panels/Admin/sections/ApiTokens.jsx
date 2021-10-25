@@ -7,15 +7,19 @@ import { selectors } from '../../../../../../reducers';
 import ResourceDrawer from '../../../../../../components/drawer/Resource';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import ResourceTable from '../../../../../../components/ResourceTable';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import LoadResources from '../../../../../../components/LoadResources';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
+import { TextButton } from '../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
+  },
+  noTokenMessage: {
+    margin: theme.spacing(-3, 0, 0, -3),
+    paddingLeft: theme.spacing(2),
   },
 }));
 
@@ -37,7 +41,7 @@ export default function ApiTokenSection({ integrationId }) {
       <ResourceDrawer match={match} />
 
       <PanelHeader title="API tokens">
-        <IconTextButton
+        <TextButton
           data-test="newAccessToken"
           onClick={() => {
             const newId = generateNewId();
@@ -59,10 +63,9 @@ export default function ApiTokenSection({ integrationId }) {
 
             dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
           }}
-          variant="text"
-          color="primary">
-          <AddIcon /> Create API token
-        </IconTextButton>
+          startIcon={<AddIcon />}>
+          Create API token
+        </TextButton>
       </PanelHeader>
 
       <div className={classes.resultContainer}>
@@ -73,7 +76,7 @@ export default function ApiTokenSection({ integrationId }) {
               resources={list.resources}
             />
           ) : (
-            <Typography>
+            <Typography className={classes.noTokenMessage}>
               No API tokens yet exist for this integration.
             </Typography>
           )}

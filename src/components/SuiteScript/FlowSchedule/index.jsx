@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
@@ -17,7 +16,8 @@ import {
 } from './util';
 import { selectors } from '../../../reducers';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import ButtonGroup from '../../ButtonGroup';
+import ActionGroup from '../../ActionGroup';
+import { TextButton } from '../../Buttons';
 
 export default function FlowSchedule({ flow, onClose }) {
   const dispatch = useDispatch();
@@ -131,16 +131,16 @@ export default function FlowSchedule({ flow, onClose }) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
             disabled={!isManageLevelUser} onClick={handleSubmit} >
             Save
           </DynaSubmit>
-          <Button onClick={onClose} variant="text" >
+          <TextButton onClick={onClose} >
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </>
   );

@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
@@ -12,10 +11,10 @@ import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../utils/constants';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   fixConnectionBtn: {
-    color: theme.palette.primary.main,
     fontSize: 15,
     lineHeight: '17px',
     padding: 6,
@@ -154,12 +153,13 @@ export default function ConnectionStatusPanel({ className, resourceId, resourceT
           <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
             The connection associated with this resource is currently offline
             and configuration is limited.
-            <Button
+            <TextButton
               data-test="fixConnection"
+              color="primary"
               className={classes.fixConnectionBtn}
               onClick={handleConnectionFixClick}>
               Fix your connection
-            </Button>
+            </TextButton>
             to bring it back online.
           </Typography>
         )}

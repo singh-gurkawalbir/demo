@@ -3,18 +3,30 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
-import IntegrationInstallation from '../../views/Integration/App/drawers/Install';
-import IntegrationAppAddNewChild from '../../views/Integration/App/drawers/AddChild';
-import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
-import Marketplace from '../../views/MarketPlace';
-import MarketplaceList from '../../views/MarketplaceList';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../utils/constants';
 import retry from '../../utils/retry';
-import UpgradeEM from '../../views/UpgradeErrorManagement';
 import ResourceListInfo from '../../views/ResourceList/infoText';
 
+const IntegrationAppAddNewChild = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationAppAddNewChild' */ '../../views/Integration/App/drawers/AddChild'))
+);
+const IntegrationAppUninstallation = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationAppUninstallation' */ '../../views/Integration/App/drawers/Uninstall/index'))
+);
+const IntegrationInstallation = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationInstallation' */ '../../views/Integration/App/drawers/Install'))
+);
+const Marketplace = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'Marketplace' */ '../../views/Marketplace'))
+);
+const MarketplaceList = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'MarketplaceList' */ '../../views/MarketplaceList'))
+);
+const UpgradeEM = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'UpgradeErrorManagement' */ '../../views/UpgradeErrorManagement'))
+);
 const RecycleBin = loadable(() =>
   retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
 );
@@ -33,7 +45,6 @@ const Permissions = loadable(() =>
 const Reports = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Reports' */ '../../views/Reports'))
 );
-
 const Playground = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );

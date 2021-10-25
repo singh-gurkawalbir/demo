@@ -1,5 +1,6 @@
 import { isArray, isEmpty } from 'lodash';
 import uniqBy from 'lodash/uniqBy';
+import { getAssistantConnectorType } from '../../../../../constants/applications';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
@@ -276,8 +277,9 @@ export function howToFindIdentifierFieldsMeta({
 
 export function fieldMeta({ resource, assistantData }) {
   const { assistant, lookups } = resource;
-  let { adaptorType } = resource;
   let headers;
+
+  let { adaptorType } = resource;
 
   if (adaptorType === 'RESTImport') {
     adaptorType = 'rest';
@@ -288,7 +290,12 @@ export function fieldMeta({ resource, assistantData }) {
   }
 
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData, lookups },
+    values: {
+      assistant,
+      adaptorType: getAssistantConnectorType(assistant),
+      assistantData,
+      lookups,
+    },
   });
   let basicFields = [];
   let pathParameterFields = [];

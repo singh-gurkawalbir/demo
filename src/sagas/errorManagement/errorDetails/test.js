@@ -183,15 +183,15 @@ describe('errorDetails sagas', () => {
     test('should dispatch received action with formatted errors incase of api success ', () => {
       const openErrors = {
         errors: [
-          { errorId: 'error123', source: 'application' },
-          { errorId: 'error123', source: 'connection' },
+          { errorId: 'error123', source: 'application', classification: 'connection' },
+          { errorId: 'error123', source: 'connection', classification: 'governance' },
         ],
       };
-      const applicationName = 'bigcommerce';
+      const applicationName = 'Bigcommerce';
       const formattedErrors = {
         errors: [
-          { errorId: 'error123', source: applicationName },
-          { errorId: 'error123', source: 'connection' },
+          { errorId: 'error123', source: applicationName, classification: 'Connection' },
+          { errorId: 'error123', source: 'Connection', classification: 'Governance' },
         ],
       };
 
@@ -568,28 +568,38 @@ describe('errorDetails sagas', () => {
     test('should return the list unchanged if none of the errors have source as application', () => {
       const errors = [
         { errorId: 'error1', message: 'application error', source: 'connection'},
-        { errorId: 'error2', message: 'source error', source: 'premap'},
-        { errorId: 'error3', message: 'invalid id', source: 'postmap'},
+        { errorId: 'error2', message: 'source error', source: 'post_response_map_hook'},
+        { errorId: 'error3', message: 'invalid id', source: 'post_map_hook'},
+      ];
+      const formattedErrors = [
+        { errorId: 'error1', message: 'application error', source: 'Connection', classification: undefined},
+        { errorId: 'error2', message: 'source error', source: 'Post response map hook', classification: undefined},
+        { errorId: 'error3', message: 'invalid id', source: 'Post map hook', classification: undefined},
       ];
 
-      expectSaga(_formatErrors, { errors, resourceId })
+      return expectSaga(_formatErrors, { errors, resourceId })
         .provide([
           [select(selectors.applicationName, resourceId), 'bigcommerce'],
         ])
-        .returns(errors)
+        .returns(formattedErrors)
         .run();
     });
     test('should return the list with source application replaced with actual application name if exists', () => {
       const errors = [
-        { errorId: 'error1', message: 'application error', source: 'connection'},
-        { errorId: 'error2', message: 'source error', source: 'application'},
-        { errorId: 'error3', message: 'invalid id', source: 'application'},
+        { errorId: 'error1', message: 'application error', source: 'connection', classification: 'connection'},
+        { errorId: 'error2', message: 'source error', source: 'application', classification: 'connection'},
+        { errorId: 'error3', message: 'invalid id', source: 'application', classification: 'connection'},
       ];
       const applicationName = 'bigcommerce';
       const formattedErrors = [
-        { errorId: 'error1', message: 'application error', source: 'connection'},
-        { errorId: 'error2', message: 'source error', source: applicationName},
-        { errorId: 'error3', message: 'invalid id', source: applicationName},
+        { errorId: 'error1', message: 'application error', source: 'Connection', classification: 'Connection'},
+        { errorId: 'error2', message: 'source error', source: applicationName, classification: 'Connection'},
+        { errorId: 'error3', message: 'invalid id', source: applicationName, classification: 'Connection'},
+      ];
+      const formattedErrorsWithoutApp = [
+        { errorId: 'error1', message: 'application error', source: 'Connection', classification: 'Connection'},
+        { errorId: 'error2', message: 'source error', source: 'Application', classification: 'Connection'},
+        { errorId: 'error3', message: 'invalid id', source: 'Application', classification: 'Connection'},
       ];
       const testWithValidApplicationName = expectSaga(_formatErrors, { errors, resourceId })
         .provide([
@@ -598,7 +608,7 @@ describe('errorDetails sagas', () => {
         .returns(formattedErrors)
         .run();
       const testWithoutApplicationName = expectSaga(_formatErrors, { errors, resourceId })
-        .returns(errors)
+        .returns(formattedErrorsWithoutApp)
         .run();
 
       return testWithValidApplicationName && testWithoutApplicationName;

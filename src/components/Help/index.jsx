@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Help({ className, helpKey, helpText, ...rest }) {
+export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -71,7 +71,9 @@ export default function Help({ className, helpKey, helpText, ...rest }) {
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br']}} />
+            <RawHtml
+              html={helpTextValue}
+              options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br'], escapeUnsecuredDomains}} />
           ) : (
             helpTextValue
           )}

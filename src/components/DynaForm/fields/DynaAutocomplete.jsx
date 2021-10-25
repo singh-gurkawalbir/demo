@@ -97,6 +97,7 @@ export default function DynaAutocomplete(props) {
     required,
     rootClassName,
     label,
+    multiline = true,
     onFieldChange,
     dataTest,
     options: actualOptions,
@@ -162,7 +163,7 @@ export default function DynaAutocomplete(props) {
             renderInput={params => (
               <TextField
                 {...params}
-                multiline
+                multiline={multiline}
                 name={name}
                 id={id}
                 variant="filled"

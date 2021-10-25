@@ -6,8 +6,9 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
 import ZipDownIcon from '../../../components/icons/DownloadIntegrationIcon';
 import ZipUpIcon from '../../../components/icons/InstallIntegrationIcon';
-import IconTextButton from '../../../components/IconTextButton';
 import { generateNewId } from '../../../utils/resource';
+import TextButton from '../../../components/Buttons/TextButton';
+import ActionGroup from '../../../components/ActionGroup';
 
 export default function IntegrationCeligoPageBar() {
   const location = useLocation();
@@ -20,40 +21,39 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      {permission.create && (
-        <IconTextButton
+      <ActionGroup>
+        {permission.create && (
+        <TextButton
           data-test="newIntegration"
           component={Link}
+          startIcon={<AddIcon />}
           to={`${location.pathname}/add/integrations/${generateNewId()}`}
-          variant="text"
-          color="primary">
-          <AddIcon />
+          >
           Create integration
-        </IconTextButton>
-      )}
-      {permission.install && (
-        <IconTextButton
+        </TextButton>
+        )}
+        {permission.install && (
+        <TextButton
           data-test="installZip"
           component={Link}
+          startIcon={<ZipUpIcon />}
           to={`${location.pathname}/installIntegration`}
-          variant="text"
-          color="primary">
-          <ZipUpIcon />
+          >
           Install integration
-        </IconTextButton>
-      )}
-      {/* TODO: What condition to use for download Integration */}
-      {permission.create && (
-        <IconTextButton
+        </TextButton>
+        )}
+        {/* TODO: What condition to use for download Integration */}
+        {permission.create && (
+        <TextButton
           data-test="downloadIntegration"
           component={Link}
+          startIcon={<ZipDownIcon />}
           to={`${location.pathname}/downloadIntegration`}
-          variant="text"
-          color="primary">
-          <ZipDownIcon />
+          >
           Download integration
-        </IconTextButton>
-      )}
+        </TextButton>
+        )}
+      </ActionGroup>
     </CeligoPageBar>
   );
 }

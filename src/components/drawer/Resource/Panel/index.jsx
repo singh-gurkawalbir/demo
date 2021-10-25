@@ -21,11 +21,11 @@ import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
-import IconTextButton from '../../../IconTextButton';
 import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import CloseButton from './CloseButton';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
+import { TextButton } from '../../../Buttons';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 export const isNestedDrawer = url => !!matchPath(url, {
@@ -323,14 +323,13 @@ export default function Panel(props) {
               </a>
               )}
               {hasListenerLogsAccess && (
-                <IconTextButton
+                <TextButton
                   onClick={listenerDrawerHandler}
-                  color="primary"
+                  startIcon={<DebugIcon />}
                   className={classes.debugLogButton}
                   data-test="listenerLogs">
-                  <DebugIcon />
                   View debug logs
-                </IconTextButton>
+                </TextButton>
               )}
               <div className={classes.appLogoWrapper}>
                 <ApplicationImg

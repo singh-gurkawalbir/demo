@@ -2,7 +2,6 @@ import React, { useMemo, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import lookupUtil from '../../../../utils/lookup';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -13,6 +12,7 @@ import FieldHelp from '../../../DynaForm/FieldHelp';
 import LookupDrawer from '../../../drawer/Lookup';
 import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/completers';
 import { emptyObject } from '../../../../utils/constants';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles({
   button: {
@@ -107,13 +107,12 @@ export default function ManageLookup({ editorId }) {
         flowId={flowId}
         onSave={handleUpdate} />
       <div className={classes.button}>
-        <Button
-          data-test={lookupFieldId}
-          variant="outlined"
+        <OutlinedButton
           color="secondary"
+          data-test={lookupFieldId}
           onClick={handleEditorClick}>
           {lookups?.length ? 'Manage lookups' : 'Create lookup'}
-        </Button>
+        </OutlinedButton>
         <FieldHelp
           id="Lookups"
           helpKey="afe.lookups"

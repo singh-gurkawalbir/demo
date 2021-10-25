@@ -109,6 +109,7 @@ export default {
               items: [
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
+                { label: 'Absolute number', value: 'absolutenumber' },
                 { label: 'Boolean', value: 'boolean' },
                 { label: 'Number array', value: 'numberarray' },
                 { label: 'String array', value: 'stringarray' },

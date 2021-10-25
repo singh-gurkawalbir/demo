@@ -59,6 +59,7 @@ export default function DynaHook_afe({
   label: propsLabel,
   helpKey: propsHelpKey,
   dataPublic,
+  isValid = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -124,7 +125,7 @@ export default function DynaHook_afe({
       const isEmptyHook = !func && !(_scriptId || _stackId);
 
       // If all fields are empty , then it is valid as we accept empty hook(except resource type apis)
-      if (isEmptyHook) return resourceType !== 'apis';
+      if (isEmptyHook) return required ? isValid : resourceType !== 'apis';
 
       // If hook is not empty, then valid if those respective fields are not empty
       switch (field) {
@@ -137,7 +138,7 @@ export default function DynaHook_afe({
         default:
       }
     },
-    [value, resourceType]
+    [value, required, isValid, resourceType]
   );
 
   return (

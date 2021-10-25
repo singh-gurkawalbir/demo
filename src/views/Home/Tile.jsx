@@ -70,6 +70,7 @@ const useStyles = makeStyles(theme => ({
     display: 'none',
   },
   headerTileStatus: {
+    fontSize: 13,
     paddingLeft: 0,
     '& > * .MuiButton-startIcon': {
       margin: 0,

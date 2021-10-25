@@ -24,6 +24,7 @@ export default function FieldHelp({
   helpText,
   helpKey,
   resourceContext,
+  escapeUnsecuredDomains,
   noApi = false,
 }) {
   const classes = useStyles();
@@ -40,6 +41,7 @@ export default function FieldHelp({
       helpText={helpText}
       fieldId={id}
       resourceType={resourceContext && resourceContext.resourceType}
+      escapeUnsecuredDomains={escapeUnsecuredDomains}
     />
   );
 }

@@ -28,13 +28,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: blockWidth,
-    // marginBottom: 'calc(100% - 54px) !important',
   },
   box: {
     width: blockWidth,
     height: blockHeight,
     position: 'relative',
-    zIndex: 2,
+    zIndex: theme.zIndex.drawer,
   },
   draggable: { cursor: 'move' },
   name: {
@@ -49,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
-    zIndex: 1,
+    zIndex: theme.zIndex.drawer - 1,
     padding: theme.spacing(2),
 
   },
@@ -111,6 +110,7 @@ const useStyles = makeStyles(theme => ({
   bubble: {
     position: 'absolute',
     fill: theme.palette.secondary.lightest,
+    background: 'transparent',
   },
   bubbleBG: {
     fill: 'white',

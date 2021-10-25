@@ -109,8 +109,6 @@ const auth = {
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-
-  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, { accountToResetTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -984,6 +982,17 @@ const integrationApp = {
         integrationId,
       }),
   },
+  templates: {
+    intsaller: {
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+          id,
+          connectionId,
+          installerFunction,
+          isFrameWork2,
+        }),
+    },
+  },
   uninstaller2: {
     init: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
@@ -1040,10 +1049,11 @@ const integrationApp = {
         installerFunction,
         steps,
       }),
-    installStep: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction, formVal) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
+        formVal,
       }),
     failedNewChildSteps: (integrationId, message) =>
       action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {
@@ -1381,6 +1391,13 @@ const resourceFormSampleData = {
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
+  polling: {
+    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.POLLING.SLOW),
+    resume: () => action(actionTypes.POLLING.RESUME),
+    stop: () => action(actionTypes.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+  },
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
   reload: () => action(actionTypes.APP_RELOAD),

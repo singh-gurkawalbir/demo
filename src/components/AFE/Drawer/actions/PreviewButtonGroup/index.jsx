@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
-import ButtonGroup from '../../../../ButtonGroup';
+import {OutlinedButton} from '../../../../Buttons';
+import ActionGroup from '../../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   previewButtonGroup: {
@@ -28,7 +29,7 @@ export default function PreviewButtonGroup({ editorId }) {
   const handleToggle = () => dispatch(actions.editor.toggleAutoPreview(editorId));
 
   return (
-    <ButtonGroup className={classes.previewButtonGroup}>
+    <ActionGroup className={classes.previewButtonGroup}>
       <DynaCheckbox
         id="disableAutoPreview"
         onFieldChange={handleToggle}
@@ -36,15 +37,14 @@ export default function PreviewButtonGroup({ editorId }) {
         label="Auto preview"
         value={autoEvaluate} />
       {!autoEvaluate && (
-        <Button
-          data-test="previewEditorResult"
-          variant="outlined"
+        <OutlinedButton
           color="secondary"
+          data-test="previewEditorResult"
           disabled={saveInProgress}
           onClick={handlePreview}>
           Preview
-        </Button>
+        </OutlinedButton>
       )}
-    </ButtonGroup>
+    </ActionGroup>
   );
 }

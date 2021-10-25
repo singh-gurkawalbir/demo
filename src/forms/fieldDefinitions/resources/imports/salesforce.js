@@ -119,7 +119,9 @@ export default {
     ],
   },
   'salesforce.attachment.description': {
-    type: 'text',
+    type: 'uri',
+    showExtract: false,
+    showLookup: false,
     label: 'Description',
     visibleWhenAll: [
       {
@@ -280,7 +282,7 @@ export default {
       },
       {
         field: 'salesforce.blobOperation',
-        isNot: [''],
+        isNot: ['', 'update'],
       },
     ],
   },
@@ -325,7 +327,9 @@ export default {
     ],
   },
   'salesforce.document.developerName': {
-    type: 'text',
+    type: 'uri',
+    showExtract: false,
+    showLookup: false,
     label: 'Developer name',
     visibleWhenAll: [
       {

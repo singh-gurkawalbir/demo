@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Button, Paper } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import RefreshIcon from '../../icons/RefreshIcon';
+import { FilledButton } from '../../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   pagingBar: {
@@ -28,12 +29,7 @@ const useStyles = makeStyles(theme => ({
   pagingBarShift: {
     left: theme.drawerWidth,
   },
-  icon: {
-    color: theme.palette.background.paper,
-    marginRight: theme.spacing(1),
-  },
   button: {
-    borderRadius: '4px',
     marginTop: '5px',
   },
   pagingDown: {
@@ -72,16 +68,13 @@ export default function ShowMoreDrawer(props) {
       <Typography variant="body2">
         Viewing first {count} of {maxCount}
       </Typography>
-      <Button
+      <FilledButton
         data-test="showMoreResults"
         onClick={handleMore}
-        variant="contained"
-        size="medium"
-        color="primary"
-        className={classes.button}>
-        <RefreshIcon className={classes.icon} />
+        className={classes.button}
+        startIcon={<RefreshIcon />}>
         Load more
-      </Button>
+      </FilledButton>
     </Paper>
   );
 }

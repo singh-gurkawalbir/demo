@@ -97,12 +97,15 @@ export function* netsuiteUserRoles({ connectionId, values }) {
         (acc, env) => acc || (resp[env] && resp[env].success),
         false
       );
+    const errorMessage =
+      resp &&
+      Object.keys(resp).reduce((acc, env) => (resp[env] && (resp[env]?.Error?.message || resp[env]?.error?.message)) || acc, undefined);
 
     if (!respSuccess) {
       yield put(
         actions.resource.connections.netsuite.requestUserRolesFailed(
           connectionId,
-          'Invalid netsuite credentials provided'
+          errorMessage || 'Invalid netsuite credentials provided'
         )
       );
     } else if (values) {
@@ -132,13 +135,10 @@ export function* netsuiteUserRoles({ connectionId, values }) {
       return;
     }
 
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
-
     yield put(
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
-        errors[0].message
+        inferErrorMessages(e.message)?.[0]
       )
     );
   }

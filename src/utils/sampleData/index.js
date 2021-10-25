@@ -469,11 +469,13 @@ export const extractRawSampleDataFromOneToManySampleData = (sampleData, resource
     if (!pathPointer) break;
   }
   if (!pathPointer) {
-    return sampleData;
+    return parentSampleData;
   }
   const targetPath = pathSegments[pathSegments.length - 1];
 
-  pathPointer[targetPath] = isEmpty(rest) ? [] : [rest];
+  if (!Array.isArray(pathPointer) && typeof pathPointer === 'object') {
+    pathPointer[targetPath] = isEmpty(rest) ? [] : [rest];
+  }
 
   return parentSampleData;
 };

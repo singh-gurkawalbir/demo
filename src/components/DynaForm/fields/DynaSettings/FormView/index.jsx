@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -46,13 +46,26 @@ export default function FormView({
     },
     [dispatch, resourceId, settingsForm, settings]
   );
+  const updatedMeta = useMemo(() => {
+    // sanitize all a tag elements within help texts
 
-  // TODO:verify this behaviour
+    if (!settingsFormState?.meta) { return null; }
+    const {fieldMap, layout} = settingsFormState.meta;
+
+    const fieldMapWithEscapeUnsecuredDomains = Object.keys(fieldMap).reduce((acc, key) => {
+      acc[key] = {...fieldMap[key], escapeUnsecuredDomains: true};
+
+      return acc;
+    }, {});
+
+    return {layout, fieldMap: fieldMapWithEscapeUnsecuredDomains};
+  }, [settingsFormState?.meta]);
+
   useFormInitWithPermissions({
     formKey: settingsFormKey,
     remount: settingsFormState?.key,
     disabled,
-    fieldMeta: settingsFormState?.meta,
+    fieldMeta: updatedMeta,
     resourceId,
     resourceType,
   });

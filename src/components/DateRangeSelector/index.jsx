@@ -1,6 +1,4 @@
-import { Button, List, ListItem, ListItemText } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
@@ -11,9 +9,10 @@ import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
-import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
+import { OutlinedButton, TextButton, FilledButton} from '../Buttons';
+import ActionGroup from '../ActionGroup';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -57,7 +56,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     padding: theme.spacing(2),
     background: theme.palette.background.default,
-
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -251,14 +249,13 @@ export default function DateRangeSelector({
             <Icon />
           </ActionButton>
         ) : (
-          <Button
+          <OutlinedButton
+            color="secondary"
             disabled={!!disabled}
             onClick={toggleClick}
-            variant="outlined"
-            color="secondary"
             className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
             {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
-          </Button>
+          </OutlinedButton>
         )
       }
       <ArrowPopper
@@ -322,21 +319,19 @@ export default function DateRangeSelector({
               </div>
               )}
             </div>
-            <div className={classes.actions}>
-              <ButtonGroup>
-                <Button variant="contained" color="primary" onClick={handleSave}>
-                  Apply
-                </Button>
-                {clearable && (
-                <Button variant="text" color="secondary" onClick={handleClear}>
+            <ActionGroup className={classes.actions}>
+              <FilledButton onClick={handleSave}>
+                Apply
+              </FilledButton>
+              {clearable && (
+                <TextButton onClick={handleClear}>
                   Clear
-                </Button>
-                )}
-                <Button variant="text" color="secondary" onClick={handleClose}>
-                  Cancel
-                </Button>
-              </ButtonGroup>
-            </div>
+                </TextButton>
+              )}
+              <TextButton onClick={handleClose}>
+                Cancel
+              </TextButton>
+            </ActionGroup>
           </div>
         )}
       </ArrowPopper>

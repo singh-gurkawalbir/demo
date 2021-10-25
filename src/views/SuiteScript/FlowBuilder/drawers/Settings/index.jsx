@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@material-ui/core';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
@@ -11,7 +10,8 @@ import DrawerContent from '../../../../../components/drawer/Right/DrawerContent'
 import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
 import { selectors } from '../../../../../reducers';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import ButtonGroup from '../../../../../components/ButtonGroup';
+import TextButton from '../../../../../components/Buttons/TextButton';
+import ActionGroup from '../../../../../components/ActionGroup';
 
 export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, flowId }) {
   const dispatch = useDispatch();
@@ -122,16 +122,18 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
-            onClick={handleSubmit} color="primary" variant="outlined">
+            onClick={handleSubmit}
+            color="primary"
+            variant="outlined">
             Save
           </DynaSubmit>
-          <Button onClick={handleClose} variant="text" color="primary">
+          <TextButton onClick={handleClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </RightDrawer>
   );

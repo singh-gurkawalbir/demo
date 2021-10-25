@@ -3,7 +3,10 @@ import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import { constructResourceFromFormValues } from '../../utils';
+import {
+  constructResourceFromFormValues,
+  constructSuiteScriptResourceFromFormValues,
+} from '../../utils';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import {
@@ -22,6 +25,7 @@ import { safeParse } from '../../../utils/string';
 
 const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
 const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
+const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
 const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
 const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 /*
@@ -68,10 +72,27 @@ export function* _getProcessorOutput({ processorData }) {
 export function* _fetchResourceInfoFromFormKey({ formKey }) {
   const formState = yield select(selectors.formState, formKey);
   const parentContext = (yield select(selectors.formParentContext, formKey)) || {};
+  const { resourceId, resourceType, integrationId, ssLinkedConnectionId } = parentContext;
+
+  if (ssLinkedConnectionId) {
+    const ssResourceObj = (yield call(constructSuiteScriptResourceFromFormValues, {
+      formValues: formState?.value || {},
+      resourceId,
+      resourceType,
+      ssLinkedConnectionId,
+      integrationId,
+    })) || {};
+
+    return {
+      formState,
+      ...parentContext,
+      resourceObj: resourceType === 'exports' ? ssResourceObj.export : ssResourceObj.import,
+    };
+  }
   const resourceObj = (yield call(constructResourceFromFormValues, {
     formValues: formState?.value || {},
-    resourceId: parentContext.resourceId,
-    resourceType: parentContext.resourceType,
+    resourceId,
+    resourceType,
   })) || {};
 
   return {
@@ -256,8 +277,13 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 
 export function* _requestFileSampleData({ formKey }) {
   // file related sample data is handled here
-  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
+  const resourceObj = { ...resourceInfo };
+
+  if (ssLinkedConnectionId && SUITESCRIPT_FILE_RESOURCE_TYPES.includes(resourceObj.type)) {
+    resourceObj.file.type = 'csv';
+  }
   const fileType = resourceObj?.file?.type;
 
   if (!fileType) {
@@ -363,7 +389,15 @@ export function* _requestLookupSampleData({ formKey, refreshCache }) {
 }
 
 export function* _requestExportSampleData({ formKey, refreshCache }) {
-  const { resourceId, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+
+  if (ssLinkedConnectionId) {
+    if (SUITESCRIPT_FILE_RESOURCE_TYPES.includes(resourceObj?.type)) {
+      return yield call(_requestFileSampleData, { formKey });
+    }
+
+    return yield put(actions.resourceFormSampleData.clearStages(resourceId));
+  }
   const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
   const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
 

@@ -17,10 +17,10 @@ import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 import RunFlowButton from '../../RunFlowButton';
 import CeligoSelect from '../../CeligoSelect';
-import IconTextButton from '../../IconTextButton';
 import FlowSelector from '../FlowSelector';
 import DateRangeSelector from '../../DateRangeSelector';
 import { getSelectedRange } from '../../../utils/flowMetrics';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -289,9 +289,9 @@ export default function Filters({
             </IconButton>
           </>
           )}
-          <IconTextButton onClick={handleRefreshClick}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
+          <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
+            Refresh
+          </TextButton>
           {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
         </div>
       </div>

@@ -7,6 +7,7 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import { getFileColumns } from '../../../utils/file';
+import { processJsonSampleData } from '../../../utils/sampleData';
 
 const useStyles = makeStyles(theme => ({
   keyColumnFormWrapper: {
@@ -42,6 +43,7 @@ export default function DynaFileKeyColumn_afe(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const editorId = 'filekeycolumns';
+  const parentFormKey = `${resourceType}-${resourceId}`;
   const { data: editorData, previewStatus, result } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -53,8 +55,29 @@ export default function DynaFileKeyColumn_afe(props) {
     resourceId, resourceType, fileType: options.fileType || 'csv',
   }));
 
+  /*
+   * In case of HTTP export, the raw data is saved in its parsed state
+   * no need to initiate the editor for evaluated result
+   */
+  const isHTTPExport = useSelector(state =>
+    selectors.fieldState(state, parentFormKey, 'http.successMediaType')?.value === 'csv');
+
+  const resObj = useSelector(state => {
+    const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+      state,
+      resourceId,
+      'preview',
+    );
+
+    if (!rawData) {
+      return emptyObj;
+    }
+
+    return processJsonSampleData(rawData);
+  });
+
   const multiSelectOptions = useMemo(() => {
-    const columns = getFileColumns(result);
+    const columns = isHTTPExport ? Object.keys(resObj) : getFileColumns(result);
     const options = columns.map(name => ({ label: name, value: name }));
 
     if (Array.isArray(value)) {
@@ -66,9 +89,12 @@ export default function DynaFileKeyColumn_afe(props) {
     }
 
     return [{ items: options }];
-  }, [result, value]);
+  }, [isHTTPExport, resObj, result, value]);
 
   useEffect(() => {
+    if (isHTTPExport) {
+      return;
+    }
     // this component requires editor only to get the evaluated result of parser
     // and then use it to show options
     dispatch(actions.editor.init(editorId, 'csvParser', {
@@ -84,15 +110,17 @@ export default function DynaFileKeyColumn_afe(props) {
 
   useEffect(() => {
     // added editorData truthy check as it gets undefined when editor is cleared
-    if (csvData && editorData && csvData !== editorData) {
+    if (!isHTTPExport && csvData && editorData && csvData !== editorData) {
       dispatch(actions.editor.patchFileKeyColumn(editorId, 'data', csvData));
 
       onFieldChange(id, []);
     }
-  }, [csvData, dispatch, id, editorData, onFieldChange]);
+  }, [csvData, dispatch, id, editorData, onFieldChange, isHTTPExport]);
   useEffect(() => {
-    dispatch(actions.editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
-  }, [dispatch, options]);
+    if (!isHTTPExport) {
+      dispatch(actions.editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
+    }
+  }, [dispatch, isHTTPExport, options]);
 
   return (
     <FormControl

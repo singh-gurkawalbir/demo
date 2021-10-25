@@ -2,13 +2,14 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import FieldHelp from '../../FieldHelp';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
+import { OutlinedButton } from '../../../Buttons';
 
 /*
  * This editor is shown in case of :
@@ -91,13 +92,12 @@ export default function DynaFileDefinitionEditor_afe(props) {
               </FormLabel>
               <FieldHelp {...props} />
             </div>
-            <Button
-              variant="outlined"
+            <OutlinedButton
               color="secondary"
               className={classes.fileDefinitionBtn}
               onClick={handleEditorClick}>
               Launch
-            </Button>
+            </OutlinedButton>
           </div>
         </LoadResources>
       </div>

@@ -478,20 +478,16 @@ selectors.installSetup = (state, { resourceType, resourceId, templateId }) => fr
 
 selectors.templateSetup = (state, templateId) => fromSession.template(state && state.session, templateId);
 
-selectors.templateInstallSteps = (state, templateId) => {
-  const templateInstallSteps = fromSession.templateInstallSteps(
-    state && state.session,
-    templateId
-  );
-
-  return produce(templateInstallSteps, draft => {
+selectors.templateInstallSteps = createSelector(
+  (state, templateId) => state?.session?.templates?.[templateId]?.installSteps,
+  (templateInstallSteps = emptyArray) => produce(templateInstallSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
-  });
-};
+  })
+);
 
 selectors.cloneInstallSteps = (state, resourceType, resourceId) => selectors.templateInstallSteps(state, `${resourceType}-${resourceId}`);
 
@@ -531,7 +527,7 @@ selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth
 
 selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-selectors.sessionValidTimestamp = state => !!(state && state.auth && state.auth.authTimestamp);
+selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resource selectors
@@ -2728,7 +2724,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
           // If no childId is passed, return all sections from all children
           allSections = [];
           sections.forEach(sec => {
-            allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
+            if (!sec.mode || sec.mode === 'settings') {
+              allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
+            }
           });
         }
       }
@@ -3456,7 +3454,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
     conn => {
       const accessLevel = selectors.userAccessLevelOnConnection(state, conn._id);
 
-      return accessLevel === 'manage' || accessLevel === 'owner';
+      return ['manage', 'owner', 'administrator'].includes(accessLevel);
     }
   );
 
@@ -4016,6 +4014,8 @@ selectors.suiteScriptResourceStatus = (
     path += `integrations/${integrationId}/flows`;
   } else if (resourceType === 'nextFlows') {
     path += 'flows';
+  } else if (resourceType === 'settings') {
+    path += `integrations/${integrationId}/settings`;
   } else {
     path += `${resourceType}`;
   }
@@ -5820,7 +5820,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     resourceType,
     resourceId
   )?.merged || emptyObject;
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 

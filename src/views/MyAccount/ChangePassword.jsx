@@ -98,13 +98,14 @@ export default function ChangePassword({ show, onClose }) {
   return (
     <ModalDialog show={show} onClose={onClose}>
       <span>Change password</span>
-      {error && (
+      <>
+        {error && (
         <NotificationToaster variant="error" size="large">
           <Typography variant="h6">{message}</Typography>
         </NotificationToaster>
-      )}
+        )}
 
-      {!success && (
+        {!success && (
         <div className={classes.container}>
           <Typography variant="body2">
             {`Please note that clicking 'Change Password' will sign you out of the
@@ -112,15 +113,18 @@ export default function ChangePassword({ show, onClose }) {
           </Typography>
 
           <DynaForm formKey={formKey} />
-          <DynaSubmit
-            disabled={isLoading}
-            formKey={formKey}
-            data-test="changePassword"
-            id="changePassword"
-            onClick={handleChangePasswordClick}>
-            {isLoading ? 'Changing Password...' : 'Change password'}
-          </DynaSubmit>
         </div>
+        )}
+      </>
+      {!success && (
+      <DynaSubmit
+        disabled={isLoading}
+        formKey={formKey}
+        data-test="changePassword"
+        id="changePassword"
+        onClick={handleChangePasswordClick}>
+        {isLoading ? 'Changing Password...' : 'Change password'}
+      </DynaSubmit>
       )}
     </ModalDialog>
   );

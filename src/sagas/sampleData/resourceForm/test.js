@@ -27,13 +27,103 @@ import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import {
+  constructResourceFromFormValues,
+  constructSuiteScriptResourceFromFormValues,
+} from '../../utils';
 
 const formKey = 'form-123';
 const resourceId = 'export-123';
 const flowId = 'flow-123';
 const integrationId = 'int-123';
+const ssLinkedConnectionId = 'ss-con-123';
 
 describe('resourceFormSampleData sagas', () => {
+  describe('_fetchResourceInfoFromFormKey saga', () => {
+    test('should call constructResourceFromFormValues to fetch resourceObj and return all form properties', () => {
+      const parentContext = { resourceId, resourceType: 'imports' };
+      const formState = {
+        parentContext,
+        value: {},
+      };
+      const expectedOutput = {
+        formState,
+        resourceId,
+        resourceType: 'imports',
+        resourceObj: {},
+      };
+
+      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+        .provide([
+          [select(selectors.formState, formKey), formState],
+          [select(selectors.formParentContext, formKey), parentContext],
+          [call(constructResourceFromFormValues, {
+            formValues: {},
+            resourceId,
+            resourceType: 'imports',
+          }), {}],
+        ])
+        .call.fn(constructResourceFromFormValues)
+        .not.call.fn(constructSuiteScriptResourceFromFormValues)
+        .returns(expectedOutput)
+        .run();
+    });
+    test('should call constructSuiteScriptResourceFromFormValues incase of suite script form and return all form properties', () => {
+      const parentContext = {
+        resourceId,
+        resourceType: 'exports',
+        integrationId,
+        ssLinkedConnectionId,
+      };
+      const formState = {
+        parentContext,
+        value: {},
+      };
+      const ssResource = {
+        type: 'import',
+        version: 'V2',
+        _integrationId: integrationId,
+        ssLinkedConnectionId,
+        _id: resourceId,
+        import: {},
+        export: {
+          file: {
+            csv: {
+              columnDelimiter: ',',
+              hasHeaderRow: true,
+            },
+          },
+          type: 'ftp',
+        },
+      };
+      const expectedOutput = {
+        formState,
+        resourceId,
+        resourceType: 'exports',
+        resourceObj: ssResource.export,
+        integrationId,
+        ssLinkedConnectionId,
+      };
+
+      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+        .provide([
+          [select(selectors.formState, formKey), formState],
+          [select(selectors.formParentContext, formKey), parentContext],
+          [call(constructSuiteScriptResourceFromFormValues, {
+            formValues: formState?.value || {},
+            resourceId,
+            resourceType: 'exports',
+            ssLinkedConnectionId,
+            integrationId,
+          }), ssResource],
+        ])
+        .call.fn(constructSuiteScriptResourceFromFormValues)
+        .not.call.fn(constructResourceFromFormValues)
+        .returns(expectedOutput)
+        .run();
+    });
+  });
+
   describe('requestResourceFormSampleData saga', () => {
     test('should do nothing if there is no formKey', () => expectSaga(requestResourceFormSampleData, {})
       .not.delay(500)
@@ -123,6 +213,41 @@ describe('resourceFormSampleData sagas', () => {
       .call(_requestLookupSampleData, { formKey, refreshCache })
       .not.call.fn(_requestPGExportSampleData)
       .run());
+    test('should call _requestFileSampleData incase of suitescript file resource', () => {
+      const resourceObj = {
+        type: 'fileCabinet',
+        file: {
+          csv: {
+            columnDelimiter: ',',
+            hasHeaderRow: true,
+          },
+        },
+      };
+
+      return expectSaga(_requestExportSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
+        ])
+        .call(_requestFileSampleData, { formKey })
+        .not.call(_requestLookupSampleData, { formKey })
+        .not.call.fn(_requestPGExportSampleData)
+        .run();
+    });
+    test('should dispatch clearStages incase of suitescript but not of a file resource', () => {
+      const resourceObj = {
+        type: 'rakuten',
+      };
+
+      return expectSaga(_requestExportSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
+        ])
+        .put(actions.resourceFormSampleData.clearStages(resourceId))
+        .not.call(_requestFileSampleData, { formKey })
+        .not.call(_requestLookupSampleData, { formKey })
+        .not.call.fn(_requestPGExportSampleData)
+        .run();
+    });
   });
   describe('_requestPGExportSampleData saga', () => {
     const refreshCache = true;

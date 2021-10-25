@@ -2,7 +2,6 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 import { merge } from 'lodash';
 import produce from 'immer';
-import styleguideTheme from '../styleguide/style';
 import light from './light';
 import dark from './dark';
 import sandbox from './sandbox';
@@ -28,6 +27,5 @@ export default (name = DEFAULT_THEME) => {
 
   return {
     ...muiTheme,
-    styleguide: styleguideTheme(muiTheme),
   };
 };

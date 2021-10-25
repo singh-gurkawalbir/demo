@@ -130,7 +130,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });
@@ -168,7 +168,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });

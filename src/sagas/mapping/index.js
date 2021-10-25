@@ -16,6 +16,7 @@ import { requestSampleData as requestFlowSampleData } from '../sampleData/flows'
 import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
+import { getAssistantConnectorType } from '../../constants/applications';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -190,14 +191,14 @@ export function* mappingInit({
       connectorExternalId: importResource.externalId,
     };
   } else if (importResource.assistant) {
-    const { type: adaptorType, assistant } = getResourceSubType(
+    const { assistant } = getResourceSubType(
       importResource
     );
     const { operation, resource, version } = importResource.assistantMetadata;
 
     const assistantData = yield select(
       selectors.assistantData, {
-        adaptorType,
+        adaptorType: getAssistantConnectorType(importResource.assistant),
         assistant,
       }
     );
@@ -244,7 +245,7 @@ export function* mappingInit({
   });
   yield put(
     actions.mapping.initComplete({
-      mappings: formattedMappings.map(m => ({
+      mappings: (formattedMappings || []).map(m => ({
         ...m,
         key: shortid.generate(),
       })),
@@ -289,11 +290,13 @@ export function* saveMappings() {
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSuccess = !!flowSampleData;
 
   _mappings = mappingUtil.generateFieldsAndListMappingForApp({
     mappings: _mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
@@ -391,6 +394,7 @@ export function* previewMappings() {
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSuccess = !!flowSampleData;
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, key, ...others }) => others
   );
@@ -399,6 +403,7 @@ export function* previewMappings() {
     mappings: _mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,

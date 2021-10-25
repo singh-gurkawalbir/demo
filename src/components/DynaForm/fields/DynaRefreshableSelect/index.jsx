@@ -9,7 +9,9 @@ import { DynaGenericSelect } from './RefreshGenericResource';
 
 const useStyles = makeStyles(() => ({
   validationError: {
-    display: 'inline-block !important',
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 

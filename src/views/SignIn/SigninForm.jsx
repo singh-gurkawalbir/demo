@@ -2,7 +2,7 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback} from 'react';
-import { Typography, Button, Link} from '@material-ui/core';
+import { Typography, Link} from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -12,6 +12,7 @@ import { getDomain } from '../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
+import { FilledButton, OutlinedButton } from '../../components/Buttons';
 
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
@@ -233,15 +234,13 @@ export default function SignIn({dialogOpen}) {
         )}
         { isAuthenticating ? <Spinner />
           : (
-            <Button
+            <FilledButton
               data-test="submit"
-              variant="contained"
-              color="primary"
               type="submit"
               className={classes.submit}
               value="Submit">
               Sign in
-            </Button>
+            </FilledButton>
           )}
       </form>
       { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
@@ -257,13 +256,12 @@ export default function SignIn({dialogOpen}) {
           <div className={classes.or}>
             <Typography variant="body1">or</Typography>
           </div>
-          <Button
+          <OutlinedButton
             type="submit"
-            variant="contained"
             color="secondary"
             className={classes.googleBtn}>
             Sign in with Google
-          </Button>
+          </OutlinedButton>
         </form>
         )}
         {dialogOpen && userHasOtherLoginOptions && (
@@ -273,25 +271,23 @@ export default function SignIn({dialogOpen}) {
         )}
         {dialogOpen && canUserLoginViaSSO && (
           <form onSubmit={handleReSignInWithSSO}>
-            <Button
+            <OutlinedButton
               type="submit"
-              variant="contained"
               className={classes.ssoBtn}
               startIcon={<SecurityIcon />}
               color="secondary">
               Sign in with SSO
-            </Button>
+            </OutlinedButton>
           </form>
         )}
         {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
         <form onSubmit={handleReSignInWithGoogle}>
-          <Button
+          <OutlinedButton
             type="submit"
-            variant="contained"
             color="secondary"
             className={classes.googleBtn}>
             Sign in with Google
-          </Button>
+          </OutlinedButton>
         </form>
         )}
       </div>

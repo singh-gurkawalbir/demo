@@ -1,6 +1,6 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -18,3 +18,7 @@ export default function Header({ children }) {
 
   return <div className={classes.wrapper}>{children}</div>;
 }
+
+Header.propTypes = {
+  children: PropTypes.node.isRequired,
+};

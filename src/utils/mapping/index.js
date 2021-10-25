@@ -332,7 +332,7 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     return modifiedExtract;
   }
 
-  if (!flowSampleData && /^\[.*\]$/.test(extract)) {
+  if (!flowSampleData && /^\[.*\]$/.test(extract) && !/^\[".*"\]$/.test(extract)) {
     // if extract starts with [ and ends with ]
     // find all ']' in the extract and replace it with '\]' excluding first '[' and last ']'
     return extract.replace(/^(\[)(.*)(\])$/, '$2').replace(/\\\]/g, ']');
@@ -358,6 +358,7 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     // So wnwrap the extract only if it doesnt have a dot or sublist character in it
     if (
       /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+      !/^\[".*"\]$/.test(extract) && // do not unwrap if extract is wrapped in double Quotes, as it will be interpreted as hardcodedValue ex: ["Receipt"]
       /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
       !/\./.test(extract.replace(/^\[|]$/g, '')) // and none of the special characters is a dot
     ) {
@@ -398,8 +399,13 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
     return modifiedExtract;
   }
 
+  const isExtractAlreadyWrappedByUser = /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+  /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
+  !/\./.test(extract.replace(/^\[|]$/g, '')); // and none of the special characters is a dot
+
   if (
     !flowSampleData &&
+    !isExtractAlreadyWrappedByUser &&
     extract.indexOf('[*].') === -1 &&
     extract.indexOf('.') === -1
   ) {
@@ -1053,6 +1059,7 @@ export default {
     mappings,
     generateFields,
     isGroupedSampleData,
+    isPreviewSuccess,
     importResource,
     netsuiteRecordType,
     exportResource,
@@ -1070,6 +1077,7 @@ export default {
     return mappingUtil.generateMappingFieldsAndList({
       mappings,
       isGroupedSampleData,
+      isPreviewSuccess,
       useFirstRowSupported: importResource.adaptorType !== 'SalesforceImport',
       importResource,
       exportResource,
@@ -1089,7 +1097,21 @@ export default {
       mappings.fields?.forEach(fm => {
         const _fm = { ...fm };
 
-        if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) _fm.useFirstRow = true;
+        if (isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+          if (isGroupedSampleData) {
+            _fm.useFirstRow = true;
+          } else if (!isPreviewSucess) {
+            // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
+            if (handlebarRegex.test(_fm.extract)) {
+              if (_fm.extract?.indexOf('*.') !== -1 || _fm.extract?.indexOf('[*].') !== -1) {
+                _fm.useIterativeRow = true;
+              }
+            } else if (/^\*\./.test(_fm?.extract)) {
+              _fm.useIterativeRow = true;
+            }
+          }
+        }
+
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
@@ -1110,6 +1132,16 @@ export default {
           if (!isPreviewSucess && /^\*\./.test(tempFm?.extract)) {
             tempFm.useIterativeRow = true;
           }
+
+          // adding support for multi-field list mappings for csv/NS only for now to reduce regression
+          if (!isPreviewSucess && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+            if (handlebarRegex.test(tempFm.extract)) {
+              if (tempFm.extract?.indexOf('*.') !== -1 || tempFm.extract?.indexOf('[*].') !== -1) {
+                tempFm.useIterativeRow = true;
+              }
+            }
+          }
+
           // remove *. if present after setting useFirstRow
           if (tempFm.extract?.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
 
@@ -1125,6 +1157,7 @@ export default {
   generateMappingFieldsAndList: ({
     mappings = [],
     isGroupedSampleData,
+    isPreviewSuccess,
     useFirstRowSupported = false,
     importResource = {},
     exportResource = {},
@@ -1168,30 +1201,31 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow) && isNetSuiteBatchExport(exportResource)) {
+      } else if (isCsvOrXlsxResource(importResource) && isNetSuiteBatchExport(exportResource)) {
         let isListMapping = false;
+        const listWithEmptyGenerate = lists.find(l => l.generate === '');
 
         // for multi-field mappings, there is no concept of useFirstRow
-        if (handlebarRegex.test(mapping.extract)) {
+        if ((!isPreviewSuccess || isGroupedSampleData || mapping.useIterativeRow) && handlebarRegex.test(mapping.extract)) {
           if (mapping.extract?.indexOf('*.') !== -1 || mapping.extract?.indexOf('[*].') !== -1) {
             isListMapping = true;
           }
         }
 
-        if (
-          !mapping.useFirstRow &&
-          mapping.extract?.indexOf('[*].') === -1 &&
-          !handlebarRegex.test(mapping.extract)
-        ) {
-          mapping.extract = `*.${mapping.extract}`;
-        }
+        if (isGroupedSampleData || mapping.useIterativeRow) {
+          if (
+            !mapping.useFirstRow &&
+            mapping.extract?.indexOf('[*].') === -1 &&
+            !handlebarRegex.test(mapping.extract)
+          ) {
+            mapping.extract = `*.${mapping.extract}`;
+          }
 
-        const listWithEmptyGenerate = lists.find(l => l.generate === '');
-
-        // for csv/xl imports the mapping order matters
-        // so we maintain the order after a list with empty generate is found
-        if ((!handlebarRegex.test(mapping.extract) && !mapping.useFirstRow) || listWithEmptyGenerate?.fields?.length) {
-          isListMapping = true;
+          // for csv/xl imports the mapping order matters
+          // so we maintain the order after a list with empty generate is found
+          if ((!handlebarRegex.test(mapping.extract) && !mapping.useFirstRow) || listWithEmptyGenerate?.fields?.length) {
+            isListMapping = true;
+          }
         }
 
         if (isListMapping) {

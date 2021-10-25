@@ -1,0 +1,52 @@
+import {Meta, Story, Canvas, ArgsTable} from '@storybook/addon-docs';
+import ActionGroup from '../../components/ActionGroup';
+import {FilledButton, OutlinedButton, TextButton} from '../../components/Buttons';
+import WithBoundingBox from './WithBoundingBox';
+
+<Meta 
+    title="Components/ActionGroup" 
+    component="ActionGroup"
+    decorators={[WithBoundingBox]} 
+   />
+
+# Action Group
+
+Let's use this ActionGroup component instead of button group component.
+Default is the position left which aligns the buttons to the left .
+
+<Canvas>
+  <Story name="left position">
+        <ActionGroup>
+          <FilledButton>Save</FilledButton>
+          <OutlinedButton>Save & Close </OutlinedButton>
+        </ActionGroup>
+  </Story>
+</Canvas>
+
+<ArgsTable of="ActionGroup" />
+
+Right position will align the buttons to the right of the page or wrapper
+
+<Canvas>
+    <Story name="right position">
+        <ActionGroup position="right">
+            <OutlinedButton>Validate</OutlinedButton>
+            <TextButton>Cancel</TextButton>
+        </ActionGroup>
+    </Story>
+</Canvas>
+
+Sometimes we need to have multiple buttons which needs both the positions 
+
+<Canvas>
+    <Story name="left and Right">
+      <ActionGroup>
+        <FilledButton>Save</FilledButton>
+        <OutlinedButton>Save & Close </OutlinedButton>
+         <TextButton>Cancel</TextButton>
+      </ActionGroup>
+      <ActionGroup position="right">
+        <OutlinedButton>Validate</OutlinedButton>
+        </ActionGroup>
+    </Story>
+</Canvas>

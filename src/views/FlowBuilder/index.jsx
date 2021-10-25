@@ -15,8 +15,15 @@ import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
-import FlowBuilderBody from './FlowBuilderBody';
-import Redirection from './Redirection';
+import loadable from '../../utils/loadable';
+import retry from '../../utils/retry';
+
+const FlowBuilderBody = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
+);
+const Redirection = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
+);
 
 function FBComponent({flowId, integrationId, childId}) {
   return (

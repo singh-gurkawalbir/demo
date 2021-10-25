@@ -18,9 +18,24 @@ describe('Connections logs reducer', () => {
   });
   test('CONNECTIONS_LOGS_REQUEST should set status = loading', () => {
     const connectionId = 's123';
-    const state = reducer(undefined, actions.logs.connections.request(connectionId));
+    const initialState = {
+      connections: {
+        s123: {
+          status: 'success',
+          isPaused: true,
+        },
+      },
+    };
+    const expectedState = {
+      connections: {
+        s123: {
+          status: 'loading',
+        },
+      },
+    };
+    const state = reducer(initialState, actions.logs.connections.request(connectionId));
 
-    expect(state.connections[connectionId].status).toEqual('loading');
+    expect(state).toEqual(expectedState);
   });
   test('CONNECTIONS_LOGS_RECEIVED should not modify state if log state corresponding to particular connectionId is not found', () => {
     const connectionId = 's123';
@@ -89,6 +104,19 @@ describe('Connections logs reducer', () => {
     const state = reducer(initialState, actions.logs.connections.requestFailed(connectionId));
 
     expect(state.connections[connectionId].status).toEqual('error');
+  });
+  test('CONNECTIONS_LOGS_PAUSE should set isPaused to true', () => {
+    const connectionId = 's123';
+    const initialState = {
+      connections: {
+        s123: {
+          status: 'loading',
+        },
+      },
+    };
+    const state = reducer(initialState, actions.logs.connections.pause(connectionId));
+
+    expect(state.connections[connectionId].isPaused).toEqual(true);
   });
   test('CONNECTIONS_LOGS_CLEAR should not do anything if state.connections is not defined', () => {
     const connectionId = 's123';

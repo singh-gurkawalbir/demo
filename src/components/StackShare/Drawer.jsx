@@ -7,9 +7,9 @@ import RefreshIcon from '../icons/RefreshIcon';
 import RightDrawer from '../drawer/Right';
 import DrawerHeader from '../drawer/Right/DrawerHeader';
 import DrawerContent from '../drawer/Right/DrawerContent';
-import IconTextButton from '../IconTextButton';
 import InviteUser from './InviteUser';
 import SharedUserList from './SharedUserList';
+import { TextButton } from '../Buttons';
 
 const rootPath = 'share/stacks/:stackId';
 
@@ -39,24 +39,19 @@ export default function StackShareDrawer() {
       <DrawerHeader title={isInviteUser ? 'Invite user' : 'Stack sharing'}>
         {!isInviteUser && (
         <>
-          <IconTextButton
+          <TextButton
+            startIcon={<RefreshIcon />}
             data-test="retrieveStackShares"
-            variant="text"
-            color="primary"
             onClick={handleRefreshClick}>
-            <RefreshIcon />
             Refresh
-          </IconTextButton>
-          <IconTextButton
+          </TextButton>
+          <TextButton
+            startIcon={<AddIcon />}
             data-test="inviteUserAccessToStack"
-            variant="text"
-            color="primary"
             onClick={handleInviteClick}>
-            <AddIcon />
             Invite user
-          </IconTextButton>
+          </TextButton>
         </>
-
         )}
       </DrawerHeader>
 

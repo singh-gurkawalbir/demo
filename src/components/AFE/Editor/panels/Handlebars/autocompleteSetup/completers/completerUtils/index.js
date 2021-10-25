@@ -8,10 +8,12 @@ export const textAfterBracesMatchers = editor => {
   return precedingText.match(prefixRegexp);
 };
 
-export const removePreceedingUncompletedText = editor => {
-  if (editor.completer.completions.filterText) {
+export const removePreceedingUncompletedText = (editor, prefix) => {
+  const filterText = prefix || editor.completer.completions.filterText;
+
+  if (filterText) {
     const ranges = editor.selection.getAllRanges();
-    const filterTextLength = editor.completer.completions.filterText.length;
+    const filterTextLength = filterText.length;
 
     ranges.forEach(rangeVal => {
       const range = rangeVal;
@@ -22,8 +24,8 @@ export const removePreceedingUncompletedText = editor => {
   }
 };
 
-export const insertMatchingResult = (editor, text) => {
-  removePreceedingUncompletedText(editor);
+export const insertMatchingResult = (editor, text, prefix) => {
+  removePreceedingUncompletedText(editor, prefix);
   editor.execCommand('insertstring', `${text}}}`);
 };
 

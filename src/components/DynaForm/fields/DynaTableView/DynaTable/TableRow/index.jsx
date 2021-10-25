@@ -69,7 +69,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -78,7 +78,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   const handleUpdate = useCallback(value => {
     setTableState({
       type: actionTypes.UPDATE_TABLE_ROW,
-      index: rowIndex,
+      rowIndex,
       field: id,
       value,
       optionsMap,
@@ -108,6 +108,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   const onNumberChange = useCallback(evt => {
     handleUpdate(evt.target.value);
   }, [handleUpdate]);
+
   const basicProps = useMemo(() => ({
     isValid,
     id: fieldTestAttr,
@@ -147,11 +148,14 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   }
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
+    const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
+
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
         <DynaAutocomplete
           {...basicProps}
+          multiline={multiline}
           onFieldChange={onFieldChange}
           errorMessages={errorMessages}
           value={fieldValue}
@@ -172,7 +176,17 @@ export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}
   return !required || (required && fieldValue);
 };
 
-const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+const RowCellMemo = ({
+  fieldValue,
+  optionsMap,
+  colIndex,
+  op,
+  touched,
+  rowIndex,
+  tableSize,
+  setTableState,
+  onRowChange,
+}) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
@@ -185,8 +199,9 @@ const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize,
       rowIndex={rowIndex}
       setTableState={setTableState}
       onRowChange={onRowChange}
+      colIndex={colIndex}
   />
-  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -197,7 +212,7 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes})
       data-test={`deleteTableRow-${rowIndex}`}
       aria-label="delete"
       onClick={() => {
-        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, index: rowIndex });
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex });
       }}
       className={classes.margin}>
       <DeleteIcon fontSize="small" />
@@ -231,6 +246,7 @@ export default function TableRow({
               fieldValue={rowValue[op.id]}
               touched={touched}
               rowIndex={rowIndex}
+              colIndex={op.id}
               tableSize={tableSize}
               setTableState={setTableState}
               onRowChange={onRowChange}

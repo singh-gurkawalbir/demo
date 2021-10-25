@@ -72,11 +72,11 @@ export default {
           items: [
             {
               value: 'Amazon-SP-API',
-              label: 'Selling Partner API (SP-API)',
+              label: 'Selling Partner API (SP-API) (Beta)',
             },
             {
               value: 'Amazon-Hybrid',
-              label: 'Hybrid Selling Partner API (SP-API and MWS)',
+              label: 'Hybrid Selling Partner API (SP-API and MWS) (Beta)',
             },
             {
               value: 'Amazon-MWS',

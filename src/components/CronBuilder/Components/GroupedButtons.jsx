@@ -30,16 +30,23 @@ export default function GroupedButton(props) {
     item => () => {
       let res;
 
-      if (finalValues.includes(item.value)) {
-        res = finalValues.filter(val => val !== item.value);
-      } else {
-        res = [...finalValues, item.value];
-      }
+      // sanitize selected values to match with the options
+      res = finalValues.filter(val => options[0].items.some(opt => opt.value === val));
 
-      onFieldChange(!res.length ? '*' : res.sort().join(','));
+      if (res.includes(item.value)) {
+        res = res.filter(val => val !== item.value);
+      } else {
+        res = [...res, item.value];
+      }
+      if (!res.length) {
+        return onFieldChange('*');
+      }
+      res.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+      onFieldChange(res.join(','));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [finalValues, onFieldChange]
+    [finalValues, onFieldChange, options]
   );
 
   return (

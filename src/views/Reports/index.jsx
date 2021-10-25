@@ -9,7 +9,6 @@ import CeligoSelect from '../../components/CeligoSelect';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
-import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import CeligoPagination from '../../components/CeligoPagination';
 import ResourceTable from '../../components/ResourceTable';
@@ -21,12 +20,10 @@ import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import Spinner from '../../components/Spinner';
+import { TextButton } from '../../components/Buttons';
+import ActionGroup from '../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
-  emptySpace: {
-    flexGrow: 1,
-    minWidth: theme.spacing(10),
-  },
   actions: {
     display: 'flex',
     padding: theme.spacing(2),
@@ -53,7 +50,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(0, 2),
     overflowX: 'auto',
   },
   reportsTable: {
@@ -82,16 +78,12 @@ const usePollLatestResourceCollection = resourceType => {
   const isReportTypeRunningOrQueued = useSelector(state => selectors.isAnyReportRunningOrQueued(state, resourceType));
 
   useEffect(() => {
-    let timerId;
-
     if (resourceType && isReportTypeRunningOrQueued) {
-      timerId = setInterval(() => {
-        dispatch(actions.resource.requestCollection(resourceType, null, true));
-      }, REPORTS_REFRESH_TIMER);
+      dispatch(actions.app.polling.start(actions.resource.requestCollection(resourceType, null, true), REPORTS_REFRESH_TIMER));
     }
 
     return () => {
-      clearInterval(timerId);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.requestCollection(resourceType, null, true)));
     };
   }, [dispatch, isReportTypeRunningOrQueued, resourceType]);
 };
@@ -147,18 +139,17 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         data-test="refreshReports"
-        color="secondary"
-        variant="text"
+        startIcon={<RefreshIcon />}
         disabled={isRefreshedByUser}
         onClick={() => {
           setIsRefreshedByUser(true);
           dispatch(actions.resource.requestCollection(resourceType, null));
         }}
     >
-        <RefreshIcon />Refresh
-      </IconTextButton>
+        Refresh
+      </TextButton>
 
       {isRefreshedByUser ? <div className={classes.tablePaginationRoot} />
         : <Pagination filterKey={resourceType} />}
@@ -266,19 +257,18 @@ export default function Reports() {
               >
               {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
             </Typography>
-            <div className={classes.emptySpace} />
-
-            <IconTextButton
-              data-test="addNewResource"
-              component={Link}
-              to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
-              variant="text"
-              color="primary">
-              <AddIcon /> Run report
-            </IconTextButton>
-            <RefreshPaginationComponent
-              isLoadingResource={isLoadingResource}
-              resourceType={resourceType} />
+            <ActionGroup position="right">
+              <TextButton
+                data-test="addNewResource"
+                component={Link}
+                to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
+                startIcon={<AddIcon />}>
+                Run report
+              </TextButton>
+              <RefreshPaginationComponent
+                isLoadingResource={isLoadingResource}
+                resourceType={resourceType} />
+            </ActionGroup>
           </div>
           {!isDataReadyAfterUserRefresh && <Spinner centerAll />}
           <div className={classes.reportsTable}>

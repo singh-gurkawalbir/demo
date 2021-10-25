@@ -1,20 +1,28 @@
 import React from 'react';
+import { addParameters } from '@storybook/react';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
+import { SnackbarProvider } from 'notistack';
+import {useSnackbarStyles} from '../src/App';
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from '@material-ui/core/styles';
 import themeProvider from '../src/theme/themeProvider';
 import FontStager from '../src/components/FontStager';
 import { ConfirmDialogProvider } from '../src/components/ConfirmDialog';
 import rootReducer from '../src/reducers';
 import rootSaga from '../src/sagas';
+import customViewPorts from './customViewports';
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   options: {
     storySort: (a, b) =>
       a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
   },
+  viewport: { viewports: customViewPorts},
+   layout: 'fullscreen' ,
 }
 export const globalTypes = {
   theme: {
@@ -29,6 +37,14 @@ export const globalTypes = {
   },
 };
 
+const withSnackbarProvider = (Story, context) => {
+  const classes = useSnackbarStyles();
+  return (
+    <SnackbarProvider classes={classes}>
+      <Story {...context} />
+    </SnackbarProvider>
+  )
+}
 
 const withConfirmDialogProvider = (Story, context) => {
   return (
@@ -42,6 +58,7 @@ const withThemeProvider = (Story, context) => {
   const theme = themeProvider(context.globals.theme);
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Story {...context} />
     </ThemeProvider>
   )
@@ -71,6 +88,7 @@ const withRedux = (Story, context) => {
       })) || compose;
   const store = createStore(
     rootReducer,
+    {user: { profile: {}}},
     composeEnhancers(applyMiddleware(...middleware))
   );
   sagaMiddleware.run(rootSaga);
@@ -93,6 +111,9 @@ export const decorators = [
   // atomic components do not need redux.
   withRedux,
 
+  // support for 'useSnackbar' (notistack)
+  withSnackbarProvider, 
+
   // This decorator adds support for confirmation dialogs
   // The provider code is what injects the modal into the document 
   // body.
@@ -111,3 +132,5 @@ export const decorators = [
     </>
   ),
 ];
+
+addParameters({ a11y: { element: '#root', manual: false } })

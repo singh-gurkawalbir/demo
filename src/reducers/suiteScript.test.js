@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* global describe, expect, test, beforeEach */
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../actions';
@@ -1404,48 +1404,629 @@ describe('suiteScriptFlowDetail selector', () => {
 
 describe('suiteScriptNetsuiteMappingSubRecord selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptNetsuiteMappingSubRecord(undefined, {})).toEqual({data: undefined, status: undefined});
+    expect(selectors.suiteScriptNetsuiteMappingSubRecord(undefined, {})).toEqual({});
+  });
+  test('should return empty object if no sub record mapping id is passed', () => {
+    expect(selectors.suiteScriptNetsuiteMappingSubRecord({}, {})).toEqual({});
+  });
+  test('should return empty object if sub record mapping id is not available in the import doc', () => {
+    const ssLinkedConnectionId = 'ss-id';
+    const integrationId = '201';
+    const flowId = 're2001';
+    const state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {
+                netsuite: {
+                  subRecordImports: [
+                    {mappingId: '1'},
+                  ],
+                },
+              },
+              export: {},
+            }],
+          },
+        },
+      },
+    };
+
+    expect(selectors.suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId: '3'})).toEqual({});
+  });
+  test('should return sub record doc from the import doc matching the mapping id', () => {
+    const ssLinkedConnectionId = 'ss-id';
+    const integrationId = '201';
+    const flowId = 're2001';
+    const state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {
+                netsuite: {
+                  subRecordImports: [
+                    {
+                      mappingId: '3',
+                      recordType: 'subRecordType',
+                      mapping: {
+                        fields: [
+                          {mappingId: 'xyz', something: 'else'},
+                        ],
+                        lists: [],
+                      },
+                      lookups: []},
+                  ],
+                },
+              },
+              export: {},
+            }],
+          },
+        },
+      },
+    };
+
+    expect(selectors.suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId: '3'})).toEqual({
+      mappingId: '3',
+      recordType: 'subRecordType',
+      mapping: {
+        fields: [
+          {mappingId: 'xyz', something: 'else'},
+        ],
+        lists: [],
+      },
+      lookups: []});
   });
 });
 
 describe('suiteScriptImportSampleData selector', () => {
+  let state;
+  const ssLinkedConnectionId = 'ss-id';
+  const integrationId = '201';
+  const flowId = 're2001';
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {
+                type: 'netsuite',
+                _connectionId: 'conn-123',
+                netsuite: {
+                  recordType: 'customer',
+                },
+              },
+              export: {},
+            },
+            {
+              _flowId: '2',
+              _id: 're2002',
+              _integrationId: '201',
+              import: {
+                type: 'salesforce',
+                _connectionId: 'SALESFORCE_CONNECTION',
+                salesforce: {
+                  sObjectType: 'Account',
+                },
+              },
+              export: {},
+            }],
+          },
+        },
+      },
+      session: {
+        metadata: {
+          application: {
+            [ssLinkedConnectionId]: {
+              [`netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/customer`]: {
+                status: 'received',
+                data: [{id: 'name', name: 'Full name', type: 'text'}],
+              },
+              [`suitescript/connections/${ssLinkedConnectionId}/connections/SALESFORCE_CONNECTION/sObjectTypes/Account`]: {
+                status: 'received',
+                data: {
+                  fields: [{name: 'Id', label: 'Account Id'}],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+  });
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptImportSampleData(undefined, {})).toEqual({data: undefined, status: undefined});
+    expect(selectors.suiteScriptImportSampleData(undefined, {})).toEqual({});
+  });
+  test('should return empty object if flow not found', () => {
+    expect(selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId: 'test' })).toEqual({});
+  });
+  test('should return netsuite related data and status if import type is netsuite', () => {
+    expect(selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId })).toEqual({
+      status: 'received',
+      data: [{value: 'name', label: 'Full name', type: 'text'}],
+    });
+  });
+  test('should return salesforce related data and status if import type is salesforce', () => {
+    expect(selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId: 're2002' })).toEqual({
+      status: 'received',
+      data: [{
+        label: 'Account Id',
+        value: 'Id' }],
+    });
   });
 });
 
 describe('suiteScriptGenerates selector', () => {
+  let state;
+  const ssLinkedConnectionId = 'ss-id';
+  const integrationId = '201';
+  const flowId = 're2001';
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {
+                type: 'netsuite',
+                _connectionId: 'conn-123',
+                netsuite: {
+                  recordType: 'customer',
+                },
+              },
+              export: {},
+            }],
+          },
+        },
+      },
+      session: {
+        metadata: {
+          application: {
+            [ssLinkedConnectionId]: {
+              [`netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/customer`]: {
+                status: 'received',
+                data: [{id: 'name', name: 'Full name', type: 'text'},
+                  {id: 'id', name: 'Customer Id', type: 'text'}],
+              },
+            },
+          },
+        },
+      },
+    };
+  });
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptGenerates(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+  test('should return status if data does not exist', () => {
+    delete state.session.metadata.application;
+    expect(selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual({data: undefined, status: undefined});
+  });
+  test('should return generate fields with the status', () => {
+    expect(selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(
+      {data: [
+        {
+          id: 'id',
+          name: 'Customer Id',
+          type: 'text',
+        },
+        {
+          id: 'name',
+          name: 'Full name',
+          type: 'text',
+        },
+      ],
+      status: 'received'}
+    );
   });
 });
 
 describe('suiteScriptFlowSampleData selector', () => {
+  let state;
+  const ssLinkedConnectionId = 'ss-id';
+  const integrationId = '201';
+  const flowId = 're2001';
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              export: {
+                type: 'netsuite',
+                _connectionId: 'conn-123',
+                netsuite: {
+                  type: 'realtime',
+                  realtime: {
+                    recordType: 'customer',
+                  },
+                },
+              },
+              import: {},
+            },
+            {
+              _flowId: '2',
+              _id: 're2002',
+              _integrationId: '201',
+              export: {
+                type: 'salesforce',
+                _connectionId: 'SALESFORCE_CONNECTION',
+                salesforce: {
+                  sObjectType: 'Account',
+                },
+              },
+              import: {},
+            }],
+          },
+        },
+      },
+      session: {
+        metadata: {
+          application: {
+            [ssLinkedConnectionId]: {
+              [`netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/customer`]: {
+                status: 'received',
+                data: [{id: 'name', name: 'Full name', type: 'text'}],
+              },
+              [`suitescript/connections/${ssLinkedConnectionId}/connections/SALESFORCE_CONNECTION/sObjectTypes/Account`]: {
+                status: 'received',
+                data: {
+                  fields: [{name: 'Id', label: 'Account Id'}],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+  });
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptFlowSampleData(undefined, {})).toEqual({data: undefined, status: undefined});
+    expect(selectors.suiteScriptFlowSampleData(undefined, {})).toEqual({});
+  });
+  test('should return empty object if flow not found', () => {
+    expect(selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId: 'test' })).toEqual({});
+  });
+  test('should return netsuite related data and status if export type is realtime netsuite', () => {
+    expect(selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId })).toEqual({
+      status: 'received',
+      data: [{id: 'name', name: 'Full name', type: 'text'}],
+    });
+  });
+  test('should return salesforce related data and status if export type is salesforce', () => {
+    expect(selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId: 're2002' })).toEqual({
+      status: 'received',
+      data: [{
+        label: 'Account Id',
+        value: 'Id' }],
+    });
   });
 });
 
 describe('suiteScriptExtracts selector', () => {
+  let state;
+  const ssLinkedConnectionId = 'ss-id';
+  const integrationId = '201';
+  const flowId = 're2001';
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              export: {
+                type: 'netsuite',
+                _connectionId: 'conn-123',
+                netsuite: {
+                  type: 'restlet',
+                  restlet: {
+                    recordType: 'customer',
+                  },
+                },
+              },
+              import: {},
+            },
+            {
+              _flowId: '2',
+              _id: 're2002',
+              _integrationId: '201',
+              export: {
+                type: 'salesforce',
+                _connectionId: 'SALESFORCE_CONNECTION',
+                salesforce: {
+                  sObjectType: 'Account',
+                },
+              },
+              import: {},
+            }],
+          },
+        },
+      },
+      session: {
+        metadata: {
+          application: {
+            [ssLinkedConnectionId]: {
+              [`suitescript/connections/${ssLinkedConnectionId}/connections/SALESFORCE_CONNECTION/sObjectTypes/Account`]: {
+                status: 'received',
+                data: {
+                  fields: [{name: 'name', label: 'Fist name'},
+                    {name: 'Id', label: 'Account Id'},
+                  ],
+                },
+              },
+            },
+          },
+        },
+        suiteScript: {
+          flowSampleData: {
+            [`${ssLinkedConnectionId}-${integrationId}-${flowId}`]: {
+              status: 'received',
+              data: [{id: 'name', name: 'Full name', type: 'text'},
+                {id: 'currency', name: 'Currency', type: 'select'}],
+            },
+          },
+        },
+      },
+    };
+  });
+
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptExtracts(undefined, {})).toEqual({data: undefined, status: undefined});
+    expect(selectors.suiteScriptExtracts(undefined, {})).toEqual({});
+  });
+  test('should return empty object if flow sample data does not exist', () => {
+    expect(selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId: 'test'})).toEqual({});
+  });
+  test('should return the extract fields with suffix as internal id for restlet and select type fields', () => {
+    expect(selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(
+      {data: [
+        {
+          id: 'currency',
+          name: 'Currency',
+        },
+        {
+          id: 'currency.internalid',
+          name: 'Currency (InternalId)',
+        },
+        {
+          id: 'name',
+          name: 'Full name',
+        },
+      ],
+      status: 'received'}
+    );
+  });
+  test('should return sorted fields list', () => {
+    expect(selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId: 're2002'})).toEqual(
+      {data: [{id: 'Id', name: 'Account Id'}, {id: 'name', name: 'Fist name'}], status: 'received'}
+    );
   });
 });
 
 describe('suiteScriptSalesforceMasterRecordTypeInfo selector', () => {
+  let state;
+  const ssLinkedConnectionId = 'ss-id';
+  const integrationId = '201';
+  const flowId = 're2001';
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {
+                type: 'netsuite',
+                _connectionId: 'conn-123',
+                netsuite: {
+                  type: 'restlet',
+                  restlet: {
+                    recordType: 'customer',
+                  },
+                },
+              },
+              export: {},
+            },
+            {
+              _flowId: '2',
+              _id: 're2002',
+              _integrationId: '201',
+              import: {
+                type: 'salesforce',
+                _connectionId: 'SALESFORCE_CONNECTION',
+                salesforce: {
+                  sObjectType: 'Account',
+                },
+              },
+              export: {},
+            }],
+          },
+        },
+      },
+      session: {
+        metadata: {
+          application: {
+            [ssLinkedConnectionId]: {
+              [`suitescript/connections/${ssLinkedConnectionId}/connections/SALESFORCE_CONNECTION/sObjectTypes/Account`]: {
+                status: 'received',
+                data: {
+                  fields: [{name: 'name', label: 'Fist name'},
+                    {name: 'Id', label: 'Account Id'},
+                  ],
+                  searchLayoutable: true,
+                },
+                changeIdentifier: 2,
+              },
+            },
+          },
+        },
+      },
+    };
+  });
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptSalesforceMasterRecordTypeInfo(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+  test('should return empty object if flow does not exist', () => {
+    expect(selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId: 'test'})).toEqual({});
+  });
+  test('should return empty object if import type is not salesforce', () => {
+    expect(selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual({});
+  });
+  test('should return salesforce options metadata correctly', () => {
+    expect(selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId: 're2002'})).toEqual(
+      {changeIdentifier: 2, data: {recordTypeId: undefined, searchLayoutable: true}, errorMessage: undefined, status: 'received', validationError: undefined}
+    );
   });
 });
 
 describe('suiteScriptFileExportSampleData selector', () => {
+  let state;
+  const ssLinkedConnectionId = 'ss-id';
+  const resourceId = 're2001';
+  const resourceType = 'exports';
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {},
+              export: {},
+            }],
+          },
+        },
+      },
+      session: {
+      },
+    };
+  });
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptFileExportSampleData(undefined, {})).toEqual();
+  });
+  test('should return undefined if sample data does not exist on the resource', () => {
+    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toBeUndefined();
+  });
+  test('should return undefined if sample data does not exist for csv resource', () => {
+    state.data.suiteScript[ssLinkedConnectionId].flows[0].export = {
+      file: {
+        xml: {},
+      },
+      sampleData: '<xml></xml>',
+    };
+    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toBeUndefined();
+  });
+  test('should return saved resource csv sample data if does not exist in state', () => {
+    state.data.suiteScript[ssLinkedConnectionId].flows[0].export = {
+      file: {
+        csv: {delimiter: '|'},
+      },
+      sampleData: 'NAME|AGE\nTest|30',
+    };
+
+    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toEqual('NAME|AGE\nTest|30');
+  });
+  test('should return state sample data if exists', () => {
+    state.data.suiteScript[ssLinkedConnectionId].flows[0].export = {
+      file: {
+        csv: {delimiter: '|'},
+      },
+      sampleData: 'NAME|AGE\nTest|30',
+    };
+    state.session.resourceFormSampleData = {
+      [resourceId]: {
+        data: {
+          raw: 'CUSTOMER|ID|TYPE\nDummy|123|Retail',
+        },
+      },
+    };
+    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toEqual('CUSTOMER|ID|TYPE\nDummy|123|Retail');
   });
 });
 
 describe('getSuitescriptMappingSubRecordList selector', () => {
+  const ssLinkedConnectionId = 'ss-id';
+  const integrationId = '201';
+  const flowId = 're2001';
+  let state;
+
+  beforeEach(() => {
+    state = {
+      data: {
+        suiteScript: {
+          [ssLinkedConnectionId]: {
+            flows: [{
+              _flowId: '1',
+              _id: 're2001',
+              _integrationId: '201',
+              import: {
+                type: 'netsuite',
+                netsuite: {
+                  subRecordImports: [
+                    {mappingId: '1',
+                      recordType: 'inventorydetail'},
+                  ],
+                },
+              },
+              export: {},
+            },
+            {
+              _flowId: '2',
+              _id: 're2002',
+              _integrationId: '201',
+              import: {
+                type: 'salesforce',
+                _connectionId: 'SALESFORCE_CONNECTION',
+                salesforce: {
+                  sObjectType: 'Account',
+                },
+              },
+              export: {},
+            }],
+          },
+        },
+      },
+    };
+  });
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.getSuitescriptMappingSubRecordList(undefined, {})).toEqual([]);
+  });
+  test('should return empty array if flow does not exist', () => {
+    expect(selectors.getSuitescriptMappingSubRecordList(state, {integrationId, ssLinkedConnectionId, flowId: 'test'})).toEqual([]);
+  });
+  test('should return empty array if import is not of netsuite type or does not contain subrecords', () => {
+    expect(selectors.getSuitescriptMappingSubRecordList(state, {integrationId, ssLinkedConnectionId, flowId: 're2002'})).toEqual([]);
+  });
+  test('should return subrecords list with (Subrecord) suffix', () => {
+    expect(selectors.getSuitescriptMappingSubRecordList(state, {integrationId, ssLinkedConnectionId, flowId})).toEqual(
+      [{id: '__parent', name: 'Netsuite'},
+        {id: '1', name: 'inventorydetail (Subrecord)'}]
+    );
   });
 });

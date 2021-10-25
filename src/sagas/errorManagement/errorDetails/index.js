@@ -6,16 +6,15 @@ import { apiCallWithRetry } from '../../index';
 import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
-import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../utils/errorManagement';
+import { MAX_ERRORS_TO_RETRY_OR_RESOLVE, CLASSIFICATION_LABELS_MAP, sourceLabelsMap } from '../../../utils/errorManagement';
 
 export function* _formatErrors({ errors = [], resourceId }) {
   const application = yield select(selectors.applicationName, resourceId);
 
   const formattedErrors = errors.map(e => ({
     ...e,
-    source: (e.source === 'application' && application) ? application : e.source,
-    // TODO: Remove this once actual API is updated to get reqAndResKey
-    // reqAndResKey: (index % 2 === 0) ? index : undefined,
+    source: sourceLabelsMap(application)[e.source] || e.source,
+    classification: CLASSIFICATION_LABELS_MAP[e.classification] || e.classification,
   }));
 
   return formattedErrors;

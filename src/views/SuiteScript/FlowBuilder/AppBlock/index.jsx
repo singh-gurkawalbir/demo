@@ -82,6 +82,7 @@ const useStyles = makeStyles(theme => ({
   bubble: {
     position: 'absolute',
     fill: theme.palette.secondary.lightest,
+    background: 'transparent',
   },
   bubbleBG: {
     fill: 'white',

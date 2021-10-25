@@ -2,7 +2,6 @@ import { deepClone } from 'fast-json-patch/lib/core';
 import React, { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import clsx from 'clsx';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import { selectors } from '../../../../reducers';
@@ -11,6 +10,7 @@ import LookupActionItem from './LookupActionItem';
 import getValueAfterInsert from './util';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../../utils/constants';
+import { OutlinedButton } from '../../../Buttons';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value = '', textInsertPosition) => {
@@ -105,9 +105,10 @@ const ExtractItem = props => {
 
   return (
     <div className={classes.suggestionsItem}>
-      <Button onClick={handleItemSelect} className={classes.suggestionsItemBtn}>
+      {/* TODO:(Karthik) please have a look on this button */}
+      <OutlinedButton onClick={handleItemSelect} className={classes.suggestionsItemBtn}>
         {label}
-      </Button>
+      </OutlinedButton>
     </div>
   );
 };

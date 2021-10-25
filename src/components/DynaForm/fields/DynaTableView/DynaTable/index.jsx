@@ -107,6 +107,7 @@ const BaseTable = ({
         items={tableValue}
         optionsMapFinal={optionsMapFinal}
         touched={touched}
+        tableState={tableState}
         ignoreEmptyRow={ignoreEmptyRow}
         setTableState={setTableState}
         onRowChange={onRowChange}
