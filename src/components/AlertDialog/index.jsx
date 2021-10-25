@@ -1,10 +1,6 @@
-import { Typography } from '@material-ui/core';
+import { Typography, Dialog, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import {makeStyles} from '@material-ui/core/styles';
 import SignInForm from '../../views/SignIn/SigninForm';
 import SignInSSOForm from '../../views/SignIn/SignInSSOForm';
 import { selectors } from '../../reducers';
