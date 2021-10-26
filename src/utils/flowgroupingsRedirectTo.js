@@ -1,6 +1,6 @@
 import { generatePath } from 'react-router-dom';
-import { MISCELLANEOUS_SECTION_ID } from './constants';
-import { shouldHaveMiscellaneousSection } from './resource';
+import { UNASSIGNED_SECTION_ID } from './constants';
+import { shouldHaveUnassignedSection } from './resource';
 
 export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute
@@ -40,10 +40,10 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
 export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
   const firstFlowGroupingSectionId = flowGroupingsSections?.[0]?.sectionId;
 
-  const flowGroupingsWithMiscSec = shouldHaveMiscellaneousSection(flowGroupingsSections, flows)
-    ? [...flowGroupingsSections, {sectionId: MISCELLANEOUS_SECTION_ID}] : flowGroupingsSections;
+  const flowGroupingsWithMiscSec = shouldHaveUnassignedSection(flowGroupingsSections, flows)
+    ? [...flowGroupingsSections, {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
 
-  // if there is no miscellaneous sectionId and the user has provided invalid section id then
+  // if there is no unassigned sectionId and the user has provided invalid section id then
   // the first sectionId of the flowGrouping is considered the defaultSectionId
   return flowgroupingsRedirectTo(match, flowGroupingsWithMiscSec, firstFlowGroupingSectionId);
 };

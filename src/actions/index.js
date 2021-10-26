@@ -367,6 +367,12 @@ const resource = {
         }),
       deleteFailed: error =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
+      shiftOrder: (integration, flowGroupName, newIndex) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
+          integration,
+          flowGroupName,
+          newIndex,
+        }),
     },
   },
   connections: {

@@ -1,7 +1,7 @@
-import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
@@ -18,18 +18,18 @@ import flowTableMeta from '../../../../../components/ResourceTable/flows/metadat
 import Spinner from '../../../../../components/Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { MISCELLANEOUS_SECTION_ID } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID } from '../../../../../utils/constants';
 import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
-import { shouldHaveMiscellaneousSection } from '../../../../../utils/resource';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
-import SectionTitle from '../../../common/FlowSectionTitle';
 import Attach from '../../../../../components/ResourceTable/flows/actions/Attach';
 import CreateFlowGroup from '../../../../../components/ResourceTable/flows/actions/CreateFlowGroup';
 import EditFlowGroup from '../../../../../components/ResourceTable/flows/actions/EditFlowGroup';
 import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
+import DragContainer from '../../../../../components/Mapping/DragContainer';
+import FlowGroupRow from './FlowGroupRow';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -113,53 +113,51 @@ const getBasePath = match => {
 };
 const tilesFilterConfig = { type: 'tiles'};
 
+const SortableItemComponent = props => (
+  <FlowGroupRow {...props} />
+);
+const LastRowSortableItemComponent = props => {
+  const lastRow = {
+    title: 'Unassigned',
+    sectionId: UNASSIGNED_SECTION_ID,
+  };
+
+  return (
+    <FlowGroupRow rowData={lastRow} {...props} />
+  );
+};
 const FlowListingTable = ({
   flows,
   filterKey,
   flowTableMeta,
   actionProps,
   integrationId,
+  flowGroupingsSections,
 }) => {
   const match = useRouteMatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const sectionId = match?.params?.sectionId;
-  const errorCountByFlowGroup = useSelector(
-    state =>
-      selectors.integrationErrorsPerFlowGroup(state, integrationId)
-  );
-  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flowGroupingsSections, flows);
-
-  const allSections = useMemo(() => {
-    if (hasMiscellaneousSection) {
-      return [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
-    }
-
-    return flowGroupingsSections;
-  },
-  [flowGroupingsSections, hasMiscellaneousSection]);
-  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
+  const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
+  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === UNASSIGNED_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
+  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
+    dispatch(actions.resource.integrations.flowGroups.shiftOrder(integration, flowGroupingsSections[oldIndex].title, newIndex));
+  }, [dispatch, flowGroupingsSections, integration]);
 
   return (
     <Grid container wrap="nowrap" className={classes.flowsGroupContainer}>
       <Grid item className={classes.subNav}>
-        <List>
-          {allSections.map(({ title, sectionId }) => (
-            <ListItem key={sectionId} className={classes.flowTitle}>
-              <NavLink
-                data-public
-                className={classes.listItem}
-                activeClassName={classes.activeListItem}
-                to={sectionId}
-                data-test={sectionId}>
-                <SectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
-              </NavLink>
-            </ListItem>
-          ))}
-        </List>
+        <DragContainer
+          integrationId={integrationId}
+          classes={classes}
+          SortableItemComponent={SortableItemComponent}
+          LastRowSortableItemComponent={LastRowSortableItemComponent}
+          items={flowGroupingsSections}
+          onSortEnd={onSortEnd}
+        />
       </Grid>
       <Grid item className={classes.content}>
         <LoadResources required resources="flows">
@@ -181,7 +179,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const history = useHistory();
   const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
 
-  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const flowGroupingsSections = useSelector(state => selectors.flowGroupingsSections(state, integrationId));
 
   const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
 
@@ -202,7 +200,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
         filterKey={filterKey}
         {...flowTableMeta}
         actionProps={actionProps}
-/>
+      />
     );
   }
 
@@ -213,6 +211,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
       flowTableMeta={flowTableMeta}
       actionProps={actionProps}
       integrationId={integrationId}
+      flowGroupingsSections={flowGroupingsSections}
     />
   );
 };

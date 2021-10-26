@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { TextButton } from '../../../Buttons';
+import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
 import DynaText from '../DynaText';
 
@@ -28,14 +29,33 @@ export default function TextFieldWithDeleteSupport(props) {
   const { integrationId, flows, isEdit, formKey, id, value, required } = props;
   const [currentValue, setValue] = useState(value);
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId) || {};
   const isValidName = (value === currentValue) || !integration?.flowGroupings.find(flowGroup => flowGroup.name === value);
 
-  const handleDelete = useCallback(() => {
-    setValue(value);
-    dispatch(actions.resource.integrations.flowGroups.delete(integration, value, flows));
-    history.goBack();
-  }, [dispatch, flows, history, integration, value]);
+  const handleDeleteFlowGroupClick = useCallback(
+    () => {
+      confirmDialog({
+        title: 'Confirm Delete',
+        message: 'Are you sure you want to delete this flow group? Only the group will be deleted. Its flows will be moved into “Unassigned”.',
+        buttons: [
+          {
+            label: 'Delete',
+            onClick: () => {
+              setValue(value);
+              dispatch(actions.resource.integrations.flowGroups.delete(integration, value, flows));
+              history.goBack();
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    },
+    [confirmDialog, dispatch, flows, history, integration, value]
+  );
 
   useEffect(() => {
     if (required) {
@@ -60,7 +80,7 @@ export default function TextFieldWithDeleteSupport(props) {
     <div className={classes.textFieldWithDeleteSupport}>
       <DynaText {...props} className={classes.dynaTextField} />
       <TextButton
-        onClick={handleDelete}
+        onClick={handleDeleteFlowGroupClick}
         startIcon={<TrashIcon />}
         className={classes.deleteFlowBtn}>
         Delete flow group

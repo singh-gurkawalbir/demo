@@ -51,7 +51,7 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID,
+  UNASSIGNED_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
@@ -67,7 +67,7 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  shouldHaveMiscellaneousSection,
+  shouldHaveUnassignedSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -2186,8 +2186,8 @@ selectors.mkIntegrationFlowGroups = () => {
       if (flowGroupings) {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
 
-        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
-          return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+        if (shouldHaveUnassignedSection(flowGroupings, integrationFlows)) {
+          return [...flowGroupings, {title: 'Unassigned', sectionId: UNASSIGNED_SECTION_ID}];
         }
       }
 
@@ -2230,7 +2230,7 @@ selectors.mkIntegrationFlowsByGroup = () => {
         }
 
         if (groupId) {
-          if (groupId === MISCELLANEOUS_SECTION_ID) {
+          if (groupId === UNASSIGNED_SECTION_ID) {
             isValid = isValid && !flow._flowGroupingId;
           } else {
             isValid = isValid && flow._flowGroupingId === groupId;
@@ -5264,7 +5264,7 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
-    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
     if (!groupErrorMap[groupId]) {
