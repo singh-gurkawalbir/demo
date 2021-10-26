@@ -1,5 +1,4 @@
 import { call, put, select, delay } from 'redux-saga/effects';
-import { sendRequest } from 'redux-saga-requests';
 import actions from '../../actions';
 import {
   normalizeUrlAndOptions,
@@ -8,7 +7,7 @@ import {
   // isUnauthorized,
   isCsrfExpired,
 } from './index';
-import { unauthenticateAndDeleteProfile } from '..';
+import { sendRequest, unauthenticateAndDeleteProfile } from '..';
 import { selectors } from '../../reducers';
 import { isJsonString } from '../../utils/string';
 import { RETRY_COUNT } from '../../reducers/comms/networkComms';
@@ -97,7 +96,6 @@ export function* onSuccessSaga(response, action) {
 
   // This api does not support 204 very well so
   // we expect all responses to be of type text
-
   try {
     yield call(checkToThrowSessionValidationException, response);
   } catch (e) {

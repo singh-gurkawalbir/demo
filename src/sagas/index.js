@@ -11,8 +11,6 @@ import {
   fork,
   cancelled,
 } from 'redux-saga/effects';
-import { createRequestInstance, sendRequest } from 'redux-saga-requests';
-import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
@@ -91,6 +89,68 @@ export function* requestCleanup(path, reqMethod) {
   // only dispatch a completed action when the request state is not completed
   if (status !== COMM_STATES.SUCCESS) {
     yield put(actions.api.complete(path, method, 'Request Aborted'));
+  }
+}
+
+function* extractResponse(response) {
+  const {url, headers, status} = response;
+  // convert into text only for 400 to 500 do you parse it into json
+  const data = yield response.text();
+
+  return {
+    url, headers, status, data,
+  };
+}
+
+export function* sendRequest(apiRequestAction) {
+  const {request} = apiRequestAction;
+  const controller = new AbortController();
+  const {signal} = controller;
+
+  // this is called first which gives us the payload with which we should make the actual network call
+  const updatedAction = yield call(onRequestSaga, request);
+
+  const {meta, ...requestPayload} = updatedAction;
+  const actionWrappedInRequest = {request: updatedAction};
+
+  try {
+    const {url, ...options} = requestPayload;
+
+    const actualResponse = yield window.fetch(`${url}surya`, {...options, signal});
+
+    console.log('check actual ', actualResponse);
+    // extract just what is important from the fetch api response like url, headers, status and actual data
+    const response = yield extractResponse(actualResponse);
+
+    console.log('res  ', response, requestPayload);
+
+    const isError = response.status >= 400 && response.status < 600;
+
+    if (isError) {
+      if (response.status >= 500) {
+        return yield call(onErrorSaga, response, actionWrappedInRequest);
+      }
+      // for 400 to 500 response are expected to be in JSON
+      const parsedErrorResponse = {...response, data: JSON.parse(response.data)};
+
+      return yield call(onErrorSaga, parsedErrorResponse, actionWrappedInRequest);
+    }
+
+    const successResponse = yield call(onSuccessSaga, response, actionWrappedInRequest);
+
+    return {response: successResponse};
+  } catch (e) {
+    console.log('e ', e, requestPayload);
+    if (e instanceof APIException) {
+      throw e;
+    }
+
+    return yield call(onErrorSaga, {status: 500, message: 'Connection has gone offline'}, actionWrappedInRequest);
+  } finally {
+    if (yield cancelled()) {
+      controller.abort();
+      yield call(onAbortSaga, actionWrappedInRequest);
+    }
   }
 }
 
@@ -186,18 +246,6 @@ export function* allSagas() {
 }
 
 export default function* rootSaga() {
-  yield createRequestInstance({
-    driver: createDriver(window.fetch, {
-      // AbortController Not supported in IE installed this polyfill package
-      // that it would resort to
-      // TODO: Have to check if it works in an IE explorer
-      AbortController: window.AbortController,
-    }),
-    onRequest: onRequestSaga,
-    onSuccess: onSuccessSaga,
-    onError: onErrorSaga,
-    onAbort: onAbortSaga,
-  });
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
@@ -219,6 +267,7 @@ export default function* rootSaga() {
   if (logout) {
     // invalidate the session and clear the store
     yield call(invalidateSession, { isExistingSessionInvalid: logout.isExistingSessionInvalid });
+
     // restart the root saga again
     yield spawn(rootSaga);
   }
@@ -246,3 +295,4 @@ export default function* rootSaga() {
     yield put(actions.auth.initSession());
   }
 }
+

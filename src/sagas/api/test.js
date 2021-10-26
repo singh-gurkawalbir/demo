@@ -1,7 +1,6 @@
 /* global describe, test, expect, jest, fail */
 
 import { put, call, select, delay } from 'redux-saga/effects';
-import { sendRequest } from 'redux-saga-requests';
 import {
   onRequestSaga,
   onSuccessSaga,
@@ -15,7 +14,7 @@ import {
   isCsrfExpired,
 } from './index';
 import * as apiConsts from './apiPaths';
-import { unauthenticateAndDeleteProfile } from '..';
+import { sendRequest, unauthenticateAndDeleteProfile } from '..';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 

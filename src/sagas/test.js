@@ -12,10 +12,10 @@ import {
   fork,
   spawn,
 } from 'redux-saga/effects';
-import { sendRequest } from 'redux-saga-requests';
+import rootSaga, {sendRequest, apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from './index';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from '.';
+
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';

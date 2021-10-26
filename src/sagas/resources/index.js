@@ -459,6 +459,7 @@ export function* getResource({ resourceType, id, message, hidden }) {
   try {
     let resource = yield call(apiCallWithRetry, { path, message, hidden });
 
+    console.log('check res', resource, path);
     if (resourceType === 'flows') {
       resource = yield call(normalizeFlow, resource);
     }
@@ -726,6 +727,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
       refresh,
     });
 
+    console.log('check ', path, collection);
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithRetry, {
         path: '/shared/stacks',
