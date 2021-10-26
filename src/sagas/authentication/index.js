@@ -298,6 +298,8 @@ export function* setLastLoggedInLocalStorage() {
     actions.user.profile.request('Retrieving user\'s Profile')
   );
 
+  console.log('check here');
+
   localStorage.setItem('latestUser', profile?._id);
 }
 

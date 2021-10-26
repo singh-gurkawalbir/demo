@@ -92,7 +92,7 @@ export function* requestCleanup(path, reqMethod) {
   }
 }
 
-function* extractResponse(response) {
+export function* extractResponse(response) {
   const {url, headers, status} = response;
   // convert into text only for 400 to 500 do you parse it into json
   const data = yield response.text();
@@ -102,33 +102,30 @@ function* extractResponse(response) {
   };
 }
 
+// this saga orchestrates all request interceptors
 export function* sendRequest(request) {
   const controller = new AbortController();
   const {signal} = controller;
 
   // this is called first which gives us the payload with which we should make the actual network call
-  const updatedAction = yield call(onRequestSaga, request);
+  const generatedRequestPayload = yield call(onRequestSaga, request);
 
-  const {meta, ...requestPayload} = updatedAction;
-  const actionWrappedInRequest = {request: updatedAction};
+  const {meta, ...requestPayload} = generatedRequestPayload;
+  const actionWrappedInRequest = {request: generatedRequestPayload};
 
   try {
     const {url, ...options} = requestPayload;
 
-    const actualResponse = yield window.fetch(url, {...options, signal});
+    const actualResponse = yield call(fetch, url, {...options, signal});
 
+    console.log('check ', actualResponse);
     // extract just what is important from the fetch api response like url, headers, status and actual data
-    const response = yield extractResponse(actualResponse);
+    const response = yield call(extractResponse, actualResponse);
 
     const isError = response.status >= 400 && response.status < 600;
 
     if (isError) {
-      // try to serialize json
-      if (
-        response.headers.get('content-type') === 'application/json; charset=utf-8'
-      ) {
-        return yield call(onErrorSaga, {...response, data: JSON.parse(response.data)}, actionWrappedInRequest);
-      }
+      console.log('hi there ', response, actionWrappedInRequest);
 
       // error sagas bubble exceptions of type APIException
       return yield call(onErrorSaga, response, actionWrappedInRequest);
@@ -162,34 +159,36 @@ export const CANCELLED_REQ = {
 // api call
 export function* apiCallWithRetry(args) {
   const { path, timeout = 2 * 60 * 1000, opts } = args;
-  const apiRequestPayload = { url: path, args };
+  const apiRequestPayload = yield { url: path, args };
 
-  try {
-    let apiResp;
-    let timeoutEffect;
+  console.log('should not call ');
+  throw new Error('hi');
+  // try {
+  //   let apiResp;
+  //   let timeoutEffect;
 
-    if (path !== logoutParams.path) {
-      ({ apiResp, timeoutEffect } = yield race({
-        apiResp: call(sendRequest, apiRequestPayload),
-        timeoutEffect: delay(timeout),
-      }));
-    } else {
-      apiResp = yield call(sendRequest, apiRequestPayload);
-    }
-    if (timeoutEffect) {
-      yield call(requestCleanup, path, opts?.method);
+  //   if (path !== logoutParams.path) {
+  //     ({ apiResp, timeoutEffect } = yield race({
+  //       apiResp: call(sendRequest, apiRequestPayload),
+  //       timeoutEffect: delay(timeout),
+  //     }));
+  //   } else {
+  //     apiResp = yield call(sendRequest, apiRequestPayload);
+  //   }
+  //   if (timeoutEffect) {
+  //     yield call(requestCleanup, path, opts?.method);
 
-      throw new APIException(CANCELLED_REQ);
-    }
+  //     throw new APIException(CANCELLED_REQ);
+  //   }
 
-    const { data } = apiResp?.response || {};
+  //   const { data } = apiResp?.response || {};
 
-    return data;
-  } finally {
-    if (yield cancelled()) {
-      yield call(requestCleanup, path, opts?.method);
-    }
-  }
+  //   return data;
+  // } finally {
+  //   if (yield cancelled()) {
+  //     yield call(requestCleanup, path, opts?.method);
+  //   }
+  // }
 }
 
 export function* allSagas() {

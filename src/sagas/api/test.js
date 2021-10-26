@@ -25,7 +25,7 @@ const status401 = new APIException({
 
 describe('request interceptors...testing the various stages of an api request on how it is handled  ', () => {
   process.env.NODE_ENV = 'development';
-  const jsonRespBody = { failure: 'some failure' };
+  const jsonRespBody = JSON.stringify({ failure: 'some failure' });
   const textRespBody = "[{ failure: 'some failure' }]";
   const path = '/somePath';
   const method = 'GET';
@@ -33,7 +33,7 @@ describe('request interceptors...testing the various stages of an api request on
   const host = 'someHost';
   const regular200Response = {
     status: 200,
-    data: JSON.stringify(jsonRespBody),
+    data: jsonRespBody,
   };
   const regular204Response = {
     status: 204,
@@ -63,7 +63,7 @@ describe('request interceptors...testing the various stages of an api request on
   const some403Response = {
     status: 403,
     headers: new Map([['content-type', 'application/json; charset=utf-8']]),
-    data: { message: 'Bad_Request_CSRF' },
+    data: JSON.stringify({ message: 'Bad_Request_CSRF' }),
   };
   const actionWithMetaProxiedFromRequestAction = {
     request: {
@@ -274,7 +274,7 @@ describe('request interceptors...testing the various stages of an api request on
         } catch (e) {
           expect(e).toEqual({
             status: 400,
-            message: JSON.stringify(jsonRespBody),
+            message: jsonRespBody,
           });
         }
       });
@@ -363,7 +363,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next().value).toEqual(apiCompleteEffect);
       expect(saga.next().value).toEqual(put(actions.auth.sessionTimestamp()));
 
-      expect(saga.next().value).toEqual({ data: jsonRespBody, status: 200 });
+      expect(saga.next().value).toEqual({ data: JSON.parse(jsonRespBody), status: 200 });
     });
   });
 
@@ -411,7 +411,7 @@ describe('request interceptors...testing the various stages of an api request on
             actions.api.failure(
               path,
               method,
-              JSON.stringify(some403Response.data),
+              some403Response.data,
               hidden
             )
           )
@@ -436,7 +436,7 @@ describe('request interceptors...testing the various stages of an api request on
             actions.api.failure(
               path,
               method,
-              JSON.stringify(some400Response.data)
+              some400Response.data
             )
           )
         );
@@ -491,15 +491,11 @@ describe('request interceptors...testing the various stages of an api request on
         );
 
         expect(saga.next().value).toEqual(put(actions.api.retry(path, method)));
-        // resend the request ..silent false meta allows the
-        // sendRequest to dispatch redux actions
-        // otherwise its defaulted to true in an interceptor
+
         expect(saga.next().value).toEqual(
           call(
             sendRequest,
-            { request, type: 'API_WATCHER' },
-            { dispatchRequestAction: false, runOnError: true }
-          )
+            request)
         );
         expect(saga.next().done).toBe(true);
       });

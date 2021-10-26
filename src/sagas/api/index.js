@@ -5,6 +5,7 @@ import {
   getCSRFParams,
 } from './apiPaths';
 import { getCSRFToken } from '../../utils/session';
+import { isJsonString } from '../../utils/string';
 
 const sessionExpired = {
   message: 'Session Expired',
@@ -62,16 +63,9 @@ export function normalizeUrlAndOptions(path, opts) {
 }
 
 export function throwExceptionUsingTheResponse(response) {
-  let body;
-
-  if (
-    response.headers.get('content-type') === 'application/json; charset=utf-8'
-  ) {
-    body = JSON.stringify(response.data);
-  } else body = response.data;
   throw new APIException({
     status: response.status,
-    message: body,
+    message: response.data,
   });
 }
 
@@ -91,9 +85,17 @@ export function checkToThrowSessionValidationException(response) {
 }
 
 export function isCsrfExpired(error) {
+  if (!error) return false;
+  const {status, data} = error;
+
+  if (!isJsonString(data)) {
+    return false;
+  }
+  const parsedData = JSON.parse(data);
+
   return (
-    error?.status === 403 &&
-    error?.data?.message === 'Bad_Request_CSRF'
+    status === 403 &&
+    parsedData.message === 'Bad_Request_CSRF'
   );
 }
 

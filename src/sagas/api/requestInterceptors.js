@@ -128,6 +128,7 @@ export function* onSuccessSaga(response, action) {
 export function* onErrorSaga(error, action) {
   const { path, method, origReq } = action.request.meta;
 
+  console.log('trying to execute ');
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions
@@ -140,14 +141,14 @@ export function* onErrorSaga(error, action) {
       // in the network snackbar and simply launch the session
       // expiration modal
       yield put(
-        actions.api.failure(path, method, JSON.stringify(error.data), hidden)
+        actions.api.failure(path, method, error.data, hidden)
       );
     } else {
       yield put(
         actions.api.failure(
           path,
           method,
-          JSON.stringify(error.data),
+          error.data,
           origReq && origReq.args && origReq.args.hidden
         )
       );
@@ -172,10 +173,8 @@ export function* onErrorSaga(error, action) {
   }
   // attempts failed after 'tryCount' attempts
   // this time yield an error...
-  const errorMessage =
-      typeof error.data === 'object' ? JSON.stringify(error.data) : error.data;
 
-  yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
+  yield put(actions.api.failure(path, method, error.data, origReq?.args?.hidden));
   // the parent saga may need to know if there was an error for
   // its own "Data story"...
   yield call(throwExceptionUsingTheResponse, error);
