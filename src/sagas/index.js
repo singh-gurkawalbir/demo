@@ -123,6 +123,13 @@ export function* sendRequest(request) {
     const isError = response.status >= 400 && response.status < 600;
 
     if (isError) {
+      // try to serialize json
+      if (
+        response.headers.get('content-type') === 'application/json; charset=utf-8'
+      ) {
+        return yield call(onErrorSaga, {...response, data: JSON.parse(response.data)}, actionWrappedInRequest);
+      }
+
       // error sagas bubble exceptions of type APIException
       return yield call(onErrorSaga, response, actionWrappedInRequest);
     }
