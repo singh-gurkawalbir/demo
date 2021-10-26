@@ -102,8 +102,7 @@ function* extractResponse(response) {
   };
 }
 
-export function* sendRequest(apiRequestAction) {
-  const {request} = apiRequestAction;
+export function* sendRequest(request) {
   const controller = new AbortController();
   const {signal} = controller;
 
@@ -116,38 +115,32 @@ export function* sendRequest(apiRequestAction) {
   try {
     const {url, ...options} = requestPayload;
 
-    const actualResponse = yield window.fetch(`${url}surya`, {...options, signal});
+    const actualResponse = yield window.fetch(url, {...options, signal});
 
-    console.log('check actual ', actualResponse);
     // extract just what is important from the fetch api response like url, headers, status and actual data
     const response = yield extractResponse(actualResponse);
-
-    console.log('res  ', response, requestPayload);
 
     const isError = response.status >= 400 && response.status < 600;
 
     if (isError) {
-      if (response.status >= 500) {
-        return yield call(onErrorSaga, response, actionWrappedInRequest);
-      }
-      // for 400 to 500 response are expected to be in JSON
-      const parsedErrorResponse = {...response, data: JSON.parse(response.data)};
-
-      return yield call(onErrorSaga, parsedErrorResponse, actionWrappedInRequest);
+      // error sagas bubble exceptions of type APIException
+      return yield call(onErrorSaga, response, actionWrappedInRequest);
     }
 
     const successResponse = yield call(onSuccessSaga, response, actionWrappedInRequest);
 
     return {response: successResponse};
   } catch (e) {
-    console.log('e ', e, requestPayload);
+    // All exceptions originating from the errorSaga are of type APIException..just bubble exception
     if (e instanceof APIException) {
       throw e;
     }
 
+    // cases such as connection goes offline...the window.fetch will throw an excepion ...in these case just retry the same request
     return yield call(onErrorSaga, {status: 500, message: 'Connection has gone offline'}, actionWrappedInRequest);
   } finally {
     if (yield cancelled()) {
+      // kill ongoing api request if this saga gets cancelled
       controller.abort();
       yield call(onAbortSaga, actionWrappedInRequest);
     }
@@ -162,10 +155,7 @@ export const CANCELLED_REQ = {
 // api call
 export function* apiCallWithRetry(args) {
   const { path, timeout = 2 * 60 * 1000, opts } = args;
-  const apiRequestAction = {
-    type: 'API_WATCHER',
-    request: { url: path, args },
-  };
+  const apiRequestPayload = { url: path, args };
 
   try {
     let apiResp;
@@ -173,15 +163,11 @@ export function* apiCallWithRetry(args) {
 
     if (path !== logoutParams.path) {
       ({ apiResp, timeoutEffect } = yield race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, apiRequestPayload),
         timeoutEffect: delay(timeout),
       }));
     } else {
-      apiResp = yield call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: false,
-      });
+      apiResp = yield call(sendRequest, apiRequestPayload);
     }
     if (timeoutEffect) {
       yield call(requestCleanup, path, opts?.method);

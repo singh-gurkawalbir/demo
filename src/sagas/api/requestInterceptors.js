@@ -166,17 +166,9 @@ export function* onErrorSaga(error, action) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path, method));
 
-    // resend the request ..silent false meta allows the
-    // sendRequest to dispatch redux actions
-    // otherwise its defaulted to true in an interceptor
-
-    // runOnError is defaulted to false to prevent an infinite calls to onErrorHook
-    // we already check the retry count onErrorHook for an exit case to prevent it from happening
-    return yield call(
-      sendRequest,
-      { request: origReq, type: 'API_WATCHER' },
-      { dispatchRequestAction: false, runOnError: true }
-    );
+    // resend the request and it will keep incrementing the retry count in the onSuccess saga
+    // Once it exceeds the retry count it will exit the retry process and throw an exception
+    return yield call(sendRequest, origReq);
   }
   // attempts failed after 'tryCount' attempts
   // this time yield an error...
