@@ -154,6 +154,7 @@ describe('editor sagas', () => {
         flowId: 'flow-123',
         resourceType: 'imports',
         data: '[{"id": "123"}]',
+        editorType: 'mappings',
       };
       const importRes = {
         _id: 'res-123',

@@ -860,6 +860,8 @@ describe('Flow sample data utility sagas', () => {
           errors: '',
           ignored: '',
           statusCode: '',
+          _json: '',
+          dataURI: '',
           headers: '',
         };
         const lookupResponseData = {
@@ -867,6 +869,7 @@ describe('Flow sample data utility sagas', () => {
           errors: '',
           ignored: '',
           statusCode: '',
+          dataURI: '',
         };
 
         const flowResourcesMap = {
@@ -1588,6 +1591,7 @@ describe('Flow sample data utility sagas', () => {
 
       test('should return defaultExtractsObj without data prop incase of export lookups with no preProcessedData', () => {
         const lookupDefaultExtracts = {
+          dataURI: '',
           errors: '',
           ignored: '',
           statusCode: '',
@@ -1598,6 +1602,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should return defaultExtractsObj incase of imports with no/empty preProcessedData', () => {
         const importDefaultExtracts = {
+          _json: '',
+          dataURI: '',
           errors: '',
           id: '',
           ignored: '',
@@ -1617,6 +1623,7 @@ describe('Flow sample data utility sagas', () => {
           users: [{ _id: 'user1', name: 'user1'}],
         };
         const expectedOutput = {
+          dataURI: '',
           errors: '',
           ignored: '',
           statusCode: '',
