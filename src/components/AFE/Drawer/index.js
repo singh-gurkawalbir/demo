@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
 import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -100,11 +100,19 @@ function RouterWrappedContent({ hideSave }) {
   const match = useRouteMatch();
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
-  const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
-  const editorTitle = useSelector(state => selectors.editor(state, editorId).editorTitle);
+  const {editorType, editorTitle, initStatus} = useSelector(state => {
+    const e = selectors.editor(state, editorId);
+
+    return {
+      editorType: e.editorType,
+      editorTitle: e.editorTitle,
+      initStatus: e.initStatus,
+    };
+  }, shallowEqual);
 
   useEffect(() => {
-    if (!editorType) {
+    // we want to redirect to parent url only if the editor init is not in progress
+    if (initStatus !== 'inProgress' && !editorType) {
       // redirect to parent url
       const urlFields = match.url.split('/');
 

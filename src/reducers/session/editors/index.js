@@ -36,6 +36,11 @@ export default function reducer(state = {}, action) {
         draft.helperFunctions = helperFunctions;
         break;
 
+      case actionTypes.EDITOR.INIT: {
+        draft[id] = {initStatus: 'inProgress'};
+        break;
+      }
+
       case actionTypes.EDITOR.INIT_COMPLETE: {
         draft[id] = options;
         break;
