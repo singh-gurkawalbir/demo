@@ -70,8 +70,8 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
-  selectDropdoownMenu: {
-    zIndex: 5,
+  dynaTypeableSelect: {
+    zIndex: theme.zIndex.appBar,
   },
 }));
 const SelectStyle = theme => ({
@@ -341,7 +341,7 @@ export default function DynaTypeableSelect(props) {
         options={suggestions}
         filterOption={filterOption}
         menuIsOpen
-        className={classes.selectDropdoownMenu}
+        className={classes.dynaTypeableSelect}
         />
       )}
       {!isFocused &&
