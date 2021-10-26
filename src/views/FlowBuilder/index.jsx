@@ -5,7 +5,6 @@ import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDe
 import ResourceDrawer from '../../components/drawer/Resource';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
-import ResponseMappingDrawer from '../../components/ResponseMapping/Drawer';
 import MappingDrawerRoute from '../MappingDrawer';
 import BottomDrawer from './drawers/BottomDrawer';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
@@ -75,7 +74,6 @@ export default function FlowBuilder() {
 
         <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
         <MappingDrawerRoute integrationId={integrationId} />
-        <ResponseMappingDrawer integrationId={integrationId} />
       </Redirection>
     </LoadResources>
   );
