@@ -281,4 +281,57 @@ describe('response mapping utils', () => {
       expect(responseMappingUtil.generateMappingFieldsAndList(flatMapping)).toEqual(result);
     });
   });
+
+  test('getResponseMappingDefaultInput util', () => {
+    const preProcessedData = {email: 'abc@test.com', id: 123456};
+    const testCases = [
+      {
+        resourceType: 'flows',
+      },
+      {
+        resourceType: 'exports',
+        preProcessedData,
+        adaptorType: 'HTTPImport',
+        result: {
+          data: [{email: 'abc@test.com', id: 123456}],
+          errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+          ignored: false,
+          statusCode: 200,
+          dataURI: '',
+        },
+      },
+      {
+        resourceType: 'exports',
+        adaptorType: 'HTTPImport',
+        result: {
+          errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+          ignored: false,
+          statusCode: 200,
+          dataURI: '',
+        },
+      },
+      {
+        resourceType: 'imports',
+        preProcessedData,
+        result: preProcessedData,
+      },
+      {
+        resourceType: 'imports',
+        adaptorType: 'RESTImport',
+        result: {
+          id: '1234567890',
+          errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+          ignored: false,
+          statusCode: 200,
+          dataURI: '',
+          _json: { responseField1: '', responseField2: '' },
+          headers: { 'content-type': 'application/json; charset=utf-8' },
+        },
+      },
+    ];
+
+    testCases.forEach(({resourceType, preProcessedData, adaptorType, result}) => {
+      expect(responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, adaptorType)).toEqual(result);
+    });
+  });
 });
