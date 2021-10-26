@@ -58,6 +58,25 @@ import { emptyObject } from '../../../utils/constants';
 import { getConstructedResourceObj } from './utils';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
+
+function* _configureFormContext({ flowId, resourceId, formKey }) {
+  const prevFormContext = (yield select(selectors.flowDataFormContext, flowId)) || {};
+
+  if (prevFormContext.resourceId) {
+    // clears stages for old formContext if exists
+    yield put(actions.flowData.resetStages(flowId, prevFormContext.resourceId));
+  }
+
+  if (formKey) {
+    // more optimization can be done here to not clear all stages
+    yield put(actions.flowData.setFormContext({ flowId, resourceId, formKey }));
+    yield put(actions.flowData.resetStages(flowId, resourceId));
+  } else {
+    // clears any existing form context
+    yield put(actions.flowData.clearFormContext(flowId));
+  }
+}
+
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
   const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const clonedFlow = deepClone(flow || {});
@@ -90,10 +109,8 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh, form
     ];
   }
   clonedFlow.refresh = !!refresh;
-  if (formKey) {
-    clonedFlow.formKey = formKey;
-  }
   yield put(actions.flowData.init(clonedFlow));
+  yield call(_configureFormContext, { flowId, resourceId, formKey });
 }
 
 export function* requestSampleData({
@@ -232,8 +249,7 @@ export function* fetchPageProcessorPreview({
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
-  const flowDataState = yield select(selectors.getFlowDataState, flowId);
-  const { formKey } = flowDataState || {};
+  const { formKey } = (yield select(selectors.flowDataFormContext, flowId)) || {};
 
   const resource = yield call(getConstructedResourceObj, {
     resourceId: _pageGeneratorId,
