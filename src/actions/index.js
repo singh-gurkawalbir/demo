@@ -2092,10 +2092,11 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: ({ flowId, resourceId }) =>
+  init: ({ flowId, resourceId, resourceType }) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
       resourceId,
       flowId,
+      resourceType,
     }),
   initComplete: (options = {}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),
