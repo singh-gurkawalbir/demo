@@ -236,9 +236,9 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   const { formKey } = flowDataState || {};
 
   const resource = yield call(getConstructedResourceObj, {
-    flowId,
     resourceId: _pageGeneratorId,
     resourceType: 'exports',
+    formKey,
   });
   const { merged: connection } = yield select(
     selectors.resourceData,
@@ -273,6 +273,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       runOffline: true,
       throwOnError: true,
       flowId,
+      formKey,
     });
     previewData = getPreviewStageData(previewData, 'parse');
   }

@@ -5,11 +5,8 @@ import {
 import { selectors } from '../../../../reducers';
 import { SCOPES } from '../../../resourceForm';
 
-export function* getConstructedResourceObj({ flowId, resourceId, resourceType }) {
+export function* getConstructedResourceObj({ formKey, resourceId, resourceType }) {
   // TODO - check for suitescript - do we need to add support at all?
-  const flowDataState = yield select(selectors.getFlowDataState, flowId);
-  const { formKey } = flowDataState || {};
-
   if (!formKey) {
     const { merged: resource = {} } = yield select(
       selectors.resourceData,
