@@ -23,6 +23,7 @@ import outputFilter from './outputFilter';
 import responseTransform from './responseTransform';
 import databaseMapping from './databaseMapping';
 import flowTransform from './flowTransform';
+import mappings from './mappings';
 
 const logicMap = {
   handlebars,
@@ -49,6 +50,7 @@ const logicMap = {
   salesforceLookupFilter,
   netsuiteQualificationCriteria,
   salesforceQualificationCriteria,
+  mappings,
 };
 
 export function getLogic(editor) {
@@ -239,6 +241,10 @@ export const featuresMap = options => ({
   salesforceQualificationCriteria: {
     layout: 'lookupFilter',
     hidePreview: true,
+  },
+  mappings: {
+    layout: 'compactRow',
+    autoEvaluate: false,
   },
 });
 
