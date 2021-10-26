@@ -8,7 +8,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
   const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
 
   return (
-    editorType === 'mappings'
+    editorType === 'mappings' || editorType === 'responseMappings'
       ? (
         <MappingsButtonGroup
           editorId={editorId}

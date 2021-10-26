@@ -9,10 +9,8 @@ const useStyles = makeStyles(theme => ({
     height: 39,
     display: 'flex',
     alignItems: 'center',
-    // justifyContent: 'space-between',
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
-    // color: theme.palette.text.main,
     borderBottom: 'solid 1px rgb(0,0,0,0.3)',
   },
   helpButton: {
