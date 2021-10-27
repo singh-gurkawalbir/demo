@@ -40,20 +40,13 @@ export function* pollForLatestLogs({ flowId, exportId, timeGt }) {
 
   yield call(fetchNewLogs, { flowId, exportId, timeGt });
   yield delay(POLLING_DURATION);
-  let pollingLastStoppedAt;
 
   yield race({
     pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: POLLING_DURATION}),
-    abortPoll: take(
-      action => {
-        if (action.type === actionTypes.POLLING.STOP) {
-          pollingLastStoppedAt = Date.now();
-
-          return true;
-        }
-      }
-    ),
+    abortPoll: take(actionTypes.POLLING.STOP),
   });
+  const pollingLastStoppedAt = Date.now();
+
   yield take(actionTypes.POLLING.RESUME);
   yield call(pollForLatestLogs, { flowId, exportId, timeGt: pollingLastStoppedAt });
 }

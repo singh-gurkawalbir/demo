@@ -177,7 +177,7 @@ export default function PageBar() {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

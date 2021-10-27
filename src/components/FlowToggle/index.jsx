@@ -101,7 +101,7 @@ export default function FlowToggle({
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

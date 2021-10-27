@@ -283,7 +283,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
 
     return { error };
   }
-  if (options?.action === 'UpdatedIA2.0Settings') {
+  if (options?.refetchResources) {
+    yield put(actions.resource.requestCollection('flows', null, true));
+    yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
   }

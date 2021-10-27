@@ -103,7 +103,7 @@ export default function RunDashboardActions({ flowId }) {
         },
         {
           label: 'No, go back',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

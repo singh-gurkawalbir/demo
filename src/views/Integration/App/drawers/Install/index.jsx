@@ -409,7 +409,7 @@ export default function ConnectorInstallation(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
