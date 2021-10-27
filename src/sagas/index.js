@@ -162,33 +162,32 @@ export function* apiCallWithRetry(args) {
   const apiRequestPayload = yield { url: path, args };
 
   console.log('should not call ');
-  throw new Error('hi');
-  // try {
-  //   let apiResp;
-  //   let timeoutEffect;
+  try {
+    let apiResp;
+    let timeoutEffect;
 
-  //   if (path !== logoutParams.path) {
-  //     ({ apiResp, timeoutEffect } = yield race({
-  //       apiResp: call(sendRequest, apiRequestPayload),
-  //       timeoutEffect: delay(timeout),
-  //     }));
-  //   } else {
-  //     apiResp = yield call(sendRequest, apiRequestPayload);
-  //   }
-  //   if (timeoutEffect) {
-  //     yield call(requestCleanup, path, opts?.method);
+    if (path !== logoutParams.path) {
+      ({ apiResp, timeoutEffect } = yield race({
+        apiResp: call(sendRequest, apiRequestPayload),
+        timeoutEffect: delay(timeout),
+      }));
+    } else {
+      apiResp = yield call(sendRequest, apiRequestPayload);
+    }
+    if (timeoutEffect) {
+      yield call(requestCleanup, path, opts?.method);
 
-  //     throw new APIException(CANCELLED_REQ);
-  //   }
+      throw new APIException(CANCELLED_REQ);
+    }
 
-  //   const { data } = apiResp?.response || {};
+    const { data } = apiResp?.response || {};
 
-  //   return data;
-  // } finally {
-  //   if (yield cancelled()) {
-  //     yield call(requestCleanup, path, opts?.method);
-  //   }
-  // }
+    return data;
+  } finally {
+    if (yield cancelled()) {
+      yield call(requestCleanup, path, opts?.method);
+    }
+  }
 }
 
 export function* allSagas() {
