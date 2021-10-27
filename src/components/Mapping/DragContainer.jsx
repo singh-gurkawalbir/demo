@@ -1,21 +1,21 @@
-import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {selectors} from '../../reducers';
-import MappingRow from './MappingRow';
-import actions from '../../actions';
+import React from 'react';
 import SortableList from '../Sortable/SortableList';
 import SortableItem from '../Sortable/SortableItem';
 import useSortableList from '../../hooks/useSortableList';
 
-export default function DragContainer({ onDrop, disabled, className, ...props }) {
-  const dispatch = useDispatch();
-  const mappings = useSelector(state => selectors.mapping(state).mappings);
-  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
-    dispatch(actions.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
-  }, [dispatch, mappings]);
+export default function DragContainer({
+  onDrop,
+  disabled,
+  className,
+  items,
+  SortableItemComponent,
+  LastRowSortableItemComponent,
+  onSortEnd,
+  ...props
+}) {
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
-  const emptyRowIndex = mappings.length;
+  const emptyRowIndex = items.length;
 
   return (
     <>
@@ -24,15 +24,15 @@ export default function DragContainer({ onDrop, disabled, className, ...props })
         updateBeforeSortStart={handleSortStart}
         axis="y"
         useDragHandle>
-        {mappings.map((mapping, index) => (
+        {items.map((item, index) => (
           <SortableItem
-            key={mapping.key}
+            key={item.key || item.sectionId}
             index={index}
             hideSortableGhost={false}
             value={(
-              <MappingRow
+              <SortableItemComponent
                 index={index}
-                mappingKey={mapping.key}
+                rowData={item}
                 disabled={disabled}
                 isDragInProgress={dragItemIndex !== undefined}
                 isRowDragged={dragItemIndex === index}
@@ -42,7 +42,7 @@ export default function DragContainer({ onDrop, disabled, className, ...props })
         />
         ))}
       </SortableList>
-      <MappingRow
+      <LastRowSortableItemComponent
         key={`newMappingRow-${emptyRowIndex}`}
         index={emptyRowIndex}
         disabled={disabled}

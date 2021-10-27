@@ -21,6 +21,13 @@ export default (state = {}, action) => {
 
         draft[integrationId].redirectTo = redirectTo;
         break;
+      case actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_FAILED:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+
+        draft[integrationId].flowGroupSaveStatus = 'Failed';
+        break;
       default:
     }
   });
@@ -35,4 +42,12 @@ selectors.shouldRedirect = (state, integrationId) => {
   }
 
   return state[integrationId].redirectTo;
+};
+
+selectors.flowGroupSaveStatus = (state, integrationId) => {
+  if (!state || !state[integrationId]) {
+    return null;
+  }
+
+  return state[integrationId].flowGroupSaveStatus;
 };

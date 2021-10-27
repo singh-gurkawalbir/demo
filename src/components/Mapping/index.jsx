@@ -1,17 +1,116 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch, Redirect } from 'react-router-dom';
 import {selectors} from '../../reducers';
+import Spinner from '../Spinner';
+import TopPanel from './TopPanel';
+import ButtonPanel from './ButtonPanel';
+import PreviewPanel from './Preview/Panel';
+import DragContainer from './DragContainer';
 import actions from '../../actions';
-import MappingWrapper from './MappingWrapper';
+import SettingsDrawer from './Settings';
+import DrawerContent from '../drawer/Right/DrawerContent';
+import DrawerFooter from '../drawer/Right/DrawerFooter';
+import AutoMapperButton from './AutoMapperButton';
+import MappingRow from './MappingRow';
+import { emptyObject } from '../../utils/constants';
 
-export default function Mapping(props) {
-  const {flowId, importId, subRecordMappingId } = props;
+const useStyles = makeStyles(theme => ({
+  mappingDrawerContent: {
+    height: '100%',
+    display: 'flex',
+  },
+  mappingColumn: {
+    flex: '1 1 0',
+    width: 'calc(100% + 24px)',
+    overflow: 'hidden',
+    flexDirection: 'column',
+    display: 'flex',
+    marginLeft: -24,
+  },
+  mappingTable: {
+    height: '100%',
+    overflow: 'auto',
+  },
+  autoMapper: {
+    margin: theme.spacing(2, 3),
+  },
+}));
+const SortableItemComponent = props => (
+  <MappingRow {...props} />
+);
+const LastRowSortableItemComponent = props => (
+  <MappingRow rowData={emptyObject} {...props} />
+);
+const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
+  const canAutoMap = useSelector(state => {
+    if (disabled) {
+      return false;
+    }
+    const generateFields = selectors.mappingGenerates(state, importId, subRecordMappingId);
+    const extractFields = selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
+
+    return generateFields.length > 0 && extractFields.length > 0;
+  });
+  const classes = useStyles();
   const dispatch = useDispatch();
-  const match = useRouteMatch();
-  const editorId = `mappings-${importId}`;
+  const mappings = useSelector(state => selectors.mapping(state).mappings);
+  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
+    dispatch(actions.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
+  }, [dispatch, mappings]);
 
-  const isMappingPreviewAvailable = useSelector(state => !!selectors.mappingPreviewType(state, importId));
+  return (
+    <>
+      <SettingsDrawer disabled={disabled} />
+      <DrawerContent>
+        <div className={classes.mappingDrawerContent}>
+          <div className={classes.mappingColumn}>
+            <TopPanel dataPublic flowId={flowId} importId={importId} disabled={disabled} />
+
+            <div className={classes.mappingTable}>
+              <DragContainer
+                disabled={disabled}
+                importId={importId}
+                flowId={flowId}
+                items={mappings}
+                SortableItemComponent={SortableItemComponent}
+                LastRowSortableItemComponent={LastRowSortableItemComponent}
+                onSortEnd={onSortEnd}
+                subRecordMappingId={subRecordMappingId}
+              />
+              {canAutoMap && (
+                <div className={classes.autoMapper}>
+                  <AutoMapperButton />
+                </div>
+              )}
+            </div>
+          </div>
+          <PreviewPanel
+            importId={importId}
+            disabled={disabled}
+            subRecordMappingId={subRecordMappingId} />
+        </div>
+      </DrawerContent>
+      <DrawerFooter>
+        <ButtonPanel
+          flowId={flowId}
+          importId={importId}
+          disabled={disabled}
+          onClose={onClose}
+           />
+      </DrawerFooter>
+    </>
+  );
+};
+
+export default function MappingWrapper(props) {
+  const {
+    flowId,
+    importId,
+    subRecordMappingId,
+  } = props;
+  const dispatch = useDispatch();
+  const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
 
   useEffect(() => {
     /** initiate a mapping init each time user opens mapping. Sample data is loaded */
@@ -21,26 +120,24 @@ export default function Mapping(props) {
       subRecordMappingId,
     }));
 
-    if (!isMappingPreviewAvailable) {
-      dispatch(actions.editor.init(editorId, 'mappings', {
-        flowId,
-        resourceId: importId,
-        resourceType: 'imports',
-        subRecordMappingId,
-        stage: 'importMappingExtract',
-        data: {}, // adding dummy data here. Actual data gets loaded once the mapping init is complete
-      }));
-    }
-
     return () => {
-      // clear the mapping list when component un-mounts.
+      // clear the mapping list when component unloads.
       dispatch(actions.mapping.clear());
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, flowId, importId, subRecordMappingId]);
+
+  if (mappingStatus === 'error') {
+    return (<Typography>Failed to load mapping.</Typography>);
+  }
+  if (mappingStatus !== 'received') {
+    return (
+
+      <Spinner centerAll />
+
+    );
+  }
 
   return (
-    isMappingPreviewAvailable ? <MappingWrapper {...props} />
-      : <Redirect to={`${match.url}/editor/${editorId}`} />
+    <Mapping {...props} />
   );
 }

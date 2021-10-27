@@ -9,7 +9,7 @@ import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
-import { MISCELLANEOUS_SECTION_ID } from './constants';
+import { UNASSIGNED_SECTION_ID } from './constants';
 import { getAsyncKey } from './saveAndCloseButtons';
 
 const uiRoutePathPrefix = '';
@@ -469,15 +469,15 @@ describe('redirectFirstFlowGrouping', () => {
 
     expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
   });
-  test('when attempting a miscellaneous section route with all uncateogrized flows then should return null since it is a valid route', () => {
+  test('when attempting a unassigned section route with all uncateogrized flows then should return null since it is a valid route', () => {
     // in this case we will have a misc section
     /// the util fn will return null since we are attempting a valid route
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
-        sectionId: MISCELLANEOUS_SECTION_ID,
+        sectionId: UNASSIGNED_SECTION_ID,
       },
-      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+      url: `${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`,
     };
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const flows = [{id: 'someId'}, {id: 'someId2'}];
@@ -485,14 +485,14 @@ describe('redirectFirstFlowGrouping', () => {
     expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(null);
   });
 
-  test('when attempting a miscellaneous section route with no flows then should return firstFlowGroupId', () => {
+  test('when attempting a unassigned section route with no flows then should return firstFlowGroupId', () => {
     // we will still have all flowGrouping sections
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
-        sectionId: MISCELLANEOUS_SECTION_ID,
+        sectionId: UNASSIGNED_SECTION_ID,
       },
-      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+      url: `${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`,
     };
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const flows = null;

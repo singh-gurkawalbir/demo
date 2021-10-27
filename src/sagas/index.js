@@ -67,6 +67,7 @@ import { APIException } from './api';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
 import { appSagas } from './app';
+import flowGroupSagas from './flowGroups';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -182,6 +183,7 @@ export function* allSagas() {
     ...logsSagas,
     ...ssoSagas,
     ...bottomDrawerSagas,
+    ...flowGroupSagas,
   ]);
 }
 

@@ -51,7 +51,7 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID,
+  UNASSIGNED_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
@@ -67,7 +67,7 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  shouldHaveMiscellaneousSection,
+  shouldHaveUnassignedSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -843,20 +843,20 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
 
   return createSelector(
     state => resourceListSel(state, flowsFilter).resources,
-    (_1, parentIntegration) => parentIntegration,
-    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
-    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
-    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
+    (_1, parentIntegrationId) => parentIntegrationId,
+    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
+    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
+    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
     (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegration, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
-      if (!flows || !parentIntegration) return null;
+    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
+      if (!flows || !parentIntegrationId) return null;
 
-      if (parentIntegration === STANDALONE_INTEGRATION.id) {
+      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
         return flows.filter(({_integrationId}) => !_integrationId);
       }
 
       if (isV2 || isDiy) {
-        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
+        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
 
         return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
       }
@@ -2182,8 +2182,8 @@ selectors.mkIntegrationFlowGroups = () => {
       if (flowGroupings) {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
 
-        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
-          return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+        if (shouldHaveUnassignedSection(flowGroupings, integrationFlows)) {
+          return [...flowGroupings, {title: 'Unassigned', sectionId: UNASSIGNED_SECTION_ID}];
         }
       }
 
@@ -2226,7 +2226,7 @@ selectors.mkIntegrationFlowsByGroup = () => {
         }
 
         if (groupId) {
-          if (groupId === MISCELLANEOUS_SECTION_ID) {
+          if (groupId === UNASSIGNED_SECTION_ID) {
             isValid = isValid && !flow._flowGroupingId;
           } else {
             isValid = isValid && flow._flowGroupingId === groupId;
@@ -5262,7 +5262,7 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
-    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
     if (!groupErrorMap[groupId]) {
