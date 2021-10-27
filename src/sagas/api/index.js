@@ -1,110 +1,62 @@
-import {
-  authParams,
-  logoutParams,
-  getHostAndProtocol,
-  getCSRFParams,
-} from './apiPaths';
-import { getCSRFToken } from '../../utils/session';
-import { isJsonString } from '../../utils/string';
+import { call, cancelled } from 'redux-saga/effects';
+import { onAbortSaga, onErrorSaga, onRequestSaga, onSuccessSaga } from './requestInterceptors';
+import { APIException } from './requestInterceptors/utils';
 
-const sessionExpired = {
-  message: 'Session Expired',
-  status: 401,
-};
+export function* extractResponse(response) {
+  const {url, headers, status} = response;
+  // convert into text only for 400 to 500 do you parse it into json
+  const data = yield response.text();
 
-export function APIException(response) {
-  this.status = response.status;
-  this.message = response.message || 'Error';
-
-  if (process.env.NODE_ENV === 'development') {
-    this.message = response.message;
-  }
+  return {
+    url, headers, status, data,
+  };
 }
 
-export function normalizeUrlAndOptions(path, opts) {
-  let options;
-  let url;
+// this saga orchestrates all request interceptors
+export function* sendRequest(request) {
+  const controller = new AbortController();
+  const {signal} = controller;
 
-  if (
-    path === authParams.path ||
-    path === logoutParams.path ||
-    path === getCSRFParams.path
-  ) {
-    url = path;
-    options = opts;
-  } else {
-    if (
-      path.includes('/netSuiteWS') ||
-      path.includes('/netsuiteDA') ||
-      /^\/connections.*distributed$/.test(path) ||
-      path.includes('/mappingPreview') ||
-      path.includes('/unlink/google') ||
-      path.includes('/reSigninWithSSO')
-    ) {
-      url = path;
-    } else {
-      // all regular api requests go in here
-      url = `/api${path}`;
+  // this is called first which gives us the payload with which we should make the actual network call
+  const generatedRequestPayload = yield call(onRequestSaga, request);
+
+  const {meta, ...requestPayload} = generatedRequestPayload;
+  const actionWrappedInRequest = {request: generatedRequestPayload};
+
+  try {
+    const {url, ...options} = requestPayload;
+
+    const actualResponse = yield call(fetch, url, {...options, signal});
+
+    console.log('check ', actualResponse);
+    // extract just what is important from the fetch api response like url, headers, status and actual data
+    const response = yield call(extractResponse, actualResponse);
+
+    const isError = response.status >= 400 && response.status < 600;
+
+    if (isError) {
+      console.log('hi there ', response, actionWrappedInRequest);
+
+      // error sagas bubble exceptions of type APIException
+      return yield call(onErrorSaga, response, actionWrappedInRequest);
     }
 
-    options = {
-      ...opts,
-      credentials: 'same-origin', // this is needed to instruct fetch to send cookies
+    const successResponse = yield call(onSuccessSaga, response, actionWrappedInRequest);
 
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'x-csrf-token': getCSRFToken(),
-        ...opts.headers,
-      },
-    };
-  }
+    return {response: successResponse};
+  } catch (e) {
+    // All exceptions originating from the errorSaga are of type APIException..just bubble exception
+    if (e instanceof APIException) {
+      throw e;
+    }
 
-  return { url, options };
-}
-
-export function throwExceptionUsingTheResponse(response) {
-  throw new APIException({
-    status: response.status,
-    message: response.data,
-  });
-}
-
-export function checkToThrowSessionValidationException(response) {
-  // when session is invalidated then we
-  // expect to get a 200 response with the response url being the sign in page
-
-  if (response.status === 200) {
-    const { host, protocol } = getHostAndProtocol();
-
-    if (response.url === `${protocol}//${host}/signin`) {
-      throw new APIException({
-        ...sessionExpired,
-      });
+    // cases such as connection goes offline...the window.fetch will throw an excepion ...in these case just retry the same request
+    return yield call(onErrorSaga, {status: 500, message: 'Connection has gone offline'}, actionWrappedInRequest);
+  } finally {
+    if (yield cancelled()) {
+      // kill ongoing api request if this saga gets cancelled
+      controller.abort();
+      yield call(onAbortSaga, actionWrappedInRequest);
     }
   }
 }
-
-export function isCsrfExpired(error) {
-  if (!error) return false;
-  const {status, data} = error;
-
-  if (!isJsonString(data)) {
-    return false;
-  }
-  const parsedData = JSON.parse(data);
-
-  return (
-    status === 403 &&
-    parsedData.message === 'Bad_Request_CSRF'
-  );
-}
-
-// we are skipping 401 checks for /change-email and /change-password
-/*
-export function isUnauthorized({ error, path }) {
-  return (
-    error.status === 401 &&
-    !['/change-email', '/change-password'].includes(path)
-  );
-}
-*/

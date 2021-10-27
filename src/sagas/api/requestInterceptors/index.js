@@ -1,16 +1,16 @@
 import { call, put, select, delay } from 'redux-saga/effects';
-import actions from '../../actions';
+import actions from '../../../actions';
 import {
   normalizeUrlAndOptions,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
   // isUnauthorized,
   isCsrfExpired,
-} from './index';
-import { sendRequest, unauthenticateAndDeleteProfile } from '..';
-import { selectors } from '../../reducers';
-import { isJsonString } from '../../utils/string';
-import { RETRY_COUNT } from '../../reducers/comms/networkComms';
+} from './utils/index';
+import { sendRequest, unauthenticateAndDeleteProfile } from '../..';
+import { selectors } from '../../../reducers';
+import { isJsonString } from '../../../utils/string';
+import { RETRY_COUNT } from '../../../reducers/comms/networkComms';
 
 function* isCurrentProfileDifferent() {
   const currentProfile = yield select(selectors.userProfile);

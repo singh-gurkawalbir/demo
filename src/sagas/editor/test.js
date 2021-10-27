@@ -26,7 +26,7 @@ import {
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
-import { APIException } from '../api';
+import { APIException } from '../api/requestInterceptors/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic';
 
 const editorId = 'httpbody';
