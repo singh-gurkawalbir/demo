@@ -211,14 +211,8 @@ export function* fetchPageProcessorPreview({
     formKey,
   });
 
-  if (resource.oneToMany) {
-    const oneToMany = resource.oneToMany === 'true';
-
-    resource = { ...resource, oneToMany };
-  }
-
   resource = getFormattedResourceForPreview(resource);
-  let previewData = yield call(pageProcessorPreview, {
+  const previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
     _pageProcessorDoc: formKey ? resource : undefined,
@@ -229,10 +223,6 @@ export function* fetchPageProcessorPreview({
     refresh: refresh || flowDataState?.refresh,
     runOffline: true,
   });
-
-  if (isOneToManyResource(resource)) {
-    previewData = processOneToManySampleData(previewData, resource);
-  }
 
   const {data: existingPreviewData} = yield select(selectors.getSampleDataContext,
     { flowId, resourceId: _pageProcessorId, resourceType, stage: previewType });
@@ -567,6 +557,28 @@ export function* requestProcessorData({
     );
 
     return;
+  } else if (stage === 'processedFlowInput') {
+    // processes oneToMany on top of flowInput
+    const { formKey } = (yield select(selectors.flowDataFormContext, flowId)) || {};
+
+    const resource = yield call(getConstructedResourceObj, {
+      resourceId,
+      resourceType,
+      formKey,
+    });
+
+    if (isOneToManyResource(resource)) {
+      const processedFlowInput = processOneToManySampleData(preProcessedSampleData, resource);
+
+      yield put(
+        actions.flowData.receivedProcessorData(flowId, resourceId, stage, {
+          data: [processedFlowInput],
+        })
+      );
+
+      return;
+    }
+    hasNoRulesToProcess = true;
   } else {
     hasNoRulesToProcess = true;
   }

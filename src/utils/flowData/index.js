@@ -19,7 +19,8 @@ import { isJsonString } from '../string';
 
 export const sampleDataStage = {
   exports: {
-    inputFilter: 'flowInput',
+    processedFlowInput: 'flowInput',
+    inputFilter: 'processedFlowInput',
     transform: 'raw',
     preSavePage: 'transform', // preSavePage indicates export hooks
     outputFilter: 'transform',
@@ -29,13 +30,14 @@ export const sampleDataStage = {
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, inputFilter
+   * flowInput, processedFlowInput, inputFilter
    * raw, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    * raw, transform, outputFilter
    */
   imports: {
-    inputFilter: 'flowInput',
-    preMap: 'flowInput',
+    processedFlowInput: 'flowInput',
+    inputFilter: 'processedFlowInput',
+    preMap: 'processedFlowInput',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
     responseMappingExtract: 'responseTransform',
@@ -47,7 +49,7 @@ export const sampleDataStage = {
     responseTransform: 'sampleResponse',
   },
   /**
-   * flowInput, inputFilter
+   * flowInput, processedFlowInput, inputFilter
    * flowInput, preMap, importMappingExtract, importMapping, postMap,
    * sampleResponse, responseTransform, postSubmit
    * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook

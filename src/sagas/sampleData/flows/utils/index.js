@@ -8,27 +8,35 @@ import { SCOPES } from '../../../resourceForm';
 export function* getConstructedResourceObj({ formKey, resourceId, resourceType }) {
   // TODO - check for suitescript - do we need to add support at all?
   if (!formKey) {
-    const { merged: resource = {} } = yield select(
+    let { merged: resource = {} } = yield select(
       selectors.resourceData,
       resourceType,
       resourceId,
       SCOPES.VALUE
     );
 
+    if (resource?.oneToMany) {
+      const oneToMany = resource.oneToMany === true || resource.oneToMany === 'true';
+
+      resource = { ...resource, oneToMany };
+    }
+
     return resource;
   }
   // all formKey related processing goes here
   const formState = yield select(selectors.formState, formKey);
 
-  const resourceObj = (yield call(constructResourceFromFormValues, {
+  let resourceObj = (yield call(constructResourceFromFormValues, {
     formValues: formState?.value || {},
     resourceId,
     resourceType,
   })) || {};
 
-  // HANDLE FILE ADAPTORS AND DATA LOADER - EXPORTS & IMPORTS
-  // HANDLE ASSISTANTS
-  // HANDLE REAL TIME
+  if (resourceObj?.oneToMany) {
+    const oneToMany = resourceObj.oneToMany === true || resourceObj.oneToMany === 'true';
+
+    resourceObj = { ...resourceObj, oneToMany };
+  }
 
   return resourceObj;
 }

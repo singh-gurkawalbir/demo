@@ -191,6 +191,7 @@ export function* requestSampleDataForImports({
       break;
     }
 
+    case 'processedFlowInput':
     case 'responseTransform':
     case 'importMappingExtract':
     case 'importMapping':
