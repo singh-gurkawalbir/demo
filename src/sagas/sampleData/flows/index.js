@@ -39,6 +39,7 @@ import {
   isOneToManyResource,
   generatePostResponseMapData,
   getAllDependentSampleDataStages,
+  getFormattedResourceForPreview,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -202,9 +203,25 @@ export function* fetchPageProcessorPreview({
 }) {
   if (!flowId || !_pageProcessorId) return;
   const flowDataState = yield select(selectors.getFlowDataState, flowId);
+  const { formKey } = (yield select(selectors.flowDataFormContext, flowId)) || {};
+
+  let resource = yield call(getConstructedResourceObj, {
+    resourceId: _pageProcessorId,
+    resourceType,
+    formKey,
+  });
+
+  if (resource.oneToMany) {
+    const oneToMany = resource.oneToMany === 'true';
+
+    resource = { ...resource, oneToMany };
+  }
+
+  resource = getFormattedResourceForPreview(resource);
   let previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
+    _pageProcessorDoc: formKey ? resource : undefined,
     previewType,
     resourceType,
     hidden,
@@ -212,12 +229,6 @@ export function* fetchPageProcessorPreview({
     refresh: refresh || flowDataState?.refresh,
     runOffline: true,
   });
-  const resource = (yield select(
-    selectors.resourceData,
-    resourceType,
-    _pageProcessorId,
-    'value'
-  ))?.merged;
 
   if (isOneToManyResource(resource)) {
     previewData = processOneToManySampleData(previewData, resource);
