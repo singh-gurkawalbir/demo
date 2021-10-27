@@ -252,7 +252,7 @@ export default function JobActionsMenu({
           },
           {
             label: 'No, go back',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

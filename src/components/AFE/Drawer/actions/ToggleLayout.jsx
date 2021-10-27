@@ -7,10 +7,11 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import ViewColumnIcon from '../../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../../icons/LayoutLgLeftSmrightIcon';
+import ViewCompactRowIcon from '../../../icons/LayoutLgTopSmBottomIcon';
 import CeligoDivider from '../../../CeligoDivider';
 
 const useStyles = makeStyles(theme => ({
-  togglelLayoutSelect: {
+  toggleLayoutSelect: {
     '& > div': {
       paddingBottom: 0,
       paddingTop: theme.spacing(0.5),
@@ -29,6 +30,7 @@ export default function ToggleLayout({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const layout = useSelector(state => selectors.editor(state, editorId).layout);
+  const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
 
   const handleToggle = event => {
     dispatch(actions.editor.changeLayout(editorId, event.target.value));
@@ -37,17 +39,17 @@ export default function ToggleLayout({ editorId }) {
   return (
     <>
       <CeligoDivider position="left" />
-
       <>
         <Select
           labelId="toggle-layout-label"
           id="toggle-layout"
           value={layout}
-          className={classes.togglelLayoutSelect}
+          className={classes.toggleLayoutSelect}
           onChange={handleToggle} >
-          <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem>
+          {editorType !== 'mappings' && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
           <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem>
-          <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem>
+          {editorType !== 'mappings' && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }
+          {editorType === 'mappings' && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
         </Select>
       </>
     </>
