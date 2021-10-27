@@ -382,7 +382,7 @@ export function* getCurrentStep({ id, step }) {
     );
   }
   if (type === INSTALL_STEP_TYPES.URL && !getUrlFunction) {
-    // fail the step
+    // fail the step if no url or function available
     return yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
   }
 
@@ -404,27 +404,26 @@ export function* getCurrentStep({ id, step }) {
     return yield put(actions.api.failure(path, 'PUT', error.message, false));
   }
 
+  const result = currentStepResponse?.result;
+
   if (type === INSTALL_STEP_TYPES.URL) {
-    if (!currentStepResponse ||
-      !currentStepResponse.step ||
-      !currentStepResponse.step.url ||
-      currentStepResponse.error) {
+    if (!result) {
       return yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
     }
 
-    yield call(openExternalUrl, { url: currentStepResponse.step.url });
+    yield call(openExternalUrl, { url: result });
 
     return yield put(
       actions.integrationApp.installer.updateStep(
         id,
         '',
         'inProgress',
-        '',
-        currentStepResponse.step.url
+        undefined,
+        result
       )
     );
   }
-  if (!currentStepResponse || !currentStepResponse.result) {
+  if (!result) {
     return yield put(
       actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
     );
@@ -435,7 +434,7 @@ export function* getCurrentStep({ id, step }) {
       id,
       '',
       'inProgress',
-      currentStepResponse.result
+      result
     )
   );
 }
