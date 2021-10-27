@@ -2,46 +2,46 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, exportId, logKey, logDetails, logs, nextPageURL, loadMore, deletedLogKey, hasNewLogs, activeLogKey, error, status } = action;
+  const { type, resourceId, logKey, logDetails, logs, nextPageURL, loadMore, deletedLogKey, hasNewLogs, activeLogKey, error, status } = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.LOGS.FLOWSTEP.REQUEST:
-        if (!draft[exportId]) {
-          draft[exportId] = {};
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
         }
-        delete draft[exportId].fetchStatus;
-        delete draft[exportId].currQueryTime;
+        delete draft[resourceId].fetchStatus;
+        delete draft[resourceId].currQueryTime;
         if (loadMore) {
-          draft[exportId].loadMoreStatus = 'requested';
+          draft[resourceId].loadMoreStatus = 'requested';
         } else {
-          draft[exportId].logsStatus = 'requested';
+          draft[resourceId].logsStatus = 'requested';
         }
         break;
 
       case actionTypes.LOGS.FLOWSTEP.RECEIVED:
-        if (!draft[exportId]) break;
-        draft[exportId].logsStatus = 'received';
-        draft[exportId].loadMoreStatus = 'received';
+        if (!draft[resourceId]) break;
+        draft[resourceId].logsStatus = 'received';
+        draft[resourceId].loadMoreStatus = 'received';
         // if loadMore is true, we only call nextPageURl so hasNewLogs should not reset
         if (!loadMore) {
-          draft[exportId].hasNewLogs = false;
+          draft[resourceId].hasNewLogs = false;
         }
-        draft[exportId].nextPageURL = nextPageURL;
+        draft[resourceId].nextPageURL = nextPageURL;
 
         // adding existing logs first to maintain the sorting order
-        draft[exportId].logsSummary = loadMore
-          ? [...draft[exportId]?.logsSummary || [], ...logs]
+        draft[resourceId].logsSummary = loadMore
+          ? [...draft[resourceId]?.logsSummary || [], ...logs]
           : logs;
         break;
 
       case actionTypes.LOGS.FLOWSTEP.LOG.REQUEST:
-        if (!draft[exportId]) break;
-        if (!draft[exportId].logsDetails) {
-          draft[exportId].logsDetails = {};
+        if (!draft[resourceId]) break;
+        if (!draft[resourceId].logsDetails) {
+          draft[resourceId].logsDetails = {};
         }
-        if (!draft[exportId].logsDetails[logKey]) {
-          draft[exportId].logsDetails[logKey] = {
+        if (!draft[resourceId].logsDetails[logKey]) {
+          draft[resourceId].logsDetails[logKey] = {
             status: 'requested',
           };
         }
@@ -49,87 +49,88 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.LOGS.FLOWSTEP.LOG.RECEIVED:
-        if (!draft[exportId] || !draft[exportId].logsDetails) break;
+        if (!draft[resourceId] || !draft[resourceId].logsDetails) break;
 
-        draft[exportId].logsDetails[logKey] = {
+        draft[resourceId].logsDetails[logKey] = {
           status: 'received',
           ...logDetails,
         };
         break;
 
       case actionTypes.LOGS.FLOWSTEP.ACTIVE_LOG:
-        if (!draft[exportId]) break;
-        draft[exportId].activeLogKey = activeLogKey;
+        if (!draft[resourceId]) break;
+        draft[resourceId].activeLogKey = activeLogKey;
         break;
 
       case actionTypes.LOGS.FLOWSTEP.LOG.DELETED: {
-        if (!draft[exportId] || !deletedLogKey || !draft[exportId].logsSummary) break;
-        const logs = draft[exportId].logsSummary;
+        if (!draft[resourceId] || !deletedLogKey || !draft[resourceId].logsSummary) break;
+        const logs = draft[resourceId].logsSummary;
         const index = logs.findIndex(l => l.key === deletedLogKey);
 
         if (index !== -1) {
           logs.splice(index, 1);
         }
-        delete draft[exportId].logsDetails?.[deletedLogKey];
+        delete draft[resourceId].logsDetails?.[deletedLogKey];
 
         // delete the activeLogKey also if it matches the deleted key
-        if (draft[exportId].activeLogKey === deletedLogKey) {
-          delete draft[exportId].activeLogKey;
+        if (draft[resourceId].activeLogKey === deletedLogKey) {
+          delete draft[resourceId].activeLogKey;
         }
 
         break;
       }
       case actionTypes.LOGS.FLOWSTEP.DEBUG.START:
-        if (!draft[exportId]) break;
-        draft[exportId].debugOn = true;
+        if (!draft[resourceId]) break;
+        draft[resourceId].debugOn = true;
         break;
 
       case actionTypes.LOGS.FLOWSTEP.DEBUG.STOP:
-        if (!draft[exportId]) break;
-        draft[exportId].debugOn = false;
+        if (!draft[resourceId]) break;
+        draft[resourceId].debugOn = false;
         break;
 
       case actionTypes.LOGS.FLOWSTEP.START_POLL:
-        if (!draft[exportId]) break;
-        draft[exportId].debugOn = true;
+        if (!draft[resourceId]) break;
+        draft[resourceId].debugOn = true;
         break;
 
       case actionTypes.LOGS.FLOWSTEP.STOP_POLL:
-        if (!draft[exportId]) break;
-        draft[exportId].hasNewLogs = hasNewLogs;
+        if (!draft[resourceId]) break;
+        draft[resourceId].hasNewLogs = hasNewLogs;
         break;
 
       case actionTypes.LOGS.FLOWSTEP.FAILED: {
-        if (!draft[exportId]) break;
+        if (!draft[resourceId]) break;
         // adding changeIdentifier to know if a new failed action was dispatched
-        const changeIdentifier = draft[exportId].error?.changeIdentifier || 0;
+        const changeIdentifier = draft[resourceId].error?.changeIdentifier || 0;
 
-        draft[exportId].error = {changeIdentifier: changeIdentifier + 1, ...error};
+        draft[resourceId].error = {changeIdentifier: changeIdentifier + 1, ...error};
         break;
       }
 
       case actionTypes.LOGS.FLOWSTEP.FETCH_STATUS: {
-        if (!draft[exportId]) break;
-        draft[exportId].fetchStatus = status;
-        const {nextPageURL} = draft[exportId];
+        if (!draft[resourceId]) break;
+
+        draft[resourceId].fetchStatus = status;
+        const {nextPageURL} = draft[resourceId];
 
         if (status !== 'completed' && nextPageURL) {
           const queryParams = new URLSearchParams(nextPageURL);
 
           const timeLte = queryParams.get('time_lte');
 
-          const logsLength = draft[exportId].logsSummary?.length;
-          const lastLogTime = logsLength && draft[exportId].logsSummary?.[logsLength - 1].time;
+          const logsLength = draft[resourceId].logsSummary?.length;
+          const lastLogTime = logsLength && draft[resourceId].logsSummary?.[logsLength - 1].time;
 
           // if nextPageURL does not have time_lte, we use the oldest log time
           // or if logs list is also empty, we use current time
-          draft[exportId].currQueryTime = parseInt(timeLte || lastLogTime || Date.now(), 10);
+          draft[resourceId].currQueryTime = parseInt(timeLte || lastLogTime || Date.now(), 10);
         }
         break;
       }
 
       case actionTypes.LOGS.FLOWSTEP.CLEAR:
-        delete draft[exportId];
+        delete draft[resourceId];
         break;
 
       default:

@@ -85,7 +85,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
   useEffect(() => {
     dispatch(actions.logs.flowStep.request({flowId, resourceId}));
     if (debugUntil) {
-      dispatch(actions.logs.flowStep.startLogsPoll(flowId, resourceId));
+      dispatch(actions.logs.flowStep.startLogsPoll(resourceId));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

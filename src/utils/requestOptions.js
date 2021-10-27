@@ -20,7 +20,6 @@ export default function getRequestOptions(
     connectorId,
     licenseId,
     flowId,
-    exportId,
     isResolved,
     nextPageURL,
     loadMore,
@@ -389,7 +388,7 @@ export default function getRequestOptions(
       if (loadMore && nextPageURL) {
         path = nextPageURL.replace('/api', '');
       } else {
-        path = `/flows/${flowId}/${exportId}/requests`;
+        path = `/flows/${flowId}/${resourceId}/requests`;
         const queryParams = [];
         const { codes = [], time } = filters;
 
