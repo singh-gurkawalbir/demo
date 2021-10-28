@@ -1,64 +1,28 @@
 import React, {useCallback, useState} from 'react';
-import clsx from 'clsx';
 import { IconButton, makeStyles, Typography } from '@material-ui/core';
-import ApplicationImg from '../icons/ApplicationImg';
 import ArrowPopper from '../ArrowPopper';
+import Applications from './Applications';
 
-const useStyles = makeStyles(theme => ({
-  logoStripWrapper: {
-    display: 'grid',
-    margin: 0,
-    padding: 0,
-    maxWidth: 300,
-    gridTemplateColumns: props => `repeat(${props.applicationsCount > 5 ? 5 : props.applicationsCount}, minmax(40px, 60px))`,
-    '& > *': {
-      justifyContent: 'center',
-      position: 'relative',
-      display: 'flex',
-      height: 40,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-      alignItems: 'center',
-      '& > img': {
-        maxWidth: '75%',
-      },
-      '&:nth-child(n)': {
-        borderLeft: 'none',
-        '&:first-child': {
-          borderLeft: '1px solid',
-          borderColor: theme.palette.secondary.lightest,
-        },
-      },
-      '&:nth-child(5n+1)': {
-        borderLeft: '1px solid',
-        borderColor: theme.palette.secondary.lightest,
-      },
-      '&:nth-child(n+6)': {
-        borderTop: 'none',
-      },
-    },
-
-  },
+const useStyles = makeStyles({
   applicationsMenuPopper: {
     border: 'none',
   },
-  moreLogoStrip: {
-    gridTemplateColumns: props => `repeat(${props.restAppsCount > 5 ? 5 : props.restAppsCount}, minmax(40px, 60px))`,
+  applicationsMenuPaper: {
+    right: restAppsCount => `calc(${60} * ${restAppsCount})`,
+    position: 'relative',
   },
-}));
+  moreLogoStrip: {
+    gridTemplateColumns: restAppsCount => `repeat(${restAppsCount > 5 ? 5 : restAppsCount}, minmax(40px, 60px))`,
+  },
+});
 
 export default function LogoStrip({applications}) {
   const [anchorEl, setAnchorEl] = useState(null);
-
   const applicationsCount = applications?.length;
   const initialApps = applications.slice(0, 9);
   const restApps = applications.slice(9, applicationsCount);
   const restAppsCount = restApps.length;
-  const props = {
-    applicationsCount,
-    restAppsCount,
-  };
-  const classes = useStyles(props);
+  const classes = useStyles(restAppsCount);
 
   const handleClick = useCallback(
     event => {
@@ -70,25 +34,6 @@ export default function LogoStrip({applications}) {
     setAnchorEl(null);
   }, []);
   const open = !!anchorEl;
-
-  const Applications = props => {
-    const {apps, children, className} = props;
-
-    return (
-      <ul className={clsx(classes.logoStripWrapper, className)}>
-        {apps.map(application => (
-          <li key={application}>
-            <ApplicationImg
-              markOnly
-              type="export"
-              assistant={application}
-          />
-          </li>
-        ))}
-        {children && (<li>{children}</li>)}
-      </ul>
-    );
-  };
 
   return (
     <>
@@ -104,11 +49,11 @@ export default function LogoStrip({applications}) {
             <Typography component="span">+ {applicationsCount - 9}</Typography>
           </IconButton>
           <ArrowPopper
-            placement="right-start"
+            placement="bottom"
             open={open}
             anchorEl={anchorEl}
             restrictToParent={false}
-            classes={{ popper: classes.applicationsMenuPopper }}
+            classes={{ popper: classes.applicationsMenuPopper, paper: classes.applicationsMenuPaper }}
             id="openDrop"
             onClose={handleClose}>
             <Applications apps={restApps} className={classes.moreLogoStrip} />
@@ -117,7 +62,6 @@ export default function LogoStrip({applications}) {
       ) : (
         <Applications apps={initialApps} />
       )}
-
     </>
   );
 }
