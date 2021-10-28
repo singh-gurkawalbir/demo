@@ -8,21 +8,27 @@ const useStyles = makeStyles({
     border: 'none',
   },
   applicationsMenuPaper: {
-    right: restAppsCount => restAppsCount * 20,
+    right: styleProps => styleProps.additionalAppsCount * 20,
     position: 'relative',
   },
   moreLogoStrip: {
-    gridTemplateColumns: restAppsCount => `repeat(${restAppsCount > 5 ? 5 : restAppsCount}, minmax(40px, 60px))`,
+    gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.maxAppsInRow ? styleProps.maxAppsInRow : styleProps.additionalAppsCount}, minmax(40px, 60px))`,
   },
 });
 
 export default function LogoStrip({applications}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const applicationsCount = applications?.length;
-  const initialApps = applications.slice(0, 9);
-  const restApps = applications.slice(9, applicationsCount);
-  const restAppsCount = restApps.length;
-  const classes = useStyles(restAppsCount);
+  const maxApps = 10;
+  const maxAppsInRow = 5;
+  const apps = applicationsCount > maxApps ? applications.slice(0, maxApps - 1) : applications.slice(0, maxApps);
+  const additionalApps = applications.slice(apps.length, applicationsCount);
+  const additionalAppsCount = additionalApps.length;
+  const styleProps = {
+    maxAppsInRow,
+    additionalAppsCount,
+  };
+  const classes = useStyles(styleProps);
 
   const handleClick = useCallback(
     event => {
@@ -37,16 +43,16 @@ export default function LogoStrip({applications}) {
 
   return (
     <>
-      {applicationsCount >= 10 ? (
-        <Applications apps={initialApps}>
+      {applicationsCount > maxApps ? (
+        <Applications apps={apps}>
           <IconButton
             data-test="logoStrip"
             aria-label="application logos"
-            aria-controls="application logos"
+            aria-controls="additionalApps"
             aria-haspopup="true"
             size="small"
             onClick={handleClick}>
-            <Typography component="span">+ {applicationsCount - 9}</Typography>
+            <Typography component="span">+ {applicationsCount - apps.length}</Typography>
           </IconButton>
           <ArrowPopper
             placement="bottom"
@@ -54,13 +60,13 @@ export default function LogoStrip({applications}) {
             anchorEl={anchorEl}
             restrictToParent={false}
             classes={{ popper: classes.applicationsMenuPopper, paper: classes.applicationsMenuPaper }}
-            id="openDrop"
+            id="additionalApps"
             onClose={handleClose}>
-            <Applications apps={restApps} className={classes.moreLogoStrip} />
+            <Applications apps={additionalApps} className={classes.moreLogoStrip} />
           </ArrowPopper>
         </Applications>
       ) : (
-        <Applications apps={initialApps} />
+        <Applications apps={apps} />
       )}
     </>
   );

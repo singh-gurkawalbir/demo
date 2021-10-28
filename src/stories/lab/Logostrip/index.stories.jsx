@@ -33,6 +33,13 @@ withEightImages.args = {
 };
 withEightImages.parameters = designParameters;
 
+export const withTenImages = Template.bind({});
+
+withTenImages.args = {
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'redshift', 'dynamodb'],
+};
+withTenImages.parameters = designParameters;
+
 export const withTwelveImages = Template.bind({});
 
 withTwelveImages.args = {
