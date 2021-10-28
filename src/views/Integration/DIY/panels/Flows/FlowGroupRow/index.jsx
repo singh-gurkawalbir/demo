@@ -39,11 +39,6 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  active: {
-    '&>a': {
-      color: theme.palette.primary.main,
-    },
-  },
 }));
 export default function FlowGroupRow({
   rowData,
@@ -84,7 +79,7 @@ export default function FlowGroupRow({
       <div
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
-        className={clsx(className, classes.rowContainer, classes.active)}>
+        className={clsx(className, classes.rowContainer)}>
         <SortableHandle isVisible={showGripper} />
         <NavLink
           data-public
