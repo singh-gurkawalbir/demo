@@ -54,7 +54,7 @@ describe('responseMappings processor logic', () => {
         ],
       };
       const expectedOutput = {
-        data: [{id: 123}],
+        data: {record: {id: 123}},
       };
 
       expect(processResult(editor, result)).toEqual(expectedOutput);
@@ -64,7 +64,7 @@ describe('responseMappings processor logic', () => {
         stage: 'responseMappingExtract',
         resourceId: 'res-123',
         resourceType: 'imports',
-        flowInputData: {email: 'test@abc.com'},
+        flowInputData: [{email: 'test@abc.com'}],
       };
       const result = {
         data: [
@@ -72,12 +72,14 @@ describe('responseMappings processor logic', () => {
         ],
       };
       const expectedOutput = {
-        data: [
-          {
-            email: 'test@abc.com',
-            id: 123,
-          },
-        ],
+        data: {
+          rows: [
+            {
+              email: 'test@abc.com',
+              id: 123,
+            },
+          ],
+        },
       };
 
       expect(processResult(editor, result)).toEqual(expectedOutput);

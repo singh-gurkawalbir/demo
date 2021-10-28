@@ -35,7 +35,11 @@ export default {
     );
 
     return {
-      data: [postResponseMapData],
+      data: Array.isArray(postResponseMapData) ? {
+        rows: postResponseMapData,
+      } : {
+        record: postResponseMapData,
+      },
     };
   },
 };
