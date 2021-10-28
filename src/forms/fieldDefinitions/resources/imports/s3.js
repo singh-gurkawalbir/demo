@@ -13,6 +13,7 @@ export default {
   },
   's3.bucket': {
     type: 'uri',
+    stage: 'importMappingExtract',
     label: 'Bucket name',
     placeholder: 'Enter S3 folder path,such as:MySite/Orders',
     required: true,

@@ -113,6 +113,7 @@ export default {
   'rdbms.ignoreExistingExtract': {
     label: 'Which field?',
     omitWhenHidden: true,
+    stage: 'importMappingExtract',
     helpKey: 'import.ignoreExtract',
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
@@ -133,6 +134,7 @@ export default {
   'rdbms.ignoreMissingExtract': {
     label: 'Which field?',
     omitWhenHidden: true,
+    stage: 'importMappingExtract',
     helpKey: 'import.ignoreExtract',
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
@@ -228,6 +230,7 @@ export default {
   'rdbms.updateExtract': {
     label: 'Which field?',
     omitWhenHidden: true,
+    stage: 'importMappingExtract',
     helpKey: 'import.ignoreExtract',
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,

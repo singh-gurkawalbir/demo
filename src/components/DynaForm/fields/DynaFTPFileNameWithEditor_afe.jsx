@@ -48,7 +48,7 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: 'importMappingExtract',
       onSave: handleSave,
     }));
 
