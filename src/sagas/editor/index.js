@@ -463,7 +463,7 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  const showPreviewStageData = resourceType === 'exports' && fieldId?.includes('once');
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
   const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
@@ -480,15 +480,6 @@ export function* requestEditorSampleData({
     );
 
     sampleData = parsedData?.data;
-  } else {
-    const flowSampleData = yield select(selectors.getSampleDataContext, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-
-    sampleData = flowSampleData?.data;
   }
 
   if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage))) {
@@ -498,6 +489,7 @@ export function* requestEditorSampleData({
       resourceId,
       resourceType,
       stage,
+      formKey,
     });
     // get sample data from the selector once loaded
     const flowSampleData = yield select(selectors.getSampleDataContext, {

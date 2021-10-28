@@ -131,6 +131,7 @@ export default function Suggestions(props) {
     skipExtractWrapOnSpecialChar = false,
     options,
     showLookupModal,
+    stage = 'flowInput',
   } = props;
   const classes = useStyles();
   const sampleData = useSelector(
@@ -139,7 +140,7 @@ export default function Suggestions(props) {
         flowId,
         resourceId,
         resourceType,
-        stage: 'flowInput',
+        stage,
       }).data
   );
   const resourceData = useSelectorMemo(

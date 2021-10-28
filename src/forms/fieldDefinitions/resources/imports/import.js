@@ -36,6 +36,7 @@ export default {
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
     type: 'uri',
+    stage: 'importMappingExtract',
     label: 'Override child record trace key template',
     visible: r => !isIntegrationApp(r),
     omitWhenHidden: true,

@@ -34,6 +34,7 @@ export default function DynaURI_afe(props) {
     flowId,
     description,
     formKey,
+    stage = 'flowInput',
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -54,14 +55,14 @@ export default function DynaURI_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage,
       onSave: handleSave,
       parentType,
       parentId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+  }, [dispatch, stage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
 
   return (
     <>

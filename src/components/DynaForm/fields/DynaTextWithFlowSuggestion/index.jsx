@@ -41,6 +41,7 @@ export default function DynaTextWithFlowSuggestion(props) {
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
     formKey,
+    stage = 'flowInput',
   } = props;
   const formContext = useFormContext(formKey);
   const ref = useRef(null);
@@ -54,15 +55,17 @@ export default function DynaTextWithFlowSuggestion(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
+
   const sampleData = useSelector(
     state =>
       selectors.getSampleDataContext(state, {
         flowId,
         resourceId,
         resourceType,
-        stage: 'flowInput',
+        stage,
       }).data
   );
+
   const handleUpdateAfterSuggestionInsert = useCallback(
     newValue => {
       onFieldChange(id, newValue);
@@ -110,13 +113,13 @@ export default function DynaTextWithFlowSuggestion(props) {
           flowId,
           resourceId,
           resourceType,
-          'flowInput',
+          stage,
           undefined,
           formKey,
         )
       );
     }
-  }, [dispatch, flowId, formKey, isPageGenerator, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, formKey, isPageGenerator, resourceId, resourceType, stage, sampleData]);
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);
@@ -153,6 +156,7 @@ export default function DynaTextWithFlowSuggestion(props) {
         />
         {(showExtract || showLookup) && (
           <Suggestions
+            stage={stage}
             hide={hideSuggestion}
             id={`suggestions-${id}`}
             onFieldChange={onFieldChange}
