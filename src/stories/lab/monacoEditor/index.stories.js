@@ -5,7 +5,7 @@ import { diffEditor } from './diff';
 import { scriptEditor } from './script';
 import { graphQlEditor } from './graphQL';
 import { customTheme } from './customTheme';
-import { customAutoComplete } from './customAutoComplete';
+import { customAutoComplete } from './customAutoComplete/customAutoComplete';
 
 export default {
   title: 'Lab / Monaco Editor',

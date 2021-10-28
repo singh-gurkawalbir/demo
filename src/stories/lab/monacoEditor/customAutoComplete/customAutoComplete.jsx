@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Editor, { useMonaco } from '@monaco-editor/react';
+import { createProposals } from './handlebarHelpers';
 
 const useStyles = makeStyles({
   container: {
@@ -9,22 +10,6 @@ const useStyles = makeStyles({
     overflow: 'hidden',
   },
 });
-
-function createHandlebarHelperProposals(monaco, range) {
-  // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
-  // here you could do a server side lookup
-  return [
-    {
-      label: '"abc"',
-      kind: monaco.languages.CompletionItemKind.Snippet,
-      documentation: 'if else block snippet',
-      // eslint-disable-next-line no-template-curly-in-string
-      insertText: '"${1:my-third-party-library}": "${2:1.2.3}"',
-      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-      range,
-    },
-  ];
-}
 
 const Template = args => {
   const classes = useStyles();
@@ -38,7 +23,7 @@ const Template = args => {
           const textUntilPosition = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
           const match = textUntilPosition.match(/.*{{#?.*}*$/m);
 
-          console.log(textUntilPosition, '\nmatch', match);
+          // console.log(textUntilPosition, '\nmatch', match);
 
           if (!match) {
             return { suggestions: [] };
@@ -52,7 +37,7 @@ const Template = args => {
           };
 
           return {
-            suggestions: createHandlebarHelperProposals(monaco, range),
+            suggestions: createProposals(monaco, range),
           };
         },
       });
