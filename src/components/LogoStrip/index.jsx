@@ -47,7 +47,7 @@ export default function LogoStrip({applications}) {
         <Applications apps={apps}>
           <IconButton
             data-test="logoStrip"
-            aria-label="application logos"
+            aria-label="additional apps"
             aria-controls="additionalApps"
             aria-haspopup="true"
             size="small"
