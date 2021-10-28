@@ -43,6 +43,7 @@ export default {
   },
   'dynamodb.partitionKey': {
     type: 'textwithflowsuggestion',
+    stage: 'importMappingExtract',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,
     label: 'Partition key',
@@ -120,6 +121,7 @@ export default {
   },
   'dynamodb.ignoreExtract': {
     type: 'textwithflowsuggestion',
+    stage: 'importMappingExtract',
     showLookup: false,
     showSuggestionsWithoutHandlebar: true,
     label: 'Ignore extract',
