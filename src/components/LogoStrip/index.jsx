@@ -40,9 +40,9 @@ export default function LogoStrip({applications}) {
       {applicationsCount >= 10 ? (
         <Applications apps={initialApps}>
           <IconButton
-            data-test="openActionsMenu"
-            aria-label="openDrop"
-            aria-controls="openDrop"
+            data-test="logoStrip"
+            aria-label="application logos"
+            aria-controls="application logos"
             aria-haspopup="true"
             size="small"
             onClick={handleClick}>
