@@ -39,31 +39,29 @@ const ResponseMapping = ({ flowId, resourceId, editorId}) => {
   const resourceType = useSelector(state => selectors.responseMapping(state).resourceType);
 
   return (
-    <>
-      <div className={classes.root}>
-        <div className={classes.header}>
-          <Typography
-            variant="h5"
-            className={classes.headerChild}
-            key="heading_extract">
-            {resourceType === 'imports' ? 'Import response' : 'Lookup response'} field
-          </Typography>
+    <div className={classes.root}>
+      <div className={classes.header}>
+        <Typography
+          variant="h5"
+          className={classes.headerChild}
+          key="heading_extract">
+          {resourceType === 'imports' ? 'Import response' : 'Lookup response'} field
+        </Typography>
 
-          <Typography
-            variant="h5"
-            className={classes.headerChild}
-            key="heading_generate">
-            Source record field
-          </Typography>
-        </div>
-        <div className={classes.mappingsBody}>
-          <FieldMappingForm
-            disabled={disabled}
-            resourceId={resourceId}
-            flowId={flowId} />
-        </div>
+        <Typography
+          variant="h5"
+          className={classes.headerChild}
+          key="heading_generate">
+          Source record field
+        </Typography>
       </div>
-    </>
+      <div className={classes.mappingsBody}>
+        <FieldMappingForm
+          disabled={disabled}
+          resourceId={resourceId}
+          flowId={flowId} />
+      </div>
+    </div>
   );
 };
 
