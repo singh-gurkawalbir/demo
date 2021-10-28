@@ -112,6 +112,11 @@ function RouterWrappedContent({ hideSave }) {
 
   useEffect(() => {
     // we want to redirect to parent url only if the editor init is not in progress
+
+    // this works for 'mappings' editor for now as there is another RightDrawer to render mappings path which does the editor init
+    // but 'responseMappings' is now completely an editor so it lands here directly on page reload and editor init does not happen,
+    // hence it gets redirected to parent url
+    // if we decide to support page reload for mappings, we somehow need to do editor init here for such use case
     if (initStatus !== 'inProgress' && !editorType) {
       // redirect to parent url
       const urlFields = match.url.split('/');
