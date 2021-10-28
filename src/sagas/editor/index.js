@@ -513,7 +513,7 @@ export function* requestEditorSampleData({
     const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
     const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
 
-    sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
+    // sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
     const body = {
       sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
@@ -549,9 +549,7 @@ export function* requestEditorSampleData({
       delete body.templateVersion;
     } else {
       if (resource?.oneToMany) {
-        const oneToMany = resource.oneToMany === true || resource.oneToMany === 'true';
-
-        resource = { ...resource, oneToMany };
+        resource = { ...resource, oneToMany: false };
       }
       if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
         // create http sub doc with paging method as /getContext expects it
