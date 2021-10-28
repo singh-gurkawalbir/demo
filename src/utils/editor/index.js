@@ -15,6 +15,7 @@ export const HOOK_STAGES = [
   'preSavePage',
   'preMap',
   'postMap',
+  'postMapOutput',
   'postSubmit',
   'postAggregate',
   'contentBasedFlowRouter',

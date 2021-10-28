@@ -198,7 +198,8 @@ export function* requestSampleDataForImports({
     case 'responseMappingExtract':
     case 'responseMapping':
     case 'postResponseMap':
-    case 'preMap': {
+    case 'preMap':
+    case 'postMap': {
       yield call(requestProcessorData, {
         flowId,
         resourceId,

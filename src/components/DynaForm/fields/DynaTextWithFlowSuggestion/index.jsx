@@ -110,11 +110,13 @@ export default function DynaTextWithFlowSuggestion(props) {
           flowId,
           resourceId,
           resourceType,
-          'flowInput'
+          'flowInput',
+          undefined,
+          formKey,
         )
       );
     }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, formKey, isPageGenerator, resourceId, resourceType, sampleData]);
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);

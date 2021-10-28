@@ -45,6 +45,7 @@ export const sampleDataStage = {
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
     postMap: 'importMapping',
+    postMapOutput: 'postMap',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
