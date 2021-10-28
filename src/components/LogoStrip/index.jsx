@@ -1,58 +1,73 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core';
-import ApplicationImg from '../icons/ApplicationImg';
+import React, {useCallback, useState} from 'react';
+import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import ArrowPopper from '../ArrowPopper';
+import Applications from './Applications';
 
-const useStyles = makeStyles(theme => ({
-  logoStripWrapper: {
-    display: 'grid',
-    margin: 10,
-    maxWidth: 500,
-    gridTemplateColumns: applicationsLength => `repeat(${applicationsLength > 5 ? 5 : applicationsLength}, minmax(40px, 60px))`,
-    '& > *': {
-      justifyContent: 'center',
-      position: 'relative',
-      display: 'flex',
-      height: 40,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-      alignItems: 'center',
-      '& > img': {
-        maxWidth: '75%',
-      },
-      '&:nth-child(n)': {
-        borderLeft: 'none',
-        '&:first-child': {
-          borderLeft: '1px solid',
-          borderColor: theme.palette.secondary.lightest,
-        },
-      },
-      '&:nth-child(5n+1)': {
-        borderLeft: '1px solid',
-        borderColor: theme.palette.secondary.lightest,
-      },
-      '&:nth-child(n+6)': {
-        borderTop: 'none',
-      },
-    },
-
+const useStyles = makeStyles({
+  applicationsMenuPopper: {
+    border: 'none',
   },
-}));
+  applicationsMenuPaper: {
+    right: styleProps => styleProps.additionalAppsCount * 20,
+    position: 'relative',
+  },
+  moreLogoStrip: {
+    gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.maxAppsInRow ? styleProps.maxAppsInRow : styleProps.additionalAppsCount}, minmax(40px, 60px))`,
+  },
+});
 
 export default function LogoStrip({applications}) {
-  const applicationsLength = applications?.length;
-  const classes = useStyles(applicationsLength);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const applicationsCount = applications?.length;
+  const maxApps = 10;
+  const maxAppsInRow = 5;
+  const apps = applicationsCount > maxApps ? applications.slice(0, maxApps - 1) : applications.slice(0, maxApps);
+  const additionalApps = applications.slice(apps.length, applicationsCount);
+  const additionalAppsCount = additionalApps.length;
+  const styleProps = {
+    maxAppsInRow,
+    additionalAppsCount,
+  };
+  const classes = useStyles(styleProps);
+
+  const handleClick = useCallback(
+    event => {
+      setAnchorEl(!anchorEl ? event.currentTarget : null);
+    },
+    [anchorEl]
+  );
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const open = !!anchorEl;
 
   return (
-    <ul className={classes.logoStripWrapper}>
-      {applications.map(application => (
-        <li key={application}>
-          <ApplicationImg
-            markOnly
-            type="export"
-            assistant={application}
-           />
-        </li>
-      ))}
-    </ul>
+    <>
+      {applicationsCount > maxApps ? (
+        <Applications apps={apps}>
+          <IconButton
+            data-test="logoStrip"
+            aria-label="additional apps"
+            aria-controls="additionalApps"
+            aria-haspopup="true"
+            size="small"
+            onClick={handleClick}>
+            <Typography component="span">+ {applicationsCount - apps.length}</Typography>
+          </IconButton>
+          <ArrowPopper
+            placement="bottom"
+            open={open}
+            anchorEl={anchorEl}
+            restrictToParent={false}
+            classes={{ popper: classes.applicationsMenuPopper, paper: classes.applicationsMenuPaper }}
+            id="additionalApps"
+            onClose={handleClose}>
+            <Applications apps={additionalApps} className={classes.moreLogoStrip} />
+          </ArrowPopper>
+        </Applications>
+      ) : (
+        <Applications apps={apps} />
+      )}
+    </>
   );
 }

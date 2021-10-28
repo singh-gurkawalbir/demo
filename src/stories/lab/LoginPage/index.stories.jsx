@@ -9,6 +9,9 @@ const targetUrl = 'https://docs.celigo.com/hc/en-us/community/topics';
 export default {
   title: 'Lab/ Marketing Login',
   component: LoginScreen,
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 const Template = args => <LoginScreen {...args} />;
