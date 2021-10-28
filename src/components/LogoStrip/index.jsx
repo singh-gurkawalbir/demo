@@ -49,7 +49,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function LogoStrip({applications}) {
   const [anchorEl, setAnchorEl] = useState(null);
+
   const applicationsCount = applications?.length;
+  const initialApps = applications.slice(0, 9);
+  const restApps = applications.slice(9, applicationsCount);
+  const restAppsCount = restApps.length;
+  const props = {
+    applicationsCount,
+    restAppsCount,
+  };
+  const classes = useStyles(props);
 
   const handleClick = useCallback(
     event => {
@@ -62,64 +71,51 @@ export default function LogoStrip({applications}) {
   }, []);
   const open = !!anchorEl;
 
-  const apps = applications.slice(0, 9).map(application => (
-    <li key={application}>
-      <ApplicationImg
-        markOnly
-        type="export"
-        assistant={application}
-     />
-    </li>
-  ));
+  const Applications = props => {
+    const {apps, children, className} = props;
 
-  const restApps = applications.slice(9, applicationsCount).map(application => (
-    <li key={application}>
-      <ApplicationImg
-        markOnly
-        type="export"
-        assistant={application}
-     />
-    </li>
-  ));
-  const restAppsCount = restApps.length;
-
-  const props = {
-    applicationsCount,
-    restAppsCount,
+    return (
+      <ul className={clsx(classes.logoStripWrapper, className)}>
+        {apps.map(application => (
+          <li key={application}>
+            <ApplicationImg
+              markOnly
+              type="export"
+              assistant={application}
+          />
+          </li>
+        ))}
+        {children && (<li>{children}</li>)}
+      </ul>
+    );
   };
-  const classes = useStyles(props);
 
   return (
     <>
       {applicationsCount >= 10 ? (
-        <ul className={classes.logoStripWrapper}>
-          {apps}
-          <li>
-            <IconButton
-              data-test="openActionsMenu"
-              aria-label="openDrop"
-              aria-controls="openDrop"
-              aria-haspopup="true"
-              size="small"
-              onClick={handleClick}>
-              <Typography component="span">+ {applicationsCount - 9}</Typography>
-            </IconButton>
-            <ArrowPopper
-              placement="right-start"
-              open={open}
-              anchorEl={anchorEl}
-              restrictToParent={false}
-              classes={{ popper: classes.applicationsMenuPopper }}
-              id="openDrop"
-              onClose={handleClose}>
-              <ul className={clsx(classes.logoStripWrapper, classes.moreLogoStrip)}>{restApps}</ul>
-            </ArrowPopper>
-          </li>
-        </ul>
+        <Applications apps={initialApps}>
+          <IconButton
+            data-test="openActionsMenu"
+            aria-label="openDrop"
+            aria-controls="openDrop"
+            aria-haspopup="true"
+            size="small"
+            onClick={handleClick}>
+            <Typography component="span">+ {applicationsCount - 9}</Typography>
+          </IconButton>
+          <ArrowPopper
+            placement="right-start"
+            open={open}
+            anchorEl={anchorEl}
+            restrictToParent={false}
+            classes={{ popper: classes.applicationsMenuPopper }}
+            id="openDrop"
+            onClose={handleClose}>
+            <Applications apps={restApps} className={classes.moreLogoStrip} />
+          </ArrowPopper>
+        </Applications>
       ) : (
-        <ul className={classes.logoStripWrapper}>
-          {apps}
-        </ul>
+        <Applications apps={initialApps} />
       )}
 
     </>

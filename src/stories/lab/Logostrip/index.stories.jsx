@@ -14,7 +14,7 @@ const designParameters = {
   design: {
     type: 'figma',
     allowFullscreen: true,
-    url: 'https://www.figma.com/file/xdzlBzxEc9OgsH9unzMsKr/List-view-for-Integrations-Home-page-IO-20667-DES-668?node-id=659%3A8687',
+    url: 'https://www.figma.com/file/xdzlBzxEc9OgsH9unzMsKr/List-view-for-%22Integrations%22-(Home)-page---IO-20667-%2F-DES-668?node-id=1102%3A4020',
   },
 };
 const Template = args => <LogoStrip {...args} />;
