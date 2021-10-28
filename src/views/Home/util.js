@@ -1,6 +1,10 @@
 import { sortBy } from 'lodash';
 import { TILE_STATUS } from '../../utils/constants';
 
+export const FILTER_KEY = 'homeView';
+export const LIST_VIEW = 'list';
+export const TILE_VIEW = 'tile';
+
 export function sortTiles(tiles = [], tilesOrder = []) {
   let maxIndex = Math.max(tiles.length, tilesOrder.length);
   let tilesWithOrder = tiles.map(t => {

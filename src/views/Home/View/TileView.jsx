@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import LoadResources from '../../../components/LoadResources';
 import HomeCard from '../HomeCard';
 import { sortTiles } from '../util';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import { TILE_STATUS } from '../../../utils/constants';
 
-export default function DashboardTiles() {
+export default function TileView() {
   const tilesOrder = useSelector(
     state => selectors.userPreferences(state)?.dashboard?.tilesOrder);
 
@@ -29,11 +28,6 @@ export default function DashboardTiles() {
   );
 
   return (
-
-    <LoadResources
-      required
-      resources="published,integrations,connections,marketplacetemplates">
-      <HomeCard sortedTiles={sortedTiles} />
-    </LoadResources>
+    <HomeCard sortedTiles={sortedTiles} />
   );
 }
