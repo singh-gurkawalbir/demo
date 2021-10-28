@@ -74,7 +74,7 @@ export default function UpgradeErrorManagement() {
           },
           {
             label: 'No, cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

@@ -117,8 +117,18 @@ function* trackFormSubmit(a) {
 
   if (!mt && entry !== 'flowBuilder') return;
 
-  const flowId = a?.flowId || a?.match?.params?.flowId;
+  let flowId = a?.flowId || a?.match?.params?.flowId;
+  const editorId = a?.match?.params?.editorId;
   let { resourceId = '', resourceType } = a;
+
+  if (editorId) {
+    // mappings are viewed as an editor
+    const editor = yield select(selectors.editor, editorId);
+
+    resourceType = editor.resourceType;
+    resourceId = editor.resourceId;
+    flowId = editor.flowId;
+  }
 
   if (!resourceType || !resourceId) {
     const { exportId, importId, resourceType: rt, id } = a?.match?.params || {};

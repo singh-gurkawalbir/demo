@@ -213,6 +213,28 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
     });
+    test('should return true for monitor user for mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{_id: 'someid', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR}],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'mappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'importMappingExtract',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+    });
     test('should return false for manage user if stage is input/output filter and active mode is filter', () => {
       state.user = {
         org: {
@@ -239,6 +261,35 @@ describe('AFE region selectors test cases', () => {
         flowId: 'flow-456',
         stage: 'outputFilter',
         activeProcessor: 'filter',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+    });
+    test('should return false for manage user for mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{
+            _id: 'someid',
+            accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+            integrationAccessLevel: [
+              {accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                _integrationId: 'int-id'},
+            ],
+          }],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'mappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'importMappingExtract',
       };
 
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);

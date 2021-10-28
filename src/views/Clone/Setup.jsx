@@ -6,7 +6,7 @@ import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import InstallWizard from '../../components/InstallationWizard';
 import getRoutePath from '../../utils/routePaths';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import { HOME_PAGE_PATH } from '../../utils/constants';
 
 export default function Clone(props) {
   const { resourceType, resourceId } = props.match.params;

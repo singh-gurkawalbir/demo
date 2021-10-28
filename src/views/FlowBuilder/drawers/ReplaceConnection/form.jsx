@@ -73,7 +73,7 @@ export default function ReplaceConnection(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

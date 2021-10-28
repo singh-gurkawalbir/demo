@@ -119,30 +119,9 @@ export default function AddOns({integrationId, childId}) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
-    if (supportsMultiStore) {
-      return childId ? model.storeId === childId : true;
-    }
-
-    return true;
-  });
-
-  if (subscribedAddOns) {
-    subscribedAddOns.forEach((f, i) => {
-      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
-
-      subscribedAddOns[i]._id = i;
-      subscribedAddOns[i].integrationId = integrationId;
-      subscribedAddOns[i].name = addon ? addon.name : f.id;
-      subscribedAddOns[i].description = addon ? addon.description : '';
-      subscribedAddOns[i].uninstallerFunction = addon
-        ? addon.uninstallerFunction
-        : '';
-      subscribedAddOns[i].installerFunction = addon
-        ? addon.installerFunction
-        : '';
-    });
-  }
+  const subscribedAddOns = useSelector(state =>
+    selectors.subscribedAddOns(state, integrationId, supportsMultiStore, childId)
+  );
 
   const hasSubscribedAddOns = subscribedAddOns?.length > 0;
   const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;

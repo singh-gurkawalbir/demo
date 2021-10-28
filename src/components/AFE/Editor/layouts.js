@@ -14,6 +14,11 @@ export default {
     gridTemplateRows: '1fr 1ft 1fr 0fr',
     gridTemplateAreas: '"rule" "data" "result" "error"',
   },
+  compactRow: {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule rule" "data result" "error error"',
+  },
   column: {
     gridTemplateColumns: '1fr 1fr 1fr',
     gridTemplateRows: '4fr 0fr',

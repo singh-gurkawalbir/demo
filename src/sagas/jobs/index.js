@@ -19,6 +19,7 @@ import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
 import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
+import { pollApiRequests } from '../app';
 
 export function* getJobFamily({ jobId, type }) {
   const requestOptions = getRequestOptions(
@@ -94,13 +95,8 @@ export function* getDasboardInProgressJobsStatus() {
 
   return yield call(getDashboardJobFamily, { inProgressJobIds });
 }
-
 export function* pollForInProgressJobs() {
-  while (true) {
-    yield delay(5 * 1000);
-
-    yield call(getInProgressJobsStatus);
-  }
+  yield call(pollApiRequests, {pollSaga: getInProgressJobsStatus, pollSagaArgs: {}, duration: 5 * 1000});
 }
 
 export function* pollForDashboardInProgressJobs() {
