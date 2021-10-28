@@ -8,7 +8,7 @@ const useStyles = makeStyles({
     border: 'none',
   },
   applicationsMenuPaper: {
-    right: restAppsCount => `calc(${60} * ${restAppsCount})`,
+    right: restAppsCount => restAppsCount * 20,
     position: 'relative',
   },
   moreLogoStrip: {
