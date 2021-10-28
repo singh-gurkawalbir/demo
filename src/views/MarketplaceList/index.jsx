@@ -173,7 +173,7 @@ export default function MarketplaceList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -203,7 +203,7 @@ export default function MarketplaceList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -222,7 +222,7 @@ export default function MarketplaceList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

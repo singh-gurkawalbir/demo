@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race, all } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race, all } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -16,6 +16,7 @@ import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import { pollApiRequests } from '../app';
 
 const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
@@ -282,7 +283,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
 
     return { error };
   }
-  if (options?.action === 'UpdatedIA2.0Settings') {
+  if (options?.refetchResources) {
+    yield put(actions.resource.requestCollection('flows', null, true));
+    yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
   }
@@ -1108,10 +1111,7 @@ export function* downloadReport({ reportId }) {
 }
 
 export function* pollForResourceCollection({ resourceType }) {
-  while (true) {
-    yield call(getResourceCollection, { resourceType });
-    yield delay(STANDARD_DELAY_FOR_POLLING);
-  }
+  yield call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType}, duration: STANDARD_DELAY_FOR_POLLING });
 }
 export function* startPollingForResourceCollection({ resourceType }) {
   return yield race({

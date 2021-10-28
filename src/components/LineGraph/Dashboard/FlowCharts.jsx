@@ -88,6 +88,9 @@ const useStyles = makeStyles(theme => ({
   legendTextWrapper: {
     padding: theme.spacing(1),
   },
+  spinnerContainer: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const flowsConfig = { type: 'flows' };
@@ -293,7 +296,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
   if (data.status === COMM_STATES.LOADING) {
     return (
 
-      <Spinner size="large" loading />
+      <Spinner className={classes.spinnerContainer} size="large" loading />
 
     );
   }

@@ -63,7 +63,7 @@ export default function AddonInstallerButton({ resource }) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

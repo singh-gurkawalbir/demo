@@ -24,6 +24,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
+import mappingUtil from '../../utils/mapping';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -49,13 +50,13 @@ function* formatEditorSampleDataForGetContextBE({ sampleData, resourceId, resour
 
 export function* invokeProcessor({ editorId, processor, body }) {
   let reqBody = body;
+  const editor = yield select(selectors.editor, editorId);
+  const {formKey, fieldId, resourceId, resourceType, supportsDefaultData, data, flowId} = editor;
 
   // options should be passed to BE for handlebars processor
   // for correct HTML/URL encoding
   if (processor === 'handlebars' && editorId) {
     const timezone = yield select(selectors.userTimezone);
-    const editor = yield select(selectors.editor, editorId);
-    const {formKey, fieldId, resourceId, resourceType, supportsDefaultData} = editor;
     const formState = yield select(selectors.formState, formKey);
     const { value: formValues } = formState || {};
     const resource = yield call(constructResourceFromFormValues, {
@@ -79,7 +80,28 @@ export function* invokeProcessor({ editorId, processor, body }) {
     if (supportsDefaultData) {
       reqBody.options.modelMetadata = safeParse(editor.defaultData) || {};
     }
+  } else if (processor === 'mapperProcessor') {
+    const flowSampleData = safeParse(data);
+    const mappings = (yield select(selectors.mapping))?.mappings;
+    const importResource = yield select(selectors.resource, 'imports', resourceId);
+    const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+    const _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+      mappings,
+      isGroupedSampleData: Array.isArray(flowSampleData),
+      isPreviewSuccess: !!flowSampleData,
+      importResource,
+      exportResource,
+    });
+
+    reqBody = {
+      rules: {
+        rules: [_mappings],
+      },
+      data: data ? [flowSampleData] : [],
+    };
   }
+
   const path = `/processors/${processor}`;
   const opts = {
     method: 'POST',
@@ -679,7 +701,6 @@ export function* initEditor({ id, editorType, options }) {
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
-      const isStandaloneExport = resourceType === 'exports' && (yield select(selectors.isStandaloneExport, flowId, resourceId));
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
       formattedOptions = init({
@@ -689,7 +710,7 @@ export function* initEditor({ id, editorType, options }) {
         fieldState,
         connection: resourceType === 'connections' ? resource : connection,
         isPageGenerator,
-        isStandaloneExport,
+        isStandaloneResource: !flowId,
       });
     } else if (editorType === 'settingsForm') {
       let parentResource = {};

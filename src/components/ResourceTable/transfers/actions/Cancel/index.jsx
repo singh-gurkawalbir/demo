@@ -26,7 +26,7 @@ export default {
           },
           {
             label: 'No, go back',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

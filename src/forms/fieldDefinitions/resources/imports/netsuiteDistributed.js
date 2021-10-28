@@ -26,12 +26,6 @@ export default {
     required: false,
     type: 'netsuitesubrecords',
     connectionId: r => r && r._connectionId,
-    visibleWhen: [
-      {
-        field: 'netsuite_da.useSS2Restlets',
-        is: ['false'],
-      },
-    ],
   },
   'netsuite_da.operation': {
     type: 'netsuiteimportoperation',
