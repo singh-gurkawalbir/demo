@@ -95,9 +95,8 @@ export const CANCELLED_REQ = {
 // api call
 export function* apiCallWithRetry(args) {
   const { path, timeout = 2 * 60 * 1000, opts } = args;
-  const apiRequestPayload = yield { url: path, args };
+  const apiRequestPayload = { url: path, args };
 
-  console.log('should not call ');
   try {
     let apiResp;
     let timeoutEffect;

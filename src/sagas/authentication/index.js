@@ -149,12 +149,8 @@ export function* fetchUIVersion() {
       shouldNotUpdateAuthTimestamp: true,
     });
 
-    console.log('resp ', resp);
-
   // eslint-disable-next-line no-empty
-  } catch (e) {
-    console.log('check ', e);
-  }
+  } catch (e) {}
   if (resp?.version) {
     yield put(actions.app.updateUIVersion(resp.version));
   }
@@ -301,8 +297,6 @@ export function* setLastLoggedInLocalStorage() {
     getResource,
     actions.user.profile.request('Retrieving user\'s Profile')
   );
-
-  console.log('check here');
 
   localStorage.setItem('latestUser', profile?._id);
 }

@@ -15,13 +15,13 @@ import {
 import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from './index';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-
 import { APIException } from './api/requestInterceptors/utils';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 import { initializeApp, initializeLogrocket, invalidateSession } from './authentication';
+import { sendRequest } from './api';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {

@@ -12,11 +12,12 @@ import {
   throwExceptionUsingTheResponse,
   checkToThrowSessionValidationException,
   isCsrfExpired,
-} from './utils/index';
+} from './utils';
 import * as apiConsts from '../apiPaths';
-import { sendRequest, unauthenticateAndDeleteProfile } from '../..';
+import { unauthenticateAndDeleteProfile } from '../..';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import { sendRequest } from '..';
 
 const status401 = new APIException({
   status: 401,

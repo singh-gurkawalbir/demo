@@ -7,10 +7,11 @@ import {
   // isUnauthorized,
   isCsrfExpired,
 } from './utils/index';
-import { sendRequest, unauthenticateAndDeleteProfile } from '../..';
+import { unauthenticateAndDeleteProfile } from '../..';
 import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
 import { RETRY_COUNT } from '../../../reducers/comms/networkComms';
+import { sendRequest } from '..';
 
 function* isCurrentProfileDifferent() {
   const currentProfile = yield select(selectors.userProfile);
@@ -128,7 +129,6 @@ export function* onSuccessSaga(response, action) {
 export function* onErrorSaga(error, action) {
   const { path, method, origReq } = action.request.meta;
 
-  console.log('trying to execute ');
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions

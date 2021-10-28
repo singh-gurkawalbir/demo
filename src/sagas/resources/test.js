@@ -39,7 +39,6 @@ import {
 import { apiCallWithRetry } from '..';
 import { selectors } from '../../reducers';
 import { SCOPES, updateFlowDoc } from '../resourceForm';
-import { APIException } from '../api';
 import { resourceConflictResolution } from '../utils';
 import {
   getNetsuiteOrSalesforceMeta,
@@ -52,6 +51,7 @@ import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
 import { pollApiRequests } from '../app';
+import { APIException } from '../api/requestInterceptors/utils';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -1036,6 +1036,7 @@ describe('deleteIntegration saga', () => {
   test('should call deleteResource and dispatch request collection actions if integration does not have _connectorId', () => expectSaga(deleteIntegration, {integrationId: '123'})
     .provide([
       [select(selectors.resource, 'integrations', '123'), {_id: '123'}],
+      [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
     .put(actions.resource.requestCollection('integrations', null, true))

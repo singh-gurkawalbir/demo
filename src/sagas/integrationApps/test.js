@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
-import { getResource } from '../resources';
+import { getResource, getResourceCollection } from '../resources';
 import {
   initInstall,
   installStep,
@@ -1351,6 +1351,8 @@ describe('settings saga', () => {
           ],
           [call(apiCallWithRetry, args1)],
           [call(apiCallWithRetry, args2), { response }],
+          [matchers.call.fn(getResourceCollection)],
+          [matchers.call.fn(getResource)],
         ])
         .call(apiCallWithRetry, args1)
         .call(apiCallWithRetry, args2)

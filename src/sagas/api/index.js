@@ -28,15 +28,12 @@ export function* sendRequest(request) {
 
     const actualResponse = yield call(fetch, url, {...options, signal});
 
-    console.log('check ', actualResponse);
     // extract just what is important from the fetch api response like url, headers, status and actual data
     const response = yield call(extractResponse, actualResponse);
 
     const isError = response.status >= 400 && response.status < 600;
 
     if (isError) {
-      console.log('hi there ', response, actionWrappedInRequest);
-
       // error sagas bubble exceptions of type APIException
       return yield call(onErrorSaga, response, actionWrappedInRequest);
     }
