@@ -32,8 +32,6 @@ export function* getJobFamily({ flowId, jobId }) {
   const { path, opts } = requestOptions;
 
   try {
-    console.log('trying to hi');
-
     const job = yield call(apiCallWithRetry, { path, opts, hidden: true });
 
     const latestJobsState = yield select(selectors.latestFlowJobsList, flowId) || {};

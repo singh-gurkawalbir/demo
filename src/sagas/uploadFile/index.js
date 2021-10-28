@@ -52,7 +52,6 @@ export function* uploadRawData({
   fileName = 'file.txt',
   fileType = 'application/text',
 }) {
-  console.log('should not run');
   const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(fileName)}&file_type=${fileType}`;
 
   try {

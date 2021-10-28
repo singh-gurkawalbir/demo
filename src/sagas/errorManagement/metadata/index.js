@@ -171,8 +171,6 @@ export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) 
       hidden: true,
     });
 
-    console.log('hi there ', errorHttpDoc);
-
     yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, errorHttpDoc));
   } catch (e) {
     if (e.status >= 400 && e.status < 500) {
@@ -194,8 +192,6 @@ export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
         method: 'GET',
       },
     });
-
-    console.log('hi there ', response);
 
     if (response?.signedURL) {
       yield call(openExternalUrl, { url: response.signedURL });

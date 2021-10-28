@@ -2765,8 +2765,6 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        console.log('body1 ', formattedResourceWithoutOnceDoc);
-
         return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
             [select(
