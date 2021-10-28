@@ -26,17 +26,24 @@ withFourImages.args = {
 };
 withFourImages.parameters = designParameters;
 
-export const withSixImages = Template.bind({});
+export const withEightImages = Template.bind({});
 
-withSixImages.args = {
-  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus'],
+withEightImages.args = {
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo'],
 };
-withSixImages.parameters = designParameters;
+withEightImages.parameters = designParameters;
 
 export const withTwelveImages = Template.bind({});
 
 withTwelveImages.args = {
-  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'surveymonkey', 'amazonmws', 'accelo', 'asana', 'http', 'rest'],
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey', 'rest'],
 };
 withTwelveImages.parameters = designParameters;
+
+export const withSixTeenImages = Template.bind({});
+
+withSixTeenImages.args = {
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey', 'rest', 'redshift', 'dynamodb', 'bigquery', 'mongodb'],
+};
+withSixTeenImages.parameters = designParameters;
 
