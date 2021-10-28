@@ -185,7 +185,7 @@ export default function JobErrorTable({
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -361,7 +361,7 @@ export default function JobErrorTable({
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

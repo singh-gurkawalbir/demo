@@ -8,7 +8,7 @@ import { onResourceCreate, onResourceUpdate, _fetchAndSaveRawDataForResource } f
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import { exportPreview } from '../utils/previewCalls';
-import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
+import { saveRawDataOnResource } from './utils';
 
 describe('rawDataUpdates sagas', () => {
   const flowId = 'f1';
@@ -412,36 +412,6 @@ describe('rawDataUpdates sagas', () => {
 
       return test1 && test2;
     });
-    test('should call saveRawDataForFileAdaptors incase of file adaptors and not call exportPreview', () => {
-      const ftpExport = {
-        _id: 'ftp-123',
-        name: 'FTP export',
-        adaptorType: 'FTPExport',
-        ftp: {
-          directoryPath: '/Test',
-        },
-        file: {
-          type: 'json',
-        },
-      };
-      const type = 'exports';
-
-      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId: 'ftp-123', tempResourceId: 'temp-123'})
-        .provide([
-          [select(
-            selectors.resource,
-            type,
-            'ftp-123'
-          ), ftpExport],
-        ])
-        .call(saveRawDataForFileAdaptors, {
-          resourceId: 'ftp-123',
-          tempResourceId: 'temp-123',
-          type,
-        })
-        .not.call.fn(exportPreview)
-        .run();
-    });
     test('should call exportPreview and saveRawDataOnResource incase it has preview data for exports', () => {
       const resourceId = 'export-123';
       const tempId = 'new-123';
@@ -515,40 +485,6 @@ describe('rawDataUpdates sagas', () => {
         })
         .run();
     });
-    test('should call removeRawDataOnResource if there is no preview data for export', () => {
-      const resourceId = 'export-123';
-      const tempId = 'new-123';
-      const restResource = {
-        _id: resourceId,
-        name: 'rest export',
-        rawData: 'rawData1234',
-        adaptorType: 'RESTExport',
-      };
-      const type = 'exports';
-
-      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId, flowId})
-        .provide([
-          [select(
-            selectors.resource,
-            type,
-            resourceId
-          ), restResource],
-          [call(exportPreview, {
-            resourceId,
-            hidden: true,
-            flowId,
-          }), undefined],
-        ])
-        .not.call.fn(saveRawDataForFileAdaptors)
-        .call(exportPreview, {
-          resourceId,
-          hidden: true,
-          flowId,
-        })
-        .not.call.fn(saveRawDataOnResource)
-        .call(removeRawDataOnResource, { resourceId })
-        .run();
-    });
     test('should do nothing incase of type other than exports', () => {
       const type = 'imports';
 
@@ -556,7 +492,6 @@ describe('rawDataUpdates sagas', () => {
         .not.call.fn(saveRawDataForFileAdaptors)
         .not.call.fn(exportPreview)
         .not.call.fn(saveRawDataOnResource)
-        .not.call.fn(removeRawDataOnResource)
         .run();
     });
   });

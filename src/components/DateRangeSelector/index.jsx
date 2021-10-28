@@ -11,7 +11,7 @@ import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import { OutlinedButton, TextButton} from '../Buttons/index';
+import { OutlinedButton, TextButton, FilledButton} from '../Buttons';
 import ActionGroup from '../ActionGroup';
 
 const defaultPresets = [
@@ -56,7 +56,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     padding: theme.spacing(2),
     background: theme.palette.background.default,
-
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -320,21 +319,19 @@ export default function DateRangeSelector({
               </div>
               )}
             </div>
-            <div className={classes.actions}>
-              <ActionGroup>
-                <OutlinedButton onClick={handleSave}>
-                  Apply
-                </OutlinedButton>
-                {clearable && (
+            <ActionGroup className={classes.actions}>
+              <FilledButton onClick={handleSave}>
+                Apply
+              </FilledButton>
+              {clearable && (
                 <TextButton onClick={handleClear}>
                   Clear
                 </TextButton>
-                )}
-                <TextButton onClick={handleClose}>
-                  Cancel
-                </TextButton>
-              </ActionGroup>
-            </div>
+              )}
+              <TextButton onClick={handleClose}>
+                Cancel
+              </TextButton>
+            </ActionGroup>
           </div>
         )}
       </ArrowPopper>

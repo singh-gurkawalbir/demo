@@ -23,6 +23,7 @@ import {
 import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import { SCOPES } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
+import { autoEvaluateProcessorWithCancel } from '../editor';
 
 describe('fetchRequiredMappingData saga', () => {
   test('should trigger mapping initFailed in case of invalid import id', () => {
@@ -1148,9 +1149,11 @@ describe('validateMappings saga', () => {
       [select(selectors.mapping), {
         mappings: [{extract: 'e1', generate: 'g1'}, {extract: 'e1', generate: 'g2'}],
         lookups: [],
+        importId: '123',
       }],
     ])
     .not.put(actions.mapping.setValidationMsg())
+    .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
     .run());
 
   test('should trigger mapping setValidation action if validation changes', () => expectSaga(validateMappings, {})
@@ -1159,9 +1162,11 @@ describe('validateMappings saga', () => {
         mappings: [{extract: 'e1', generate: 'g1'}, {extract: 'e1', generate: 'g2'}],
         validationErrMsg: 'have some text',
         lookups: [],
+        importId: '123',
       }],
     ])
     .put(actions.mapping.setValidationMsg(undefined))
+    .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
     .run());
 
   test('should trigger mapping setValidation action if validation changes[2]', () => expectSaga(validateMappings, {})
@@ -1169,9 +1174,11 @@ describe('validateMappings saga', () => {
       [select(selectors.mapping), {
         mappings: [{extract: 'e1', generate: 'g1'}, {generate: 'g2'}],
         lookups: [],
+        importId: '123',
       }],
     ])
     .put(actions.mapping.setValidationMsg('Extract Fields missing for field(s): g2'))
+    .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
     .run());
 });
 

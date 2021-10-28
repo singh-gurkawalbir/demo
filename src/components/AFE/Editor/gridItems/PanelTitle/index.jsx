@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
     height: 39,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
     // color: theme.palette.text.main,
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
   helpButton: {
     padding: 0,
-    margin: -1,
+    margin: 2,
   },
 }));
 
