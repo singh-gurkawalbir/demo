@@ -160,7 +160,6 @@ export default function RunHistory({ flowId, className }) {
               value={selectedDate}
               customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
-              showTime={false}
          />
             <div className={classes.hideLabel}>
               <FormControlLabel

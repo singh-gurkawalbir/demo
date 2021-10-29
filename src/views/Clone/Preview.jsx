@@ -149,7 +149,7 @@ export default function ClonePreview(props) {
               },
               {
                 label: 'No, go back',
-                color: 'secondary',
+                variant: 'text',
                 onClick: () => {
                   dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
                   props.history.push(

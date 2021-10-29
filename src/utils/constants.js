@@ -32,6 +32,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   INSTALL_PACKAGE: 'installPackage',
   STACK: 'Stack',
   FORM: 'form',
+  URL: 'url',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
@@ -748,3 +749,10 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
+export const POLLING_STATUS = {
+  SLOW: 'slow down polling',
+  RESUME: 'resume polling',
+  STOP: 'stop polling',
+};
+
+Object.freeze(POLLING_STATUS);

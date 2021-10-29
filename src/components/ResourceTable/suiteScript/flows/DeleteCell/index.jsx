@@ -40,7 +40,7 @@ export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderVie
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

@@ -45,7 +45,7 @@ export default {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           }],
       });
     }, [confirmDialog, rowData?.ftp?.tradingPartner, updateTradingPartner, connectionsList]);

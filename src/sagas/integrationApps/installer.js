@@ -9,6 +9,7 @@ import { isJsonString } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import openExternalUrl from '../../utils/window';
 
 export function* initInstall({ id }) {
   const path = `/integrations/${id}/installSteps`;
@@ -364,21 +365,25 @@ export function* addNewChild({ id }) {
   }
 }
 
-// for certain type of steps ('form' for now), in order to display the step for the user,
-// we need to invoke get /currentStep route to get the form metadata
+// for certain type of steps ('form'/'url' for now), in order to display the step for the user,
+// we need to invoke get /currentStep route to get the form metadata or url
 export function* getCurrentStep({ id, step }) {
-  const { type, form, initFormFunction } = step;
+  const { type, form, initFormFunction, getUrlFunction } = step;
 
-  //  currently only handling 'form' type step
-  if (type !== INSTALL_STEP_TYPES.FORM) {
+  //  currently only handling 'form' and 'url' type step
+  if (type !== INSTALL_STEP_TYPES.FORM && type !== INSTALL_STEP_TYPES.URL) {
     return;
   }
 
-  if (!initFormFunction) {
-    // update formmeta in the session state
+  if (type === INSTALL_STEP_TYPES.FORM && !initFormFunction) {
+    // update form meta in the session state
     return yield put(
       actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
     );
+  }
+  if (type === INSTALL_STEP_TYPES.URL && !getUrlFunction) {
+    // fail the step if no url or function available
+    return yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
   }
 
   const path = `/integrations/${id}/currentStep`;
@@ -399,7 +404,26 @@ export function* getCurrentStep({ id, step }) {
     return yield put(actions.api.failure(path, 'PUT', error.message, false));
   }
 
-  if (!currentStepResponse || !currentStepResponse.result) {
+  const result = currentStepResponse?.result;
+
+  if (type === INSTALL_STEP_TYPES.URL) {
+    if (!result) {
+      return yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
+    }
+
+    yield call(openExternalUrl, { url: result });
+
+    return yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        '',
+        'inProgress',
+        undefined,
+        result
+      )
+    );
+  }
+  if (!result) {
     return yield put(
       actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
     );
@@ -410,7 +434,7 @@ export function* getCurrentStep({ id, step }) {
       id,
       '',
       'inProgress',
-      currentStepResponse.result
+      result
     )
   );
 }

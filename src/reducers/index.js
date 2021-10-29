@@ -2724,7 +2724,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
           // If no childId is passed, return all sections from all children
           allSections = [];
           sections.forEach(sec => {
-            allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
+            if (!sec.mode || sec.mode === 'settings') {
+              allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
+            }
           });
         }
       }
@@ -5763,7 +5765,8 @@ selectors.isEditorDisabled = (state, editorId) => {
 
   // if we are on FB actions, below logic applies
   // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
-  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
+  if (editorType === 'mappings' ||
+  (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter'))) {
     const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
     return isMonitorLevelAccess;

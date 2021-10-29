@@ -36,12 +36,11 @@ export default function ConnectionPanel({ flowId }) {
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
     // For connections resource table, we need to poll the connection status and queueSize
-    const interval = setInterval(() => {
-      dispatch(actions.resource.connections.refreshStatus(integrationId));
-    }, 10 * 1000);
+
+    dispatch(actions.app.polling.start(actions.resource.connections.refreshStatus(integrationId), 10 * 1000));
 
     return () => {
-      clearInterval(interval);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus(integrationId)));
     };
   }, [dispatch, integrationId]);
 
