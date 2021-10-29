@@ -62,11 +62,11 @@ function imageName(assistant) {
 }
 
 export default function ApplicationImg({
-  size = 'small',
+  size,
   markOnly = false,
   assistant,
   type,
-  alt = 'Application image',
+  alt,
   className,
 }) {
   const classes = useStyles();

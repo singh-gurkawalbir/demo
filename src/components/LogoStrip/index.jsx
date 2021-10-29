@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 
 export default function LogoStrip({applications}) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const applicationsCount = applications?.length;
+  const applicationsCount = applications?.length || 0;
   const maxApps = 10;
   const maxAppsInRow = 5;
   const apps = applicationsCount > maxApps ? applications.slice(0, maxApps - 1) : applications.slice(0, maxApps);
