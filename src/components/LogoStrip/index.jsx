@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import clsx from 'clsx';
-import {makeStyles, Typography } from '@material-ui/core';
+import {makeStyles } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import Applications from './Applications';
 import {TextButton} from '../Buttons';
@@ -10,7 +10,7 @@ const useStyles = makeStyles({
     border: 'none',
   },
   applicationsMenuPaper: {
-    right: 60,
+    right: styleProps => styleProps.additionalAppsCount >= 3 ? 60 : 30,
   },
   applicationsMenuPaperMax: {
     right: 120,
@@ -61,7 +61,7 @@ export default function LogoStrip({applications}) {
             aria-controls="additionalApps"
             aria-haspopup="true"
             onClick={handleClick}>
-            <Typography className={classes.appsIconButton}>+ {applicationsCount - apps.length}</Typography>
+            + {applicationsCount - apps.length}
           </TextButton>
           <ArrowPopper
             placement="bottom"
