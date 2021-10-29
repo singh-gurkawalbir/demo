@@ -924,8 +924,10 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects) => {
     });
     const lastFlowObject = finalFlowObjects.pop();
 
-    lastFlowObject.lastFlowInFlowGroup = true;
-    finalFlowObjects.push(lastFlowObject);
+    if (lastFlowObject) {
+      lastFlowObject.lastFlowInFlowGroup = true;
+      finalFlowObjects.push(lastFlowObject);
+    }
   });
 
   return finalFlowObjects;
