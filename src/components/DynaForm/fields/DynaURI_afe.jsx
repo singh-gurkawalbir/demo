@@ -34,7 +34,7 @@ export default function DynaURI_afe(props) {
     flowId,
     description,
     formKey,
-    stage = 'flowInput',
+    stage = 'inputFilter',
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();

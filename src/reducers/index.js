@@ -3788,6 +3788,7 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (_, { editorType }) => editorType,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
       const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
@@ -3811,6 +3812,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    editorType,
     parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
@@ -3821,6 +3823,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    editorType,
     parentIntegration})
 );
 
@@ -5721,12 +5724,12 @@ selectors.editorHelperFunctions = state => {
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession.editor(state?.session, editorId);
+  const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (stage === 'outputFilter' ||
-    stage === 'exportFilter' ||
-    stage === 'inputFilter') return true;
+  if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
+    return true;
+  }
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
@@ -5815,7 +5818,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession.editor(state?.session, editorId);
-  const {stage, resourceId, resourceType, flowId, fieldId} = editor;
+  const {stage, resourceId, resourceType, flowId, fieldId, editorType} = editor;
   const resource = selectors.resourceData(
     state,
     resourceType,
@@ -5825,7 +5828,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage)) {
+  if (FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage) || stage === 'postMapOutput') {
     _sampleData = sampleData;
   } else if (isPageGenerator) {
     // for PGs, no sample data is shown
@@ -5843,7 +5846,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   // TODO: BE would be deprecating native REST adaptor as part of IO-19864
   // we can remove this logic from UI as well once that is complete
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
+    if (!connection.isHTTP && (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType))) {
       // native REST adaptor filters
       return {
         shouldGetContextFromBE: false,
@@ -5855,8 +5858,11 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
       };
     }
   }
-  if (stage === 'transform' ||
-  stage === 'sampleResponse' || stage === 'importMappingExtract' || HOOK_STAGES.includes(stage)) {
+
+  if (
+    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter'].includes(editorType) ||
+  HOOK_STAGES.includes(stage)
+  ) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 

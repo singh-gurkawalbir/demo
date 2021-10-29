@@ -21,7 +21,7 @@ import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil from '../../utils/mapping';
@@ -393,6 +393,33 @@ export function* refreshHelperFunctions() {
   yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
+function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
+  // let flowSampleData = yield select(selectors.getSampleDataContext, {
+  //   flowId,
+  //   resourceId,
+  //   resourceType,
+  //   stage,
+  // });
+
+  // if (flowSampleData.status !== 'received') {
+  yield call(requestSampleData, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    formKey,
+  });
+  // }
+  const flowSampleData = yield select(selectors.getSampleDataContext, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+
+  return flowSampleData?.data;
+}
+
 export function* requestEditorSampleData({
   id,
   requestedTemplateVersion,
@@ -480,27 +507,35 @@ export function* requestEditorSampleData({
     );
 
     sampleData = parsedData?.data;
+  } else if (formKey) {
+    if (resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId)) {
+      sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
+    } else if (!isPageGenerator) {
+      sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
+    }
+  } else if (stage) {
+    sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
   }
 
-  if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage))) {
-    // sample data not present, trigger action to get sample data
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-      formKey,
-    });
-    // get sample data from the selector once loaded
-    const flowSampleData = yield select(selectors.getSampleDataContext, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
+  // if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage))) {
+  //   // sample data not present, trigger action to get sample data
+  //   yield call(requestSampleData, {
+  //     flowId,
+  //     resourceId,
+  //     resourceType,
+  //     stage,
+  //     formKey,
+  //   });
+  //   // get sample data from the selector once loaded
+  //   const flowSampleData = yield select(selectors.getSampleDataContext, {
+  //     flowId,
+  //     resourceId,
+  //     resourceType,
+  //     stage,
+  //   });
 
-    sampleData = flowSampleData?.data;
-  }
+  //   sampleData = flowSampleData?.data;
+  // }
   let _sampleData = null;
   let templateVersion;
 
@@ -510,7 +545,7 @@ export function* requestEditorSampleData({
   if (!shouldGetContextFromBE) {
     _sampleData = uiSampleData;
   } else {
-    const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
+    const filterPath = (editorType === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
     const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
 
     // sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
@@ -600,11 +635,9 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  if (editorType !== 'csvGenerator' &&
-  stage !== 'outputFilter' &&
-  stage !== 'exportFilter' &&
-  stage !== 'inputFilter' &&
-  stage !== 'importMappingExtract') {
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter'];
+
+  if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,
@@ -616,6 +649,7 @@ export function* requestEditorSampleData({
       resourceType,
       fieldType: fieldId,
       stage,
+      editorType,
     });
 
     return { data, templateVersion};

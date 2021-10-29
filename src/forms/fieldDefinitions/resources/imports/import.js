@@ -76,12 +76,14 @@ export default {
   },
   idLockTemplate: {
     type: 'uri',
+    stage: 'importMappingExtract',
     label: 'Concurrency ID lock template',
     showExtract: false,
     showLookup: false,
   },
   dataURITemplate: {
     type: 'uri',
+    stage: 'importMappingExtract',
     label: 'Data URI template',
     showLookup: false,
   },
