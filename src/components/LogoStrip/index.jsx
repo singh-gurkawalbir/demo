@@ -60,7 +60,6 @@ export default function LogoStrip({applications}) {
             aria-label="additional apps"
             aria-controls="additionalApps"
             aria-haspopup="true"
-            size="medium"
             onClick={handleClick}>
             <Typography className={classes.appsIconButton}>+ {applicationsCount - apps.length}</Typography>
           </TextButton>
