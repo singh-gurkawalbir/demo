@@ -7,8 +7,37 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import mappingUtil from '../../../utils/mapping';
 import ActionGroup from '../../ActionGroup';
+import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
-export default function ButtonPanel({ editorId, onClose }) {
+function ResponseMappingsButtonGroup({ editorId, onClose }) {
+  const match = useRouteMatch();
+  const dispatch = useDispatch();
+  const saveInProgress = useSelector(
+    state => selectors.responseMappingSaveStatus(state).saveInProgress
+  );
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const mappingsChanged = useSelector(state =>
+    selectors.responseMappingChanged(state)
+  );
+  const status = saveInProgress ? FORM_SAVE_STATUS.LOADING : FORM_SAVE_STATUS.COMPLETE;
+  const onSave = useCallback(() => {
+    dispatch(actions.responseMapping.save({ match }));
+  }, [dispatch, match]);
+
+  return (
+    <SaveAndCloseButtonGroupAuto
+      isDirty={mappingsChanged}
+      disabled={disabled}
+      status={status}
+      onSave={onSave}
+      onClose={onClose}
+      shouldHandleCancel
+      asyncKey={editorId}
+    />
+  );
+}
+
+function ImportMappingsButtonGroup({ editorId, onClose }) {
   const match = useRouteMatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
@@ -46,4 +75,19 @@ export default function ButtonPanel({ editorId, onClose }) {
         />
     </ActionGroup>
   );
+}
+
+export default function ButtonWrapper({editorId, onClose}) {
+  const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
+
+  return editorType === 'mappings' ? (
+    <ImportMappingsButtonGroup
+      editorId={editorId}
+      onClose={onClose} />
+  )
+    : (
+      <ResponseMappingsButtonGroup
+        editorId={editorId}
+        onClose={onClose} />
+    );
 }
