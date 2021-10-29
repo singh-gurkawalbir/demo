@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
-import {selectors} from '../../reducers';
-import actions from '../../actions';
-import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
-import TrashIcon from '../icons/TrashIcon';
-import ActionButton from '../ActionButton';
+import {selectors} from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+import DynaTypeableSelect from '../../../../../DynaForm/fields/DynaTypeableSelect';
+import TrashIcon from '../../../../../icons/TrashIcon';
+import ActionButton from '../../../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {

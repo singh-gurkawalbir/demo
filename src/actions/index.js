@@ -924,12 +924,13 @@ const integrationApp = {
         formSubmission,
         stackId,
       }),
-    updateStep: (integrationId, installerFunction, update, formMeta) =>
+    updateStep: (integrationId, installerFunction, update, formMeta, url) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
         formMeta,
+        url,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
@@ -2092,10 +2093,11 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: ({ flowId, resourceId }) =>
+  init: ({ flowId, resourceId, resourceType }) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
       resourceId,
       flowId,
+      resourceType,
     }),
   initComplete: (options = {}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),

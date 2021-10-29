@@ -17,6 +17,7 @@ import { requestSampleData as requestImportSampleData } from '../sampleData/impo
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
 import { getAssistantConnectorType } from '../../constants/applications';
+import { autoEvaluateProcessorWithCancel } from '../editor';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -505,6 +506,9 @@ export function* validateMappings() {
   if (newValidationErrMsg !== validationErrMsg) {
     yield put(actions.mapping.setValidationMsg(newValidationErrMsg));
   }
+  const {importId} = yield select(selectors.mapping);
+
+  yield call(autoEvaluateProcessorWithCancel, { id: `mappings-${importId}` });
 }
 
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {

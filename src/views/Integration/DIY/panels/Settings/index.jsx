@@ -69,6 +69,11 @@ function CustomSettings({ integrationId, sectionId }) {
 
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
+  const hasPreSaveHook = useSelector(state => {
+    const integration = selectors.resourceData(state, 'integrations', integrationId);
+
+    return !!(integration?.preSave?._scriptId && integration.preSave?.function);
+  });
   const canEditIntegration = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
@@ -132,6 +137,7 @@ function CustomSettings({ integrationId, sectionId }) {
           value,
         },
       ];
+      const refetchResources = isFrameWork2 || hasPreSaveHook;
 
       dispatch(
         actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
@@ -141,11 +147,11 @@ function CustomSettings({ integrationId, sectionId }) {
           'integrations',
           integrationId,
           SCOPES.VALUE,
-          {action: isFrameWork2 ? 'UpdatedIA2.0Settings' : 'DIYSettings'}
+          { refetchResources }
         )
       );
     },
-    [dispatch, integrationId, isFrameWork2, patchPath]
+    [dispatch, integrationId, isFrameWork2, patchPath, hasPreSaveHook]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
