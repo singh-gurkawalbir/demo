@@ -32,7 +32,7 @@ describe('sendRequest saga', () => {
   test('should call first onRequest saga to generate a requestPayload', () => {
     expectSaga(sendRequest, request)
       .provide([
-        [call(onRequestSaga, request), onRequestGeneratedPayload],
+        [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
       ])
       .call(onRequestSaga, request).run();
   });
@@ -46,7 +46,7 @@ describe('sendRequest saga', () => {
 
     return expectSaga(sendRequest, request)
       .provide([
-        [call(onRequestSaga, request), onRequestGeneratedPayload],
+        [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
         [matchers.call.fn(fetch), someErrorResp],
         [matchers.call.fn(extractResponse), someErrorResp],
         [matchers.call.fn(onErrorSaga), throwError(errorResponseException)],
@@ -54,13 +54,13 @@ describe('sendRequest saga', () => {
       ]).call.fn(onErrorSaga).throws(errorResponseException).silentRun();
   });
 
-  test('should call the onErrorSaga when the fetch API throws an error in cases like the network connection is done', () => {
+  test('should call the onErrorSaga when the fetch API throws an error in cases like the network connection is down', () => {
     // in cases like this it will try to retry until failure
     const fetchApiException = new Error('some fetch api error');
 
     return expectSaga(sendRequest, request)
       .provide([
-        [call(onRequestSaga, request), onRequestGeneratedPayload],
+        [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
         [matchers.call.fn(fetch), throwError(fetchApiException)],
 
       ]).call.fn(onErrorSaga).silentRun();
@@ -78,7 +78,7 @@ describe('sendRequest saga', () => {
 
     return expectSaga(sendRequest, request)
       .provide([
-        [call(onRequestSaga, request), onRequestGeneratedPayload],
+        [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
         [matchers.call.fn(fetch), someSuccessResponse],
         [matchers.call.fn(extractResponse), someSuccessResponse],
         [matchers.call.fn(onSuccessSaga), parsedSuccessResponse],
