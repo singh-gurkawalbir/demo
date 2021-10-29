@@ -53,7 +53,8 @@ export default {
     {
       key: 'errors',
       heading: 'Errors',
-      Value: ({rowData: r}) => r.numOpenError },
+      Value: ({rowData: r}) => r.numError,
+    },
     {
       key: 'pages',
       heading: 'Pages',
