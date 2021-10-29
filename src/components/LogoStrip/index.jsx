@@ -1,18 +1,30 @@
 import React, {useCallback, useState} from 'react';
-import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import {makeStyles, Typography } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import Applications from './Applications';
+import {TextButton} from '../Buttons';
 
 const useStyles = makeStyles({
   applicationsMenuPopper: {
     border: 'none',
   },
   applicationsMenuPaper: {
-    right: styleProps => styleProps.additionalAppsCount * 20,
+    right: 60,
     position: 'relative',
+    maxHeight: 160,
+    overflowY: 'auto',
+  },
+  applicationsMenuPaperMax: {
+    right: 120,
+    position: 'relative',
+    maxHeight: 160,
+    overflowY: 'auto',
   },
   moreLogoStrip: {
     gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.maxAppsInRow ? styleProps.maxAppsInRow : styleProps.additionalAppsCount}, minmax(40px, 60px))`,
+  },
+  appsIconButton: {
+    display: 'flex',
   },
 });
 
@@ -29,6 +41,7 @@ export default function LogoStrip({applications}) {
     additionalAppsCount,
   };
   const classes = useStyles(styleProps);
+  const appsPaper = additionalAppsCount > maxAppsInRow ? classes.applicationsMenuPaperMax : classes.applicationsMenuPaper;
 
   const handleClick = useCallback(
     event => {
@@ -45,21 +58,21 @@ export default function LogoStrip({applications}) {
     <>
       {applicationsCount > maxApps ? (
         <Applications apps={apps}>
-          <IconButton
+          <TextButton
             data-test="logoStrip"
             aria-label="additional apps"
             aria-controls="additionalApps"
             aria-haspopup="true"
-            size="small"
+            size="medium"
             onClick={handleClick}>
-            <Typography component="span">+ {applicationsCount - apps.length}</Typography>
-          </IconButton>
+            <Typography className={classes.appsIconButton}>+ {applicationsCount - apps.length}</Typography>
+          </TextButton>
           <ArrowPopper
             placement="bottom"
             open={open}
             anchorEl={anchorEl}
             restrictToParent={false}
-            classes={{ popper: classes.applicationsMenuPopper, paper: classes.applicationsMenuPaper }}
+            classes={{ popper: classes.applicationsMenuPopper, paper: appsPaper }}
             id="additionalApps"
             onClose={handleClose}>
             <Applications apps={additionalApps} className={classes.moreLogoStrip} />
