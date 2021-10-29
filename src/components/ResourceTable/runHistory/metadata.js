@@ -17,6 +17,7 @@ export default {
           <MultiSelectColumnFilter
             title="Status"
             filterBy="status"
+            singleSelect
             filterKey={FILTER_KEYS.RUN_HISTORY}
             options={RUN_HISTORY_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
         );

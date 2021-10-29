@@ -26,13 +26,14 @@ export default function MultiSelectColumnFilter({
   options = emptyArr,
   handleSave,
   helpKey,
+  singleSelect,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filterOptions = useSelector(state => selectors.filter(state, filterKey));
 
   const handleSelect = useCallback((selectedIds, id) => {
-    if (id === 'all') {
+    if (id === 'all' || singleSelect) {
       if (selectedIds.includes(id)) return [];
 
       return [id];
@@ -65,7 +66,7 @@ export default function MultiSelectColumnFilter({
     }
 
     return [...selectedIds, id];
-  }, [options]);
+  }, [options, singleSelect]);
   const onSaveHandler = useCallback(
     values => {
       dispatch(actions.patchFilter(filterKey, {

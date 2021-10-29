@@ -51,12 +51,11 @@ export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
   {_id: JOB_STATUS.COMPLETED, name: JOB_UI_STATUS[JOB_STATUS.COMPLETED]},
   {_id: JOB_STATUS.FAILED, name: JOB_UI_STATUS[JOB_STATUS.FAILED]}];
 
-export const RUN_HISTORY_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
+export const RUN_HISTORY_STATUS_OPTIONS = [
   {_id: JOB_STATUS.CANCELED, name: JOB_UI_STATUS[JOB_STATUS.CANCELED]},
   {_id: JOB_STATUS.COMPLETED, name: JOB_UI_STATUS[JOB_STATUS.COMPLETED]},
   {_id: JOB_STATUS.FAILED, name: JOB_UI_STATUS[JOB_STATUS.FAILED]},
-  {_id: JOB_STATUS.ERROR, name: JOB_UI_STATUS[JOB_STATUS.ERROR]},
-  {_id: JOB_STATUS.RESOLVED, name: JOB_UI_STATUS[JOB_STATUS.RESOLVED]}];
+  {_id: JOB_STATUS.ERROR, name: JOB_UI_STATUS[JOB_STATUS.ERROR]}];
 
 export function getTimeString(timeInMs = 0, delim = ':') {
   const showWith0 = value => (value < 10 ? `0${value}` : value);

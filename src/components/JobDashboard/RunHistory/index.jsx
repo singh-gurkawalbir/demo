@@ -50,6 +50,9 @@ const useStyles = makeStyles(theme => ({
   hideEmptyLabel: {
     marginTop: theme.spacing(0.5),
   },
+  hideLabel: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 
 const defaultRange = {
@@ -161,21 +164,18 @@ export default function RunHistory({ flowId, className }) {
               customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
          />
-            <div className={classes.hideLabel}>
-              <FormControlLabel
-                data-test="hideEmptyJobsFilter"
-                label="Hide empty jobs"
-                classes={{ label: classes.hideEmptyLabel }}
-                control={(
-                  <Checkbox
-                    checked={filter?.hideEmpty}
-                    data-test="hideEmptyJobs"
-                    color="primary"
-                    onChange={e => handleHideEmptyJobs(e.target.checked)}
-            />
-            )}
-        />
-            </div>
+            <FormControlLabel
+              className={classes.hideLabel}
+              data-test="hideEmptyRunsFilter"
+              label="Hide empty runs"
+              control={(
+                <Checkbox
+                  checked={filter?.hideEmpty}
+                  data-test="hideEmptyRuns"
+                  color="primary"
+                  onChange={e => handleHideEmptyJobs(e.target.checked)} />
+                  )}
+                />
           </div>
           <div className={classes.actions}>
             { hasFlowRunHistory && (
