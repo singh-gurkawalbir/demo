@@ -140,6 +140,7 @@ import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
+import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -276,6 +277,7 @@ export default {
   as2Mode: DynaAs2Mode,
   childlicenses: DynaChildLicenses,
   flowgroupname: DynaFlowGroupName,
+  flowgroupstiedtointegrations: DynaFlowGroupsTiedToIntegrations,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,

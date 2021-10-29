@@ -1,7 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, UNASSIGNED_SECTION_ID } from './constants';
 import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
@@ -877,6 +877,59 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 
 // when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
 export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+
+export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects) => {
+  const finalFlowObjects = [];
+
+  if (!flowGroupings?.length) {
+    return flowObjects;
+  }
+
+  flowGroupings.push({
+    _id: UNASSIGNED_SECTION_ID,
+    name: 'Unassigned',
+  });
+  flowGroupings.forEach(flowGroup => {
+    let firstElement = true;
+
+    flowObjects.forEach(flowObject => {
+      if (flowGroup._id === UNASSIGNED_SECTION_ID && !flowObject.doc?._flowGroupingId) {
+        if (firstElement) {
+          finalFlowObjects.push(
+            {
+              ...flowObject,
+              groupName: flowGroup.name,
+            }
+          );
+          firstElement = false;
+        } else {
+          finalFlowObjects.push(flowObject);
+        }
+
+        return;
+      }
+      if (flowObject.doc?._flowGroupingId === flowGroup._id) {
+        if (firstElement) {
+          finalFlowObjects.push(
+            {
+              ...flowObject,
+              groupName: flowGroup.name,
+            }
+          );
+          firstElement = false;
+        } else {
+          finalFlowObjects.push(flowObject);
+        }
+      }
+    });
+    const lastFlowObject = finalFlowObjects.pop();
+
+    lastFlowObject.lastFlowInFlowGroup = true;
+    finalFlowObjects.push(lastFlowObject);
+  });
+
+  return finalFlowObjects;
+};
 
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;

@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowSectionTitle({ title, errorCount = 0 }) {
+export default function FlowSectionTitle({ title, errorCount = 0, groupHasFlows }) {
   const classes = useStyles();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -49,7 +49,7 @@ export default function FlowSectionTitle({ title, errorCount = 0 }) {
   return (
     <span className={classes.gridContainer}>
       <span> { title }</span>
-      <span> {errorStatus} </span>
+      <span> { groupHasFlows ? errorStatus : 'No Flows'} </span>
     </span>
   );
 }

@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import SortableHandle from '../../../../../../components/Sortable/SortableHandle';
 import { selectors } from '../../../../../../reducers';
+import { UNASSIGNED_SECTION_ID } from '../../../../../../utils/constants';
 import FlowSectionTitle from '../../../../common/FlowSectionTitle';
 
 const useStyles = makeStyles(theme => ({
@@ -46,9 +47,12 @@ export default function FlowGroupRow({
   className,
   isDragInProgress = false,
   isRowDragged = false,
+  hasUnassignedSection,
+  flows,
 }) {
   const { sectionId, title } = rowData;
   const [showGripper, setShowGripper] = useState(false);
+  const groupHasFlows = sectionId === UNASSIGNED_SECTION_ID ? true : flows.find(flow => flow._flowGroupingId === sectionId);
   const errorCountByFlowGroup = useSelector(
     state =>
       selectors.integrationErrorsPerFlowGroup(state, integrationId)
@@ -74,6 +78,8 @@ export default function FlowGroupRow({
     return null;
   }
 
+  if (sectionId === UNASSIGNED_SECTION_ID && !hasUnassignedSection) return null;
+
   return (
     <div
       onMouseEnter={handleOnMouseEnter}
@@ -86,7 +92,7 @@ export default function FlowGroupRow({
         activeClassName={classes.activeListItem}
         to={sectionId}
         data-test={sectionId}>
-        <FlowSectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
+        <FlowSectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} groupHasFlows={groupHasFlows} />
       </NavLink>
     </div>
   );

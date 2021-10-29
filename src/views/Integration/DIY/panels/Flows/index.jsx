@@ -30,6 +30,7 @@ import EditFlowGroup from '../../../../../components/ResourceTable/flows/actions
 import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
 import DragContainer from '../../../../../components/Mapping/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
+import { shouldHaveUnassignedSection } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -146,6 +147,7 @@ const FlowListingTable = ({
 
   const sectionId = match?.params?.sectionId;
   const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
+  const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
   const groupedFlows = useMemo(() => flows.filter(flow => sectionId === UNASSIGNED_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
@@ -163,6 +165,8 @@ const FlowListingTable = ({
           LastRowSortableItemComponent={LastRowSortableItemComponent}
           items={flowGroupingsSections}
           onSortEnd={onSortEnd}
+          flows={flows}
+          hasUnassignedSection={hasUnassignedSection}
         />
       </Grid>
       <Grid item className={classes.content}>
