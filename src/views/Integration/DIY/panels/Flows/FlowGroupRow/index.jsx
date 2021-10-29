@@ -75,21 +75,19 @@ export default function FlowGroupRow({
   }
 
   return (
-    <>
-      <div
-        onMouseEnter={handleOnMouseEnter}
-        onMouseLeave={handleOnMouseLeave}
-        className={clsx(className, classes.rowContainer)}>
-        <SortableHandle isVisible={showGripper} />
-        <NavLink
-          data-public
-          className={classes.listItem}
-          activeClassName={classes.activeListItem}
-          to={sectionId}
-          data-test={sectionId}>
-          <FlowSectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
-        </NavLink>
-      </div>
-    </>
+    <div
+      onMouseEnter={handleOnMouseEnter}
+      onMouseLeave={handleOnMouseLeave}
+      className={clsx(classes.rowContainer, className)}>
+      <SortableHandle isVisible={showGripper} />
+      <NavLink
+        data-public
+        className={classes.listItem}
+        activeClassName={classes.activeListItem}
+        to={sectionId}
+        data-test={sectionId}>
+        <FlowSectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
+      </NavLink>
+    </div>
   );
 }
