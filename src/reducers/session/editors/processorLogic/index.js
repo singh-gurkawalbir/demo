@@ -24,6 +24,7 @@ import responseTransform from './responseTransform';
 import databaseMapping from './databaseMapping';
 import flowTransform from './flowTransform';
 import mappings from './mappings';
+import responseMappings from './responseMappings';
 
 const logicMap = {
   handlebars,
@@ -51,6 +52,7 @@ const logicMap = {
   netsuiteQualificationCriteria,
   salesforceQualificationCriteria,
   mappings,
+  responseMappings,
 };
 
 export function getLogic(editor) {
@@ -243,6 +245,10 @@ export const featuresMap = options => ({
     hidePreview: true,
   },
   mappings: {
+    layout: 'compactRow',
+    autoEvaluate: false,
+  },
+  responseMappings: {
     layout: 'compactRow',
     autoEvaluate: false,
   },

@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import StatusTag from '../../StatusTag';
+import Tag from '../../tags/Tag';
 
 export default function JobStatusWithTag({job}) {
   const jobStatus = job?.status;
@@ -9,9 +9,9 @@ export default function JobStatusWithTag({job}) {
     return null;
   }
   const statusMap = {
-    completed: <StatusTag variant="success" label="Completed" />,
-    canceled: <StatusTag variant="warning" label="Canceled" />,
-    failed: <StatusTag variant="error" label="Failed" />,
+    completed: <Tag color="success" label="Completed" />,
+    canceled: <Tag color="warning" label="Canceled" />,
+    failed: <Tag color="error" label="Failed" />,
   };
 
   return statusMap[jobStatus] || <Typography>{jobStatus}</Typography>;
