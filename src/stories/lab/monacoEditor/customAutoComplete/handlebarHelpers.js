@@ -396,6 +396,9 @@ export function createProposals(monaco, range) {
     },
   ];
 
+  // The auto-suggest algorithm matches the string starting with '{{' prefix.
+  // Here we use the label as the base text, and use the filterText property
+  // match on the full matching text. (See field spec above)
   proposals.forEach((p, i) => { proposals[i].filterText = `{{${p.label}`; });
 
   return proposals;
