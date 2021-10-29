@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { Checkbox, ListItemText, makeStyles, MenuItem, Typography } from '@material-ui/core';
 import map from 'lodash/map';
+import clsx from 'clsx';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -24,8 +25,44 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  flowName: {
+    flex: 1,
+  },
+  optionFlowGroupName: {
+    width: 200,
+  },
+  optionFlowGroupUnassigned: {
+    fontStyle: 'italic',
+  },
 }));
 const options = { ignoreUnusedConnections: true };
+const SelectedOptionIml = ({ item, className, processedValue}) => {
+  const classes = useStyles();
+
+  return (
+    <MenuItem
+      key={item.value}
+      value={item.value}
+      disabled={item.disabled}
+      className={className}>
+      {!item.disabled && (
+        <Checkbox
+          checked={processedValue.indexOf(item.value) !== -1}
+          color="primary"
+        />
+      )}
+      <ListItemText primary={item.label || item.value} className={classes.flowName} />
+      {item.groupName && (
+        <Typography
+          variant="body1"
+          className={clsx(classes.optionFlowGroupName, item.groupName === 'Unassigned' ? classes.optionFlowGroupUnassigned : '')}
+        >
+          {item.groupName}
+        </Typography>
+      )}
+    </MenuItem>
+  );
+};
 export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -59,6 +96,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
+        SelectedOptionIml,
         selectAllIdentifier: _integrationId,
       },
       connections: {
