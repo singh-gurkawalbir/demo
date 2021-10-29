@@ -1,4 +1,5 @@
 import React, {useCallback, useState} from 'react';
+import clsx from 'clsx';
 import {makeStyles, Typography } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import Applications from './Applications';
@@ -10,21 +11,17 @@ const useStyles = makeStyles({
   },
   applicationsMenuPaper: {
     right: 60,
-    position: 'relative',
-    maxHeight: 160,
-    overflowY: 'auto',
   },
   applicationsMenuPaperMax: {
     right: 120,
+  },
+  applicationsMenuPaperPlaceholder: {
     position: 'relative',
     maxHeight: 160,
     overflowY: 'auto',
   },
   moreLogoStrip: {
     gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.maxAppsInRow ? styleProps.maxAppsInRow : styleProps.additionalAppsCount}, minmax(40px, 60px))`,
-  },
-  appsIconButton: {
-    display: 'flex',
   },
 });
 
@@ -72,7 +69,7 @@ export default function LogoStrip({applications}) {
             open={open}
             anchorEl={anchorEl}
             restrictToParent={false}
-            classes={{ popper: classes.applicationsMenuPopper, paper: appsPaper }}
+            classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, appsPaper) }}
             id="additionalApps"
             onClose={handleClose}>
             <Applications apps={additionalApps} className={classes.moreLogoStrip} />

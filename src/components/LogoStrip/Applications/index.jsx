@@ -52,8 +52,7 @@ export default function Applications(props) {
             <ApplicationImg
               markOnly
               type="export"
-              assistant={application}
-          />
+              assistant={application} />
           </li>
         </Tooltip>
       ))}
