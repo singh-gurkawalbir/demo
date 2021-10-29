@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Tooltip } from '@material-ui/core';
 import ApplicationImg from '../../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
@@ -47,13 +47,14 @@ export default function Applications(props) {
   return (
     <ul className={clsx(classes.logoStripWrapper, className)}>
       {apps.map(application => (
-        <li key={application}>
-          <ApplicationImg
-            markOnly
-            type="export"
-            assistant={application}
-          />
-        </li>
+        <Tooltip title={application} key={application}>
+          <li>
+            <ApplicationImg
+              markOnly
+              type="export"
+              assistant={application} />
+          </li>
+        </Tooltip>
       ))}
       {children && (<li>{children}</li>)}
     </ul>
