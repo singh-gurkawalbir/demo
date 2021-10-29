@@ -5,7 +5,7 @@
 // list based on what a user is typing. The functionality is split in case a developer want to only override
 // the suggestion list OR the filter function.
 export function createProposals(monaco, range) {
-  return [
+  const proposals = [
     // For full details on what properties are available and how they work, visit the link below:
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.completionitem.html
     // {
@@ -395,5 +395,9 @@ export function createProposals(monaco, range) {
       insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
     },
   ];
+
+  proposals.forEach((p, i) => { proposals[i].filterText = `{{${p.label}`; });
+
+  return proposals;
 }
 

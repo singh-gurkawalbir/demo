@@ -28,12 +28,21 @@ const Template = args => {
           if (!match) {
             return { suggestions: [] };
           }
+
           const word = model.getWordUntilPosition(position);
+          const surroundingText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: word.startColumn - 2, endLineNumber: position.lineNumber, endColumn: word.endColumn + 2 });
+
+          let replaceOffset = 0;
+
+          if (surroundingText.endsWith('}}')) {
+            replaceOffset = 2;
+          }
+
           const range = {
             startLineNumber: position.lineNumber,
             endLineNumber: position.lineNumber,
-            startColumn: word.startColumn,
-            endColumn: word.endColumn,
+            startColumn: word.startColumn - 2, // we want to also replace the leading `{{` chars
+            endColumn: word.endColumn + replaceOffset, // if present, replace the trailing '}}'
           };
 
           return {
