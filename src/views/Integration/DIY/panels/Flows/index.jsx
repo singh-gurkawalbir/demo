@@ -93,6 +93,11 @@ const useStyles = makeStyles(theme => ({
   flowPanelStatusHeader: {
     fontSize: 14,
   },
+  flowGroupRowUnassigned: {
+    '&>a': {
+      borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    },
+  },
 }));
 
 const getBasePath = match => {
@@ -121,9 +126,10 @@ const LastRowSortableItemComponent = props => {
     title: 'Unassigned',
     sectionId: UNASSIGNED_SECTION_ID,
   };
+  const classes = useStyles();
 
   return (
-    <FlowGroupRow rowData={lastRow} {...props} />
+    <FlowGroupRow rowData={lastRow} {...props} className={classes.flowGroupRowUnassigned} />
   );
 };
 const FlowListingTable = ({
