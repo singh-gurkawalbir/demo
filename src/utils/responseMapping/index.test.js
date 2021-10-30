@@ -14,6 +14,8 @@ describe('response mapping utils', () => {
           'errors',
           'ignored',
           'statusCode',
+          '_json',
+          'dataURI',
           'headers',
         ],
       },
@@ -27,6 +29,8 @@ describe('response mapping utils', () => {
           'errors',
           'ignored',
           'statusCode',
+          '_json',
+          'dataURI',
           'headers',
         ],
       },
@@ -40,6 +44,8 @@ describe('response mapping utils', () => {
           'errors',
           'ignored',
           'statusCode',
+          '_json',
+          'dataURI',
         ],
       },
       {
@@ -51,6 +57,7 @@ describe('response mapping utils', () => {
           'errors',
           'ignored',
           'statusCode',
+          'dataURI',
         ],
       },
     ];
@@ -74,6 +81,8 @@ describe('response mapping utils', () => {
           {id: 'errors', name: 'errors'},
           {id: 'ignored', name: 'ignored'},
           {id: 'statusCode', name: 'statusCode'},
+          {id: '_json', name: '_json'},
+          {id: 'dataURI', name: 'dataURI'},
           {id: 'headers', name: 'headers'},
         ],
       },
@@ -87,6 +96,8 @@ describe('response mapping utils', () => {
           {id: 'errors', name: 'errors'},
           {id: 'ignored', name: 'ignored'},
           {id: 'statusCode', name: 'statusCode'},
+          {id: '_json', name: '_json'},
+          {id: 'dataURI', name: 'dataURI'},
         ],
       },
       {
@@ -98,6 +109,7 @@ describe('response mapping utils', () => {
           {id: 'errors', name: 'errors'},
           {id: 'ignored', name: 'ignored'},
           {id: 'statusCode', name: 'statusCode'},
+          {id: 'dataURI', name: 'dataURI'},
         ],
       },
     ];
@@ -267,6 +279,59 @@ describe('response mapping utils', () => {
 
     testCases.forEach(({flatMapping, result}) => {
       expect(responseMappingUtil.generateMappingFieldsAndList(flatMapping)).toEqual(result);
+    });
+  });
+
+  test('getResponseMappingDefaultInput util', () => {
+    const preProcessedData = {email: 'abc@test.com', id: 123456};
+    const testCases = [
+      {
+        resourceType: 'flows',
+      },
+      {
+        resourceType: 'exports',
+        preProcessedData,
+        adaptorType: 'HTTPImport',
+        result: {
+          data: [{email: 'abc@test.com', id: 123456}],
+          errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+          ignored: false,
+          statusCode: 200,
+          dataURI: '',
+        },
+      },
+      {
+        resourceType: 'exports',
+        adaptorType: 'HTTPImport',
+        result: {
+          errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+          ignored: false,
+          statusCode: 200,
+          dataURI: '',
+        },
+      },
+      {
+        resourceType: 'imports',
+        preProcessedData,
+        result: preProcessedData,
+      },
+      {
+        resourceType: 'imports',
+        adaptorType: 'RESTImport',
+        result: {
+          id: '1234567890',
+          errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+          ignored: false,
+          statusCode: 200,
+          dataURI: '',
+          _json: { responseField1: '', responseField2: '' },
+          headers: { 'content-type': 'application/json; charset=utf-8' },
+        },
+      },
+    ];
+
+    testCases.forEach(({resourceType, preProcessedData, adaptorType, result}) => {
+      expect(responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, adaptorType)).toEqual(result);
     });
   });
 });

@@ -594,6 +594,7 @@ describe('generateDefaultExtractsObject util', () => {
     const lookupDefaultExtracts = {
       errors: '',
       data: '',
+      dataURI: '',
       ignored: '',
       statusCode: '',
     };
@@ -602,6 +603,8 @@ describe('generateDefaultExtractsObject util', () => {
   });
   test('should return default extracts sample data as expected for imports', () => {
     const importDefaultExtracts = {
+      _json: '',
+      dataURI: '',
       errors: '',
       id: '',
       ignored: '',
@@ -614,6 +617,7 @@ describe('generateDefaultExtractsObject util', () => {
     const lookupDefaultExtracts = {
       errors: '',
       data: '',
+      dataURI: '',
       ignored: '',
       statusCode: '',
     };
@@ -622,6 +626,8 @@ describe('generateDefaultExtractsObject util', () => {
   });
   test('should return default extracts containing headers incase of http imports', () => {
     const httpImportDefaultExtracts = {
+      _json: '',
+      dataURI: '',
       errors: '',
       id: '',
       ignored: '',
@@ -795,6 +801,8 @@ describe('getFormattedResourceForPreview util', () => {
       _id: 'asdf2345',
       name: 'FTP Import',
       sampleResponseData: {
+        _json: '',
+        dataURI: '',
         errors: '',
         id: '',
         ignored: '',
