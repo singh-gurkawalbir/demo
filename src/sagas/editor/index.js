@@ -24,6 +24,8 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
+import mappingUtil from '../../utils/mapping';
+import responseMappingUtil from '../../utils/responseMapping';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -49,13 +51,13 @@ function* formatEditorSampleDataForGetContextBE({ sampleData, resourceId, resour
 
 export function* invokeProcessor({ editorId, processor, body }) {
   let reqBody = body;
+  const editor = yield select(selectors.editor, editorId);
+  const {formKey, fieldId, resourceId, resourceType, supportsDefaultData, data, flowId, editorType} = editor;
 
   // options should be passed to BE for handlebars processor
   // for correct HTML/URL encoding
   if (processor === 'handlebars' && editorId) {
     const timezone = yield select(selectors.userTimezone);
-    const editor = yield select(selectors.editor, editorId);
-    const {formKey, fieldId, resourceId, resourceType, supportsDefaultData} = editor;
     const formState = yield select(selectors.formState, formKey);
     const { value: formValues } = formState || {};
     const resource = yield call(constructResourceFromFormValues, {
@@ -79,7 +81,36 @@ export function* invokeProcessor({ editorId, processor, body }) {
     if (supportsDefaultData) {
       reqBody.options.modelMetadata = safeParse(editor.defaultData) || {};
     }
+  } else if (processor === 'mapperProcessor') {
+    const flowSampleData = safeParse(data);
+    let _mappings;
+
+    if (editorType === 'mappings') {
+      const mappings = (yield select(selectors.mapping))?.mappings;
+      const importResource = yield select(selectors.resource, 'imports', resourceId);
+      const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+      _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+        mappings,
+        isGroupedSampleData: Array.isArray(flowSampleData),
+        isPreviewSuccess: !!flowSampleData,
+        importResource,
+        exportResource,
+      });
+    } else if (editorType === 'responseMappings') {
+      const mappings = (yield select(selectors.responseMapping))?.mappings;
+
+      _mappings = responseMappingUtil.generateMappingFieldsAndList(mappings);
+    }
+
+    reqBody = {
+      rules: {
+        rules: [_mappings],
+      },
+      data: data ? [flowSampleData] : [],
+    };
   }
+
   const path = `/processors/${processor}`;
   const opts = {
     method: 'POST',
@@ -592,7 +623,8 @@ export function* requestEditorSampleData({
   stage !== 'outputFilter' &&
   stage !== 'exportFilter' &&
   stage !== 'inputFilter' &&
-  stage !== 'importMappingExtract') {
+  stage !== 'importMappingExtract' &&
+  stage !== 'responseMappingExtract') {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,

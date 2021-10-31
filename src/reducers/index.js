@@ -53,7 +53,8 @@ import {
   FILE_PROVIDER_ASSISTANTS,
   MISCELLANEOUS_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
-  NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH} from '../utils/constants';
+  NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
+  AFE_SAVE_STATUS} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -4867,6 +4868,8 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
   if (!resource) { return emptyArray; }
 
   if (isImport) {
+    // imports can have response transformation wherein the sample data can be saved.
+    // if present, that sample data acts as the input to the response mappings
     const extractFields = selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
@@ -4885,6 +4888,18 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     isImport ? 'imports' : 'exports',
     resource.adaptorType
   );
+};
+
+selectors.responseMappingInput = (state, resourceType, resourceId, flowId) => {
+  const preProcessedData = selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId,
+    stage: 'responseMappingExtract',
+    resourceType,
+  }).data;
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  return responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, resource?.adaptorType);
 };
 
 // #endregion MAPPING END
@@ -5763,13 +5778,22 @@ selectors.isEditorDisabled = (state, editorId) => {
     }
   }
 
+  const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
+
   // if we are on FB actions, below logic applies
   // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
-  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
-    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
+  if (editorType === 'mappings' ||
+  (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter'))) {
+    return isMonitorLevelAccess;
+  }
+  if (editorType === 'responseMappings') {
+    if (isIntegrationApp(flow)) {
+      return false;
+    }
 
     return isMonitorLevelAccess;
   }
+
   const isViewMode = selectors.isFlowViewMode(state, integrationId, flowId);
   const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
 
@@ -5855,11 +5879,22 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     }
   }
   if (stage === 'transform' ||
-  stage === 'sampleResponse' || stage === 'importMappingExtract' || HOOK_STAGES.includes(stage)) {
+  stage === 'sampleResponse' || stage === 'importMappingExtract' || stage === 'responseMappingExtract' || HOOK_STAGES.includes(stage)) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
   return {shouldGetContextFromBE: true};
+};
+
+selectors.isEditorSaveInProgress = (state, editorId) => {
+  // at a time only one of below editors would be active,
+  // so checking save status for all
+  const {saveStatus} = selectors.editor(state, editorId);
+  const editorSaveInProgress = saveStatus === AFE_SAVE_STATUS.REQUESTED;
+  const mappingSaveInProgress = selectors.mappingSaveStatus(state)?.saveInProgress;
+  const responseMappingSaveInProgress = selectors.responseMappingSaveStatus(state)?.saveInProgress;
+
+  return !!(editorSaveInProgress || mappingSaveInProgress || responseMappingSaveInProgress);
 };
 
 // #endregion AFE selectors

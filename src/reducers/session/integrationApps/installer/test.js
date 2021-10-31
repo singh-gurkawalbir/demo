@@ -14,7 +14,7 @@ describe('integrationApps reducer test cases', () => {
 });
 
 describe('intetgrationApps installer reducer', () => {
-  describe('integrationApps received ouath connection status action', () => {
+  describe('integrationApps received oauth connection status action', () => {
     test('should find the integration with id and update connection details', () => {
       const state = reducer(
         {
@@ -51,7 +51,22 @@ describe('intetgrationApps installer reducer', () => {
         1: { isTriggered: true },
       });
     });
+    test('should find the integration with id and set isTriggered flag to true along with updated url if passed', () => {
+      const state = reducer(
+        {},
+        actions.integrationApp.installer.updateStep(
+          1,
+          'installerFunction',
+          'inProgress',
+          undefined,
+          'https://newurl.com'
+        )
+      );
 
+      expect(state).toEqual({
+        1: { isTriggered: true, updatedUrl: 'https://newurl.com' },
+      });
+    });
     test('should find the integration with id and update it but should not affect any other integration in the session', () => {
       const integrationId = 1;
       const initialState = {
