@@ -36,7 +36,6 @@ export default {
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
     type: 'uri',
-    stage: 'importMappingExtract',
     label: 'Override child record trace key template',
     visible: r => !isIntegrationApp(r),
     omitWhenHidden: true,
@@ -76,14 +75,12 @@ export default {
   },
   idLockTemplate: {
     type: 'uri',
-    stage: 'importMappingExtract',
     label: 'Concurrency ID lock template',
     showExtract: false,
     showLookup: false,
   },
   dataURITemplate: {
     type: 'uri',
-    stage: 'importMappingExtract',
     label: 'Data URI template',
     showLookup: false,
   },

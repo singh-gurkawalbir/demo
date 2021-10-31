@@ -1,7 +1,6 @@
 export default {
   'ftp.directoryPath': {
     type: 'uri',
-    stage: 'importMappingExtract',
     label: 'Directory path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
     required: true,

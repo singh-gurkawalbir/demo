@@ -239,7 +239,6 @@ export default {
   },
   'file.backupPath': {
     type: 'uri',
-    stage: 'importMappingExtract',
     label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
     helpKey: r => {
       if (r?.adaptorType === 'S3Import') {

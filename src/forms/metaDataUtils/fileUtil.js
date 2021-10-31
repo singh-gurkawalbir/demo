@@ -205,7 +205,6 @@ blobKeyPath: {
 },
 'http.relativeURI': {
   fieldId: 'http.relativeURI',
-  stage: 'importMappingExtract',
   label: r => r?.assistant === 'googledrive' ? 'Directory path' : 'Container name',
   required: true,
   type: 'uri',

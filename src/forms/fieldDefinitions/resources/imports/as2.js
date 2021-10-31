@@ -1,7 +1,6 @@
 export default {
   'as2.fileNameTemplate': {
     type: 'uri',
-    stage: 'importMappingExtract',
     showLookup: false,
     showExtract: false,
     label: 'File name',
@@ -14,7 +13,6 @@ export default {
   },
   'as2.messageIdTemplate': {
     type: 'uri',
-    stage: 'importMappingExtract',
     showLookup: false,
     showExtract: false,
     label: 'Message ID',
