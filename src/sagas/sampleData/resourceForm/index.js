@@ -307,15 +307,12 @@ export function* _requestExportSampleData({ formKey, refreshCache }) {
 
     return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
-  const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
-  const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
+  const isLookUpExport = flowId && (yield select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' }));
 
-  // need to handle standalone export as isPageGenerator returns false but still it needs export sample data
-  // ref: IO-21691
-  if (isPageGenerator || isStandaloneExport) {
-    yield call(_requestPGExportSampleData, { formKey, refreshCache });
-  } else {
+  if (isLookUpExport) {
     yield call(_requestLookupSampleData, { formKey, refreshCache });
+  } else {
+    yield call(_requestPGExportSampleData, { formKey, refreshCache });
   }
 }
 
