@@ -66,12 +66,14 @@ export default function DynaTimestampFileName(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
+  const flowDataStage = (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+
   const sampleDataFields = useSelector(state => {
     const { data: sampleData } = selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage: flowDataStage,
     });
     const fields = getJSONPaths(sampleData) || [];
 
@@ -86,7 +88,7 @@ export default function DynaTimestampFileName(props) {
           flowId,
           resourceId,
           resourceType,
-          'flowInput'
+          flowDataStage
         )
       );
     }
@@ -97,6 +99,7 @@ export default function DynaTimestampFileName(props) {
     resourceId,
     resourceType,
     sampleDataFields.length,
+    flowDataStage,
   ]);
 
   // TODO Aditya: replace with regex

@@ -41,7 +41,7 @@ export default function DynaTextWithFlowSuggestion(props) {
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
     formKey,
-    stage = 'flowInput',
+    stage,
   } = props;
   const formContext = useFormContext(formKey);
   const ref = useRef(null);
@@ -55,6 +55,7 @@ export default function DynaTextWithFlowSuggestion(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
+  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
 
   const sampleData = useSelector(
     state =>
@@ -62,7 +63,7 @@ export default function DynaTextWithFlowSuggestion(props) {
         flowId,
         resourceId,
         resourceType,
-        stage,
+        stage: flowDataStage,
       }).data
   );
 
@@ -113,13 +114,13 @@ export default function DynaTextWithFlowSuggestion(props) {
           flowId,
           resourceId,
           resourceType,
-          stage,
+          flowDataStage,
           undefined,
           formKey,
         )
       );
     }
-  }, [dispatch, flowId, formKey, isPageGenerator, resourceId, resourceType, stage, sampleData]);
+  }, [dispatch, flowDataStage, flowId, formKey, isPageGenerator, resourceId, resourceType, stage, sampleData]);
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);
@@ -156,7 +157,7 @@ export default function DynaTextWithFlowSuggestion(props) {
         />
         {(showExtract || showLookup) && (
           <Suggestions
-            stage={stage}
+            stage={flowDataStage}
             hide={hideSuggestion}
             id={`suggestions-${id}`}
             onFieldChange={onFieldChange}

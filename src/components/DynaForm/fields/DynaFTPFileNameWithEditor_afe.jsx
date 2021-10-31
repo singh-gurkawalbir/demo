@@ -41,6 +41,8 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
     onFieldChange(id, editorValues.rule);
   }, [id, onFieldChange]);
 
+  const flowDataStage = (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
@@ -48,12 +50,12 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'importMappingExtract',
+      stage: flowDataStage,
       onSave: handleSave,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   const updateFileNameExtension = useCallback(() => {
     const newExtension = [
