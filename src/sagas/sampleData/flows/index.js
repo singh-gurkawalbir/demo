@@ -539,7 +539,7 @@ export function* requestProcessorData({
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage: 'inputFilter',
       isInitialized: true,
       noWrap: true,
     });

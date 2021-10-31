@@ -169,7 +169,6 @@ export default function DynaXmlParse_afe({
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
       onSave: handleSave,
     }));
 

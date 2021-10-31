@@ -17,7 +17,7 @@ export default function DynaNetSuiteSubRecordJsonPath(props) {
       flowId,
       resourceId,
       resourceType: 'imports',
-      stage: 'flowInput',
+      stage: 'inputFilter',
     }).data
   );
 
@@ -28,7 +28,7 @@ export default function DynaNetSuiteSubRecordJsonPath(props) {
           flowId,
           resourceId,
           'imports',
-          'flowInput'
+          'inputFilter'
         )
       );
     }

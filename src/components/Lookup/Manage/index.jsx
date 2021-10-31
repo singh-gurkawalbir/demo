@@ -42,7 +42,7 @@ export default function ManageLookup({
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage: 'inputFilter', // TODO: verify
     }).data
   );
   // TODO: @aditya, check if we can get rid of getFormattedSampleData and use wrapSampleDataWithContext instead
