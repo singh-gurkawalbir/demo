@@ -19,7 +19,6 @@ import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
-import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
@@ -40,13 +39,6 @@ export function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
-}
-
-// Deals with any modification related to the sample data being passed to getContext API
-function* formatEditorSampleDataForGetContextBE({ sampleData, resourceId, resourceType }) {
-  const savedResourceObj = yield select(selectors.resource, resourceType, resourceId);
-
-  return extractRawSampleDataFromOneToManySampleData(sampleData, savedResourceObj);
 }
 
 export function* invokeProcessor({ editorId, processor, body }) {
@@ -403,23 +395,23 @@ export function* refreshHelperFunctions() {
 }
 
 function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
-  // let flowSampleData = yield select(selectors.getSampleDataContext, {
-  //   flowId,
-  //   resourceId,
-  //   resourceType,
-  //   stage,
-  // });
-
-  // if (flowSampleData.status !== 'received') {
-  yield call(requestSampleData, {
+  let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
     resourceType,
     stage,
-    formKey,
   });
-  // }
-  const flowSampleData = yield select(selectors.getSampleDataContext, {
+
+  if (flowSampleData.status !== 'received') {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      formKey,
+    });
+  }
+  flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
     resourceType,

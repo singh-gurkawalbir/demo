@@ -107,20 +107,20 @@ export default function DynaTextWithFlowSuggestion(props) {
     }
   };
 
-  useEffect(() => {
-    if (flowId && !sampleData && !isPageGenerator) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          flowDataStage,
-          undefined,
-          formKey,
-        )
-      );
-    }
-  }, [dispatch, flowDataStage, flowId, formKey, isPageGenerator, resourceId, resourceType, stage, sampleData]);
+  // useEffect(() => {
+  //   if (flowId && !sampleData && !isPageGenerator) {
+  //     dispatch(
+  //       actions.flowData.requestSampleData(
+  //         flowId,
+  //         resourceId,
+  //         resourceType,
+  //         flowDataStage,
+  //         undefined,
+  //         formKey,
+  //       )
+  //     );
+  //   }
+  // }, [dispatch, flowDataStage, flowId, formKey, isPageGenerator, resourceId, resourceType, stage, sampleData]);
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);

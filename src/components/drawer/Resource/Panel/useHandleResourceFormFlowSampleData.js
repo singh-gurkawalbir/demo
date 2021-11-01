@@ -1,0 +1,154 @@
+import { useEffect, useCallback } from 'react';
+import { cloneDeep } from 'lodash';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import { getAllDependentSampleDataStages, getSubsequentStages } from '../../../../utils/flowData';
+
+const BASE_FLOW_INPUT_STAGE = 'flowInput';
+const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
+
+export default function useHandleResourceFormFlowSampleData(formKey) {
+  const dispatch = useDispatch();
+  const { flowId, resourceType, resourceId, initComplete, skipCommit} = useSelector(state => {
+    const parentContext = selectors.formParentContext(state, formKey) || {};
+
+    return {...parentContext};
+  });
+  const eligibleForFlowSampleData = initComplete && !skipCommit && ELIGIBLE_RESOURCE_TYPES.includes(resourceType);
+
+  const isLookUpExport = useSelector(state =>
+    flowId && selectors.isLookUpExport(state, { flowId, resourceId, resourceType })
+  );
+
+  const formValues = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+    const formValues = formContext.value;
+
+    return JSON.stringify(formValues);
+  });
+
+  const oneToManyValues = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+    const formValues = formContext.value || {};
+    const oneToMany = formValues['/oneToMany'];
+    const pathToMany = formValues['/pathToMany'];
+
+    return oneToMany + pathToMany;
+  });
+
+  const formValuesWithoutOneToMany = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+    const formValues = cloneDeep(formContext.value || {});
+
+    delete formValues['/oneToMany'];
+    delete formValues['/pathToMany'];
+    delete formValues['/traceKeyTemplate']; // dependent on one to many , so ignore its value too
+
+    return JSON.stringify(formValues);
+  });
+
+  const flowData = useSelector(
+    state =>
+      selectors.getSampleDataContext(state, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract',
+      })
+  );
+
+  const resetFlowInputData = useCallback(() => {
+    const flowInputDependentStages = getSubsequentStages(BASE_FLOW_INPUT_STAGE, resourceType);
+
+    dispatch(actions.flowData.resetStages(flowId, resourceId, flowInputDependentStages));
+  }, [dispatch, resourceId, flowId, resourceType]);
+
+  const resetExportSampleData = useCallback(() => {
+    const exportSampleDataStages = getAllDependentSampleDataStages('responseMapping', 'exports');
+
+    dispatch(actions.flowData.resetStages(flowId, resourceId, exportSampleDataStages));
+  }, [dispatch, resourceId, flowId]);
+
+  // const handleFlowDataReset = useCallback(
+  //   () => {
+  //     if (resourceType === 'imports') {
+  //       resetFlowInputData();
+  //     } else if (isLookUpExport) {
+  //       resetFlowInputData();
+  //       resetExportSampleData();
+  //     } else {
+  //       dispatch(actions.flowData.resetStages(flowId, resourceId));
+  //     }
+  //   },
+  //   [isLookUpExport, resourceType, dispatch, flowId, resourceId, resetFlowInputData, resetExportSampleData],
+  // );
+
+  useEffect(() => {
+    if (isLookUpExport || resourceType === 'imports') {
+      resetFlowInputData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [oneToManyValues]);
+
+  useEffect(() => {
+    if (isLookUpExport) {
+      resetExportSampleData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formValuesWithoutOneToMany]);
+
+  useEffect(() => {
+    if ((resourceType === 'exports' && !isLookUpExport)) {
+      // standalone/PG exports  - reset everything
+      dispatch(actions.flowData.resetStages(flowId, resourceId));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formValues]);
+
+  // useEffect(() => {
+  //   if (eligibleForFlowSampleData) {
+  //     handleFlowDataReset();
+  //   }
+  // }, [eligibleForFlowSampleData, handleFlowDataReset]);
+
+  useEffect(() =>
+    () => {
+      if (formKey && flowId && resourceId) {
+        dispatch(actions.flowData.resetStages(flowId, resourceId));
+      }
+    },
+  [flowId, resourceId, dispatch, formKey]);
+
+  useEffect(() => {
+    // fetch all possible dependent stages
+    if (eligibleForFlowSampleData && !flowData.status) {
+      if (isLookUpExport) {
+        dispatch(
+          actions.flowData.requestSampleData(
+            flowId,
+            resourceId,
+            resourceType,
+            'inputFilter',
+            undefined,
+            formKey,
+          )
+        );
+      }
+      if (flowId && resourceType === 'imports') {
+        dispatch(
+          actions.flowData.requestSampleData(
+            flowId,
+            resourceId,
+            resourceType,
+            'importMappingExtract',
+            undefined,
+            formKey,
+          )
+        );
+      }
+    }
+  }, [flowData?.status, dispatch, flowId, resourceType, formKey, isLookUpExport, eligibleForFlowSampleData, resourceId]);
+
+  return null;
+}

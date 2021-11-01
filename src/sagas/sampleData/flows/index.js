@@ -61,17 +61,9 @@ import { getConstructedResourceObj } from './utils';
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
 
 function* _configureFormContext({ flowId, resourceId, formKey }) {
-  const prevFormContext = (yield select(selectors.flowDataFormContext, flowId)) || {};
-
-  if (prevFormContext.resourceId) {
-    // clears stages for old formContext if exists
-    yield put(actions.flowData.resetStages(flowId, prevFormContext.resourceId));
-  }
-
   if (formKey) {
     // more optimization can be done here to not clear all stages
     yield put(actions.flowData.setFormContext({ flowId, resourceId, formKey }));
-    yield put(actions.flowData.resetStages(flowId, resourceId));
   } else {
     // clears any existing form context
     yield put(actions.flowData.clearFormContext(flowId));
