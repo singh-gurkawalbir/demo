@@ -76,27 +76,24 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
     dispatch(actions.flowData.resetStages(flowId, resourceId, exportSampleDataStages));
   }, [dispatch, resourceId, flowId]);
 
-  const debounceResetFlowInputData = debounce(resetFlowInputData, DEBOUNCE_DURATION);
-  const debounceResetExportSampleData = debounce(resetExportSampleData, DEBOUNCE_DURATION);
-
   useEffect(() => {
     if (isLookUpExport || resourceType === 'imports') {
-      debounceResetFlowInputData();
+      debounce(resetFlowInputData, DEBOUNCE_DURATION)();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [oneToManyValues]);
 
   useEffect(() => {
     if (isLookUpExport) {
-      debounceResetExportSampleData();
+      debounce(resetExportSampleData, DEBOUNCE_DURATION)();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValuesWithoutOneToMany]);
 
   useEffect(() => {
-    if ((resourceType === 'exports' && !isLookUpExport)) {
+    if (resourceType === 'exports' && !isLookUpExport) {
       // standalone/PG exports  - reset everything
-      dispatch(actions.flowData.resetStages(flowId, resourceId));
+      debounce(() => dispatch(actions.flowData.resetStages(flowId, resourceId)), DEBOUNCE_DURATION)();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValues]);
