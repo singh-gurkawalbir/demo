@@ -1,12 +1,18 @@
 import { useEffect, useCallback } from 'react';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import { getAllDependentSampleDataStages, getSubsequentStages } from '../../../../utils/flowData';
+import {
+  getAllDependentSampleDataStages,
+  getSubsequentStages,
+  BASE_FLOW_INPUT_STAGE,
+  LOOKUP_FLOW_DATA_STAGE,
+  IMPORT_FLOW_DATA_STAGE,
+} from '../../../../utils/flowData';
 
-const BASE_FLOW_INPUT_STAGE = 'flowInput';
 const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
+const DEBOUNCE_DURATION = 300;
 
 export default function useHandleResourceFormFlowSampleData(formKey) {
   const dispatch = useDispatch();
@@ -54,7 +60,7 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
         flowId,
         resourceId,
         resourceType,
-        stage: resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract',
+        stage: resourceType === 'exports' ? LOOKUP_FLOW_DATA_STAGE : IMPORT_FLOW_DATA_STAGE,
       })
   );
 
@@ -70,30 +76,19 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
     dispatch(actions.flowData.resetStages(flowId, resourceId, exportSampleDataStages));
   }, [dispatch, resourceId, flowId]);
 
-  // const handleFlowDataReset = useCallback(
-  //   () => {
-  //     if (resourceType === 'imports') {
-  //       resetFlowInputData();
-  //     } else if (isLookUpExport) {
-  //       resetFlowInputData();
-  //       resetExportSampleData();
-  //     } else {
-  //       dispatch(actions.flowData.resetStages(flowId, resourceId));
-  //     }
-  //   },
-  //   [isLookUpExport, resourceType, dispatch, flowId, resourceId, resetFlowInputData, resetExportSampleData],
-  // );
+  const debounceResetFlowInputData = debounce(resetFlowInputData, DEBOUNCE_DURATION);
+  const debounceResetExportSampleData = debounce(resetExportSampleData, DEBOUNCE_DURATION);
 
   useEffect(() => {
     if (isLookUpExport || resourceType === 'imports') {
-      resetFlowInputData();
+      debounceResetFlowInputData();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [oneToManyValues]);
 
   useEffect(() => {
     if (isLookUpExport) {
-      resetExportSampleData();
+      debounceResetExportSampleData();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValuesWithoutOneToMany]);
@@ -105,12 +100,6 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValues]);
-
-  // useEffect(() => {
-  //   if (eligibleForFlowSampleData) {
-  //     handleFlowDataReset();
-  //   }
-  // }, [eligibleForFlowSampleData, handleFlowDataReset]);
 
   useEffect(() =>
     () => {
@@ -129,7 +118,7 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
             flowId,
             resourceId,
             resourceType,
-            'inputFilter',
+            LOOKUP_FLOW_DATA_STAGE,
             undefined,
             formKey,
           )
@@ -141,7 +130,7 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
             flowId,
             resourceId,
             resourceType,
-            'importMappingExtract',
+            IMPORT_FLOW_DATA_STAGE,
             undefined,
             formKey,
           )

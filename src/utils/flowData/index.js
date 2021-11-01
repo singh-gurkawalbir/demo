@@ -17,6 +17,10 @@ import jsonUtils from '../json';
 import { isIntegrationApp } from '../flows';
 import { isJsonString } from '../string';
 
+export const BASE_FLOW_INPUT_STAGE = 'flowInput';
+export const LOOKUP_FLOW_DATA_STAGE = 'inputFilter';
+export const IMPORT_FLOW_DATA_STAGE = 'importMappingExtract';
+
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',

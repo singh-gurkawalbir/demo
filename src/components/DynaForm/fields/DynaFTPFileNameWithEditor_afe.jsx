@@ -8,6 +8,7 @@ import AfeIcon from '../../icons/AfeIcon';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import useFormContext from '../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
@@ -41,8 +42,6 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
     onFieldChange(id, editorValues.rule);
   }, [id, onFieldChange]);
 
-  const flowDataStage = (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
-
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
@@ -50,12 +49,12 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: flowDataStage,
+      stage: IMPORT_FLOW_DATA_STAGE,
       onSave: handleSave,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   const updateFileNameExtension = useCallback(() => {
     const newExtension = [

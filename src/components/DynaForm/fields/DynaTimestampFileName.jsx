@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import timeStamps from '../../../utils/timeStamps';
 import getJSONPaths from '../../../utils/jsonPaths';
+import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import { selectors } from '../../../reducers';
-import actions from '../../../actions';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 
@@ -49,7 +49,6 @@ export default function DynaTimestampFileName(props) {
     required,
   } = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
   const userTimezone = useSelector(state => selectors.userTimezone(state));
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [state, setState] = useState({
@@ -63,44 +62,17 @@ export default function DynaTimestampFileName(props) {
     onFieldChange(id, inpValue);
   };
 
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
-  );
-  const flowDataStage = (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
-
   const sampleDataFields = useSelector(state => {
     const { data: sampleData } = selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
-      stage: flowDataStage,
+      stage: IMPORT_FLOW_DATA_STAGE,
     });
     const fields = getJSONPaths(sampleData) || [];
 
     return fields.map(field => ({ label: field.id, value: field.id }));
   });
-
-  useEffect(() => {
-    // Request for sample data only incase of flow context
-    if (flowId && !sampleDataFields.length && !isPageGenerator) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          flowDataStage
-        )
-      );
-    }
-  }, [
-    dispatch,
-    flowId,
-    isPageGenerator,
-    resourceId,
-    resourceType,
-    sampleDataFields.length,
-    flowDataStage,
-  ]);
 
   // TODO Aditya: replace with regex
   const handleSuggestionClick = suggestion => {
