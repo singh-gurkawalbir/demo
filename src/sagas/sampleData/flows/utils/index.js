@@ -23,7 +23,7 @@ export function* getConstructedResourceObj({ formKey, resourceId, resourceType }
 
     return resource;
   }
-  // all formKey related processing goes here
+  // fetch resource object from the form state values incase of formKey
   const formState = yield select(selectors.formState, formKey);
 
   let resourceObj = (yield call(constructResourceFromFormValues, {

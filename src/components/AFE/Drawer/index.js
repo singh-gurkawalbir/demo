@@ -49,7 +49,6 @@ function RouterWrappedContent({ hideSave }) {
   const match = useRouteMatch();
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
-
   const {editorType, editorTitle, initStatus} = useSelector(state => {
     const e = selectors.editor(state, editorId);
 

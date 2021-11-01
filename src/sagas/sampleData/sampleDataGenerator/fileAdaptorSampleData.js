@@ -12,6 +12,8 @@ export default function* requestFileAdaptorSampleData({ resource, formKey }) {
     let fileContent = sampleData;
 
     if (formKey) {
+      // Incase of form context, fetch file content from form state
+      // as the resource has not yet been updated with sampleData
       fileContent = (yield call(extractFileSampleDataProps, { formKey })).sampleData;
       if (type === 'xlsx' && fileContent && typeof fileContent !== 'string') {
         // convert its format to csv and pass further to process sampleData

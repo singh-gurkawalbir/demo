@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { cloneDeep, debounce } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import {
@@ -27,32 +27,22 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
     flowId && selectors.isLookUpExport(state, { flowId, resourceId, resourceType })
   );
 
-  const formValues = useSelector(state => {
-    const formContext = selectors.formState(state, formKey) || {};
-    const formValues = formContext.value;
-
-    return JSON.stringify(formValues);
-  });
-
-  const oneToManyValues = useSelector(state => {
-    const formContext = selectors.formState(state, formKey) || {};
-    const formValues = formContext.value || {};
-    const oneToMany = formValues['/oneToMany'];
-    const pathToMany = formValues['/pathToMany'];
-
-    return oneToMany + pathToMany;
-  });
-
-  const formValuesWithoutOneToMany = useSelector(state => {
+  const { formValues, oneToManyValues, formValuesWithoutOneToMany } = useSelector(state => {
     const formContext = selectors.formState(state, formKey) || {};
     const formValues = cloneDeep(formContext.value || {});
+    const formValuesWithoutOneToMany = cloneDeep(formContext.value || {});
+    const oneToManyValues = formValues['/oneToMany'] + formValues['/pathToMany'];
 
-    delete formValues['/oneToMany'];
-    delete formValues['/pathToMany'];
-    delete formValues['/traceKeyTemplate']; // dependent on one to many , so ignore its value too
+    delete formValuesWithoutOneToMany['/oneToMany'];
+    delete formValuesWithoutOneToMany['/pathToMany'];
+    delete formValuesWithoutOneToMany['/traceKeyTemplate']; // dependent on one to many , so ignore its value too
 
-    return JSON.stringify(formValues);
-  });
+    return {
+      formValues: JSON.stringify(formValues),
+      oneToManyValues,
+      formValuesWithoutOneToMany: JSON.stringify(formValuesWithoutOneToMany),
+    };
+  }, shallowEqual);
 
   const flowData = useSelector(
     state =>

@@ -540,7 +540,7 @@ export function* requestProcessorData({
 
     return;
   } else if (stage === 'processedFlowInput') {
-    // processes oneToMany on top of flowInput
+    // processes oneToMany on the received flowInput data
     const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
 
     const resource = yield call(getConstructedResourceObj, {

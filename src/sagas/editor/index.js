@@ -518,25 +518,6 @@ export function* requestEditorSampleData({
     sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
   }
 
-  // if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage))) {
-  //   // sample data not present, trigger action to get sample data
-  //   yield call(requestSampleData, {
-  //     flowId,
-  //     resourceId,
-  //     resourceType,
-  //     stage,
-  //     formKey,
-  //   });
-  //   // get sample data from the selector once loaded
-  //   const flowSampleData = yield select(selectors.getSampleDataContext, {
-  //     flowId,
-  //     resourceId,
-  //     resourceType,
-  //     stage,
-  //   });
-
-  //   sampleData = flowSampleData?.data;
-  // }
   let _sampleData = null;
   let templateVersion;
 
@@ -547,9 +528,7 @@ export function* requestEditorSampleData({
     _sampleData = uiSampleData;
   } else {
     const filterPath = (editorType === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
-    const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
-
-    // sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
+    const defaultData = (isPageGenerator && !editorType.includes('Filter')) ? undefined : { myField: 'sample' };
     const body = {
       sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
