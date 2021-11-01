@@ -60,16 +60,6 @@ import { getConstructedResourceObj } from './utils';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
 
-function* _configureFormContext({ flowId, resourceId, formKey }) {
-  if (formKey) {
-    // more optimization can be done here to not clear all stages
-    yield put(actions.flowData.setFormContext({ flowId, resourceId, formKey }));
-  } else {
-    // clears any existing form context
-    yield put(actions.flowData.clearFormContext(flowId));
-  }
-}
-
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
   const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const clonedFlow = deepClone(flow || {});
@@ -102,8 +92,10 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh, form
     ];
   }
   clonedFlow.refresh = !!refresh;
+  if (formKey) {
+    clonedFlow.formKey = formKey;
+  }
   yield put(actions.flowData.init(clonedFlow));
-  yield call(_configureFormContext, { flowId, resourceId, formKey });
 }
 
 export function* requestSampleData({
@@ -194,9 +186,7 @@ export function* fetchPageProcessorPreview({
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
-  const flowDataState = yield select(selectors.getFlowDataState, flowId);
-  const { formKey } = (yield select(selectors.flowDataFormContext, flowId)) || {};
-
+  const { formKey, refresh: flowDataRefresh } = (yield select(selectors.getFlowDataState, flowId)) || {};
   let resource = yield call(getConstructedResourceObj, {
     resourceId: _pageProcessorId,
     resourceType,
@@ -212,7 +202,7 @@ export function* fetchPageProcessorPreview({
     resourceType,
     hidden,
     throwOnError: true,
-    refresh: refresh || flowDataState?.refresh,
+    refresh: refresh || flowDataRefresh,
     runOffline: true,
   });
 
@@ -221,7 +211,7 @@ export function* fetchPageProcessorPreview({
 
   // in case on hard refresh and flow preview doesnt return data,
   // dont empty the state, rather use old preview data
-  if (flowDataState?.refresh && existingPreviewData && !previewData) {
+  if (flowDataRefresh && existingPreviewData && !previewData) {
     return yield put(
       actions.flowData.setStatusReceived(
         flowId,
@@ -242,7 +232,7 @@ export function* fetchPageProcessorPreview({
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
-  const { formKey } = (yield select(selectors.flowDataFormContext, flowId)) || {};
+  const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
 
   const resource = yield call(getConstructedResourceObj, {
     resourceId: _pageGeneratorId,
@@ -551,7 +541,7 @@ export function* requestProcessorData({
     return;
   } else if (stage === 'processedFlowInput') {
     // processes oneToMany on top of flowInput
-    const { formKey } = (yield select(selectors.flowDataFormContext, flowId)) || {};
+    const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
 
     const resource = yield call(getConstructedResourceObj, {
       resourceId,

@@ -9,7 +9,6 @@ export default function (state = {}, action) {
     type,
     flowId,
     resourceId,
-    formKey,
     resourceIndex,
     flow = {},
     updatedFlow = {},
@@ -27,7 +26,7 @@ export default function (state = {}, action) {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW_DATA.INIT: {
-        const { pageGenerators = [], pageProcessors = [], _id, refresh } = flow;
+        const { pageGenerators = [], pageProcessors = [], _id, refresh, formKey } = flow;
 
         if (!_id) {
           break;
@@ -36,7 +35,7 @@ export default function (state = {}, action) {
           draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {} };
         }
 
-        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, refresh };
+        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, refresh, formKey };
 
         break;
       }
@@ -266,21 +265,6 @@ export default function (state = {}, action) {
 
         break;
       }
-      case actionTypes.FLOW_DATA.SET_FORM_CONTEXT: {
-        if (draft[flowId]) {
-          draft[flowId].formContext = {
-            resourceId,
-            formKey,
-          };
-        }
-        break;
-      }
-      case actionTypes.FLOW_DATA.CLEAR_FORM_CONTEXT: {
-        if (draft[flowId]) {
-          delete draft[flowId].formContext;
-        }
-        break;
-      }
 
       default:
     }
@@ -324,6 +308,4 @@ selectors.getSampleDataContext = (
 
   return flowStageContext || DEFAULT_VALUE;
 };
-
-selectors.flowDataFormContext = (state, flowId) => state?.[flowId]?.formContext;
 

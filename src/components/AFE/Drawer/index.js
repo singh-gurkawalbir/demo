@@ -50,16 +50,13 @@ function RouterWrappedContent({ hideSave }) {
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
 
-  const {editorType, editorTitle, initStatus, flowId, resourceId, formKey} = useSelector(state => {
+  const {editorType, editorTitle, initStatus} = useSelector(state => {
     const e = selectors.editor(state, editorId);
 
     return {
       editorType: e.editorType,
       editorTitle: e.editorTitle,
       initStatus: e.initStatus,
-      flowId: e.flowId,
-      resourceId: e.resourceId,
-      formKey: e.formKey,
     };
   }, shallowEqual);
 

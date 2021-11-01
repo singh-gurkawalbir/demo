@@ -1378,8 +1378,6 @@ const flowData = {
       resourceIndex,
       responseMapping,
     }),
-  setFormContext: ({ flowId, resourceId, formKey }) => action(actionTypes.FLOW_DATA.SET_FORM_CONTEXT, { flowId, resourceId, formKey }),
-  clearFormContext: flowId => action(actionTypes.FLOW_DATA.CLEAR_FORM_CONTEXT, { flowId }),
 };
 const resourceFormSampleData = {
   request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
