@@ -1040,45 +1040,43 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow: {}, stage, resource: {}})).toEqual(sampleData);
   });
-  // test('should return correctly wrapped sample data for native REST adaptor if stage = flowInput', () => {
-  //   const stage = 'flowInput';
+  test('should return correctly wrapped sample data for native REST adaptor for handlebars editorType', () => {
+    resource.adaptorType = 'RESTExport';
+    connection.isHTTP = false;
 
-  //   resource.adaptorType = 'RESTExport';
-  //   connection.isHTTP = false;
+    const sampleData = {
+      status: 'received',
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+      },
+      templateVersion: 2,
+    };
 
-  //   const sampleData = {
-  //     status: 'received',
-  //     data: {
-  //       record: {
-  //         CONTRACT_PRICE: '89',
-  //         CUSTOMER_NUMBER: 'C1234',
-  //       },
-  //     },
-  //     templateVersion: 2,
-  //   };
+    const expectedData = {
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+      status: 'received',
+      templateVersion: 2,
+    };
 
-  //   const expectedData = {
-  //     data: {
-  //       record: {
-  //         CONTRACT_PRICE: '89',
-  //         CUSTOMER_NUMBER: 'C1234',
-  //       },
-  //       settings: {
-  //         integration: {
-  //           store: 'shopify',
-  //         },
-  //         flowGrouping: {},
-  //         flow: {},
-  //         export: {resourceSet: 'custom settings'},
-  //         connection: {conn1: 'conn1'},
-  //       },
-  //     },
-  //     status: 'received',
-  //     templateVersion: 2,
-  //   };
-
-  //   expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
-  // });
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, editorType: 'handlebars'})).toEqual(expectedData);
+  });
   test('should return correctly wrapped sample data without connection details if stage is flowInput', () => {
     const stage = 'flowInput';
 
@@ -1133,29 +1131,30 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({fieldType: 'idLockTemplate', sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
-  // test('should return correctly wrapped sample data if stage is transform or sampleResponse or inputFilter', () => {
-  //   const stages = ['transform', 'sampleResponse', 'inputFilter'];
-  //   const expectedData = {
-  //     status: 'received',
-  //     data: {
-  //       record: {
-  //         id: 333,
-  //         phone: '1234',
-  //       },
-  //       settings: {
-  //         integration: {
-  //           store: 'shopify',
-  //         },
-  //         flowGrouping: {},
-  //         flow: {},
-  //         export: {resourceSet: 'custom settings'},
-  //         connection: {conn1: 'conn1'},
-  //       },
-  //     },
-  //   };
+  test('should return correctly wrapped sample data if stage is transform or sampleResponse', () => {
+    const stages = ['transform', 'sampleResponse'];
+    const expectedData = {
+      status: 'received',
+      data: {
+        pageIndex: 0,
+        record: {
+          id: 333,
+          phone: '1234',
+        },
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
 
-  //   expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage: stages[Math.floor(Math.random() * stages.length)]})).toEqual(expectedData);
-  // });
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage: stages[Math.floor(Math.random() * stages.length)]})).toEqual(expectedData);
+  });
   test('should return correctly wrapped sample data if stage is outputFilter', () => {
     const stage = 'outputFilter';
 

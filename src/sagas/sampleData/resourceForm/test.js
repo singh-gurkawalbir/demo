@@ -153,101 +153,100 @@ describe('resourceFormSampleData sagas', () => {
         .call(_requestImportSampleData, { formKey })
         .run(500);
     });
-    // test('should dispatch requested status and call _requestImportSampleData incase of imports resourceType ', () => {
-    //   const refreshCache = true;
+    test('should dispatch requested status and call _requestImportSampleData incase of imports resourceType ', () => {
+      const refreshCache = true;
 
-    //   return expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache} })
-    //     .provide([
-    //       [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
-    //       [call(_requestExportSampleData, { formKey, refreshCache }), {}],
-    //     ])
-    //     .delay(500)
-    //     .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
-    //     .call(_requestExportSampleData, { formKey, refreshCache })
-    //     .not.call.fn(_requestImportSampleData)
-    //     .run(500);
-    // });
+      return expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache} })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
+          [call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
+        ])
+        .delay(500)
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
+        .call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+        .not.call.fn(_requestImportSampleData)
+        .run(500);
+    });
   });
-  // describe('_requestExportSampleData saga', () => {
-  //   const refreshCache = true;
+  describe('_requestExportSampleData saga', () => {
+    const refreshCache = true;
 
-  //   test('should call _requestPGExportSampleData if the resource is PG export or stand alone export', () => {
-  //     const testPGWithoutFlowId = expectSaga(_requestExportSampleData, { formKey, refreshCache })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId }],
-  //         [call(_requestPGExportSampleData, { formKey, refreshCache }), {}],
-  //       ])
-  //       .call(_requestPGExportSampleData, { formKey, refreshCache })
-  //       .not.call.fn(_requestLookupSampleData)
-  //       .run();
-  //     const testPGWithFlowId = expectSaga(_requestExportSampleData, { formKey, refreshCache })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
-  //         [select(selectors.isPageGenerator, flowId, resourceId), true],
-  //         [call(_requestPGExportSampleData, { formKey, refreshCache }), {}],
-  //       ])
-  //       .call(_requestPGExportSampleData, { formKey, refreshCache })
-  //       .not.call.fn(_requestLookupSampleData)
-  //       .run();
-  //     const testStandaloneExport = expectSaga(_requestExportSampleData, { formKey, refreshCache })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
-  //         [select(selectors.isPageGenerator, flowId, resourceId), false],
-  //         [select(selectors.isStandaloneExport, flowId, resourceId), true],
-  //         [call(_requestPGExportSampleData, { formKey, refreshCache }), {}],
-  //       ])
-  //       .call(_requestPGExportSampleData, { formKey, refreshCache })
-  //       .not.call.fn(_requestLookupSampleData)
-  //       .run();
+    test('should call _requestPGExportSampleData if the resource is PG export or stand alone export', () => {
+      const testPGWithoutFlowId = expectSaga(_requestExportSampleData, { formKey, refreshCache })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId }],
+          [call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
+        ])
+        .call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+        .not.call.fn(_requestLookupSampleData)
+        .run();
+      const testPGWithFlowId = expectSaga(_requestExportSampleData, { formKey, refreshCache })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
+          [select(selectors.isPageGenerator, flowId, resourceId), true],
+          [call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
+        ])
+        .call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+        .not.call.fn(_requestLookupSampleData)
+        .run();
+      const testStandaloneExport = expectSaga(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
+          [select(selectors.isPageGenerator, flowId, resourceId), false],
+          [select(selectors.isStandaloneExport, flowId, resourceId), true],
+          [call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
+        ])
+        .call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+        .not.call.fn(_requestLookupSampleData)
+        .run();
 
-  //     return testPGWithoutFlowId && testPGWithFlowId && testStandaloneExport;
-  //   });
-  //   test('should call _requestLookupSampleData if the resource is a PP lookup', () => expectSaga(_requestExportSampleData, { formKey, refreshCache })
-  //     .provide([
-  //       [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
-  //       [select(selectors.isPageGenerator, flowId, resourceId), false],
-  //       [select(selectors.isStandaloneExport, flowId, resourceId), false],
-  //       [call(_requestLookupSampleData, { formKey, refreshCache }), {}],
-  //     ])
-  //     .call(_requestLookupSampleData, { formKey, refreshCache })
-  //     .not.call.fn(_requestPGExportSampleData)
-  //     .run());
-  //   test('should call _requestFileSampleData incase of suitescript file resource', () => {
-  //     const resourceObj = {
-  //       type: 'fileCabinet',
-  //       file: {
-  //         csv: {
-  //           columnDelimiter: ',',
-  //           hasHeaderRow: true,
-  //         },
-  //       },
-  //     };
+      return testPGWithoutFlowId && testPGWithFlowId && testStandaloneExport;
+    });
+    test('should call _requestLookupSampleData if the resource is a PP lookup', () => expectSaga(_requestExportSampleData, { formKey, refreshCache })
+      .provide([
+        [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
+        [select(selectors.isLookUpExport, {flowId, resourceId, resourceType: 'exports'}), true],
+        [call(_requestLookupSampleData, { formKey, refreshCache }), {}],
+      ])
+      .call(_requestLookupSampleData, { formKey, refreshCache })
+      .not.call.fn(_requestPGExportSampleData)
+      .run());
+    test('should call _requestFileSampleData incase of suitescript file resource', () => {
+      const resourceObj = {
+        type: 'fileCabinet',
+        file: {
+          csv: {
+            columnDelimiter: ',',
+            hasHeaderRow: true,
+          },
+        },
+      };
 
-  //     return expectSaga(_requestExportSampleData, { formKey })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
-  //       ])
-  //       .call(_requestFileSampleData, { formKey })
-  //       .not.call(_requestLookupSampleData, { formKey })
-  //       .not.call.fn(_requestPGExportSampleData)
-  //       .run();
-  //   });
-  //   test('should dispatch clearStages incase of suitescript but not of a file resource', () => {
-  //     const resourceObj = {
-  //       type: 'rakuten',
-  //     };
+      return expectSaga(_requestExportSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
+        ])
+        .call(_requestFileSampleData, { formKey })
+        .not.call(_requestLookupSampleData, { formKey })
+        .not.call.fn(_requestPGExportSampleData)
+        .run();
+    });
+    test('should dispatch clearStages incase of suitescript but not of a file resource', () => {
+      const resourceObj = {
+        type: 'rakuten',
+      };
 
-  //     return expectSaga(_requestExportSampleData, { formKey })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
-  //       ])
-  //       .put(actions.resourceFormSampleData.clearStages(resourceId))
-  //       .not.call(_requestFileSampleData, { formKey })
-  //       .not.call(_requestLookupSampleData, { formKey })
-  //       .not.call.fn(_requestPGExportSampleData)
-  //       .run();
-  //   });
-  // });
+      return expectSaga(_requestExportSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
+        ])
+        .put(actions.resourceFormSampleData.clearStages(resourceId))
+        .not.call(_requestFileSampleData, { formKey })
+        .not.call(_requestLookupSampleData, { formKey })
+        .not.call.fn(_requestPGExportSampleData)
+        .run();
+    });
+  });
   describe('_requestPGExportSampleData saga', () => {
     const refreshCache = true;
 
@@ -292,22 +291,22 @@ describe('resourceFormSampleData sagas', () => {
         .not.call.fn(_requestExportPreviewData)
         .run();
     });
-    // test('should _requestExportPreviewData if the export\'s sample data can be extracted from preview call', () => {
-    //   const restResource = {
-    //     _id: '123',
-    //     adaptorType: 'RESTExport',
-    //   };
+    test('should call _requestExportPreviewData if the export\'s sample data can be extracted from preview call', () => {
+      const restResource = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+      };
 
-    //   return expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
-    //     .provide([
-    //       [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: restResource }],
-    //       [call(_requestExportPreviewData, { formKey }), {}],
-    //     ])
-    //     .call(_requestExportPreviewData, { formKey })
-    //     .not.call.fn(_requestFileSampleData)
-    //     .not.call.fn(_requestRealTimeSampleData)
-    //     .run();
-    // });
+      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: restResource }],
+          [call(_requestExportPreviewData, { formKey, executeProcessors: undefined }), {}],
+        ])
+        .call(_requestExportPreviewData, { formKey, executeProcessors: undefined })
+        .not.call.fn(_requestFileSampleData)
+        .not.call.fn(_requestRealTimeSampleData)
+        .run();
+    });
   });
   describe('_requestExportPreviewData saga', () => {
     const sampleDataRecordSize = 5;
