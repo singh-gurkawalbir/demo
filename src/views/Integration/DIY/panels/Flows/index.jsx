@@ -103,12 +103,7 @@ const useStyles = makeStyles(theme => ({
 
 const getBasePath = match => {
   if (match.params?.sectionId) {
-    // if there are sections in the path strip it out the last three segments
-    // it would appear like this /flows/sections/someSectionOd
-    return match.url
-      .split('/')
-      .slice(0, -3)
-      .join('/');
+    return match.url;
   }
 
   // remove just the tab section in the url

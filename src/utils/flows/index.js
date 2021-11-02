@@ -316,7 +316,7 @@ export function isSimpleImportFlow(flow, exports, flowExports) {
   return !!(exp && exp.type === 'simple');
 }
 
-export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName, flowGroupId}) {
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
 
   let flowBuilderTo;
@@ -327,6 +327,8 @@ export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationAp
     } else {
       flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
     }
+  } else if (flowGroupId && integrationId !== 'none') {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${flowGroupId}/${flowBuilderPathName}/${flowId}`);
   } else {
     flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
   }
