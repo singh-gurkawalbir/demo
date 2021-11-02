@@ -1,5 +1,4 @@
 /* global describe, test, expect */
-
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -2697,6 +2696,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should throw error when apiCall throws error and throwOnError is true', () => {
         const resourceId = 'export-123';
+        const flowId = '23';
+        const _integrationId = '34';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2710,6 +2711,8 @@ describe('Flow sample data utility sagas', () => {
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
+          _integrationId,
+          _flowId: flowId,
           rest: {
             relativeURI: '/api/v2/INVALID_URI.json',
           },
@@ -2719,7 +2722,7 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, throwOnError: true })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, throwOnError: true, flowId})
           .provide([
             [select(
               selectors.resourceData,
@@ -2727,6 +2730,10 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               SCOPES.VALUE
             ), { merged: resource }],
+            [select(
+              selectors.resource,
+              'flows',
+              flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
               path: '/exports/preview',
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
@@ -2739,6 +2746,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should not throw error when apiCall throws error and throwOnError is false', () => {
         const resourceId = 'export-123';
+        const flowId = '23';
+        const _integrationId = '34';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2752,6 +2761,8 @@ describe('Flow sample data utility sagas', () => {
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
+          _integrationId,
+          _flowId: flowId,
           rest: {
             relativeURI: '/api/v2/INVALID_URI.json',
           },
@@ -2761,7 +2772,7 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
             [select(
               selectors.resourceData,
@@ -2769,6 +2780,10 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               SCOPES.VALUE
             ), { merged: resource }],
+            [select(
+              selectors.resource,
+              'flows',
+              flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
               path: '/exports/preview',
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
@@ -2781,6 +2796,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should not throw error when apiCall throws error for Offline mode and call exportPreview saga again without runOffline', () => {
         const resourceId = 'export-123';
+        const flowId = '23';
+        const _integrationId = '34';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2803,6 +2820,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const body = {
           ...formattedResourceWithoutOnceDoc,
+          _integrationId,
+          _flowId: flowId,
           verbose: true,
           runOfflineOptions: {
             runOffline: true,
@@ -2815,7 +2834,7 @@ describe('Flow sample data utility sagas', () => {
         const hidden = false;
         const throwOnError = true;
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, throwOnError })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, throwOnError, flowId})
           .provide([
             [select(
               selectors.resourceData,
@@ -2823,6 +2842,10 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               SCOPES.VALUE
             ), { merged: resource }],
+            [select(
+              selectors.resource,
+              'flows',
+              flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
               path: '/exports/preview',
               opts: { method: 'POST', body },

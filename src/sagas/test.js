@@ -1,4 +1,4 @@
-/* global describe, test, expect, fail,beforeEach,afterEach,jest */
+/* global describe, test, expect, fail,beforeEach,afterEach, jest */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 import {
@@ -12,16 +12,16 @@ import {
   fork,
   spawn,
 } from 'redux-saga/effects';
-import { sendRequest } from 'redux-saga-requests';
+import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from './index';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from '.';
-import { APIException } from './api';
+import { APIException } from './api/requestInterceptors/utils';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 import { initializeApp, initializeLogrocket, invalidateSession } from './authentication';
+import { sendRequest } from './api';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {
@@ -192,14 +192,9 @@ describe('apiCallWithRetry saga', () => {
     test('Any successful non signout request return the response back to the parent saga ', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
       const raceBetweenApiCallAndTimeoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, request),
         timeoutEffect: delay(2 * 60 * 1000),
       });
       // if an effect does not succeeds in a race...we get an undefined
@@ -218,14 +213,10 @@ describe('apiCallWithRetry saga', () => {
     test('Any failed non signout request return should bubble the exception to parent ', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
+
       const raceBetweenApiCallAndTimeoutEffect = race([
-        call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        call(sendRequest, request),
         take(actionsTypes.USER_LOGOUT),
       ]);
 
@@ -245,14 +236,10 @@ describe('apiCallWithRetry saga', () => {
     test('In the event of a 204 response apiCallWithRetry saga should return undefined to the parent saga', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
+
       const raceBetweenApiCallAndTimeoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, request),
         timeoutEffect: delay(120000),
       });
 
@@ -276,14 +263,10 @@ describe('apiCallWithRetry saga', () => {
     test('timed out non-logout requests should perform request cleanup and subsequently throw a timed out exception', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
+
       const raceBetweenApiCallAndTimeoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, request),
         timeoutEffect: delay(120000),
       });
 
@@ -312,14 +295,10 @@ describe('apiCallWithRetry saga', () => {
           message: undefined,
         };
         const saga = apiCallWithRetry(args);
-        const apiRequestAction = {
-          type: 'API_WATCHER',
-          request: { url: path, args },
-        };
+        const request = { url: path, args };
+
         const raceBetweenApiCallAndTimeoutEffect = race({
-          apiResp: call(sendRequest, apiRequestAction, {
-            dispatchRequestAction: false,
-          }),
+          apiResp: call(sendRequest, request),
           timeoutEffect: delay(2 * 60 * 1000),
         });
         // if an effect does not succeeds in a race...we get an undefined
@@ -345,14 +324,10 @@ describe('apiCallWithRetry saga', () => {
           message: undefined,
         };
         const saga = apiCallWithRetry(args);
-        const apiRequestAction = {
-          type: 'API_WATCHER',
-          request: { url: path, args },
-        };
+        const request = { url: path, args };
+
         const raceBetweenApiCallAndTimeoutEffect = race({
-          apiResp: call(sendRequest, apiRequestAction, {
-            dispatchRequestAction: false,
-          }),
+          apiResp: call(sendRequest, request),
           timeoutEffect: delay(2 * 60 * 1000),
         });
         // if an effect does not succeeds in a race...we get an undefined
@@ -378,13 +353,9 @@ describe('apiCallWithRetry saga', () => {
         message: undefined,
       };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: logoutPath, args },
-      };
-      const sendRequestEffect = call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: false,
-      });
+      const request = { url: logoutPath, args };
+
+      const sendRequestEffect = call(sendRequest, request);
       const resp = { response: { data: 'some response' } };
 
       expect(saga.next().value).toEqual(sendRequestEffect);
@@ -438,9 +409,6 @@ describe('rootSaga', () => {
 
     beforeEach(() => {
       saga = rootSaga();
-
-      // skip the first yield effect
-      saga.next();
     });
 
     test('should initialize logrocket when the logrocket action races', () => {

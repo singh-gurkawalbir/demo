@@ -41,14 +41,8 @@ export default {
       id: 'configureTokenRefresh',
       type: 'checkbox',
       label: 'Configure refresh token',
-      defaultValue: r =>
-        !!(
-          r &&
-          r.http &&
-          r.http.auth &&
-          r.http.auth.token &&
-          r.http.auth.token.refreshRelativeURI
-        ),
+      // Refresh token is mandatory when Configure refresh token is enabled, hence we check if this value is provided or not
+      defaultValue: r => !!(r?.http?.auth?.token?.refreshToken),
       visibleWhenAll: [
         { field: 'http.auth.token.location', isNot: [''] },
         { field: 'http.auth.type', is: ['token'] },
