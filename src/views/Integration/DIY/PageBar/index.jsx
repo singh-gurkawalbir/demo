@@ -20,9 +20,9 @@ import { HOME_PAGE_PATH, STANDALONE_INTEGRATION } from '../../../../utils/consta
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../../utils/messageStore';
 import getRoutePath from '../../../../utils/routePaths';
+import { camelCase } from '../../../../utils/string';
 import { useAvailableTabs } from '../useAvailableTabs';
 
-const camelCase = (str = '') => str.charAt(0).toLowerCase() + str.slice(1);
 const integrationsFilterConfig = { type: 'integrations' };
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -313,7 +313,7 @@ export default function PageBar() {
             IconComponent={ArrowDownIcon}
             value={childId}>
             <MenuItem disabled value="">
-            {`Select ${camelCase(childDisplayName) || 'child'}`}
+              {`Select ${camelCase(childDisplayName) || 'child'}`}
             </MenuItem>
 
             {children.map(s => (
