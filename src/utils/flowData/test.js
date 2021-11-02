@@ -29,7 +29,7 @@ const possibleExportSampleDataStagePaths = [
 ];
 const possibleImportSampleDataStagePaths = [
   ['flowInput', 'processedFlowInput', 'inputFilter'],
-  ['flowInput', 'processedFlowInput', 'preMap', 'importMappingExtract', 'importMapping', 'postMap'],
+  ['flowInput', 'processedFlowInput', 'preMap', 'importMappingExtract', 'importMapping', 'postMap', 'postMapOutput'],
   ['sampleResponse', 'responseTransform', 'postSubmit'],
   ['sampleResponse', 'responseTransform', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
 ];

@@ -61,7 +61,7 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
   }, [dispatch, resourceId, flowId, resourceType]);
 
   const resetExportSampleData = useCallback(() => {
-    const exportSampleDataStages = getAllDependentSampleDataStages('responseMapping', 'exports');
+    const exportSampleDataStages = getAllDependentSampleDataStages('postResponseMap', 'exports');
 
     dispatch(actions.flowData.resetStages(flowId, resourceId, exportSampleDataStages));
   }, [dispatch, resourceId, flowId]);
