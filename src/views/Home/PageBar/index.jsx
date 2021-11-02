@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,7 +10,7 @@ import ZipUpIcon from '../../../components/icons/InstallIntegrationIcon';
 import { generateNewId } from '../../../utils/resource';
 import TextButton from '../../../components/Buttons/TextButton';
 import ActionGroup from '../../../components/ActionGroup';
-import CeligoDivider from '../../../components/CeligoDivider';
+// import CeligoDivider from '../../../components/CeligoDivider';
 import TilesViewIcon from '../../../components/icons/TilesViewIcon';
 import ListViewIcon from '../../../components/icons/ListViewIcon';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
@@ -19,10 +20,30 @@ import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../util';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {
+    position: 'relative',
+    marginLeft: theme.spacing(2),
     color: theme.palette.secondary.main,
     '&:hover': {
       background: 'none',
       color: theme.palette.primary.main,
+    },
+    '&:last-child': {
+      marginLeft: -theme.spacing(0.5),
+    },
+  },
+  viewsWrapper: {
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingLeft: theme.spacing(3),
+  },
+  activeView: {
+    color: theme.palette.primary.main,
+    '&:after': {
+      position: 'absolute',
+      content: '""',
+      width: '100%',
+      borderBottom: `2px solid ${theme.palette.primary.main}`,
+      bottom: -theme.spacing(0.5),
+      left: 0,
     },
   },
 }));
@@ -64,26 +85,26 @@ export default function IntegrationCeligoPageBar() {
           Install integration
         </TextButton>
         )}
+        <ActionGroup className={classes.viewsWrapper}>
+          {/* todo: ashu based on current view, place blue underline on icon */}
+          <IconButtonWithTooltip
+            data-test="tileView"
+            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view === 'tile'})}
+            onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: TILE_VIEW}}))}
+            tooltipProps={{title: 'Tile view', placement: 'bottom'}}
+            buttonSize={{size: 'small'}}>
+            <TilesViewIcon />
+          </IconButtonWithTooltip>
 
-        <CeligoDivider position="right" />
-        {/* todo: ashu based on current view, place blue underline on icon */}
-        <IconButtonWithTooltip
-          data-test="tileView"
-          className={classes.viewIcon}
-          onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: TILE_VIEW}}))}
-          tooltipProps={{title: 'Tile view', placement: 'bottom'}}
-          buttonSize={{size: 'small'}}>
-          <TilesViewIcon />
-        </IconButtonWithTooltip>
-
-        <IconButtonWithTooltip
-          data-test="listView"
-          className={classes.viewIcon}
-          onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: LIST_VIEW} }))}
-          tooltipProps={{title: 'List view', placement: 'bottom'}}
-          buttonSize={{size: 'small'}}>
-          <ListViewIcon />
-        </IconButtonWithTooltip>
+          <IconButtonWithTooltip
+            data-test="listView"
+            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view === 'list'})}
+            onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: LIST_VIEW} }))}
+            tooltipProps={{title: 'List view', placement: 'bottom'}}
+            buttonSize={{size: 'small'}}>
+            <ListViewIcon />
+          </IconButtonWithTooltip>
+        </ActionGroup>
       </ActionGroup>
     </CeligoPageBar>
   );

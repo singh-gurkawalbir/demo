@@ -1,11 +1,14 @@
-import React from 'react';
-import {InputBase, IconButton} from '@material-ui/core';
+import React, { useState} from 'react';
+import clsx from 'clsx';
+import {InputBase, IconButton, ClickAwayListener} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '../icons/SearchIcon';
 import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   search: {
+    display: 'flex',
+    alignItems: 'center',
     position: 'relative',
     borderRadius: 32,
     fontSize: theme.spacing(2),
@@ -13,11 +16,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'transparent',
     marginRight: theme.spacing(1),
     marginLeft: 0,
+    height: 38,
     width: '300px',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
@@ -33,10 +33,17 @@ const useStyles = makeStyles(theme => ({
       width: theme.spacing(2),
     },
   },
-
+  hideSearchIcon: {
+    display: 'none',
+  },
+  hideCloseIcon: {
+    display: 'none',
+  },
   inputRoot: {
     color: theme.palette.secondary.light,
-    height: '38px',
+    height: '100%',
+    top: -1,
+    width: '100%',
   },
   inputInput: {
     fontSize: '16px',
@@ -46,48 +53,94 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     padding: theme.spacing(0, 1, 0, 4),
     transition: theme.transitions.create('width'),
-    width: 300,
-    [theme.breakpoints.up('sm')]: {
-      '&:focus': {
-        width: 300,
-      },
+    '&::placeholder': {
+      color: theme.palette.secondary.light,
+      opacity: 1,
     },
+  },
+  inputSearch: {
+    paddingLeft: 18,
+    width: '90%',
+  },
+  searchActive: {
+    borderColor: theme.palette.primary.main,
+    transition: theme.transitions.create(['borderColor'],
+      {
+        easing: theme.transitions.easing.easeInOut,
+        duration: theme.transitions.duration.complex,
+      }
+    ),
+  },
+  closeIcon: {
+    marginRight: 8,
+    width: 24,
+    height: 24,
+  },
+  hideCloseBtn: {
+    display: 'none',
+  },
+  closeIconSvg: {
+    fontSize: 18,
+    color: theme.palette.secondary.main,
   },
 }));
 
-// todo: Azhar, fix below things:
-// search bar width and height
-// when field is click, close icon appears, field outline turns blue, search icon disappears
-// rest verify from mocks
-// with console open, distorted view
-export default function HomeSearchInput({ onChange, ...rest }) {
+export default function HomeSearchInput({value, onChange}) {
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [isSearchIconHidden, setSearchIconHidden] = useState(false);
+  const [isCloseIconHidden, setCloseIconHidden] = useState(true);
+
   const classes = useStyles();
+  const onChangeHandler = e => {
+    if (e.target.value !== '') {
+      setSearchIconHidden(true);
+      setCloseIconHidden(false);
+    } else {
+      setSearchIconHidden(false);
+      setCloseIconHidden(true);
+    }
+    onChange(e);
+  };
+  const searchClickHandler = () => {
+    setSearchFocused(true);
+    setSearchIconHidden(false);
+  };
   const onClearInput = e => {
     // eslint-disable-next-line no-param-reassign
     e.target.value = '';
-    onChange(e);
+    setSearchFocused(false);
+    onChangeHandler(e);
+  };
+
+  const handleClose = e => {
+    if (e.target.value === '') {
+      setSearchIconHidden(false);
+    }
+    setSearchFocused(false);
   };
 
   return (
-    <>
-      <div className={classes.search}>
-        <div className={classes.searchIcon}>
+    <ClickAwayListener onClickAway={handleClose}>
+      <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})} onClick={searchClickHandler}>
+        {!isSearchIconHidden && (
+        <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />
         </div>
+        )}
         <InputBase
-          {...rest}
-          onChange={onChange}
+          value={value}
+          onChange={onChangeHandler}
           placeholder="Search integrations & flows"
           classes={{
             root: classes.inputRoot,
-            input: classes.inputInput,
+            input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
           }}
           inputProps={{ 'aria-label': 'search integrations & flows' }}
         />
-        <IconButton size="small" onClick={onClearInput}>
-          <CloseIcon />
+        <IconButton size="small" onClick={onClearInput} className={clsx(classes.closeIcon, {[classes.hideCloseBtn]: isCloseIconHidden})}>
+          <CloseIcon className={classes.closeIconSvg} />
         </IconButton>
       </div>
-    </>
+    </ClickAwayListener>
   );
 }
