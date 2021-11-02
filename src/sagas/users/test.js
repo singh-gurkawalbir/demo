@@ -33,9 +33,9 @@ import {
   requestLicenseUpgrade,
   requestSharedStackNotifications,
 } from '.';
-import { APIException } from '../api/index';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
 import getRequestOptions from '../../utils/requestOptions';
+import { APIException } from '../api/requestInterceptors/utils';
 
 const changeEmailError = new APIException({
   status: 403,

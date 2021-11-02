@@ -7,7 +7,6 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../..';
-import { APIException } from '../../api';
 import actionTypes from '../../../actions/types';
 import {
   fetchNewLogs,
@@ -22,6 +21,7 @@ import {
 } from './index';
 import { FILTER_KEY } from '../../../utils/listenerLogs';
 import { pollApiRequests } from '../../app';
+import { APIException } from '../../api/requestInterceptors/utils';
 
 const flowId = 'flow-123';
 const exportId = 'exp-123';
@@ -196,9 +196,6 @@ describe('Listener logs sagas', () => {
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
-          opts: {
-            method: 'GET',
-          },
         }), throwError(new APIException({
           status: 422,
           message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
