@@ -550,7 +550,7 @@ export function* requestProcessorData({
     });
 
     if (isOneToManyResource(resource)) {
-      const processedFlowInput = processOneToManySampleData(preProcessedSampleData, resource);
+      const processedFlowInput = processOneToManySampleData(deepClone(preProcessedSampleData), resource);
 
       yield put(
         actions.flowData.receivedProcessorData(flowId, resourceId, stage, {

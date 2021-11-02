@@ -6,6 +6,8 @@ import {
 import { selectors } from '../../../../reducers';
 import { generateFileParserOptionsFromResource } from '../../utils/fileParserUtils';
 import { safeParse } from '../../../../utils/string';
+import { evaluateExternalProcessor } from '../../../editor';
+import { getResource } from '../../../resources';
 
 export const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
 export const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
@@ -124,4 +126,99 @@ export function* extractFileSampleDataProps({ formKey }) {
   }
 
   return {};
+}
+
+export function* executeTransformationRules({ transform = {}, sampleData }) {
+  let hasNoRulesToProcess = false;
+  let processorData;
+
+  if (transform.type === 'expression') {
+    const [rule] = transform.expression.rules || [];
+
+    if (!(rule && rule.length)) {
+      hasNoRulesToProcess = true;
+    } else {
+      processorData = {
+        data: sampleData,
+        rule,
+        editorType: 'transform',
+      };
+    }
+  } else if (transform.type === 'script') {
+    const { _scriptId, function: entryFunction } = transform.script || {};
+
+    if (_scriptId) {
+      const script = yield call(getResource, {
+        resourceType: 'scripts',
+        id: _scriptId,
+      });
+
+      processorData = {
+        data: { record: sampleData },
+        rule: {
+          code: script?.content,
+          entryFunction,
+        },
+        editorType: 'javascript',
+      };
+    } else {
+      hasNoRulesToProcess = true;
+    }
+  } else {
+    hasNoRulesToProcess = true;
+  }
+
+  if (hasNoRulesToProcess) return { hasNoRulesToProcess };
+
+  const processedData = yield call(evaluateExternalProcessor, {
+    processorData,
+  });
+
+  if (processedData?.error) {
+    // sends data as undefined as no data gets propagated for further stages
+    return {};
+  }
+
+  if (processorData.editorType === 'javascript') {
+    return { data: processedData?.data };
+  }
+
+  return { data: processedData?.data?.[0] };
+}
+
+export function* executeJavascriptHook({ hook = {}, sampleData }) {
+  let processorData;
+  let hasNoRulesToProcess = false;
+
+  if (hook._scriptId) {
+    const scriptId = hook._scriptId;
+    const script = yield call(getResource, {
+      resourceType: 'scripts',
+      id: scriptId,
+    });
+    const { content: code } = script;
+
+    processorData = {
+      data: { data: sampleData ? [sampleData] : []},
+      rule: {
+        code,
+        entryFunction: hook.function,
+      },
+      editorType: 'javascript',
+    };
+  } else {
+    hasNoRulesToProcess = true;
+  }
+  if (hasNoRulesToProcess) return { hasNoRulesToProcess };
+
+  const processedData = yield call(evaluateExternalProcessor, {
+    processorData,
+  });
+
+  if (processedData?.error) {
+    // sends data as undefined as no data gets propagated for further stages
+    return {};
+  }
+
+  return {data: processedData?.data?.data?.[0] };
 }

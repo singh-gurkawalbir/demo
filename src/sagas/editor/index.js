@@ -495,9 +495,12 @@ export function* requestEditorSampleData({
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
   const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
+  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId);
+  const isStandaloneExportAdvancedField = !flowId && isExportAdvancedField;
 
-  if (showPreviewStageData || needPreviewStagesData) {
-    yield call(requestResourceFormSampleData, { formKey });
+  if (showPreviewStageData || needPreviewStagesData || isStandaloneExportAdvancedField) {
+    // Incase of advanced fields , we need preSavePage hook's output
+    yield call(requestResourceFormSampleData, { formKey, options: { executeProcessors: isStandaloneExportAdvancedField } });
   }
 
   if (showPreviewStageData) {
@@ -509,12 +512,21 @@ export function* requestEditorSampleData({
 
     sampleData = parsedData?.data;
   } else if (formKey) {
-    if (resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId)) {
-      sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
-    } else if (!isPageGenerator) {
+    if (isStandaloneExportAdvancedField) {
+      // Handles Standalone export's advanced field ID related sample data
+      const parsedData = yield select(
+        selectors.getResourceSampleDataWithStatus,
+        resourceId,
+        'preSavePageHook'
+      );
+
+      sampleData = parsedData?.data;
+    } else if (isExportAdvancedField || (flowId && !isPageGenerator)) {
+      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey )
       sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
     }
   } else if (stage) {
+    // Handles sample data for all editors outside form context ( FB actions )
     sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
   }
 

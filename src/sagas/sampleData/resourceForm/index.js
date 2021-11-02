@@ -14,6 +14,8 @@ import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import {
   _fetchResourceInfoFromFormKey,
   extractFileSampleDataProps,
+  executeTransformationRules,
+  executeJavascriptHook,
   SUITESCRIPT_FILE_RESOURCE_TYPES,
   FILE_DEFINITION_TYPES,
   IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES,
@@ -80,11 +82,16 @@ export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestExportPreviewData({ formKey }) {
+export function* _requestExportPreviewData({ formKey, executeProcessors = false }) {
   const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
   const body = getFormattedResourceForPreview(resourceObj);
+
+  if (!executeProcessors) {
+    delete body.transform;
+    delete body.hooks;
+  }
   // BE need flowId and integrationId in the preview call
   // if in case integration settings were used in export
   const flow = yield select(selectors.resource, 'flows', flowId);
@@ -237,17 +244,65 @@ export function* _requestFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.clearStages(resourceId));
 }
 
-export function* _requestPGExportSampleData({ formKey, refreshCache }) {
+// Deals with fetching transform & preSavePage hook data
+function* _fetchFBActionsSampleData({ formKey }) {
+  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const parsedData = (yield select(
+    selectors.getResourceSampleDataWithStatus,
+    resourceId,
+    'parse'
+  ))?.data;
+
+  const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
+    transform: resourceObj.transform,
+    sampleData: parsedData,
+  });
+
+  yield put(actions.resourceFormSampleData.setProcessorData({
+    resourceId,
+    processor: 'transform',
+    processorData: hasNoRulesToProcess ? parsedData : transformedOutput,
+  }));
+
+  const transformedData = (yield select(
+    selectors.getResourceSampleDataWithStatus,
+    resourceId,
+    'transform'
+  ))?.data;
+
+  const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
+    hook: resourceObj.hooks?.preSavePage,
+    sampleData: transformedData,
+  });
+
+  yield put(actions.resourceFormSampleData.setProcessorData({
+    resourceId,
+    processor: 'preSavePageHook',
+    processorData: hasNoHook ? transformedData : preSavePageHookOutput,
+  }));
+}
+
+export function* _requestPGExportSampleData({ formKey, refreshCache, executeProcessors }) {
   const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj) || isRestCsvExport) {
-    return yield call(_requestFileSampleData, { formKey });
+    yield call(_requestFileSampleData, { formKey });
+    if (executeProcessors) {
+      yield call(_fetchFBActionsSampleData, { formKey });
+    }
+
+    return;
   }
   if (isRealTimeOrDistributedResource(resourceObj)) {
-    return yield call(_requestRealTimeSampleData, { formKey, refreshCache });
+    yield call(_requestRealTimeSampleData, { formKey, refreshCache });
+    if (executeProcessors) {
+      yield call(_fetchFBActionsSampleData, { formKey });
+    }
+
+    return;
   }
-  yield call(_requestExportPreviewData, { formKey });
+  yield call(_requestExportPreviewData, { formKey, executeProcessors });
 }
 
 export function* _requestLookupSampleData({ formKey, refreshCache }) {
@@ -297,7 +352,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache }) {
   }
 }
 
-export function* _requestExportSampleData({ formKey, refreshCache }) {
+export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors }) {
   const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (ssLinkedConnectionId) {
@@ -312,7 +367,7 @@ export function* _requestExportSampleData({ formKey, refreshCache }) {
   if (isLookUpExport) {
     yield call(_requestLookupSampleData, { formKey, refreshCache });
   } else {
-    yield call(_requestPGExportSampleData, { formKey, refreshCache });
+    yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors });
   }
 }
 
@@ -383,9 +438,9 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {
-    const { refreshCache } = options;
+    const { refreshCache, executeProcessors } = options;
 
-    yield call(_requestExportSampleData, { formKey, refreshCache });
+    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
     yield call(_requestImportSampleData, { formKey });
