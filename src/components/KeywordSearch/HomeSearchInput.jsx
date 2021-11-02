@@ -6,6 +6,7 @@ import SearchIcon from '../icons/SearchIcon';
 import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
+  // TODO (Azhar): *** styles are repeating work on to make a generic component
   search: {
     display: 'flex',
     alignItems: 'center',
@@ -32,12 +33,6 @@ const useStyles = makeStyles(theme => ({
     '& svg': {
       width: theme.spacing(2),
     },
-  },
-  hideSearchIcon: {
-    display: 'none',
-  },
-  hideCloseIcon: {
-    display: 'none',
   },
   inputRoot: {
     color: theme.palette.secondary.light,
@@ -75,6 +70,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: 8,
     width: 24,
     height: 24,
+  },
+  hideSearchIcon: {
+    display: 'none',
   },
   hideCloseBtn: {
     display: 'none',
