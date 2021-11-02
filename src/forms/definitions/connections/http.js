@@ -1,6 +1,6 @@
 export default {
   preSave: formValues => {
-    const newValues = { ...formValues};
+    const newValues = { ...formValues };
 
     if (newValues['/mode'] === 'cloud') {
       newValues['/_agentId'] = undefined;
@@ -84,13 +84,13 @@ export default {
       newValues['/http/auth/type'] !== 'token' ||
       !formValues['/configureTokenRefresh']
     ) {
-      delete newValues['/http/auth/token/refreshMethod'];
-      delete newValues['/http/auth/token/refreshTokenPath'];
-      delete newValues['/http/auth/token/refreshToken'];
-      delete newValues['/http/auth/token/refreshHeaders'];
-      delete newValues['/http/auth/token/refreshBody'];
-      delete newValues['/http/auth/token/refreshRelativeURI'];
-      delete newValues['/http/auth/token/refreshMediaType'];
+      newValues['/http/auth/token/refreshMethod'] = undefined;
+      newValues['/http/auth/token/refreshTokenPath'] = undefined;
+      newValues['/http/auth/token/refreshToken'] = undefined;
+      newValues['/http/auth/token/refreshHeaders'] = undefined;
+      newValues['/http/auth/token/refreshBody'] = undefined;
+      newValues['/http/auth/token/refreshRelativeURI'] = undefined;
+      newValues['/http/auth/token/refreshMediaType'] = undefined;
     }
 
     if (newValues['/http/auth/type'] === 'token') {
