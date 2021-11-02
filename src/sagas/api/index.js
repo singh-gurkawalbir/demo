@@ -4,7 +4,8 @@ import { APIException } from './requestInterceptors/utils';
 
 export function* extractResponse(response) {
   const {url, headers, status} = response;
-  // convert into text only for 400 to 500 do you parse it into json
+  // response is a promise yield it to as a text in all cases
+  // the reason we convert it into a text is not all responses can be parsed into JSON, such as 204 response will be an "" and between 400 to 600 not all responses can be parsed.
   const data = yield response.text();
 
   return {
@@ -34,10 +35,10 @@ export function* sendRequest(request) {
     const isError = response.status >= 400 && response.status < 600;
 
     if (isError) {
-      // error sagas bubble exceptions of type APIException
+      // error sagas bubble exceptions of type APIException uses the errored response in the API exception message
       return yield call(onErrorSaga, response, actionWrappedInRequest);
     }
-
+    // we call the onSuccess saga which tries to parse the response into JSON and ultimately return it to the parent saga
     const successResponse = yield call(onSuccessSaga, response, actionWrappedInRequest);
 
     return {response: successResponse};
