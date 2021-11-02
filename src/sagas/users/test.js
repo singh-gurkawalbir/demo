@@ -484,7 +484,7 @@ describe('all modal sagas', () => {
       });
     });
     describe('integrator license trial & upgrade requests', () => {
-      test('should start trial successfully', () => {
+      test('should start trial successfully in all tabs except Subscription Tab', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
           actionTypes.LICENSE_TRIAL_REQUEST,
@@ -506,6 +506,37 @@ describe('all modal sagas', () => {
         expect(saga.next(response).value).toEqual(
           put(actions.user.org.accounts.trialLicenseIssued(response)),
         );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should start trial successfully in Subscriptions Tab', () => {
+        const saga = requestTrialLicense();
+        const requestOptions = getRequestOptions(
+          actionTypes.LICENSE_TRIAL_REQUEST,
+        );
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Requesting trial license',
+          }),
+        );
+        const response = {
+          _id: 'something',
+          trialEndDate: new Date().toISOString(),
+        };
+
+        expect(saga.next(response).value).toEqual(
+          put(actions.user.org.accounts.trialLicenseIssued(response)),
+        );
+        global.window = Object.create(window);
+        Object.defineProperty(window, 'location', {
+          value: {
+            pathname: '/subscription',
+          },
+        });
+
         expect(saga.next().value).toEqual(
           call(getResourceCollection, {
             resourceType: 'licenses',

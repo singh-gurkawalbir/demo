@@ -93,7 +93,10 @@ export function* requestTrialLicense() {
     return true;
   }
   yield put(actions.user.org.accounts.trialLicenseIssued(response));
-  yield call(getResourceCollection, {resourceType: 'licenses', refresh: true });
+  // Updating the license information in Subscriptions tab
+  if (window.location.pathname.toLowerCase().includes('/subscription')) {
+    yield call(getResourceCollection, {resourceType: 'licenses', refresh: true });
+  }
 }
 
 export function* requestLicenseUpgrade() {
