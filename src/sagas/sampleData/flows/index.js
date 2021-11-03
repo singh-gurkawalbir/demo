@@ -570,7 +570,7 @@ export function* requestProcessorData({
     return yield call(updateStateForProcessorData, {
       flowId,
       resourceId,
-      processedData: { data: [preProcessedSampleData] },
+      processedData: { data: preProcessedSampleData ? [preProcessedSampleData] : [] },
       stage,
     });
   }
