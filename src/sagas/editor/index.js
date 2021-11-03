@@ -627,7 +627,7 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter', 'responseMappings'];
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
