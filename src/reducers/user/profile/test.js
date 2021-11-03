@@ -2,6 +2,7 @@
 import reducer, { selectors } from '.';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
+import { CDN_BASE_URL } from '../../../utils/constants';
 
 describe('user reducers', () => {
   describe('profile reducers', () => {
@@ -100,7 +101,7 @@ describe('user reducers', () => {
       );
 
       expect(selectors.avatarUrl(state)).toEqual(
-        `https://secure.gravatar.com/avatar/123?d=${process.env.CDN_BASE_URI}images/icons/icon-user-default.png&s=55`
+        `https://secure.gravatar.com/avatar/123?d=${CDN_BASE_URL}images/icons/icon-user-default.png&s=55`
       );
     });
   });
