@@ -245,7 +245,7 @@ export function* _requestFileSampleData({ formKey }) {
 }
 
 // Deals with fetching transform & preSavePage hook data
-function* _fetchFBActionsSampleData({ formKey }) {
+export function* _fetchFBActionsSampleData({ formKey }) {
   const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const parsedData = (yield select(
     selectors.getResourceSampleDataWithStatus,

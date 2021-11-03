@@ -20,8 +20,9 @@ import {
   _parseFileData,
   _handlePreviewError,
   _getProcessorOutput,
+  _fetchFBActionsSampleData,
 } from '.';
-import { _fetchResourceInfoFromFormKey } from './utils';
+import { _fetchResourceInfoFromFormKey, extractFileSampleDataProps } from './utils';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
@@ -267,6 +268,30 @@ describe('resourceFormSampleData sagas', () => {
           [call(_requestFileSampleData, { formKey }), {}],
         ])
         .call(_requestFileSampleData, { formKey })
+        .not.call.fn(_fetchFBActionsSampleData)
+        .not.call.fn(_requestRealTimeSampleData)
+        .not.call.fn(_requestExportPreviewData)
+        .run();
+    });
+    test('should call _fetchFBActionsSampleData for file adaptors if executeProcessors is passed true', () => {
+      const ftpResource = {
+        _id: 'export-123',
+        name: 'FTP export',
+        file: {
+          type: 'json',
+        },
+        adaptorType: 'FTPExport',
+        sampleData: { test: 5 },
+      };
+
+      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource }],
+          [call(_requestFileSampleData, { formKey }), {}],
+          [call(_fetchFBActionsSampleData, { formKey }), {}],
+        ])
+        .call(_requestFileSampleData, { formKey })
+        .call(_fetchFBActionsSampleData, { formKey })
         .not.call.fn(_requestRealTimeSampleData)
         .not.call.fn(_requestExportPreviewData)
         .run();
@@ -287,6 +312,29 @@ describe('resourceFormSampleData sagas', () => {
           [call(_requestRealTimeSampleData, { formKey, refreshCache }), {}],
         ])
         .call(_requestRealTimeSampleData, { formKey, refreshCache })
+        .not.call(_fetchFBActionsSampleData, { formKey })
+        .not.call.fn(_requestFileSampleData)
+        .not.call.fn(_requestExportPreviewData)
+        .run();
+    });
+    test('should call _fetchFBActionsSampleData when executeProcessors is true incase of real time export', () => {
+      const nsResource = {
+        _id: '123',
+        adaptorType: 'NetSuiteExport',
+        netsuite: {
+          distributed: { recordType: 'accounts' },
+        },
+        type: 'distributed',
+      };
+
+      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: nsResource }],
+          [call(_requestRealTimeSampleData, { formKey, refreshCache }), {}],
+          [call(_fetchFBActionsSampleData, { formKey }), {}],
+        ])
+        .call(_requestRealTimeSampleData, { formKey, refreshCache })
+        .call(_fetchFBActionsSampleData, { formKey })
         .not.call.fn(_requestFileSampleData)
         .not.call.fn(_requestExportPreviewData)
         .run();
@@ -307,6 +355,23 @@ describe('resourceFormSampleData sagas', () => {
         .not.call.fn(_requestRealTimeSampleData)
         .run();
     });
+    test('should call _requestExportPreviewData with executeProcessors true when the same is passed to _requestPGExportSampleData saga as true', () => {
+      const restResource = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+      };
+
+      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: restResource }],
+          [call(_requestExportPreviewData, { formKey, executeProcessors: true }), {}],
+        ])
+        .call(_requestExportPreviewData, { formKey, executeProcessors: true })
+        .not.call.fn(_requestFileSampleData)
+        .not.call.fn(_requestRealTimeSampleData)
+        .not.call(_fetchFBActionsSampleData, { formKey })
+        .run();
+    });
   });
   describe('_requestExportPreviewData saga', () => {
     const sampleDataRecordSize = 5;
@@ -315,6 +380,13 @@ describe('resourceFormSampleData sagas', () => {
       const resourceObj = {
         _id: '123',
         adaptorType: 'RESTExport',
+        transform: { rules: []},
+        hooks: {
+          preSavePage: {
+            _scriptId: 'script-23',
+            function: 'fn',
+          },
+        },
       };
       const flow = {
         _id: flowId,
@@ -324,7 +396,8 @@ describe('resourceFormSampleData sagas', () => {
       };
 
       const body = {
-        ...resourceObj,
+        _id: '123',
+        adaptorType: 'RESTExport',
         _flowId: flowId,
         _integrationId: integrationId,
         test: {
@@ -333,6 +406,60 @@ describe('resourceFormSampleData sagas', () => {
       };
 
       return expectSaga(_requestExportPreviewData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
+          [call(apiCallWithRetry, {
+            path: '/exports/preview',
+            opts: { method: 'POST', body },
+            hidden: true,
+          }), { test: 5 }],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/exports/preview',
+          opts: { method: 'POST', body },
+          hidden: true,
+        })
+        .run();
+    });
+    test('should not remove transformations and hooks from the resource when executeProcessors is true while making export preview call ', () => {
+      const resourceObj = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+        transform: { rules: []},
+        hooks: {
+          preSavePage: {
+            _scriptId: 'script-23',
+            function: 'fn',
+          },
+        },
+      };
+      const flow = {
+        _id: flowId,
+        pageGenerators: [],
+        pageProcessors: [],
+        settings: {},
+      };
+
+      const body = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+        transform: { rules: []},
+        hooks: {
+          preSavePage: {
+            _scriptId: 'script-23',
+            function: 'fn',
+          },
+        },
+        _flowId: flowId,
+        _integrationId: integrationId,
+        test: {
+          limit: sampleDataRecordSize,
+        },
+      };
+
+      return expectSaga(_requestExportPreviewData, { formKey, executeProcessors: true })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -450,157 +577,131 @@ describe('resourceFormSampleData sagas', () => {
       .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
       .run());
   });
-  // describe('_requestFileSampleData saga', () => {
-  //   test('should dispatch clear stages action and do nothing if the file type is not valid or does not exist', () => expectSaga(_requestFileSampleData, { formKey })
-  //     .provide([
-  //       [call(_fetchResourceInfoFromFormKey, { formKey }), {resourceObj: {}, resourceId}],
-  //     ])
-  //     .put(actions.resourceFormSampleData.clearStages(resourceId))
-  //     .not.call.fn(_hasSampleDataOnResource)
-  //     .not.call.fn(_parseFileData)
-  //     .run());
-  //   test('should call parseFileData for File definitions by fetching sampleData and rules from fileDefinitionSampleData selector', () => {
-  //     const ftpResource = {
-  //       _id: 'export-123',
-  //       name: 'FTP export',
-  //       file: {
-  //         type: 'filedefinition',
-  //       },
-  //       adaptorType: 'FTPExport',
-  //       sampleData: { test: 5 },
-  //     };
-  //     const fieldState = {
-  //       userDefinitionId: 'id-123',
-  //       options: {format: 'edi'},
-  //     };
-  //     const fileDefinitionSampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
-  //     const rule = {
-  //       name: '84 Lumber 810',
-  //       description: 'Invoice',
-  //       sampleData: 'ISA*02*SW810 *00* *01*84EXAMPLE *12',
-  //       rules: [{
-  //         maxOccurrence: 1,
-  //         skipRowSuffix: true,
-  //       }],
-  //     };
+  describe('_requestFileSampleData saga', () => {
+    test('should dispatch clear stages action and do nothing if the file type is not valid or does not exist', () => expectSaga(_requestFileSampleData, { formKey })
+      .provide([
+        [call(_fetchResourceInfoFromFormKey, { formKey }), {resourceObj: {}, resourceId}],
+      ])
+      .put(actions.resourceFormSampleData.clearStages(resourceId))
+      .not.call.fn(extractFileSampleDataProps)
+      .not.call.fn(_parseFileData)
+      .run());
+    test('should dispatch clear stages action and do nothing if there is no sample data for the resource', () => {
+      const ftpResource = {
+        _id: 'export-123',
+        name: 'FTP export',
+        file: {
+          type: 'filedefinition',
+        },
+        adaptorType: 'FTPExport',
+      };
 
-  //     return expectSaga(_requestFileSampleData, { formKey })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
-  //         [select(selectors.fieldState, formKey, 'file.filedefinition.rules'), fieldState],
-  //         [select(selectors.fileDefinitionSampleData, {
-  //           userDefinitionId: fieldState.userDefinitionId,
-  //           resourceType: 'exports',
-  //           options: { format: fieldState.options.format, definitionId: undefined, resourcePath: undefined },
-  //         }), { rule, sampleData: fileDefinitionSampleData }],
-  //         [call(_parseFileData, {
-  //           resourceId,
-  //           fileContent: fileDefinitionSampleData,
-  //           parserOptions: rule,
-  //           fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
-  //           fileType: 'fileDefinitionParser',
-  //         }), {}],
-  //       ])
-  //       .call(_parseFileData, {
-  //         resourceId,
-  //         fileContent: fileDefinitionSampleData,
-  //         parserOptions: rule,
-  //         fileType: 'fileDefinitionParser',
-  //         fileProps: { rule: undefined, sortByFields: [], groupByFields: [] },
-  //       })
-  //       .not.put(actions.resourceFormSampleData.clearStages(resourceId))
-  //       .run();
-  //   });
-  //   test('should check for uploaded file content from getUploadedFile and call parseFileData saga with that content for other valid file types ', () => {
-  //     const fileProps = {
-  //       columnDelimiter: '|',
-  //       hasHeaderRow: true,
-  //       rowsToSkip: 1,
-  //     };
-  //     const parserOptions = {
-  //       rowsToSkip: 1,
-  //       trimSpaces: undefined,
-  //       columnDelimiter: '|',
-  //       hasHeaderRow: true,
-  //       rowDelimiter: undefined,
-  //       sortByFields: [],
-  //       groupByFields: [],
-  //     };
-  //     const ftpResource = {
-  //       _id: 'export-123',
-  //       name: 'FTP export',
-  //       file: {
-  //         type: 'csv',
-  //         csv: fileProps,
-  //       },
-  //       adaptorType: 'FTPExport',
-  //     };
-  //     const fileId = `${resourceId}-uploadFile`;
-  //     const uploadedFile = {
-  //       file: "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE↵C1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0",
-  //     };
+      return expectSaga(_requestFileSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), {resourceObj: ftpResource, resourceId}],
+          [call(extractFileSampleDataProps, { formKey }), {}],
+        ])
+        .call.fn(extractFileSampleDataProps)
+        .not.call.fn(_parseFileData)
+        .put(actions.resourceFormSampleData.clearStages(resourceId))
+        .run();
+    });
+    test('should call extractFileSampleDataProps to get file sample data and then call _parseFileData saga to update the state', () => {
+      const ftpResource = {
+        _id: 'export-123',
+        name: 'FTP export',
+        file: {
+          type: 'filedefinition',
+        },
+        adaptorType: 'FTPExport',
+        sampleData: { test: 5 },
+      };
+      const rule = {
+        name: '84 Lumber 810',
+        description: 'Invoice',
+        sampleData: 'ISA*02*SW810 *00* *01*84EXAMPLE *12',
+        rules: [{
+          maxOccurrence: 1,
+          skipRowSuffix: true,
+        }],
+      };
+      const response = {
+        sampleData: rule.sampleData,
+        parserOptions: rule,
+        fileProps: {
+          sortByFields: undefined,
+          groupByFields: undefined,
+        },
+      };
 
-  //     return expectSaga(_requestFileSampleData, { formKey })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
-  //         [select(selectors.getUploadedFile, fileId), uploadedFile],
-  //         [call(_parseFileData, {
-  //           resourceId,
-  //           fileContent: uploadedFile.file,
-  //           fileType: 'csv',
-  //           parserOptions,
-  //           fileProps,
-  //           isNewSampleData: true}), {}],
-  //       ])
-  //       .call(_parseFileData, {
-  //         resourceId,
-  //         fileContent: uploadedFile.file,
-  //         fileType: 'csv',
-  //         parserOptions,
-  //         fileProps,
-  //         isNewSampleData: true})
-  //       .not.put(actions.resourceFormSampleData.clearStages(resourceId))
-  //       .run();
-  //   });
-  //   test('should call _hasSampleDataOnResource saga and pass resourceObj\'s sampleData as fileContent for parseFileData saga', () => {
-  //     const fileProps = {
-  //       columnDelimiter: '|',
-  //       hasHeaderRow: true,
-  //       rowsToSkip: 1,
-  //     };
-  //     const parserOptions = {
-  //       rowsToSkip: 1,
-  //       trimSpaces: undefined,
-  //       columnDelimiter: '|',
-  //       hasHeaderRow: true,
-  //       rowDelimiter: undefined,
-  //       sortByFields: [],
-  //       groupByFields: [],
-  //     };
-  //     const ftpResource = {
-  //       _id: 'export-123',
-  //       name: 'FTP export',
-  //       file: {
-  //         type: 'csv',
-  //         csv: fileProps,
-  //       },
-  //       adaptorType: 'FTPExport',
-  //       sampleData: "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE↵C1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0",
-  //     };
-  //     const fileId = `${resourceId}-uploadFile`;
+      return expectSaga(_requestFileSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
+          [call(extractFileSampleDataProps, { formKey }), response],
+          [matchers.call.fn(_parseFileData)],
+        ])
+        .call(_parseFileData, {
+          resourceId,
+          fileContent: response.sampleData,
+          fileType: 'fileDefinitionParser',
+          fileProps: response.fileProps,
+          parserOptions: response.parserOptions,
+          isNewSampleData: undefined,
+        })
+        .not.put(actions.resourceFormSampleData.clearStages(resourceId))
+        .run();
+    });
+    test('should check for uploaded file content from getUploadedFile and call parseFileData saga with that content for other valid file types ', () => {
+      const fileProps = {
+        columnDelimiter: '|',
+        hasHeaderRow: true,
+        rowsToSkip: 1,
+      };
+      const parserOptions = {
+        rowsToSkip: 1,
+        trimSpaces: undefined,
+        columnDelimiter: '|',
+        hasHeaderRow: true,
+        rowDelimiter: undefined,
+        sortByFields: [],
+        groupByFields: [],
+      };
+      const ftpResource = {
+        _id: 'export-123',
+        name: 'FTP export',
+        file: {
+          type: 'csv',
+          csv: fileProps,
+        },
+        adaptorType: 'FTPExport',
+      };
+      const uploadedFile = {
+        file: "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE↵C1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0",
+      };
 
-  //     return expectSaga(_requestFileSampleData, { formKey })
-  //       .provide([
-  //         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
-  //         [select(selectors.getUploadedFile, fileId), undefined],
-  //         [call(_hasSampleDataOnResource, { formKey }), true],
-  //         [call(_parseFileData, { resourceId, fileContent: ftpResource.sampleData, fileProps, fileType: 'csv', parserOptions }), {}],
-  //       ])
-  //       .call(_parseFileData, { resourceId, fileContent: ftpResource.sampleData, fileProps, fileType: 'csv', parserOptions })
-  //       .not.put(actions.resourceFormSampleData.clearStages(resourceId))
-  //       .run();
-  //   });
-  // });
+      return expectSaga(_requestFileSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
+          [call(extractFileSampleDataProps, { formKey }), {
+            resourceId,
+            sampleData: uploadedFile.file,
+            parserOptions,
+            fileProps,
+            isNewSampleData: true,
+          }],
+          [matchers.call.fn(_parseFileData)],
+        ])
+        .call(_parseFileData, {
+          resourceId,
+          fileContent: uploadedFile.file,
+          fileType: 'csv',
+          parserOptions,
+          fileProps,
+          isNewSampleData: true})
+        .not.put(actions.resourceFormSampleData.clearStages(resourceId))
+        .run();
+    });
+  });
   describe('_requestLookupSampleData saga', () => {
     test('should call _requestFileSampleData incase of file adaptor lookup export', () => {
       const ftpResource = {
