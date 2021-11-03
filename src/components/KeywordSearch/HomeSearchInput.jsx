@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import clsx from 'clsx';
-import {InputBase, IconButton, ClickAwayListener} from '@material-ui/core';
+import {InputBase, IconButton} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '../icons/SearchIcon';
 import CloseIcon from '../icons/CloseIcon';
@@ -91,54 +91,55 @@ export default function HomeSearchInput({value, onChange}) {
   const classes = useStyles();
   const onChangeHandler = e => {
     if (e.target.value !== '') {
-      setSearchIconHidden(true);
       setCloseIconHidden(false);
+      setSearchIconHidden(true);
     } else {
-      setSearchIconHidden(false);
       setCloseIconHidden(true);
     }
     onChange(e);
   };
   const searchClickHandler = () => {
     setSearchFocused(true);
-    setSearchIconHidden(false);
+    setSearchIconHidden(true);
   };
   const onClearInput = e => {
     // eslint-disable-next-line no-param-reassign
     e.target.value = '';
     setSearchFocused(false);
+    setSearchIconHidden(false);
     onChangeHandler(e);
   };
-
-  const handleClose = e => {
-    if (e.target.value === '') {
+  const handleBlur = e => {
+    if (e.target.value !== '') {
+      setSearchIconHidden(true);
+      setCloseIconHidden(false);
+    } else {
       setSearchIconHidden(false);
     }
     setSearchFocused(false);
   };
 
   return (
-    <ClickAwayListener onClickAway={handleClose}>
-      <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})} onClick={searchClickHandler}>
-        {!isSearchIconHidden && (
+
+    <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})} onClick={searchClickHandler} onBlur={handleBlur}>
+      {!isSearchIconHidden && (
         <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />
         </div>
-        )}
-        <InputBase
-          value={value}
-          onChange={onChangeHandler}
-          placeholder="Search integrations & flows"
-          classes={{
-            root: classes.inputRoot,
-            input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
-          }}
-          inputProps={{ 'aria-label': 'search integrations & flows' }}
+      )}
+      <InputBase
+        value={value}
+        onChange={onChangeHandler}
+        placeholder="Search integrations & flows"
+        classes={{
+          root: classes.inputRoot,
+          input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
+        }}
+        inputProps={{ 'aria-label': 'search integrations & flows' }}
         />
-        <IconButton size="small" onClick={onClearInput} className={clsx(classes.closeIcon, {[classes.hideCloseBtn]: isCloseIconHidden})}>
-          <CloseIcon className={classes.closeIconSvg} />
-        </IconButton>
-      </div>
-    </ClickAwayListener>
+      <IconButton size="small" onClick={onClearInput} className={clsx(classes.closeIcon, {[classes.hideCloseBtn]: isCloseIconHidden})}>
+        <CloseIcon className={classes.closeIconSvg} />
+      </IconButton>
+    </div>
   );
 }
