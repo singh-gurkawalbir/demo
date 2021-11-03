@@ -7,9 +7,9 @@ import DynaSelect from '../../../DynaSelect';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import { camelCase } from '../../../../../../utils/string';
 
 // view only component
-const camelCase = str => str.charAt(0).toLowerCase() + str.slice(1);
 
 export default function DynaSalesUser(props) {
   const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, sectionId} = props;
