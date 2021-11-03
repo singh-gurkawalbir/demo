@@ -44,7 +44,7 @@ describe('flow sample data sagas', () => {
     const exportResource = { _id: exportId, name: 'rest export' };
     const importResource = { _id: importId, name: 'rest import'};
 
-    test('should dispatch init action if the flowId and resourceId are not new, with only refresh as a new property in addition to flow doc ', () => {
+    test('should dispatch init action if the flowId and resourceId are not new, with refresh and formKey as a new property in addition to flow doc ', () => {
       const flow = { _id: flowId, pageGenerators: [exportResource], pageProcessors: [importResource]};
 
       const test1 = expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports'})
@@ -53,11 +53,11 @@ describe('flow sample data sagas', () => {
         ])
         .put(actions.flowData.init({...flow, refresh: false}))
         .run();
-      const test2 = expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports', refresh: true})
+      const test2 = expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports', refresh: true, formKey: 'form-123'})
         .provide([
           [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
         ])
-        .put(actions.flowData.init({...flow, refresh: true}))
+        .put(actions.flowData.init({...flow, refresh: true, formKey: 'form-123'}))
         .run();
 
       return test1 && test2;
@@ -1060,6 +1060,86 @@ describe('flow sample data sagas', () => {
           adaptorType: restExport.adaptorType,
         })
         .call.fn(_processMappingData)
+        .run();
+    });
+    test('should process oneToMany path on flowInput data and update the state incase of oneToMany for processedFlowInput stage', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+        oneToMany: true,
+        pathToMany: 'e.check.f',
+      };
+      const sampleData = {
+        a: 5,
+        c: { d: 7 },
+        e: { check: { f: [{ a: 1}]} },
+      };
+      const stage = 'processedFlowInput';
+      const formKey = 'form-123';
+      const oneToManySampleData = {
+        _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+        a: 1,
+      };
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: sampleData}],
+          [select(selectors.getFlowDataState, flowId), { formKey }],
+          [call(getConstructedResourceObj, {
+            resourceId,
+            resourceType,
+            formKey,
+          }), restExport],
+        ])
+        .put(actions.flowData.receivedProcessorData(flowId, resourceId, stage, { data: [oneToManySampleData]}))
+        .run();
+    });
+    test('should update the state with flowInput data if the resource is not oneToMany for processedFlowInput stage', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+      };
+      const sampleData = {
+        a: 5,
+        c: { d: 7 },
+        e: { check: { f: [{ a: 1}]} },
+      };
+      const stage = 'processedFlowInput';
+      const formKey = 'form-123';
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: sampleData}],
+          [select(selectors.getFlowDataState, flowId), { formKey }],
+          [call(getConstructedResourceObj, {
+            resourceId,
+            resourceType,
+            formKey,
+          }), restExport],
+        ])
+        .put(actions.flowData.receivedProcessorData(flowId, resourceId, stage, { data: [sampleData]}))
         .run();
     });
     test('should do nothing if mappings does not exist for responseMapping stage', () => {
