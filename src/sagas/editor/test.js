@@ -885,52 +885,53 @@ describe('editor sagas', () => {
         .returns({})
         .run();
     });
-    // test('should call requestResourceFormSampleData and get preview stage data for dataURITemplate field', () => {
-    //   const editor = {
-    //     id: 'dataURITemplate',
-    //     editorType: 'handlebars',
-    //     flowId,
-    //     resourceType: 'exports',
-    //     resourceId,
-    //     fieldId: 'dataURITemplate',
-    //     formKey: 'new-123',
-    //   };
+    test('should call requestResourceFormSampleData for standalone export and get preSavePageHook stage data for dataURITemplate/traceKeyTemplate field', () => {
+      const editor = {
+        id: 'dataURITemplate',
+        editorType: 'handlebars',
+        resourceType: 'exports',
+        resourceId,
+        fieldId: 'dataURITemplate',
+        formKey: 'new-123',
+      };
 
-    //   return expectSaga(requestEditorSampleData, { id: 'dataURITemplate' })
-    //     .provide([
-    //       [select(selectors.editor, 'dataURITemplate'), editor],
-    //       [matchers.call.fn(constructResourceFromFormValues), {}],
-    //       [matchers.call.fn(requestResourceFormSampleData)],
-    //       [matchers.call.fn(requestSampleData), {}],
-    //       [matchers.call.fn(apiCallWithRetry), {}],
-    //     ])
-    //     .call(requestResourceFormSampleData, { formKey: editor.formKey })
-    //     .returns({data: undefined, templateVersion: undefined})
-    //     .run();
-    // });
-    //   test('should call requestResourceFormSampleData and get preview stage data for traceKeyTemplate field', () => {
-    //     const editor = {
-    //       id: 'traceKeyTemplate',
-    //       editorType: 'handlebars',
-    //       flowId,
-    //       resourceType: 'exports',
-    //       resourceId,
-    //       fieldId: 'traceKeyTemplate',
-    //       formKey: 'new-123',
-    //     };
+      return expectSaga(requestEditorSampleData, { id: 'dataURITemplate' })
+        .provide([
+          [select(selectors.editor, 'dataURITemplate'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(requestResourceFormSampleData)],
+          [matchers.select.selector(selectors.getResourceSampleDataWithStatus), { data: {name: 'Bob'} }],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
+        ])
+        .call(requestResourceFormSampleData, { formKey: editor.formKey, options: { executeProcessors: true } })
+        .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
+        .run();
+    });
+    test('should call getFlowSampleData and get responseMappingExtract ( output of preSavePage hook ) stage data for dataURI/traceKeyTemplate field', () => {
+      const editor = {
+        id: 'traceKeyTemplate',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        fieldId: 'traceKeyTemplate',
+        stage: 'responseMappingExtract',
+        formKey: 'new-123',
+      };
 
-    //     return expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
-    //       .provide([
-    //         [select(selectors.editor, 'traceKeyTemplate'), editor],
-    //         [matchers.call.fn(constructResourceFromFormValues), {}],
-    //         [matchers.call.fn(requestResourceFormSampleData)],
-    //         [matchers.call.fn(requestSampleData), {}],
-    //         [matchers.call.fn(apiCallWithRetry), {}],
-    //       ])
-    //       .call(requestResourceFormSampleData, { formKey: editor.formKey })
-    //       .returns({data: undefined, templateVersion: undefined})
-    //       .run();
-    //   });
+      return expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
+        .provide([
+          [select(selectors.editor, 'traceKeyTemplate'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(getFlowSampleData), {name: 'Bob'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
+        ])
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'responseMappingExtract', formKey: 'new-123'})
+        .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
+        .run();
+    });
     test('should call requestResourceFormSampleData incase of http/rest resource when paging is configured', () => {
       const editor = {
         id: 'restrelativeuri',
@@ -965,27 +966,27 @@ describe('editor sagas', () => {
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
-    //   test('should reload sample data and call requestSampleData if no sample data exists in the state', () => {
-    //     const editor = {
-    //       id: 'tx-123',
-    //       editorType: 'flowTransform',
-    //       flowId,
-    //       resourceType: 'imports',
-    //       resourceId,
-    //       stage: 'transform',
-    //     };
+    test('should reload sample data and call requestSampleData if no sample data exists in the state', () => {
+      const editor = {
+        id: 'tx-123',
+        editorType: 'flowTransform',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'transform',
+      };
 
-    //     return expectSaga(requestEditorSampleData, { id: 'tx-123' })
-    //       .provide([
-    //         [select(selectors.editor, 'tx-123'), editor],
-    //         [matchers.call.fn(constructResourceFromFormValues), {}],
-    //         [matchers.call.fn(requestSampleData), {}],
-    //         [matchers.call.fn(apiCallWithRetry), {}],
-    //       ])
-    //       .call(requestSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
-    //       .returns({data: undefined, templateVersion: undefined})
-    //       .run();
-    //   });
+      return expectSaga(requestEditorSampleData, { id: 'tx-123' })
+        .provide([
+          [select(selectors.editor, 'tx-123'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(getFlowSampleData), {}],
+          [matchers.call.fn(apiCallWithRetry), {}],
+        ])
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
+        .returns({data: undefined, templateVersion: undefined})
+        .run();
+    });
     test('should not make apiCallWithRetry if BE does not support the editor', () => {
       const editor = {
         id: 'tx-123',
