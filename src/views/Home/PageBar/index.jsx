@@ -16,7 +16,7 @@ import ListViewIcon from '../../../components/icons/ListViewIcon';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
-import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../util';
+import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-
+const emptyObject = {};
 export default function IntegrationCeligoPageBar() {
   const location = useLocation();
   const classes = useStyles();
@@ -58,7 +58,7 @@ export default function IntegrationCeligoPageBar() {
 
     return {create, install};
   }, shallowEqual);
-  const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard, shallowEqual);
+  const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard || emptyObject, shallowEqual);
 
   return (
     <CeligoPageBar title="My integrations">
@@ -86,10 +86,9 @@ export default function IntegrationCeligoPageBar() {
         </TextButton>
         )}
         <ActionGroup className={classes.viewsWrapper}>
-          {/* todo: ashu based on current view, place blue underline on icon */}
           <IconButtonWithTooltip
             data-test="tileView"
-            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view === 'tile'})}
+            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view !== LIST_VIEW})}
             onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: TILE_VIEW}}))}
             tooltipProps={{title: 'Tile view', placement: 'bottom'}}
             buttonSize={{size: 'small'}}>
@@ -98,7 +97,7 @@ export default function IntegrationCeligoPageBar() {
 
           <IconButtonWithTooltip
             data-test="listView"
-            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view === 'list'})}
+            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view === LIST_VIEW})}
             onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: LIST_VIEW} }))}
             tooltipProps={{title: 'List view', placement: 'bottom'}}
             buttonSize={{size: 'small'}}>
