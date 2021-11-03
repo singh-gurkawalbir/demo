@@ -16,12 +16,13 @@ import IntegrationTag from '../../components/tags/IntegrationTag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
-import { tileStatus } from './util';
+import { INTEGRATION_ACCESS_LEVELS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
+import { tileStatus } from '../../utils/home';
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import CeligoTruncate from '../../components/CeligoTruncate';
 import Status from '../../components/Buttons/Status';
+import { useSelectorMemo } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -71,15 +72,9 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
 
   const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
   const status = tileStatus(tile);
-  let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
-
-  if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`;
-  } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
-  } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
-  }
+  const {
+    urlToIntegrationSettings,
+    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
 
   const handleTileClick = useCallback(
     event => {
@@ -102,25 +97,9 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
 
         return;
       }
-      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-        history.push(
-          getRoutePath(
-            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`
-          )
-        );
-      } else if (tile._connectorId) {
-        history.push(
-          getRoutePath(`/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`)
-        );
-      } else {
-        history.push(
-          getRoutePath(
-            `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`
-          )
-        );
-      }
+      history.push(urlToIntegrationStatus);
     },
-    [isOffline, tile.status, tile._connectorId, tile.ssLinkedConnectionId, tile.urlName, tile._integrationId, history, match.url]
+    [history, isOffline, match.url, tile.ssLinkedConnectionId, urlToIntegrationStatus]
   );
   // IO-13418
   const getApplication = application =>
