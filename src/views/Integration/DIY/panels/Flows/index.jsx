@@ -373,7 +373,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
   const basePath = getBasePath(match);
-  const rowData = { ...integration, canAttach };
+  const rowData = { ...integration, canAttach, sectionId };
 
   return (
     <div className={classes.root}>

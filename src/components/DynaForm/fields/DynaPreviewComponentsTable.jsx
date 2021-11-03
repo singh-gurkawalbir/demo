@@ -42,7 +42,7 @@ export default function DynaPreviewComponentsTable({ data: objects, useColumns, 
       result[resourceType].push(obj);
     });
 
-    result.Flow = [...mappingFlowsToFlowGroupings(flowGroupings, result.Flow)];
+    result.Flow = [...mappingFlowsToFlowGroupings(flowGroupings, result.Flow, objects.length)];
 
     return result;
   }, [objects]);

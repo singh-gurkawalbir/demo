@@ -87,16 +87,16 @@ const useColumns = () => [
     key: 'name',
     heading: 'Name',
     width: '40%',
+    GetClassName: ({rowData: r}) => {
+      const classes = useStyles();
+
+      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
+    },
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
       if (r?.groupName) {
-        return (
-          <>
-            <Typography variant="overline" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>
-            <Typography variant="body2">{r?.doc?.name || r?.doc?._id}</Typography>
-          </>
-        );
+        return <Typography variant="overline" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
       }
 
       return r?.doc?.name || r?.doc?._id;
@@ -106,19 +106,12 @@ const useColumns = () => [
     key: 'description',
     heading: 'Description',
     width: '60%',
-    Value: ({rowData: r}) => {
+    GetClassName: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r.groupName) {
-        return (
-          <>
-            <Typography variant="body2" className={classes.flowGroupDescription} >{r?.doc?.description}</Typography>
-          </>
-        );
-      }
-
-      return r?.doc?.description;
+      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
     },
+    Value: ({rowData: r}) => r?.doc?.description,
   },
 ];
 export default function ClonePreview(props) {
@@ -256,6 +249,10 @@ export default function ClonePreview(props) {
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
   const { objects = [] } = components || {};
+
+  // if (resourceType === 'integrations' && resource.flowGrouings.length > 1) {
+  //   objects = [...objects.filter()];
+  // }
   const fieldMeta = {
     fieldMap: {
       name: {

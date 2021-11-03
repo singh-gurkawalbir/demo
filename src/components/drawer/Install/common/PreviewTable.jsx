@@ -25,43 +25,32 @@ const useColumns = () => [
   {
     key: 'name',
     heading: 'Name',
+    width: '40%',
+    GetClassName: ({rowData: r}) => {
+      const classes = useStyles();
+
+      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
+    },
     Value: ({rowData: r}) => {
       const classes = useStyles();
-      const className = r?.lastFlowInFlowGroup ? classes.lastFlowInFlowGroup : '';
 
       if (r?.groupName) {
-        return (
-          <>
-            <Typography variant="overline" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>
-            <Typography variant="body2" className={classes.firstFlowName} >{r?.doc?.name || r?.doc?._id}</Typography>
-          </>
-        );
+        return <Typography variant="overline" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
       }
 
-      return (
-        <>
-          <Typography variant="body2" className={className} >{r?.doc?.name || r?.doc?._id}</Typography>
-        </>
-      );
+      return r?.doc?.name || r?.doc?._id;
     },
-    width: '50%',
   },
   {
     key: 'description',
     heading: 'Description',
-    Value: ({rowData: r}) => {
+    width: '60%',
+    GetClassName: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r.groupName) {
-        return (
-          <>
-            <Typography variant="body2" className={classes.flowGroupDescription} >{r?.doc?.description}</Typography>
-          </>
-        );
-      }
-
-      return r?.doc?.description;
+      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
     },
+    Value: ({rowData: r}) => r?.doc?.description,
   },
 ];
 

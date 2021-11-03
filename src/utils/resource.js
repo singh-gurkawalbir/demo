@@ -1,7 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, UNASSIGNED_SECTION_ID } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
 import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
@@ -878,57 +878,37 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 // when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
 export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 
-export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects) => {
-  const finalFlowObjects = [];
-
+export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsLength) => {
   if (!flowGroupings?.length) {
     return flowObjects;
   }
 
-  flowGroupings.push({
-    _id: UNASSIGNED_SECTION_ID,
-    name: 'Unassigned',
-  });
-  flowGroupings.forEach(flowGroup => {
-    let firstElement = true;
+  const finalFlowObjects = [];
 
-    flowObjects.forEach(flowObject => {
-      if (flowGroup._id === UNASSIGNED_SECTION_ID && !flowObject.doc?._flowGroupingId) {
-        if (firstElement) {
-          finalFlowObjects.push(
-            {
-              ...flowObject,
-              groupName: flowGroup.name,
-            }
-          );
-          firstElement = false;
-        } else {
-          finalFlowObjects.push(flowObject);
-        }
-
-        return;
-      }
-      if (flowObject.doc?._flowGroupingId === flowGroup._id) {
-        if (firstElement) {
-          finalFlowObjects.push(
-            {
-              ...flowObject,
-              groupName: flowGroup.name,
-            }
-          );
-          firstElement = false;
-        } else {
-          finalFlowObjects.push(flowObject);
-        }
-      }
+  flowGroupings.forEach(({_id: groupId, name}, index) => {
+    finalFlowObjects.push({
+      groupName: name,
+      _id: index + objectsLength,
     });
-    const lastFlowObject = finalFlowObjects.pop();
+    const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
+    const lastFlowObject = resultFlowObjects.pop();
 
-    if (lastFlowObject) {
-      lastFlowObject.lastFlowInFlowGroup = true;
-      finalFlowObjects.push(lastFlowObject);
-    }
+    lastFlowObject.isLastFlowInFlowGroup = true;
+    finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
   });
+
+  const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
+
+  if (flowsWithoutGroupId?.length) {
+    finalFlowObjects.push({
+      groupName: 'Unassigned',
+      _id: objectsLength + flowsWithoutGroupId.length + 1,
+    });
+    const lastFlowObject = flowsWithoutGroupId.pop();
+
+    lastFlowObject.isLastFlowInFlowGroup = true;
+    finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
+  }
 
   return finalFlowObjects;
 };
