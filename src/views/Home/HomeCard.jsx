@@ -4,7 +4,7 @@ import { isEqual, difference } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
-import { getTileId } from './util';
+import { getTileId } from '../../utils/home';
 import Tile from './Tile';
 import SuiteScriptTile from './SuiteScriptTile';
 import SortableList from '../../components/Sortable/SortableList';

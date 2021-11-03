@@ -1,9 +1,26 @@
 import { sortBy } from 'lodash';
-import { TILE_STATUS } from '../../utils/constants';
+import { TILE_STATUS } from '../constants';
+import {applicationsList} from '../../constants/applications';
 
-export const FILTER_KEY = 'homeView';
+export const FILTER_KEY = 'homeTiles';
 export const LIST_VIEW = 'list';
 export const TILE_VIEW = 'tile';
+
+export const DEFAULT_FILTERS = {
+  sort: { order: 'asc', orderBy: 'name' },
+  searchBy: ['name', 'displayName', 'description', 'flowsNameAndDescription'],
+  // take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10, todo: ashu
+  take: 10,
+};
+
+export const HOME_ALL_APPLICATIONS = () => {
+  const applications = applicationsList();
+  const defaultFilter = [{ _id: 'all', name: 'All applications'}];
+
+  const options = applications?.map(a => ({_id: a.id, name: a.name}));
+
+  return [...defaultFilter, ...options];
+};
 
 export function sortTiles(tiles = [], tilesOrder = []) {
   let maxIndex = Math.max(tiles.length, tilesOrder.length);
@@ -44,11 +61,11 @@ export function tileStatus(tile) {
 
   switch (status) {
     case TILE_STATUS.IS_PENDING_SETUP:
-      label = 'Continue setup';
+      label = 'Continue setup >';
       variant = 'warning';
       break;
     case TILE_STATUS.UNINSTALL:
-      label = 'Continue uninstall';
+      label = 'Continue uninstall >';
       variant = 'warning';
       break;
     case TILE_STATUS.HAS_ERRORS:
@@ -67,3 +84,27 @@ export const getTileId = tile =>
   tile.ssLinkedConnectionId
     ? `${tile.ssLinkedConnectionId}_${tile._integrationId}`
     : tile._integrationId;
+
+export const getStatusSortableProp = tile => {
+  const { status, numError, offlineConnections } = tile;
+  let statusSortableProp = 0;
+
+  if (offlineConnections?.length) {
+    statusSortableProp = parseInt(offlineConnections?.length, 10);
+  }
+
+  switch (status) {
+    case TILE_STATUS.IS_PENDING_SETUP:
+      statusSortableProp = -1;
+      break;
+    case TILE_STATUS.UNINSTALL:
+      statusSortableProp = -2;
+      break;
+    case TILE_STATUS.HAS_ERRORS:
+      statusSortableProp += parseInt(numError, 10);
+      break;
+    default:
+  }
+
+  return statusSortableProp;
+};
