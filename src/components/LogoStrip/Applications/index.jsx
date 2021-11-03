@@ -10,17 +10,18 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     maxWidth: 300,
-    gridTemplateColumns: applicationsCount => `repeat(${applicationsCount > 5 ? 5 : applicationsCount}, minmax(40px, 60px))`,
+    gridTemplateColumns: styleProps => `repeat(${styleProps.applicationsCount > 5 ? 5 : styleProps.applicationsCount}, ${styleProps.appWidth}px)`,
     '& > *': {
       justifyContent: 'center',
       position: 'relative',
       display: 'flex',
-      height: 40,
+      height: styleProps => styleProps.appWidth,
       border: '1px solid',
       borderColor: theme.palette.secondary.lightest,
       alignItems: 'center',
       '& > img': {
-        maxWidth: '75%',
+        maxWidth: '80%',
+        maxHeight: '80%',
       },
       '&:nth-child(n)': {
         borderLeft: 'none',
@@ -42,7 +43,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function Applications({apps, children, className}) {
   const applicationsCount = apps?.length;
-  const classes = useStyles(applicationsCount);
+  const appWidth = 30;
+  const styleProps = {
+    applicationsCount,
+    appWidth,
+  };
+
+  console.error('What is applications count', styleProps.appWidth);
+  const classes = useStyles(styleProps);
 
   return (
     <ul className={clsx(classes.logoStripWrapper, className)}>
