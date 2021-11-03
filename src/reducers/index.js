@@ -5883,7 +5883,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   }
 
   if (
-    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'responseMappings'].includes(editorType) ||
+    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter', 'responseMappings'].includes(editorType) ||
   HOOK_STAGES.includes(stage)
   ) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};

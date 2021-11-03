@@ -394,7 +394,7 @@ export function* refreshHelperFunctions() {
   yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
-function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
+export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
@@ -521,7 +521,7 @@ export function* requestEditorSampleData({
       );
 
       sampleData = parsedData?.data;
-    } else if (isExportAdvancedField || (flowId && !isPageGenerator)) {
+    } else if (stage && (isExportAdvancedField || (flowId && !isPageGenerator))) {
       // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey )
       sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
     }
@@ -627,7 +627,7 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'responseMappings'];
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter', 'responseMappings'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
