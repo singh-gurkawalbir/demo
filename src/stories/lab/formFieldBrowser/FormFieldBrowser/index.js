@@ -1,15 +1,22 @@
 import React from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, makeStyles, Typography } from '@material-ui/core';
-import UpArrowIcon from '../../../../components/icons/ArrowUpIcon';
-import fieldDefinitions from '../../../../forms/fieldDefinitions';
-import FieldDetails from '../FieldDetails';
+import { makeStyles } from '@material-ui/core';
+import FieldList from '../FieldList';
+import ChangeLog from '../ChangeLog';
+import { FieldPickerProvider } from '../FieldPickerContext';
 
-const useStyles = makeStyles({
-  details: {
-    display: 'block',
-    marginBottom: 8,
+const useStyles = makeStyles(() => ({
+  container: {
+    display: 'flex',
+    justifyContent: 'stretch',
+    width: '100%',
   },
-});
+  list: {
+    flexGrow: 2,
+  },
+  changes: {
+    flexGrow: 1,
+  },
+}));
 
 export default function FormFieldBrowser() {
   const classes = useStyles();
@@ -17,26 +24,15 @@ export default function FormFieldBrowser() {
   // console.log(fieldDefinitions);
 
   return (
-    <div className={classes.container}>
-      {Object.keys(fieldDefinitions).map(resourceType => (
-        <Accordion key={resourceType}>
-          <AccordionSummary expandIcon={<UpArrowIcon />}>
-            <div className={classes.summary}>
-              <Typography variant="subtitle1">{resourceType}</Typography>
-            </div>
-          </AccordionSummary>
-
-          <AccordionDetails className={classes.details}>
-            {Object.keys(fieldDefinitions[resourceType]).map(fieldId => (
-              <FieldDetails
-                key={fieldId}
-                resourceType={resourceType}
-                id={fieldId}
-                field={fieldDefinitions[resourceType][fieldId]} />
-            ))}
-          </AccordionDetails>
-        </Accordion>
-      ))}
-    </div>
+    <FieldPickerProvider>
+      <div className={classes.container}>
+        <div className={classes.list}>
+          <FieldList />
+        </div>
+        <div className={classes.changes}>
+          <ChangeLog />
+        </div>
+      </div>
+    </FieldPickerProvider>
   );
 }
