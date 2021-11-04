@@ -92,6 +92,14 @@ describe('netsuiteUserRoles', () => {
           )
         )
       );
+      expect(saga.next(failedResp).value).toEqual(
+        put(
+          actions.resource.connections.testErrored(
+            connectionId,
+            'Invalid netsuite credentials provided'
+          )
+        )
+      );
     });
 
     test('should check the response for errors on a successful call and subsequently dispatch a successful netsuite userRoles if any of the environments succeeded', () => {
@@ -105,6 +113,13 @@ describe('netsuiteUserRoles', () => {
           actions.resource.connections.netsuite.receivedUserRoles(
             connectionId,
             oneEnvfailedResp
+          )
+        )
+      );
+      expect(saga.next(oneEnvfailedResp).value).toEqual(
+        put(
+          actions.resource.connections.testSuccessful(
+            connectionId
           )
         )
       );
@@ -122,6 +137,13 @@ describe('netsuiteUserRoles', () => {
           )
         )
       );
+      expect(saga.next(successResp).value).toEqual(
+        put(
+          actions.resource.connections.testSuccessful(
+            connectionId
+          )
+        )
+      );
     });
 
     test('should dispatch an Error action when the api call has failed and an exception is thrown ', () => {
@@ -132,6 +154,14 @@ describe('netsuiteUserRoles', () => {
       expect(saga.throw(errorException).value).toEqual(
         put(
           actions.resource.connections.netsuite.requestUserRolesFailed(
+            connectionId,
+            'Some error'
+          )
+        )
+      );
+      expect(saga.next(errorException).value).toEqual(
+        put(
+          actions.resource.connections.testErrored(
             connectionId,
             'Some error'
           )
