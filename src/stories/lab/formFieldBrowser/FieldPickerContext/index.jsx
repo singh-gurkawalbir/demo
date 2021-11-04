@@ -14,7 +14,19 @@ function getStartingChangeSet() {
 export const FieldPickerProvider = ({ children }) => {
   const [changeSet, setChangeSet] = useState(() => getStartingChangeSet());
 
-  const onChange = useCallback((fieldId, isPublic) => {
+  const clearField = useCallback(fieldId => {
+    setChangeSet(current => {
+      const newSet = {...current };
+
+      delete newSet[fieldId];
+
+      localStorage.setItem('fieldPicker', JSON.stringify(newSet));
+
+      return newSet;
+    });
+  }, []);
+
+  const setField = useCallback((fieldId, isPublic) => {
     setChangeSet(current => {
       const newSet = {...current, [fieldId]: isPublic };
 
@@ -26,7 +38,8 @@ export const FieldPickerProvider = ({ children }) => {
 
   const initialState = {
     changeSet,
-    onChange,
+    setField,
+    clearField,
   };
 
   return (

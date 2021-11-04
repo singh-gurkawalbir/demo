@@ -9,12 +9,15 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'stretch',
     width: '100%',
+    height: '100vh',
   },
   list: {
     flexGrow: 2,
+    overflowY: 'auto',
   },
   changes: {
     flexGrow: 1,
+    overflowY: 'auto',
   },
 }));
 

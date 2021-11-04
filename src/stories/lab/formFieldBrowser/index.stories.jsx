@@ -4,6 +4,9 @@ import FormFieldBrowser from './FormFieldBrowser';
 export default {
   title: 'Lab / Form Field Browser',
   component: FormFieldBrowser,
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 const Template = () => (
