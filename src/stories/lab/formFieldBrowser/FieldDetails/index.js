@@ -22,8 +22,10 @@ const useStyles = makeStyles(theme => ({
   },
   toggleContainer: {
     backgroundColor: fade(theme.palette.error.main, 0.3),
-    width: 150,
+    width: 175,
     marginBottom: theme.spacing(1),
+    padding: theme.spacing(1),
+    cursor: 'pointer',
   },
 
   titleContainer: {

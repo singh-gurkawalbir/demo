@@ -19,7 +19,10 @@ export default function ChangeLog() {
       <Typography variant="h3">ChangeLog</Typography>
       {Object.keys(changeSet).map(fieldId => (
         <div key={fieldId}>
-          {fieldId} {changeSet[fieldId] ? 'public' : 'private'}
+          <Typography component="span"><b>{fieldId}</b> should be </Typography>
+          {changeSet[fieldId]
+            ? (<Typography component="span"> instrumented </Typography>)
+            : (<Typography component="span" color="error"> PII </Typography>)}
         </div>
       ))}
     </div>
