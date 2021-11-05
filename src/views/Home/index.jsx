@@ -6,8 +6,8 @@ import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegrati
 import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
 import ResourceDrawer from '../../components/drawer/Resource';
 import { selectors } from '../../reducers';
-import DashboardPageBar from './PageBar';
-import DashboardTiles from './Tiles';
+import HomePageBar from './PageBar';
+import HomeView from './View';
 import InstallZip from './InstallZip';
 import OfflineConnectionDrawer from './OfflineConnectionDrawer';
 
@@ -63,8 +63,8 @@ export default function Dashboard() {
       <DownloadIntegrationDrawer />
       <InstallIntegrationDrawer />
       <OfflineConnectionDrawer />
-      <DashboardPageBar />
-      <DashboardTiles />
+      <HomePageBar />
+      <HomeView />
     </>
   );
 }

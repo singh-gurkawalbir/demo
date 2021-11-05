@@ -21,11 +21,10 @@ import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon'
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, isTileStatusConnectionDown } from './util';
+import { tileStatus, isTileStatusConnectionDown } from '../../utils/home';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
-import { getTemplateUrlName } from '../../utils/template';
 import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 import CeligoTruncate from '../../components/CeligoTruncate';
@@ -116,7 +115,6 @@ function Tile({
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
-  const isCloned = integration?.install?.find(step => step?.isClone);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -126,84 +124,28 @@ function Tile({
   );
   const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
 
-  const templateName = useSelector(state => {
-    if (integration && integration._templateId) {
-      const template = selectors.resource(
-        state,
-        'marketplacetemplates',
-        integration._templateId
-      );
+  const {
+    urlToIntegrationSettings,
+    urlToIntegrationUsers,
+    urlToIntegrationConnections,
+    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
 
-      return getTemplateUrlName(template && template.applications);
-    }
-
-    return null;
-  });
-  const accessLevel =
-    tile.integration &&
-    tile.integration.permissions &&
-    tile.integration.permissions.accessLevel;
+  const accessLevel = tile.integration?.permissions?.accessLevel;
   const status = tileStatus(tile);
   const isConnectionDown = isTileStatusConnectionDown(tile);
   const integrationAppTileName =
     tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
-  let urlToIntegrationSettings = templateName
-    ? `/templates/${templateName}/${tile._integrationId}`
-    : `/integrations/${tile._integrationId}`;
-  let urlToIntegrationUsers = templateName
-    ? `/templates/${templateName}/${tile._integrationId}/users`
-    : `/integrations/${tile._integrationId}/users`;
 
-  if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    if (tile._connectorId) {
-      urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
-    } else {
-      urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
-    }
-    urlToIntegrationUsers = urlToIntegrationSettings;
-  } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
-    urlToIntegrationUsers = urlToIntegrationSettings;
-  } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-  }
   const handleConnectionDownStatusClick = useCallback(event => {
     event.stopPropagation();
-    if (tile._connectorId) {
-      history.push(
-        getRoutePath(
-          `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
-        )
-      );
-    } else {
-      history.push(
-        getRoutePath(
-          `/integrations/${tile._integrationId}/connections`
-        )
-      );
-    }
-  }, [history, integrationAppTileName, tile._connectorId, tile._integrationId]);
+    history.push(urlToIntegrationConnections);
+  }, [history, urlToIntegrationConnections]);
 
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
-      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-        if (tile._connectorId) {
-          history.push(
-            getRoutePath(
-              `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
-            )
-          );
-        } else {
-          history.push(
-            getRoutePath(
-              `/integrations/${tile._integrationId}/setup`
-            )
-          );
-        }
-      } else if (isUserInErrMgtTwoDotZero) {
-        history.push(getRoutePath(urlToIntegrationSettings));
+      if (tile.status === TILE_STATUS.IS_PENDING_SETUP || isUserInErrMgtTwoDotZero) {
+        history.push(urlToIntegrationStatus);
       } else {
         dispatch(
           actions.patchFilter('jobs', {
@@ -211,20 +153,10 @@ function Tile({
           })
         );
 
-        if (tile._connectorId) {
-          history.push(
-            getRoutePath(
-              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`
-            )
-          );
-        } else {
-          history.push(
-            getRoutePath(`/integrations/${tile._integrationId}/dashboard`)
-          );
-        }
+        history.push(urlToIntegrationStatus);
       }
     },
-    [tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant, urlToIntegrationSettings]
+    [dispatch, history, isUserInErrMgtTwoDotZero, status.variant, tile.status, urlToIntegrationStatus]
   );
 
   const handleUsersClick = useCallback(event => {
