@@ -122,7 +122,7 @@ export default function HomeSearchInput({value, onChange}) {
 
   return (
 
-    <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})} onBlur={handleBlur}>
+    <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})} >
       {!isSearchIconHidden && (
         <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />
@@ -131,6 +131,7 @@ export default function HomeSearchInput({value, onChange}) {
       <InputBase
         value={value}
         ref={inputRef}
+        onBlur={handleBlur}
         onFocus={focusHandler}
         onChange={onChangeHandler}
         placeholder="Search integrations & flows"
