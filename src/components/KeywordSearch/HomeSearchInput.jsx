@@ -96,9 +96,9 @@ export default function HomeSearchInput({value, onChange}) {
       setSearchIconHidden(true);
       setCloseIconHidden(true);
     } else {
-      setSearchIconHidden(true);
       setCloseIconHidden(false);
     }
+    setSearchIconHidden(true);
     onChange(e);
   };
   const handleBlur = e => {
