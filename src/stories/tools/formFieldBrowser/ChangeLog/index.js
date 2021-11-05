@@ -26,6 +26,13 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     justifyContent: 'flex-end',
   },
+  fieldList: {
+    marginLeft: theme.spacing(2),
+  },
+  resourceLabel: {
+    marginTop: theme.spacing(1),
+    fontWeight: 'bold',
+  },
 }));
 
 export default function ChangeLog() {
@@ -65,7 +72,7 @@ export default function ChangeLog() {
             onCopy={handleCopy}
             text={JSON.stringify(changeSet, null, 2)}>
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+              tooltipProps={{title: 'Copy proposed changes to clipboard', placement: 'bottom'}}
               buttonSize={{size: 'small'}}>
               <CopyIcon />
             </IconButtonWithTooltip>
@@ -80,12 +87,25 @@ export default function ChangeLog() {
       </div>
 
       <div className={classes.log}>
-        {Object.keys(changeSet).map(fieldId => (
-          <div key={fieldId}>
-            <Typography variant="body2" component="span"><b>{fieldId}</b> </Typography>
-            {changeSet[fieldId]
-              ? (<Typography variant="inherit"> (safe) </Typography>)
-              : (<Typography variant="inherit" color="error"> (PII) </Typography>)}
+        {Object.keys(changeSet).map(resourceType => (
+          <div key={resourceType}>
+            {Object.keys(changeSet[resourceType]).length > 0 && (
+              <Typography className={classes.resourceLabel} variant="body2">
+                {resourceType}
+              </Typography>
+            )}
+            <div className={classes.fieldList}>
+              {Object.keys(changeSet[resourceType]).map(fieldId => (
+                <div key={fieldId}>
+                  <Typography variant="body2" component="span">
+                    <b>{fieldId}</b>
+                  </Typography>
+                  {changeSet[resourceType][fieldId]
+                    ? (<Typography variant="inherit"> (safe) </Typography>)
+                    : (<Typography variant="inherit" color="error"> (PII) </Typography>)}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>

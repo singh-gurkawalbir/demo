@@ -47,18 +47,18 @@ export default function FieldDetails({id, resourceType, field}) {
   const classes = useStyles();
   const helpKey = `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}.${id}`;
   const { changeSet, clearField, setField } = useFieldPickerContext();
-
+  const changedValue = changeSet[resourceType]?.[id];
+  const hasChange = changedValue !== undefined;
   // we favor the changelog setting.
-  const hasChange = changeSet[helpKey] !== undefined;
   const canInstrument = hasChange
-    ? changeSet[helpKey]
+    ? changedValue
     : field.canInstrument || false;
 
   function handleClick() {
-    if (hasChange && field.canInstrument !== changeSet[helpKey]) {
-      clearField(helpKey);
+    if (hasChange && field.canInstrument !== changedValue) {
+      clearField(resourceType, id);
     } else {
-      setField(helpKey, !canInstrument);
+      setField(resourceType, id, !canInstrument);
     }
   }
 
