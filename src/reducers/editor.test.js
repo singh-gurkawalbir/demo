@@ -62,7 +62,7 @@ describe('AFE region selectors test cases', () => {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
-        stage: 'exportFilter',
+        editorType: 'exportFilter',
       };
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
@@ -552,6 +552,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'inputFilter',
+        editorType: 'inputFilter',
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
@@ -583,6 +584,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'exportFilter',
+        editorType: 'exportFilter',
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
@@ -615,6 +617,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'transform',
+        editorType: 'flowTransform',
       };
       state.session.editors.def = {
         id: 'def',
@@ -622,6 +625,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '999',
         flowId: 'flow-456',
         stage: 'postResponseMapHook',
+        editorType: 'postResponseMapHook',
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
@@ -638,7 +642,7 @@ describe('AFE region selectors test cases', () => {
       state.data.resources = {
         exports: [{
           _id: '123',
-          type: 'webhook',
+          adaptorType: 'HTTPExport',
           _connectionId: 'conn-id',
         }],
       };
@@ -652,6 +656,9 @@ describe('AFE region selectors test cases', () => {
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
+        sampleData: {
+          data: sampleData,
+        },
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);

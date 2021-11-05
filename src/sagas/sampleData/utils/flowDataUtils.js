@@ -191,13 +191,15 @@ export function* requestSampleDataForImports({
       break;
     }
 
+    case 'processedFlowInput':
     case 'responseTransform':
     case 'importMappingExtract':
     case 'importMapping':
     case 'responseMappingExtract':
     case 'responseMapping':
     case 'postResponseMap':
-    case 'preMap': {
+    case 'preMap':
+    case 'postMap': {
       yield call(requestProcessorData, {
         flowId,
         resourceId,

@@ -34,12 +34,14 @@ export default function DynaURI_afe(props) {
     flowId,
     description,
     formKey,
+    stage,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
+  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
 
   const {parentType, parentId} = getParentResourceContext(match.url);
 
@@ -54,14 +56,14 @@ export default function DynaURI_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: flowDataStage,
       onSave: handleSave,
       parentType,
       parentId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
 
   return (
     <>
@@ -70,6 +72,7 @@ export default function DynaURI_afe(props) {
           description={description}
           id={id}
           value={value}
+          stage={flowDataStage}
           {...props}
         />
         <ActionButton

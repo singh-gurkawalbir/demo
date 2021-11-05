@@ -118,7 +118,6 @@ export default function DynaCsvParse_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
       onSave: handleSave,
     }));
 
