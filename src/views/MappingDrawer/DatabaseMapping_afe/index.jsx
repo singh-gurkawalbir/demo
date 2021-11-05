@@ -33,7 +33,7 @@ export default function DatabaseMapping_afe() {
       fieldId,
       resourceId: importId,
       resourceType: 'imports',
-      stage: 'inputFilter', // TODO: verify
+      stage: 'importMappingExtract',
       arrayIndex: index && parseInt(index, 10),
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
