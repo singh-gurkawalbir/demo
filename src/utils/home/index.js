@@ -8,16 +8,15 @@ export const TILE_VIEW = 'tile';
 
 export const DEFAULT_FILTERS = {
   sort: { order: 'asc', orderBy: 'name' },
-  searchBy: ['name', 'displayName', 'description', 'flowsNameAndDescription'],
-  // take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10, todo: ashu
-  take: 10,
+  searchBy: ['name', 'description', 'flowsNameAndDescription'],
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
 export const HOME_ALL_APPLICATIONS = () => {
   const applications = applicationsList();
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];
 
-  const options = applications?.map(a => ({_id: a.id, name: a.name}));
+  const options = applications.map(a => ({_id: a.id, name: a.name}));
 
   return [...defaultFilter, ...options];
 };
@@ -90,7 +89,7 @@ export const getStatusSortableProp = tile => {
   let statusSortableProp = 0;
 
   if (offlineConnections?.length) {
-    statusSortableProp = parseInt(offlineConnections?.length, 10);
+    statusSortableProp = offlineConnections?.length;
   }
 
   switch (status) {
@@ -101,7 +100,7 @@ export const getStatusSortableProp = tile => {
       statusSortableProp = -2;
       break;
     case TILE_STATUS.HAS_ERRORS:
-      statusSortableProp += parseInt(numError, 10);
+      statusSortableProp += numError;
       break;
     default:
   }

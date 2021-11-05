@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
 const emptyObject = {};
 export default function IntegrationCeligoPageBar() {
   const location = useLocation();
@@ -59,6 +60,7 @@ export default function IntegrationCeligoPageBar() {
     return {create, install};
   }, shallowEqual);
   const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard || emptyObject, shallowEqual);
+  const isListView = useSelector(state => selectors.isHomeListView(state));
 
   return (
     <CeligoPageBar title="My integrations">
@@ -88,7 +90,7 @@ export default function IntegrationCeligoPageBar() {
         <ActionGroup className={classes.viewsWrapper}>
           <IconButtonWithTooltip
             data-test="tileView"
-            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view !== LIST_VIEW})}
+            className={clsx(classes.viewIcon, {[classes.activeView]: !isListView})}
             onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: TILE_VIEW}}))}
             tooltipProps={{title: 'Tile view', placement: 'bottom'}}
             buttonSize={{size: 'small'}}>
@@ -97,7 +99,7 @@ export default function IntegrationCeligoPageBar() {
 
           <IconButtonWithTooltip
             data-test="listView"
-            className={clsx(classes.viewIcon, {[classes.activeView]: homePreferences.view === LIST_VIEW})}
+            className={clsx(classes.viewIcon, {[classes.activeView]: isListView})}
             onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: LIST_VIEW} }))}
             tooltipProps={{title: 'List view', placement: 'bottom'}}
             buttonSize={{size: 'small'}}>

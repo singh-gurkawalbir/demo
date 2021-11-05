@@ -5,12 +5,11 @@ import TileView from './TileView';
 import ListView from './ListView';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
-import { FILTER_KEY, LIST_VIEW, DEFAULT_FILTERS } from '../../../utils/home';
+import { FILTER_KEY, DEFAULT_FILTERS } from '../../../utils/home';
 
 export default function HomeView() {
   const dispatch = useDispatch();
-
-  const viewType = useSelector(state => selectors.userPreferences(state).dashboard?.view);
+  const isListView = useSelector(state => selectors.isHomeListView(state));
   const searchInput = useSelector(state => selectors.filter(state, FILTER_KEY)?.keyword);
 
   // lazily load flows, only if search input is entered
@@ -27,7 +26,7 @@ export default function HomeView() {
 
   return (
     <LoadResources required resources={resourcesToLoad}>
-      {viewType === LIST_VIEW
+      {isListView
         ? <ListView />
         : <TileView />}
     </LoadResources>

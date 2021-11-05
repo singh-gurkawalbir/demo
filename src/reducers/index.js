@@ -535,65 +535,69 @@ selectors.sessionValidTimestamp = state => state && state.auth && state.auth.aut
 
 // #region resource selectors
 
-selectors.mkTileApplications = () => createSelector(
-  (_, tile) => tile,
-  state => state?.data?.resources?.integrations,
-  state => state?.data?.resources?.connections,
-  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
-  (state, tile) => selectors.resource(state, 'integrations', tile?._integrationId),
-  state => selectors.userPreferences(state).dashboard,
-  (tile, integrations = emptyArray, connections = emptyArray, isIAV2, integration, homePreferences) => {
-    let applications = [];
+selectors.mkTileApplications = () => {
+  const resourceSel = selectors.makeResourceSelector();
 
-    if (!tile || (homePreferences?.view !== LIST_VIEW && !tile._connectorId)) {
-      return emptyArray;
-    }
-    if (!tile._connectorId) {
-      integration?._registeredConnectionIds?.forEach(r => {
-        const connection = connections.find(c => c._id === r);
+  return createSelector(
+    (_, tile) => tile,
+    state => state?.data?.resources?.integrations,
+    state => state?.data?.resources?.connections,
+    (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
+    (state, tile) => resourceSel(state, 'integrations', tile?._integrationId),
+    state => selectors.isHomeListView(state),
+    (tile, integrations = emptyArray, connections = emptyArray, isIAV2, integration, isListView) => {
+      let applications = [];
 
-        applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
-      });
-
-      return uniq(applications);
-    }
-
-    if (!isIAV2) {
-      applications = tile?.connector?.applications || emptyArray;
-      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
-        applications[0] = 'magento1';
+      if (!tile || (!isListView && !tile._connectorId)) {
+        return emptyArray;
       }
-    } else {
-      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
-      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+      if (!tile._connectorId) {
+        integration?._registeredConnectionIds?.forEach(r => {
+          const connection = connections.find(c => c._id === r);
 
-      childIntegrations.forEach(i => {
-        const integrationConnections = connections.filter(c => c._integrationId === i._id);
+          applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
+        });
 
-        integrationConnections.forEach(c => {
+        return uniq(applications);
+      }
+
+      if (!isIAV2) {
+        applications = tile?.connector?.applications || emptyArray;
+        // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+        if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
+          applications[0] = 'magento1';
+        }
+      } else {
+        const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+        const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+
+        childIntegrations.forEach(i => {
+          const integrationConnections = connections.filter(c => c._integrationId === i._id);
+
+          integrationConnections.forEach(c => {
+            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+          });
+        });
+
+        const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+
+        parentIntegrationConnections.forEach(c => {
           applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
         });
-      });
+        applications = uniq(applications);
+      }
 
-      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+      // Make NetSuite always the last application
+      if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
+      // Only consider up to four applications only for tile view
+      if (applications.length > 4 && !isListView) {
+        applications.length = 4;
+      }
 
-      parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
-      });
-      applications = uniq(applications);
+      return applications;
     }
-
-    // Make NetSuite always the last application
-    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
-    // Only consider up to four applications only for tile view
-    if (applications.length > 4 && homePreferences?.view !== LIST_VIEW) {
-      applications.length = 4;
-    }
-
-    return applications;
-  }
-);
+  );
+};
 
 const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
@@ -1752,9 +1756,10 @@ selectors.mkFilteredHomeTiles = () => {
     state => tilesSelector(state),
     state => selectors.suiteScriptLinkedTiles(state),
     state => selectors.userPreferences(state).dashboard,
+    state => selectors.isHomeListView(state),
     state => selectors.filter(state, HOME_FILTER_KEY),
-    (tiles = emptyArray, ssTiles = emptyArray, homePreferences, filterConfig) => {
-      const {view, tilesOrder} = homePreferences || emptyObject;
+    (tiles = emptyArray, ssTiles = emptyArray, homePreferences, isListView, filterConfig) => {
+      const {tilesOrder} = homePreferences || emptyObject;
       const {take} = filterConfig || emptyObject;
 
       const suiteScriptLinkedTiles = ssTiles.filter(t => {
@@ -1770,9 +1775,9 @@ selectors.mkFilteredHomeTiles = () => {
       // if(applications && !applications.includes('all')) {
       //   result = result.filter
       // }
-      if (typeof take !== 'number' || take < 1 || view !== LIST_VIEW) {
+      if (typeof take !== 'number' || take < 1 || !isListView) {
         return {
-          filteredTiles: view === LIST_VIEW ? result : sortTiles(
+          filteredTiles: isListView ? result : sortTiles(
             result,
             tilesOrder
           ),
@@ -1784,7 +1789,7 @@ selectors.mkFilteredHomeTiles = () => {
       const slicedTiles = result.slice(0, take);
 
       return {
-        filteredTiles: view === LIST_VIEW ? slicedTiles : sortTiles(
+        filteredTiles: isListView ? slicedTiles : sortTiles(
           slicedTiles,
           tilesOrder
         ),
@@ -1795,95 +1800,106 @@ selectors.mkFilteredHomeTiles = () => {
     });
 };
 
-selectors.homeTileRedirectUrl = () => createSelector(
-  (_, tile) => tile,
-  state => selectors.isOwnerUserInErrMgtTwoDotZero(state),
-  (state, tile) => selectors.resource(state, 'integrations', tile?._integrationId),
-  (state, tile) => {
-    const integration = selectors.resource(state, 'integrations', tile?._integrationId);
+selectors.homeTileRedirectUrl = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+  const marketplaceResourceSel = selectors.makeResourceSelector();
 
-    if (integration?._templateId) {
-      const template = selectors.resource(state, 'marketplacetemplates', integration._templateId);
+  return createSelector(
+    (_, tile) => tile,
+    state => selectors.isOwnerUserInErrMgtTwoDotZero(state),
+    (state, tile) => resourceSelector(state, 'integrations', tile?._integrationId),
+    (state, tile) => {
+      const integration = resourceSelector(state, 'integrations', tile?._integrationId);
 
-      return getTemplateUrlName(template?.applications);
-    }
+      if (integration?._templateId) {
+        const template = marketplaceResourceSel(state, 'marketplacetemplates', integration._templateId);
 
-    return null;
-  },
-  (tile, isUserInErrMgtTwoDotZero, integration, templateName) => {
-    // separate logic for suitescript tiles
-    if (tile.ssLinkedConnectionId) {
-      let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
-      let urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`;
+        return getTemplateUrlName(template?.applications);
+      }
+
+      return null;
+    },
+    (tile, isUserInErrMgtTwoDotZero, integration, templateName) => {
+      // separate logic for suitescript tiles
+      if (tile.ssLinkedConnectionId) {
+        let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
+        let urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`;
+
+        if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`;
+          urlToIntegrationStatus = urlToIntegrationSettings;
+        } else if (tile.status === TILE_STATUS.UNINSTALL) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
+        } else if (tile._connectorId) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
+        }
+
+        if (tile._connectorId) {
+          urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`;
+        }
+
+        return {
+          urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
+          urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
+        };
+      }
+
+      const isCloned = integration?.install?.find(step => step?.isClone);
+      const integrationAppTileName =
+      tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
+
+      let urlToIntegrationSettings = templateName
+        ? `/templates/${templateName}/${tile._integrationId}`
+        : `/integrations/${tile._integrationId}`;
+
+      let urlToIntegrationUsers = templateName
+        ? `/templates/${templateName}/${tile._integrationId}/users`
+        : `/integrations/${tile._integrationId}/users`;
+
+      let urlToIntegrationStatus = `/integrations/${tile._integrationId}/dashboard`;
+      let urlToIntegrationConnections = `/integrations/${tile._integrationId}/connections`;
 
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-        urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`;
+        if (tile._connectorId) {
+          urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+        } else {
+          urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
+        }
+        urlToIntegrationUsers = urlToIntegrationSettings;
         urlToIntegrationStatus = urlToIntegrationSettings;
       } else if (tile.status === TILE_STATUS.UNINSTALL) {
-        urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
+        urlToIntegrationUsers = urlToIntegrationSettings;
       } else if (tile._connectorId) {
-        urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+        urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
       }
 
       if (tile._connectorId) {
-        urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`;
+        urlToIntegrationConnections = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`;
+      }
+
+      if (isUserInErrMgtTwoDotZero) {
+        urlToIntegrationStatus = urlToIntegrationSettings;
+      } else if (tile._connectorId) {
+        urlToIntegrationStatus = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`;
       }
 
       return {
         urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
+        urlToIntegrationUsers: getRoutePath(urlToIntegrationUsers),
+        urlToIntegrationConnections: getRoutePath(urlToIntegrationConnections),
         urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
       };
     }
+  );
+};
 
-    const isCloned = integration?.install?.find(step => step?.isClone);
-    const integrationAppTileName =
-    tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
+selectors.isHomeListView = state => {
+  const homePreferences = selectors.userPreferences(state).dashboard || emptyObject;
 
-    let urlToIntegrationSettings = templateName
-      ? `/templates/${templateName}/${tile._integrationId}`
-      : `/integrations/${tile._integrationId}`;
-
-    let urlToIntegrationUsers = templateName
-      ? `/templates/${templateName}/${tile._integrationId}/users`
-      : `/integrations/${tile._integrationId}/users`;
-
-    let urlToIntegrationStatus = `/integrations/${tile._integrationId}/dashboard`;
-    let urlToIntegrationConnections = `/integrations/${tile._integrationId}/connections`;
-
-    if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-      if (tile._connectorId) {
-        urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
-      } else {
-        urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
-      }
-      urlToIntegrationUsers = urlToIntegrationSettings;
-      urlToIntegrationStatus = urlToIntegrationSettings;
-    } else if (tile.status === TILE_STATUS.UNINSTALL) {
-      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
-      urlToIntegrationUsers = urlToIntegrationSettings;
-    } else if (tile._connectorId) {
-      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-      urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-    }
-
-    if (tile._connectorId) {
-      urlToIntegrationConnections = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`;
-    }
-
-    if (isUserInErrMgtTwoDotZero) {
-      urlToIntegrationStatus = urlToIntegrationSettings;
-    } else if (tile._connectorId) {
-      urlToIntegrationStatus = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`;
-    }
-
-    return {
-      urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
-      urlToIntegrationUsers: getRoutePath(urlToIntegrationUsers),
-      urlToIntegrationConnections: getRoutePath(urlToIntegrationConnections),
-      urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
-    };
-  }
-);
+  return homePreferences.view === LIST_VIEW;
+};
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.

@@ -33,7 +33,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LogoStrip({applications}) {
+const emptyArr = [];
+export default function LogoStrip({applications = emptyArr}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const applicationsCount = applications?.length || 0;
   const maxApps = 10;

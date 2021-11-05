@@ -1,4 +1,4 @@
-import React, { useState, useRef} from 'react';
+import React, { useState, useRef, useCallback} from 'react';
 import clsx from 'clsx';
 import {InputBase, IconButton} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -84,12 +84,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function HomeSearchInput({value, onChange}) {
+  const inputRef = useRef();
+  const classes = useStyles();
   const [searchFocused, setSearchFocused] = useState(false);
   const [isSearchIconHidden, setSearchIconHidden] = useState(false);
   const [isCloseIconHidden, setCloseIconHidden] = useState(true);
-  const inputRef = useRef();
-  const classes = useStyles();
-  const onChangeHandler = e => {
+
+  const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
       inputRef.current.firstChild.placeholder = '';
@@ -100,8 +101,9 @@ export default function HomeSearchInput({value, onChange}) {
     }
     setSearchIconHidden(true);
     onChange(e);
-  };
-  const handleBlur = e => {
+  }, [onChange]);
+
+  const handleBlur = useCallback(e => {
     if (e.target.value !== '') {
       setSearchIconHidden(true);
       setCloseIconHidden(false);
@@ -110,12 +112,14 @@ export default function HomeSearchInput({value, onChange}) {
       setSearchIconHidden(false);
     }
     setSearchFocused(false);
-  };
-  const onClearInput = e => {
+  }, []);
+
+  const onClearInput = useCallback(e => {
     // eslint-disable-next-line no-param-reassign
     e.target.value = '';
     onChangeHandler(e);
-  };
+  }, [onChangeHandler]);
+
   const focusHandler = () => {
     setSearchFocused(true);
   };
