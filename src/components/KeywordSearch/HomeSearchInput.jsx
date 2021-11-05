@@ -122,7 +122,7 @@ export default function HomeSearchInput({value, onChange}) {
 
   return (
 
-    <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})} >
+    <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})}>
       {!isSearchIconHidden && (
         <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />
