@@ -21,6 +21,7 @@ export const BASE_FLOW_INPUT_STAGE = 'flowInput';
 export const LOOKUP_FLOW_DATA_STAGE = 'inputFilter';
 export const IMPORT_FLOW_DATA_STAGE = 'importMappingExtract';
 
+// TODO @RAGHU : Add comments on the different stages and their use cases
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',
