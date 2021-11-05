@@ -11,8 +11,22 @@ function getStartingChangeSet() {
   return startingChangeSet;
 }
 
+function setLocalStorage(newSet) {
+  localStorage.setItem('fieldPicker', JSON.stringify(newSet));
+}
+
 export const FieldPickerProvider = ({ children }) => {
   const [changeSet, setChangeSet] = useState(() => getStartingChangeSet());
+
+  const clearAllFields = useCallback(() => {
+    setChangeSet(() => {
+      const newSet = {};
+
+      setLocalStorage(newSet);
+
+      return newSet;
+    });
+  }, []);
 
   const clearField = useCallback(fieldId => {
     setChangeSet(current => {
@@ -20,7 +34,7 @@ export const FieldPickerProvider = ({ children }) => {
 
       delete newSet[fieldId];
 
-      localStorage.setItem('fieldPicker', JSON.stringify(newSet));
+      setLocalStorage(newSet);
 
       return newSet;
     });
@@ -30,7 +44,7 @@ export const FieldPickerProvider = ({ children }) => {
     setChangeSet(current => {
       const newSet = {...current, [fieldId]: isPublic };
 
-      localStorage.setItem('fieldPicker', JSON.stringify(newSet));
+      setLocalStorage(newSet);
 
       return newSet;
     });
@@ -40,6 +54,7 @@ export const FieldPickerProvider = ({ children }) => {
     changeSet,
     setField,
     clearField,
+    clearAllFields,
   };
 
   return (

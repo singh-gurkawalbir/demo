@@ -12,11 +12,11 @@ const useStyles = makeStyles(() => ({
     height: '100vh',
   },
   list: {
-    flexGrow: 2,
+    flexGrow: 1,
     overflowY: 'auto',
   },
   changes: {
-    flexGrow: 1,
+    minWidth: 450,
     overflowY: 'auto',
   },
 }));

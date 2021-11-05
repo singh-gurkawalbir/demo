@@ -12,20 +12,19 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     width: '100%',
     justifyContent: 'stretch',
+    cursor: 'pointer',
+    marginBottom: theme.spacing(1),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   fieldInfoContainer: {
-    marginBottom: theme.spacing(1),
     padding: theme.spacing(1),
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
     background: theme.palette.background.paper2,
     flexGrow: 1,
   },
   toggleContainer: {
     backgroundColor: fade(theme.palette.error.main, 0.3),
     width: 175,
-    marginBottom: theme.spacing(1),
     padding: theme.spacing(1),
-    cursor: 'pointer',
   },
 
   titleContainer: {
@@ -36,6 +35,9 @@ const useStyles = makeStyles(theme => ({
   },
   canInstrument: {
     backgroundColor: fade(theme.palette.success.main, 0.3),
+  },
+  hasChange: {
+    border: `solid 1px ${theme.palette.info.light}`,
   },
 }));
 
@@ -61,7 +63,7 @@ export default function FieldDetails({id, resourceType, field}) {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={clsx(classes.root, {[classes.hasChange]: hasChange})} onClick={() => handleClick()}>
       <div className={classes.fieldInfoContainer}>
         <div className={classes.titleContainer}>
           <Typography><b>{field.label}</b></Typography>
@@ -76,7 +78,6 @@ export default function FieldDetails({id, resourceType, field}) {
         <Typography variant="body2">UI Component: {field.type}</Typography>
       </div>
       <div
-        onClick={() => handleClick()}
         className={clsx(classes.toggleContainer, {
           [classes.canInstrument]: canInstrument,
         })}>
