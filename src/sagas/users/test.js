@@ -36,6 +36,7 @@ import {
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
 import getRequestOptions from '../../utils/requestOptions';
 import { APIException } from '../api/requestInterceptors/utils';
+import { getResourceCollection } from '../resources';
 
 const changeEmailError = new APIException({
   status: 403,
@@ -504,6 +505,12 @@ describe('all modal sagas', () => {
 
         expect(saga.next(response).value).toEqual(
           put(actions.user.org.accounts.trialLicenseIssued(response)),
+        );
+        expect(saga.next().value).toEqual(
+          call(getResourceCollection, {
+            resourceType: 'licenses',
+            refresh: true,
+          }),
         );
         expect(saga.next().done).toEqual(true);
       });
