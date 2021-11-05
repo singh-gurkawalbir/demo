@@ -25,6 +25,7 @@ export default function FieldHelp({
   helpKey,
   resourceContext,
   escapeUnsecuredDomains,
+  customLabel,
   noApi = false,
 }) {
   const classes = useStyles();
@@ -34,7 +35,7 @@ export default function FieldHelp({
     <Help
       key={`help-${id}`}
       data-test={`help-${id}`}
-      title={label || 'Field Help'}
+      title={customLabel || label || 'Field Help'}
       className={classes.iconButton}
       caption={developer && !noApi && helpKey}
       helpKey={helpKey}

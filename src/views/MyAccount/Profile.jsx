@@ -242,8 +242,9 @@ export default function ProfilePanel() {
         name: 'showFullDateTime',
         type: 'checkbox',
         helpKey: 'myaccount.showFullDateTime',
-        label: 'Show full date-time for timestamp fields',
-        defaultValue: preferences && preferences.showFullDateTime,
+        label: 'Show timestamps as full date/time',
+        customLabel: 'Timestamp displayed as full date/time ',
+        defaultValue: preferences?.showFullDateTime,
       },
       developer: {
         id: 'developer',
