@@ -893,8 +893,10 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
     const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
     const lastFlowObject = resultFlowObjects.pop();
 
-    lastFlowObject.isLastFlowInFlowGroup = true;
-    finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
+    if (lastFlowObject) {
+      lastFlowObject.isLastFlowInFlowGroup = true;
+      finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
+    }
   });
 
   const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
@@ -906,8 +908,10 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
     });
     const lastFlowObject = flowsWithoutGroupId.pop();
 
-    lastFlowObject.isLastFlowInFlowGroup = true;
-    finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
+    if (lastFlowObject) {
+      lastFlowObject.isLastFlowInFlowGroup = true;
+      finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
+    }
   }
 
   return finalFlowObjects;

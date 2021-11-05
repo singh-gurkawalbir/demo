@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
+import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
@@ -70,9 +71,16 @@ const useStyles = makeStyles(theme => ({
   },
   flowGroupTitle: {
     textTransform: 'uppercase',
+    paddingTop: theme.spacing(1),
   },
   flowGroupDescription: {
     marginTop: theme.spacing(2),
+  },
+  flowInFlowGroupName: {
+    border: 'none',
+  },
+  flowInFlowGroupNameHover: {
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 const integrationsFilterConfig = {
@@ -90,13 +98,13 @@ const useColumns = () => [
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
 
-      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
+      return clsx(r?.groupName || r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
       if (r?.groupName) {
-        return <Typography variant="overline" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
       }
 
       return r?.doc?.name || r?.doc?._id;
@@ -109,7 +117,7 @@ const useColumns = () => [
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
 
-      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
+      return clsx(r?.groupName || r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },

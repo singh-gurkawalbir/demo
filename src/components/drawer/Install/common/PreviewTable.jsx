@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
@@ -12,6 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowGroupTitle: {
     textTransform: 'uppercase',
+    paddingTop: theme.spacing(1),
   },
   firstFlowName: {
     marginTop: theme.spacing(1),
@@ -19,7 +21,12 @@ const useStyles = makeStyles(theme => ({
   flowGroupDescription: {
     marginTop: theme.spacing(3),
   },
-  lastFlowInFlowGroup: {},
+  flowInFlowGroupName: {
+    border: 'none',
+  },
+  flowInFlowGroupNameHover: {
+    backgroundColor: theme.palette.background.paper,
+  },
 }));
 const useColumns = () => [
   {
@@ -29,13 +36,13 @@ const useColumns = () => [
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
 
-      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
+      return clsx(!r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
       if (r?.groupName) {
-        return <Typography variant="overline" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
       }
 
       return r?.doc?.name || r?.doc?._id;
@@ -48,7 +55,7 @@ const useColumns = () => [
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
 
-      return r?.groupName || r?.isLastFlowInFlowGroup ? classes : '';
+      return clsx(!r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
