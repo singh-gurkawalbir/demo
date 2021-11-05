@@ -20,11 +20,11 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
     const parentContext = selectors.formParentContext(state, formKey) || {};
 
     return {...parentContext};
-  });
+  }, shallowEqual);
   const eligibleForFlowSampleData = initComplete && !skipCommit && ELIGIBLE_RESOURCE_TYPES.includes(resourceType);
 
   const isLookUpExport = useSelector(state =>
-    flowId && selectors.isLookUpExport(state, { flowId, resourceId, resourceType })
+    selectors.isLookUpExport(state, { flowId, resourceId, resourceType })
   );
 
   const { formValues, oneToManyValues, formValuesWithoutOneToMany } = useSelector(state => {

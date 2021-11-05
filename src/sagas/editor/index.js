@@ -575,9 +575,8 @@ export function* requestEditorSampleData({
       delete body.sampleData;
       delete body.templateVersion;
     } else {
-      if (resource?.oneToMany) {
-        resource = { ...resource, oneToMany: false };
-      }
+      // As UI does oneToMany processing and we do not need BE changes w.r.to oneToMany, we make oneToMany prop as false  for getContext API
+      resource = { ...resource, oneToMany: false };
       if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
         // create http sub doc with paging method as /getContext expects it
         // map rest paging method to http paging method

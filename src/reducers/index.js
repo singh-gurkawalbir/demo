@@ -5608,8 +5608,8 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
  * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
  */
 selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
-  // If not an export , then it is not a lookup
-  if (resourceType !== 'exports' || !resourceId) return false;
+  // If not an export or not inside a flow context , then it is not a lookup
+  if (resourceType !== 'exports' || !resourceId || !flowId) return false;
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag

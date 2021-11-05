@@ -362,7 +362,7 @@ export function* _requestExportSampleData({ formKey, refreshCache, executeProces
 
     return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
-  const isLookUpExport = flowId && (yield select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' }));
+  const isLookUpExport = yield select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' });
 
   if (isLookUpExport) {
     yield call(_requestLookupSampleData, { formKey, refreshCache });

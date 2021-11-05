@@ -1086,7 +1086,7 @@ describe('editor sagas', () => {
               templateVersion: undefined,
               flowId,
               integrationId: 'Integration-1234',
-              export: {},
+              export: { oneToMany: false },
               fieldPath: 'filter',
             },
           },
