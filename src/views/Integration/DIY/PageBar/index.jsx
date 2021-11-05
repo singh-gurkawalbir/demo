@@ -9,6 +9,7 @@ import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import EditableText from '../../../../components/EditableText';
+import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import TrashIcon from '../../../../components/icons/TrashIcon';
@@ -19,6 +20,7 @@ import { HOME_PAGE_PATH, STANDALONE_INTEGRATION } from '../../../../utils/consta
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../../utils/messageStore';
 import getRoutePath from '../../../../utils/routePaths';
+import { camelCase } from '../../../../utils/string';
 import { useAvailableTabs } from '../useAvailableTabs';
 
 const integrationsFilterConfig = { type: 'integrations' };
@@ -50,6 +52,7 @@ export default function PageBar() {
   const {
     name,
     description,
+    childDisplayName,
     isIntegrationApp,
     hasIntegration,
     supportsChild,
@@ -67,6 +70,7 @@ export default function PageBar() {
         templateId: integration._templateId,
         mode: integration.mode,
         name: integration.name,
+        childDisplayName: integration.childDisplayName,
         isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
@@ -297,9 +301,9 @@ export default function PageBar() {
         <>
           <TextButton
             onClick={handleAddNewChild}
-            startIcon={<CopyIcon />}
+            startIcon={<AddIcon />}
             data-test="addNewStore">
-            Add new child
+            {`Add new ${camelCase(childDisplayName) || 'child'}`}
           </TextButton>
           <Select
             displayEmpty
@@ -309,7 +313,7 @@ export default function PageBar() {
             IconComponent={ArrowDownIcon}
             value={childId}>
             <MenuItem disabled value="">
-              Select child
+              {`Select ${camelCase(childDisplayName) || 'child'}`}
             </MenuItem>
 
             {children.map(s => (

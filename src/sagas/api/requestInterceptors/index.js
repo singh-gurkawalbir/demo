@@ -1,17 +1,17 @@
 import { call, put, select, delay } from 'redux-saga/effects';
-import { sendRequest } from 'redux-saga-requests';
-import actions from '../../actions';
+import actions from '../../../actions';
 import {
   normalizeUrlAndOptions,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
   // isUnauthorized,
   isCsrfExpired,
-} from './index';
-import { unauthenticateAndDeleteProfile } from '..';
-import { selectors } from '../../reducers';
-import { isJsonString } from '../../utils/string';
-import { RETRY_COUNT } from '../../reducers/comms/networkComms';
+} from './utils/index';
+import { unauthenticateAndDeleteProfile } from '../..';
+import { selectors } from '../../../reducers';
+import { isJsonString } from '../../../utils/string';
+import { RETRY_COUNT } from '../../../reducers/comms/networkComms';
+import { sendRequest } from '..';
 
 function* isCurrentProfileDifferent() {
   const currentProfile = yield select(selectors.userProfile);
@@ -97,7 +97,6 @@ export function* onSuccessSaga(response, action) {
 
   // This api does not support 204 very well so
   // we expect all responses to be of type text
-
   try {
     yield call(checkToThrowSessionValidationException, response);
   } catch (e) {
@@ -142,14 +141,14 @@ export function* onErrorSaga(error, action) {
       // in the network snackbar and simply launch the session
       // expiration modal
       yield put(
-        actions.api.failure(path, method, JSON.stringify(error.data), hidden)
+        actions.api.failure(path, method, error.data, hidden)
       );
     } else {
       yield put(
         actions.api.failure(
           path,
           method,
-          JSON.stringify(error.data),
+          error.data,
           origReq && origReq.args && origReq.args.hidden
         )
       );
@@ -168,24 +167,14 @@ export function* onErrorSaga(error, action) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path, method));
 
-    // resend the request ..silent false meta allows the
-    // sendRequest to dispatch redux actions
-    // otherwise its defaulted to true in an interceptor
-
-    // runOnError is defaulted to false to prevent an infinite calls to onErrorHook
-    // we already check the retry count onErrorHook for an exit case to prevent it from happening
-    return yield call(
-      sendRequest,
-      { request: origReq, type: 'API_WATCHER' },
-      { dispatchRequestAction: false, runOnError: true }
-    );
+    // resend the request and it will keep incrementing the retry count in the onSuccess saga
+    // Once it exceeds the retry count it will exit the retry process and throw an exception
+    return yield call(sendRequest, origReq);
   }
   // attempts failed after 'tryCount' attempts
   // this time yield an error...
-  const errorMessage =
-      typeof error.data === 'object' ? JSON.stringify(error.data) : error.data;
 
-  yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
+  yield put(actions.api.failure(path, method, error.data, origReq?.args?.hidden));
   // the parent saga may need to know if there was an error for
   // its own "Data story"...
   yield call(throwExceptionUsingTheResponse, error);

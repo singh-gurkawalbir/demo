@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import getImageUrl from '../../../utils/image';
 
 export default (state = null, action) => {
   const { type, resourceType, resource, profile } = action;
@@ -38,7 +39,7 @@ export const selectors = {};
 selectors.avatarUrl = state => {
   if (!state || !state.emailHash) return undefined;
 
-  return `https://secure.gravatar.com/avatar/${state.emailHash}?d=${process.env.CDN_BASE_URI}images/icons/icon-user-default.png&s=55`;
+  return `https://secure.gravatar.com/avatar/${state.emailHash}?d=${getImageUrl('images/icons/icon-user-default.png&s=55')}`;
 };
 // #endregion PUBLIC SELECTORS
 

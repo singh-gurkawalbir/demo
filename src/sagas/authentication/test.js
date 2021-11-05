@@ -739,8 +739,7 @@ describe('setLastLoggedInLocalStorage', () => {
     expectSaga(setLastLoggedInLocalStorage)
       .provide([
         [call(getResource,
-          actions.user.profile.request('Retrieving user\'s Profile'), {id: 'someProfileId'}),
-        ]])
+          actions.user.profile.request('Retrieving user\'s Profile')), {id: 'someProfileId'}]])
 
       .run();
 
