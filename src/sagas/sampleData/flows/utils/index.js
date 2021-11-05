@@ -6,7 +6,6 @@ import { selectors } from '../../../../reducers';
 import { SCOPES } from '../../../resourceForm';
 
 export function* getConstructedResourceObj({ formKey, resourceId, resourceType }) {
-  // TODO - check for suitescript - do we need to add support at all?
   if (!formKey) {
     let { merged: resource = {} } = yield select(
       selectors.resourceData,
