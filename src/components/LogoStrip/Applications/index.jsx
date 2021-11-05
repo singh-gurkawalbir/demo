@@ -48,8 +48,6 @@ export default function Applications({apps, children, className}) {
     applicationsCount,
     appWidth,
   };
-
-  console.error('What is applications count', styleProps.appWidth);
   const classes = useStyles(styleProps);
 
   return (

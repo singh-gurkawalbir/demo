@@ -86,6 +86,7 @@ const useStyles = makeStyles(theme => ({
 export default function HomeSearchInput({value, onChange}) {
   const inputRef = useRef();
   const classes = useStyles();
+  const placeholder = 'Search integrations & flows';
   const [searchFocused, setSearchFocused] = useState(false);
   const [isSearchIconHidden, setSearchIconHidden] = useState(false);
   const [isCloseIconHidden, setCloseIconHidden] = useState(true);
@@ -93,7 +94,7 @@ export default function HomeSearchInput({value, onChange}) {
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = '';
+      inputRef.current.firstChild.placeholder = placeholder;
       setSearchIconHidden(true);
       setCloseIconHidden(true);
     } else {
@@ -103,12 +104,11 @@ export default function HomeSearchInput({value, onChange}) {
     onChange(e);
   }, [onChange]);
 
-  const handleBlur = useCallback(e => {
+  const blurHandler = useCallback(e => {
     if (e.target.value !== '') {
       setSearchIconHidden(true);
       setCloseIconHidden(false);
     } else {
-      inputRef.current.firstChild.placeholder = 'Search integrations & flows';
       setSearchIconHidden(false);
     }
     setSearchFocused(false);
@@ -122,6 +122,7 @@ export default function HomeSearchInput({value, onChange}) {
 
   const focusHandler = () => {
     setSearchFocused(true);
+    setSearchIconHidden(true);
   };
 
   return (
@@ -135,10 +136,10 @@ export default function HomeSearchInput({value, onChange}) {
       <InputBase
         value={value}
         ref={inputRef}
-        onBlur={handleBlur}
+        onBlur={blurHandler}
         onFocus={focusHandler}
         onChange={onChangeHandler}
-        placeholder="Search integrations & flows"
+        placeholder={placeholder}
         classes={{
           root: classes.inputRoot,
           input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
