@@ -120,7 +120,7 @@ export default function ConnectionDrawer({
           },
           {
             label: 'No, go back',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

@@ -28,7 +28,7 @@ export default function SharedUserRow({ user }) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -48,7 +48,7 @@ export default function SharedUserRow({ user }) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

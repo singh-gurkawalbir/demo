@@ -12,7 +12,7 @@ import inputFilterAction from './actions/inputFilter_afe';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter_afe';
 import lookupTransformationAction from './actions/lookupTransformation_afe';
-import responseMapping from './actions/responseMapping';
+import responseMapping from './actions/responseMapping_afe';
 import postResponseMapHook from './actions/postResponseMapHook_afe';
 import responseTransformationAction from './actions/responseTransformation_afe';
 import proceedOnFailureAction from './actions/proceedOnFailure';

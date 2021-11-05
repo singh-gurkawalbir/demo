@@ -730,6 +730,17 @@ describe('getStepText', () => {
     ],
     [
       {
+        stepText: 'Install',
+        showSpinner: false,
+      },
+      {
+        getUrlFunction: 'something',
+        isTriggered: false,
+      },
+      'something',
+    ],
+    [
+      {
         stepText: 'Done',
         showSpinner: false,
       },

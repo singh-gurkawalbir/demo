@@ -18,9 +18,10 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH} from '../../utils/constants';
+import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH } from '../../utils/constants';
 import { capitalizeFirstLetter } from '../../utils/string';
 import FilledButton from '../../components/Buttons/FilledButton';
+import getImageUrl from '../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -132,7 +133,7 @@ export default function MarketplaceList() {
     application,
     sandbox
   );
-  const marketPlaceConnectAppUrl = `${process.env.CDN_BASE_URI}images/react/marketplace-connect-app.png`;
+  const marketPlaceConnectAppUrl = getImageUrl('images/react/marketplace-connect-app.png');
   const templates = useSelector(state =>
     selectors.marketplaceTemplatesByApp(state, application)
   );
@@ -173,7 +174,7 @@ export default function MarketplaceList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -203,7 +204,7 @@ export default function MarketplaceList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -222,7 +223,7 @@ export default function MarketplaceList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

@@ -164,7 +164,7 @@ function AccountList() {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

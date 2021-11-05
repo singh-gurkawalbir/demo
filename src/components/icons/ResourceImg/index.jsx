@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import getImageUrl from '../../../utils/image';
 
 const mapTypes = type => {
   switch (type) {
@@ -32,9 +33,7 @@ export default function ResourceImg(props) {
     <img
       className={classes[size]}
       alt={resourceType}
-      src={`${process.env.CDN_BASE_URI}io-icons/icon-${mapTypes(
-        resourceType
-      )}.svg`}
+      src={getImageUrl(`io-icons/icon-${mapTypes(resourceType)}.svg`)}
     />
   );
 }

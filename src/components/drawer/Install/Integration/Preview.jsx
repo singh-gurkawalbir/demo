@@ -71,7 +71,7 @@ export default function IntegrationPreview() {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

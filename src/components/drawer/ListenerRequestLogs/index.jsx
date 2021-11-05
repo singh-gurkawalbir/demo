@@ -13,7 +13,7 @@ import LogsTable from './LogsTable';
 import Help from '../../Help';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
-import { OutlinedButton } from '../../Buttons';
+import { FilledButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -62,13 +62,11 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ActionGroup>
-          <OutlinedButton
-            data-test="closeLogs"
-            onClick={handleClose}>
-            Close
-          </OutlinedButton>
-        </ActionGroup>
+        <FilledButton
+          data-test="closeLogs"
+          onClick={handleClose}>
+          Close
+        </FilledButton>
       </DrawerFooter>
     </>
   );

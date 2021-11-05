@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
-import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
 import ActionGroup from '../ActionGroup';
+import { TextButton, FilledButton, OutlinedButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   message: {
@@ -23,38 +23,6 @@ const useStyles = makeStyles(theme => ({
     top: 0,
   },
 }));
-
-const getButtonProps = ({ variant, color }) => {
-  const buttonVariantProps = {
-    primary: {
-      color: 'primary',
-      variant: 'outlined',
-    },
-    secondary: {
-      color: 'secondary',
-      variant: 'outlined',
-    },
-    tertiary: {
-      variant: 'text',
-    },
-  };
-
-  let buttonProps;
-
-  if (variant) {
-    buttonProps = buttonVariantProps[variant];
-  } else {
-    // NOTE: This "else" block should be deleted when we update
-    // all instances of this component to use the new variant prop.
-    buttonProps = {
-      variant: color === 'secondary' ? 'text' : 'outlined',
-      color: color === 'secondary' ? '' : 'primary',
-    };
-  }
-
-  return buttonProps;
-};
-
 export const ConfirmDialog = (
   {
     message,
@@ -64,8 +32,8 @@ export const ConfirmDialog = (
     onClose,
     maxWidth,
     buttons = [
-      { label: 'No', variant: 'secondary' },
-      { label: 'Yes', variant: 'primary' },
+      { label: 'No', variant: 'text' },
+      { label: 'Yes' },
     ],
     onDialogClose,
   }) => {
@@ -96,16 +64,40 @@ export const ConfirmDialog = (
       )}
       <div className={classes.containerButtons}>
         <ActionGroup>
-          {buttons.map(button => (
-            <Button
-              data-test={button.dataTest || button.label}
-              key={button.label}
-              className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
-              onClick={handleButtonClick(button)}
-              {...getButtonProps(button)}>
-              {button.label}
-            </Button>
-          ))}
+          {buttons.map(button => {
+            const buttonProps = {
+              'data-test': button.dataTest || button.label,
+              key: button.label,
+              className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
+              onClick: handleButtonClick(button),
+            };
+            const {variant = 'filled'} = button;
+
+            if (variant === 'filled') {
+              return (
+                <FilledButton {...buttonProps}>
+                  {button.label}
+                </FilledButton>
+              );
+            }
+            if (variant === 'outlined') {
+              return (
+                <OutlinedButton {...buttonProps}>
+                  {button.label}
+                </OutlinedButton>
+              );
+            }
+
+            if (variant === 'text') {
+              return (
+                <TextButton {...buttonProps}>
+                  {button.label}
+                </TextButton>
+              );
+            }
+
+            return null;
+          })}
         </ActionGroup>
       </div>
 
@@ -143,8 +135,8 @@ export default function useConfirmDialog() {
         title: 'Confirm',
         message: `Are you sure you want to ${message}`,
         buttons: [
-          { label: 'Yes', color: 'primary', onClick: callback },
-          { label: 'Cancel', variant: 'text', color: 'secondary' },
+          { label: 'Yes', onClick: callback },
+          { label: 'Cancel', variant: 'text' },
         ],
       });
     },
@@ -157,8 +149,8 @@ export default function useConfirmDialog() {
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',
         buttons: [
-          { label: 'Save changes', variant: 'primary', onClick: onSave },
-          { label: 'Discard changes', variant: 'secondary', onClick: onDiscard },
+          { label: 'Save changes', onClick: onSave },
+          { label: 'Discard changes', variant: 'outlined', onClick: onDiscard },
         ],
       });
     },
@@ -171,3 +163,4 @@ export default function useConfirmDialog() {
     defaultConfirmDialog,
   };
 }
+
