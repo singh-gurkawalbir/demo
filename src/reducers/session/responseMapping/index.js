@@ -75,6 +75,9 @@ export default function reducer(state = {}, action) {
           draft.mapping.validationErrMsg = undefined;
         }
         break;
+      case actionTypes.RESPONSE_MAPPING.CLEAR:
+        delete draft.mapping;
+        break;
 
       default:
     }
@@ -97,7 +100,7 @@ selectors.responseMappingChanged = state => {
   if (!state || !state.mapping) {
     return false;
   }
-  const { mappings, mappingsCopy } = state.mapping;
+  const { mappings = [], mappingsCopy = [] } = state.mapping;
   const _mappings = mappings.map(({ key, ...other }) => other);
   const _mappingsCopy = mappingsCopy.map(
     ({ key, ...other }) => other

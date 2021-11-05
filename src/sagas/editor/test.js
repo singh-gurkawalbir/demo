@@ -26,7 +26,7 @@ import {
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
-import { APIException } from '../api';
+import { APIException } from '../api/requestInterceptors/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic';
 
 const editorId = 'httpbody';
@@ -148,12 +148,13 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
-    test('should set correct request body and make api call if processor is mapperProcessor', () => {
+    test('should set correct request body and make api call if processor is mapperProcessor for mappings editor type', () => {
       const editorState = {
         resourceId: 'res-123',
         flowId: 'flow-123',
         resourceType: 'imports',
         data: '[{"id": "123"}]',
+        editorType: 'mappings',
       };
       const importRes = {
         _id: 'res-123',
@@ -210,6 +211,46 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
+    test('should set correct request body and make api call if processor is mapperProcessor for responseMappings editor type', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'responseMappings',
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+      }];
+
+      const expectedBody = {
+        rules: {
+          rules: [{
+            fields: [{extract: 'id', generate: 'id'}],
+            lists: [],
+          }],
+        },
+        data: [[{id: '123'}]],
+      };
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.responseMapping), {mappings}],
+          [select(selectors.editor, editorId), editorState],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/mapperProcessor',
+          opts: {
+            method: 'POST',
+            body: expectedBody,
+          },
+          hidden: true })
+        .run();
+    });
+
     test('should make api call with passed arguments', () => {
       const body = 'somebody';
 

@@ -31,6 +31,7 @@ export default function ToggleLayout({ editorId }) {
   const classes = useStyles();
   const layout = useSelector(state => selectors.editor(state, editorId).layout);
   const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
+  const isMappingsEditor = editorType === 'mappings' || editorType === 'responseMappings';
 
   const handleToggle = event => {
     dispatch(actions.editor.changeLayout(editorId, event.target.value));
@@ -46,10 +47,10 @@ export default function ToggleLayout({ editorId }) {
           value={layout}
           className={classes.toggleLayoutSelect}
           onChange={handleToggle} >
-          {editorType !== 'mappings' && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
+          {!isMappingsEditor && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
           <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem>
-          {editorType !== 'mappings' && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }
-          {editorType === 'mappings' && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
+          {!isMappingsEditor && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }
+          {isMappingsEditor && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
         </Select>
       </>
     </>

@@ -1,16 +1,20 @@
 import { deepClone } from 'fast-json-patch/lib/core';
+import { isEmpty} from 'lodash';
 
 const LOOKUP_RESPONSE_MAPPING_EXTRACTS = [
   'data',
   'errors',
   'ignored',
   'statusCode',
+  'dataURI',
 ];
 const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
   'id',
   'errors',
   'ignored',
   'statusCode',
+  '_json',
+  'dataURI',
 ];
 
 export default {
@@ -165,5 +169,41 @@ export default {
       fields,
       lists,
     };
+  },
+
+  getResponseMappingDefaultInput: (resourceType, preProcessedData, adaptorType) => {
+    if (!['exports', 'imports'].includes(resourceType)) {
+      return;
+    }
+    const extractsObj = {
+      id: '1234567890',
+      data: {},
+      errors: [{code: 'error_code', message: 'error message', source: 'application'}],
+      ignored: false,
+      statusCode: 200,
+      dataURI: '',
+    };
+
+    // Incase of lookups , add preProcessedData as part of data if exists else no data from lookup is passed
+    if (resourceType === 'exports') {
+      delete extractsObj.id;
+      if (preProcessedData) {
+        extractsObj.data = [preProcessedData];
+      } else delete extractsObj.data;
+
+      return extractsObj;
+    }
+
+    // Incase of imports, send preProcessedData if present else default fields
+    if (!isEmpty(preProcessedData)) {
+      return preProcessedData;
+    }
+    delete extractsObj.data;
+    extractsObj._json = { responseField1: '', responseField2: '' };
+    if (['RESTImport', 'HTTPImport'].includes(adaptorType)) {
+      extractsObj.headers = { 'content-type': 'application/json; charset=utf-8' };
+    }
+
+    return extractsObj;
   },
 };

@@ -7,7 +7,7 @@ const {
   processResult,
 } = processorLogic;
 
-describe('settingsForm processor logic', () => {
+describe('mappings processor logic', () => {
   describe('init util', () => {
     test('should correctly return options along with editor title', () => {
       const options = {

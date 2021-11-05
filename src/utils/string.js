@@ -10,6 +10,14 @@ export const safeParse = o => {
   }
 };
 
+export const camelCase = (str = '') => {
+  if (typeof str === 'string' && str.length) {
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  }
+
+  return str;
+};
+
 export const hashCode = (s, stable) => {
   let hash = 0;
   let i;
