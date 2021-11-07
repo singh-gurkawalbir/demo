@@ -43,7 +43,7 @@ export function* responseMappingInit({ flowId, resourceId, resourceType }) {
   const flowInputStage = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
-    stage: 'flowInput',
+    stage: 'inputFilter',
     resourceType,
   });
 
@@ -52,7 +52,7 @@ export function* responseMappingInit({ flowId, resourceId, resourceType }) {
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage: 'inputFilter',
     });
   }
 
