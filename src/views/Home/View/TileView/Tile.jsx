@@ -3,33 +3,34 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
-import { selectors } from '../../reducers';
-import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
-import Header from '../../components/HomePageCard/Header';
-import StatusCircle from '../../components/StatusCircle';
-import Content from '../../components/HomePageCard/Content';
-import ApplicationImg from '../../components/icons/ApplicationImg';
-import AddIcon from '../../components/icons/AddIcon';
-import ApplicationImages from '../../components/HomePageCard/Content/ApplicationImages';
-import CardTitle from '../../components/HomePageCard/Content/CardTitle';
-import Footer from '../../components/HomePageCard/Footer';
-import FooterActions from '../../components/HomePageCard/Footer/FooterActions';
-import Info from '../../components/HomePageCard/Footer/Info';
-import IntegrationTag from '../../components/tags/IntegrationTag';
-import Manage from '../../components/HomePageCard/Footer/Manage';
-import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
-import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
-import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, isTileStatusConnectionDown } from '../../utils/home';
-import getRoutePath from '../../utils/routePaths';
-import actions from '../../actions';
-import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
-import TileNotification from '../../components/HomePageCard/TileNotification';
-import { useSelectorMemo } from '../../hooks';
-import CeligoTruncate from '../../components/CeligoTruncate';
-import ActionButton from '../../components/ActionButton';
-import Status from '../../components/Buttons/Status';
+import { selectors } from '../../../../reducers';
+import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
+import Header from '../../../../components/HomePageCard/Header';
+import StatusCircle from '../../../../components/StatusCircle';
+import Content from '../../../../components/HomePageCard/Content';
+import ApplicationImg from '../../../../components/icons/ApplicationImg';
+import AddIcon from '../../../../components/icons/AddIcon';
+import ApplicationImages from '../../../../components/HomePageCard/Content/ApplicationImages';
+import CardTitle from '../../../../components/HomePageCard/Content/CardTitle';
+import Footer from '../../../../components/HomePageCard/Footer';
+import FooterActions from '../../../../components/HomePageCard/Footer/FooterActions';
+import Info from '../../../../components/HomePageCard/Footer/Info';
+import IntegrationTag from '../../../../components/tags/IntegrationTag';
+import Manage from '../../../../components/HomePageCard/Footer/Manage';
+import PermissionsManageIcon from '../../../../components/icons/PermissionsManageIcon';
+import PermissionsMonitorIcon from '../../../../components/icons/PermissionsMonitorIcon';
+import ConnectionDownIcon from '../../../../components/icons/unLinkedIcon';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/constants';
+import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
+import getRoutePath from '../../../../utils/routePaths';
+import actions from '../../../../actions';
+import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../../../utils/integrationApps';
+import TileNotification from '../../../../components/HomePageCard/TileNotification';
+import { useSelectorMemo } from '../../../../hooks';
+import CeligoTruncate from '../../../../components/CeligoTruncate';
+import ActionButton from '../../../../components/ActionButton';
+import Status from '../../../../components/Buttons/Status';
+import TileActions from './TileActions';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -201,6 +202,7 @@ function Tile({
             </IconButton>
           </Tooltip>
           )}
+          <TileActions />
         </Header>
         <Content>
           <CardTitle>

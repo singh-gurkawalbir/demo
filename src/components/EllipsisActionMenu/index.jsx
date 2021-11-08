@@ -1,7 +1,8 @@
 import React, { useCallback, useState} from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
+import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
+import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -19,7 +20,7 @@ const ActionLabel = (({ label, Icon }) => {
   return label;
 });
 
-export default function EllipsisActionMenu({ actionsMenu, onAction }) {
+export default function EllipsisActionMenu({ actionsMenu, onAction, alignment }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
@@ -43,7 +44,7 @@ export default function EllipsisActionMenu({ actionsMenu, onAction }) {
         aria-haspopup="true"
         size="small"
         onClick={handleMenuClick}>
-        <EllipsisIcon />
+        {alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal /> }
       </IconButton>
 
       <Menu
