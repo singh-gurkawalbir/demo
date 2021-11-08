@@ -8,11 +8,7 @@ module.exports = api => {
     ],
     plugins: [
 
-      ['@babel/plugin-transform-runtime',
-        {
-          regenerator: true,
-        },
-      ],
+      ['@babel/plugin-transform-runtime', { regenerator: true }],
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       ['@babel/plugin-proposal-class-properties', { loose: true }],
       ['@babel/plugin-transform-modules-commonjs', { strict: false }],

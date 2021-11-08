@@ -441,18 +441,6 @@ export default {
       delete retValues['/rest/pagingPostBody'];
     }
 
-    try {
-      // there are two cases when postBody of REST is configured as a string
-      // 1) '{{details.company}}' - this would definitely require rest way of postBody handlebar evaluation, it will reach catch block and set the flag
-      // 2) '{"companyName": "{{details.company.name}}"} - this may not require rest way of postBody handlebar evaluation. Hence the flag wont get set with below logic
-      // the above case is not possible in REST as the body should always be in json format
-
-      if (retValues['/http/body'] && typeof retValues['/http/body'] === 'string') {
-        JSON.parse(retValues['/http/body']); // I dont think this passes for any doc. Hence all the docs with body of type string will have 'customeTemplateEval' enabled
-      }
-    } catch (ex) {
-      retValues['/http/customeTemplateEval'] = true;
-    }
     if (retValues['/http/response/successPath'] && !isValidArray(retValues['/http/response/successPath'])) {
       retValues['/http/response/allowArrayforSuccessPath'] = true;
     }
