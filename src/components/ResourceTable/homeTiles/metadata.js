@@ -5,6 +5,7 @@ import TypeCell from './cells/TypeCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {FILTER_KEY, HOME_ALL_APPLICATIONS} from '../../../utils/home';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import DIYClone from './actions/diy/Clone';
 import DIYDelete from './actions/diy/Delete';
 import DIYDownload from './actions/diy/Download';
@@ -74,8 +75,8 @@ export default {
       ),
     },
   ],
-  useRowActions: ({_connectorId, ssLinkedConnectionId }) => {
-    if (ssLinkedConnectionId) return [];
+  useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId }) => {
+    if (ssLinkedConnectionId || _integrationId === STANDALONE_INTEGRATION.id) return [];
     if (_connectorId) {
       return [IARenew, IAReactivate, IAClone, IAUninstall];
     }
