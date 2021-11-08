@@ -133,7 +133,7 @@ export default function DynaCsvGenerate_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: 'inputFilter',
       onSave: handleSave,
     }));
 

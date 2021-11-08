@@ -67,7 +67,6 @@ export default function DynaFileDefinitionEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
       onSave: handleSave,
     }));
 

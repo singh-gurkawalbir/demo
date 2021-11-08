@@ -80,7 +80,7 @@ export default function DynaTransformRules_afe({
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: 'inputFilter',
       onSave: handleSave,
     }));
 

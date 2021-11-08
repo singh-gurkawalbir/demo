@@ -1,7 +1,7 @@
 import getFailedRecordDefault from './util';
 
 export default {
-  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData, resourceId,
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, resourceId,
     resourceType,
     flowId }) => {
     const fieldMeta = {
@@ -30,7 +30,6 @@ export default {
           label: 'SQL query',
           required: true,
           helpText: 'The query that fetches records to be exported.',
-          sampleData,
           resourceId,
           resourceType,
           flowId,

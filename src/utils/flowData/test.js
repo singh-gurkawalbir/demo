@@ -23,13 +23,13 @@ import {
 } from '.';
 
 const possibleExportSampleDataStagePaths = [
-  ['flowInput', 'inputFilter'],
+  ['flowInput', 'processedFlowInput', 'inputFilter'],
   ['raw', 'transform', 'preSavePage', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
   ['raw', 'transform', 'outputFilter'],
 ];
 const possibleImportSampleDataStagePaths = [
-  ['flowInput', 'inputFilter'],
-  ['flowInput', 'preMap', 'importMappingExtract', 'importMapping', 'postMap'],
+  ['flowInput', 'processedFlowInput', 'inputFilter'],
+  ['flowInput', 'processedFlowInput', 'preMap', 'importMappingExtract', 'importMapping', 'postMap', 'postMapOutput'],
   ['sampleResponse', 'responseTransform', 'postSubmit'],
   ['sampleResponse', 'responseTransform', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
 ];

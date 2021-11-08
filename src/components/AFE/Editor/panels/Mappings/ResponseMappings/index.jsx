@@ -90,7 +90,7 @@ export default function ResponseMappingWrapper({ editorId }) {
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage: 'inputFilter',
     });
 
     return dataAsString(data);
