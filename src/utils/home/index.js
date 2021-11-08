@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 import { TILE_STATUS } from '../constants';
 import {applicationsList} from '../../constants/applications';
 
@@ -13,8 +13,10 @@ export const DEFAULT_FILTERS = {
 };
 
 export const HOME_ALL_APPLICATIONS = () => {
-  const applications = applicationsList();
+  let applications = applicationsList();
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];
+
+  applications = sortBy(applications, ['name']);
 
   const options = applications.map(a => ({_id: a.id, name: a.name}));
 

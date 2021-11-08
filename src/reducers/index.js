@@ -1751,16 +1751,25 @@ selectors.mkTiles = () => createSelector(
 
 selectors.mkFilteredHomeTiles = () => {
   const tilesSelector = selectors.mkTiles();
+  const appSel = selectors.mkTileApplications();
 
   return createSelector(
-    state => tilesSelector(state),
+    state => {
+      const tiles = tilesSelector(state);
+
+      return tiles.map(t => {
+        const applications = appSel(state, t);
+
+        return {...t, applications};
+      });
+    },
     state => selectors.suiteScriptLinkedTiles(state),
     state => selectors.userPreferences(state).dashboard,
     state => selectors.isHomeListView(state),
     state => selectors.filter(state, HOME_FILTER_KEY),
     (tiles = emptyArray, ssTiles = emptyArray, homePreferences, isListView, filterConfig) => {
       const {tilesOrder} = homePreferences || emptyObject;
-      const {take} = filterConfig || emptyObject;
+      const {take, applications} = filterConfig || emptyObject;
 
       const suiteScriptLinkedTiles = ssTiles.filter(t => {
         // only fully configured svb tile should be shown on dashboard
@@ -1770,11 +1779,12 @@ selectors.mkFilteredHomeTiles = () => {
       });
       const finalTiles = tiles.concat(suiteScriptLinkedTiles);
 
-      const result = filterAndSortResources(finalTiles, filterConfig);
+      let result = filterAndSortResources(finalTiles, filterConfig);
 
-      // if(applications && !applications.includes('all')) {
-      //   result = result.filter
-      // }
+      if (applications && !applications.includes('all')) {
+        result = result.filter(t => t.applications?.some(a => applications.includes(a)));
+      }
+
       if (typeof take !== 'number' || take < 1 || !isListView) {
         return {
           filteredTiles: isListView ? result : sortTiles(
@@ -1846,7 +1856,7 @@ selectors.homeTileRedirectUrl = () => {
 
       const isCloned = integration?.install?.find(step => step?.isClone);
       const integrationAppTileName =
-      tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
+        tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
 
       let urlToIntegrationSettings = templateName
         ? `/templates/${templateName}/${tile._integrationId}`

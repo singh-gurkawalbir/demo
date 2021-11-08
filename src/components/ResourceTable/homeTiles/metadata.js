@@ -2,13 +2,16 @@ import React from 'react';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
-import ApplicationsCell from './cells/ApplicationsCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {FILTER_KEY, HOME_ALL_APPLICATIONS} from '../../../utils/home';
-import References from '../commonActions/References';
+import Clone from './actions/Clone';
+import LogoStrip from '../../LogoStrip';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../../reducers';
 
 export default {
+  rowKey: '_integrationId',
   useColumns: () => [
     {
       key: 'name',
@@ -28,9 +31,13 @@ export default {
           options={HOME_ALL_APPLICATIONS()}
             />
       ),
-      Value: ({rowData: r}) => (
-        <ApplicationsCell tile={r} />
-      ),
+      Value: ({rowData: r}) => {
+        const applications = useSelectorMemo(selectors.mkTileApplications, r);
+
+        return (
+          <LogoStrip applications={applications} />
+        );
+      },
     },
     {
       key: 'status',
@@ -61,5 +68,5 @@ export default {
       ),
     },
   ],
-  useRowActions: () => [References],
+  useRowActions: () => [Clone],
 };
