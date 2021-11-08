@@ -1,17 +1,12 @@
 import React from 'react';
 import EllipsisActionMenu from '../../../../components/EllipsisActionMenu';
-import CopyIcon from '../../../../components/icons/CopyIcon';
-
-const tileActions = [{
-  Icon: CopyIcon,
-  action: 'clone',
-  label: 'Clone integration',
-  // disabled: !validDashboardActions.includes('cancel'),
-}];
+import useTileActions from '../../../../hooks/useTileActions';
 
 // todo: siddharth
-export default function TileActions() {
-  const handleAction = () => {};
+export default function TileActions({tile}) {
+  const {tileActions, handleAction} = useTileActions(tile);
+
+  console.log('tileActions', tileActions);
 
   return (
     <EllipsisActionMenu
