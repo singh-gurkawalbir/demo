@@ -1,0 +1,25 @@
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import DownloadIcon from '../../../../../icons/DownloadIcon';
+import { selectors } from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+
+export default {
+  key: 'generateTemplateZip', // todo: ashu shd we use "downloadIntegration" data-test
+  useLabel: () => 'Download integration',
+  icon: DownloadIcon,
+  useHasAccess: () => {
+    const canDownload = useSelector(state => selectors.resourcePermissions(state, 'integrations')?.create);
+
+    return canDownload;
+  },
+  useOnClick: rowData => {
+    const {_integrationId} = rowData;
+    const dispatch = useDispatch();
+    const handleDownload = useCallback(() => {
+      dispatch(actions.template.generateZip(_integrationId));
+    }, [_integrationId, dispatch]);
+
+    return handleDownload;
+  },
+};
