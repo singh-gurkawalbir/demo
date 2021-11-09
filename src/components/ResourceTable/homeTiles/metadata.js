@@ -13,6 +13,8 @@ import IAClone from './actions/integrationApp/Clone';
 import IAUninstall from './actions/integrationApp/Uninstall';
 import IARenew from './actions/integrationApp/Renew';
 import IAReactivate from './actions/integrationApp/Reactivate';
+import PinAction from './actions/common/Pin';
+import UnpinAction from './actions/common/Unpin';
 import LogoStrip from '../../LogoStrip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
@@ -75,12 +77,15 @@ export default {
       ),
     },
   ],
-  useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId }) => {
-    if (ssLinkedConnectionId || _integrationId === STANDALONE_INTEGRATION.id) return [];
+  useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId, pinned }) => {
+    if (_integrationId === STANDALONE_INTEGRATION.id) return [];
+    const pinUnpin = pinned ? UnpinAction : PinAction;
+
+    if (ssLinkedConnectionId) return [pinUnpin];
     if (_connectorId) {
-      return [IARenew, IAReactivate, IAClone, IAUninstall];
+      return [IARenew, IAReactivate, pinUnpin, IAClone, IAUninstall];
     }
 
-    return [DIYClone, DIYDownload, DIYDelete];
+    return [pinUnpin, DIYClone, DIYDownload, DIYDelete];
   },
 };
