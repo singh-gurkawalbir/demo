@@ -30,7 +30,7 @@ import { useSelectorMemo } from '../../../../hooks';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
 import ActionButton from '../../../../components/ActionButton';
 import Status from '../../../../components/Buttons/Status';
-import TileActions from './TileActions';
+import TileActions from './TileActions/index';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
