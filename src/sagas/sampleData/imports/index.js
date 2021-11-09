@@ -1,5 +1,6 @@
 import { takeLatest, select, call, put, all } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
@@ -11,6 +12,88 @@ import { isIntegrationApp } from '../../../utils/flows';
 import { getAssistantConnectorType } from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 
+function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
+  const assistantConfig = deepClone(assistantConfigOrig);
+
+  if (!assistantConfig.queryParams) {
+    assistantConfig.queryParams = {};
+  }
+
+  if (assistantConfig.lookupConfig) {
+    assistantConfig.lookupConfig.parameterValues = {}; // should not send these for preview call
+  }
+
+  assistantConfig.forPreview = true;
+  const exportConfiguration = convertToExport({
+    assistantData: assistantMetadata,
+    assistantConfig,
+  });
+
+  if (!exportConfiguration) {
+    return false;
+  }
+  const patchSet = sanitizePatchSet({
+    patchSet: defaultPatchSetConverter(exportConfiguration || {}),
+    resource: {},
+  });
+
+  const exportJson = jsonPatch.applyPatch({}, patchSet)?.newDocument;
+
+  exportJson.forPreview = true;
+  exportJson._connectionId = resource._connectionId;
+
+  return exportJson;
+}
+
+function updateAssistantConfigWithCorrectMeta(importEndpoint, assistantConfig, resource) {
+  // if (
+  //   importEndpoint.howToFindIdentifier?.lookup?.id
+  // ) {
+  //   const updatedAssistantConfig = {...assistantConfig};
+
+  //   updatedAssistantConfig.operation = importEndpoint.howToFindIdentifier.lookup.id;
+  //   updatedAssistantConfig.assistant = resource.assistant;
+  //   updatedAssistantConfig.resource = importEndpoint.howToFindIdentifier.lookup.resource || assistantConfig.resource;
+
+  //   if (assistantConfig.lookupConfig?.parameterValues) {
+  //     updatedAssistantConfig.queryParams = {
+  //       ...assistantConfig.queryParams,
+  //       ...assistantConfig.lookupConfig.parameterValues,
+  //     };
+  //   }
+
+  //   return {
+  //     assistantConfig: updatedAssistantConfig,
+  //     sampleDataWrapper: importEndpoint.howToFindIdentifier.lookup.sampleDataWrapper,
+  //   };
+  // }
+
+  if (importEndpoint?.previewConfig?.id) {
+    const updatedAssistantConfig = {...assistantConfig};
+
+    updatedAssistantConfig.operation = importEndpoint.previewConfig.id;
+    updatedAssistantConfig.assistant = resource.assistant;
+    updatedAssistantConfig.resource = importEndpoint.previewConfig.resource || assistantConfig.resource;
+
+    if (
+    importEndpoint.previewConfig?.parameterValues
+    ) {
+      updatedAssistantConfig.queryParams = {
+        ...assistantConfig.queryParams,
+        ...importEndpoint.previewConfig.parameterValues,
+      };
+    }
+
+    return {
+      assistantConfig: updatedAssistantConfig,
+      sampleDataWrapper: importEndpoint.previewConfig,
+    };
+  }
+
+  return {
+    assistantConfig,
+  };
+}
 export function* _fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
   let assistantMetadata;
@@ -35,85 +118,26 @@ export function* _fetchAssistantSampleData({ resource }) {
   });
   const importEndpoint = assistantConfig.operationDetails;
 
-  let sampleDataWrapper = {};
-
-  if (importEndpoint?.sampleData) {
-    return yield put(
-      actions.metadata.receivedAssistantImportPreview(
-        resource._id,
-        importEndpoint.sampleData
-      )
-    );
-  }
+  // if (importEndpoint?.sampleData) {
+  //   return yield put(
+  //     actions.metadata.receivedAssistantImportPreview(
+  //       resource._id,
+  //       importEndpoint.sampleData
+  //     )
+  //   );
+  // }
   if (importEndpoint) {
-    if (
-      importEndpoint.howToFindIdentifier?.lookup?.id
-    ) {
-      assistantConfig.operation = importEndpoint.howToFindIdentifier.lookup.id;
-      assistantConfig.assistant = resource.assistant;
-      assistantConfig.resource = importEndpoint.howToFindIdentifier.lookup.resource || assistantConfig.resource;
-      sampleDataWrapper = importEndpoint.howToFindIdentifier.lookup.sampleDataWrapper;
+    const {assistantConfig: updatedAssitantConfig, sampleDataWrapper} = updateAssistantConfigWithCorrectMeta(importEndpoint, assistantConfig, resource);
+    const exportJson = convertToVirtualExport(updatedAssitantConfig, assistantMetadata, resource);
 
-      if (
-        assistantConfig.lookupConfig &&
-      assistantConfig.lookupConfig.parameterValues
-      ) {
-        assistantConfig.queryParams = {
-          ...assistantConfig.queryParams,
-          ...assistantConfig.lookupConfig.parameterValues,
-        };
-      }
-    } else if (importEndpoint?.previewConfig?.id) {
-      assistantConfig.operation = importEndpoint.previewConfig.id;
-      assistantConfig.assistant = resource.assistant;
-      assistantConfig.resource = importEndpoint.previewConfig.resource || assistantConfig.resource;
-      ({ sampleDataWrapper } = importEndpoint.previewConfig);
+    if (!exportJson) {
+      yield put(actions.metadata.failedAssistantImportPreview(resource._id));
 
-      if (
-      importEndpoint.previewConfig?.parameterValues
-      ) {
-        assistantConfig.queryParams = {
-          ...assistantConfig.queryParams,
-          ...importEndpoint.previewConfig.parameterValues,
-        };
-      }
-    }
-
-    if (!assistantConfig.queryParams) {
-      assistantConfig.queryParams = {};
-    }
-
-    if (assistantConfig.lookupConfig) {
-      assistantConfig.lookupConfig.parameterValues = {}; // should not send these for preview call
-    }
-
-    if (!assistantConfig || (!assistantConfig.endpoint && !assistantConfig.resource && !resource.operation)) {
       return false;
     }
-
-    assistantConfig.forPreview = true;
-    const exportConfiguration = convertToExport({
-      assistantData: assistantMetadata,
-      assistantConfig,
-    });
-
-    if (!exportConfiguration) {
-      return false;
-    }
-    const patchSet = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter(exportConfiguration || {}),
-      resource: {},
-    });
-
-    const exportJson = jsonPatch.applyPatch({}, patchSet)?.newDocument;
-
-    exportJson.forPreview = true;
-    exportJson._connectionId = resource._connectionId;
-
-    let previewData;
 
     try {
-      previewData = yield call(apiCallWithRetry, {
+      const previewData = yield call(apiCallWithRetry, {
         path: '/exports/preview',
         opts: {
           method: 'POST',
@@ -121,6 +145,7 @@ export function* _fetchAssistantSampleData({ resource }) {
         },
         hidden: true,
       });
+
       yield put(
         actions.metadata.receivedAssistantImportPreview(
           resource._id,
