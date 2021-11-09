@@ -10,6 +10,7 @@ import SelectError from '../cells/SelectError';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
+import Classification from '../cells/Classification';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
@@ -75,7 +76,7 @@ export default {
 
         return <SelectClassification {...tableContext} />;
       },
-      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
+      Value: ({rowData: r}) => <Classification error={r} />,
       width: '10%',
     },
     {
