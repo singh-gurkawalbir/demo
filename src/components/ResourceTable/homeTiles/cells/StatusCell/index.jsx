@@ -22,6 +22,8 @@ export default function StatusCell({ tile }) {
 
   const status = tileStatus(tile);
   const isConnectionDown = isTileStatusConnectionDown(tile);
+  const connErrorsText = isConnectionDown && `${tile.offlineConnections.length} connection${tile.offlineConnections.length === 1 ? '' : 's'} down`;
+
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
@@ -56,9 +58,8 @@ export default function StatusCell({ tile }) {
       {isConnectionDown && (
       <Status
         variant="error"
-        onClick={handleConnectionDownStatusClick}
-        >
-        {tile.offlineConnections.length} connection down
+        onClick={handleConnectionDownStatusClick} >
+        {connErrorsText}
       </Status>
       )}
     </>
