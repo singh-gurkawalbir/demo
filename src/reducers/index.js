@@ -1709,8 +1709,9 @@ selectors.mkTiles = () => createSelector(
 
         return {
           ...t,
+          key: t._integrationId, // for Celigo table unique key
           status,
-          description: integration.description,
+          description: integration.description, // todo Ashu : remove description once BE adds it
           flowsNameAndDescription,
           sortablePropType: -1,
           totalErrorCount: getStatusSortableProp({...t, status}),
@@ -1737,6 +1738,7 @@ selectors.mkTiles = () => createSelector(
 
       return {
         ...t,
+        key: t._integrationId,
         status,
         description: integration.description,
         flowsNameAndDescription,
@@ -4173,6 +4175,7 @@ selectors.suiteScriptLinkedTiles = createSelector(
     });
 
     return tiles.map(t => ({ ...t,
+      key: `${t.ssLinkedConnectionId}|${t._connectorId}`,
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : 0,
@@ -6178,7 +6181,7 @@ selectors.tileLicenseDetails = (state, tile) => {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
-    listViewLicenseMesssage = `Expired ${trialExpiresInDays} days ago`;
+    listViewLicenseMesssage = `Expired ${Math.abs(trialExpiresInDays)} days ago`;
     showTrialLicenseMessage = true;
     trialExpired = true;
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays > 0) {
@@ -6188,7 +6191,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   } else if (expiresInDays <= 0) {
     expired = true;
     licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
-    listViewLicenseMesssage = `Expired ${expiresInDays} days ago`;
+    listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
     licenseMessageContent = `Your subscription will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your subscription.`;
     listViewLicenseMesssage = `Expiring in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}`;

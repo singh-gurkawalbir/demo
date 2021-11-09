@@ -2,7 +2,6 @@ import { difference } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
 import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
 import ResourceDrawer from '../../components/drawer/Resource';
 import { selectors } from '../../reducers';
@@ -60,7 +59,6 @@ export default function Dashboard() {
       <LoadTiles />
       <InstallZip />
       <ResourceDrawer />
-      <DownloadIntegrationDrawer />
       <InstallIntegrationDrawer />
       <OfflineConnectionDrawer />
       <HomePageBar />

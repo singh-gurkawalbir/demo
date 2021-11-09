@@ -91,7 +91,7 @@ export const getStatusSortableProp = tile => {
   let statusSortableProp = 0;
 
   if (offlineConnections?.length) {
-    statusSortableProp = offlineConnections?.length;
+    statusSortableProp = offlineConnections?.length || 0;
   }
 
   switch (status) {

@@ -20,7 +20,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 
 export default {
-  rowKey: '_integrationId',
   useColumns: () => [
     {
       key: 'name',
