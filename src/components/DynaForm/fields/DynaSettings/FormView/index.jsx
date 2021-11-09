@@ -50,7 +50,7 @@ export default function FormView({
     // sanitize all a tag elements within help texts
 
     if (!settingsFormState?.meta) { return null; }
-    const {fieldMap, layout} = settingsFormState.meta;
+    const {fieldMap = {}, layout} = settingsFormState.meta;
 
     const fieldMapWithEscapeUnsecuredDomains = Object.keys(fieldMap).reduce((acc, key) => {
       acc[key] = {...fieldMap[key], escapeUnsecuredDomains: true};
