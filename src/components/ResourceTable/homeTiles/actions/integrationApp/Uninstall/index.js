@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import { selectors } from '../../../../../../reducers';
@@ -13,16 +14,13 @@ export default {
   key: 'uninstallConnector',
   useLabel: () => 'Uninstall integration',
   icon: TrashIcon,
-  //   useHasAccess: rowData => {
-  //     const {_integrationId} = rowData;
-  //     const canDelete = useSelector(state => selectors.resourcePermissions(
-  //       state,
-  //       'integrations',
-  //       _integrationId
-  //     )?.delete);
+  useHasAccess: rowData => {
+    const {_integrationId} = rowData;
 
-  //     return canDelete;
-  //   },
+    const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
+
+    return canUninstall;
+  },
   useOnClick: rowData => {
     const {_integrationId} = rowData;
     const history = useHistory();
