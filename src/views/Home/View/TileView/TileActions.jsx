@@ -46,8 +46,6 @@ export default function TileActions({tile}) {
   const handleAction = action => {
     switch (action) {
       case 'cloneIntegration': // for IA and DIY/templates
-        handleClone();
-        break;
       case 'cloneIntegrationApp':
         handleClone();
         break;
@@ -55,8 +53,6 @@ export default function TileActions({tile}) {
         handleDownload();
         break;
       case 'deleteIntegration': // for DIY/templates
-        handleDelete();
-        break;
       case 'uninstallConnector': // for IA
         handleDelete();
         break;
