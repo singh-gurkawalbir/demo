@@ -8,8 +8,8 @@ import IntegrationTag from '../../../../tags/IntegrationTag';
 import Tag from '../../../../tags/Tag';
 import { INTEGRATION_ACCESS_LEVELS } from '../../../../../utils/constants';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import IntegrationPinnedIcon from '../../../../icons/IntegrationPinnedIcon';
 
-// todo: ashu css
 const useStyles = makeStyles({
   root: {
     display: 'flex',
@@ -25,7 +25,8 @@ export default function NameCell({ tile }) {
   const { name,
     description,
     tag,
-    ssLinkedConnectionId} = tile;
+    ssLinkedConnectionId,
+    pinned} = tile;
   const classes = useStyles();
   const {urlToIntegrationSettings} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
 
@@ -43,6 +44,7 @@ export default function NameCell({ tile }) {
 
   return (
     <div className={classes.root}>
+      {pinned && <IntegrationPinnedIcon />}
       <Link to={urlToIntegrationSettings}>{name}</Link>
 
       <InfoIconButton info={description} escapeUnsecuredDomains size="xs" />

@@ -1759,8 +1759,9 @@ selectors.mkFilteredHomeTiles = () => {
 
       return tiles.map(t => {
         const applications = appSel(state, t);
+        const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
 
-        return {...t, applications};
+        return {...t, applications, pinned: pinnedIntegrations.includes(t._integrationId)};
       });
     },
     state => selectors.suiteScriptLinkedTiles(state),
@@ -1768,7 +1769,7 @@ selectors.mkFilteredHomeTiles = () => {
     state => selectors.isHomeListView(state),
     state => selectors.filter(state, HOME_FILTER_KEY),
     (tiles = emptyArray, ssTiles = emptyArray, homePreferences, isListView, filterConfig) => {
-      const {tilesOrder} = homePreferences || emptyObject;
+      const {tilesOrder, pinnedIntegrations} = homePreferences || emptyObject;
       const {take, applications} = filterConfig || emptyObject;
 
       const suiteScriptLinkedTiles = ssTiles.filter(t => {
@@ -1783,6 +1784,16 @@ selectors.mkFilteredHomeTiles = () => {
 
       if (applications && !applications.includes('all')) {
         result = result.filter(t => t.applications?.some(a => applications.includes(a)));
+      }
+
+      if (pinnedIntegrations?.length && result.length) {
+        // move pinned integrations to the top, not affected by sorting
+        pinnedIntegrations.forEach(p => {
+          const index = result.findIndex(i => i._integrationId === p);
+          const pinnedInt = result.splice(index, 1);
+
+          result.unshift(pinnedInt[0]);
+        });
       }
 
       if (typeof take !== 'number' || take < 1 || !isListView) {
@@ -4153,14 +4164,19 @@ selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnection
 selectors.suiteScriptLinkedTiles = createSelector(
   selectors.suiteScriptLinkedConnections,
   state => state?.data?.suiteScript,
-  (linkedConnections, suiteScriptTiles = {}) => {
+  state => selectors.userPreferences(state).dashboard?.pinnedIntegrations,
+  (linkedConnections, suiteScriptTiles = {}, pinnedIntegrations = emptyArray) => {
     let tiles = [];
 
     linkedConnections.forEach(connection => {
       tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles || []);
     });
 
-    return tiles.map(t => ({ ...t, name: t.displayName, totalErrorCount: getStatusSortableProp(t), sortablePropType: t._connectorId ? -1 : 0 }));
+    return tiles.map(t => ({ ...t,
+      name: t.displayName,
+      totalErrorCount: getStatusSortableProp(t),
+      sortablePropType: t._connectorId ? -1 : 0,
+      pinned: pinnedIntegrations.includes(t._integrationId) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
