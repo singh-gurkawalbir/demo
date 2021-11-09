@@ -1709,6 +1709,7 @@ selectors.mkTiles = () => createSelector(
 
         return {
           ...t,
+          key: t._integrationId, // for Celigo table unique key
           status,
           description: integration.description, // todo Ashu : remove description once BE adds it
           flowsNameAndDescription,
@@ -1737,6 +1738,7 @@ selectors.mkTiles = () => createSelector(
 
       return {
         ...t,
+        key: t._integrationId,
         status,
         description: integration.description,
         flowsNameAndDescription,
@@ -4173,6 +4175,7 @@ selectors.suiteScriptLinkedTiles = createSelector(
     });
 
     return tiles.map(t => ({ ...t,
+      key: `${t.ssLinkedConnectionId}|${t._connectorId}`,
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : 0,

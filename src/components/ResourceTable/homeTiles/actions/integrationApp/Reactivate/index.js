@@ -15,7 +15,7 @@ export default {
 
     return (
       <div>
-        Reactivate subscription
+        Reactivate integration
         <FieldMessage
           isValid
           description={licenseMessageContent}
