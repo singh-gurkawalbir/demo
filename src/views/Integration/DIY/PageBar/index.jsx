@@ -1,5 +1,5 @@
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
@@ -7,20 +7,18 @@ import ActionGroup from '../../../../components/ActionGroup';
 import { TextButton } from '../../../../components/Buttons';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
-import useConfirmDialog from '../../../../components/ConfirmDialog';
 import EditableText from '../../../../components/EditableText';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import TrashIcon from '../../../../components/icons/TrashIcon';
-import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { HOME_PAGE_PATH, STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { HOME_PAGE_PATH } from '../../../../utils/constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
-import { INTEGRATION_DELETE_VALIDATE } from '../../../../utils/messageStore';
 import getRoutePath from '../../../../utils/routePaths';
 import { camelCase } from '../../../../utils/string';
+import useHandleDelete from '../../hooks/useHandleDelete';
 import { useAvailableTabs } from '../useAvailableTabs';
 
 const integrationsFilterConfig = { type: 'integrations' };
@@ -44,8 +42,6 @@ export default function PageBar() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
 
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { confirmDialog } = useConfirmDialog();
   const availableTabs = useAvailableTabs();
   const { integrationId, childId, tab} = match?.params;
 
@@ -108,23 +104,6 @@ export default function PageBar() {
   }, shallowEqual);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
-  const flowsFilterConfig = useMemo(
-    () => ({
-      type: 'flows',
-      filter: {
-        _integrationId:
-              integrationId === STANDALONE_INTEGRATION.id
-                ? undefined
-                : integrationId,
-      },
-    }),
-    [integrationId]
-  );
-  const flows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
-  const cantDelete = flows.length > 0;
   const patchIntegration = useCallback(
     (path, value) => {
       // TODO: need to revisit after IA2.0 behavior is clear.
@@ -159,39 +138,8 @@ export default function PageBar() {
     history.push(getRoutePath(HOME_PAGE_PATH));
   }
 
-  const handleDelete = useCallback(() => {
-    if (cantDelete) {
-      enqueueSnackbar({
-        message: INTEGRATION_DELETE_VALIDATE,
-        variant: 'info',
-      });
+  const handleDelete = useHandleDelete(integrationId);
 
-      return;
-    }
-    confirmDialog({
-      title: 'Confirm delete',
-      message: 'Are you sure you want to delete this integration?',
-      buttons: [
-        {
-          label: 'Delete',
-          onClick: () => {
-            dispatch(actions.resource.delete('integrations', integrationId));
-            setIsDeleting(true);
-          },
-        },
-        {
-          label: 'Cancel',
-          variant: 'text',
-        },
-      ],
-    });
-  }, [
-    cantDelete,
-    confirmDialog,
-    dispatch,
-    enqueueSnackbar,
-    integrationId,
-  ]);
   const handleChildChange = useCallback(
     e => {
       const newChildId = e.target.value;
