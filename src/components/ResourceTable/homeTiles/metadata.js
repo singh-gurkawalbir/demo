@@ -5,7 +5,13 @@ import TypeCell from './cells/TypeCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {FILTER_KEY, HOME_ALL_APPLICATIONS} from '../../../utils/home';
-import Clone from './actions/Clone';
+import DIYClone from './actions/diy/Clone';
+import DIYDelete from './actions/diy/Delete';
+import DIYDownload from './actions/diy/Download';
+import IAClone from './actions/integrationApp/Clone';
+import IAUninstall from './actions/integrationApp/Uninstall';
+import IARenew from './actions/integrationApp/Renew';
+import IAReactivate from './actions/integrationApp/Reactivate';
 import LogoStrip from '../../LogoStrip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
@@ -68,5 +74,12 @@ export default {
       ),
     },
   ],
-  useRowActions: () => [Clone],
+  useRowActions: ({_connectorId, ssLinkedConnectionId }) => {
+    if (ssLinkedConnectionId) return [];
+    if (_connectorId) {
+      return [IARenew, IAReactivate, IAClone, IAUninstall];
+    }
+
+    return [DIYClone, DIYDownload, DIYDelete];
+  },
 };
