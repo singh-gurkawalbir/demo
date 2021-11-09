@@ -10,9 +10,6 @@ const useStyles = makeStyles(theme => ({
       marginLeft: theme.spacing(-2),
     },
   },
-  label: {
-    display: 'flex',
-  },
 }));
 
 const ActionLabel = (({ label, Icon }) => {
