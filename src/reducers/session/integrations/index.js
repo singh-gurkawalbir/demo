@@ -6,6 +6,7 @@ export default (state = {}, action) => {
     type,
     redirectTo,
     integrationId,
+    error,
   } = action;
 
   return produce(state, draft => {
@@ -21,12 +22,16 @@ export default (state = {}, action) => {
 
         draft[integrationId].redirectTo = redirectTo;
         break;
-      case actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_FAILED:
+      case actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED:
+      case actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED:
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
 
-        draft[integrationId].flowGroupSaveStatus = 'Failed';
+        draft[integrationId].flowGroupStatus = {
+          status: 'Failed',
+          message: error?.message,
+        };
         break;
       default:
     }
@@ -44,10 +49,10 @@ selectors.shouldRedirect = (state, integrationId) => {
   return state[integrationId].redirectTo;
 };
 
-selectors.flowGroupSaveStatus = (state, integrationId) => {
+selectors.flowGroupStatus = (state, integrationId) => {
   if (!state || !state[integrationId]) {
     return null;
   }
 
-  return state[integrationId].flowGroupSaveStatus;
+  return state[integrationId].flowGroupStatus;
 };

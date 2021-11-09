@@ -1,14 +1,17 @@
-import { call, put, all, takeEvery } from 'redux-saga/effects';
+import { call, put, all, takeEvery, select } from 'redux-saga/effects';
 import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
+import { selectors } from '../../reducers';
+import { getResourceCollection } from '../resources';
 
-export function* updateResource({ flow, flowGroupId, asyncKey }) {
+export function* updateFlowWithFlowGroupId({ flow, flowGroupId, asyncKey }) {
   const path = `/flows/${flow?._id}`;
   const payload = {
     ...flow,
-    _flowGroupingId: flowGroupId,
   };
+
+  payload._flowGroupingId = flowGroupId;
   let response;
 
   try {
@@ -28,15 +31,37 @@ export function* updateResource({ flow, flowGroupId, asyncKey }) {
 
   yield put(actions.resource.received('flows', response));
 }
-export function* deleteFlowGroupFromFlow({ flow }) {
+
+export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, asyncKey }) {
+  try {
+    yield call(apiCallWithRetry, {
+      path: '/flows/updateFlowGrouping',
+      opts: {
+        method: 'PUT',
+        body: {
+          _flowIds: flowIds,
+          _flowGroupingId: flowGroupId,
+        },
+      },
+      hidden: false,
+      message: 'Updating flow group',
+    });
+
+    yield call(getResourceCollection, { resourceType: 'flows' });
+  } catch (error) {
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
+    yield put(actions.asyncTask.failed(asyncKey));
+  }
+}
+
+export function* deleteFlowGroupIdFromFlow({ flow }) {
   const path = `/flows/${flow?._id}`;
   const payload = { ...flow };
 
   delete payload._flowGroupingId;
-  let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'put',
@@ -45,64 +70,69 @@ export function* deleteFlowGroupFromFlow({ flow }) {
       hidden: false,
       message: 'Updating flow group',
     });
+
+    yield put(actions.resource.received('flows', response));
   } catch (error) {
     yield put(actions.resource.integrations.flowGroups.deleteFailed(error));
   }
-
-  yield put(actions.resource.received('flows', response));
 }
-export function* createOrUpdateFlowGroup({ integration, groupName, flows, deSelectedFlows, asyncKey }) {
-  const groupId = integration.flowGroupings.find(flowGroup => flowGroup.name === groupName)?._id;
+export function* createOrUpdateFlowGroup({ integrationId, groupName, flowIds, deSelectedFlows, asyncKey }) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const groupId = integration.flowGroupings?.find(flowGroup => flowGroup.name === groupName)?._id;
 
   yield put(actions.asyncTask.start(asyncKey));
 
   if (!groupId) {
-    const path = `/integrations/${integration._id}`;
-    const payload = { ...integration };
-    let response;
+    const path = `/integrations/${integrationId}`;
+    const updatedFlowGroupings = [...integration.flowGroupings];
 
-    payload.flowGroupings.push({ name: groupName});
+    updatedFlowGroupings.push({
+      name: groupName,
+    });
+    const payload = { ...integration, flowGroupings: updatedFlowGroupings };
+    let response;
 
     try {
       response = yield call(apiCallWithRetry, {
         path,
         opts: {
-          method: 'put',
+          method: 'PUT',
           body: payload,
         },
         hidden: false,
-        message: 'Updating flow group',
+        message: 'Updating flow groups',
       });
     } catch (error) {
-      yield put(actions.resource.integrations.flowGroups.createFailed(error));
+      yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
       yield put(actions.asyncTask.failed(asyncKey));
     }
 
     if (response) {
       const { _id: flowGroupId } = response.flowGroupings?.find(flowGroup => flowGroup.name === groupName);
 
-      yield all(flows.map(flow => call(updateResource, { flow, flowGroupId, asyncKey })));
+      yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, asyncKey });
+      yield put(actions.resource.received('integrations', response));
     }
   } else {
-    const addGroupIdToFlows = flows.filter(flow => !flow._flowGroupingId);
-
-    yield all(addGroupIdToFlows.map(flow => call(updateResource, { flow, flowGroupId: groupId, asyncKey})));
-    yield all(deSelectedFlows.map(flow => call(deleteFlowGroupFromFlow, { flow })));
+    yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: groupId, asyncKey});
+    yield all(deSelectedFlows.map(flow => call(deleteFlowGroupIdFromFlow, { flow })));
   }
 
   yield put(actions.asyncTask.success(asyncKey));
 }
-export function* deleteFlowGroup({ integration, groupName, flows }) {
-  yield all(flows.map(flow => call(deleteFlowGroupFromFlow, {flow})));
+export function* deleteFlowGroup({ integrationId, groupName, flows }) {
+  if (flows) {
+    yield all(flows?.map(flow => call(deleteFlowGroupIdFromFlow, {flow})));
+  }
 
-  const path = `/integrations/${integration._id}`;
-  const payload = {...integration};
-  const newFlowGroups = integration.flowGroupings.filter(flowGroup => flowGroup.name !== groupName);
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const path = `/integrations/${integrationId}`;
+  const updatedFlowGroupings = integration?.flowGroupings.filter(flowGroup => flowGroup.name !== groupName);
 
-  payload.flowGroupings = { ...newFlowGroups };
+  const payload = { ...integration, flowGroupings: updatedFlowGroupings };
 
   try {
-    yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'put',
@@ -111,38 +141,40 @@ export function* deleteFlowGroup({ integration, groupName, flows }) {
       hidden: false,
       message: 'Delete flow group',
     });
+
+    yield put(actions.resource.received('integrations', response));
   } catch (error) {
     yield put(actions.resource.integrations.flowGroups.deleteFailed(error));
   }
 }
 
-export function* flowGroupsShiftOrder({ integration, flowGroupName, newIndex}) {
-  const path = `/integrations/${integration._id}`;
+export function* flowGroupsShiftOrder({ integrationId, groupName, newIndex}) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const path = `/integrations/${integrationId}`;
 
   const updatedFlowGroupings = [...integration.flowGroupings];
 
-  const flowGroupIndex = updatedFlowGroupings.findIndex(flowGroup => flowGroup.name === flowGroupName);
+  const flowGroupIndex = updatedFlowGroupings.findIndex(flowGroup => flowGroup.name === groupName);
   const [removed] = updatedFlowGroupings.splice(flowGroupIndex, 1);
 
   updatedFlowGroupings.splice(newIndex, 0, removed);
   const payload = { ...integration, flowGroupings: updatedFlowGroupings };
-  let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'put',
         body: payload,
       },
       hidden: false,
-      message: 'Updating flow group',
+      message: 'Shift flow groups order',
     });
-  } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.createFailed(error));
-  }
 
-  yield put(actions.resource.received('integrations', response));
+    yield put(actions.resource.received('integrations', response));
+  } catch (error) {
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
+  }
 }
 
 export default [

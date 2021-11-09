@@ -58,7 +58,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   const handleClose = history.goBack;
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []);
-  let groupName = '';
+  let groupName;
   let flowsWithGroupId = [];
 
   if (isEdit) {
@@ -67,25 +67,24 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   }
   const formValues = useSelector(state => selectors.formState(state, formKey)?.fields);
   const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit);
-  const flowGroupSaveStatus = useSelector(state => selectors.flowGroupSaveStatus(state, integrationId));
+  const { status: flowGroupSaveStatus, message } = useSelector(state => selectors.flowGroupStatus(state, integrationId)) || {};
 
   useFormInitWithPermissions({formKey, fieldMeta, remount: remountCount});
 
   useEffect(() => {
     if (flowGroupSaveStatus === 'Failed') {
-      enquesnackbar({ message: 'Flow goup failed to save' });
+      enquesnackbar({ message: message || 'Flow goup failed to save' });
     }
-  }, [enquesnackbar, flowGroupSaveStatus]);
+  }, [enquesnackbar, flowGroupSaveStatus, message]);
   const handleSave = useCallback(closeAfterSave => {
     const { name, _flowIds } = formValues;
-    const selectedFlows = flowsTiedToIntegrations.filter(flow => _flowIds.value.find(id => id === flow._id));
     const deSelectedFlows = flowsWithGroupId.filter(flow => !_flowIds.value.find(id => id === flow._id));
 
-    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integration, name.value, selectedFlows, deSelectedFlows, formKey));
+    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, name.value, _flowIds.value, deSelectedFlows, formKey));
     if (closeAfterSave) {
       handleClose();
     }
-  }, [formValues, flowsTiedToIntegrations, flowsWithGroupId, dispatch, integration, handleClose]);
+  }, [formValues, flowsWithGroupId, dispatch, integrationId, handleClose]);
   const remountForm = useCallback(() => {
     setRemountCount(remountCount => remountCount + 1);
   }, []);

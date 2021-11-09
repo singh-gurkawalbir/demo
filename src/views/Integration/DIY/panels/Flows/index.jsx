@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -99,6 +99,9 @@ const useStyles = makeStyles(theme => ({
       borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     },
   },
+  noSearchResults: {
+    marginTop: theme.spacing(1),
+  },
 }));
 
 const getBasePath = match => {
@@ -141,14 +144,22 @@ const FlowListingTable = ({
   const dispatch = useDispatch();
 
   const sectionId = match?.params?.sectionId;
-  const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
   const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowGroups = useMemo(() => {
+    if (flowFilter.keyword) {
+      return flowGroupingsSections.filter(({ sectionId }) =>
+        flows.find(flow => (flow._flowGroupingId === sectionId) || (sectionId === UNASSIGNED_SECTION_ID && !flow._flowGroupingId)));
+    }
+
+    return flowGroupingsSections;
+  }, [flowFilter, flowGroupingsSections, flows]);
   const groupedFlows = useMemo(() => flows.filter(flow => sectionId === UNASSIGNED_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
   const onSortEnd = useCallback(({oldIndex, newIndex}) => {
-    dispatch(actions.resource.integrations.flowGroups.shiftOrder(integration, flowGroupingsSections[oldIndex].title, newIndex));
-  }, [dispatch, flowGroupingsSections, integration]);
+    dispatch(actions.resource.integrations.flowGroups.shiftOrder(integrationId, flowGroupingsSections[oldIndex].title, newIndex));
+  }, [dispatch, flowGroupingsSections, integrationId]);
 
   return (
     <Grid container wrap="nowrap" className={classes.flowsGroupContainer}>
@@ -158,7 +169,7 @@ const FlowListingTable = ({
           classes={classes}
           SortableItemComponent={SortableItemComponent}
           LastRowSortableItemComponent={LastRowSortableItemComponent}
-          items={flowGroupingsSections}
+          items={flowGroups}
           onSortEnd={onSortEnd}
           flows={flows}
           hasUnassignedSection={hasUnassignedSection}
@@ -376,63 +387,72 @@ export default function FlowsPanel({ integrationId, childId }) {
   const rowData = { ...integration, canAttach, sectionId };
 
   return (
-    <div className={classes.root}>
-      {selectedComponent}
-      {showDialog && (
+    <>
+      <div className={classes.root}>
+        {selectedComponent}
+        {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
           onClose={handleClose}
         />
-      )}
-      <MappingDrawerRoute integrationId={integrationId} />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
-      <ScheduleDrawer />
-      <QueuedJobsDrawer />
-      <FlowgroupDrawer integrationId={integrationId} />
+        )}
+        <MappingDrawerRoute integrationId={integrationId} />
+        {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
+        <ScheduleDrawer />
+        <QueuedJobsDrawer />
+        <FlowgroupDrawer integrationId={integrationId} />
 
-      <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
-        <ActionGroup>
-          <KeywordSearch
-            filterKey={filterKey}
+        <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
+          <ActionGroup>
+            <KeywordSearch
+              filterKey={filterKey}
         />
-          {canCreate && !isIntegrationApp && (
-          <TextButton
-            component={Link}
-            startIcon={<AddIcon />}
-            to={`${basePath}/flowBuilder/new`}
-            data-test="createFlow">
-            Create flow
-          </TextButton>
-          )}
-          {/* check if this condition is correct */}
-          {canEdit && !isIntegrationApp && (
-          <TextButton
-            startIcon={<AddIcon />}
-            component={Link}
-            to={`${basePath}/dataLoader/new`}
-            data-test="loadData">
-            Load data
-          </TextButton>
-          )}
-          {!isStandalone && !isMonitorLevelUser && (
+            {canCreate && !isIntegrationApp && (
+            <TextButton
+              component={Link}
+              startIcon={<AddIcon />}
+              to={`${basePath}/flowBuilder/new`}
+              data-test="createFlow">
+              Create flow
+            </TextButton>
+            )}
+            {/* check if this condition is correct */}
+            {canEdit && !isIntegrationApp && (
+            <TextButton
+              startIcon={<AddIcon />}
+              component={Link}
+              to={`${basePath}/dataLoader/new`}
+              data-test="loadData">
+              Load data
+            </TextButton>
+            )}
+            {!isStandalone && !isMonitorLevelUser && (
             <ActionMenu
               setSelectedComponent={setSelectedComponent}
               useRowActions={useRowActions}
               rowData={rowData}
               isIntegrationPage
             />
-          )}
-        </ActionGroup>
-      </PanelHeader>
+            )}
+          </ActionGroup>
+        </PanelHeader>
 
-      <LoadResources required resources="flows, exports">
-        <FlowListing
-          integrationId={currentIntegrationId}
-          filterKey={filterKey}
-          actionProps={actionProps}
-          flows={flows}
+        <LoadResources required resources="flows, exports">
+          <FlowListing
+            integrationId={currentIntegrationId}
+            filterKey={filterKey}
+            actionProps={actionProps}
+            flows={flows}
         />
-      </LoadResources>
-    </div>
+        </LoadResources>
+      </div>
+      <div className={classes.noSearchResults}>
+        {(flowFilter.keyword && flows.length === 0) ? (
+          <Typography variant="body1">
+            Your search didn’t return any matching results. Try expanding your search criteria.
+          </Typography>
+        ) : ''}
+      </div>
+    </>
   );
 }
