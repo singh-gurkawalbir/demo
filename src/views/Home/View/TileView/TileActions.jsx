@@ -32,6 +32,12 @@ export default function TileActions({tile}) {
       accessLevel,
     };
   }, shallowEqual);
+  const isCloningSupported = tile &&
+            integrationAppUtil.isCloningSupported(
+              _connectorId,
+              name
+            ) && accessLevel !== 'monitor' &&
+            !supportsMultiStore;
 
   const handleClone = () => { // for IA and DIY/templates
     history.push(getRoutePath(`/clone/integrations/${_integrationId}/preview`));
@@ -87,13 +93,6 @@ export default function TileActions({tile}) {
       );
     }
   } else { // Integration app
-    const isCloningSupported = tile &&
-            integrationAppUtil.isCloningSupported(
-              _connectorId,
-              name
-            ) && accessLevel !== 'monitor' &&
-            !supportsMultiStore;
-
     if (isCloningSupported) {
       tileActions.push(
         {
