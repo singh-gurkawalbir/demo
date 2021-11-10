@@ -366,16 +366,19 @@ export default function getRequestOptions(
       let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
       const { range, status, hideEmpty = false } = filters || {};
       const queryParams = [];
-      const statusFilter = status?.length ? status : [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const defaultStatusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
       const {startDate, endDate} = getSelectedRange(range) || {};
 
-      statusFilter.forEach(status => {
-        if (status === 'error') {
-          queryParams.push('numError_gte=1');
-        } else if (status === 'resolved') {
-          queryParams.push('numResolved_gte=1');
-        } else { queryParams.push(`status=${status}`); }
-      });
+      if (status === 'all') {
+        defaultStatusFilter.forEach(status => {
+          queryParams.push(`status=${status}`);
+        });
+      } else if (status === 'error') {
+        queryParams.push('numError_gte=1');
+      } else if (status) {
+        queryParams.push(`status=${status}`);
+      }
+
       if (hideEmpty) { queryParams.push(`hideEmpty=${hideEmpty}`); }
 
       if (startDate && endDate) {

@@ -1,8 +1,9 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles, FormControlLabel, Checkbox } from '@material-ui/core';
+import { makeStyles, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
+import CeligoSelect from '../../CeligoSelect';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -16,6 +17,7 @@ import Spinner from '../../Spinner';
 import MessageWrapper from '../../MessageWrapper';
 import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
+import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -38,8 +40,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     background: theme.palette.background.default,
   },
-  rangeFilter: {
-    padding: 5,
+  runHistoryPagination: {
+    '& > div': {
+      marginRight: theme.spacing(-2) },
   },
   wrapper: {
     position: 'relative',
@@ -52,6 +55,16 @@ const useStyles = makeStyles(theme => ({
   },
   hideLabel: {
     marginLeft: theme.spacing(1),
+  },
+  filterButton: {
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
+    '&:first-child': {
+      marginLeft: 0,
+    },
+  },
+  status: {
+    minWidth: 134,
   },
 }));
 
@@ -128,17 +141,16 @@ export default function RunHistory({ flowId, className }) {
     },
     [dispatch, fetchFlowRunHistory, filter],
   );
+  const patchFilter = useCallback(
+    (key, value) => {
+      const filter = { [key]: value };
 
-  const handleHideEmptyJobs = useCallback(
-    value => {
       dispatch(
-        actions.patchFilter(FILTER_KEYS.RUN_HISTORY, {
-          hideEmpty: value,
-        })
+        actions.patchFilter(FILTER_KEYS.RUN_HISTORY, filter)
       );
       fetchFlowRunHistory();
     },
-    [dispatch, fetchFlowRunHistory],
+    [dispatch, fetchFlowRunHistory]
   );
 
   const handleChangePage = useCallback((event, newPage) => {
@@ -154,7 +166,7 @@ export default function RunHistory({ flowId, className }) {
     <div className={clsx(classes.wrapper, className)}>
       <div className={classes.filterContainerRunHistory}>
         <>
-          <div className={classes.rangeFilter}>
+          <ActionGroup>
             <DateRangeSelector
               clearable
               placement="right"
@@ -164,6 +176,23 @@ export default function RunHistory({ flowId, className }) {
               customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
          />
+            <CeligoSelect
+              data-test="flowStatusFilter"
+              className={clsx(classes.filterButton, classes.status)}
+              onChange={e => patchFilter('status', e.target.value)}
+              value={filter?.status || 'all'}>
+              {[
+                ['all', 'Select status'],
+                ['error', 'Contains error'],
+                ['canceled', 'Canceled'],
+                ['completed', 'Completed'],
+                ['failed', 'Failed'],
+              ].map(opt => (
+                <MenuItem key={opt[0]} value={opt[0]}>
+                  {opt[1]}
+                </MenuItem>
+              ))}
+            </CeligoSelect>
             <FormControlLabel
               className={classes.hideLabel}
               data-test="hideEmptyRunsFilter"
@@ -173,13 +202,14 @@ export default function RunHistory({ flowId, className }) {
                   checked={filter?.hideEmpty}
                   data-test="hideEmptyRuns"
                   color="primary"
-                  onChange={e => handleHideEmptyJobs(e.target.checked)} />
+                  onChange={e => patchFilter('hideEmpty', e.target.checked)} />
                   )}
                 />
-          </div>
-          <div className={classes.actions}>
+          </ActionGroup>
+          <ActionGroup position="right">
             { hasFlowRunHistory && (
             <CeligoPagination
+              className={classes.runHistoryPagination}
               count={runHistory.length}
               page={currentPage}
               rowsPerPage={ROWS_PER_PAGE}
@@ -192,7 +222,7 @@ export default function RunHistory({ flowId, className }) {
               startIcon={<RefreshIcon />}>
               Refresh
             </TextButton>
-          </div>
+          </ActionGroup>
         </>
       </div>
       {isLoadingHistory && <Spinner centerAll />}
