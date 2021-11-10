@@ -5,7 +5,7 @@ export const MULTIPLE_INSTALLS =
 export const INTEGRATION_DELETE_VALIDATE =
   'All Flows within an integration tile must be removed before the integration tile can be deleted.';
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
-  'Your request for a license upgrade has been received. We will contact you soon via email once the upgrade is done.';
+'Thanks for your interest! We’ll be in touch shortly to get your license upgraded.';
 export default {
   CONTACT_SALES_MESSAGE,
   MULTIPLE_INSTALLS,

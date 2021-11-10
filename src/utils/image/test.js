@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+import { CDN_BASE_URL } from '../constants';
 import getImageUrl from './index';
 
 describe('image utils test cases', () => {
@@ -12,8 +13,8 @@ describe('image utils test cases', () => {
       expect(getImageUrl('https://someurl.net/logo.png')).toEqual('https://someurl.net/logo.png');
     });
     test('should prepend cdn base uri to passed url', () => {
-      expect(getImageUrl('images/googlelogo.png')).toEqual(`${process.env.CDN_BASE_URI}images/googlelogo.png`);
-      expect(getImageUrl('/images/googlelogo.png')).toEqual(`${process.env.CDN_BASE_URI}images/googlelogo.png`);
+      expect(getImageUrl('images/googlelogo.png')).toEqual(`${CDN_BASE_URL}images/googlelogo.png`);
+      expect(getImageUrl('/images/googlelogo.png')).toEqual(`${CDN_BASE_URL}images/googlelogo.png`);
     });
   });
 });

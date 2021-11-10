@@ -105,7 +105,7 @@ describe('responseMappingInit saga', () => {
       }).run();
   });
 
-  test('should call requestSampleData in case sample data is not loaded for stage flowInput', () => {
+  test('should call requestSampleData in case sample data is not loaded for stage inputFilter', () => {
     const flowId = 'f1';
     const resourceId = 'r1';
     const resourceType = 'imports';
@@ -124,7 +124,7 @@ describe('responseMappingInit saga', () => {
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId,
-          stage: 'flowInput',
+          stage: 'inputFilter',
           resourceType,
         }), {}],
       ])
@@ -132,11 +132,11 @@ describe('responseMappingInit saga', () => {
         flowId,
         resourceId,
         resourceType,
-        stage: 'flowInput',
+        stage: 'inputFilter',
       }).run();
   });
 
-  test('should not call requestSampleData in case sample data is not loaded for stage flowInput', () => {
+  test('should not call requestSampleData in case sample data is not loaded for stage inputFilter', () => {
     const flowId = 'f1';
     const resourceId = 'r0';
     const resourceType = 'exports';
@@ -155,7 +155,7 @@ describe('responseMappingInit saga', () => {
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId,
-          stage: 'flowInput',
+          stage: 'inputFilter',
           resourceType,
         }), {data: {}, status: 'received'}],
       ])
@@ -163,7 +163,7 @@ describe('responseMappingInit saga', () => {
         flowId,
         resourceId,
         resourceType,
-        stage: 'flowInput',
+        stage: 'inputFilter',
       }).run();
   });
 

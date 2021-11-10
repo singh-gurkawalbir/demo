@@ -3,7 +3,6 @@ import { select, delay, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
-import { APIException } from '../api';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { commitStagedChanges } from '../resources';
@@ -32,6 +31,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '..';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
+import { APIException } from '../api/requestInterceptors/utils';
 
 jest.mock('../../forms/formFactory/getResourceFromAssets');
 jest.mock('../../forms/formFactory/getFieldsWithDefaults');
