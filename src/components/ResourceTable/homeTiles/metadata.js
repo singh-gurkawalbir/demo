@@ -4,7 +4,7 @@ import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import {FILTER_KEY, HOME_ALL_APPLICATIONS} from '../../../utils/home';
+import {FILTER_KEY, getAllApplications} from '../../../utils/home';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import DIYClone from './actions/diy/Clone';
 import DIYDelete from './actions/diy/Delete';
@@ -36,7 +36,7 @@ export default {
           title="Applications"
           filterBy="applications"
           filterKey={FILTER_KEY}
-          options={HOME_ALL_APPLICATIONS()}
+          options={getAllApplications()}
             />
       ),
       Value: ({rowData: r}) => {
