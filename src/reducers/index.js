@@ -1794,12 +1794,7 @@ selectors.mkFilteredHomeTiles = () => {
       if (pinnedIntegrations?.length && filteredTiles.length) {
         // move pinned integrations to the top, not affected by sorting
         pinnedIntegrations.forEach(p => {
-          const index = filteredTiles.findIndex(i => {
-            const uniqueIntId = i.ssLinkedConnectionId ? `${i.ssLinkedConnectionId}|${i._integrationId}` : i._integrationId;
-
-            return uniqueIntId === p;
-          }
-          );
+          const index = filteredTiles.findIndex(t => t.key === p);
           const pinnedInt = filteredTiles.splice(index, 1);
 
           filteredTiles.unshift(pinnedInt[0]);
