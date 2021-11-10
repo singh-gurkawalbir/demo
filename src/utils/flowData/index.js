@@ -17,9 +17,15 @@ import jsonUtils from '../json';
 import { isIntegrationApp } from '../flows';
 import { isJsonString } from '../string';
 
+export const BASE_FLOW_INPUT_STAGE = 'flowInput';
+export const LOOKUP_FLOW_DATA_STAGE = 'inputFilter';
+export const IMPORT_FLOW_DATA_STAGE = 'importMappingExtract';
+
+// TODO @RAGHU : Add comments on the different stages and their use cases
 export const sampleDataStage = {
   exports: {
-    inputFilter: 'flowInput',
+    processedFlowInput: 'flowInput',
+    inputFilter: 'processedFlowInput',
     transform: 'raw',
     preSavePage: 'transform', // preSavePage indicates export hooks
     outputFilter: 'transform',
@@ -29,13 +35,14 @@ export const sampleDataStage = {
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, inputFilter
-   * raw, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
+   * flowInput, processedFlowInput, inputFilter
+   * raw, processedFlowInput, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    * raw, transform, outputFilter
    */
   imports: {
-    inputFilter: 'flowInput',
-    preMap: 'flowInput',
+    processedFlowInput: 'flowInput',
+    inputFilter: 'processedFlowInput',
+    preMap: 'processedFlowInput',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
     responseMappingExtract: 'responseTransform',
@@ -43,11 +50,12 @@ export const sampleDataStage = {
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
     postMap: 'importMapping',
+    postMapOutput: 'postMap',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
   /**
-   * flowInput, inputFilter
+   * flowInput, processedFlowInput, inputFilter
    * flowInput, preMap, importMappingExtract, importMapping, postMap,
    * sampleResponse, responseTransform, postSubmit
    * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook

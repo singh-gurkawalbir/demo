@@ -19,12 +19,12 @@ import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
-import { extractRawSampleDataFromOneToManySampleData } from '../../utils/sampleData';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES, previewDataDependentFieldIds } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil from '../../utils/mapping';
+import responseMappingUtil from '../../utils/responseMapping';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -41,17 +41,10 @@ export function extractResourcePath(value, initialResourcePath) {
   return initialResourcePath;
 }
 
-// Deals with any modification related to the sample data being passed to getContext API
-function* formatEditorSampleDataForGetContextBE({ sampleData, resourceId, resourceType }) {
-  const savedResourceObj = yield select(selectors.resource, resourceType, resourceId);
-
-  return extractRawSampleDataFromOneToManySampleData(sampleData, savedResourceObj);
-}
-
 export function* invokeProcessor({ editorId, processor, body }) {
   let reqBody = body;
   const editor = yield select(selectors.editor, editorId);
-  const {formKey, fieldId, resourceId, resourceType, supportsDefaultData, data, flowId} = editor;
+  const {formKey, fieldId, resourceId, resourceType, supportsDefaultData, data, flowId, editorType} = editor;
 
   // options should be passed to BE for handlebars processor
   // for correct HTML/URL encoding
@@ -82,17 +75,25 @@ export function* invokeProcessor({ editorId, processor, body }) {
     }
   } else if (processor === 'mapperProcessor') {
     const flowSampleData = safeParse(data);
-    const mappings = (yield select(selectors.mapping))?.mappings;
-    const importResource = yield select(selectors.resource, 'imports', resourceId);
-    const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+    let _mappings;
 
-    const _mappings = mappingUtil.generateFieldsAndListMappingForApp({
-      mappings,
-      isGroupedSampleData: Array.isArray(flowSampleData),
-      isPreviewSuccess: !!flowSampleData,
-      importResource,
-      exportResource,
-    });
+    if (editorType === 'mappings') {
+      const mappings = (yield select(selectors.mapping))?.mappings;
+      const importResource = yield select(selectors.resource, 'imports', resourceId);
+      const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+      _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+        mappings,
+        isGroupedSampleData: Array.isArray(flowSampleData),
+        isPreviewSuccess: !!flowSampleData,
+        importResource,
+        exportResource,
+      });
+    } else if (editorType === 'responseMappings') {
+      const mappings = (yield select(selectors.responseMapping))?.mappings;
+
+      _mappings = responseMappingUtil.generateMappingFieldsAndList(mappings);
+    }
 
     reqBody = {
       rules: {
@@ -393,6 +394,33 @@ export function* refreshHelperFunctions() {
   yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
+export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
+  let flowSampleData = yield select(selectors.getSampleDataContext, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+
+  if (flowSampleData.status !== 'received') {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      formKey,
+    });
+  }
+  flowSampleData = yield select(selectors.getSampleDataContext, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+
+  return flowSampleData?.data;
+}
+
 export function* requestEditorSampleData({
   id,
   requestedTemplateVersion,
@@ -463,13 +491,16 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const showPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
+  const showPreviewStageData = resourceType === 'exports' && fieldId?.includes('once');
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
   const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
+  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId);
+  const isStandaloneExportAdvancedField = !flowId && isExportAdvancedField;
 
-  if (showPreviewStageData || needPreviewStagesData) {
-    yield call(requestResourceFormSampleData, { formKey });
+  if (showPreviewStageData || needPreviewStagesData || isStandaloneExportAdvancedField) {
+    // Incase of advanced fields , we need preSavePage hook's output
+    yield call(requestResourceFormSampleData, { formKey, options: { executeProcessors: isStandaloneExportAdvancedField } });
   }
 
   if (showPreviewStageData) {
@@ -480,35 +511,25 @@ export function* requestEditorSampleData({
     );
 
     sampleData = parsedData?.data;
-  } else {
-    const flowSampleData = yield select(selectors.getSampleDataContext, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
+  } else if (formKey) {
+    if (isStandaloneExportAdvancedField) {
+      // Handles Standalone export's advanced field ID related sample data
+      const parsedData = yield select(
+        selectors.getResourceSampleDataWithStatus,
+        resourceId,
+        'preSavePageHook'
+      );
 
-    sampleData = flowSampleData?.data;
+      sampleData = parsedData?.data;
+    } else if (stage && (isExportAdvancedField || (flowId && !isPageGenerator))) {
+      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey )
+      sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
+    }
+  } else if (stage) {
+    // Handles sample data for all editors outside form context ( FB actions )
+    sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
   }
 
-  if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage))) {
-    // sample data not present, trigger action to get sample data
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-    // get sample data from the selector once loaded
-    const flowSampleData = yield select(selectors.getSampleDataContext, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-
-    sampleData = flowSampleData?.data;
-  }
   let _sampleData = null;
   let templateVersion;
 
@@ -518,10 +539,8 @@ export function* requestEditorSampleData({
   if (!shouldGetContextFromBE) {
     _sampleData = uiSampleData;
   } else {
-    const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
-    const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
-
-    sampleData = yield call(formatEditorSampleDataForGetContextBE, { sampleData, resourceId, resourceType });
+    const filterPath = (editorType === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
+    const defaultData = (isPageGenerator && !editorType.includes('Filter')) ? undefined : { myField: 'sample' };
     const body = {
       sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
@@ -556,11 +575,8 @@ export function* requestEditorSampleData({
       delete body.sampleData;
       delete body.templateVersion;
     } else {
-      if (resource?.oneToMany) {
-        const oneToMany = resource.oneToMany === true || resource.oneToMany === 'true';
-
-        resource = { ...resource, oneToMany };
-      }
+      // As UI does oneToMany processing and we do not need BE changes w.r.to oneToMany, we make oneToMany prop as false  for getContext API
+      resource = { ...resource, oneToMany: false };
       if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
         // create http sub doc with paging method as /getContext expects it
         // map rest paging method to http paging method
@@ -610,11 +626,9 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  if (editorType !== 'csvGenerator' &&
-  stage !== 'outputFilter' &&
-  stage !== 'exportFilter' &&
-  stage !== 'inputFilter' &&
-  stage !== 'importMappingExtract') {
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
+
+  if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,
@@ -626,6 +640,7 @@ export function* requestEditorSampleData({
       resourceType,
       fieldType: fieldId,
       stage,
+      editorType,
     });
 
     return { data, templateVersion};

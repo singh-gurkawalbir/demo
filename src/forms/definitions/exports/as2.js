@@ -39,7 +39,6 @@ export default {
         label: 'How would you like to parse files?',
         type: 'indent',
         fields: [
-          'outputMode',
           'file.type',
           'uploadFile',
           'file.json.resourcePath',

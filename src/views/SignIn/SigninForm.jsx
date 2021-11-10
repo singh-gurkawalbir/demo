@@ -13,8 +13,9 @@ import { AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../components/Buttons';
+import getImageUrl from '../../utils/image';
 
-const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
+const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
   snackbar: {

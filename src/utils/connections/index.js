@@ -1,5 +1,36 @@
 import { matchPath } from 'react-router-dom';
+import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
+
+export const getStatusVariantAndMessage = ({
+  resourceType,
+  showOfflineMsg,
+  testStatus,
+}) => {
+  if (resourceType !== 'connections') {
+    return { variant: 'warning' };
+  }
+
+  if (testStatus === PING_STATES.ERROR) {
+    return {
+      variant: 'error',
+      message:
+        'Your test was not successful. Check your information and try again',
+    };
+  } if (testStatus === PING_STATES.SUCCESS) {
+    return {
+      variant: 'success',
+      message: 'Your connection is working great! Nice Job!',
+    };
+  } if (!testStatus && showOfflineMsg) {
+    return {
+      variant: 'error',
+      message: 'This connection is currently offline. Re-enter your credentials to bring it back online.',
+    };
+  }
+
+  return {};
+};
 
 export const getFilterExpressionForAssistant = (assistant, expression) => {
   if (!assistant ||

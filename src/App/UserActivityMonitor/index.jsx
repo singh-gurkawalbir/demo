@@ -36,7 +36,7 @@ export default function UserActivityMonitor() {
   useEffect(() => {
     let intervalID;
 
-    // when polling resumes then we should and the idle time elapsed reaches the slow down threshold we should dispatch the slow down polling action
+    // When polling resumes, and subsequently the idle time elapsed reaches the slow down threshold we should dispatch the slow down polling action
     if (!pollingStatus || pollingStatus === POLLING_STATUS.RESUME) {
       intervalID = setInterval(() => {
         // keep sampling the getRemainingTime to check if it is less than the slow down period.
