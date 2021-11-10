@@ -11,6 +11,7 @@ import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
 import { getAssistantConnectorType } from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { REST_ASSISTANTS } from '../../../utils/constants';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -47,6 +48,7 @@ function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource
 
 function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource) {
   const {id, url, resource: previewConfigResource, sampleDataWrapper, resourcePath, ...hardCodedParams} = previewConfig;
+  const {adaptorType} = assistantConfig;
 
   if (id) {
     const updatedAssistantConfig = {...assistantConfig};
@@ -58,8 +60,26 @@ function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConf
     return convertToVirtualExport(updatedAssistantConfig, assistantMetadata, resource);
   }
 
-  return {http: {...hardCodedParams, url }, response: {successValues: [], resourcePath}};
+  return {[adaptorType]: {...hardCodedParams, url }, response: {successValues: [], resourcePath}};
 }
+
+function getImportAdaptorType(resource) {
+  const {adaptorType, assistant, http, rest} = resource;
+
+  if (adaptorType === 'HTTPImport') {
+    if (http?.formType === 'assistant') {
+      return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
+    }
+
+    return http?.formType;
+  }
+  if (rest?.formType === 'assistant') {
+    return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
+  }
+
+  return rest?.formType;
+}
+
 export function* _fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
   let assistantMetadata;
@@ -70,9 +90,11 @@ export function* _fetchAssistantSampleData({ resource }) {
     assistant: resource.assistant,
   });
 
+  const adaptorType = getImportAdaptorType(resource);
+
   if (!assistantMetadata) {
     assistantMetadata = yield call(requestAssistantMetadata, {
-      adaptorType: (resource.adaptorType === 'HTTPImport' && resource.http?.formType !== 'rest') ? 'http' : 'rest',
+      adaptorType,
       assistant: resource.assistant,
     });
   }
@@ -80,9 +102,10 @@ export function* _fetchAssistantSampleData({ resource }) {
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,
-    adaptorType: resource.type,
+    adaptorType,
   });
 
+  assistantConfig.adaptorType = adaptorType;
   const importEndpoint = assistantConfig.operationDetails;
 
   if (!importEndpoint) {
