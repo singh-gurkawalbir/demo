@@ -12,7 +12,7 @@ export const DEFAULT_FILTERS = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
-export const HOME_ALL_APPLICATIONS = () => {
+export const getAllApplications = () => {
   let applications = applicationsList();
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];
 

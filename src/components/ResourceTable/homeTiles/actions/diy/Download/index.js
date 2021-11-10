@@ -13,8 +13,7 @@ export default {
 
     return canDownload;
   },
-  useOnClick: rowData => {
-    const {_integrationId} = rowData;
+  useOnClick: ({_integrationId}) => {
     const dispatch = useDispatch();
     const handleDownload = useCallback(() => {
       dispatch(actions.template.generateZip(_integrationId));

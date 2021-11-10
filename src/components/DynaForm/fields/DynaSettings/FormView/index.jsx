@@ -52,6 +52,7 @@ export default function FormView({
     if (!settingsFormState?.meta) { return null; }
     const {fieldMap, layout} = settingsFormState.meta;
 
+    if (!fieldMap) return;
     const fieldMapWithEscapeUnsecuredDomains = Object.keys(fieldMap).reduce((acc, key) => {
       acc[key] = {...fieldMap[key], escapeUnsecuredDomains: true};
 
