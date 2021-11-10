@@ -3,10 +3,6 @@ import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import {
-  constructResourceFromFormValues,
-  constructSuiteScriptResourceFromFormValues,
-} from '../../utils';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import {
@@ -15,19 +11,23 @@ import {
   isAS2Resource,
 } from '../../../utils/resource';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import {
+  _fetchResourceInfoFromFormKey,
+  extractFileSampleDataProps,
+  executeTransformationRules,
+  executeJavascriptHook,
+  SUITESCRIPT_FILE_RESOURCE_TYPES,
+  FILE_DEFINITION_TYPES,
+  IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES,
+  VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA,
+} from './utils';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData } from '../../../utils/sampleData';
-import { generateFileParserOptionsFromResource } from '../utils/fileParserUtils';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { safeParse } from '../../../utils/string';
 
-const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
-const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
-const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
-const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
-const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -41,16 +41,6 @@ const PARSERS = {
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
-
-function extractResourcePath(value, initialResourcePath) {
-  if (value) {
-    const jsonValue = safeParse(value) || {};
-
-    return jsonValue.resourcePath;
-  }
-
-  return initialResourcePath;
-}
 
 export function* _getProcessorOutput({ processorData }) {
   try {
@@ -67,39 +57,6 @@ export function* _getProcessorOutput({ processorData }) {
       return {error: parsedError};
     }
   }
-}
-
-export function* _fetchResourceInfoFromFormKey({ formKey }) {
-  const formState = yield select(selectors.formState, formKey);
-  const parentContext = (yield select(selectors.formParentContext, formKey)) || {};
-  const { resourceId, resourceType, integrationId, ssLinkedConnectionId } = parentContext;
-
-  if (ssLinkedConnectionId) {
-    const ssResourceObj = (yield call(constructSuiteScriptResourceFromFormValues, {
-      formValues: formState?.value || {},
-      resourceId,
-      resourceType,
-      ssLinkedConnectionId,
-      integrationId,
-    })) || {};
-
-    return {
-      formState,
-      ...parentContext,
-      resourceObj: resourceType === 'exports' ? ssResourceObj.export : ssResourceObj.import,
-    };
-  }
-  const resourceObj = (yield call(constructResourceFromFormValues, {
-    formValues: formState?.value || {},
-    resourceId,
-    resourceType,
-  })) || {};
-
-  return {
-    formState,
-    ...parentContext,
-    resourceObj,
-  };
 }
 
 export function* _handlePreviewError({ e, resourceId }) {
@@ -125,11 +82,16 @@ export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestExportPreviewData({ formKey }) {
+export function* _requestExportPreviewData({ formKey, executeProcessors = false }) {
   const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
   const body = getFormattedResourceForPreview(resourceObj);
+
+  if (!executeProcessors) {
+    delete body.transform;
+    delete body.hooks;
+  }
   // BE need flowId and integrationId in the preview call
   // if in case integration settings were used in export
   const flow = yield select(selectors.resource, 'flows', flowId);
@@ -157,28 +119,6 @@ export function* _requestExportPreviewData({ formKey }) {
   } catch (e) {
     yield call(_handlePreviewError, { e, resourceId });
   }
-}
-
-/**
- * Checks if the constructed body from formValues has same file type as saved resource
- * and if body has sampleData
- */
-export function* _hasSampleDataOnResource({ formKey }) {
-  const { resourceObj, resourceId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
-  const resource = yield select(selectors.resource, resourceType, resourceId);
-
-  if (!resource || !resourceObj?.sampleData) return false;
-  const resourceFileType = resource?.file?.type;
-  const bodyFileType = resourceObj?.file?.type;
-
-  if (
-    ['filedefinition', 'fixed', 'delimited/edifact'].includes(bodyFileType) &&
-      resourceFileType === 'filedefinition'
-  ) {
-    return true;
-  }
-
-  return bodyFileType === resourceFileType;
 }
 
 export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
@@ -276,7 +216,6 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 }
 
 export function* _requestFileSampleData({ formKey }) {
-  // file related sample data is handled here
   const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const resourceObj = { ...resourceInfo };
@@ -289,56 +228,81 @@ export function* _requestFileSampleData({ formKey }) {
   if (!fileType) {
     return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
+  const { sampleData, isNewSampleData, parserOptions, fileProps } = yield call(extractFileSampleDataProps, { formKey });
 
-  const fileProps = resourceObj.file[fileType] || {};
-  const fileId = `${resourceId}-uploadFile`;
-  const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
-  const { file: uploadedFile } = uploadedFileObj || {};
-  const hasSampleData = yield call(_hasSampleDataOnResource, { formKey });
-  const parserOptions = generateFileParserOptionsFromResource(resourceObj);
-
-  if (FILE_DEFINITION_TYPES.includes(fileType)) {
-    const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
-    const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
-    const { format, definitionId } = fieldOptions || {};
-    const resourcePath = extractResourcePath(fieldValue, fileDefinitionResourcePath);
-
-    const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {
-      userDefinitionId,
-      resourceType: 'exports',
-      options: { format, definitionId, resourcePath },
-    });
-
-    yield call(_parseFileData, {
+  if (sampleData) {
+    return yield call(_parseFileData, {
       resourceId,
-      fileContent: fileDefinitionData?.sampleData || resourceObj.sampleData,
-      parserOptions: fieldValue || fileDefinitionData?.rule,
-      fileType: 'fileDefinitionParser',
-      fileProps: parserOptions,
+      fileContent: sampleData,
+      fileType: FILE_DEFINITION_TYPES.includes(fileType) ? 'fileDefinitionParser' : fileType,
+      fileProps,
+      parserOptions,
+      isNewSampleData,
     });
-  } else if (EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES.includes(fileType) && uploadedFile) {
-    // parse through the file and update state
-    yield call(_parseFileData, { resourceId, fileContent: uploadedFile, fileType, fileProps, parserOptions, isNewSampleData: true});
-  } else if (hasSampleData) {
-    // fetch from sample data and update state
-    yield call(_parseFileData, { resourceId, fileContent: resourceObj.sampleData, fileProps, fileType, parserOptions});
-  } else {
-    // no sample data - so clear sample data from state
-    yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
+  // no sample data - so clear sample data from state
+  yield put(actions.resourceFormSampleData.clearStages(resourceId));
 }
 
-export function* _requestPGExportSampleData({ formKey, refreshCache }) {
+// Deals with fetching transform & preSavePage hook data
+export function* _fetchFBActionsSampleData({ formKey }) {
+  const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const parsedData = (yield select(
+    selectors.getResourceSampleDataWithStatus,
+    resourceId,
+    'parse'
+  ))?.data;
+
+  const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
+    transform: resourceObj.transform,
+    sampleData: parsedData,
+  });
+
+  yield put(actions.resourceFormSampleData.setProcessorData({
+    resourceId,
+    processor: 'transform',
+    processorData: hasNoRulesToProcess ? parsedData : transformedOutput,
+  }));
+
+  const transformedData = (yield select(
+    selectors.getResourceSampleDataWithStatus,
+    resourceId,
+    'transform'
+  ))?.data;
+
+  const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
+    hook: resourceObj.hooks?.preSavePage,
+    sampleData: transformedData,
+  });
+
+  yield put(actions.resourceFormSampleData.setProcessorData({
+    resourceId,
+    processor: 'preSavePageHook',
+    processorData: hasNoHook ? transformedData : preSavePageHookOutput,
+  }));
+}
+
+export function* _requestPGExportSampleData({ formKey, refreshCache, executeProcessors }) {
   const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj) || isRestCsvExport) {
-    return yield call(_requestFileSampleData, { formKey });
+    yield call(_requestFileSampleData, { formKey });
+    if (executeProcessors) {
+      yield call(_fetchFBActionsSampleData, { formKey });
+    }
+
+    return;
   }
   if (isRealTimeOrDistributedResource(resourceObj)) {
-    return yield call(_requestRealTimeSampleData, { formKey, refreshCache });
+    yield call(_requestRealTimeSampleData, { formKey, refreshCache });
+    if (executeProcessors) {
+      yield call(_fetchFBActionsSampleData, { formKey });
+    }
+
+    return;
   }
-  yield call(_requestExportPreviewData, { formKey });
+  yield call(_requestExportPreviewData, { formKey, executeProcessors });
 }
 
 export function* _requestLookupSampleData({ formKey, refreshCache }) {
@@ -388,7 +352,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache }) {
   }
 }
 
-export function* _requestExportSampleData({ formKey, refreshCache }) {
+export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors }) {
   const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (ssLinkedConnectionId) {
@@ -398,15 +362,12 @@ export function* _requestExportSampleData({ formKey, refreshCache }) {
 
     return yield put(actions.resourceFormSampleData.clearStages(resourceId));
   }
-  const isPageGenerator = !flowId || (yield select(selectors.isPageGenerator, flowId, resourceId));
-  const isStandaloneExport = yield select(selectors.isStandaloneExport, flowId, resourceId);
+  const isLookUpExport = yield select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' });
 
-  // need to handle standalone export as isPageGenerator returns false but still it needs export sample data
-  // ref: IO-21691
-  if (isPageGenerator || isStandaloneExport) {
-    yield call(_requestPGExportSampleData, { formKey, refreshCache });
-  } else {
+  if (isLookUpExport) {
     yield call(_requestLookupSampleData, { formKey, refreshCache });
+  } else {
+    yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors });
   }
 }
 
@@ -477,9 +438,9 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
   if (resourceType === 'exports') {
-    const { refreshCache } = options;
+    const { refreshCache, executeProcessors } = options;
 
-    yield call(_requestExportSampleData, { formKey, refreshCache });
+    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
     yield call(_requestImportSampleData, { formKey });

@@ -7,10 +7,10 @@ import { Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
-import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../utils/constants';
+import { getStatusVariantAndMessage } from '../../utils/connections';
 import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -24,35 +24,6 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto400',
   },
 }));
-const getStatusVariantAndMessage = ({
-  resourceType,
-  showOfflineMsg,
-  testStatus,
-}) => {
-  if (resourceType !== 'connections') {
-    return { variant: 'warning' };
-  }
-
-  if (testStatus === PING_STATES.ERROR) {
-    return {
-      variant: 'error',
-      message:
-        'Your test was not successful. Check your information and try again',
-    };
-  } if (testStatus === PING_STATES.SUCCESS) {
-    return {
-      variant: 'success',
-      message: 'Your connection is working great! Nice Job!',
-    };
-  } if (!testStatus && showOfflineMsg) {
-    return {
-      variant: 'error',
-      message: 'This connection is currently offline. Re-enter your credentials to bring it back online.',
-    };
-  }
-
-  return {};
-};
 
 export default function ConnectionStatusPanel({ className, resourceId, resourceType, isFlowBuilderView }) {
   const classes = useStyles();
@@ -65,23 +36,12 @@ export default function ConnectionStatusPanel({ className, resourceId, resourceT
     resourceType,
     resourceId
   )?.merged || emptyObject;
-  const connectionId =
-    resourceType === 'connections' ? resourceId : resource._connectionId;
+
+  const connectionId = resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
-    state => {
-      const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
-
-      if (resource.type === 'netsuite' && !commStatus) {
-        const {status, hideNotificationMessage} = selectors.netsuiteUserRoles(state, connectionId);
-
-        if (!hideNotificationMessage) {
-          return status;
-        }
-      }
-
-      return commStatus;
-    }
+    state => selectors.testConnectionCommState(state, connectionId)?.commState
   );
+
   const isIAIntegration = useSelector(state => {
     const connection =
       selectors.resource(state, 'connections', connectionId) || {};
@@ -94,12 +54,9 @@ export default function ConnectionStatusPanel({ className, resourceId, resourceT
   const isIAConnectionSetupPending = useSelector(state =>
     selectors.isIAConnectionSetupPending(state, connectionId)
   );
+
   const handleConnectionFixClick = useCallback(() => {
-    history.push(
-      `${
-        match.path.split(':')[0]
-      }edit/connections/${connectionId}?fixConnnection=true`
-    );
+    history.push(`${match.path.split(':')[0]}edit/connections/${connectionId}?fixConnnection=true`);
   }, [connectionId, history, match.path]);
   const { variant, message } = useMemo(() => {
     const queryParams = new URLSearchParams(location.search);

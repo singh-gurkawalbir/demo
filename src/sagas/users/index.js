@@ -11,6 +11,7 @@ import {
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { getResourceCollection } from '../resources';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -91,8 +92,8 @@ export function* requestTrialLicense() {
   } catch (e) {
     return true;
   }
-
   yield put(actions.user.org.accounts.trialLicenseIssued(response));
+  yield call(getResourceCollection, {resourceType: 'licenses', refresh: true });
 }
 
 export function* requestLicenseUpgrade() {

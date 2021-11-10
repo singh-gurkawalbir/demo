@@ -50,6 +50,8 @@ export default function DynaSQLQueryBuilder_afe(props) {
     }
   }, [arrayIndex, id, onFieldChange, value]);
 
+  const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
+
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, 'sql', {
       formKey,
@@ -57,12 +59,12 @@ export default function DynaSQLQueryBuilder_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: flowDataStage,
       onSave: handleSave,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   return (
     <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />

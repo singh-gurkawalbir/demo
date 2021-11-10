@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {selectors} from '../../reducers';
+import {selectors} from '../../../../../../reducers';
 import MappingRow from './MappingRow';
 
 const emptyObject = {};

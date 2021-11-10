@@ -8,7 +8,7 @@ export const POLL_SAMPLE_INTERVAL = 1000;
 
 export function* pollApiRequests({pollAction, pollSaga, pollSagaArgs, duration, disableSlowPolling}) {
   if (pollAction && pollSaga) {
-    throw new Error('Cannot have both pollAction and pollSaga provided, the poll saga supports either one');
+    throw new Error('Cannot have both pollAction and pollSaga provided, the pollApiRequests saga supports either one');
   }
   while (true) {
     const pollingStatus = yield select(selectors.pollingStatus);

@@ -47,7 +47,7 @@ describe('pollApiRequests', () => {
         saga.next();
         fail('should throw error for incorrect arguments');
       } catch (e) {
-        expect(e).toEqual(new Error('Cannot have both pollAction and pollSaga provided, the poll saga supports either one'));
+        expect(e).toEqual(new Error('Cannot have both pollAction and pollSaga provided, the pollApiRequests saga supports either one'));
       }
     });
     const pollOnceRegularly = saga => saga.select(selectors.pollingStatus)
@@ -739,8 +739,7 @@ describe('setLastLoggedInLocalStorage', () => {
     expectSaga(setLastLoggedInLocalStorage)
       .provide([
         [call(getResource,
-          actions.user.profile.request('Retrieving user\'s Profile'), {id: 'someProfileId'}),
-        ]])
+          actions.user.profile.request('Retrieving user\'s Profile')), {id: 'someProfileId'}]])
 
       .run();
 

@@ -1,11 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector, useDispatch } from 'react-redux';
 import Suggestions from './Suggestions';
-import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
-import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 
@@ -41,28 +38,18 @@ export default function DynaTextWithFlowSuggestion(props) {
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
     formKey,
+    stage,
   } = props;
   const formContext = useFormContext(formKey);
   const ref = useRef(null);
-  const dispatch = useDispatch();
   const [lookupModalShown, setLookupModalShown] = useState(false);
   const [state, setState] = useState({
     hideSuggestion: true,
     textInsertPosition: 0,
   });
   const { hideSuggestion, textInsertPosition } = state;
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
-  );
-  const sampleData = useSelector(
-    state =>
-      selectors.getSampleDataContext(state, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: 'flowInput',
-      }).data
-  );
+  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+
   const handleUpdateAfterSuggestionInsert = useCallback(
     newValue => {
       onFieldChange(id, newValue);
@@ -104,19 +91,6 @@ export default function DynaTextWithFlowSuggestion(props) {
   };
 
   useEffect(() => {
-    if (flowId && !sampleData && !isPageGenerator) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'flowInput'
-        )
-      );
-    }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
-
-  useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);
 
     return () => {
@@ -151,6 +125,7 @@ export default function DynaTextWithFlowSuggestion(props) {
         />
         {(showExtract || showLookup) && (
           <Suggestions
+            stage={flowDataStage}
             hide={hideSuggestion}
             id={`suggestions-${id}`}
             onFieldChange={onFieldChange}

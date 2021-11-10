@@ -12,6 +12,7 @@ import actions from '../../actions';
 import InfoIconButton from '../InfoIconButton';
 import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
+import getImageUrl from '../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -239,7 +240,7 @@ export default function InstallationStep(props) {
             {step.imageURL && (
             <img
               alt=""
-              src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
+              src={getImageUrl(step.imageURL)}
             />
             )}
             {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection) && (

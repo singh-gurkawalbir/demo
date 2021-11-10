@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const CloseIconButton = ({CloseButton, disableClose, onClose}) => {
+const CloseIconButton = ({CloseButton, disableClose, onClose, closeDataTest}) => {
   // If the parent drawer provided a custom close button, then use it.
   if (CloseButton) return CloseButton;
 
@@ -43,7 +43,7 @@ const CloseIconButton = ({CloseButton, disableClose, onClose}) => {
     <IconButton
       size="small"
       disabled={!!disableClose}
-      data-test="closeRightDrawer"
+      data-test={closeDataTest || 'closeRightDrawer'}
       aria-label="Close"
       onClick={onClose}>
       <CloseIcon />
@@ -62,6 +62,7 @@ export default function DrawerHeader({
   disableClose,
   className,
   handleClose,
+  closeDataTest,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -97,7 +98,7 @@ export default function DrawerHeader({
 
       {/* Typically children are the action icons/buttons */}
       {children}
-      <CloseIconButton CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />
+      <CloseIconButton closeDataTest={closeDataTest} CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />
     </div>
   );
 }

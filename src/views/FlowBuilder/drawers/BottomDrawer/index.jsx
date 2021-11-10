@@ -141,10 +141,15 @@ export default function BottomDrawer({
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const {tabs, activeTabIndex} = useSelector(state => selectors.bottomDrawerTabs(state), shallowEqual);
+  const isScriptTabShown = tabs?.find(a => a.tabType === 'scripts');
   const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
   const isFlowRunInProgress = useSelector(state =>
     !!selectors.getInProgressLatestJobs(state, flowId).length
   );
+  const flowScripts = useSelector(state =>
+    selectors.getScriptsTiedToFlow(state, flowId)
+  );
+
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -289,6 +294,12 @@ export default function BottomDrawer({
   useEffect(() => {
     dispatch(actions.bottomDrawer.init(flowId));
   }, [dispatch, flowId]);
+
+  useEffect(() => {
+    if ((flowScripts?.length && !isScriptTabShown) || (!flowScripts?.length && isScriptTabShown)) {
+      dispatch(actions.bottomDrawer.init(flowId));
+    }
+  }, [dispatch, flowId, flowScripts?.length, isScriptTabShown]);
 
   return (
     <div>
