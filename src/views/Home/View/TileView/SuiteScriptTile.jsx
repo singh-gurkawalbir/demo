@@ -105,7 +105,6 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
   const getApplication = application =>
     application === 'magento' ? 'magento1' : application;
 
-  // todo: check if we need to add actions to suitescript tiles
   return (
     <div>
       <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>

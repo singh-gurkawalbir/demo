@@ -202,7 +202,7 @@ function Tile({
             </IconButton>
           </Tooltip>
           )}
-          <TileActions history={history} tile={tile} />
+          <TileActions tile={tile} />
         </Header>
         <Content>
           <CardTitle>
