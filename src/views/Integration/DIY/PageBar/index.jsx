@@ -138,7 +138,7 @@ export default function PageBar() {
     history.push(getRoutePath(HOME_PAGE_PATH));
   }
 
-  const handleDelete = useHandleDelete(integrationId);
+  const handleDelete = useHandleDelete(integrationId, setIsDeleting);
 
   const handleChildChange = useCallback(
     e => {

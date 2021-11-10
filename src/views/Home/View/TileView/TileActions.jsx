@@ -10,29 +10,35 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import useHandleDelete from '../../../Integration/hooks/useHandleDelete';
+import { emptyObject } from '../../../../utils/constants';
 
 export default function TileActions({tile}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const {_integrationId, _connectorId, name} = tile || {};
-  const supportsMultiStore = useSelector(state =>
-    (selectors.resource(state, 'integrations', _integrationId))?.settings?.supportsMultiStore
-  );
-  const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
-  const { canClone, canDelete, accessLevel } = useSelector(state => {
-    const {clone: canClone, delete: canDelete, accessLevel} = selectors.resourcePermissions(
-      state,
-      'integrations',
-      _integrationId
-    );
 
-    return {
-      canClone,
-      canDelete,
-      accessLevel,
-    };
-  }, shallowEqual);
-  const isCloningSupported = tile &&
+  const {hasIntegration, supportsMultiStore} = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', _integrationId);
+
+    if (integration) {
+      return {
+        supportsMultiStore: integration.settings?.supportsMultiStore,
+        hasIntegration: true,
+      };
+    }
+
+    return emptyObject;
+  });
+
+  const canDownloadDiy = useSelector(state => selectors.resourcePermissions(state, 'integrations')?.create);
+  const { clone: canCloneDiy, delete: canDeleteDiy, accessLevel } = useSelector(state => selectors.resourcePermissions(
+    state,
+    'integrations',
+    _integrationId
+  ), shallowEqual);
+
+  const canUninstallIA = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
+  const canCloneIA = hasIntegration &&
             integrationAppUtil.isCloningSupported(
               _connectorId,
               name
@@ -62,14 +68,14 @@ export default function TileActions({tile}) {
       case 'uninstallConnector': // for IA
         handleDelete();
         break;
-      default: break;
+      default:
     }
   };
 
   const tileActions = [];
 
-  if (!_connectorId) { // diy / template integrations
-    if (canClone) {
+  if (!_connectorId && hasIntegration) { // diy / template integrations except standalone flows
+    if (canCloneDiy) {
       tileActions.push(
         {
           Icon: CopyIcon,
@@ -78,12 +84,14 @@ export default function TileActions({tile}) {
         }
       );
     }
-    tileActions.push({
-      Icon: DownloadIcon,
-      action: 'generateTemplateZip',
-      label: 'Download integration',
-    });
-    if (canDelete) {
+    if (canDownloadDiy) {
+      tileActions.push({
+        Icon: DownloadIcon,
+        action: 'generateTemplateZip',
+        label: 'Download integration',
+      });
+    }
+    if (canDeleteDiy) {
       tileActions.push(
         {
           Icon: TrashIcon,
@@ -92,8 +100,8 @@ export default function TileActions({tile}) {
         },
       );
     }
-  } else { // Integration app
-    if (isCloningSupported) {
+  } else if (_connectorId) { // Integration app
+    if (canCloneIA) {
       tileActions.push(
         {
           Icon: CopyIcon,
@@ -102,7 +110,7 @@ export default function TileActions({tile}) {
         }
       );
     }
-    if (canUninstall) {
+    if (canUninstallIA) {
       tileActions.push({
         Icon: TrashIcon,
         action: 'uninstallConnector',
@@ -111,10 +119,10 @@ export default function TileActions({tile}) {
     }
   }
 
-  return (
+  return tileActions.length > 0 ? (
     <EllipsisActionMenu
       actionsMenu={tileActions}
       onAction={handleAction}
       alignment="vertical" />
-  );
+  ) : null;
 }
