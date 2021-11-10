@@ -279,8 +279,6 @@ export const JOB_STATUS = Object.freeze({
   RUNNING: 'running',
   RETRYING: 'retrying',
   CANCELING: 'canceling',
-  ERROR: 'error',
-  RESOLVED: 'resolved',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
