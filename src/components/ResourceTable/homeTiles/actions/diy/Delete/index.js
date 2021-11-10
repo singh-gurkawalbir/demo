@@ -7,8 +7,7 @@ export default {
   key: 'deleteIntegration',
   useLabel: () => 'Delete integration',
   icon: TrashIcon,
-  useHasAccess: rowData => {
-    const {_integrationId} = rowData;
+  useHasAccess: ({_integrationId}) => {
     const canDelete = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',

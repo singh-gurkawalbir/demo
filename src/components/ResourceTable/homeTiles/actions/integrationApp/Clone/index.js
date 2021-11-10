@@ -11,8 +11,7 @@ export default {
   key: 'cloneIntegrationApp',
   useLabel: () => 'Clone integration',
   icon: CopyIcon,
-  useHasAccess: rowData => {
-    const {name, _connectorId, _integrationId} = rowData;
+  useHasAccess: ({name, _connectorId, _integrationId}) => {
     const accessLevel = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',
@@ -20,7 +19,7 @@ export default {
     )?.accessLevel);
 
     const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId) || {};
-    const { supportsMultiStore } = integration?.settings || {};
+    const supportsMultiStore = integration?.settings?.supportsMultiStore;
 
     const isCloningSupported = integration &&
     integrationAppUtil.isCloningSupported(
@@ -30,8 +29,7 @@ export default {
 
     return isCloningSupported && integration && !supportsMultiStore;
   },
-  useOnClick: rowData => {
-    const {_integrationId} = rowData;
+  useOnClick: ({_integrationId}) => {
     const history = useHistory();
     const openCloneURL = useCallback(() => {
       history.push(getRoutePath(`/clone/integrations/${_integrationId}/preview`));

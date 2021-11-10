@@ -9,8 +9,7 @@ export default {
   key: 'cloneIntegration',
   useLabel: () => 'Clone integration',
   icon: CopyIcon,
-  useHasAccess: rowData => {
-    const {_integrationId} = rowData;
+  useHasAccess: ({_integrationId}) => {
     const canClone = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',
@@ -19,8 +18,7 @@ export default {
 
     return canClone;
   },
-  useOnClick: rowData => {
-    const {_integrationId} = rowData;
+  useOnClick: ({_integrationId}) => {
     const history = useHistory();
     const openCloneURL = useCallback(() => {
       history.push(getRoutePath(`/clone/integrations/${_integrationId}/preview`));

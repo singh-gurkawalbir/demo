@@ -9,15 +9,15 @@ export default {
   key: 'pinIntegration',
   useLabel: () => 'Pin integration',
   icon: PinIntegrationIcon,
-  useOnClick: rowData => {
-    const {_integrationId} = rowData;
+  useOnClick: ({key}) => {
     const dispatch = useDispatch();
     const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard || emptyObject, shallowEqual);
 
     const handlePin = useCallback(() => {
-        homePreferences.pinnedIntegrations?.push(_integrationId);
+        // push unique integration key to preferences
+        homePreferences.pinnedIntegrations?.push(key);
         dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, pinnedIntegrations: homePreferences.pinnedIntegrations || [] }}));
-    }, [_integrationId, dispatch, homePreferences]);
+    }, [dispatch, homePreferences, key]);
 
     return handlePin;
   },

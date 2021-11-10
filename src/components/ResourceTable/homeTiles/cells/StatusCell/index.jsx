@@ -8,8 +8,6 @@ import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import Status from '../../../../Buttons/Status';
 
-// todo: ashu css
-
 export default function StatusCell({ tile }) {
   const dispatch = useDispatch();
   const history = useHistory();
