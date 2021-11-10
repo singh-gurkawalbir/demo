@@ -236,12 +236,15 @@ export default {
     delete retValues['/rest/pagingMethod'];
 
     if (
-      retValues['/http/response/successValues'] &&
-      !retValues['/http/response/successValues'].length
+      !retValues['/http/response/successValues'] || (retValues['/http/response/successValues'] &&
+      !retValues['/http/response/successValues'].length)
     ) {
       retValues['/http/response/successValues'] = undefined;
     }
 
+    if (!retValues['/http/response/successPath']) {
+      retValues['/http/response/successPath'] = undefined;
+    }
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
       retValues['/http/method'] = retValues['/http/blobMethod'];
@@ -443,6 +446,8 @@ export default {
 
     if (retValues['/http/response/successPath'] && !isValidArray(retValues['/http/response/successPath'])) {
       retValues['/http/response/allowArrayforSuccessPath'] = true;
+    } else {
+      retValues['/http/response/allowArrayforSuccessPath'] = undefined;
     }
     // set the successMediaType on Export according to the connection
     // the request media-type is always json/urlencoded for REST, others are not supported in REST
