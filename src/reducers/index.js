@@ -1699,6 +1699,7 @@ selectors.mkTiles = () => createSelector(
       }
 
       if (t._connectorId) {
+        // adding flow names and descriptions to be used for searching tiles
         flowsNameAndDescription = flows
           .filter(f => f._connectorId === t._connectorId)
           .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
@@ -1726,6 +1727,7 @@ selectors.mkTiles = () => createSelector(
         };
       }
 
+      // adding flow names and descriptions to be used for searching tiles
       flowsNameAndDescription = flows
         .filter(f => {
           if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
@@ -1780,43 +1782,49 @@ selectors.mkFilteredHomeTiles = () => {
 
         return !isPendingSVB;
       });
-      const finalTiles = tiles.concat(suiteScriptLinkedTiles);
+      const homeTiles = tiles.concat(suiteScriptLinkedTiles);
 
-      let result = filterAndSortResources(finalTiles, filterConfig);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
 
       if (applications && !applications.includes('all')) {
-        result = result.filter(t => t.applications?.some(a => applications.includes(a)));
+        // filter on applications
+        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
       }
 
-      if (pinnedIntegrations?.length && result.length) {
+      if (pinnedIntegrations?.length && filteredTiles.length) {
         // move pinned integrations to the top, not affected by sorting
         pinnedIntegrations.forEach(p => {
-          const index = result.findIndex(i => i._integrationId === p);
-          const pinnedInt = result.splice(index, 1);
+          const index = filteredTiles.findIndex(i => {
+            const uniqueIntId = i.ssLinkedConnectionId ? `${i.ssLinkedConnectionId}|${i._integrationId}` : i._integrationId;
 
-          result.unshift(pinnedInt[0]);
+            return uniqueIntId === p;
+          }
+          );
+          const pinnedInt = filteredTiles.splice(index, 1);
+
+          filteredTiles.unshift(pinnedInt[0]);
         });
       }
 
       if (typeof take !== 'number' || take < 1 || !isListView) {
         return {
-          filteredTiles: isListView ? result : sortTiles(
-            result,
+          filteredTiles: isListView ? filteredTiles : sortTiles(
+            filteredTiles,
             tilesOrder
           ),
-          filteredCount: result.length,
-          perPageCount: result.length,
+          filteredCount: filteredTiles.length,
+          perPageCount: filteredTiles.length,
           totalCount: tiles.length,
         };
       }
-      const slicedTiles = result.slice(0, take);
+      const slicedTiles = filteredTiles.slice(0, take);
 
       return {
         filteredTiles: isListView ? slicedTiles : sortTiles(
           slicedTiles,
           tilesOrder
         ),
-        filteredCount: result.length,
+        filteredCount: filteredTiles.length,
         perPageCount: slicedTiles.length,
         totalCount: tiles.length,
       };
@@ -4175,11 +4183,11 @@ selectors.suiteScriptLinkedTiles = createSelector(
     });
 
     return tiles.map(t => ({ ...t,
-      key: `${t.ssLinkedConnectionId}|${t._connectorId}`,
+      key: `${t.ssLinkedConnectionId}|${t._integrationId}`, // for Celigo Table unique key
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : 0,
-      pinned: pinnedIntegrations.includes(t._integrationId) }));
+      pinned: pinnedIntegrations.includes(`${t.ssLinkedConnectionId}|${t._integrationId}`) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {

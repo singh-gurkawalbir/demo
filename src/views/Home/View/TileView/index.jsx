@@ -14,7 +14,6 @@ export default function TileView() {
   const classes = useStyles();
   const {filteredTiles, totalCount} = useSelectorMemo(selectors.mkFilteredHomeTiles);
 
-  // todo: empty search msg css
   if (!filteredTiles?.length && totalCount) {
     return (
       <Typography className={classes.textWrapper}>

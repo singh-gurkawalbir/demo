@@ -13,7 +13,6 @@ export default function HomeView() {
   const searchInput = useSelector(state => selectors.filter(state, FILTER_KEY)?.keyword);
 
   // lazily load flows, only if search input is entered
-  // todo: ashu consider adding this inside each view instead
   const resourcesToLoad = searchInput ? 'published,integrations,connections,marketplacetemplates,flows'
     : 'published,integrations,connections,marketplacetemplates';
 
