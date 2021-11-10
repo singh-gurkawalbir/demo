@@ -369,13 +369,13 @@ export default function getRequestOptions(
       const defaultStatusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
       const {startDate, endDate} = getSelectedRange(range) || {};
 
-      if (status === 'all') {
+      if (status === 'all' || !status) {
         defaultStatusFilter.forEach(status => {
           queryParams.push(`status=${status}`);
         });
       } else if (status === 'error') {
         queryParams.push('numError_gte=1');
-      } else if (status) {
+      } else {
         queryParams.push(`status=${status}`);
       }
 
