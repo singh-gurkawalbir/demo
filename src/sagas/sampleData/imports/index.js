@@ -45,54 +45,20 @@ function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource
   return exportJson;
 }
 
-function updateAssistantConfigWithCorrectMeta(importEndpoint, assistantConfig, resource) {
-  // if (
-  //   importEndpoint.howToFindIdentifier?.lookup?.id
-  // ) {
-  //   const updatedAssistantConfig = {...assistantConfig};
+function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource) {
+  const {id, url, resource: previewConfigResource, sampleDataWrapper, resourcePath, ...hardCodedParams} = previewConfig;
 
-  //   updatedAssistantConfig.operation = importEndpoint.howToFindIdentifier.lookup.id;
-  //   updatedAssistantConfig.assistant = resource.assistant;
-  //   updatedAssistantConfig.resource = importEndpoint.howToFindIdentifier.lookup.resource || assistantConfig.resource;
-
-  //   if (assistantConfig.lookupConfig?.parameterValues) {
-  //     updatedAssistantConfig.queryParams = {
-  //       ...assistantConfig.queryParams,
-  //       ...assistantConfig.lookupConfig.parameterValues,
-  //     };
-  //   }
-
-  //   return {
-  //     assistantConfig: updatedAssistantConfig,
-  //     sampleDataWrapper: importEndpoint.howToFindIdentifier.lookup.sampleDataWrapper,
-  //   };
-  // }
-
-  if (importEndpoint?.previewConfig?.id) {
+  if (id) {
     const updatedAssistantConfig = {...assistantConfig};
 
-    updatedAssistantConfig.operation = importEndpoint.previewConfig.id;
+    updatedAssistantConfig.operation = id;
     updatedAssistantConfig.assistant = resource.assistant;
-    updatedAssistantConfig.resource = importEndpoint.previewConfig.resource || assistantConfig.resource;
+    updatedAssistantConfig.resource = previewConfigResource || assistantConfig.resource;
 
-    if (
-    importEndpoint.previewConfig?.parameterValues
-    ) {
-      updatedAssistantConfig.queryParams = {
-        ...assistantConfig.queryParams,
-        ...importEndpoint.previewConfig.parameterValues,
-      };
-    }
-
-    return {
-      assistantConfig: updatedAssistantConfig,
-      sampleDataWrapper: importEndpoint.previewConfig,
-    };
+    return convertToVirtualExport(updatedAssistantConfig, assistantMetadata, resource);
   }
 
-  return {
-    assistantConfig,
-  };
+  return {http: {...hardCodedParams, url }, response: {successValues: [], resourcePath}};
 }
 export function* _fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
@@ -116,50 +82,53 @@ export function* _fetchAssistantSampleData({ resource }) {
     assistantData: assistantMetadata,
     adaptorType: resource.type,
   });
+
   const importEndpoint = assistantConfig.operationDetails;
 
-  // if (importEndpoint?.sampleData) {
-  //   return yield put(
-  //     actions.metadata.receivedAssistantImportPreview(
-  //       resource._id,
-  //       importEndpoint.sampleData
-  //     )
-  //   );
-  // }
-  if (importEndpoint) {
-    const {assistantConfig: updatedAssitantConfig, sampleDataWrapper} = updateAssistantConfigWithCorrectMeta(importEndpoint, assistantConfig, resource);
-    const exportJson = convertToVirtualExport(updatedAssitantConfig, assistantMetadata, resource);
+  if (!importEndpoint) {
+    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
 
-    if (!exportJson) {
-      yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+    return false;
+  }
+  const {previewConfig, sampleData} = importEndpoint;
 
-      return false;
-    }
-
-    try {
-      const previewData = yield call(apiCallWithRetry, {
-        path: '/exports/preview',
-        opts: {
-          method: 'POST',
-          body: exportJson,
-        },
-        hidden: true,
-      });
-
-      yield put(
-        actions.metadata.receivedAssistantImportPreview(
-          resource._id,
-          sampleDataWrapper ? { [sampleDataWrapper]: previewData } : previewData
-        )
-      );
-    } catch (e) {
-      yield put(actions.metadata.failedAssistantImportPreview(resource._id));
-    }
-
-    return;
+  if (!previewConfig) {
+    return yield put(
+      actions.metadata.receivedAssistantImportPreview(
+        resource._id,
+        sampleData
+      )
+    );
   }
 
-  yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+  const {sampleDataWrapper} = previewConfig;
+  const exportPayload = getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource);
+
+  if (!exportPayload) {
+    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+
+    return false;
+  }
+
+  try {
+    const previewData = yield call(apiCallWithRetry, {
+      path: '/exports/preview',
+      opts: {
+        method: 'POST',
+        body: exportPayload,
+      },
+      hidden: true,
+    });
+
+    yield put(
+      actions.metadata.receivedAssistantImportPreview(
+        resource._id,
+        sampleDataWrapper ? { [sampleDataWrapper]: previewData } : previewData
+      )
+    );
+  } catch (e) {
+    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+  }
 }
 
 export function* _fetchIAMetaData({
