@@ -112,8 +112,8 @@ function Tile({
   const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', tile && tile._integrationId)
+  const isIntegrationV2 = useSelector(state =>
+    isIntegrationAppVerion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -121,7 +121,6 @@ function Tile({
   const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId} = useSelector(state =>
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
-  const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
 
   const {
     urlToIntegrationSettings,
