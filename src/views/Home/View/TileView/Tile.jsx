@@ -23,7 +23,7 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/consta
 import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../../../utils/integrationApps';
+import { isIntegrationAppVerion2 } from '../../../../utils/integrationApps';
 import TileNotification from '../../../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../../../hooks';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
@@ -118,7 +118,6 @@ function Tile({
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const supportsMultiStore = integration?.settings?.supportsMultiStore;
   const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId} = useSelector(state =>
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
@@ -133,8 +132,6 @@ function Tile({
   const accessLevel = tile.integration?.permissions?.accessLevel;
   const status = tileStatus(tile);
   const isConnectionDown = isTileStatusConnectionDown(tile);
-  const integrationAppTileName =
-    tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
 
   const handleConnectionDownStatusClick = useCallback(event => {
     event.stopPropagation();
@@ -201,7 +198,7 @@ function Tile({
             </IconButton>
           </Tooltip>
           )}
-          <TileActions />
+          <TileActions tile={tile} />
         </Header>
         <Content>
           <CardTitle>
@@ -258,10 +255,9 @@ function Tile({
             content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
             trialExpired={trialExpired}
             licenseId={licenseId}
-            supportsMultiStore={supportsMultiStore}
             tileStatus={tile.status}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
-            integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
+            resumable={resumable} accessLevel={accessLevel} />
           )
         }
       </HomePageCardContainer>

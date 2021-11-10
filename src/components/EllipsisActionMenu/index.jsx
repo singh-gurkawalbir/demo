@@ -68,7 +68,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
         className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
-        {actionsMenu.map(({ action, label, Icon, disabled }) => (
+        {actionsMenu?.map(({ action, label, Icon, disabled }) => (
           <MenuItem
             key={label}
             data-test={`${action}`}
