@@ -9,7 +9,6 @@ import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import Status from '../../../../Buttons/Status';
 
-<<<<<<< HEAD
 const useStyles = makeStyles({
   statusWrapper: {
     display: 'flex',
@@ -18,8 +17,6 @@ const useStyles = makeStyles({
   },
 });
 
-=======
->>>>>>> ec81197b0a029efbccb369936d4a601c2a546752
 export default function StatusCell({ tile }) {
   const classes = useStyles();
   const dispatch = useDispatch();
