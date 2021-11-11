@@ -29,12 +29,12 @@ function LocalDateTime({ date }) {
 }
 
 export default function CeligoTimeAgo(props) {
-  const preferences = useSelector(state => selectors.userOwnPreferences(state));
+  const {showRelativeDateTime} = useSelector(state => selectors.userOwnPreferences(state));
 
   if (!props.date) {
     return null;
   }
-  if (!preferences?.showRelativeDateTime) {
+  if (!showRelativeDateTime) {
     return <LocalDateTime date={props.date} />;
   }
 
