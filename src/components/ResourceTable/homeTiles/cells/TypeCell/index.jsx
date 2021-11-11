@@ -38,7 +38,7 @@ export default function TypeCell({ tile }) {
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
 
-  const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const numFlowsText = `${tile.numFlows || 0} Flow${tile.numFlows === 1 ? '' : 's'}`;
 
   if (tile._connectorId) {
     return (
@@ -56,14 +56,13 @@ export default function TypeCell({ tile }) {
     );
   }
 
-  return tile.ssLinkedConnectionId ? 'Custom'
-    : (
-      <>
-        Custom
-        <FieldMessage
-          isValid
-          description={numFlowsText}
+  return (
+    <>
+      Custom
+      <FieldMessage
+        isValid
+        description={numFlowsText}
            />
-      </>
-    );
+    </>
+  );
 }

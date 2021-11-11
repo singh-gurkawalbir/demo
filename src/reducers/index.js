@@ -1714,7 +1714,6 @@ selectors.mkTiles = () => createSelector(
           ...t,
           key: t._integrationId, // for Celigo table unique key
           status,
-          description: integration.description, // todo Ashu : remove description once BE adds it
           flowsNameAndDescription,
           sortablePropType: -1,
           totalErrorCount: getStatusSortableProp({...t, status}),
@@ -1744,9 +1743,8 @@ selectors.mkTiles = () => createSelector(
         ...t,
         key: t._integrationId,
         status,
-        description: integration.description,
         flowsNameAndDescription,
-        sortablePropType: t.numFlows,
+        sortablePropType: t.numFlows || 0,
         totalErrorCount: getStatusSortableProp({...t, status}),
         integration: {
           permissions: integration.permissions,
@@ -4183,7 +4181,7 @@ selectors.suiteScriptLinkedTiles = createSelector(
       key: `${t.ssLinkedConnectionId}|${t._integrationId}`, // for Celigo Table unique key
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
-      sortablePropType: t._connectorId ? -1 : 0,
+      sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
       pinned: pinnedIntegrations.includes(`${t.ssLinkedConnectionId}|${t._integrationId}`) }));
   });
 
