@@ -1822,7 +1822,15 @@ describe('Accounts region selector testcases', () => {
   });
   describe('selectors.tileLicenseDetails test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      const expected = {licenseMessageContent: '', expired: false, trialExpired: false, showTrialLicenseMessage: false};
+      const expected = {
+        expired: false,
+        licenseId: undefined,
+        licenseMessageContent: '',
+        listViewLicenseMesssage: '',
+        resumable: undefined,
+        showTrialLicenseMessage: false,
+        trialExpired: false,
+      };
 
       expect(selectors.tileLicenseDetails(undefined, {})).toEqual(expected);
     });
@@ -1870,6 +1878,8 @@ describe('Accounts region selector testcases', () => {
         trialExpired: false,
         showTrialLicenseMessage: true,
         licenseId: '605b100f1562e664f50e8a23',
+        listViewLicenseMesssage: 'Expiring in 20 days.',
+        resumable: undefined,
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -1920,6 +1930,8 @@ describe('Accounts region selector testcases', () => {
       trialExpired: true,
       showTrialLicenseMessage: true,
       licenseId: '605b100f1562e664f50e8a23',
+      listViewLicenseMesssage: 'Expired 20 days ago',
+      resumable: undefined,
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -1963,11 +1975,14 @@ describe('Accounts region selector testcases', () => {
         },
       };
       const tile = {_integrationId: '605b5fd2fddc8259d923d23d', numError: 0, offlineConnections: [], _connectorId: '605b0c867904202f317413c2', name: 'IA Testing', sandbox: false, numFlows: 0, _parentId: null, status: 'is_pending_setup', integration: {mode: 'install', permissions: {accessLevel: 'owner', connections: {edit: true}}}, connector: {owner: 'Celigo', applications: ['netsuite']}};
-      const expected = {licenseMessageContent: 'Your license will expire in 20 days. Contact sales to renew your license.',
+      const expected = {
         expired: false,
         trialExpired: false,
         showTrialLicenseMessage: false,
         licenseId: '605b100f1562e664f50e8a23',
+        licenseMessageContent: 'Your subscription will expire in 20 days. Contact sales to renew your subscription.',
+        listViewLicenseMesssage: 'Expiring in 20 days',
+        resumable: undefined,
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -2011,13 +2026,14 @@ describe('Accounts region selector testcases', () => {
         },
       };
       const tile = {_integrationId: '605b5fd2fddc8259d923d23d', numError: 0, offlineConnections: [], _connectorId: '605b0c867904202f317413c2', name: 'IA Testing', sandbox: false, numFlows: 0, _parentId: null, status: 'is_pending_setup', integration: {mode: 'install', permissions: {accessLevel: 'owner', connections: {edit: true}}}, connector: {owner: 'Celigo', applications: ['netsuite']}};
-      const expected = {licenseMessageContent: `Your license expired on ${moment(moment()
-        .subtract(20, 'days')
-        .toISOString()).format('MMM Do, YYYY')}. Contact sales to renew your license.`,
-      expired: true,
-      trialExpired: false,
-      showTrialLicenseMessage: false,
-      licenseId: '605b100f1562e664f50e8a23',
+      const expected = {
+        expired: true,
+        trialExpired: false,
+        showTrialLicenseMessage: false,
+        licenseId: '605b100f1562e664f50e8a23',
+        licenseMessageContent: 'Your subscription expired on Oct 22nd, 2021. Contact sales to renew your subscription.',
+        listViewLicenseMesssage: 'Expired 20 days ago',
+        resumable: undefined,
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -2069,6 +2085,7 @@ describe('Accounts region selector testcases', () => {
         trialExpired: false,
         showTrialLicenseMessage: false,
         licenseId: '605b100f1562e664f50e8a23',
+        listViewLicenseMesssage: '',
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
