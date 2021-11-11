@@ -34,7 +34,7 @@ export default function CeligoTimeAgo(props) {
   if (!props.date) {
     return null;
   }
-  if (preferences?.showFullDateTime) {
+  if (!preferences?.showRelativeDateTime) {
     return <LocalDateTime date={props.date} />;
   }
 

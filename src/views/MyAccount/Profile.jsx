@@ -127,14 +127,14 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showFullDateTime } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showFullDateTime };
+    const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
     dispatch(actions.user.preferences.update(preferencesPayload));
     // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
-    delete completePayloadCopy.showFullDateTime;
+    delete completePayloadCopy.showRelativeDateTime;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch]);
@@ -237,14 +237,13 @@ export default function ProfilePanel() {
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,
       },
-      showFullDateTime: {
-        id: 'showFullDateTime',
-        name: 'showFullDateTime',
+      showRelativeDateTime: {
+        id: 'showRelativeDateTime',
+        name: 'showRelativeDateTime',
         type: 'checkbox',
-        helpKey: 'myaccount.showFullDateTime',
-        label: 'Show timestamps as full date/time',
-        customLabel: 'Timestamp displayed as full date/time ',
-        defaultValue: preferences?.showFullDateTime,
+        helpKey: 'myaccount.showRelativeDateTime',
+        label: 'Show timestamps as relative',
+        defaultValue: preferences?.showRelativeDateTime,
       },
       developer: {
         id: 'developer',
@@ -266,7 +265,7 @@ export default function ProfilePanel() {
         'timezone',
         'dateFormat',
         'timeFormat',
-        'showFullDateTime',
+        'showRelativeDateTime',
         'developer',
       ],
     },
