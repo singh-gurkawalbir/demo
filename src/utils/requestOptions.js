@@ -364,12 +364,22 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
       let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
-      const { range, status } = filters || {};
+      const { range, status, hideEmpty = false } = filters || {};
       const queryParams = [];
-      const statusFilter = status?.length ? status : [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const defaultStatusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
       const {startDate, endDate} = getSelectedRange(range) || {};
 
-      statusFilter.forEach(status => queryParams.push(`status=${status}`));
+      if (status === 'all' || !status) {
+        defaultStatusFilter.forEach(status => {
+          queryParams.push(`status=${status}`);
+        });
+      } else if (status === 'error') {
+        queryParams.push('numError_gte=1');
+      } else {
+        queryParams.push(`status=${status}`);
+      }
+
+      if (hideEmpty) { queryParams.push(`hideEmpty=${hideEmpty}`); }
 
       if (startDate && endDate) {
         queryParams.push(`createdAt_gte=${moment(startDate).toISOString()}`);
