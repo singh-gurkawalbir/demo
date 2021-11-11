@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import InfoIconButton from '../../../../InfoIconButton';
@@ -10,16 +11,32 @@ import { INTEGRATION_ACCESS_LEVELS } from '../../../../../utils/constants';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import IntegrationPinnedIcon from '../../../../icons/IntegrationPinnedIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     maxWidth: 360,
     wordWrap: 'break-word',
+    flexDirection: 'column',
   },
-  tags: {
-    display: 'inherit',
+  nameCellDescription: {
+    display: 'flex',
   },
-});
+  nameCellLink: {
+    marginRight: theme.spacing(0.5),
+    marginLeft: theme.spacing(1),
+  },
+  nameCellTags: {
+    marginTop: theme.spacing(1),
+  },
+  nameCellIntegrationTag: {
+    marginRight: theme.spacing(3),
+  },
+  nameCellInfoIcon: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    marginTop: 0,
+  },
+}));
 
 export default function NameCell({ tile }) {
   const { name,
@@ -44,14 +61,17 @@ export default function NameCell({ tile }) {
 
   return (
     <div className={classes.root}>
-      {pinned && <IntegrationPinnedIcon />}
-      <Link to={urlToIntegrationSettings}>{name}</Link>
-
-      <InfoIconButton info={description} escapeUnsecuredDomains size="xs" />
-      <div className={classes.tags}>
-        {integrationTag && <IntegrationTag label={integrationTag} />}
+      <div className={classes.nameCellDescription}>
+        {pinned && <IntegrationPinnedIcon />}
+        <Link to={urlToIntegrationSettings} className={classes.nameCellLink}>{name}</Link>
+        <InfoIconButton info={description} escapeUnsecuredDomains size="xs" className={classes.nameCellInfoIcon} />
+      </div>
+      {(integrationTag || accessLevel) && (
+      <div className={clsx(classes.nameCellDescription, classes.nameCellTags)}>
+        {integrationTag && <IntegrationTag label={integrationTag} className={classes.nameCellIntegrationTag} />}
         {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR && <Tag label="Monitor only" /> }
       </div>
+      )}
     </div>
   );
 }
