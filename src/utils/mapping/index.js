@@ -797,8 +797,8 @@ export default {
       }
     }
   },
-  getApplicationName: (resource = {}, conn) => {
-    if (resource.assistant || conn?.assistant) {
+  getApplicationName: (resource, conn) => {
+    if (resource?.assistant || conn?.assistant) {
       const connectors = applicationsList();
       const assistant = connectors.find(
         connector => (connector.id === resource.assistant || connector.id === conn?.assistant)
@@ -807,7 +807,7 @@ export default {
       if (assistant) return assistant.name;
     }
 
-    const { adaptorType } = resource;
+    const { adaptorType } = resource || {};
 
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.RESTImport:

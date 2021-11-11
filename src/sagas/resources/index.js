@@ -969,6 +969,7 @@ export function* fetchUnloadedIntegrationResources({ integrationId }) {
   yield all(
     ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
   );
+  yield put(actions.resource.integrations.resolveUnloadedResources(integrationId));
 }
 
 export function* receivedResource({ resourceType, resource }) {

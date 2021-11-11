@@ -338,6 +338,7 @@ const resource = {
 
   integrations: {
     fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
+    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
     updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
