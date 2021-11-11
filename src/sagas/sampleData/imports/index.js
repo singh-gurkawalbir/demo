@@ -59,8 +59,11 @@ function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConf
 
     return convertToVirtualExport(updatedAssistantConfig, assistantMetadata, resource);
   }
+  if (adaptorType === 'http') {
+    return { adaptorType: 'HTTPExport', http: {...hardCodedParams, relativeURI: url }, response: {successValues: [], resourcePath}};
+  }
 
-  return {[adaptorType]: {...hardCodedParams, url }, response: {successValues: [], resourcePath}};
+  return {adaptorType: 'RESTExport', rest: {...hardCodedParams, relativeURI: url, resourcePath}, assistant: resource.assistant};
 }
 
 function getImportAdaptorType(resource) {
