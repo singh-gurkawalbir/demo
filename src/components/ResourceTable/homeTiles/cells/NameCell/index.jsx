@@ -11,7 +11,6 @@ import { INTEGRATION_ACCESS_LEVELS } from '../../../../../utils/constants';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import IntegrationPinnedIcon from '../../../../icons/IntegrationPinnedIcon';
 
-// todo: ashu css
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
