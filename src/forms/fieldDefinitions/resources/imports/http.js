@@ -79,15 +79,15 @@ export default {
       {
         items: [
           {
-            label: 'Create New Data & Update Existing Data',
+            label: 'Create new records & update existing records',
             value: 'createandupdate',
           },
           {
-            label: 'Create New Data & Ignore Existing Data',
+            label: 'Create new records & ignore existing records',
             value: 'createandignore',
           },
           {
-            label: 'Update Existing Data & Ignore New Data',
+            label: 'Ignore new records & update existing records',
             value: 'updateandignore',
           },
         ],
