@@ -129,13 +129,7 @@ export function* _fetchAssistantSampleData({ resource }) {
   }
 
   const {sampleDataWrapper} = previewConfig;
-  const exportPayload = getCorrectPreviewConfig(assistantConfig, assistantMetadata,
-    {
-      url: '/api/data/v8.2/accounts',
-      resourcePath: 'value',
-      method: 'get',
-    },
-    resource);
+  const exportPayload = getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource);
 
   if (!exportPayload) {
     yield put(actions.metadata.failedAssistantImportPreview(resource._id));
