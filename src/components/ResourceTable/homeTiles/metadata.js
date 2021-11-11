@@ -2,11 +2,22 @@ import React from 'react';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
-import ApplicationsCell from './cells/ApplicationsCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import {FILTER_KEY, HOME_ALL_APPLICATIONS} from '../../../utils/home';
-import References from '../commonActions/References';
+import {FILTER_KEY, getAllApplications} from '../../../utils/home';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import DIYClone from './actions/diy/Clone';
+import DIYDelete from './actions/diy/Delete';
+import DIYDownload from './actions/diy/Download';
+import IAClone from './actions/integrationApp/Clone';
+import IAUninstall from './actions/integrationApp/Uninstall';
+import IARenew from './actions/integrationApp/Renew';
+import IAReactivate from './actions/integrationApp/Reactivate';
+import PinAction from './actions/common/Pin';
+import UnpinAction from './actions/common/Unpin';
+import LogoStrip from '../../LogoStrip';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../../reducers';
 
 export default {
   useColumns: () => [
@@ -25,12 +36,16 @@ export default {
           title="Applications"
           filterBy="applications"
           filterKey={FILTER_KEY}
-          options={HOME_ALL_APPLICATIONS()}
+          options={getAllApplications()}
             />
       ),
-      Value: ({rowData: r}) => (
-        <ApplicationsCell tile={r} />
-      ),
+      Value: ({rowData: r}) => {
+        const applications = useSelectorMemo(selectors.mkTileApplications, r);
+
+        return (
+          <LogoStrip applications={applications} />
+        );
+      },
     },
     {
       key: 'status',
@@ -44,7 +59,11 @@ export default {
       key: 'lastErrorAt',
       orderBy: 'lastErrorAt',
       heading: 'Last open error',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
+      Value: ({rowData: r}) => {
+        if (r.ssLinkedConnectionId) return 'Not available';
+
+        return <CeligoTimeAgo date={r.lastErrorAt} />;
+      },
     },
     {
       key: 'lastModified',
@@ -61,5 +80,15 @@ export default {
       ),
     },
   ],
-  useRowActions: () => [References],
+  useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId, pinned }) => {
+    if (_integrationId === STANDALONE_INTEGRATION.id) return [];
+    const pinUnpin = pinned ? UnpinAction : PinAction;
+
+    if (ssLinkedConnectionId) return [pinUnpin];
+    if (_connectorId) {
+      return [IARenew, IAReactivate, pinUnpin, IAClone, IAUninstall];
+    }
+
+    return [pinUnpin, DIYClone, DIYDownload, DIYDelete];
+  },
 };

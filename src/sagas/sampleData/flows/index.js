@@ -39,6 +39,7 @@ import {
   isOneToManyResource,
   generatePostResponseMapData,
   getAllDependentSampleDataStages,
+  getFormattedResourceForPreview,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -55,9 +56,11 @@ import {
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../utils/constants';
+import { getConstructedResourceObj } from './utils';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
-export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
+
+export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
   const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const clonedFlow = deepClone(flow || {});
 
@@ -89,7 +92,9 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
     ];
   }
   clonedFlow.refresh = !!refresh;
-
+  if (formKey) {
+    clonedFlow.formKey = formKey;
+  }
   yield put(actions.flowData.init(clonedFlow));
 }
 
@@ -99,6 +104,7 @@ export function* requestSampleData({
   resourceType,
   stage,
   refresh = false,
+  formKey,
   isInitialized,
   onSagaEnd,
 }) {
@@ -116,7 +122,7 @@ export function* requestSampleData({
 
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
-    yield call(_initFlowData, { flowId, resourceId, resourceType, refresh });
+    yield call(_initFlowData, { flowId, resourceId, resourceType, refresh, formKey });
   }
 
   if (refresh) {
@@ -180,34 +186,32 @@ export function* fetchPageProcessorPreview({
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
-  const flowDataState = yield select(selectors.getFlowDataState, flowId);
-  let previewData = yield call(pageProcessorPreview, {
+  const { formKey, refresh: flowDataRefresh } = (yield select(selectors.getFlowDataState, flowId)) || {};
+  let resource = yield call(getConstructedResourceObj, {
+    resourceId: _pageProcessorId,
+    resourceType,
+    formKey,
+  });
+
+  resource = getFormattedResourceForPreview(resource);
+  const previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
+    _pageProcessorDoc: formKey ? resource : undefined,
     previewType,
     resourceType,
     hidden,
     throwOnError: true,
-    refresh: refresh || flowDataState?.refresh,
+    refresh: refresh || flowDataRefresh,
     runOffline: true,
   });
-  const resource = (yield select(
-    selectors.resourceData,
-    resourceType,
-    _pageProcessorId,
-    'value'
-  ))?.merged;
-
-  if (isOneToManyResource(resource)) {
-    previewData = processOneToManySampleData(previewData, resource);
-  }
 
   const {data: existingPreviewData} = yield select(selectors.getSampleDataContext,
     { flowId, resourceId: _pageProcessorId, resourceType, stage: previewType });
 
   // in case on hard refresh and flow preview doesnt return data,
   // dont empty the state, rather use old preview data
-  if (flowDataState?.refresh && existingPreviewData && !previewData) {
+  if (flowDataRefresh && existingPreviewData && !previewData) {
     return yield put(
       actions.flowData.setStatusReceived(
         flowId,
@@ -228,12 +232,13 @@ export function* fetchPageProcessorPreview({
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
-  const { merged: resource = {} } = yield select(
-    selectors.resourceData,
-    'exports',
-    _pageGeneratorId,
-    SCOPES.VALUE
-  );
+  const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
+
+  const resource = yield call(getConstructedResourceObj, {
+    resourceId: _pageGeneratorId,
+    resourceType: 'exports',
+    formKey,
+  });
   const { merged: connection } = yield select(
     selectors.resourceData,
     'connections',
@@ -254,7 +259,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     isRestCsvMediaTypeExport(resource, connection)
   ) {
     // fetch data for file adaptors , AS2 and Rest CSV Media type resource and get parsed based on file type to JSON
-    previewData = yield call(requestFileAdaptorSampleData, { resource });
+    previewData = yield call(requestFileAdaptorSampleData, { resource, formKey });
   } else if (isRealTimeOrDistributedResource(resource)) {
     // fetch data from real time sample data
     previewData = yield call(requestRealTimeMetadata, { resource });
@@ -267,6 +272,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       runOffline: true,
       throwOnError: true,
       flowId,
+      formKey,
     });
     previewData = getPreviewStageData(previewData, 'parse');
   }
@@ -515,7 +521,7 @@ export function* requestProcessorData({
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage: 'inputFilter',
       isInitialized: true,
       noWrap: true,
     });
@@ -533,6 +539,28 @@ export function* requestProcessorData({
     );
 
     return;
+  } else if (stage === 'processedFlowInput') {
+    // processes oneToMany on the received flowInput data
+    const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
+
+    const resource = yield call(getConstructedResourceObj, {
+      resourceId,
+      resourceType,
+      formKey,
+    });
+
+    if (isOneToManyResource(resource)) {
+      const processedFlowInput = processOneToManySampleData(deepClone(preProcessedSampleData), resource);
+
+      yield put(
+        actions.flowData.receivedProcessorData(flowId, resourceId, stage, {
+          data: [processedFlowInput],
+        })
+      );
+
+      return;
+    }
+    hasNoRulesToProcess = true;
   } else {
     hasNoRulesToProcess = true;
   }
@@ -542,7 +570,7 @@ export function* requestProcessorData({
     return yield call(updateStateForProcessorData, {
       flowId,
       resourceId,
-      processedData: { data: [preProcessedSampleData] },
+      processedData: { data: preProcessedSampleData ? [preProcessedSampleData] : [] },
       stage,
     });
   }

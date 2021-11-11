@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PreviewInfo({
-  flowId,
   resourceId,
   formKey,
   resourceSampleData,
@@ -41,11 +40,9 @@ function PreviewInfo({
   const dispatch = useDispatch();
 
   const fetchExportPreviewData = useCallback(() => {
-    dispatch(actions.flowData.clearStages(flowId));
     dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
   }, [
     dispatch,
-    flowId,
     formKey,
   ]);
 
@@ -107,7 +104,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
         <PreviewInfo
           resourceSampleData={resourceSampleData}
           previewStageDataList={previewStageDataList}
-          flowId={flowId}
           resourceId={resourceId}
           formKey={formKey}
           setShowPreviewData={setShowPreviewData}

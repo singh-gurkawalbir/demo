@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 import { TILE_STATUS } from '../constants';
 import {applicationsList} from '../../constants/applications';
 
@@ -12,9 +12,11 @@ export const DEFAULT_FILTERS = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
-export const HOME_ALL_APPLICATIONS = () => {
-  const applications = applicationsList();
+export const getAllApplications = () => {
+  let applications = applicationsList();
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];
+
+  applications = sortBy(applications, ['name']);
 
   const options = applications.map(a => ({_id: a.id, name: a.name}));
 
@@ -89,7 +91,7 @@ export const getStatusSortableProp = tile => {
   let statusSortableProp = 0;
 
   if (offlineConnections?.length) {
-    statusSortableProp = offlineConnections?.length;
+    statusSortableProp = offlineConnections?.length || 0;
   }
 
   switch (status) {

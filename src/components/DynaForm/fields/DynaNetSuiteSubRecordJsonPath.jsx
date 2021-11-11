@@ -1,38 +1,20 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { uniq } from 'lodash';
 import { selectors } from '../../../reducers';
-import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import DynaAutoSuggest from './DynaAutoSuggest';
 
 export default function DynaNetSuiteSubRecordJsonPath(props) {
   const { resourceId, flowId } = props;
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, 'imports')
-  );
-  const dispatch = useDispatch();
   const sampleData = useSelector(state =>
     selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType: 'imports',
-      stage: 'flowInput',
+      stage: 'inputFilter',
     }).data
   );
-
-  useEffect(() => {
-    if (flowId && !sampleData && !isPageGenerator) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          'imports',
-          'flowInput'
-        )
-      );
-    }
-  }, [dispatch, flowId, isPageGenerator, resourceId, sampleData]);
 
   const formattedExtractFields = [{ value: '$', label: '$' }];
 
