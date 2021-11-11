@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
   nameCellLink: {
     marginRight: theme.spacing(0.5),
+    marginLeft: theme.spacing(1),
   },
   nameCellTags: {
     marginTop: theme.spacing(1),
@@ -60,15 +61,17 @@ export default function NameCell({ tile }) {
 
   return (
     <div className={classes.root}>
-      {pinned && <IntegrationPinnedIcon />}
       <div className={classes.nameCellDescription}>
+        {!pinned && <IntegrationPinnedIcon />}
         <Link to={urlToIntegrationSettings} className={classes.nameCellLink}>{name}</Link>
         <InfoIconButton info={description} escapeUnsecuredDomains size="xs" className={classes.nameCellInfoIcon} />
       </div>
+      {(integrationTag || accessLevel) && (
       <div className={clsx(classes.nameCellDescription, classes.nameCellTags)}>
         {integrationTag && <IntegrationTag label={integrationTag} className={classes.nameCellIntegrationTag} />}
         {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR && <Tag label="Monitor only" /> }
       </div>
+      )}
     </div>
   );
 }
