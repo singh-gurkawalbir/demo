@@ -10,25 +10,17 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import useHandleDelete from '../../../Integration/hooks/useHandleDelete';
-import { emptyObject } from '../../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { useSelectorMemo } from '../../../../hooks';
 
 export default function TileActions({tile}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const {_integrationId, _connectorId, name} = tile || {};
-
-  const {hasIntegration, supportsMultiStore} = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', _integrationId);
-
-    if (integration) {
-      return {
-        supportsMultiStore: integration.settings?.supportsMultiStore,
-        hasIntegration: true,
-      };
-    }
-
-    return emptyObject;
-  });
+  const isStandalone = STANDALONE_INTEGRATION.id === _integrationId;
+  const supportsMultiStore = useSelector(state =>
+    selectors.resource(state, 'integrations', _integrationId)?.settings?.supportsMultiStore
+  );
 
   const canDownloadDiy = useSelector(state => selectors.resourcePermissions(state, 'integrations')?.create);
   const { clone: canCloneDiy, delete: canDeleteDiy, accessLevel } = useSelector(state => selectors.resourcePermissions(
@@ -36,9 +28,10 @@ export default function TileActions({tile}) {
     'integrations',
     _integrationId
   ), shallowEqual);
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId) || {};
 
   const canUninstallIA = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
-  const canCloneIA = hasIntegration &&
+  const canCloneIA = integration &&
             integrationAppUtil.isCloningSupported(
               _connectorId,
               name
@@ -74,7 +67,7 @@ export default function TileActions({tile}) {
 
   const tileActions = [];
 
-  if (!_connectorId && hasIntegration) { // diy / template integrations except standalone flows
+  if (!_connectorId && !isStandalone) { // diy / template integrations except standalone flows
     if (canCloneDiy) {
       tileActions.push(
         {

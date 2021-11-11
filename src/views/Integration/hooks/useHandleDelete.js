@@ -11,7 +11,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import actions from '../../../actions';
 
-export default function useHandleDelete(_integrationId, setIsDeleting) {
+export default function useHandleDelete(_integrationId) {
   // this hook returns a callback function to handle deleting/uninstalling integrations
   const history = useHistory();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -90,7 +90,6 @@ export default function useHandleDelete(_integrationId, setIsDeleting) {
           label: 'Delete',
           onClick: () => {
             dispatch(actions.resource.integrations.delete(_integrationId));
-            setIsDeleting && setIsDeleting(true);
           },
         },
         {
@@ -99,7 +98,7 @@ export default function useHandleDelete(_integrationId, setIsDeleting) {
         },
       ],
     });
-  }, [cantDelete, confirmDialog, enqueueSnackbar, dispatch, _integrationId, setIsDeleting]);
+  }, [cantDelete, confirmDialog, enqueueSnackbar, dispatch, _integrationId]);
 
   return _connectorId ? handleUninstall : handleDelete;
 }
