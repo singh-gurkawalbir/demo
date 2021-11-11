@@ -81,8 +81,9 @@ export default function FieldDetails({id, resourceType, field}) {
         className={clsx(classes.toggleContainer, {
           [classes.canInstrument]: canInstrument,
         })}>
+        <Typography variant="body2" gutterBottom>Loggable?</Typography>
         <Typography>
-          {canInstrument ? 'Safe to instrument' : 'PII'}
+          <b>{canInstrument ? 'YES' : 'NO'}</b>
         </Typography>
       </div>
     </div>

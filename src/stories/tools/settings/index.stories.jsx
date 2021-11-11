@@ -9,6 +9,7 @@ export default {
 const Template = () => {
   const settings = process.env;
 
+  // eslint-disable-next-line no-console
   console.log(settings);
 
   return (
