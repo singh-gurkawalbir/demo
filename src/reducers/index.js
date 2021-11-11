@@ -185,6 +185,7 @@ selectors.userProfilePreferencesProps = createSelector(
       email,
       company,
       role,
+      showRelativeDateTime,
       developer,
       phone,
       dateFormat,
@@ -208,6 +209,7 @@ selectors.userProfilePreferencesProps = createSelector(
       timeFormat,
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
+      showRelativeDateTime,
     };
   });
 
