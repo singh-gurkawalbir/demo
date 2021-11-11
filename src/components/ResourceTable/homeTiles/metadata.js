@@ -69,7 +69,7 @@ export default {
       key: 'lastModified',
       orderBy: 'lastModified',
       heading: 'Last updated',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={new Date(r.lastModified)} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified && new Date(r.lastModified)} />,
     },
     {
       key: 'type',
