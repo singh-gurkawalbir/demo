@@ -16,5 +16,5 @@ const Template = () => {
   );
 };
 
-export const browseAllFieldDefinitions = Template.bind({});
+export const EnvVarDump = Template.bind({});
 
