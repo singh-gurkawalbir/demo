@@ -9,6 +9,7 @@ import IntegrationTag from '../../../../tags/IntegrationTag';
 import Tag from '../../../../tags/Tag';
 import { INTEGRATION_ACCESS_LEVELS } from '../../../../../utils/constants';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import IntegrationPinnedIcon from '../../../../icons/IntegrationPinnedIcon';
 
 // todo: ashu css
 const useStyles = makeStyles(theme => ({
@@ -41,7 +42,8 @@ export default function NameCell({ tile }) {
   const { name,
     description,
     tag,
-    ssLinkedConnectionId} = tile;
+    ssLinkedConnectionId,
+    pinned} = tile;
   const classes = useStyles();
   const {urlToIntegrationSettings} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
 
@@ -59,13 +61,14 @@ export default function NameCell({ tile }) {
 
   return (
     <div className={classes.root}>
+      {pinned && <IntegrationPinnedIcon />}
       <div className={classes.nameCellDescription}>
         <Link to={urlToIntegrationSettings} className={classes.nameCellLink}>{name}</Link>
         <InfoIconButton info={description} escapeUnsecuredDomains size="xs" className={classes.nameCellInfoIcon} />
       </div>
       <div className={clsx(classes.nameCellDescription, classes.nameCellTags)}>
         {integrationTag && <IntegrationTag label={integrationTag} className={classes.nameCellIntegrationTag} />}
-        {accessLevel !== INTEGRATION_ACCESS_LEVELS.MONITOR && <Tag label="Monitor only" /> }
+        {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR && <Tag label="Monitor only" /> }
       </div>
     </div>
   );
