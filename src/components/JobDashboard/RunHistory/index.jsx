@@ -18,6 +18,7 @@ import MessageWrapper from '../../MessageWrapper';
 import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
+import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -93,7 +94,7 @@ export default function RunHistory({ flowId, className }) {
     selectors.filter(state, FILTER_KEYS.RUN_HISTORY),
   shallowEqual
   );
-  const filterHash = hashCode(filter.status);
+  const filterHash = hashCode(`${filter.status}${filter.hideEmpty}`);
 
   const isDateFilterSelected = !!(filter.range && filter.range.preset !== defaultRange.preset);
   const selectedDate = useMemo(() => isDateFilterSelected ? {
@@ -148,9 +149,8 @@ export default function RunHistory({ flowId, className }) {
       dispatch(
         actions.patchFilter(FILTER_KEYS.RUN_HISTORY, filter)
       );
-      fetchFlowRunHistory();
     },
-    [dispatch, fetchFlowRunHistory]
+    [dispatch]
   );
 
   const handleChangePage = useCallback((event, newPage) => {
@@ -181,13 +181,7 @@ export default function RunHistory({ flowId, className }) {
               className={clsx(classes.filterButton, classes.status)}
               onChange={e => patchFilter('status', e.target.value)}
               value={filter?.status || 'all'}>
-              {[
-                ['all', 'Select status'],
-                ['error', 'Contains error'],
-                ['canceled', 'Canceled'],
-                ['completed', 'Completed'],
-                ['failed', 'Failed'],
-              ].map(opt => (
+              {RUN_HISTORY_STATUS_OPTIONS.map(opt => (
                 <MenuItem key={opt[0]} value={opt[0]}>
                   {opt[1]}
                 </MenuItem>

@@ -59,3 +59,10 @@ export function getTimeString(timeInMs = 0, delim = ':') {
   return `${hours}${delim}${minutes}${delim}${seconds}`;
 }
 
+export const RUN_HISTORY_STATUS_OPTIONS = [
+  ['all', 'Select status'],
+  ['error', 'Contains error'],
+  ['canceled', 'Canceled'],
+  ['completed', 'Completed'],
+  ['failed', 'Failed']];
+
