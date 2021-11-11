@@ -9,9 +9,8 @@ import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../reso
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
-import { getAssistantConnectorType } from '../../../constants/applications';
+import { getAssistantConnectorType, getImportAdaptorType } from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import { REST_ASSISTANTS } from '../../../utils/constants';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -33,6 +32,9 @@ function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource
   if (!exportConfiguration) {
     return false;
   }
+
+  // the export configuration has all keys starting with forward slash, we generate patches from it and create a new document.
+  // This process results in the document not having the forward slash.
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(exportConfiguration || {}),
     resource: {},
@@ -46,60 +48,48 @@ function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource
   return exportJson;
 }
 
-function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource) {
+function convertToVirtualExportFromPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource) {
   const {id, url, resource: previewConfigResource, sampleDataWrapper, resourcePath, ...hardCodedParams} = previewConfig;
-  const {adaptorType} = assistantConfig;
-  const {_connectionId} = resource;
+  const {adaptorType, resource: assistantConfigResource} = assistantConfig;
+  const {_connectionId, assistant} = resource;
 
+  // if id is provided use that as an operation
   if (id) {
     const updatedAssistantConfig = {...assistantConfig};
 
     updatedAssistantConfig.operation = id;
-    updatedAssistantConfig.assistant = resource.assistant;
-    updatedAssistantConfig.resource = previewConfigResource || assistantConfig.resource;
-
+    updatedAssistantConfig.assistant = assistant;
+    updatedAssistantConfig.resource = previewConfigResource || assistantConfigResource;
+    console.log("call this")
     return convertToVirtualExport(updatedAssistantConfig, assistantMetadata, resource);
   }
+
+  // in the cases hard coded parameters like url, header etc are provided instead of id fabricate a simple export
   if (adaptorType === 'http') {
     return {_connectionId, adaptorType: 'HTTPExport', http: {...hardCodedParams, relativeURI: url }, response: {successValues: [], resourcePath}};
   }
 
-  return {_connectionId, adaptorType: 'RESTExport', rest: {...hardCodedParams, relativeURI: url, resourcePath}, assistant: resource.assistant};
-}
-
-function getImportAdaptorType(resource) {
-  const {adaptorType, assistant, http, rest} = resource;
-
-  if (adaptorType === 'HTTPImport') {
-    if (http?.formType === 'assistant') {
-      return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
-    }
-
-    return http?.formType;
-  }
-  if (rest?.formType === 'assistant') {
-    return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
-  }
-
-  return rest?.formType;
+  return {_connectionId, adaptorType: 'RESTExport', rest: {...hardCodedParams, relativeURI: url, resourcePath}, assistant};
 }
 
 export function* _fetchAssistantSampleData({ resource }) {
+  if (!resource) return;
+  const {assistant, _id} = resource;
+
+  yield put(actions.metadata.requestAssistantImportPreview(_id));
+
   // Fetch assistant's sample data logic
   let assistantMetadata;
 
-  yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(selectors.assistantData, {
-    adaptorType: getAssistantConnectorType(resource.assistant),
-    assistant: resource.assistant,
+    adaptorType: getAssistantConnectorType(assistant),
+    assistant,
   });
-
   const adaptorType = getImportAdaptorType(resource);
-
   if (!assistantMetadata) {
     assistantMetadata = yield call(requestAssistantMetadata, {
       adaptorType,
-      assistant: resource.assistant,
+      assistant,
     });
   }
 
@@ -113,26 +103,30 @@ export function* _fetchAssistantSampleData({ resource }) {
   const importEndpoint = assistantConfig.operationDetails;
 
   if (!importEndpoint) {
-    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+    // we can't find the endpoint if the operation is incorrect
+    yield put(actions.metadata.failedAssistantImportPreview(_id));
 
     return false;
   }
   const {previewConfig, sampleData} = importEndpoint;
 
+  // if there is not previewConfig just use the sample data associated sampleData
   if (!previewConfig) {
     return yield put(
       actions.metadata.receivedAssistantImportPreview(
-        resource._id,
+        _id,
         sampleData
       )
     );
   }
 
   const {sampleDataWrapper} = previewConfig;
-  const exportPayload = getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource);
+  const exportPayload = convertToVirtualExportFromPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource);
+  console.log("check  here ", exportPayload)
 
+  // if it cannot be converted to a virtual export just fail the preview call
   if (!exportPayload) {
-    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+    yield put(actions.metadata.failedAssistantImportPreview(_id));
 
     return false;
   }
@@ -149,12 +143,12 @@ export function* _fetchAssistantSampleData({ resource }) {
 
     yield put(
       actions.metadata.receivedAssistantImportPreview(
-        resource._id,
+        _id,
         sampleDataWrapper ? { [sampleDataWrapper]: previewData } : previewData
       )
     );
   } catch (e) {
-    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
+    yield put(actions.metadata.failedAssistantImportPreview(_id));
   }
 }
 
