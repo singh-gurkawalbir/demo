@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import {makeStyles} from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import { TILE_STATUS } from '../../../../../utils/constants';
 import { tileStatus, isTileStatusConnectionDown } from '../../../../../utils/home';
@@ -8,9 +9,16 @@ import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import Status from '../../../../Buttons/Status';
 
-// todo: ashu css
+const useStyles = makeStyles({
+  statusWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+});
 
 export default function StatusCell({ tile }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const {
@@ -46,7 +54,7 @@ export default function StatusCell({ tile }) {
   }, [history, urlToIntegrationConnections]);
 
   return (
-    <>
+    <div className={classes.statusWrapper}>
       <Status
         variant={status.variant}
         onClick={handleStatusClick}
@@ -61,6 +69,6 @@ export default function StatusCell({ tile }) {
         {tile.offlineConnections.length} connection down
       </Status>
       )}
-    </>
+    </div>
   );
 }
