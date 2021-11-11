@@ -48,6 +48,9 @@ const useStyles = makeStyles(theme => ({
     width: 300,
     marginTop: '50%',
     height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: 0,
+    },
   },
   title: {
     marginBottom: theme.spacing(2),

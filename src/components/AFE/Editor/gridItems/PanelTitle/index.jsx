@@ -9,18 +9,13 @@ const useStyles = makeStyles(theme => ({
     height: 39,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
-    // color: theme.palette.text.main,
     borderBottom: 'solid 1px rgb(0,0,0,0.3)',
   },
   helpButton: {
     padding: 0,
-    margin: -1,
-  },
-  titleText: {
-    marginBottom: -2,
+    margin: 2,
   },
 }));
 
@@ -29,7 +24,7 @@ export default function PanelTitle({ title, children, className, helpKey}) {
 
   return (
     <div data-public className={clsx(classes.titleContainer, className)}>
-      {title ? <Typography variant="body1" component="div" className={clsx(classes.titleText, className)}>{title}</Typography> : children}
+      {title ? <Typography variant="body1" component="div" className={className}>{title}</Typography> : children}
       {helpKey && (
         <Help
           title={helpKey}

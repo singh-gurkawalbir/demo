@@ -1,11 +1,12 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import actions from '../../../../../actions';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
+import FilledButton from '../../../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -37,13 +38,11 @@ export default function UpgradeDrawer() {
           your integration needs.
         </Typography>
 
-        <Button
+        <FilledButton
           className={classes.button}
-          variant="outlined"
-          color="primary"
           onClick={onStartFreeTrialInterestedClick}>
           Yes, I&apos;m interested
-        </Button>
+        </FilledButton>
         <a
           target="_blank"
           rel="noopener noreferrer"

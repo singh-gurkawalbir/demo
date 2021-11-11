@@ -33,12 +33,12 @@ import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
-import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
+import { TextButton } from '../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -115,6 +115,7 @@ export default function ConnectorInstallation(props) {
     parentId: integration._parentId,
   } : emptyObject, [integration]);
 
+  const isTemplate = !_connectorId;
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -144,6 +145,39 @@ export default function ConnectorInstallation(props) {
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
+  const templateInstallSteps = useMemo(() => {
+    const bundleInstallationForNetsuiteConnections = [];
+    const bundleInstallationForSalesforceConnections = [];
+
+    return installSteps.map(step => {
+      if (step.sourceConnection?.type === 'netsuite') {
+        bundleInstallationForNetsuiteConnections.push(step);
+      } else if (step.sourceConnection?.type === 'salesforce') {
+        bundleInstallationForSalesforceConnections.push(step);
+      }
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connStep = bundleInstallationForNetsuiteConnections.shift();
+
+          return {
+            ...step,
+            connectionId: connStep._connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connStep = bundleInstallationForSalesforceConnections.shift();
+
+          return {
+            ...step,
+            connectionId: connStep._connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }, [installSteps]);
   const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
     installSteps,
   ]);
@@ -375,7 +409,7 @@ export default function ConnectorInstallation(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -390,6 +424,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
       completed,
       url,
+      updatedUrl,
       form,
     } = step;
 
@@ -434,7 +469,7 @@ export default function ConnectorInstallation(props) {
         )
       );
 
-      if (type === INSTALL_STEP_TYPES.FORM) {
+      if (type === INSTALL_STEP_TYPES.FORM || type === INSTALL_STEP_TYPES.URL) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
@@ -444,7 +479,7 @@ export default function ConnectorInstallation(props) {
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
       }
-    } else if (installURL || url) {
+    } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -453,7 +488,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL || url });
+        openExternalUrl({ url: installURL || url || updatedUrl});
       } else {
         if (step.verifying) {
           return false;
@@ -534,34 +569,32 @@ export default function ConnectorInstallation(props) {
         >
         <div className={classes.actions}>
           {helpUrl && (
-            <IconTextButton
+            <TextButton
               data-test="viewHelpGuide"
               component={Link}
-              variant="text"
               onClick={handleHelpUrlClick}
-              color="primary">
-              <HelpIcon />
+              startIcon={<HelpIcon />}
+              >
               View help guide
-            </IconTextButton>
+            </TextButton>
           )}
           {_connectorId ? (
-            <IconTextButton
+            <TextButton
               data-test="uninstall"
               component={Link}
-              variant="text"
               onClick={handleUninstall}
-              color="primary">
-              <CloseIcon />
+              startIcon={<CloseIcon />}
+             >
               Uninstall
-            </IconTextButton>
+            </TextButton>
           )
             : (
-              <IconTextButton
-                variant="text"
+              <TextButton
                 data-test="deleteIntegration"
-                onClick={handleUninstall}>
-                <TrashIcon /> Delete integration
-              </IconTextButton>
+                onClick={handleUninstall}
+                startIcon={<TrashIcon />}>
+                Delete integration
+              </TextButton>
             )}
 
         </div>
@@ -617,12 +650,15 @@ export default function ConnectorInstallation(props) {
             <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
-            {installSteps.map((step, index) => (
+            {(isTemplate ? templateInstallSteps : installSteps).map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
+                isTemplate={isTemplate}
+                integrationId={integrationId}
+                isFrameWork2={isFrameWork2}
               />
             ))}
           </div>

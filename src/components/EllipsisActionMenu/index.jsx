@@ -2,6 +2,7 @@ import React, { useCallback, useState} from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
+import {TextButton} from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -19,7 +20,7 @@ const ActionLabel = (({ label, Icon }) => {
   return label;
 });
 
-export default function EllipsisActionMenu({ actionsMenu, onAction }) {
+export default function EllipsisActionMenu({ actionsMenu, label, onAction }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
@@ -36,16 +37,28 @@ export default function EllipsisActionMenu({ actionsMenu, onAction }) {
 
   return (
     <>
-      <IconButton
-        data-test="openActionsMenu"
-        aria-label="more"
-        aria-controls={actionsPopoverId}
-        aria-haspopup="true"
-        size="small"
-        onClick={handleMenuClick}>
-        <EllipsisIcon />
-      </IconButton>
-
+      {label ? (
+        <TextButton
+          data-test="openActionsMenu"
+          aria-label="more"
+          aria-controls={actionsPopoverId}
+          aria-haspopup="true"
+          onClick={handleMenuClick}
+          startIcon={<EllipsisIcon />}>
+          {label}
+        </TextButton>
+      )
+        : (
+          <IconButton
+            data-test="openActionsMenu"
+            aria-label="more"
+            aria-controls={actionsPopoverId}
+            aria-haspopup="true"
+            size="small"
+            onClick={handleMenuClick}>
+            <EllipsisIcon />
+          </IconButton>
+        )}
       <Menu
         elevation={2}
         variant="menu"

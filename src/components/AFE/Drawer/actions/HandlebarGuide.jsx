@@ -1,15 +1,14 @@
 import React from 'react';
 import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
 import CeligoDivider from '../../../CeligoDivider';
-import IconTextButton from '../../../IconTextButton';
 import Icon from '../../../icons/InstallationGuideIcon';
+import { TextButton } from '../../../Buttons';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   button: {
     marginRight: '0 !important',
-    color: theme.palette.primary.main,
   },
-}));
+});
 
 const anchorProps = {
   component: 'a',
@@ -25,13 +24,18 @@ export default function HandlebarGuide() {
   return (
     <>
       {hasWideScreen ? (
-        <IconTextButton
-          {...anchorProps} className={classes.button} variant="text">
-          <Icon /> Handlebars guide
-        </IconTextButton>
+        <TextButton
+          {...anchorProps}
+          className={classes.button}
+          startIcon={<Icon />}>
+          Handlebars guide
+        </TextButton>
       ) : (
         <Tooltip data-public title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
-          <IconButton {...anchorProps} className={classes.button} aria-label="handlebars guide">
+          <IconButton
+            {...anchorProps}
+            className={classes.button}
+            aria-label="handlebars guide">
             <Icon />
           </IconButton>
         </Tooltip>

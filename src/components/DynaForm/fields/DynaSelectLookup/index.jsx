@@ -81,8 +81,9 @@ export default function DynaSelectLookup(props) {
         onFieldChange(lookupFieldId, modifiedLookup);
       }
       onFieldChange(id, newValue.name);
+      history.replace(`${match.url}/lookups/edit/${newValue.name}`);
     },
-    [adaptorType, id, lookups, onFieldChange, value],
+    [adaptorType, history, id, lookups, match.url, onFieldChange, value],
   );
   const handleManageLookupsSave = useCallback(
     lookups => {
@@ -102,12 +103,12 @@ export default function DynaSelectLookup(props) {
         <DynaSelect {...props} options={lookupOptions} />
         <div className={classes.actions} >
           <ActionButton
-            data-test="addNewConditionalLookup"
+            data-test="addNewLookup"
             onClick={handleAddLookupClick}>
             <AddIcon />
           </ActionButton>
           <ActionButton
-            data-test="addEditConditionalLookup"
+            data-test="addEditLookup"
             disabled={!value}
             onClick={handleEditLookupClick}>
             <EditIcon />

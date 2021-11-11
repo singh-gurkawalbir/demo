@@ -3,14 +3,16 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
+import ActionGroup from '../../../../components/ActionGroup';
+import { TextButton } from '../../../../components/Buttons';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import EditableText from '../../../../components/EditableText';
+import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import TrashIcon from '../../../../components/icons/TrashIcon';
-import IconTextButton from '../../../../components/IconTextButton';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -18,6 +20,7 @@ import { HOME_PAGE_PATH, STANDALONE_INTEGRATION } from '../../../../utils/consta
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../../utils/messageStore';
 import getRoutePath from '../../../../utils/routePaths';
+import { camelCase } from '../../../../utils/string';
 import { useAvailableTabs } from '../useAvailableTabs';
 
 const integrationsFilterConfig = { type: 'integrations' };
@@ -49,6 +52,7 @@ export default function PageBar() {
   const {
     name,
     description,
+    childDisplayName,
     isIntegrationApp,
     hasIntegration,
     supportsChild,
@@ -66,6 +70,7 @@ export default function PageBar() {
         templateId: integration._templateId,
         mode: integration.mode,
         name: integration.name,
+        childDisplayName: integration.childDisplayName,
         isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
@@ -176,7 +181,7 @@ export default function PageBar() {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -280,52 +285,55 @@ export default function PageBar() {
                 undefined
               )
             }>
-      {canClone && hasIntegration && (
-      <IconTextButton
-        component={Link}
-        to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
-        variant="text"
-        data-test="cloneIntegration">
-        <CopyIcon /> Clone integration
-      </IconTextButton>
-      )}
-      {/* Sravan needs to move add child functionality to integrationApps */}
-      { supportsChild && (
-      <>
-        <IconTextButton
-          onClick={handleAddNewChild}
-          variant="text"
-          data-test="addNewStore">
-          <CopyIcon /> Add new child
-        </IconTextButton>
-        <Select
-          displayEmpty
-          data-test="select Child"
-          className={classes.storeSelect}
-          onChange={handleChildChange}
-          IconComponent={ArrowDownIcon}
-          value={childId}>
-          <MenuItem disabled value="">
-            Select child
-          </MenuItem>
 
-          {children.map(s => (
-            <MenuItem key={s.value} value={s.value}>
-              {s.label}
+      <ActionGroup>
+        {canClone && hasIntegration && (
+        <TextButton
+          component={Link}
+          to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
+          startIcon={<CopyIcon />}
+          data-test="cloneIntegration">
+          Clone integration
+        </TextButton>
+        )}
+        {/* Sravan needs to move add child functionality to integrationApps */}
+        { supportsChild && (
+        <>
+          <TextButton
+            onClick={handleAddNewChild}
+            startIcon={<AddIcon />}
+            data-test="addNewStore">
+            {`Add new ${camelCase(childDisplayName) || 'child'}`}
+          </TextButton>
+          <Select
+            displayEmpty
+            data-test="select Child"
+            className={classes.storeSelect}
+            onChange={handleChildChange}
+            IconComponent={ArrowDownIcon}
+            value={childId}>
+            <MenuItem disabled value="">
+              {`Select ${camelCase(childDisplayName) || 'child'}`}
             </MenuItem>
-          ))}
-        </Select>
-      </>
-      )}
 
-      {canDelete && hasIntegration && !isIntegrationApp && (
-      <IconTextButton
-        variant="text"
-        data-test="deleteIntegration"
-        onClick={handleDelete}>
-        <TrashIcon /> Delete integration
-      </IconTextButton>
-      )}
+            {children.map(s => (
+              <MenuItem key={s.value} value={s.value}>
+                {s.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </>
+        )}
+
+        {canDelete && hasIntegration && !isIntegrationApp && (
+        <TextButton
+          startIcon={<TrashIcon />}
+          data-test="deleteIntegration"
+          onClick={handleDelete}>
+          Delete integration
+        </TextButton>
+        )}
+      </ActionGroup>
     </CeligoPageBar>
   );
 }

@@ -10,9 +10,9 @@ import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import SelectResource from '../SelectResource';
-import ButtonGroup from '../../ButtonGroup';
-import IconTextButton from '../../IconTextButton';
 import CeligoSelect from '../../CeligoSelect';
+import { TextButton } from '../../Buttons';
+import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -131,10 +131,10 @@ export default function LineGraphDrawer({ integrationId, childId }) {
   return (
     <div className={classes.linegraphContainer}>
       <div className={classes.linegraphActions}>
-        <ButtonGroup>
-          <IconTextButton onClick={handleRefreshClick}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
+        <ActionGroup>
+          <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
+            Refresh
+          </TextButton>
 
           <DateRangeSelector
             onSave={handleDateRangeChange}
@@ -161,7 +161,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
             flowResources={filteredFlowResources}
             onSave={handleResourcesChange}
         />
-        </ButtonGroup>
+        </ActionGroup>
       </div>
       <FlowCharts
         integrationId={integrationId}

@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { LinearProgress, Typography} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
+import { TextButton } from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   featureText: {
@@ -68,15 +68,12 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
           />
       </div>
       {!hideButton && (
-      <Button
+      <TextButton
         disabled={usedCount === 0}
         data-test="fixConnection"
-        variant="text"
-        color="primary"
-        onClick={onButtonClick}
-        className={classes.productionUsageListLink}>
+        onClick={onButtonClick}>
         List
-      </Button>
+      </TextButton>
       )}
     </div>
   );

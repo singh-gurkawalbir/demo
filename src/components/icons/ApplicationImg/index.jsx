@@ -1,9 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { map } from 'lodash';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { getDatabaseConnectors } from '../../../constants/applications';
+import getImageUrl from '../../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -64,29 +63,26 @@ function imageName(assistant) {
 }
 
 export default function ApplicationImg({
-  size = 'small',
+  size,
   markOnly = false,
   assistant,
   type,
-  alt = 'Application image',
+  alt,
   className,
 }) {
   const classes = useStyles();
-  let path = `${process.env.CDN_BASE_URI}images/`;
-  const dbConnectors = map(getDatabaseConnectors(), 'id');
+  let path;
 
   if (!assistant) {
-    if (dbConnectors.includes(iconMap(type)) && markOnly) {
-      path += `react/application-logos/small/${iconMap(type)}.png`;
+    if (markOnly) {
+      path = getImageUrl(`images/react/application-logos/small/${iconMap(type)}.png`);
     } else {
-      path += `react/application-logos/large/${iconMap(
-        type
-      )}.png`;
+      path = getImageUrl(`images/react/application-logos/large/${iconMap(type)}.png`);
     }
   } else if (markOnly) {
-    path += `react/application-logos/small/${imageName(assistant)}.png`;
+    path = getImageUrl(`images/react/application-logos/small/${imageName(assistant)}.png`);
   } else {
-    path += `react/application-logos/large/${assistant}.png`;
+    path = getImageUrl(`images/react/application-logos/large/${assistant}.png`);
   }
 
   return (

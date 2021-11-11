@@ -1,14 +1,14 @@
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@material-ui/core';
 import actions from '../../actions';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import DynaForm from '../DynaForm';
-import ButtonGroup from '../ButtonGroup';
+import ActionGroup from '../ActionGroup';
+import { TextButton } from '../Buttons';
 
 const fieldMeta = {
   fieldMap: {
@@ -58,7 +58,7 @@ export default function InviteUser() {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
             data-test="saveInviteUser"
@@ -66,15 +66,13 @@ export default function InviteUser() {
             onClick={handleInviteUser}>
             Invite user & close
           </DynaSubmit>
-          <Button
-            variant="text"
-            color="primary"
+          <TextButton
             data-test="cancelInviteUser"
             label="Cancel"
             onClick={handleClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../../DynaSelect';
@@ -69,7 +69,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -148,11 +148,14 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   }
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
+    const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
+
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
         <DynaAutocomplete
           {...basicProps}
+          multiline={multiline}
           onFieldChange={onFieldChange}
           errorMessages={errorMessages}
           value={fieldValue}
@@ -183,25 +186,11 @@ const RowCellMemo = ({
   tableSize,
   setTableState,
   onRowChange,
-  fieldHeight,
-  listRef}) => {
+}) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
-  const rowRef = React.useRef();
-  const heightOfCell = rowRef?.current?.getBoundingClientRect().height;
-
-  // we have to maintain in the height of each cell so that the virtualized row can be updated with the same
-  useEffect(() => {
-    setTableState({type: actionTypes.UPDATE_CELL_HEIGHT, rowIndex, colIndex, heightOfCell});
-  }, [colIndex, rowIndex, heightOfCell, setTableState]);
-  // this function is need for react virtualized list to reset that row computation
-  useEffect(() => {
-    listRef?.current?.resetAfterIndex(rowIndex);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldHeight]);
-
-  const memoCell = useMemo(() => (
+  return useMemo(() => (
     <RowCell
       optionsMap={optionsMap}
       fieldValue={fieldValue}
@@ -213,12 +202,6 @@ const RowCellMemo = ({
       colIndex={colIndex}
   />
   ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
-
-  return (
-    <div ref={rowRef}>
-      {memoCell}
-    </div>
-  );
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -237,7 +220,6 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes})
   ), [classes.margin, disableDeleteRows, rowIndex, setTableState]);
 export default function TableRow({
   rowValue,
-  rowSizeMap,
   rowIndex,
   tableSize,
   optionsMap,
@@ -246,7 +228,6 @@ export default function TableRow({
   onRowChange,
   ignoreEmptyRow,
   disableDeleteRows,
-  listRef,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -260,11 +241,9 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
-              listRef={listRef}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
-              fieldHeight={rowSizeMap?.[op.id]}
               touched={touched}
               rowIndex={rowIndex}
               colIndex={op.id}

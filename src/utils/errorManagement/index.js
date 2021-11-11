@@ -123,41 +123,53 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   return errorDiffMap;
 };
 
+export const sourceLabelsMap = applicationName => ({
+  internal: 'Internal',
+  application: `${applicationName || 'Application'}`,
+  connection: 'Connection',
+  resource: 'Resource',
+  transformation: 'Transformation',
+  output_filter: 'Output filter',
+  input_filter: 'Input filter',
+  import_filter: 'Import filter',
+  lookup: 'Lookup',
+  mapping: 'Mapping',
+  response_mapping: 'Response mapping',
+  pre_save_page_hook: 'Pre save page hook',
+  pre_map_hook: 'Pre map hook',
+  post_map_hook: 'Post map hook',
+  post_submit_hook: 'Post submit hook',
+  post_response_map_hook: 'Post response map hook',
+  post_aggregate_hook: 'Post aggregate hook',
+  pre_send_hook_ss: 'Pre send suitescript hook',
+  pre_map_hook_ss: 'Pre map suitescript hook',
+  post_map_hook_ss: 'Post map suitescript hook',
+  post_submit_hook_ss: 'Post submit suitescript hook',
+});
+
 export const getSourceOptions = (sourceList = [], applicationName) => {
   if (!sourceList.length) return [];
-  const sourceLabelsMap = {
-    internal: 'Internal',
-    application: `${applicationName || 'Application'}`,
-    connection: 'Connection',
-    resource: 'Resource',
-    transformation: 'Transformation',
-    output_filter: 'Output filter',
-    input_filter: 'Input filter',
-    import_filter: 'Import filter',
-    lookup: 'Lookup',
-    mapping: 'Mapping',
-    response_mapping: 'Response mapping',
-    pre_save_page_hook: 'Pre save page hook',
-    pre_map_hook: 'Pre map hook',
-    post_map_hook: 'Post map hook',
-    post_submit_hook: 'Post submit hook',
-    post_response_map_hook: 'Post response map hook',
-    post_aggregate_hook: 'Post aggregate hook',
-    pre_send_hook_ss: 'Pre send suitescript hook',
-    pre_map_hook_ss: 'Pre map suitescript hook',
-    post_map_hook_ss: 'Post map suitescript hook',
-    post_submit_hook_ss: 'Post submit suitescript hook',
-  };
-  const options = sourceList.map(sourceId => ({_id: sourceId, name: sourceLabelsMap[sourceId] || sourceId}));
+
+  const options = sourceList.map(sourceId => ({_id: sourceId, name: sourceLabelsMap(applicationName)[sourceId] || sourceId}));
   const sortedOptions = sortBy(options, s => s.name);
 
   return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
 
+export const CLASSIFICATION_LABELS_MAP = {
+  connection: 'Connection',
+  duplicate: 'Duplicate',
+  governance: 'Governance',
+  missing: 'Missing',
+  parse: 'Parse',
+  value: 'Value',
+  intermittent: 'Intermittent',
+};
+
 export function getClassificationOptions(classificationList = []) {
   const options = classificationList
     .filter(classificationId => classificationId !== 'none')
-    .map(classificationId => ({_id: classificationId, name: classificationId}));
+    .map(classificationId => ({_id: classificationId, name: CLASSIFICATION_LABELS_MAP[classificationId] || classificationId}));
   const sortedOptions = sortBy(options, s => s.name);
 
   return [{ _id: 'all', name: 'All classifications'}, ...sortedOptions];

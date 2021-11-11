@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
     minHeight: 124,
+    marginBottom: theme.spacing(12),
   },
 }));
 

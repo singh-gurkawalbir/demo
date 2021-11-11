@@ -58,6 +58,7 @@ export default {
               items: [
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
+                { label: 'Absolute number', value: 'absolutenumber' },
                 { label: 'Boolean', value: 'boolean' },
                 { label: 'Date', value: 'date' },
                 { label: 'Number array', value: 'numberarray' },
@@ -117,6 +118,7 @@ export default {
           name: '_mode',
           type: 'radiogroup',
           label: 'Options',
+          required: true,
           fullWidth: true,
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],

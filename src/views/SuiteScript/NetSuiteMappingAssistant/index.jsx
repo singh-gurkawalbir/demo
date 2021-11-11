@@ -1,13 +1,14 @@
 import Iframe from 'react-iframe';
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { getDomain } from '../../../utils/resource';
 import Spinner from '../../../components/Spinner';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import FilledButton from '../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -197,12 +198,9 @@ export default function NetSuiteMappingAssistant({
       {!showNetSuiteForm && (
         <>
           <div className={classes.NetsuiteRules}>
-            <Button
-              onClick={handleLaunchAssistantClick}
-              variant="outlined"
-              color="primary">
+            <FilledButton onClick={handleLaunchAssistantClick}>
               Launch NetSuite assistant
-            </Button>
+            </FilledButton>
             <ol>
               <li>
                 Please make sure that you have &quot;Celigo integrator.io&quot;

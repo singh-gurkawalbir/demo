@@ -164,6 +164,7 @@ export function searchParameterFieldsMeta({
   parameters = [],
   oneMandatoryQueryParamFrom,
   value,
+  operationChanged,
   deltaDefaults = {},
   isDeltaExport,
 }) {
@@ -171,7 +172,7 @@ export function searchParameterFieldsMeta({
   const defaultValue = {};
 
   parameters.forEach(p => {
-    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue')) {
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
       if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
         try {
           defaultValue[p.id] = JSON.parse(p.defaultValue);
@@ -288,6 +289,7 @@ export function fieldMeta({ resource, assistantData }) {
           oneMandatoryQueryParamFrom:
             operationDetails.oneMandatoryQueryParamFrom,
           value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
+          operationChanged: resource.assistantMetadata?.operationChanged,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&

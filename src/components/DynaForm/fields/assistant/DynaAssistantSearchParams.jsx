@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { isArray, isObject } from 'lodash';
 import { useDispatch } from 'react-redux';
@@ -12,10 +12,14 @@ import {
   PARAMETER_LOCATION,
   isMetaRequiredValuesMet,
 } from '../../../../utils/assistant';
+import { selectors } from '../../../../reducers/index';
+import { SCOPES } from '../../../../sagas/resourceForm';
 import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
+import { OutlinedButton, TextButton } from '../../../Buttons';
+import { useSelectorMemo } from '../../../../hooks';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -49,11 +53,21 @@ const SearchParamsModal = props => {
     flowId,
     resourceContext,
   } = props;
+  const dispatch = useDispatch();
+
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceContext.resourceType,
+      resourceContext.resourceId
+    ) || {};
+
   const { fieldMap, layout, fieldDetailsMap } = convertToReactFormFields({
     paramMeta,
     value,
     flowId,
     resourceContext,
+    operationChanged: merged.assistantMetadata?.operationChanged,
   });
 
   function onSaveClick(formValues) {
@@ -64,6 +78,18 @@ const SearchParamsModal = props => {
     });
 
     onFieldChange(id, updatedValues);
+
+    dispatch(
+      actions.resource.patchStaged(
+        resourceContext.resourceId,
+        [{
+          op: 'replace',
+          path: '/assistantMetadata/operationChanged',
+          value: false,
+        }],
+        SCOPES.VALUE
+      )
+    );
     onClose();
   }
 
@@ -106,13 +132,11 @@ const SearchParamsModal = props => {
       </div>
       <div>
         <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
-        <Button
+        <TextButton
           data-test="cancelSearchParams"
-          onClick={onClose}
-          variant="text"
-          color="primary">
+          onClick={onClose}>
           Cancel
-        </Button>
+        </TextButton>
       </div>
 
     </ModalDialog>
@@ -173,15 +197,14 @@ export default function DynaAssistantSearchParams(props) {
           {/* {Todo (shiva): we need helpText for the component} */}
           <FieldHelp {...props} helpText="Configure search parameters" />
         </div>
-        <Button
+        <OutlinedButton
+          color="secondary"
           disabled={disabled}
           data-test={id}
-          variant="outlined"
-          color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
       <FieldMessage
         isValid={isValid}

@@ -1,20 +1,27 @@
-/* global describe, test, jest */
+/* global describe, test, jest, expect */
 import { expectSaga } from 'redux-saga-test-plan';
-import { call, select, delay } from 'redux-saga/effects';
+import { call, select, fork, cancel } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
+import { createMockTask } from '@redux-saga/testing-utils';
 import moment from 'moment';
 // import { createMockTask } from '@redux-saga/testing-utils';
 // import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import actionTypes from '../../../actions/types';
+import openExternalUrl from '../../../utils/window';
 import {
   getConnectionDebugLogs,
   pollForConnectionLogs,
-  // startPollingForConnectionDebugLogs,
+  startPollingForConnectionDebugLogs,
+  refreshConnectionDebugLogs,
   deleteConnectionDebugLogs,
+  downloadConnectionDebugLogs,
   startDebug,
+  pollToGetConnectionLogs,
 } from '.';
+import { pollApiRequests } from '../../app';
 
 describe('Connection debugger log sagas', () => {
   describe('getConnectionDebugLogs saga', () => {
@@ -48,50 +55,74 @@ describe('Connection debugger log sagas', () => {
     });
   });
   describe('pollForConnectionLogs saga', () => {
-    test('should call getConnectionDebugLogs after 5 seconds delay continuously', () => {
+    test('should call pollApiRequests within pollApiRequests saga with a polling duration of 5 seconds', () => {
       const connectionId = 'c1';
-      const dateStrAfter15Mins = moment().add(15, 'm').toISOString();
 
-      return expectSaga(pollForConnectionLogs, { connectionId })
-        .provide([
-          [select(selectors.resource, 'connections', connectionId), {debugDate: dateStrAfter15Mins}],
-          [call(getConnectionDebugLogs, {connectionId}), {}],
-          [delay(5000), {}],
-        ])
-        .call(getConnectionDebugLogs, {connectionId})
-        .delay(5000)
-        .call(getConnectionDebugLogs, {connectionId})
-        .run();
+      const saga = pollForConnectionLogs({ connectionId });
+
+      expect(saga.next().value).toEqual(call(getConnectionDebugLogs, { connectionId }));
+
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: pollToGetConnectionLogs, pollSagaArgs: { connectionId }, duration: 5000}));
+      expect(saga.next().done).toEqual(true);
     });
   });
-  describe('startPollingForConnectionDebugLogs saga', () => {
-    // TODO
-    // test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
-    // const connectionId = 'c1';
-    // const saga = startPollingForConnectionDebugLogs({connectionId});
+  describe('pollToGetConnectionLogs', () => {
+    test('should terminate polling since the debug date has expired', () => {
+      const connectionId = 'c1';
+      const dateStrBefore15Mins = moment().subtract(15, 'm').toISOString();
+      const saga = pollToGetConnectionLogs({ connectionId });
 
-    // expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+      expect(saga.next().value).toEqual(select(selectors.resource, 'connections', connectionId));
+      expect(saga.next({debugDate: dateStrBefore15Mins})).toEqual({value: {terminatePolling: true}, done: true});
+    });
+    test('should not ternminate polling since debug time hasn`t expired yet', () => {
+      const connectionId = 'c1';
+      const dateStrAfter15Mins = moment().add(15, 'm').toISOString();
+      const saga = pollToGetConnectionLogs({ connectionId });
 
-    // const watcherTask = createMockTask();
+      expect(saga.next().value).toEqual(select(selectors.resource, 'connections', connectionId));
+      expect(saga.next({debugDate: dateStrAfter15Mins}).value).toEqual(call(getConnectionDebugLogs, { connectionId }));
 
-    // expect(saga.next(watcherTask).value).toEqual(
-    //   // take(actionTypes.LOGS.CONNECTIONS.CLEAR)
-    //   take(action => {
-    //     if (action.type === actionTypes.LOGS.CONNECTIONS.REQUEST && action.connectionId === connectionId) {
-    //       return true;
-    //     }
-    //     if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
-    //       if (action.clearAllLogs) {
-    //         return true;
-    //       }
+      expect(saga.next().done).toEqual(true);
+    });
+  });
 
-    //       return action.connectionId === connectionId;
-    //     }
-    //   })
-    // );
-    // expect(saga.next().value).toEqual(cancel(watcherTask));
-    // expect(saga.next().done).toEqual(true);
-    // });
+  describe('startPollingForConnectionDebugLogs', () => {
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
+      const connectionId = 'c1';
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.CLEAR, clearAllLogs: true}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+  describe('refreshConnectionDebugLogs saga', () => {
+    test('should not call getConnectionDebugLogs if connection logs are not supported', () => {
+      const connectionId = 'c1';
+
+      return expectSaga(refreshConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.isConnectionLogsNotSupported, connectionId), true],
+        ])
+        .not.call.fn(getConnectionDebugLogs)
+        .run();
+    });
+    test('should call getConnectionDebugLogs if connection logs are supported', () => {
+      const connectionId = 'c1';
+
+      return expectSaga(refreshConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.isConnectionLogsNotSupported, connectionId), false],
+        ])
+        .call(getConnectionDebugLogs, { connectionId })
+        .run();
+    });
   });
   describe('deleteConnectionDebugLogs saga', () => {
     test('should call apiCallWithRetry with delete connection log path', () => {
@@ -99,6 +130,30 @@ describe('Connection debugger log sagas', () => {
 
       return expectSaga(deleteConnectionDebugLogs, { connectionId })
         .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
+        .run();
+    });
+  });
+  describe('downloadConnectionDebugLogs saga', () => {
+    test('should call openExternalUrl with url not containing integrator-ashareid query param', () => {
+      const connectionId = 'c1';
+      const url = `/connections/${connectionId}/debug`;
+
+      return expectSaga(downloadConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.accountShareHeader, url), {}],
+        ])
+        .call(openExternalUrl, { url: `/api${url}` })
+        .run();
+    });
+    test('should call openExternalUrl with url containing integrator-ashareid query param if present', () => {
+      const connectionId = 'c1';
+      const url = `/connections/${connectionId}/debug`;
+
+      return expectSaga(downloadConnectionDebugLogs, {connectionId})
+        .provide([
+          [select(selectors.accountShareHeader, url), {'integrator-ashareid': '123'}],
+        ])
+        .call(openExternalUrl, { url: `/api/connections/${connectionId}/debug?integrator-ashareid=123` })
         .run();
     });
   });

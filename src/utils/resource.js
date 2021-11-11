@@ -85,7 +85,7 @@ export const multiStepSaveResourceTypes = [
   'pageProcessor',
 ];
 
-const inferResourceType = adaptorType => {
+export const inferResourceType = adaptorType => {
   if (!adaptorType) return 'connections';
 
   if (adaptorType.toLowerCase().indexOf('import') > 0) {
@@ -833,10 +833,8 @@ export function getConnectionType(resource) {
 
   if (assistant) return assistant;
 
-  if (resource?.type === 'netsuite') {
-    if (resource?.netsuite?.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
+  if (resource?.netsuite?.authType === 'token-auto') {
+    return 'netsuite-oauth';
   }
 
   return type;
@@ -915,4 +913,21 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
   }
 
   return accessLevelOnConnection;
+};
+
+export const getAssistantFromResource = resource => {
+  if (!resource) return;
+  const {assistant} = resource;
+
+  if (assistant?.includes('constantcontact')) {
+    return 'constantcontact';
+  }
+
+  return assistant;
+};
+
+export const isOldRestAdaptor = (resource, connection) => {
+  const { adaptorType, _id } = resource || {};
+
+  return (['RESTExport', 'RESTImport'].includes(adaptorType) && _id && !isNewId(_id)) || connection?.isHTTP === false;
 };

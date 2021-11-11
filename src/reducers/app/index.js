@@ -1,12 +1,12 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
+import { POLLING_STATUS } from '../../utils/constants';
 
-const defaultState = {
+export const defaultState = {
   appErrored: false,
   bannerOpened: true,
   count: 1,
 };
-
 // #region Reducers
 export default function (state = defaultState, action) {
   const {version, type } = action;
@@ -16,6 +16,15 @@ export default function (state = defaultState, action) {
       case actionTypes.APP_RELOAD:
         draft.count += 1;
         delete draft.bannerOpened;
+        break;
+      case actionTypes.POLLING.SLOW:
+        draft.pollingStatus = POLLING_STATUS.SLOW;
+        break;
+      case actionTypes.POLLING.RESUME:
+        draft.pollingStatus = POLLING_STATUS.RESUME;
+        break;
+      case actionTypes.POLLING.STOP:
+        draft.pollingStatus = POLLING_STATUS.STOP;
         break;
 
       case actionTypes.APP_TOGGLE_BANNER:
@@ -66,6 +75,7 @@ selectors.appErrored = state => {
   return state.appErrored;
 };
 
+selectors.pollingStatus = state => state?.pollingStatus;
 selectors.initVersion = state => state?.initVersion;
 selectors.version = state => state?.version;
 selectors.isUiVersionDifferent = state => state?.initVersion !== state?.version;

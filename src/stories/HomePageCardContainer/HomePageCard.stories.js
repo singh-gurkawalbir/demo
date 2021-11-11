@@ -13,7 +13,7 @@ import CardTitle from '../../components/HomePageCard/Content/CardTitle/index';
 import ApplicationImages from '../../components/HomePageCard/Content/ApplicationImages';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import Footer from '../../components/HomePageCard/Footer/index';
-import Tag from '../../components/HomePageCard/Footer/Tag/index';
+import IntegrationTag from '../../components/tags/IntegrationTag/index';
 import FooterActions from '../../components/HomePageCard/Footer/FooterActions/index';
 import Info from '../../components/HomePageCard/Footer/Info/index';
 import Manage from '../../components/HomePageCard/Footer/Manage/index';
@@ -23,6 +23,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import StatusCircle from '../../components/StatusCircle/index';
+import withBoundingBox from './withBoundingBox';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,7 +72,8 @@ const options = ['view errors', 'settings', 'dashboard', 'generate zip', 'add fl
 export default {
   title: 'Components / HomePageCardsContainer',
   component: HomePageCardsContainer,
-  decorators: [withDesign, jsxDecorator],
+  subcomponents: {Header, CardTitle, ApplicationImg},
+  decorators: [withDesign, jsxDecorator, withBoundingBox],
 };
 
 const designParameters = {
@@ -153,7 +155,7 @@ export const SuiteScript = args => {
               <Manage>
                 <PermissionsManageIcon />
               </Manage>
-              <Tag label="clone" />
+              <IntegrationTag label="clone" />
             </FooterActions>
             <Info variant="Integration app" label="celigo" />
           </Footer>

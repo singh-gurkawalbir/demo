@@ -109,8 +109,6 @@ const auth = {
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-
-  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, { accountToResetTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -926,12 +924,13 @@ const integrationApp = {
         formSubmission,
         stackId,
       }),
-    updateStep: (integrationId, installerFunction, update, formMeta) =>
+    updateStep: (integrationId, installerFunction, update, formMeta, url) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
         formMeta,
+        url,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
@@ -983,6 +982,17 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
       }),
+  },
+  templates: {
+    intsaller: {
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+          id,
+          connectionId,
+          installerFunction,
+          isFrameWork2,
+        }),
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1341,13 +1351,14 @@ const flowData = {
       stage,
       error,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh, formKey) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
       refresh,
+      formKey,
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
@@ -1377,11 +1388,19 @@ const resourceFormSampleData = {
   setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
+  polling: {
+    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.POLLING.SLOW),
+    resume: () => action(actionTypes.POLLING.RESUME),
+    stop: () => action(actionTypes.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+  },
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
   reload: () => action(actionTypes.APP_RELOAD),
@@ -2076,10 +2095,11 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: ({ flowId, resourceId }) =>
+  init: ({ flowId, resourceId, resourceType }) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
       resourceId,
       flowId,
+      resourceType,
     }),
   initComplete: (options = {}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),

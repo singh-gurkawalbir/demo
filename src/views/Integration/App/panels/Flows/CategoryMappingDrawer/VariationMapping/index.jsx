@@ -1,4 +1,4 @@
-import { Drawer, makeStyles, Typography, Button } from '@material-ui/core';
+import { Drawer, makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback } from 'react';
 import {
@@ -12,13 +12,15 @@ import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
 import ApplicationImg from '../../../../../../../components/icons/ApplicationImg';
-import ButtonGroup from '../../../../../../../components/ButtonGroup';
 import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 import { capitalizeFirstLetter } from '../../../../../../../utils/string';
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import TextButton from '../../../../../../../components/Buttons/TextButton';
+import ActionGroup from '../../../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -32,7 +34,6 @@ const useStyles = makeStyles(theme => ({
   },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
-    float: 'left',
   },
   mappingHeader: {
     padding: theme.spacing(1),
@@ -242,23 +243,19 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                     isVariationAttributes={isVariationAttributes}
                   />
                 </div>
-                <ButtonGroup className={classes.saveButtonGroup}>
-                  <Button
+                <ActionGroup className={classes.saveButtonGroup}>
+                  <FilledButton
                     id={flowId}
-                    variant="outlined"
-                    color="primary"
                     data-test="saveImportMapping"
                     onClick={handleSave}>
                     Save
-                  </Button>
-                  <Button
-                    variant="text"
-                    color="primary"
+                  </FilledButton>
+                  <TextButton
                     data-test="saveImportMapping"
                     onClick={handleCancel}>
                     Close
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

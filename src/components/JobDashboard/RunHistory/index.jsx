@@ -9,13 +9,13 @@ import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
 import { isNewId } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
-import IconTextButton from '../../IconTextButton';
 import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
 import MessageWrapper from '../../MessageWrapper';
 import { hashCode } from '../../../utils/string';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -145,7 +145,6 @@ export default function RunHistory({ flowId, className }) {
               value={selectedDate}
               customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
-              showTime={false}
          />
           </div>
           <div className={classes.actions}>
@@ -157,9 +156,12 @@ export default function RunHistory({ flowId, className }) {
               onChangePage={handleChangePage}
               />
             )}
-            <IconTextButton onClick={fetchFlowRunHistory} disabled={isLoadingHistory}>
-              <RefreshIcon /> Refresh
-            </IconTextButton>
+            <TextButton
+              onClick={fetchFlowRunHistory}
+              disabled={isLoadingHistory}
+              startIcon={<RefreshIcon />}>
+              Refresh
+            </TextButton>
           </div>
         </>
       </div>

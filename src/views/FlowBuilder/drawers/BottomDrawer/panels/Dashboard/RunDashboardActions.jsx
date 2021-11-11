@@ -5,7 +5,6 @@ import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 import CancelIcon from '../../../../../../components/icons/CancelIcon';
 import DownloadIntegrationIcon from '../../../../../../components/icons/DownloadIntegrationIcon';
 import RunFlowButton from '../../../../../../components/RunFlowButton';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
@@ -13,6 +12,8 @@ import { JOB_STATUS } from '../../../../../../utils/constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
 import { DRAGGABLE_SECTION_DIV_ID } from '../..';
+import { TextButton } from '../../../../../../components/Buttons';
+import ActionGroup from '../../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -103,7 +104,7 @@ export default function RunDashboardActions({ flowId }) {
         },
         {
           label: 'No, go back',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -148,14 +149,19 @@ export default function RunDashboardActions({ flowId }) {
 
   return (
     <div id={DRAGGABLE_SECTION_DIV_ID} className={classes.rightActionContainer}>
-      <RunFlowButton variant="iconText" flowId={flowId} label="Run" />
-      <IconTextButton onClick={handleRefresh} disabled={status === 'requested'}>
-        <RefreshIcon /> Refresh
-      </IconTextButton>
-      <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} />
-      {
+      <ActionGroup>
+        <RunFlowButton variant="iconText" flowId={flowId} label="Run" />
+        <TextButton
+          onClick={handleRefresh}
+          disabled={status === 'requested'}
+          startIcon={<RefreshIcon />}>
+          Refresh
+        </TextButton>
+        <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} label="More" />
+        {
         showDownloadFilesDialog && <JobFilesDownloadDialog job={latestJobs[0]} onCloseClick={handleCloseDownloadFilesDialog} />
       }
+      </ActionGroup>
     </div>
   );
 }

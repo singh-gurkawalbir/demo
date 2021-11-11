@@ -39,4 +39,6 @@ FilledButton.propTypes = {
 FilledButton.defaultProps = {
   color: 'primary',
   size: 'medium',
+  disabled: false,
+  error: false,
 };

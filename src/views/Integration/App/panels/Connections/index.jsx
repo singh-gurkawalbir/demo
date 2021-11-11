@@ -9,13 +9,14 @@ import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/connections/metadata';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { isTradingPartnerSupported, generateNewId } from '../../../../../utils/resource';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../../../components/Buttons';
+import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -82,12 +83,10 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
     // For connections resource table, we need to poll the connection status and queueSize
-    const interval = setInterval(() => {
-      dispatch(actions.resource.connections.refreshStatus(integrationId));
-    }, 10 * 1000);
+    dispatch(actions.app.polling.start(actions.resource.connections.refreshStatus(integrationId), 10 * 1000));
 
     return () => {
-      clearInterval(interval);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus(integrationId)));
     };
   }, [dispatch, integrationId]);
 
@@ -101,9 +100,10 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       )}
 
       <PanelHeader title="Connections">
-        <>
+        <ActionGroup>
           {permission.create && (
-            <IconTextButton
+            <TextButton
+              startIcon={<AddIcon />}
               onClick={() => {
                 const newId = generateNewId();
 
@@ -139,15 +139,15 @@ export default function ConnectionsPanel({ integrationId, childId }) {
                   actions.resource.patchStaged(newId, patchSet, 'value')
                 );
               }}>
-              <AddIcon /> Create connection
-            </IconTextButton>
+              Create connection
+            </TextButton>
           )}
           {permission.register && (
-            <IconTextButton onClick={() => setShowRegister(true)}>
-              <ConnectionsIcon /> Register connections
-            </IconTextButton>
+            <TextButton onClick={() => setShowRegister(true)} startIcon={<ConnectionsIcon />}>
+              Register connections
+            </TextButton>
           )}
-        </>
+        </ActionGroup>
       </PanelHeader>
 
       <LoadResources required resources="connections,flows,exports,imports">

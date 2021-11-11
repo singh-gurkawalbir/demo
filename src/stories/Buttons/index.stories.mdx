@@ -1,0 +1,113 @@
+import { Meta, Story, Canvas, ArgsTable } from "@storybook/addon-docs";
+import {FilledButton, OutlinedButton, TextButton, PillButton} from '../../components/Buttons/index.js';
+import AddIcon from "../../components/icons/AddIcon";
+import DeleteIcon from "../../components/icons/TrashIcon";
+import ActionGroup from "../../components/ActionGroup";
+
+<Meta title="Components/Buttons/All"  />
+
+# Filled Buttons
+
+Below are the Filled buttons used throughout the application.
+when there are multiple buttons we use the ActionGroup component which will give margin between the buttons along with the positioning of the buttons
+
+<Canvas>
+  <Story name="Filled Buttons">
+    <ActionGroup>
+      <FilledButton>Filled Button</FilledButton>
+      <FilledButton startIcon={<AddIcon />}>Start Icon</FilledButton>
+      <FilledButton endIcon={<DeleteIcon />}>End Icon</FilledButton>
+      <FilledButton disabled>Disabled</FilledButton>
+      <FilledButton error>Error</FilledButton>
+    </ActionGroup>
+  </Story>
+  <Story name="Filled Buttons Sizes">
+    <ActionGroup>
+      <FilledButton size="small">Small</FilledButton>
+      <FilledButton size="medium">Medium</FilledButton>
+      <FilledButton size="large">Large</FilledButton>
+    </ActionGroup>
+  </Story>
+</Canvas>
+
+<ArgsTable of={FilledButton} />
+
+# Outlined Buttons
+
+Below are the Outlined buttons used throughout the application
+
+<Canvas>
+  <Story name="Outlined Buttons">
+    <ActionGroup>
+        <OutlinedButton>Outlined Button</OutlinedButton>
+        <OutlinedButton color="secondary">Secondary Outlined</OutlinedButton>
+        <OutlinedButton startIcon={<AddIcon />}>Start Icon</OutlinedButton>
+        <OutlinedButton endIcon={<DeleteIcon />}>End Icon</OutlinedButton>
+        <OutlinedButton disabled>Disabled</OutlinedButton>
+        <OutlinedButton error>Error</OutlinedButton>
+    </ActionGroup>
+  </Story>
+  <Story name="Outlined Buttons Sizes">
+    <ActionGroup>
+        <OutlinedButton size="small">Small</OutlinedButton>
+        <OutlinedButton size="medium">Medium</OutlinedButton>
+        <OutlinedButton size="large">Large</OutlinedButton>
+    </ActionGroup>
+  </Story>
+</Canvas>
+
+ <ArgsTable of={OutlinedButton} />
+
+# Text Buttons
+
+Below are the Outlined buttons used throughout the application
+
+<Canvas>
+  <Story name="Text Buttons">
+    <ActionGroup>
+        <TextButton>Text Button</TextButton>
+        <TextButton color="primary">Primary</TextButton>
+        <TextButton startIcon={<AddIcon />}>Start Icon</TextButton>
+        <TextButton endIcon={<DeleteIcon />}>End Icon</TextButton>
+        <TextButton disabled>Disabled</TextButton>
+        <TextButton bold>Bold</TextButton>
+        <TextButton bold color="primary" startIcon={<AddIcon />}>Bold Primary</TextButton>
+        <TextButton bold error>Error</TextButton>
+    </ActionGroup>
+  </Story>
+  <Story name="Text Buttons Sizes">
+    <ActionGroup>
+        <TextButton size="small">Small</TextButton>
+        <TextButton size="medium">Medium</TextButton>
+        <TextButton size="large">Large</TextButton>
+    </ActionGroup>
+  </Story>
+</Canvas>
+
+ <ArgsTable of={TextButton} />
+
+# Pill Buttons
+
+Below are the pill buttons used on specific cases
+
+<Canvas>
+    <Story name="Pill Buttons">
+        <ActionGroup>
+            <PillButton>Pill Button</PillButton>
+            <PillButton color="primary">Primary</PillButton>
+            <PillButton startIcon={<AddIcon />}>Start Icon</PillButton>
+            <PillButton endIcon={<DeleteIcon />}>End Icon</PillButton>
+            <PillButton disabled>Disabled</PillButton>
+            <PillButton fill>Fill</PillButton>
+        </ActionGroup>
+    </Story>
+    <Story name=" Pill Button Sizes">
+        <ActionGroup>
+            <PillButton size="small">small</PillButton>  
+            <PillButton size="medium">medium</PillButton>  
+            <PillButton size="large">large</PillButton>  
+        </ActionGroup>
+    </Story>
+</Canvas>
+
+ <ArgsTable of={PillButton} />

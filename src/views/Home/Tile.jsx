@@ -15,7 +15,7 @@ import CardTitle from '../../components/HomePageCard/Content/CardTitle';
 import Footer from '../../components/HomePageCard/Footer';
 import FooterActions from '../../components/HomePageCard/Footer/FooterActions';
 import Info from '../../components/HomePageCard/Footer/Info';
-import Tag from '../../components/HomePageCard/Footer/Tag';
+import IntegrationTag from '../../components/tags/IntegrationTag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
@@ -70,6 +70,7 @@ const useStyles = makeStyles(theme => ({
     display: 'none',
   },
   headerTileStatus: {
+    fontSize: 13,
     paddingLeft: 0,
     '& > * .MuiButton-startIcon': {
       margin: 0,
@@ -311,8 +312,8 @@ function Tile({
               )}
             </Manage>
             )}
-            {expired && tile.tag && (<Tag label={tile.tag} className={classes.tagExpire} />)}
-            {!expired && tile.tag && (<Tag label={tile.tag} />)}
+            {expired && tile.tag && (<IntegrationTag label={tile.tag} className={classes.tagExpire} />)}
+            {!expired && tile.tag && (<IntegrationTag label={tile.tag} />)}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : numFlowsText}

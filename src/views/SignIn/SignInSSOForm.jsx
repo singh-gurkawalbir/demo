@@ -2,10 +2,10 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { Button} from '@material-ui/core';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import Spinner from '../../components/Spinner';
+import { FilledButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -57,15 +57,13 @@ export default function SignInSSOForm() {
         className={classes.textField}
         disabled />
       {isAuthenticating ? <Spinner /> : (
-        <Button
+        <FilledButton
           data-test="submit"
-          variant="contained"
-          color="primary"
           type="submit"
           className={classes.submit}
           onClick={handleSignInWithSSO} >
           Sign in with SSO
-        </Button>
+        </FilledButton>
       )}
     </div>
   );

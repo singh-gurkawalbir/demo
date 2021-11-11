@@ -9,7 +9,7 @@ export default {
     const newValues = updatePGPFormValues(formValues);
 
     if (newValues['/ftp/entryParser'] === '') {
-      delete newValues['/ftp/entryParser'];
+      newValues['/ftp/entryParser'] = undefined;
     }
     if (!newValues['/ftp/usePgp']) {
       newValues['/ftp/pgpEncryptKey'] = undefined;

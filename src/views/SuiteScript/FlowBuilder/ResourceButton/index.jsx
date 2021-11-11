@@ -1,12 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
 import ExportIcon from '../../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../../components/icons/DataLoaderIcon';
 import ListenerIcon from '../../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../../components/icons/TransferUpIcon';
+import { OutlinedButton } from '../../../../components/Buttons';
 
 const blockMap = {
   export: { label: 'Export', Icon: ExportIcon },
@@ -44,15 +44,14 @@ export default function ResourceButton({ onClick, variant = 'export', isFileTran
   const block = blockMap[isFileTransfer ? `${variant}Transfer` : variant];
 
   return (
-    <Button
+    <OutlinedButton
       size="small"
+      color="secondary"
       className={classes.blockButton}
       data-test={block.label}
+      startIcon={<block.icon className={classes.blockIcon} />}
       onClick={onClick}>
-      <div>
-        <block.Icon className={classes.blockIcon} />
-        <Typography variant="body2">{block.label}</Typography>
-      </div>
-    </Button>
+      {block.label}
+    </OutlinedButton>
   );
 }

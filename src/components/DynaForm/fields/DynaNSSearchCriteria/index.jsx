@@ -1,11 +1,11 @@
 import { FormLabel } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import SearchCriteriaDialog from './SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
+import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles({
   dynaNSSearchCriteriaWrapper: {
@@ -64,12 +64,6 @@ export default function DynaNSSearchCriteria(props) {
           title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
-          // fieldOptions={{
-          //   fields: savedSearches,
-          //   status,
-          //   valueName: 'value',
-          //   labelName: 'label',
-          // }}
           connectionId={connectionId}
           commMetaPath={commMetaPath}
           filterKey={filterKey}
@@ -86,14 +80,13 @@ export default function DynaNSSearchCriteria(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
           color="secondary"
           className={classes.dynaNSbtn}
           onClick={handleEditorClick}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
     </>
   );

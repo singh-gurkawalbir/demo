@@ -282,7 +282,7 @@ export default {
       },
       {
         field: 'salesforce.blobOperation',
-        isNot: [''],
+        isNot: ['', 'update'],
       },
     ],
   },

@@ -57,7 +57,7 @@ export default function DynaSemiAssistantOperationSelect(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

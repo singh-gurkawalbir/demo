@@ -8,6 +8,7 @@ import AfeIcon from '../../icons/AfeIcon';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import useFormContext from '../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
@@ -27,8 +28,10 @@ const useStyles = makeStyles(theme => ({
 const VALID_FILE_EXTENSIONS = ['csv', 'json', 'xlsx', 'xml', 'edi'];
 export default function DynaFTPFileNameWithEditor_afe(props) {
   const {id, flowId, value, resourceId, resourceType, onFieldChange, formKey} = props;
-  const {value: formValue} = useFormContext(formKey);
-  const fileType = formValue['/file/type'];
+  const {fields} = useFormContext(formKey);
+  const fileType = fields['file.type']?.value;
+  const fileTypeIsTouched = fields['file.type']?.touched;
+
   const [savedFileType, setSavedFileType] = useState(fileType);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -46,7 +49,7 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: IMPORT_FLOW_DATA_STAGE,
       onSave: handleSave,
     }));
 
@@ -83,7 +86,7 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
   }, [fileType, id, onFieldChange, value]);
 
   useEffect(() => {
-    if (fileType && fileType !== savedFileType) {
+    if (fileTypeIsTouched && fileType && fileType !== savedFileType) {
       // update fileName extension
       updateFileNameExtension();
     }

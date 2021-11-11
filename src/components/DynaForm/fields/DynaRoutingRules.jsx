@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { FormLabel, Button } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
 import DynaHook from './DynaHook_afe';
 import ModalDialog from '../../ModalDialog';
+import { OutlinedButton, FilledButton, TextButton } from '../../Buttons';
+import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {
@@ -45,14 +47,14 @@ export default function DynaRoutingRules(props) {
           <DynaHook
             {...props}
             label={title} />
-          <div>
-            <Button data-test="saveRoutingRules" onClick={handleClose}>
+          <ActionGroup>
+            <FilledButton data-test="saveRoutingRules" onClick={handleClose}>
               Save
-            </Button>
-            <Button data-test="cancelRoutingRules" onClick={handleClose}>
+            </FilledButton>
+            <TextButton data-test="cancelRoutingRules" onClick={handleClose}>
               Cancel
-            </Button>
-          </div>
+            </TextButton>
+          </ActionGroup>
         </ModalDialog>
       )}
       <div className={classes.dynaRoutingRulesWrapper}>
@@ -60,14 +62,13 @@ export default function DynaRoutingRules(props) {
           <FormLabel className={classes.dynaRoutingRulesLabel}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
           color="secondary"
           className={classes.dynaRoutingRulesBtn}
           onClick={handleEditorClick}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
     </>
   );

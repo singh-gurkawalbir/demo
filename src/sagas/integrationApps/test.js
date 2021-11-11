@@ -8,11 +8,12 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
-import { getResource } from '../resources';
+import { getResource, getResourceCollection } from '../resources';
 import {
   initInstall,
   installStep,
   installScriptStep,
+  verifyBundleOrPackageInstall,
   getCurrentStep,
   addNewChild,
   installChildStep,
@@ -29,6 +30,7 @@ import {
 import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen } from './uninstaller';
 import { initUninstall, uninstallStep, requestSteps } from './uninstaller2.0';
 import { resumeIntegration } from './resume';
+import openExternalUrl from '../../utils/window';
 
 describe('installer saga', () => {
   describe('initInstall generator', () => {
@@ -568,6 +570,120 @@ describe('installer saga', () => {
         .run();
     });
   });
+  describe('verifyBundleOrPackageInstall generator', () => {
+    const id = '1234';
+    const connectionId = '5678';
+    const path = `/connections/${connectionId}/distributed`;
+    const installerFunction = 'Installer_Function';
+
+    test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = { success: true };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .not.put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful and the response is success, should dispatch integrationApp installStep if isFrameWork2 false', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = false;
+      const response = { success: true };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful but response is not true, should dispatch api.failure', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = {
+        success: false,
+        message: 'something',
+      };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch integrationApp installer update step', () => {
+      const args = {
+        path,
+        message: 'Verifying Bundle/Package Installation...',
+      };
+      const isFrameWork2 = true;
+      const error = {
+        code: '400',
+        message: 'something',
+      };
+
+      return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'failed'
+          )
+        )
+        .run();
+    });
+  });
   describe('getCurrentStep generator', () => {
     const id = '1234';
     const form = {
@@ -600,6 +716,16 @@ describe('installer saga', () => {
         )
         .run();
     });
+    test('should dispatch failed step action for url type step and not make API call, if no getUrlFunction', () => {
+      const step = { type: 'url' };
+
+      return expectSaga(getCurrentStep, { id, step })
+        .not.call.fn(apiCallWithRetry)
+        .put(
+          actions.integrationApp.installer.updateStep(id, '', 'failed')
+        )
+        .run();
+    });
 
     test('should make API call when init function present and dispatch action with same form meta if response is null or result is false', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
@@ -628,7 +754,32 @@ describe('installer saga', () => {
         )
         .run();
     });
+    test('should make API call when getUrlFunction present and dispatch failed action if response is null', () => {
+      const step = { type: 'url', getUrlFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
+      const expectedOut = {
+        result: null,
+      };
 
+      return expectSaga(getCurrentStep, { id, step })
+        .provide([[call(apiCallWithRetry, args), expectedOut]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'failed',
+          )
+        )
+        .run();
+    });
     test('should make API call when init function present and dispatch action with updated form meta', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
       const args = {
@@ -663,7 +814,35 @@ describe('installer saga', () => {
         )
         .run();
     });
+    test('should make API call when getUrlFunction present and call openExternalUrl and dispatch action', () => {
+      const step = { type: 'url', getUrlFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
+      const expectedOut = {
+        result: 'https://newurl.com',
+      };
 
+      return expectSaga(getCurrentStep, { id, step })
+        .provide([[call(apiCallWithRetry, args), expectedOut]])
+        .call(apiCallWithRetry, args)
+        .call(openExternalUrl, { url: expectedOut.result })
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'inProgress',
+            undefined,
+            expectedOut.result
+          )
+        )
+        .run();
+    });
     test('should dispatch failed step action if API call fails', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
       const args = {
@@ -1236,6 +1415,8 @@ describe('settings saga', () => {
           ],
           [call(apiCallWithRetry, args1)],
           [call(apiCallWithRetry, args2), { response }],
+          [matchers.call.fn(getResourceCollection)],
+          [matchers.call.fn(getResource)],
         ])
         .call(apiCallWithRetry, args1)
         .call(apiCallWithRetry, args2)

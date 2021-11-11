@@ -7,7 +7,6 @@ import { addDays, startOfDay } from 'date-fns';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
-import IconTextButton from '../../../IconTextButton';
 import CeligoPagination from '../../../CeligoPagination';
 import DateRangeSelector from '../../../DateRangeSelector';
 import { FILTER_KEYS_AD,
@@ -18,6 +17,7 @@ import { FILTER_KEYS_AD,
   DEFAULT_RANGE,
   ROWS_PER_PAGE_OPTIONS } from '../../../../utils/accountDashboard';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -181,9 +181,9 @@ export default function Filters({filterKey}) {
             />
             )
             : '' }
-          <IconTextButton onClick={handleRefreshClick}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
+          <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
+            Refresh
+          </TextButton>
         </div>
       </div>
     </div>

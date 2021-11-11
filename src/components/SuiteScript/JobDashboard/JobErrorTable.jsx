@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
-import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -10,9 +9,10 @@ import Spinner from '../../Spinner';
 import CeligoTable from '../../CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import DateTimeDisplay from '../../DateTimeDisplay';
-import ButtonsGroup from '../../ButtonGroup';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
+import OutlinedButton from '../../Buttons/OutlinedButton';
+import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right'},
@@ -41,19 +41,6 @@ const useStyles = makeStyles(theme => ({
   },
   btnsWrappper: {
     marginTop: theme.spacing(1),
-    '& button': {
-      marginRight: theme.spacing(2),
-    },
-  },
-  // TODO (Azhar):  we need to keep a varaint for this button
-  btnErrorTable: {
-    borderColor: theme.palette.secondary.lightest,
-    color: theme.palette.secondary.light,
-    fontFamily: 'Roboto400',
-    '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
-    },
   },
   statusWrapper: {
     display: 'flex',
@@ -234,34 +221,28 @@ export default function JobErrorTable({
         </li>
       </ul>
       {!jobErrors ? (
-        <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading</span>
-        </div>
+        <Spinner centerAll size="medium">Loading</Spinner>
       ) : (
         <>
-          <ButtonsGroup className={classes.btnsWrappper}>
-            <Button
+          <ActionGroup className={classes.btnsWrappper}>
+            <OutlinedButton
               data-test="markResolvedJobs"
-              variant="outlined"
               color="secondary"
-              className={classes.btnErrorTable}
               onClick={handleResolveClick}
               disabled={!hasUnresolvedErrors}>
               {numSelectedResolvableErrors > 0
                 ? `Mark resolved ${numSelectedResolvableErrors} errors`
                 : 'Mark resolved'}
-            </Button>
+            </OutlinedButton>
             { job.errorFileId && (
-              <Button
-                data-test="downloadAllErrors"
-                variant="outlined"
+              <OutlinedButton
                 color="secondary"
-                className={classes.btnErrorTable}
+                data-test="downloadAllErrors"
                 onClick={handleDownloadAllErrorsClick}>
                 Download all errors
-              </Button>
+              </OutlinedButton>
             )}
-          </ButtonsGroup>
+          </ActionGroup>
 
           <>
             <TablePagination

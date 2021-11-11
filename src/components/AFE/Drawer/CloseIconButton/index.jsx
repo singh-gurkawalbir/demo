@@ -3,14 +3,20 @@ import { useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import CloseIcon from '../../../icons/CloseIcon';
 import { selectors } from '../../../../reducers';
-import { AFE_SAVE_STATUS } from '../../../../utils/constants';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
 
-export default function EditorDrawerCloseIconButton({editorId}) {
-  const saveStatus = useSelector(state => selectors.editor(state, editorId).saveStatus);
-  const saveInProgress = saveStatus === AFE_SAVE_STATUS.REQUESTED;
+export default function EditorDrawerCloseIconButton({editorId, onClose, hideSave}) {
+  const saveInProgress = useSelector(state => selectors.isEditorSaveInProgress(state, editorId));
 
   const {setCancelTriggered} = useFormOnCancelContext(editorId);
+
+  const handleClose = () => {
+    // when save is hidden, use custom close handler
+    if (hideSave && typeof onClose === 'function') {
+      return onClose();
+    }
+    setCancelTriggered();
+  };
 
   return (
     <IconButton
@@ -19,7 +25,7 @@ export default function EditorDrawerCloseIconButton({editorId}) {
       data-test="closeRightDrawer"
       aria-label="Close"
       disabled={saveInProgress}
-      onClick={setCancelTriggered}>
+      onClick={handleClose}>
       <CloseIcon />
     </IconButton>
   );

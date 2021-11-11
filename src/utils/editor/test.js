@@ -65,6 +65,33 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('http.bodyCreate', resource1)).toEqual('http.body');
       expect(getUniqueFieldId('http.bodyUpdate', resource2)).toEqual('http.body.0');
     });
+    test('should return rest field ids for old rest imports incase of http fields  ', () => {
+      const resource1 = {
+        _id: '123',
+        adaptorType: 'RESTImport',
+        ignoreExisting: true,
+      };
+      const resource2 = {
+        _id: '123',
+        adaptorType: 'RESTImport',
+        ignoreExisting: false,
+      };
+
+      expect(getUniqueFieldId('http.relativeURICreate', resource1)).toEqual('rest.relativeURI');
+      expect(getUniqueFieldId('http.relativeURIUpdate', resource2)).toEqual('rest.relativeURI.0');
+    });
+
+    test('should return http field ids for new rest exports incase of rest fields  ', () => {
+      const resource = {
+        _id: '123',
+        adaptorType: 'HTTPExport',
+      };
+
+      expect(getUniqueFieldId('rest.relativeURI', resource)).toEqual('http.relativeURI');
+      expect(getUniqueFieldId('rest.postBody', resource)).toEqual('http.body');
+      expect(getUniqueFieldId('rest.once.postBody', resource)).toEqual('http.once.body');
+    });
+
     test('should return unique fieldId', () => {
       expect(getUniqueFieldId('rdbms.queryInsert')).toEqual('rdbms.query.1');
       expect(getUniqueFieldId('rdbms.queryUpdate')).toEqual('rdbms.query.0');

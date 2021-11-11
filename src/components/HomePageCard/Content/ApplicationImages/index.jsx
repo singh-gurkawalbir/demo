@@ -5,37 +5,33 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    height: 48,
+    height: theme.spacing(6),
     display: 'flex',
     color: theme.palette.background.default,
     alignItems: 'center',
     maxWidth: '100%',
-    overflow: 'hidden',
     marginBottom: theme.spacing(2),
     '& img': {
-      maxWidth: '84px',
-      maxHeight: '84px',
+      maxWidth: theme.spacing(10),
+      maxHeight: theme.spacing(6),
     },
     '& span': {
       color: theme.palette.secondary.contrastText,
-      width: 24,
-      height: 24,
+      width: theme.spacing(3),
+      height: theme.spacing(3),
       margin: theme.spacing(0, 1),
     },
   },
   threeAppImages: {
     '& img': {
-      maxWidth: theme.spacing(8),
-      maxHeight: theme.spacing(8),
-    },
-    '& > span': {
-      margin: '0px',
+      maxWidth: theme.spacing(9),
+      maxHeight: theme.spacing(6),
     },
   },
   fourAppImages: {
     '& img': {
-      maxWidth: '45px',
-      maxHeight: '45px',
+      maxWidth: theme.spacing(7),
+      maxHeight: theme.spacing(6),
     },
     '& > span': {
       margin: '0px',
@@ -55,7 +51,6 @@ export default function ApplicationImages({ children, className, noOfApps }) {
           classes.root,
           {[classes.threeAppImages]: noOfApps === 3},
           {[classes.fourAppImages]: noOfApps === 4},
-
         )
       }>
       {children}

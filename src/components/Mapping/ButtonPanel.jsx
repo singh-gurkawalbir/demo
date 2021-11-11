@@ -1,14 +1,15 @@
 import React, { useCallback } from 'react';
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { MAPPINGS_FORM_KEY } from '../../utils/constants';
 import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import mappingUtil from '../../utils/mapping';
+import ActionGroup from '../ActionGroup';
+import { OutlinedButton } from '../Buttons';
 
 const useStyles = makeStyles({
   previewButton: {
@@ -54,7 +55,7 @@ export default function ButtonPanel({importId, disabled, onClose}) {
 
   return (
     <>
-      <ButtonGroup>
+      <ActionGroup>
         <SaveAndCloseButtonGroupAuto
           isDirty={mappingsChanged}
           disabled={disabled}
@@ -65,17 +66,15 @@ export default function ButtonPanel({importId, disabled, onClose}) {
           shouldHandleCancel
         />
         {showPreviewButton && (
-        <Button
-          variant="outlined"
-          color="primary"
+        <OutlinedButton
           data-test="preview"
           className={classes.previewButton}
           disabled={disabled || saveStatus === 'inProgress'}
           onClick={handlePreviewClick}>
           Preview
-        </Button>
+        </OutlinedButton>
         )}
-      </ButtonGroup>
+      </ActionGroup>
     </>
   );
 }

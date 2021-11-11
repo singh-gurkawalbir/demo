@@ -6,12 +6,12 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import RunFlowButton from '../../components/RunFlowButton';
 import StartDebug from '../../components/StartDebug';
-import IconTextButton from '../../components/IconTextButton';
 import CancelIcon from '../../components/icons/CancelIcon';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
 import AutoScrollEditorTerminal from '../../components/AutoScrollEditorTerminal';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
+import { TextButton } from '../../components/Buttons';
 
 const overrides = { useWorker: false };
 
@@ -109,20 +109,20 @@ export default function ConnectionLogs({ connectionId, flowId }) {
               variant="iconText"
             />
           )}
-          <IconTextButton
+          <TextButton
             onClick={handleRefreshClick}
             data-test="refreshResource"
+            startIcon={<RefreshIcon />}
             disabled={status === COMM_STATES.LOADING || isConnectionLogsNotSupported}>
-            <RefreshIcon />
             Refresh
-          </IconTextButton>
-          <IconTextButton
+          </TextButton>
+          <TextButton
             onClick={handleDeleteLogsClick}
             data-test="clearLogs"
+            startIcon={<CancelIcon />}
             disabled={status === COMM_STATES.LOADING || isConnectionLogsNotSupported}>
-            <CancelIcon />
             Clear
-          </IconTextButton>
+          </TextButton>
         </div>
       </div>
       <div className={classes.editorContainer}>

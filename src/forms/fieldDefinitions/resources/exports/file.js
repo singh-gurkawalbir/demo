@@ -43,7 +43,13 @@ export default {
         }
       }
     },
+    helpKey: r => {
+      if (r.assistant === 'azurestorageaccount') {
+        return 'export.azure.fileNameStartsWith';
+      }
 
+      return 'export.file.fileNameStartsWith';
+    },
   },
   'file.fileNameEndsWith': {
     type: 'uri',
@@ -59,6 +65,13 @@ export default {
         }
       }
     },
+    helpKey: r => {
+      if (r?.assistant === 'azurestorageaccount') {
+        return 'export.azure.fileNameEndsWith';
+      }
+
+      return 'export.file.fileNameEndsWith';
+    },
   },
   'file.backupPath': {
     type: 'uri',
@@ -69,10 +82,19 @@ export default {
       } if (r?.adaptorType === 'FTPExport') {
         return 'export.ftp.backupDirectoryPath';
       }
+      if (r?.assistant === 'azurestorageaccount') {
+        return 'export.azure.backupPath';
+      }
 
       return 'export.file.backupPath';
     },
     showLookup: false,
+    visibleWhenAll: [
+      {
+        field: 'fileMetadata',
+        isNot: [true],
+      },
+    ],
   },
   'file.encoding': {
     type: 'select',

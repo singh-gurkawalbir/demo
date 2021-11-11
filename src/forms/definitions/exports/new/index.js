@@ -5,6 +5,7 @@ import {applicationsList,
 } from '../../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../../utils/resource';
 import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
+import {getFilterExpressionForAssistant} from '../../../../utils/connections';
 
 export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
@@ -146,11 +147,10 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
 
       if (app.assistant) {
-        expression.push({ assistant: app.assistant });
-
-        const andingExpressions = { $and: expression };
-
-        return { filter: andingExpressions, appType: app.assistant };
+        return {
+          filter: getFilterExpressionForAssistant(app.assistant, expression),
+          appType: app.assistant,
+        };
       }
 
       const andingExpressions = { $and: expression };

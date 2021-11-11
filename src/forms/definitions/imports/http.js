@@ -548,10 +548,10 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.body[1];
+            return r.http.body[1] || '';
           }
 
-          return r.http.body[0];
+          return r.http.body[0] || '';
         }
 
         return '';
@@ -1030,7 +1030,7 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.body[0];
+          return r.http.body[0] || '';
         }
 
         return '';
@@ -1256,6 +1256,7 @@ export default {
         },
       ],
     },
+    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
   },
   layout: {
     type: 'collapse',
@@ -1275,6 +1276,7 @@ export default {
           return 'How would you like the records imported?';
         },
         fields: [
+          'unencrypted.apiType',
           'http.method',
           'http.blobMethod',
           'http.compositeType',

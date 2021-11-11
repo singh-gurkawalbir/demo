@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Card, CardActions, Typography } from '@material-ui/core';
+import { Card, CardActions, Typography } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import RawHtml from '../../../../../components/RawHtml';
@@ -12,6 +12,7 @@ import ModalDialog from '../../../../../components/ModalDialog';
 import {isHTML} from '../../../../../utils/string';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import AddonInstallerButton from '../Admin/sections/Subscription/AddonInstallerButton';
+import FilledButton from '../../../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -87,7 +88,10 @@ export default function AddOnsPanel({ integrationId, childId }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => supportsMultiStore && childId ? model.storeId === childId : true);
+  const subscribedAddOns = useSelector(state =>
+    selectors.subscribedAddOns(state, integrationId, supportsMultiStore, childId)
+  );
+
   const subscribedAddOn = metadata => subscribedAddOns?.find(sa => sa.id === metadata.id);
   const addOnMetadata = addOnState?.addOns?.addOnMetaData;
   const licenseId = useSelector(state => {
@@ -134,13 +138,11 @@ export default function AddOnsPanel({ integrationId, childId }) {
                 { subscribedAddOn(data)
                   ? <AddonInstallerButton size="medium" resource={subscribedAddOn(data)} />
                   : (
-                    <Button
+                    <FilledButton
                       data-test="contactSales"
-                      onClick={() => handleContactSales(data.name)}
-                      variant="outlined"
-                      color="primary">
+                      onClick={() => handleContactSales(data.name)}>
                       Contact sales
-                    </Button>
+                    </FilledButton>
                   )}
               </CardActions>
             </Card>

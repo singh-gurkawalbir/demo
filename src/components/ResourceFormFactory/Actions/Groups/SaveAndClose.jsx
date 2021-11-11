@@ -85,7 +85,7 @@ export default function SaveAndClose(props) {
             },
             {
               label: 'Cancel',
-              color: 'secondary',
+              variant: 'text',
               onClick: onCancel,
             },
           ],
