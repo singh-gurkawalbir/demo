@@ -93,7 +93,7 @@ import {
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
-import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { HOOK_STAGES } from '../utils/editor';
 import { capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
@@ -3791,6 +3791,7 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (_, { editorType }) => editorType,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
       const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
@@ -3814,6 +3815,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    editorType,
     parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
@@ -3824,6 +3826,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    editorType,
     parentIntegration})
 );
 
@@ -5607,8 +5610,8 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
  * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
  */
 selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
-  // If not an export , then it is not a lookup
-  if (resourceType !== 'exports' || !resourceId) return false;
+  // If not an export or not inside a flow context , then it is not a lookup
+  if (resourceType !== 'exports' || !resourceId || !flowId) return false;
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
@@ -5738,12 +5741,12 @@ selectors.editorHelperFunctions = state => {
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession.editor(state?.session, editorId);
+  const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (stage === 'outputFilter' ||
-    stage === 'exportFilter' ||
-    stage === 'inputFilter') return true;
+  if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
+    return true;
+  }
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
@@ -5840,49 +5843,47 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession.editor(state?.session, editorId);
-  const {stage, resourceId, resourceType, flowId, fieldId} = editor;
+  const {stage, resourceId, resourceType, flowId, fieldId, editorType} = editor;
   const resource = selectors.resourceData(
     state,
     resourceType,
     resourceId
   )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
-  let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage)) {
-    _sampleData = sampleData;
-  } else if (isPageGenerator) {
-    // for PGs, no sample data is shown
-    _sampleData = undefined;
-  } else {
-    // for all PPs, default sample data is shown in case its empty
-    _sampleData = { data: sampleData || { myField: 'sample' }};
-  }
 
   // for lookup fields, BE doesn't support v1/v2 yet
   if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+    return {shouldGetContextFromBE: false, sampleData: { data: sampleData || { myField: 'sample' }}};
   }
 
   // TODO: BE would be deprecating native REST adaptor as part of IO-19864
   // we can remove this logic from UI as well once that is complete
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType) && !connection.isHTTP) {
+    let _sampleData;
+
+    if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
       // native REST adaptor filters
-      return {
-        shouldGetContextFromBE: false,
-        sampleData: Array.isArray(_sampleData) ? {
-          rows: _sampleData,
-        } : {
-          record: _sampleData,
-        },
+      _sampleData = Array.isArray(sampleData) ? {
+        rows: sampleData,
+      } : {
+        record: sampleData,
       };
+    } else if (!isPageGenerator) {
+      _sampleData = { data: sampleData || { myField: 'sample' }};
     }
+
+    return {
+      shouldGetContextFromBE: false,
+      sampleData: _sampleData,
+    };
   }
-  if (stage === 'transform' ||
-  stage === 'sampleResponse' || stage === 'importMappingExtract' || stage === 'responseMappingExtract' || HOOK_STAGES.includes(stage)) {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+
+  if (
+    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+  HOOK_STAGES.includes(stage)
+  ) {
+    return {shouldGetContextFromBE: false, sampleData};
   }
 
   return {shouldGetContextFromBE: true};
