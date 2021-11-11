@@ -5,7 +5,7 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 
 export default {
-  key: 'generateTemplateZip', // todo: ashu shd we use "downloadIntegration" data-test
+  key: 'generateTemplateZip',
   useLabel: () => 'Download integration',
   icon: DownloadIcon,
   useHasAccess: () => {
