@@ -49,6 +49,7 @@ function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource
 function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource) {
   const {id, url, resource: previewConfigResource, sampleDataWrapper, resourcePath, ...hardCodedParams} = previewConfig;
   const {adaptorType} = assistantConfig;
+  const {_connectionId} = resource;
 
   if (id) {
     const updatedAssistantConfig = {...assistantConfig};
@@ -60,10 +61,10 @@ function getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConf
     return convertToVirtualExport(updatedAssistantConfig, assistantMetadata, resource);
   }
   if (adaptorType === 'http') {
-    return { adaptorType: 'HTTPExport', http: {...hardCodedParams, relativeURI: url }, response: {successValues: [], resourcePath}};
+    return {_connectionId, adaptorType: 'HTTPExport', http: {...hardCodedParams, relativeURI: url }, response: {successValues: [], resourcePath}};
   }
 
-  return {adaptorType: 'RESTExport', rest: {...hardCodedParams, relativeURI: url, resourcePath}, assistant: resource.assistant};
+  return {_connectionId, adaptorType: 'RESTExport', rest: {...hardCodedParams, relativeURI: url, resourcePath}, assistant: resource.assistant};
 }
 
 function getImportAdaptorType(resource) {
@@ -128,7 +129,13 @@ export function* _fetchAssistantSampleData({ resource }) {
   }
 
   const {sampleDataWrapper} = previewConfig;
-  const exportPayload = getCorrectPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource);
+  const exportPayload = getCorrectPreviewConfig(assistantConfig, assistantMetadata,
+    {
+      url: '/api/data/v8.2/accounts',
+      resourcePath: 'value',
+      method: 'get',
+    },
+    resource);
 
   if (!exportPayload) {
     yield put(actions.metadata.failedAssistantImportPreview(resource._id));
