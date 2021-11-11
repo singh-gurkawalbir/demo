@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
+import { Typography, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../../../components/HomePageCard/Header';
@@ -30,6 +30,8 @@ import CeligoTruncate from '../../../../components/CeligoTruncate';
 import ActionButton from '../../../../components/ActionButton';
 import Status from '../../../../components/Buttons/Status';
 import TileActions from './TileActions';
+import ActionGroup from '../../../../components/ActionGroup';
+import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -73,6 +75,16 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 0,
     '& > * .MuiButton-startIcon': {
       margin: 0,
+    },
+  },
+  actionGroupWrapper: {
+    '&:last-child': {
+      marginRight: theme.spacing(-1),
+    },
+  },
+  connectionIcon: {
+    '&:hover': {
+      backgroundColor: theme.palette.background.paper2,
     },
   },
 }));
@@ -180,13 +192,13 @@ function Tile({
             className={classes.headerTileStatus}>
             {status.label}
           </Status>
-          {isConnectionDown && (
-          <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
-            <IconButton
-              size="small"
-              color="inherit"
+          <ActionGroup className={classes.actionGroupWrapper}>
+            {isConnectionDown && (
+            <IconButtonWithTooltip
+              className={classes.connectionIcon}
               onClick={handleConnectionDownStatusClick}
-              className={classes.status}>
+              tooltipProps={{title: 'Connection down', placement: 'bottom'}}
+              buttonSize={{size: 'small'}}>
               <span>
                 <StatusCircle
                   size="small"
@@ -194,10 +206,10 @@ function Tile({
                   variant="error" />
               </span>
               <ConnectionDownIcon />
-            </IconButton>
-          </Tooltip>
-          )}
-          <TileActions tile={tile} />
+            </IconButtonWithTooltip>
+            )}
+            <TileActions tile={tile} />
+          </ActionGroup>
         </Header>
         <Content>
           <CardTitle>
