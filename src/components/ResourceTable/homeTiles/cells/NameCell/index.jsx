@@ -62,7 +62,7 @@ export default function NameCell({ tile }) {
   return (
     <div className={classes.root}>
       <div className={classes.nameCellDescription}>
-        {!pinned && <IntegrationPinnedIcon />}
+        {pinned && <IntegrationPinnedIcon />}
         <Link to={urlToIntegrationSettings} className={classes.nameCellLink}>{name}</Link>
         <InfoIconButton info={description} escapeUnsecuredDomains size="xs" className={classes.nameCellInfoIcon} />
       </div>
