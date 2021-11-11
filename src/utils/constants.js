@@ -1,7 +1,8 @@
 import invert from 'lodash/invert';
 
 export const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
-export const CDN_BASE_URL = process.env.CDN_BASE_URI || PRODUCTION_CDN_BASE_URL;
+// eslint-disable-next-line no-undef
+export const CDN_BASE_URL = CDN_BASE_URI || PRODUCTION_CDN_BASE_URL;
 export const emptyList = Object.freeze([]);
 export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
