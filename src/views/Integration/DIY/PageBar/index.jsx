@@ -1,5 +1,5 @@
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
@@ -14,7 +14,6 @@ import CopyIcon from '../../../../components/icons/CopyIcon';
 import TrashIcon from '../../../../components/icons/TrashIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { HOME_PAGE_PATH } from '../../../../utils/constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import { camelCase } from '../../../../utils/string';
@@ -127,18 +126,8 @@ export default function PageBar() {
   const handleAddNewChild = useCallback(() => {
     dispatch(actions.integrationApp.installer.initChild(integrationId));
   }, [integrationId, dispatch]);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  if (!hasIntegration && isDeleting) {
-    ['integrations', 'tiles', 'scripts'].forEach(resource =>
-      dispatch(actions.resource.requestCollection(resource))
-    );
-
-    setIsDeleting(false);
-    history.push(getRoutePath(HOME_PAGE_PATH));
-  }
-
-  const handleDelete = useHandleDelete(integrationId, setIsDeleting);
+  const handleDelete = useHandleDelete(integrationId);
 
   const handleChildChange = useCallback(
     e => {
