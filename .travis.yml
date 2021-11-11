@@ -5,9 +5,9 @@ cache:
   directories:
     - node_modules
 script:
-  - yarn test
-  - yarn run lint 
-  - yarn build-storybook
+  # - yarn test
+  # - yarn run lint 
+  - yarn build-storybook 
 
 # Deployment information
 deploy:
