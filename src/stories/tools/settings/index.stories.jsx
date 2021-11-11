@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+import { Typography } from '@material-ui/core';
 import React from 'react';
 
 export default {
@@ -10,9 +12,14 @@ const Template = () => {
   console.log(settings);
 
   return (
-    <pre>
-      {JSON.stringify(settings, null, 2)}
-    </pre>
+    <>
+      <pre>
+        {JSON.stringify(settings, null, 2)}
+      </pre>
+      <Typography>{CDN_BASE_URI}</Typography>
+      <Typography>{process.env.CDN_BASE_URI}</Typography>
+      <Typography>{process.env.STORYBOOK_FOO}</Typography>
+    </>
   );
 };
 
