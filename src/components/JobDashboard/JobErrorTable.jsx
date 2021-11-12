@@ -20,6 +20,7 @@ import { UNDO_TIME } from '../../utils/jobdashboard';
 import DownloadIcon from '../icons/DownloadIcon';
 import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
+import { displayValue } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -465,7 +466,7 @@ export default function JobErrorTable({
               onClick={handleRetryClick}
               disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
               { !job.flowDisabled && numSelectedRetriableErrors > 0
-                ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
+                ? `Retry ${displayValue('error', numSelectedRetriableErrors)}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </OutlinedButton>
             <OutlinedButton

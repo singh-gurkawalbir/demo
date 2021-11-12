@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress } from '@material-ui/core';
 import { selectors } from '../../../reducers';
+import { displayValue } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -140,8 +141,7 @@ export default function DIY() {
           </div>
           <div>
             <span className={classes.bold}>
-              {platformLicense.currentUsage.usedHours} Hour
-              {platformLicense.currentUsage.usedHours === 1 ? '' : 's'}
+              {displayValue('Hour', platformLicense.currentUsage.usedHours)}
             </span>
           </div>
         </div>

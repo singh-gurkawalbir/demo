@@ -83,10 +83,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const placeholder = 'Search integrations & flows';
 export default function HomeSearchInput({value, onChange}) {
   const inputRef = useRef();
   const classes = useStyles();
-  const placeholder = 'Search integrations & flows';
   const [searchFocused, setSearchFocused] = useState(false);
   const [isSearchIconHidden, setSearchIconHidden] = useState(false);
   const [isCloseIconHidden, setCloseIconHidden] = useState(true);
@@ -120,10 +120,10 @@ export default function HomeSearchInput({value, onChange}) {
     onChangeHandler(e);
   }, [onChangeHandler]);
 
-  const focusHandler = () => {
+  const focusHandler = useCallback(() => {
     setSearchFocused(true);
     setSearchIconHidden(true);
-  };
+  }, []);
 
   return (
     <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})}>

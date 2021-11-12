@@ -94,7 +94,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
-import { capitalizeFirstLetter } from '../utils/string';
+import { displayValue, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
@@ -6196,8 +6196,8 @@ selectors.tileLicenseDetails = (state, tile) => {
     licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
     listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your subscription will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your subscription.`;
-    listViewLicenseMesssage = `Expiring in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}`;
+    licenseMessageContent = `Your subscription will expire in ${displayValue('day', expiresInDays)}. Contact sales to renew your subscription.`;
+    listViewLicenseMesssage = `Expiring in ${displayValue('day', expiresInDays)}`;
   }
 
   return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id, listViewLicenseMesssage};
