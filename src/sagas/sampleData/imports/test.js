@@ -297,11 +297,11 @@ describe('sampleData imports saga', () => {
         .run();
     });
 
-    describe("previewConfig", ()=>{
-      const connectionId = "someConnectionId"
+    describe('previewConfig', () => {
+      const connectionId = 'someConnectionId';
       const resource = {
         _id: 'someId',
-        _connectionId:connectionId,
+        _connectionId: connectionId,
         assistant: 'shipwire',
         assistantMetadata: {
           resource: 'product',
@@ -312,21 +312,21 @@ describe('sampleData imports saga', () => {
         adaptorType: 'RESTImport',
       };
       const assistantMetadata = {
-        export:{
+        export: {
           versions: [{
             version: 'v3',
             resources: [{
               id: 'product',
               name: 'Product',
-              "endpoints": [
+              endpoints: [
                 {
-                  "id": "list_products",
-                  "url": "/api/data/v8.2/products",
-                  "resourcePath": "value",
-                }
+                  id: 'list_products',
+                  url: '/api/data/v8.2/products',
+                  resourcePath: 'value',
+                },
               ],
-            }]
-          }]
+            }],
+          }],
         },
         import: {
           versions: [{
@@ -342,38 +342,39 @@ describe('sampleData imports saga', () => {
                 id: 'create_product',
                 url: '/v3/products',
                 method: 'POST',
-                "previewConfig": {
-                  "id": "list_products"
+                previewConfig: {
+                  id: 'list_products',
                 },
               }],
             }],
           }],
         },
       };
-    test('shoul get sample data based on the virtual export of the previewConfig id and subsequently set it to the importPreview', () => {
- 
-      const expectedSampleData = {
-        sku: 'sportsWatch',
-        externalId: 'narp',
-      };
-      return expectSaga(_fetchAssistantSampleData, { resource })
-        .provide([
-          [select(selectors.assistantData, {
-            adaptorType: 'rest',
-            assistant: 'shipwire',
-          }), assistantMetadata],
-          [matchers.call.fn(apiCallWithRetry),expectedSampleData]
-        ]).
-        call(apiCallWithRetry,  {
-          path: '/exports/preview',
-          opts: {
-            method: 'POST',
-            body:  {assistant: 'shipwire',
-            assistantMetadata:
+
+      test('shoul get sample data based on the virtual export of the previewConfig id and subsequently set it to the importPreview', () => {
+        const expectedSampleData = {
+          sku: 'sportsWatch',
+          externalId: 'narp',
+        };
+
+        return expectSaga(_fetchAssistantSampleData, { resource })
+          .provide([
+            [select(selectors.assistantData, {
+              adaptorType: 'rest',
+              assistant: 'shipwire',
+            }), assistantMetadata],
+            [matchers.call.fn(apiCallWithRetry), expectedSampleData],
+          ])
+          .call(apiCallWithRetry, {
+            path: '/exports/preview',
+            opts: {
+              method: 'POST',
+              body: {assistant: 'shipwire',
+                assistantMetadata:
              { resource: 'product',
                version: 'v3',
                operation: 'list_products' },
-            rest:
+                rest:
              { method: 'GET',
                relativeURI: '/api/data/v8.2/products',
                headers: [],
@@ -390,34 +391,26 @@ describe('sampleData imports saga', () => {
                resourcePath: 'value',
                successPath: undefined,
                allowUndefinedResource: false },
-            forPreview: true,
-            _connectionId: connectionId },
-          },
-          hidden: true,
-        })
-        .put(actions.metadata.receivedAssistantImportPreview('someId',expectedSampleData))
-        .run();
+                forPreview: true,
+                _connectionId: connectionId },
+            },
+            hidden: true,
+          })
+          .put(actions.metadata.receivedAssistantImportPreview('someId', expectedSampleData))
+          .run();
       });
 
-      test('should dispatch failedAssistantImportPreview when the export preview fails', () => {
- 
-        const expectedSampleData = {
-          sku: 'sportsWatch',
-          externalId: 'narp',
-        };
-        return expectSaga(_fetchAssistantSampleData, { resource })
-          .provide([
-            [select(selectors.assistantData, {
-              adaptorType: 'rest',
-              assistant: 'shipwire',
-            }), assistantMetadata],
-            [matchers.call.fn(apiCallWithRetry),throwError(new Error("could not process export"))]
-          ])
-       
-          .put(actions.metadata.failedAssistantImportPreview('someId'))
-          .run();
-        });
-    });
+      test('should dispatch failedAssistantImportPreview when the export preview fails', () => expectSaga(_fetchAssistantSampleData, { resource })
+        .provide([
+          [select(selectors.assistantData, {
+            adaptorType: 'rest',
+            assistant: 'shipwire',
+          }), assistantMetadata],
+          [matchers.call.fn(apiCallWithRetry), throwError(new Error('could not process export'))],
+        ])
 
+        .put(actions.metadata.failedAssistantImportPreview('someId'))
+        .run());
+    });
   });
 });
