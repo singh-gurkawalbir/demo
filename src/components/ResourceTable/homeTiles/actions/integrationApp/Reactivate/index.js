@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import ReactivateIcon from '../../../../../icons/ReactivateIcon';
 import { selectors } from '../../../../../../reducers';
 import { isIntegrationAppVersion2 } from '../../../../../../utils/integrationApps';
@@ -8,22 +9,34 @@ import actions from '../../../../../../actions';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import FieldMessage from '../../../../../DynaForm/fields/FieldMessage';
 
+const useStyles = makeStyles(theme => ({
+  icon: {
+    marginTop: theme.spacing(-6),
+    marginRight: theme.spacing(1),
+  },
+}));
+
 export default {
   key: 'RenewOrReactivate',
   useLabel: rowData => {
+    const classes = useStyles();
     const licenseMessageContent = useSelector(state => selectors.tileLicenseDetails(state, rowData).licenseMessageContent);
 
     return (
-      <div>
-        Reactivate integration
-        <FieldMessage
-          isValid
-          description={licenseMessageContent}
+      <>
+        <div className={classes.icon}>
+          <ReactivateIcon />
+        </div>
+        <div>
+          Reactivate integration
+          <FieldMessage
+            isValid
+            description={licenseMessageContent}
            />
-      </div>
+        </div>
+      </>
     );
   },
-  icon: ReactivateIcon,
   useHasAccess: rowData => {
     const {_integrationId, status} = rowData;
     const isIntegrationV2 = useSelector(state => {
