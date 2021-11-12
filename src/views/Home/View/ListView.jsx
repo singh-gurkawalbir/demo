@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { Typography, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
@@ -10,18 +11,26 @@ const useStyles = makeStyles(theme => ({
   textWrapper: {
     padding: theme.spacing(2),
   },
+  resultContainer: {
+    padding: theme.spacing(3, 3, 14, 3),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
+  },
+  noShowMoreContainer: {
+    paddingBottom: theme.spacing(3),
+  },
 }));
 
 export default function ListView() {
-  const classes = useStyles();
   const {filteredTiles, filteredCount, perPageCount, totalCount} = useSelectorMemo(selectors.mkFilteredHomeTiles);
+  const classes = useStyles();
 
   if (!totalCount) {
     return null;
   }
 
   return (
-    <div>
+    <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: perPageCount === filteredCount })}>
       <ResourceTable
         resourceType={FILTER_KEY}
         resources={filteredTiles} />
