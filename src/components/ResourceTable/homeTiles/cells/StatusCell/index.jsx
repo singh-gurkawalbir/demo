@@ -14,6 +14,10 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
+    '& > *': {
+      textAlign: 'left',
+      alignItems: 'flex-start',
+    },
   },
 });
 
