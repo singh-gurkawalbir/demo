@@ -446,7 +446,7 @@ export const getApp = (type, assistant) => {
 };
 
 export function getImportAdaptorType(resource) {
-  const {adaptorType, assistant, http, rest} = resource;
+  const {adaptorType, assistant, http} = resource;
 
   if (adaptorType === 'HTTPImport') {
     if (http?.formType === 'assistant') {
@@ -456,11 +456,9 @@ export function getImportAdaptorType(resource) {
     return http?.formType === 'rest' ? 'rest' : 'http';
   }
 
-  //for rest adaptors search by assistant type
+  // for rest adaptors search by assistant type
 
   return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
-
-
 }
 
 export const getAssistantConnectorType = assistant => {

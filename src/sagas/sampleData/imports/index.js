@@ -60,7 +60,7 @@ function convertToVirtualExportFromPreviewConfig(assistantConfig, assistantMetad
     updatedAssistantConfig.operation = id;
     updatedAssistantConfig.assistant = assistant;
     updatedAssistantConfig.resource = previewConfigResource || assistantConfigResource;
-    console.log("call this")
+
     return convertToVirtualExport(updatedAssistantConfig, assistantMetadata, resource);
   }
 
@@ -86,6 +86,7 @@ export function* _fetchAssistantSampleData({ resource }) {
     assistant,
   });
   const adaptorType = getImportAdaptorType(resource);
+
   if (!assistantMetadata) {
     assistantMetadata = yield call(requestAssistantMetadata, {
       adaptorType,
@@ -122,7 +123,6 @@ export function* _fetchAssistantSampleData({ resource }) {
 
   const {sampleDataWrapper} = previewConfig;
   const exportPayload = convertToVirtualExportFromPreviewConfig(assistantConfig, assistantMetadata, previewConfig, resource);
-  console.log("check  here ", exportPayload)
 
   // if it cannot be converted to a virtual export just fail the preview call
   if (!exportPayload) {
