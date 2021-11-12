@@ -51,7 +51,7 @@ selectors.shouldRedirect = (state, integrationId) => {
 
 selectors.resolvedIntegrationDependencies = (state, integrationId) => {
   if (!state || !state[integrationId]) {
-    return false;
+    return true;
   }
 
   return !!state[integrationId].resolvedResources;
