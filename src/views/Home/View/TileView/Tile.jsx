@@ -139,7 +139,7 @@ function Tile({
     urlToIntegrationSettings,
     urlToIntegrationUsers,
     urlToIntegrationConnections,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const accessLevel = tile.integration?.permissions?.accessLevel;
   const status = tileStatus(tile);

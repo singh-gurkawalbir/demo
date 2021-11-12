@@ -1826,7 +1826,7 @@ selectors.mkFilteredHomeTiles = () => {
     });
 };
 
-selectors.homeTileRedirectUrl = () => {
+selectors.mkHomeTileRedirectUrl = () => {
   const resourceSelector = selectors.makeResourceSelector();
   const marketplaceResourceSel = selectors.makeResourceSelector();
 

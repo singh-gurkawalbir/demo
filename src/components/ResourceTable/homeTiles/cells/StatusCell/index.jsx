@@ -28,7 +28,7 @@ export default function StatusCell({ tile }) {
   const history = useHistory();
   const {
     urlToIntegrationConnections,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
