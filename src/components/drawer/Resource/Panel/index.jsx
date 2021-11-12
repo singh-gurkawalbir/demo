@@ -54,6 +54,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
     padding: theme.spacing(3),
+    height: `calc(100vh - ${theme.spacing(20)}px)`,
     '& > div:first-child': {
       padding: 0,
       paddingRight: theme.spacing(2),
