@@ -1,5 +1,6 @@
 export default {
   'mongodb.method': {
+    loggable: true,
     type: 'radiogroupforresetfields',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
@@ -36,6 +37,7 @@ export default {
     ],
   },
   'mongodb.lookupType': {
+    loggable: true,
     type: 'select',
     label: 'How would you like to identify existing records?',
     required: true,
@@ -146,6 +148,7 @@ export default {
     ],
   },
   'mongodb.upsert': {
+    loggable: true,
     type: 'checkbox',
     label: 'Upsert',
     visibleWhen: [

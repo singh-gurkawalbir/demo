@@ -4,17 +4,20 @@ import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../utils/cons
 
 export default {
   name: {
+    loggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
   description: {
+    loggable: true,
     type: 'text',
     multiline: true,
     maxRows: 5,
     label: 'Description',
   },
   websiteURL: {
+    loggable: true,
     type: 'text',
     label: 'Website URL',
     validWhen: {
@@ -37,6 +40,7 @@ export default {
     },
   },
   framework: {
+    loggable: true,
     type: 'text',
     label: 'Framework',
     defaultValue: r => (isNewId(r._id) || r.framework === 'twoDotZero') ? 'twoDotZero' : '',
@@ -59,6 +63,7 @@ export default {
     ],
   },
   _integrationId: {
+    loggable: true,
     type: 'selectresource',
     label: 'Source integration',
     placeholder: 'Choose integration',
@@ -81,6 +86,7 @@ export default {
     ],
   },
   _stackId: {
+    loggable: true,
     type: 'selectresource',
     label: 'Stack',
     resourceType: 'stacks',
@@ -130,6 +136,7 @@ export default {
     ],
   },
   applications: {
+    loggable: true,
     type: 'selectmultiapplication',
     placeholder: 'Choose applications',
     label: 'Applications',
@@ -147,12 +154,14 @@ export default {
     ],
   },
   trialEnabled: {
+    loggable: true,
     type: 'checkbox',
     label: 'Enable trials',
     defaultDisabled: r => isNewId(r._id),
     helpKey: 'license.trialEnabled',
   },
   trialPeriod: {
+    loggable: true,
     type: 'select',
     label: 'Trial period',
     defaultValue: r => r?.trialPeriod || 30,
@@ -167,6 +176,7 @@ export default {
     ],
   },
   _trialLicenseId: {
+    loggable: true,
     type: 'triallicense',
     label: 'Trial license template',
     resourceType: 'connectorLicenses',

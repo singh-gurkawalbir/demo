@@ -2,6 +2,7 @@ import { isNewId } from '../../../../utils/resource';
 
 export default {
   'netsuite_da.recordType': {
+    loggable: true,
     label: 'Record type',
     required: true,
     type: 'netsuiterecordtype',
@@ -23,11 +24,13 @@ export default {
     visible: false,
   },
   'netsuite_da.subrecords': {
+    loggable: true,
     required: false,
     type: 'netsuitesubrecords',
     connectionId: r => r && r._connectionId,
   },
   'netsuite_da.operation': {
+    loggable: true,
     type: 'netsuiteimportoperation',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
@@ -57,6 +60,7 @@ export default {
     ],
   },
   'netsuite.operation': {
+    loggable: true,
     type: 'radiogroup',
     label: 'Operation',
     required: true,
@@ -77,6 +81,7 @@ export default {
     ],
   },
   'netsuite_da.useSS2Restlets': {
+    loggable: true,
     fieldId: 'netsuite_da.useSS2Restlets',
     type: 'netsuiteapiversion',
     label: 'NetSuite API version',
@@ -254,6 +259,7 @@ export default {
     ],
   },
   'netsuite_da.batchSize': {
+    loggable: true,
     type: 'text',
     label: 'Batch size limit',
     helpKey: 'import.netsuite_da.batchSize',

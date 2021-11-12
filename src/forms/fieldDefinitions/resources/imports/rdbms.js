@@ -1,5 +1,6 @@
 export default {
   'rdbms.queryType': {
+    loggable: true,
     type: 'queryradiogroup',
     label: 'Query type',
     fieldsToReset: [
@@ -151,6 +152,7 @@ export default {
     ],
   },
   'rdbms.ignoreExistingLookupName': {
+    loggable: true,
     label: 'Lookup',
     type: 'selectlookup',
     omitWhenHidden: true,
@@ -171,6 +173,7 @@ export default {
     ],
   },
   'rdbms.ignoreMissingLookupName': {
+    loggable: true,
     label: 'Lookup',
     type: 'selectlookup',
     omitWhenHidden: true,
@@ -191,6 +194,7 @@ export default {
     ],
   },
   'rdbms.lookupType': {
+    loggable: true,
     type: 'select',
     label: 'How would you like to identify existing records?',
     required: true,

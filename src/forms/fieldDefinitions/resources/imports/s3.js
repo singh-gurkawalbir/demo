@@ -2,6 +2,7 @@ import { AWS_REGIONS_LIST } from '../../../../utils/constants';
 
 export default {
   's3.region': {
+    loggable: true,
     type: 'select',
     label: 'Region',
     required: true,

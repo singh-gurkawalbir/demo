@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
-  canInstrument: {
+  loggable: {
     backgroundColor: fade(theme.palette.success.main, 0.3),
   },
   hasChange: {
@@ -50,15 +50,15 @@ export default function FieldDetails({id, resourceType, field}) {
   const changedValue = changeSet[resourceType]?.[id];
   const hasChange = changedValue !== undefined;
   // we favor the changelog setting.
-  const canInstrument = hasChange
+  const loggable = hasChange
     ? changedValue
-    : field.canInstrument || false;
+    : field.loggable || false;
 
   function handleClick() {
-    if (hasChange && field.canInstrument !== changedValue) {
+    if (hasChange && field.loggable !== changedValue) {
       clearField(resourceType, id);
     } else {
-      setField(resourceType, id, !canInstrument);
+      setField(resourceType, id, !loggable);
     }
   }
 
@@ -67,7 +67,7 @@ export default function FieldDetails({id, resourceType, field}) {
       <div className={classes.fieldInfoContainer}>
         <div className={classes.titleContainer}>
           <Typography><b>{field.label}</b></Typography>
-          <Help className={classes.helpTextButton} title={field.label} helpText={helpTextMap[helpKey]} />
+          <Help className={classes.helpTextButton} title={field.label} helpText={field.helpText || helpTextMap[helpKey]} />
         </div>
 
         {field.description && (
@@ -79,11 +79,11 @@ export default function FieldDetails({id, resourceType, field}) {
       </div>
       <div
         className={clsx(classes.toggleContainer, {
-          [classes.canInstrument]: canInstrument,
+          [classes.loggable]: loggable,
         })}>
         <Typography variant="body2" gutterBottom>Loggable?</Typography>
         <Typography>
-          <b>{canInstrument ? 'YES' : 'NO'}</b>
+          <b>{loggable ? 'YES' : 'NO'}</b>
         </Typography>
       </div>
     </div>

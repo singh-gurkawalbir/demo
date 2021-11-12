@@ -2,6 +2,7 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   'http.status._exportId': {
+    loggable: true,
     label: 'Status export',
     type: 'selectresource',
     options: { appType: 'http' },
@@ -14,24 +15,29 @@ export default {
     required: true,
   },
   name: {
+    loggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
   description: {
+    loggable: true,
     type: 'text',
     label: 'Description',
     defaultValue: r => r.description || '',
   },
   'http.status.initialWaitTime': {
+    loggable: true,
     type: 'text',
     label: 'Initial wait time',
   },
   'http.status.pollWaitTime': {
+    loggable: true,
     type: 'text',
     label: 'Poll wait time',
   },
   'http.status.statusPath': {
+    loggable: true,
     type: 'text',
     label: 'Status path',
     required: true,
@@ -61,6 +67,7 @@ export default {
     label: 'Resource path',
   },
   'http.result._exportId': {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'exports',
     allowNew: true,
@@ -73,6 +80,7 @@ export default {
     label: 'Result export',
   },
   'http.submit.sameAsStatus': {
+    loggable: true,
     type: 'checkbox',
     label: 'Same as check status',
     defaultValue: r => isNewId(r?._id) ? true : r?.http?.submit?.sameAsStatus,

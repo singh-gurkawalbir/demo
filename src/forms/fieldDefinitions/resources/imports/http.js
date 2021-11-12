@@ -1,5 +1,6 @@
 export default {
   'http.method': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     required: true,
@@ -39,6 +40,7 @@ export default {
     },
   },
   'http.blobMethod': {
+    loggable: true,
     type: 'select',
     helpKey: 'import.http.method',
     label: 'HTTP method',
@@ -67,12 +69,14 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
+    loggable: true,
     type: 'selectrequestmediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
+    loggable: true,
     type: 'select',
     label: 'Composite type',
     options: [
@@ -132,6 +136,7 @@ export default {
     },
   },
   'http.requestType': {
+    loggable: true,
     type: 'select',
     label: 'Request type',
     options: [
@@ -309,6 +314,7 @@ export default {
     ],
   },
   'http.batchSize': {
+    loggable: true,
     type: 'text',
     label: 'Number of records per HTTP request',
     defaultValue: r => r?.http?.batchSize || 1,
@@ -327,6 +333,7 @@ export default {
     ],
   },
   'http.successMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
@@ -346,6 +353,7 @@ export default {
     ],
   },
   'http.errorMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
@@ -365,6 +373,7 @@ export default {
     ],
   },
   'http.ignoreEmptyNodes': {
+    loggable: true,
     type: 'checkbox',
     label: 'Remove empty fields from HTTP request body',
     visibleWhen: [
@@ -375,6 +384,7 @@ export default {
     ],
   },
   'http.configureAsyncHelper': {
+    loggable: true,
     type: 'checkbox',
     label: 'Configure async helper',
     defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
@@ -392,6 +402,7 @@ export default {
   },
 
   'http._asyncHelperId': {
+    loggable: true,
     label: 'Async helper',
     type: 'selectresource',
     resourceType: 'asyncHelpers',
@@ -408,6 +419,7 @@ export default {
     ],
   },
   'http.existingLookupType': {
+    loggable: true,
     id: 'http.existingLookupType',
     type: 'select',
     label: 'How would you like to identify existing records?',
@@ -506,6 +518,7 @@ export default {
     ],
   },
   'http.newLookupType': {
+    loggable: true,
     id: 'http.newLookupType',
     type: 'select',
     label: 'How would you like to identify existing records?',
@@ -604,6 +617,7 @@ export default {
     ],
   },
   'unencrypted.apiType': {
+    loggable: true,
     type: 'selectAmazonSellerCentralAPIType',
     label: 'API type',
     helpKey: 'export.unencrypted.apiType',

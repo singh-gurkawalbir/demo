@@ -3,11 +3,21 @@ import { isIntegrationApp } from '../../../../utils/flows';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
-  name: { type: 'text', label: 'Name', required: true },
-  description: { type: 'text', label: 'Description' },
+  name: {
+    loggable: true,
+    type: 'text',
+    label: 'Name',
+    required: true,
+  },
+  description: {
+    loggable: true,
+    type: 'text',
+    label: 'Description',
+  },
 
   // UI Specific field
   formView: {
+    loggable: true,
     id: 'formView',
     type: 'formview',
     label: 'Form view',
@@ -16,6 +26,7 @@ export default {
     helpKey: 'formView',
   },
   _connectionId: {
+    loggable: true,
     type: 'replaceconnection',
     resourceType: 'connections',
     parentResourceType: 'imports',
@@ -49,12 +60,14 @@ export default {
   },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
+    loggable: true,
     type: 'text',
     label: 'Distributed',
     defaultValue: true,
     visible: false,
   },
   maxAttempts: {
+    loggable: true,
     type: 'text',
     label: 'Max attempts',
     validWhen: [
@@ -64,16 +77,19 @@ export default {
     ],
   },
   ignoreExisting: {
+    loggable: true,
     type: 'checkbox',
     label: 'Ignore existing records',
     defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
+    loggable: true,
     type: 'checkbox',
     label: 'Ignore missing records',
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
+    loggable: true,
     type: 'uri',
     label: 'Concurrency ID lock template',
     showExtract: false,
@@ -85,6 +101,7 @@ export default {
     showLookup: false,
   },
   oneToMany: {
+    loggable: true,
     type: 'radiogroup',
     label: 'One to many',
     defaultValue: r => ((r?.oneToMany && r?.oneToMany !== 'false') ? 'true' : 'false'),
@@ -127,6 +144,7 @@ export default {
     ],
   },
   deleteAfterImport: {
+    loggable: true,
     type: 'checkbox',
     label: 'Purge blob data immediately?',
   },
@@ -135,6 +153,7 @@ export default {
     label: 'Assistant metadata',
   },
   useTechAdaptorForm: {
+    loggable: true,
     type: 'checkbox',
     label: 'Use tech adaptor form',
     defaultValue: false,
@@ -144,10 +163,15 @@ export default {
     label: 'Sample response data',
   },
   modelMetadata: { type: 'text', label: 'Model metadata' },
-  adaptorType: { type: 'text', label: 'Adaptor type' },
+  adaptorType: {
+    loggable: true,
+    type: 'text',
+    label: 'Adaptor type',
+  },
   // #endregion common
   // #region filter
   'filter.expression.version': {
+    loggable: true,
     type: 'radiogroup',
     label: 'Filter expression version',
     options: [{ items: [{ label: '1', value: '1' }] }],
@@ -157,6 +181,7 @@ export default {
     label: 'Filter expression rules',
   },
   'filter.script._scriptId': {
+    loggable: true,
     type: 'text',
     label: 'Filter script _script ID',
   },
@@ -167,6 +192,7 @@ export default {
   // #endregion filter
   // #region parsers[*]
   'parsers[*].version': {
+    loggable: true,
     type: 'text',
     label: 'Parsers[*] version',
   },
@@ -177,6 +203,7 @@ export default {
   // #endregion parsers[*]
   // #region hooks
   hookType: {
+    loggable: true,
     type: 'radiogroup',
     label: 'Hook type',
     defaultValue: 'script',
@@ -211,6 +238,7 @@ export default {
     ],
   },
   'hooks.preMap._scriptId': {
+    loggable: true,
     type: 'selectresource',
     label: 'Pre map script',
     resourceType: 'scripts',
@@ -222,6 +250,7 @@ export default {
     ],
   },
   'hooks.preMap._stackId': {
+    loggable: true,
     label: 'Pre map stack',
     type: 'selectresource',
     resourceType: 'stacks',
@@ -265,6 +294,7 @@ export default {
     ],
   },
   'hooks.postMap._scriptId': {
+    loggable: true,
     label: 'Post map script',
     type: 'selectresource',
     resourceType: 'scripts',
@@ -276,6 +306,7 @@ export default {
     ],
   },
   'hooks.postMap._stackId': {
+    loggable: true,
     label: 'Post map stack',
     type: 'selectresource',
     resourceType: 'stacks',
@@ -319,6 +350,7 @@ export default {
     ],
   },
   'hooks.postSubmit._scriptId': {
+    loggable: true,
     label: 'Post submit script',
     type: 'selectresource',
     resourceType: 'scripts',
@@ -330,6 +362,7 @@ export default {
     ],
   },
   'hooks.postSubmit._stackId': {
+    loggable: true,
     label: 'Post submit stack',
     type: 'selectresource',
     resourceType: 'stacks',
@@ -373,6 +406,7 @@ export default {
     ],
   },
   'hooks.postAggregate._scriptId': {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'scripts',
     label: 'Post aggregate script',
@@ -384,6 +418,7 @@ export default {
     ],
   },
   'hooks.postAggregate._stackId': {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'stacks',
     label: 'Post aggregate stack',
@@ -408,6 +443,7 @@ export default {
   // #endregion hooks
   // #region responseTransform
   'responseTransform.expression.version': {
+    loggable: true,
     type: 'radiogroup',
     label: 'Response transform expression version',
     options: [{ items: [{ label: '1', value: '1' }] }],
@@ -417,6 +453,7 @@ export default {
     label: 'Response transform expression rules',
   },
   'responseTransform.script._scriptId': {
+    loggable: true,
     type: 'text',
     label: 'Response transform script _script ID',
   },

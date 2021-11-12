@@ -8,6 +8,7 @@ export default {
     showLookup: false,
   },
   'ftp.useTempFile': {
+    loggable: true,
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
     defaultValue: r => !!(r && r.ftp && r.ftp.inProgressFileName),

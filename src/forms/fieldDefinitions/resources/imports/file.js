@@ -2,6 +2,7 @@ export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
   'file.type': {
+    loggable: true,
     type: 'filetypeselect',
     label: 'File type',
     required: true,
