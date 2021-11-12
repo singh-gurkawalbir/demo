@@ -8,7 +8,7 @@ export const getIntegrationAppUrlName = integrationAppName => {
   return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
 };
 
-export const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
+export const isIntegrationAppVersion2 = (integration, skipCloneCheck) => {
   if (!integration) return false;
   let isCloned = false;
 

@@ -76,7 +76,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -1305,7 +1305,7 @@ selectors.mkFlowAttributes = () => createSelector(
     const exportIdToExport = {};
     const flowExports = {};
     // eslint-disable-next-line no-use-before-define
-    const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
+    const isIntegrationV2 = isIntegrationAppVersion2(integration, true);
 
     exps.forEach(exp => {
       exportIdToExport[exp._id] = exp;
@@ -3044,7 +3044,7 @@ selectors.integrationAppFlowIds = (state, integrationId, childId) => {
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
   const integration = selectors.resource(state, 'integrations', integrationId);
 
-  return isIntegrationAppVerion2(integration, skipCloneCheck);
+  return isIntegrationAppVersion2(integration, skipCloneCheck);
 };
 
 selectors.isIntegrationAppV1 = (state, integrationId) => {

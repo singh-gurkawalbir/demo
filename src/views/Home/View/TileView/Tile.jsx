@@ -23,7 +23,7 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/consta
 import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { isIntegrationAppVerion2 } from '../../../../utils/integrationApps';
+import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 import TileNotification from '../../../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../../../hooks';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
@@ -126,7 +126,7 @@ function Tile({
   const dispatch = useDispatch();
   const numFlowsText = displayValue('Flow', tile.numFlows);
   const isIntegrationV2 = useSelector(state =>
-    isIntegrationAppVerion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
+    isIntegrationAppVersion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)

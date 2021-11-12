@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import RenewIcon from '../../../../../icons/RenewIcon';
 import { selectors } from '../../../../../../reducers';
-import { isIntegrationAppVerion2 } from '../../../../../../utils/integrationApps';
+import { isIntegrationAppVersion2 } from '../../../../../../utils/integrationApps';
 import { TILE_STATUS } from '../../../../../../utils/constants';
 import actions from '../../../../../../actions';
 import FieldMessage from '../../../../../DynaForm/fields/FieldMessage';
@@ -28,7 +28,7 @@ export default {
     const isIntegrationV2 = useSelector(state => {
       const i = selectors.resource(state, 'integrations', _integrationId);
 
-      return isIntegrationAppVerion2(i, true);
+      return isIntegrationAppVersion2(i, true);
     });
 
     const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable} = useSelector(state =>
