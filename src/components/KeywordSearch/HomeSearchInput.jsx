@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback} from 'react';
+import React, { useRef, useCallback, useReducer} from 'react';
 import clsx from 'clsx';
 import {InputBase, IconButton} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -83,35 +83,52 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function reducer(state, action) {
+  const { type, value } = action;
+
+  switch (type) {
+    case 'setSearchFocused':
+      return { ...state, searchFocused: value };
+    case 'setSearchIconHidden':
+      return { ...state, isSearchIconHidden: value };
+    case 'setCloseIconHidden':
+      return { ...state, isCloseIconHidden: value };
+    default:
+      throw new Error();
+  }
+}
+const placeholder = 'Search integrations & flows';
 export default function HomeSearchInput({value, onChange}) {
   const inputRef = useRef();
   const classes = useStyles();
-  const placeholder = 'Search integrations & flows';
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [isSearchIconHidden, setSearchIconHidden] = useState(false);
-  const [isCloseIconHidden, setCloseIconHidden] = useState(true);
+  const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
+    searchFocused: false,
+    isSearchIconHidden: false,
+    isCloseIconHidden: true,
+  });
+  const {searchFocused, isSearchIconHidden, isCloseIconHidden} = searchBoxState;
 
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
       inputRef.current.firstChild.placeholder = placeholder;
-      setSearchIconHidden(true);
-      setCloseIconHidden(true);
+      dispatchLocalAction({type: 'setSearchIconHidden', value: true});
+      dispatchLocalAction({type: 'setCloseIconHidden', value: true});
     } else {
-      setCloseIconHidden(false);
+      dispatchLocalAction({type: 'setCloseIconHidden', value: false});
     }
-    setSearchIconHidden(true);
+    dispatchLocalAction({type: 'setSearchIconHidden', value: true});
     onChange(e);
   }, [onChange]);
 
   const blurHandler = useCallback(e => {
     if (e.target.value !== '') {
-      setSearchIconHidden(true);
-      setCloseIconHidden(false);
+      dispatchLocalAction({type: 'setSearchIconHidden', value: true});
+      dispatchLocalAction({type: 'setCloseIconHidden', value: false});
     } else {
-      setSearchIconHidden(false);
+      dispatchLocalAction({type: 'setSearchIconHidden', value: false});
     }
-    setSearchFocused(false);
+    dispatchLocalAction({type: 'setSearchFocused', value: false});
   }, []);
 
   const onClearInput = useCallback(e => {
@@ -120,10 +137,10 @@ export default function HomeSearchInput({value, onChange}) {
     onChangeHandler(e);
   }, [onChangeHandler]);
 
-  const focusHandler = () => {
-    setSearchFocused(true);
-    setSearchIconHidden(true);
-  };
+  const focusHandler = useCallback(() => {
+    dispatchLocalAction({type: 'setSearchFocused', value: true});
+    dispatchLocalAction({type: 'setSearchIconHidden', value: true});
+  }, []);
 
   return (
     <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})}>
@@ -139,6 +156,7 @@ export default function HomeSearchInput({value, onChange}) {
         onFocus={focusHandler}
         onChange={onChangeHandler}
         placeholder={placeholder}
+        data-test="homeSearchInput"
         classes={{
           root: classes.inputRoot,
           input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),

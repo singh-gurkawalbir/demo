@@ -8,6 +8,7 @@ import { tileStatus, isTileStatusConnectionDown } from '../../../../../utils/hom
 import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import Status from '../../../../Buttons/Status';
+import { getTextAfterCount } from '../../../../../utils/string';
 
 const useStyles = makeStyles({
   statusWrapper: {
@@ -27,14 +28,14 @@ export default function StatusCell({ tile }) {
   const history = useHistory();
   const {
     urlToIntegrationConnections,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
   const status = tileStatus(tile);
   const isConnectionDown = isTileStatusConnectionDown(tile);
-  const connErrorsText = isConnectionDown && `${tile.offlineConnections.length} connection${tile.offlineConnections.length === 1 ? '' : 's'} down`;
+  const connErrorsText = isConnectionDown && `${getTextAfterCount('connection', tile.offlineConnections.length)} down`;
 
   const handleStatusClick = useCallback(
     event => {

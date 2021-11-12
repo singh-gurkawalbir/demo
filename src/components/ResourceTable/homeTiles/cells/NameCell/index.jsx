@@ -45,7 +45,7 @@ export default function NameCell({ tile }) {
     ssLinkedConnectionId,
     pinned} = tile;
   const classes = useStyles();
-  const {urlToIntegrationSettings} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+  const {urlToIntegrationSettings} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const ssAccessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, ssLinkedConnectionId));
 

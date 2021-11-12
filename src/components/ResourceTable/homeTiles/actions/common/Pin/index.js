@@ -14,9 +14,12 @@ export default {
     const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard || emptyObject, shallowEqual);
 
     const handlePin = useCallback(() => {
-        // push unique integration key to preferences
-        homePreferences.pinnedIntegrations?.push(key);
-        dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, pinnedIntegrations: homePreferences.pinnedIntegrations || [] }}));
+      // push unique integration key to preferences
+      if (!homePreferences.pinnedIntegrations) {
+        homePreferences.pinnedIntegrations = [];
+      }
+      homePreferences.pinnedIntegrations.push(key);
+      dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, pinnedIntegrations: homePreferences.pinnedIntegrations }}));
     }, [dispatch, homePreferences, key]);
 
     return handlePin;

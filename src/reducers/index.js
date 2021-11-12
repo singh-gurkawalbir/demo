@@ -76,7 +76,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -94,7 +94,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
-import { capitalizeFirstLetter } from '../utils/string';
+import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
@@ -1305,7 +1305,7 @@ selectors.mkFlowAttributes = () => createSelector(
     const exportIdToExport = {};
     const flowExports = {};
     // eslint-disable-next-line no-use-before-define
-    const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
+    const isIntegrationV2 = isIntegrationAppVersion2(integration, true);
 
     exps.forEach(exp => {
       exportIdToExport[exp._id] = exp;
@@ -1826,7 +1826,7 @@ selectors.mkFilteredHomeTiles = () => {
     });
 };
 
-selectors.homeTileRedirectUrl = () => {
+selectors.mkHomeTileRedirectUrl = () => {
   const resourceSelector = selectors.makeResourceSelector();
   const marketplaceResourceSel = selectors.makeResourceSelector();
 
@@ -3044,7 +3044,7 @@ selectors.integrationAppFlowIds = (state, integrationId, childId) => {
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
   const integration = selectors.resource(state, 'integrations', integrationId);
 
-  return isIntegrationAppVerion2(integration, skipCloneCheck);
+  return isIntegrationAppVersion2(integration, skipCloneCheck);
 };
 
 selectors.isIntegrationAppV1 = (state, integrationId) => {
@@ -6196,8 +6196,8 @@ selectors.tileLicenseDetails = (state, tile) => {
     licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
     listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your subscription will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your subscription.`;
-    listViewLicenseMesssage = `Expiring in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}`;
+    licenseMessageContent = `Your subscription will expire in ${getTextAfterCount('day', expiresInDays)}. Contact sales to renew your subscription.`;
+    listViewLicenseMesssage = `Expiring in ${getTextAfterCount('day', expiresInDays)}`;
   }
 
   return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id, listViewLicenseMesssage};
