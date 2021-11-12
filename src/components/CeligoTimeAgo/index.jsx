@@ -35,7 +35,13 @@ export default function CeligoTimeAgo(props) {
     return null;
   }
   if (!showRelativeDateTime) {
-    return <LocalDateTime date={props.date} />;
+    return (
+      <Tooltip data-public title={<TimeAgo {...props} formatter={formatter} />} aria-label="relative date time">
+        <div>
+          <LocalDateTime date={props.date} />
+        </div>
+      </Tooltip>
+    );
   }
 
   return (
