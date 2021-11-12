@@ -32,7 +32,7 @@ import Status from '../../../../components/Buttons/Status';
 import TileActions from './TileActions';
 import ActionGroup from '../../../../components/ActionGroup';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
-import { displayValue } from '../../../../utils/string';
+import { getTextAfterCount } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -124,7 +124,7 @@ function Tile({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const numFlowsText = displayValue('Flow', tile.numFlows);
+  const numFlowsText = getTextAfterCount('Flow', tile.numFlows);
   const isIntegrationV2 = useSelector(state =>
     isIntegrationAppVersion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
   );

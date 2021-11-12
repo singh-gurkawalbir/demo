@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import { displayValue } from '../../../utils/string';
+import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -141,7 +141,7 @@ export default function DIY() {
           </div>
           <div>
             <span className={classes.bold}>
-              {displayValue('Hour', platformLicense.currentUsage.usedHours)}
+              {getTextAfterCount('Hour', platformLicense.currentUsage.usedHours)}
             </span>
           </div>
         </div>

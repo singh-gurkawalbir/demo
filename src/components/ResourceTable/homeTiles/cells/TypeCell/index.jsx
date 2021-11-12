@@ -3,7 +3,7 @@ import {useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../reducers';
 import FieldMessage from '../../../../DynaForm/fields/FieldMessage';
-import { displayValue } from '../../../../../utils/string';
+import { getTextAfterCount } from '../../../../../utils/string';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -18,7 +18,7 @@ export default function TypeCell({ tile }) {
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
 
-  const numFlowsText = displayValue('Flow', tile.numFlows || 0);
+  const numFlowsText = getTextAfterCount('Flow', tile.numFlows || 0);
 
   if (tile._connectorId) {
     return (
