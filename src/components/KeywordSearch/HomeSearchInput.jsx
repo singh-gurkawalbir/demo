@@ -156,6 +156,7 @@ export default function HomeSearchInput({value, onChange}) {
         onFocus={focusHandler}
         onChange={onChangeHandler}
         placeholder={placeholder}
+        data-test="homeSearchInput"
         classes={{
           root: classes.inputRoot,
           input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
