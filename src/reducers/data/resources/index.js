@@ -177,7 +177,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
     const importResource = selectors.resource(state, 'imports', resourceId);
     const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
 
-    return `Import field (${mappingUtil.getApplicationName(
+    return `Destination record field (${mappingUtil.getApplicationName(
       importResource,
       importConn
     )})`;
@@ -191,7 +191,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
       const exportResource = selectors.resource(state, 'exports', _exportId);
       const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
 
-      return `Export field (${mappingUtil.getApplicationName(
+      return `Source record field (${mappingUtil.getApplicationName(
         exportResource,
         exportConn
       )})`;

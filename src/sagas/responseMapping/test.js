@@ -8,6 +8,7 @@ import actions from '../../actions';
 import { selectors } from '../../reducers';
 import responseMappingUtil from '../../utils/responseMapping';
 import { commitStagedChanges } from '../resources';
+import { requestSampleData } from '../sampleData/flows';
 
 describe('responseMappingInit saga', () => {
   test('should dispatch initFailed in case there is no flow page processor ', () => {
@@ -42,9 +43,10 @@ describe('responseMappingInit saga', () => {
       .run();
   });
 
-  test('should trigger requestFlowSampleData action in case sample data is not loaded for import pageProcessor', () => {
+  test('should call requestSampleData in case sample data is not loaded for stage responseMappingExtract', () => {
     const flowId = 'f1';
-    const resourceId = 'r1';
+    const resourceId = 'r0';
+    const resourceType = 'exports';
     const flowResource = {
       merged: {
         pageProcessors: [
@@ -54,27 +56,28 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId })
+    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId,
           stage: 'responseMappingExtract',
-          resourceType: 'imports',
+          resourceType,
         }), {}],
       ])
-      .put(actions.flowData.requestSampleData(
+      .call(requestSampleData, {
         flowId,
         resourceId,
-        'imports',
-        'responseMappingExtract',
-      )).run();
+        resourceType,
+        stage: 'responseMappingExtract',
+      }).run();
   });
 
-  test('should not trigger requestFlowSampleData action in case sample data is present for import pageProcessor', () => {
+  test('should not call requestSampleData in case sample data is not loaded for stage responseMappingExtract', () => {
     const flowId = 'f1';
     const resourceId = 'r1';
+    const resourceType = 'imports';
     const flowResource = {
       merged: {
         pageProcessors: [
@@ -84,57 +87,90 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId })
+    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId,
           stage: 'responseMappingExtract',
-          resourceType: 'imports',
-        }), {data: {}}],
+          resourceType,
+        }), {data: {}, status: 'received'}],
       ])
-      .not.put(actions.flowData.requestSampleData(
+      .not.call(requestSampleData, {
         flowId,
         resourceId,
-        'imports',
-        'responseMappingExtract',
-      )).run();
+        resourceType,
+        stage: 'responseMappingExtract',
+      }).run();
   });
 
-  test('should not trigger requestFlowSampleData action in case of export pageProcessor ', () => {
+  test('should call requestSampleData in case sample data is not loaded for stage inputFilter', () => {
     const flowId = 'f1';
-    const resourceId = 'exp0';
+    const resourceId = 'r1';
+    const resourceType = 'imports';
     const flowResource = {
       merged: {
         pageProcessors: [
-          {type: 'export', _connectionId: 'something', _exportId: 'exp0', responseMapping: {}},
+          {type: 'export', _connectionId: 'something', _exportId: 'r0', responseMapping: {}},
           {type: 'import', _connectionId: 'something', _importId: 'r1', responseMapping: {}},
         ],
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId })
+    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId,
-          stage: 'responseMappingExtract',
-          resourceType: 'imports',
-        }), {data: {}}],
+          stage: 'inputFilter',
+          resourceType,
+        }), {}],
       ])
-      .not.put(actions.flowData.requestSampleData(
+      .call(requestSampleData, {
         flowId,
         resourceId,
-        'imports',
-        'responseMappingExtract',
-      )).run();
+        resourceType,
+        stage: 'inputFilter',
+      }).run();
+  });
+
+  test('should not call requestSampleData in case sample data is not loaded for stage inputFilter', () => {
+    const flowId = 'f1';
+    const resourceId = 'r0';
+    const resourceType = 'exports';
+    const flowResource = {
+      merged: {
+        pageProcessors: [
+          {type: 'export', _connectionId: 'something', _exportId: 'r0', responseMapping: {}},
+          {type: 'import', _connectionId: 'something', _importId: 'r1', responseMapping: {}},
+        ],
+      },
+    };
+
+    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+      .provide([
+        [select(selectors.resourceData, 'flows', flowId), flowResource],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId,
+          stage: 'inputFilter',
+          resourceType,
+        }), {data: {}, status: 'received'}],
+      ])
+      .not.call(requestSampleData, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: 'inputFilter',
+      }).run();
   });
 
   test('should complete init and trigger initComplete successfully in case of import pageProcessor', () => {
     const flowId = 'f1';
     const resourceId = 'imp0';
+    const resourceType = 'imports';
     const expectedMappingList = [
       {generate: 'fg1', extract: 'e1'},
       {generate: 'lg1[*].lfg1', extract: 'lge1'},
@@ -170,14 +206,14 @@ describe('responseMappingInit saga', () => {
 
     mock.mockReturnValue('mock_key');
 
-    const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId })
+    const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId,
           stage: 'responseMappingExtract',
-          resourceType: 'imports',
+          resourceType,
         }), {data: {}}],
       ])
       .put(
@@ -188,7 +224,7 @@ describe('responseMappingInit saga', () => {
           })),
           flowId,
           resourceId,
-          resourceType: 'imports',
+          resourceType,
         }))
       .run();
 
@@ -200,6 +236,7 @@ describe('responseMappingInit saga', () => {
   test('should complete init and trigger initComplete successfully in case of export pageProcessor', () => {
     const flowId = 'f1';
     const resourceId = 'exp0';
+    const resourceType = 'exports';
     const expectedMappingList = [
       {generate: 'fg1', extract: 'e1'},
       {generate: 'lg1[*].lfg1', extract: 'lge1'},
@@ -235,7 +272,7 @@ describe('responseMappingInit saga', () => {
 
     mock.mockReturnValue('mock_key');
 
-    const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId })
+    const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
       ])
@@ -247,7 +284,7 @@ describe('responseMappingInit saga', () => {
           })),
           flowId,
           resourceId,
-          resourceType: 'exports',
+          resourceType,
         }))
       .run();
 

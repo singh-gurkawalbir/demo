@@ -9,6 +9,7 @@ export const FLOW_STAGES = [
   'transform',
   'sampleResponse',
   'importMappingExtract',
+  'responseMappingExtract',
 ];
 export const HOOK_STAGES = [
   'postResponseMapHook',

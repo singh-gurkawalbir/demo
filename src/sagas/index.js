@@ -11,8 +11,6 @@ import {
   fork,
   cancelled,
 } from 'redux-saga/effects';
-import { createRequestInstance, sendRequest } from 'redux-saga-requests';
-import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
@@ -24,12 +22,6 @@ import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editor from './editor';
-import {
-  onRequestSaga,
-  onSuccessSaga,
-  onErrorSaga,
-  onAbortSaga,
-} from './api/requestInterceptors';
 import { authenticationSagas, initializeApp, initializeLogrocket, invalidateSession } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
@@ -63,9 +55,11 @@ import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
-import { APIException } from './api';
+import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { appSagas } from './app';
+import { sendRequest } from './api';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -101,10 +95,7 @@ export const CANCELLED_REQ = {
 // api call
 export function* apiCallWithRetry(args) {
   const { path, timeout = 2 * 60 * 1000, opts } = args;
-  const apiRequestAction = {
-    type: 'API_WATCHER',
-    request: { url: path, args },
-  };
+  const apiRequestPayload = { url: path, args };
 
   try {
     let apiResp;
@@ -112,15 +103,11 @@ export function* apiCallWithRetry(args) {
 
     if (path !== logoutParams.path) {
       ({ apiResp, timeoutEffect } = yield race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, apiRequestPayload),
         timeoutEffect: delay(timeout),
       }));
     } else {
-      apiResp = yield call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: false,
-      });
+      apiResp = yield call(sendRequest, apiRequestPayload);
     }
     if (timeoutEffect) {
       yield call(requestCleanup, path, opts?.method);
@@ -140,6 +127,7 @@ export function* apiCallWithRetry(args) {
 
 export function* allSagas() {
   yield all([
+    ...appSagas,
     ...resourceSagas,
     ...connectorSagas,
     ...templateSagas,
@@ -184,18 +172,6 @@ export function* allSagas() {
 }
 
 export default function* rootSaga() {
-  yield createRequestInstance({
-    driver: createDriver(window.fetch, {
-      // AbortController Not supported in IE installed this polyfill package
-      // that it would resort to
-      // TODO: Have to check if it works in an IE explorer
-      AbortController: window.AbortController,
-    }),
-    onRequest: onRequestSaga,
-    onSuccess: onSuccessSaga,
-    onError: onErrorSaga,
-    onAbort: onAbortSaga,
-  });
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
@@ -217,6 +193,7 @@ export default function* rootSaga() {
   if (logout) {
     // invalidate the session and clear the store
     yield call(invalidateSession, { isExistingSessionInvalid: logout.isExistingSessionInvalid });
+
     // restart the root saga again
     yield spawn(rootSaga);
   }
@@ -244,3 +221,4 @@ export default function* rootSaga() {
     yield put(actions.auth.initSession());
   }
 }
+

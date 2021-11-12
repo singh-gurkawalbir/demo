@@ -39,7 +39,6 @@ import {
 import { apiCallWithRetry } from '..';
 import { selectors } from '../../reducers';
 import { SCOPES, updateFlowDoc } from '../resourceForm';
-import { APIException } from '../api';
 import { resourceConflictResolution } from '../utils';
 import {
   getNetsuiteOrSalesforceMeta,
@@ -51,6 +50,8 @@ import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
+import { pollApiRequests } from '../app';
+import { APIException } from '../api/requestInterceptors/utils';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -374,7 +375,7 @@ describe('commitStagedChanges saga', () => {
       expect(finalEffect).toEqual({ done: true, value: undefined });
     });
     test('should complete with dispatch of received, clear stage actions when commit succeeds and fetch exports and imports if it triggered from IA2.0 settings page.', () => {
-      const saga = commitStagedChanges({ resourceType, id, options: {action: 'UpdatedIA2.0Settings'} });
+      const saga = commitStagedChanges({ resourceType, id, options: {refetchResources: true} });
       const selectEffect = saga.next().value;
 
       expect(selectEffect).toEqual(select(selectors.userPreferences));
@@ -417,6 +418,8 @@ describe('commitStagedChanges saga', () => {
 
       const updated = { _id: 1 };
 
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('flows', null, true)));
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('connections', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('exports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('imports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
@@ -1035,6 +1038,7 @@ describe('deleteIntegration saga', () => {
   test('should call deleteResource and dispatch request collection actions if integration does not have _connectorId', () => expectSaga(deleteIntegration, {integrationId: '123'})
     .provide([
       [select(selectors.resource, 'integrations', '123'), {_id: '123'}],
+      [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
     .put(actions.resource.requestCollection('integrations', null, true))
@@ -1574,9 +1578,9 @@ describe('pollForResourceCollection saga', () => {
   test('should call getResourceCollection after 5 seconds delay continously', () => {
     const saga = pollForResourceCollection({resourceType: 'connections'});
 
-    expect(saga.next().value).toEqual(call(getResourceCollection, {resourceType: 'connections'}));
-    expect(saga.next().value).toEqual(delay(5000));
-    expect(saga.next().done).toEqual(false);
+    expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType: 'connections'}, duration: 5000 }));
+
+    expect(saga.next().done).toEqual(true);
   });
 });
 

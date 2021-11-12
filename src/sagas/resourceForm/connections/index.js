@@ -68,7 +68,7 @@ export function* createPayload({ values, resourceId }) {
   return returnData;
 }
 
-export function* netsuiteUserRoles({ connectionId, values }) {
+export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessage }) {
   // '/netsuite/alluserroles'
   let reqPayload = {};
 
@@ -108,6 +108,12 @@ export function* netsuiteUserRoles({ connectionId, values }) {
           errorMessage || 'Invalid netsuite credentials provided'
         )
       );
+      if (!hideNotificationMessage) {
+        yield put(actions.resource.connections.testErrored(
+          connectionId,
+          errorMessage || 'Invalid netsuite credentials provided')
+        );
+      }
     } else if (values) {
       // for a new connection we fetch userRoles
       // remove non success user environments
@@ -122,6 +128,9 @@ export function* netsuiteUserRoles({ connectionId, values }) {
           successOnlyEnvs
         )
       );
+      if (!hideNotificationMessage) {
+        yield put(actions.resource.connections.testSuccessful(connectionId));
+      }
     } else {
       yield put(
         actions.resource.connections.netsuite.receivedUserRoles(
@@ -129,6 +138,9 @@ export function* netsuiteUserRoles({ connectionId, values }) {
           resp
         )
       );
+      if (!hideNotificationMessage) {
+        yield put(actions.resource.connections.testSuccessful(connectionId));
+      }
     }
   } catch (e) {
     if (e.status === 403 || e.status === 401) {
@@ -141,6 +153,9 @@ export function* netsuiteUserRoles({ connectionId, values }) {
         inferErrorMessages(e.message)?.[0]
       )
     );
+    if (!hideNotificationMessage) {
+      yield put(actions.resource.connections.testErrored(connectionId, inferErrorMessages(e.message)?.[0]));
+    }
   }
 }
 

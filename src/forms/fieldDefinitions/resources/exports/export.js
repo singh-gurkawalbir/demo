@@ -115,10 +115,12 @@ export default {
   dataURITemplate: {
     type: 'uri',
     label: 'Data URI template',
+    stage: 'responseMappingExtract',
     showLookup: false,
   },
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
+    stage: 'responseMappingExtract',
     type: 'uri',
     label: r => !(r?.isLookup) ? 'Override trace key template' : 'Override child record trace key template',
     helpKey: r => r?.isLookup && 'import.traceKeyTemplate',

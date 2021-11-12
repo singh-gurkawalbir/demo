@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { call, takeEvery, put, select, delay, fork, take, cancel, takeLatest} from 'redux-saga/effects';
+import { call, takeEvery, put, select, fork, take, cancel, takeLatest} from 'redux-saga/effects';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -8,6 +8,7 @@ import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 import { convertUtcToTimezone } from '../../../utils/date';
+import {pollApiRequests} from '../../app';
 // import { selectors } from '../../../reducers';
 const UTCDateTimeRegex = '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z';
 
@@ -45,21 +46,21 @@ export function* getConnectionDebugLogs({ connectionId }) {
   );
 }
 
-export function* pollForConnectionLogs({ connectionId }) {
-  let hasPollingStarted = false;
+export function* pollToGetConnectionLogs({connectionId}) {
+  const connection = yield select(selectors.resource, 'connections', connectionId);
+  const { debugDate } = connection || {};
 
-  while (true) {
-    const connection = yield select(selectors.resource, 'connections', connectionId);
-    const { debugDate } = connection || {};
-
-    // check if debug time expired. Check only after polling starts.
-    if (hasPollingStarted && (!debugDate || moment().isAfter(moment(debugDate)))) {
-      return;
-    }
-    hasPollingStarted = true;
-    yield call(getConnectionDebugLogs, { connectionId });
-    yield delay(5 * 1000);
+  // check if debug time expired. Check only after polling starts.
+  if ((!debugDate || moment().isAfter(moment(debugDate)))) {
+    return {terminatePolling: true};
   }
+
+  yield call(getConnectionDebugLogs, { connectionId });
+}
+
+export function* pollForConnectionLogs({ connectionId }) {
+  yield call(getConnectionDebugLogs, { connectionId });
+  yield call(pollApiRequests, {pollSaga: pollToGetConnectionLogs, pollSagaArgs: {connectionId}, duration: 5 * 1000});
 }
 export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);

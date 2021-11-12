@@ -409,7 +409,7 @@ export default function ConnectorInstallation(props) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -424,6 +424,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
       completed,
       url,
+      updatedUrl,
       form,
     } = step;
 
@@ -468,7 +469,7 @@ export default function ConnectorInstallation(props) {
         )
       );
 
-      if (type === INSTALL_STEP_TYPES.FORM) {
+      if (type === INSTALL_STEP_TYPES.FORM || type === INSTALL_STEP_TYPES.URL) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
@@ -478,7 +479,7 @@ export default function ConnectorInstallation(props) {
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
       }
-    } else if (installURL || url) {
+    } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -487,7 +488,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL || url });
+        openExternalUrl({ url: installURL || url || updatedUrl});
       } else {
         if (step.verifying) {
           return false;

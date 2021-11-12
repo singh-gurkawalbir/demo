@@ -105,7 +105,7 @@ export default function Actions({
     return (
       <div className={classes.action}>
         <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
-          Save &amp; retry
+          Save &amp; Retry
         </FilledButton>
         <SaveAndCloseMiniButtonGroup
           isDirty={isRetryDataChanged}
@@ -115,11 +115,11 @@ export default function Actions({
           asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY}
         />
         { !isResolved && (
-          <OutlinedButton onClick={resolve} color="secondary">
+          <OutlinedButton onClick={resolve}>
             Resolve
           </OutlinedButton>
         )}
-        <TextButton variant="text" color="primary" onClick={handleCancel}>
+        <TextButton onClick={handleCancel}>
           Close
         </TextButton>
       </div>
