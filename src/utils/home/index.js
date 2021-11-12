@@ -87,11 +87,11 @@ export const getTileId = tile =>
     : tile?._integrationId;
 
 export const getStatusSortableProp = tile => {
-  const { status, numError, offlineConnections } = tile || {};
+  const { status, numError = 0, offlineConnections } = tile || {};
   let statusSortableProp = 0;
 
   if (offlineConnections?.length) {
-    statusSortableProp = offlineConnections?.length || 0;
+    statusSortableProp = offlineConnections.length;
   }
 
   switch (status) {

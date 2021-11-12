@@ -1,36 +1,15 @@
 import React from 'react';
 import {useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { selectors } from '../../../../../reducers';
 import FieldMessage from '../../../../DynaForm/fields/FieldMessage';
-import WarningIcon from '../../../../icons/WarningIcon';
-import ExpiredIcon from '../../../../icons/ErrorIcon';
 
-// todo: ashu css
-const useStyles = makeStyles(theme => ({
-  content: {
-    display: 'flex',
-    width: '89%',
-    maxHeight: 45,
-    overflowY: 'auto',
-    wordBreak: 'break-word',
-  },
-  warningIcon: {
-    color: theme.palette.warning.main,
-  },
-  expiredIcon: {
-    color: theme.palette.error.main,
-  },
+const useStyles = makeStyles({
   contentWrapper: {
     display: 'flex',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
   },
-  details: {
-    fontSize: 12,
-    color: 'red',
-  },
-}));
+});
 
 export default function TypeCell({ tile }) {
   const classes = useStyles();
@@ -38,32 +17,27 @@ export default function TypeCell({ tile }) {
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
 
-  const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const numFlowsText = `${tile.numFlows || 0} Flow${tile.numFlows === 1 ? '' : 's'}`;
 
   if (tile._connectorId) {
     return (
       <div className={classes.contentWrapper}>
         Integration app
         {listViewLicenseMesssage && (
-        <div >
-          {(expired || trialExpired) ? <ExpiredIcon className={classes.expiredIcon} /> : <WarningIcon className={classes.warningIcon} />}
-          <div className={classes.content}>
-            <Typography variant="body2" className={classes.details}>{listViewLicenseMesssage}</Typography>
-          </div>
-        </div>
+          (expired || trialExpired)
+            ? <FieldMessage errorMessages={listViewLicenseMesssage} /> : <FieldMessage warningMessages={listViewLicenseMesssage} />
         )}
       </div>
     );
   }
 
-  return tile.ssLinkedConnectionId ? 'Custom'
-    : (
-      <>
-        Custom
-        <FieldMessage
-          isValid
-          description={numFlowsText}
+  return (
+    <>
+      Custom
+      <FieldMessage
+        isValid
+        description={numFlowsText}
            />
-      </>
-    );
+    </>
+  );
 }
