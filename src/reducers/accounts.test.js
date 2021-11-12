@@ -2031,7 +2031,7 @@ describe('Accounts region selector testcases', () => {
         trialExpired: false,
         showTrialLicenseMessage: false,
         licenseId: '605b100f1562e664f50e8a23',
-        licenseMessageContent: 'Your subscription expired on Oct 22nd, 2021. Contact sales to renew your subscription.',
+        licenseMessageContent: 'Your subscription expired on Oct 23rd, 2021. Contact sales to renew your subscription.',
         listViewLicenseMesssage: 'Expired 20 days ago',
         resumable: undefined,
       };
