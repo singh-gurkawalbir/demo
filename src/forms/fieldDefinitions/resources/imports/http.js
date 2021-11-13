@@ -164,6 +164,7 @@ export default {
       r && r.http && r.http.requestType && r.http.requestType[0],
   },
   'http.relativeURI': {
+    loggable: true,
     type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
@@ -183,6 +184,7 @@ export default {
       r && r.http && r.http.relativeURI && r.http.relativeURI[0],
   },
   'http.body': {
+    loggable: true,
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
@@ -203,6 +205,7 @@ export default {
     ],
   },
   'http.response.successPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to success field in HTTP response body',
     delimiter: ',',
@@ -218,6 +221,7 @@ export default {
     ],
   },
   'http.response.successValues': {
+    loggable: true,
     type: 'text',
     label: 'Success values',
     delimiter: ',',
@@ -235,6 +239,7 @@ export default {
     ],
   },
   'http.response.resourceIdPath': {
+    loggable: true,
     type: 'text',
     helpKey: r => {
       if (r?.resourceType === 'transferFiles' || r?.blob) { return 'import.http.response.file.resourceIdPath'; }
@@ -255,6 +260,7 @@ export default {
     ],
   },
   'http.response.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to error field in HTTP response body',
     delimiter: ',',
@@ -270,6 +276,7 @@ export default {
     ],
   },
   'http.response.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Error values',
@@ -285,6 +292,7 @@ export default {
     ],
   },
   'http.response.resourcePath': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Path to records in HTTP response body',
@@ -300,6 +308,7 @@ export default {
     ],
   },
   'http.response.errorPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to detailed error message field in HTTP response body',
     visibleWhenAll: [
@@ -462,6 +471,7 @@ export default {
     ],
   },
   'http.ignoreExistingExtract': {
+    loggable: true,
     id: 'http.ignoreExistingExtract',
     label: 'Which field?',
     omitWhenHidden: true,
@@ -490,6 +500,7 @@ export default {
     defaultValue: r => r.http?.ignoreExtract,
   },
   'http.ignoreExistingLookupName': {
+    loggable: true,
     id: 'http.ignoreExistingLookupName',
     omitWhenHidden: true,
     label: 'Lookup',
@@ -561,6 +572,7 @@ export default {
     ],
   },
   'http.ignoreNewExtract': {
+    loggable: true,
     id: 'http.ignoreNewExtract',
     label: 'Which field?',
     omitWhenHidden: true,
@@ -589,6 +601,7 @@ export default {
     defaultValue: r => r.http?.ignoreExtract,
   },
   'http.ignoreNewLookupName': {
+    loggable: true,
     id: 'http.ignoreNewLookupName',
     omitWhenHidden: true,
     label: 'Lookup',

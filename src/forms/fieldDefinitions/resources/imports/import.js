@@ -45,6 +45,7 @@ export default {
     visible: r => r && !isNewId(r._id),
   },
   traceKeyTemplate: {
+    loggable: true,
     id: 'traceKeyTemplate',
     type: 'uri',
     label: 'Override child record trace key template',
@@ -96,6 +97,7 @@ export default {
     showLookup: false,
   },
   dataURITemplate: {
+    loggable: true,
     type: 'uri',
     label: 'Data URI template',
     showLookup: false,
@@ -115,6 +117,7 @@ export default {
     ],
   },
   pathToMany: {
+    loggable: true,
     type: 'text',
     label: 'Path to many',
     helpKey: 'pathToMany',
@@ -133,6 +136,7 @@ export default {
     ],
   },
   blobKeyPath: {
+    loggable: true,
     type: 'text',
     label: 'Blob key path',
     placeholder: 'Blob Key Path',
@@ -177,6 +181,7 @@ export default {
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
   'filter.expression.rules': {
+    loggable: true,
     type: 'text',
     label: 'Filter expression rules',
   },
@@ -186,6 +191,7 @@ export default {
     label: 'Filter script _script ID',
   },
   'filter.script.function': {
+    loggable: true,
     type: 'text',
     label: 'Filter script function',
   },
@@ -197,6 +203,7 @@ export default {
     label: 'Parsers[*] version',
   },
   'parsers[*].rules': {
+    loggable: true,
     type: 'text',
     label: 'Parsers[*] rules',
   },
@@ -217,6 +224,7 @@ export default {
     ],
   },
   'hooks.preMap.function': {
+    loggable: true,
     type: 'text',
     label: 'Pre map',
     placeholder: 'Function Name',
@@ -262,6 +270,7 @@ export default {
     ],
   },
   'hooks.preMap.configuration': {
+    loggable: true,
     type: 'text',
     label: 'Pre map',
     placeholder: 'Function Name',
@@ -273,6 +282,7 @@ export default {
     ],
   },
   'hooks.postMap.function': {
+    loggable: true,
     type: 'text',
     label: 'Post map',
     placeholder: 'Function Name',
@@ -318,6 +328,7 @@ export default {
     ],
   },
   'hooks.postMap.configuration': {
+    loggable: true,
     type: 'text',
     label: 'Post map',
     placeholder: 'Function Name',
@@ -329,6 +340,7 @@ export default {
     ],
   },
   'hooks.postSubmit.function': {
+    loggable: true,
     type: 'text',
     label: 'Post submit',
     placeholder: 'Function Name',
@@ -374,6 +386,7 @@ export default {
     ],
   },
   'hooks.postSubmit.configuration': {
+    loggable: true,
     type: 'text',
     label: 'Post submit',
     placeholder: 'Function Name',
@@ -385,6 +398,7 @@ export default {
     ],
   },
   'hooks.postAggregate.function': {
+    loggable: true,
     type: 'text',
     label: 'Post aggregate',
     placeholder: 'Function Name',
@@ -430,6 +444,7 @@ export default {
     ],
   },
   'hooks.postAggregate.configuration': {
+    loggable: true,
     type: 'text',
     label: 'Post aggregate',
     placeholder: 'Function Name',
@@ -449,6 +464,7 @@ export default {
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
   'responseTransform.expression.rules': {
+    loggable: true,
     type: 'text',
     label: 'Response transform expression rules',
   },
@@ -458,6 +474,7 @@ export default {
     label: 'Response transform script _script ID',
   },
   'responseTransform.script.function': {
+    loggable: true,
     type: 'text',
     label: 'Response transform script function',
   },

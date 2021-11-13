@@ -37,6 +37,7 @@ export default {
     },
   },
   'rdbms.query1': {
+    loggable: true,
     id: 'rdbms.query1',
     dataTest: 'rdbms.query',
     type: 'sqlquerybuilder',
@@ -51,6 +52,7 @@ export default {
     ],
   },
   'rdbms.query2': {
+    loggable: true,
     id: 'rdbms.query2',
     dataTest: 'rdbms.query',
     type: 'sqlquerybuilder',
@@ -65,6 +67,7 @@ export default {
     ],
   },
   'rdbms.bulkInsert.tableName': {
+    loggable: true,
     id: 'rdbms.bulkInsert.tableName',
     type: 'text',
     label: 'Target table',
@@ -78,6 +81,7 @@ export default {
     ],
   },
   'rdbms.queryInsert': {
+    loggable: true,
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
     helpKey: 'import.rdbms.query',
@@ -95,6 +99,7 @@ export default {
     ],
   },
   'rdbms.queryUpdate': {
+    loggable: true,
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
     helpKey: 'import.rdbms.query',
@@ -112,6 +117,7 @@ export default {
     ],
   },
   'rdbms.ignoreExistingExtract': {
+    loggable: true,
     label: 'Which field?',
     omitWhenHidden: true,
     helpKey: 'import.ignoreExtract',
@@ -132,6 +138,7 @@ export default {
     ],
   },
   'rdbms.ignoreMissingExtract': {
+    loggable: true,
     label: 'Which field?',
     omitWhenHidden: true,
     helpKey: 'import.ignoreExtract',
@@ -230,6 +237,7 @@ export default {
     ],
   },
   'rdbms.updateExtract': {
+    loggable: true,
     label: 'Which field?',
     omitWhenHidden: true,
     helpKey: 'import.ignoreExtract',
@@ -249,6 +257,7 @@ export default {
     ],
   },
   'rdbms.updateLookupName': {
+    loggable: true,
     omitWhenHidden: true,
     label: 'Lookup',
     type: 'selectlookup',

@@ -47,6 +47,7 @@ export default {
     visible: false,
   },
   installerFunction: {
+    loggable: true,
     type: 'text',
     label: 'Installer function',
     requiredWhen: [
@@ -104,6 +105,7 @@ export default {
     ],
   },
   uninstallerFunction: {
+    loggable: true,
     type: 'text',
     label: 'Uninstaller function',
     required: [
@@ -120,6 +122,7 @@ export default {
     ],
   },
   updateFunction: {
+    loggable: true,
     type: 'text',
     label: 'Update function',
     requiredWhen: [

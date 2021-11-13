@@ -15,6 +15,7 @@ export default {
     label: 'Description',
   },
   newdescription: {
+    loggable: true,
     type: 'text',
     multiline: true,
     maxRows: 5,
@@ -35,7 +36,7 @@ export default {
     ],
   },
   content: {
-    loggable: false,
+    loggable: true,
     defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
     type: 'scriptcontent',
     label: 'Edit content',

@@ -26,6 +26,7 @@ export default {
     ],
   },
   'mongodb.collection': {
+    loggable: true,
     type: 'text',
     label: 'Collection',
     required: true,
@@ -70,6 +71,7 @@ export default {
     ],
   },
   'mongodb.document': {
+    loggable: true,
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
@@ -82,6 +84,7 @@ export default {
     ],
   },
   'mongodb.update': {
+    loggable: true,
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
@@ -94,6 +97,7 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
+    loggable: true,
     id: 'mongodb.ignoreLookupFilter',
     type: 'sqlquerybuilder',
     label: 'MongoDB filter',
@@ -113,6 +117,7 @@ export default {
     ],
   },
   'mongodb.filter': {
+    loggable: true,
     id: 'mongodb.filter',
     type: 'sqlquerybuilder',
     label: 'MongoDB filter',
@@ -125,6 +130,7 @@ export default {
     required: true,
   },
   'mongodb.ignoreExtract': {
+    loggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,

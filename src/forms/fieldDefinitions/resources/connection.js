@@ -95,11 +95,13 @@ export default {
   // #endregion common
   // #region rdbms
   'rdbms.host': {
+    loggable: true,
     type: 'text',
     label: 'Host',
     required: true,
   },
   'rdbms.port': {
+    loggable: true,
     type: 'text',
     label: 'Port',
     validWhen: [
@@ -114,11 +116,13 @@ export default {
     ],
   },
   'rdbms.database': {
+    loggable: true,
     type: 'text',
     label: 'Database name',
     required: true,
   },
   'rdbms.instanceName': {
+    loggable: true,
     type: 'text',
     label: 'Instance name',
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
@@ -157,6 +161,7 @@ export default {
     label: 'Certificate',
   },
   'rdbms.version': {
+    loggable: true,
     type: 'select',
     label: 'SQL server version',
     required: true,
@@ -243,6 +248,7 @@ export default {
       r && r.rest && r.rest.mediaType ? r.rest.mediaType : 'json',
   },
   'rest.baseURI': {
+    loggable: true,
     type: 'text',
     label: 'Base URI',
     required: true,
@@ -257,6 +263,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'rest.tokenLocation': {
+    loggable: true,
     type: 'select',
     label: 'Send token via',
     helpKey: 'connection.http.auth.token.location',
@@ -277,6 +284,7 @@ export default {
   },
 
   'rest.authType': {
+    loggable: true,
     type: 'select',
     label: 'Auth type',
     helpKey: 'connection.http.auth.type',
@@ -293,6 +301,7 @@ export default {
   },
 
   'rest.authScheme': {
+    loggable: true,
     type: 'select',
     label: 'Header scheme',
     helpKey: 'connection.http.auth.token.scheme',
@@ -472,6 +481,7 @@ export default {
       r && r.http && r.http.rateLimit && r.http.rateLimit.limit,
   },
   'http.baseURI': {
+    loggable: true,
     type: 'text',
     label: 'Base URI',
     required: true,
@@ -533,6 +543,7 @@ export default {
     label: 'Override retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
+    loggable: true,
     type: 'relativeuri',
     showLookup: false,
     showExtract: false,
@@ -553,6 +564,7 @@ export default {
     ],
   },
   'http.ping.body': {
+    loggable: true,
     type: 'httprequestbody',
     label: 'HTTP request body',
   },
@@ -562,6 +574,7 @@ export default {
     label: 'Path to success field in HTTP response body',
   },
   'http.ping.successValues': {
+    loggable: true,
     type: 'text',
     label: 'Success values',
     delimiter: ',',
@@ -578,6 +591,7 @@ export default {
     ],
   },
   'http.ping.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Error values',
@@ -609,6 +623,7 @@ export default {
     label: 'Path to auth error field in HTTP response body',
   },
   'http.auth.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Auth error values',
@@ -650,6 +665,7 @@ export default {
     label: 'Authorization URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
+    loggable: true,
     type: 'select',
     label: 'Send client credentials via',
     defaultValue: r =>
@@ -729,6 +745,7 @@ export default {
     ],
   },
   'http.auth.oauth.callbackURL': {
+    loggable: true,
     type: 'text',
     label: 'Redirect URL',
     defaultDisabled: true,
@@ -772,6 +789,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'http.auth.token.location': {
+    loggable: true,
     type: 'select',
     label: 'Send token via',
     required: true,
@@ -786,6 +804,7 @@ export default {
     ],
   },
   'http.auth.token.headerName': {
+    loggable: true,
     type: 'text',
     label: 'Header name',
     defaultValue: r =>
@@ -814,6 +833,7 @@ export default {
     ],
   },
   'http.auth.token.paramName': {
+    loggable: true,
     type: 'text',
     label: 'Parameter name',
     required: true,
@@ -838,6 +858,7 @@ export default {
     ],
   },
   'http.auth.token.refreshRelativeURI': {
+    loggable: true,
     type: 'relativeuri',
     showLookup: false,
     showExtract: false,
@@ -946,6 +967,7 @@ export default {
     ],
   },
   'http.headers': {
+    loggable: true,
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
@@ -985,6 +1007,7 @@ export default {
   // #endregion http
   // #region ftp
   'ftp.hostURI': {
+    loggable: true,
     type: 'text',
     label: 'Host',
     required: true,
@@ -1037,6 +1060,7 @@ export default {
     multiline: true,
   },
   'ftp.port': {
+    loggable: true,
     type: 'ftpport',
     label: 'Port',
     required: true,
@@ -1116,6 +1140,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.pgpKeyAlgorithm': {
+    loggable: true,
     type: 'select',
     label: 'PGP encryption algorithm',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
@@ -1167,6 +1192,7 @@ export default {
     label: 'Enable PGP cryptographic',
   },
   'pgp.publicKey': {
+    loggable: true,
     type: 'text',
     multiline: true,
     label: 'PGP public key',
@@ -1181,6 +1207,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'pgp.compressionAlgorithm': {
+    loggable: true,
     type: 'select',
     label: 'Compression algorithm',
     skipSort: true,
@@ -1194,6 +1221,7 @@ export default {
     ],
   },
   'pgp.asciiArmored': {
+    loggable: true,
     label: 'ASCII armor',
     type: 'radiogroup',
     defaultValue: r => r?.pgp?.asciiArmored === false ? 'false' : 'true',
@@ -1251,6 +1279,7 @@ export default {
   // #endregion ftp
   // #region s3
   's3.accessKeyId': {
+    loggable: true,
     type: 'text',
     label: 'Access key ID',
   },
@@ -1263,6 +1292,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   's3.pingBucket': {
+    loggable: true,
     type: 'text',
     label: 'Ping bucket',
   },
@@ -1331,6 +1361,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.failStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'Authentication fail status code',
     validWhen: [
@@ -1346,6 +1377,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.type': {
+    loggable: true,
     type: 'select',
     label: 'Authentication type',
     required: true,
@@ -1360,6 +1392,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Authentication fail path',
     visibleWhen: [
@@ -1370,6 +1403,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Authentication fail values',
@@ -1416,6 +1450,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.location': {
+    loggable: true,
     type: 'select',
     label: 'Location',
     options: [
@@ -1435,6 +1470,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.headerName': {
+    loggable: true,
     type: 'text',
     label: 'Header name',
     defaultValue: r =>
@@ -1453,6 +1489,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.scheme': {
+    loggable: true,
     type: 'select',
     label: 'Scheme',
     options: [
@@ -1473,6 +1510,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.paramName': {
+    loggable: true,
     type: 'text',
     label: 'Parameter name',
     visibleWhen: [
@@ -1483,6 +1521,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshMethod': {
+    loggable: true,
     type: 'select',
     label: 'Refresh method',
     options: [
@@ -1502,6 +1541,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshRelativeURI': {
+    loggable: true,
     type: 'text',
     label: 'Refresh relative URI',
     visibleWhen: [
@@ -1523,6 +1563,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshTokenPath': {
+    loggable: true,
     type: 'text',
     label: 'Refresh token path',
     visibleWhen: [
@@ -1576,6 +1617,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'HTTP status code for rate-limit errors',
     visibleWhen: [
@@ -1591,6 +1633,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to rate-limit errors in HTTP response body',
     visibleWhen: [
@@ -1601,6 +1644,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.rateLimit.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     visibleWhen: [
@@ -1612,6 +1656,7 @@ export default {
     label: 'Rate-limit error values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
+    loggable: true,
     type: 'text',
     label: 'Wait time between HTTP requests',
     visibleWhen: [
@@ -1639,6 +1684,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.encryptionType': {
+    loggable: true,
     type: 'select',
     label: 'Encryption type',
     required: true,
@@ -1678,6 +1724,7 @@ export default {
     value: 'Click here to see the list of IP Addresses.',
   },
   'as2.partnerStationInfo.signing': {
+    loggable: true,
     type: 'select',
     label: 'Signing',
     required: true,
@@ -1712,6 +1759,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.signatureEncoding': {
+    loggable: true,
     type: 'select',
     label: 'Signature encoding',
     options: [
@@ -1735,6 +1783,7 @@ export default {
     ],
   },
   'as2.userStationInfo.mdn.mdnSigning': {
+    loggable: true,
     type: 'select',
     label: 'MDN signing',
     required: true,
@@ -1750,6 +1799,7 @@ export default {
     ],
   },
   'as2.userStationInfo.mdn.mdnEncoding': {
+    loggable: true,
     type: 'select',
     label: 'MDN encoding',
     options: [
@@ -1762,6 +1812,7 @@ export default {
     ],
   },
   'as2.userStationInfo.encryptionType': {
+    loggable: true,
     type: 'select',
     label: 'Decryption algorithm',
     required: true,
@@ -1779,6 +1830,7 @@ export default {
     ],
   },
   'as2.userStationInfo.signing': {
+    loggable: true,
     type: 'select',
     label: 'Signature verification algorithm',
     required: true,
@@ -1794,6 +1846,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.mdnSigning': {
+    loggable: true,
     type: 'select',
     label: 'Signature encoding',
     options: [
@@ -1806,6 +1859,7 @@ export default {
     ],
   },
   'as2.userStationInfo.encoding': {
+    loggable: true,
     type: 'select',
     label: 'Incoming message encoding',
     required: true,
@@ -1825,6 +1879,7 @@ export default {
     ],
   },
   'as2.unencrypted.userPublicKey': {
+    loggable: true,
     type: 'editor',
     mode: 'text',
     label: 'X.509 Public Certificate',
@@ -1847,6 +1902,7 @@ export default {
     ],
   },
   'as2.preventCanonicalization': {
+    loggable: true,
     label: 'Prevent canonicalization',
     type: 'checkbox',
   },
@@ -1932,6 +1988,7 @@ export default {
     label: 'Token secret',
   },
   'netsuite.tokenEnvironment': {
+    loggable: true,
     type: 'select',
     label: 'Environment',
     defaultValue: r => r && r.netsuite && r.netsuite.environment,
@@ -1951,6 +2008,7 @@ export default {
     label: 'Environment',
   },
   'netsuite.roleId': {
+    loggable: true,
     type: 'netsuiteuserroles',
     label: 'Role',
   },
@@ -1972,6 +2030,7 @@ export default {
     label: 'NetSuite request level credentials',
   },
   'netsuite.dataCenterURLs': {
+    loggable: true,
     type: 'text',
     label: 'NetSuite data center URLs',
   },
@@ -1994,6 +2053,7 @@ export default {
     ],
   },
   'netsuite.concurrencyLevelWebServices': {
+    loggable: true,
     type: 'text',
     label: 'NetSuite concurrency level web services',
     validWhen: [
@@ -2108,6 +2168,7 @@ export default {
     label: 'Net suite distributed adaptor username',
   },
   'netSuiteDistributedAdaptor.uri': {
+    loggable: true,
     type: 'text',
     label: 'Net suite distributed adaptor URI',
   },
@@ -2128,10 +2189,12 @@ export default {
     ],
   },
   'salesforce.baseURI': {
+    loggable: true,
     type: 'text',
     label: 'Salesforce base URI',
   },
   'salesforce.oauth2FlowType': {
+    loggable: true,
     type: 'select',
     label: 'OAuth 2.0 flow type',
     required: true,
@@ -2243,6 +2306,7 @@ export default {
     defaultValue: '',
   },
   'wrapper.pingFunction': {
+    loggable: true,
     type: 'text',
     label: 'Ping function',
     required: true,
@@ -2308,6 +2372,7 @@ export default {
   // #endregion wrapper
   // #region mongodb
   'mongodb.host': {
+    loggable: true,
     type: 'text',
     required: true,
     omitWhenValueIs: [''],
@@ -2315,6 +2380,7 @@ export default {
     defaultValue: r => r && r.mongodb && r.mongodb.host[0],
   },
   'mongodb.database': {
+    loggable: true,
     type: 'text',
     label: 'Database',
   },
@@ -2333,10 +2399,12 @@ export default {
     label: 'Password',
   },
   'mongodb.replicaSet': {
+    loggable: true,
     type: 'text',
     label: 'Replica set',
   },
   'mongodb.ssl': {
+    loggable: true,
     type: 'checkbox',
     label: 'TLS/SSL',
     defaultValue: r => (r && r.mongodb && r.mongodb.ssl) || false,
@@ -2367,6 +2435,7 @@ export default {
   // #region custom connection
   // #region constant contact
   versionType: {
+    loggable: true,
     type: 'select',
     label: 'Version type',
     required: true,

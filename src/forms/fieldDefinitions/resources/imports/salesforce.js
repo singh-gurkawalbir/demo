@@ -36,6 +36,7 @@ export default {
     },
   },
   'salesforce.document.id': {
+    loggable: true,
     type: 'uri',
     label: 'Document ID',
     showExtract: false,
@@ -57,6 +58,7 @@ export default {
     ],
   },
   'salesforce.attachment.id': {
+    loggable: true,
     type: 'uri',
     label: 'Attachment ID',
     showExtract: false,
@@ -78,6 +80,7 @@ export default {
     ],
   },
   'salesforce.document.name': {
+    loggable: true,
     type: 'uri',
     label: 'Document name',
     required: true,
@@ -99,6 +102,7 @@ export default {
     ],
   },
   'salesforce.attachment.name': {
+    loggable: true,
     type: 'uri',
     label: 'Attachment name',
     required: true,
@@ -141,6 +145,7 @@ export default {
     ],
   },
   'salesforce.document.folderId': {
+    loggable: true,
     type: 'uri',
     label: 'Folder ID',
     required: true,
@@ -162,6 +167,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.contentDocumentId': {
+    loggable: true,
     type: 'uri',
     label: 'Content document ID',
     showExtract: false,
@@ -203,6 +209,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.tagCsv': {
+    loggable: true,
     type: 'uri',
     label: 'Tag csv',
     showExtract: false,
@@ -250,6 +257,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.pathOnClient': {
+    loggable: true,
     type: 'uri',
     label: 'Path on client',
     showExtract: false,
@@ -270,6 +278,7 @@ export default {
     ],
   },
   'salesforce.attachment.parentId': {
+    loggable: true,
     type: 'uri',
     label: 'Parent ID',
     required: true,
@@ -291,6 +300,7 @@ export default {
     ],
   },
   'salesforce.document.contentType': {
+    loggable: true,
     type: 'uri',
     label: 'Content type',
     showExtract: false,
@@ -311,6 +321,7 @@ export default {
     ],
   },
   'salesforce.attachment.contentType': {
+    loggable: true,
     type: 'uri',
     label: 'Content type',
     showExtract: false,
@@ -331,6 +342,7 @@ export default {
     ],
   },
   'salesforce.document.developerName': {
+    loggable: true,
     type: 'uri',
     showExtract: false,
     showLookup: false,
@@ -615,6 +627,7 @@ export default {
     ],
   },
   'salesforce.idLookup.extract': {
+    loggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     skipExtractWrapOnSpecialChar: true,

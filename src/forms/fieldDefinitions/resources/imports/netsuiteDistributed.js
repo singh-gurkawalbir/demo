@@ -20,6 +20,7 @@ export default {
     ],
   },
   'netsuite_da.mapping': {
+    loggable: true,
     type: 'text',
     visible: false,
   },
@@ -114,6 +115,7 @@ export default {
     resourceId: r => r?._id,
   },
   'netsuite_da.internalIdLookup.expression': {
+    loggable: true,
     type: 'netsuitelookup',
     label: 'How can we find existing records?',
     required: true,
@@ -129,6 +131,7 @@ export default {
     ],
   },
   'netsuite_da.hooks.preMap.function': {
+    loggable: true,
     type: 'text',
     label: 'Pre map',
     placeholder: 'Function Name',
@@ -140,6 +143,7 @@ export default {
     ],
   },
   'netsuite_da.hooks.preMap.fileInternalId': {
+    loggable: true,
     type: 'text',
     placeholder: 'File Internal ID',
     label: 'Pre map file',
@@ -151,6 +155,7 @@ export default {
     ],
   },
   'netsuite_da.hooks.postMap.function': {
+    loggable: true,
     type: 'text',
     label: 'Post map',
     placeholder: 'Function Name',
@@ -162,6 +167,7 @@ export default {
     ],
   },
   'netsuite_da.hooks.postMap.fileInternalId': {
+    loggable: true,
     type: 'text',
     placeholder: 'File Internal ID',
     label: 'Post map file',
@@ -173,6 +179,7 @@ export default {
     ],
   },
   'netsuite_da.hooks.postSubmit.function': {
+    loggable: true,
     type: 'text',
     label: 'Post submit',
     placeholder: 'Function Name',
@@ -184,6 +191,7 @@ export default {
     ],
   },
   'netsuite.file.name': {
+    loggable: true,
     type: 'uri',
     label: 'Name',
     showExtract: false,
@@ -200,6 +208,7 @@ export default {
     ],
   },
   'netsuite.file.fileType': {
+    loggable: true,
     type: 'uri',
     label: 'File type',
     showExtract: false,
@@ -216,6 +225,7 @@ export default {
     ],
   },
   'netsuite.file.folder': {
+    loggable: true,
     type: 'uri',
     label: 'Folder',
     showExtract: false,
@@ -232,6 +242,7 @@ export default {
     ],
   },
   'netsuite.file.internalId': {
+    loggable: true,
     type: 'uri',
     label: 'File internal ID',
     showExtract: false,
@@ -248,6 +259,7 @@ export default {
     ],
   },
   'netsuite_da.hooks.postSubmit.fileInternalId': {
+    loggable: true,
     type: 'text',
     placeholder: 'File Internal ID',
     label: 'Post submit file',

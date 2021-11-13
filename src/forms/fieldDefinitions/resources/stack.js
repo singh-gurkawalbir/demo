@@ -41,6 +41,7 @@ export default {
     label: 'Language',
   },
   'server.hostURI': {
+    loggable: true,
     type: 'text',
     label: 'Host',
     required: true,

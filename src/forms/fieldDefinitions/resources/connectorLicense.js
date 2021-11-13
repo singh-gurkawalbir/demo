@@ -17,6 +17,7 @@ export default {
     connectorId: r => r._connectorId,
   },
   opts: {
+    loggable: true,
     defaultValue: r => r.opts,
     type: 'licenseeditor',
     mode: 'json',

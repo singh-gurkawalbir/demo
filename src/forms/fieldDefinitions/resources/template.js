@@ -31,6 +31,7 @@ export default {
     label: 'Contact emails',
   },
   installerFunction: {
+    loggable: true,
     type: 'text',
     label: 'Installer function',
   },

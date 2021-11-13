@@ -43,20 +43,24 @@ export default {
     required: true,
   },
   'http.status.inProgressValues': {
+    loggable: true,
     type: 'textlist',
     label: 'In progress values',
     required: true,
   },
   'http.status.doneValues': {
+    loggable: true,
     type: 'textlist',
     label: 'Done values',
     required: true,
   },
   'http.status.doneWithoutDataValues': {
+    loggable: true,
     type: 'textlist',
     label: 'Done without data values',
   },
   'http.submit.resourcePath': {
+    loggable: true,
     type: 'text',
     visibleWhen: [
       {
@@ -86,6 +90,7 @@ export default {
     defaultValue: r => isNewId(r?._id) ? true : r?.http?.submit?.sameAsStatus,
   },
   'http.submit.transform': {
+    loggable: true,
     type: 'transformrules',
     label: 'Transform rules',
     visibleWhen: [
