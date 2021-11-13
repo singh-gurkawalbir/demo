@@ -13,9 +13,9 @@ module.exports = async ({ config }) => {
   // build-storybook in the scripts section of package.json
   config.plugins.push(
     new webpack.DefinePlugin({
-      // replaces Globals defined in the UI code.
+      // replaces Globals referenced in the UI code
       'CDN_BASE_URI': JSON.stringify('HTTPS://d142hkd03ds8ug.cloudfront.net/'),
-      // replaces env vars referenced in the UI code.
+      // replaces env vars referenced in the UI code
       'process.env.STORYBOOK_FOO': JSON.stringify('value of process.env.STORYBOOK_FOO'),
     })
   );

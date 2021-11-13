@@ -1,5 +1,6 @@
 export default {
   'export.file.method': {
+    loggable: true,
     type: 'suitescriptapimethod',
     label: 'API',
     _connectionId: r => r && r.export && r.export._connectionId,

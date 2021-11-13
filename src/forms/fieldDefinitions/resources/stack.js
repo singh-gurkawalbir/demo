@@ -2,13 +2,13 @@ import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
-    canInstrument: true,
+    loggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
   type: {
-    canInstrument: true,
+    loggable: true,
     type: 'select',
     options: [
       {
@@ -21,7 +21,7 @@ export default {
     label: 'Type',
   },
   'lambda.language': {
-    canInstrument: true,
+    loggable: true,
     type: 'select',
     options: [
       {
@@ -41,6 +41,7 @@ export default {
     label: 'Language',
   },
   'server.hostURI': {
+    loggable: true,
     type: 'text',
     label: 'Host',
     required: true,
@@ -78,7 +79,7 @@ export default {
     ],
   },
   'lambda.awsRegion': {
-    canInstrument: false,
+    loggable: false,
     type: 'select',
     label: 'AWS region',
     options: [
@@ -111,7 +112,7 @@ export default {
     ],
   },
   'lambda.functionName': {
-    canInstrument: true,
+    loggable: true,
     type: 'text',
     label: 'Function name',
     visibleWhen: [
