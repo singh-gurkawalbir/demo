@@ -1791,13 +1791,17 @@ selectors.mkFilteredHomeTiles = () => {
         filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
       }
 
-      if (pinnedIntegrations?.length && filteredTiles.length) {
+      if (pinnedIntegrations?.length && filteredTiles.length && isListView) {
         // move pinned integrations to the top, not affected by sorting
         pinnedIntegrations.forEach(p => {
           const index = filteredTiles.findIndex(t => t.key === p);
-          const pinnedInt = filteredTiles.splice(index, 1);
 
-          filteredTiles.unshift(pinnedInt[0]);
+          // only push to beginning if the tile exists in filteredTiles
+          if (index !== -1) {
+            const pinnedInt = filteredTiles.splice(index, 1);
+
+            filteredTiles.unshift(pinnedInt[0]);
+          }
         });
       }
 

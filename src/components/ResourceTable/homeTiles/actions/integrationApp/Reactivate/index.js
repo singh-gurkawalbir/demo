@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default {
-  key: 'RenewOrReactivate',
+  key: 'Reactivate',
   useLabel: rowData => {
     const classes = useStyles();
     const licenseMessageContent = useSelector(state => selectors.tileLicenseDetails(state, rowData).licenseMessageContent);
