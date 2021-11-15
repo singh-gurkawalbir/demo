@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 import actions from '../../actions';
 import SearchInput from '../SearchInput';
 import { selectors } from '../../reducers';
-import HomeSearchInput from './HomeSearchInput';
+import HomeSearchInput from '../SearchInput/HomeSearchInput';
 
 const DEBOUNCE_DURATION = 300;
 export default function KeywordSearch({ filterKey, isHomeSearch }) {
