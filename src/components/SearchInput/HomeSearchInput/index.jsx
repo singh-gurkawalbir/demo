@@ -89,11 +89,11 @@ export default function HomeSearchInput({value, onChange}) {
   const inputRef = useRef();
   const classes = useStyles();
   const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
-    searchFocused: false,
+    isSearchFocused: false,
     isSearchIconHidden: false,
     isCloseIconHidden: true,
   });
-  const {searchFocused, isSearchIconHidden, isCloseIconHidden} = searchBoxState;
+  const {isSearchFocused, isSearchIconHidden, isCloseIconHidden} = searchBoxState;
 
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
@@ -119,7 +119,7 @@ export default function HomeSearchInput({value, onChange}) {
   }, []);
 
   return (
-    <div className={clsx(classes.search, {[classes.searchActive]: searchFocused})}>
+    <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused})}>
       {!isSearchIconHidden && (
         <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />

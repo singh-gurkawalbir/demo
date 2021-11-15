@@ -14,7 +14,7 @@ export default function reducer(state, action) {
       break;
 
     case 'onBlur':
-      draft.searchFocused = false;
+      draft.isSearchFocused = false;
       if (value !== '') {
         draft.isSearchIconHidden = true;
         draft.isCloseIconHidden = false;
@@ -25,7 +25,7 @@ export default function reducer(state, action) {
       break;
 
     case 'onFocus':
-      draft.searchFocused = true;
+      draft.isSearchFocused = true;
       draft.isSearchIconHidden = true;
 
       break;
