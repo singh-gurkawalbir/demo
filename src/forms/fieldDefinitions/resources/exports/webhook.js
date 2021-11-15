@@ -45,6 +45,7 @@ export default {
     visible: r => r && r.webhook && r.webhook.provider === 'slack',
   },
   'webhook.verify': {
+    loggable: true,
     type: 'selectforsetfields',
     label: 'Verification type',
     required: true,
@@ -62,6 +63,7 @@ export default {
     visible: r => r && r.webhook && r.webhook.provider === 'custom',
   },
   'webhook.algorithm': {
+    loggable: true,
     type: 'selectforsetfields',
     label: 'Algorithm',
     setFieldIds: ['webhook.url'],
@@ -94,6 +96,7 @@ export default {
     ],
   },
   'webhook.encoding': {
+    loggable: true,
     type: 'selectforsetfields',
     label: 'Encoding',
     required: true,
@@ -114,6 +117,7 @@ export default {
     ],
   },
   'webhook.url': {
+    loggable: true,
     type: 'generateurl',
     label: 'Public URL',
     provider: r => r && r.webhook && r.webhook.provider,
@@ -144,6 +148,7 @@ export default {
     ],
   },
   'webhook.path': {
+    loggable: true,
     type: 'textforsetfields',
     label: 'Path',
     required: true,
