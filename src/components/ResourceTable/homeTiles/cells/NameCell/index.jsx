@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function NameCell({ tile }) {
-  const { name,
+  const {name,
     description,
     tag,
     ssLinkedConnectionId,

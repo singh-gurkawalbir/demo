@@ -14,7 +14,8 @@ export default {
     const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard || emptyObject, shallowEqual);
 
     const handleUnpin = useCallback(() => {
-      const index = homePreferences.pinnedIntegrations?.indexOf(key);
+      if (!homePreferences.pinnedIntegrations) return;
+      const index = homePreferences.pinnedIntegrations.indexOf(key);
 
       // if found, remove the integration from pinned list
       if (index !== -1) {

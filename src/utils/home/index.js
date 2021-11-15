@@ -6,12 +6,6 @@ export const FILTER_KEY = 'homeTiles';
 export const LIST_VIEW = 'list';
 export const TILE_VIEW = 'tile';
 
-export const DEFAULT_FILTERS = {
-  sort: { order: 'asc', orderBy: 'name' },
-  searchBy: ['name', 'description', 'flowsNameAndDescription'],
-  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
-};
-
 export const getAllApplications = () => {
   let applications = applicationsList();
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];

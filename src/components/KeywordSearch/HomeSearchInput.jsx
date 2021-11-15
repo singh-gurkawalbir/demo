@@ -97,7 +97,8 @@ function reducer(state, action) {
       throw new Error();
   }
 }
-const placeholder = 'Search integrations & flows';
+
+const PLACEHOLDER = 'Search integrations & flows';
 export default function HomeSearchInput({value, onChange}) {
   const inputRef = useRef();
   const classes = useStyles();
@@ -111,7 +112,7 @@ export default function HomeSearchInput({value, onChange}) {
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = placeholder;
+      inputRef.current.firstChild.placeholder = PLACEHOLDER;
       dispatchLocalAction({type: 'setSearchIconHidden', value: true});
       dispatchLocalAction({type: 'setCloseIconHidden', value: true});
     } else {
@@ -155,7 +156,7 @@ export default function HomeSearchInput({value, onChange}) {
         onBlur={blurHandler}
         onFocus={focusHandler}
         onChange={onChangeHandler}
-        placeholder={placeholder}
+        placeholder={PLACEHOLDER}
         data-test="homeSearchInput"
         classes={{
           root: classes.inputRoot,

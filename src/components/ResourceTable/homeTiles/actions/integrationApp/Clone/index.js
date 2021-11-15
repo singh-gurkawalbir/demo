@@ -18,16 +18,19 @@ export default {
       _integrationId
     )?.accessLevel);
 
-    const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId) || {};
-    const supportsMultiStore = integration?.settings?.supportsMultiStore;
+    const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId);
 
-    const isCloningSupported = integration &&
-    integrationAppUtil.isCloningSupported(
+    if (!integration) {
+      return false;
+    }
+    const supportsMultiStore = integration.settings?.supportsMultiStore;
+
+    const isCloningSupported = integrationAppUtil.isCloningSupported(
       _connectorId,
       name
     ) && accessLevel !== 'monitor';
 
-    return isCloningSupported && integration && !supportsMultiStore;
+    return isCloningSupported && !supportsMultiStore;
   },
   useOnClick: ({_integrationId}) => {
     const history = useHistory();

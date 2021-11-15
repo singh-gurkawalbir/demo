@@ -47,11 +47,13 @@ export default {
     const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable} = useSelector(state =>
       selectors.tileLicenseDetails(state, rowData), shallowEqual
     );
-    // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
-    const single = status === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
     if (!licenseMessageContent) return false;
     if (showTrialLicenseMessage) return false; // buy
+
+    // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
+    const single = status === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
+
     if (!showTrialLicenseMessage && single && resumable) return false; // reactivate
 
     return true;
