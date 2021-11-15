@@ -20,12 +20,6 @@ const paths = ['flowgroups/add', 'flowgroups/edit'];
 
 const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
   fieldMap: {
-    integration: {
-      id: 'integration',
-      type: 'text',
-      defaultValue: integrationId,
-      visible: false,
-    },
     name: {
       id: 'name',
       type: 'flowgroupname',
@@ -39,13 +33,12 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
     _flowIds: {
       id: '_flowIds',
       type: 'flowstiedtointegrations',
-      helpText: 'something',
       label: 'Flows',
       placeholder: 'Add flows',
       defaultValue: flowsWithGroupId.map(flow => flow._id),
-      required: true,
       unSearchable: true,
       isFlowGroupForm: true,
+      integrationId,
     },
   },
 });

@@ -876,6 +876,15 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
   );
 };
 
+selectors.mkFlowGroupingsTiedToIntegrations = () => {
+  const resourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, id) => resourceSel(state, 'integrations', id)?.flowGroupings,
+    flowGroupings => flowGroupings || [],
+  );
+};
+
 selectors.mkGetSortedScriptsTiedToFlow = () => {
   const scriptsTiedToFlowSelector = selectors.mkGetScriptsTiedToFlow();
 

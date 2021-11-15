@@ -7,7 +7,7 @@ import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export const FlowGroupName = ({ integrationId, flowId }) => {
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
-  const { flowGroupings } = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId) || {};
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
   let flowGroupName = 'Unassigned';
 
   if (!flowGroupings?.length) return null;

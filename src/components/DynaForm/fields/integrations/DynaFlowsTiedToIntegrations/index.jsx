@@ -75,31 +75,24 @@ const DropdownIndicator = props => (
 const TypeableSelect = props => {
   const { isFlowGroupForm } = props;
 
-  return isFlowGroupForm ? (
+  return (
     <GenericTypeableSelect
       {...props}
       SelectedOptionImpl={OptionCheckbox}
       SelectedValueImpl={SelectedValueChips}
-      dropdownIndicator={DropdownIndicator}
-      menuListImpl={MenuListImpl}
-    />
-  ) : (
-    <GenericTypeableSelect
-      {...props}
-      SelectedOptionImpl={OptionCheckbox}
-      SelectedValueImpl={SelectedValueChips}
+      {...(isFlowGroupForm ? { dropdownIndicator: DropdownIndicator, menuListImpl: MenuListImpl} : {})}
     />
   );
 };
 export default function DynaFlowsTiedToIntegration(props) {
-  const {formKey, id, onFieldChange, isFlowGroupForm} = props;
+  const {formKey, id, onFieldChange, isFlowGroupForm, integrationId} = props;
 
   const selectedIntegrationId = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
   const childIntegrationsIds = useSelector(state => selectors.formState(state, formKey)?.fields?.childIntegrations?.value);
 
-  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, selectedIntegrationId, childIntegrationsIds);
+  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, selectedIntegrationId || integrationId, childIntegrationsIds);
 
-  const { flowGroupings } = useSelectorMemo(selectors.makeResourceSelector, 'integrations', selectedIntegrationId) || [];
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, selectedIntegrationId || integrationId) || [];
 
   // reset flows list when either integration or childIntegrations changes
   useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
@@ -113,7 +106,7 @@ export default function DynaFlowsTiedToIntegration(props) {
   return (
 
     <LoadResources required resources="flows" >
-      <TypeableSelect {...props} disabled={!selectedIntegrationId} options={options} />
+      <TypeableSelect {...props} disabled={!(selectedIntegrationId || integrationId)} options={options} />
     </LoadResources>
 
   );

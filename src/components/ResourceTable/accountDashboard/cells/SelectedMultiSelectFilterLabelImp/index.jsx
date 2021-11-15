@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
 export default function SelectedLabelImp({name, id}) {
   const classes = useStyles();
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', id);
-  const { flowGroupings } = useSelectorMemo(selectors.makeResourceSelector, 'integrations', flow?._integrationId) || {};
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, flow?._integrationId);
   let flowGroupName = 'Unassigned';
 
   if (!flowGroupings?.length || name === 'All flows') return name;

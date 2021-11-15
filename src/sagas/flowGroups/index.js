@@ -5,33 +5,6 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { getResourceCollection } from '../resources';
 
-export function* updateFlowWithFlowGroupId({ flow, flowGroupId, asyncKey }) {
-  const path = `/flows/${flow?._id}`;
-  const payload = {
-    ...flow,
-  };
-
-  payload._flowGroupingId = flowGroupId;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'put',
-        body: payload,
-      },
-      hidden: false,
-      message: 'Updating flow group',
-    });
-  } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.createFailed(error));
-    yield put(actions.asyncTask.failed(asyncKey));
-  }
-
-  yield put(actions.resource.received('flows', response));
-}
-
 export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, asyncKey }) {
   try {
     yield call(apiCallWithRetry, {
