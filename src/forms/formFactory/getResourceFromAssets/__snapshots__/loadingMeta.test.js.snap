@@ -12409,6 +12409,9 @@ Object {
       "http.status.doneWithoutDataValues": Object {
         "fieldId": "http.status.doneWithoutDataValues",
       },
+      "http.status.errorValues": Object {
+        "fieldId": "http.status.errorValues",
+      },
       "http.status.inProgressValues": Object {
         "fieldId": "http.status.inProgressValues",
       },
@@ -12453,6 +12456,7 @@ Object {
             "http.status.inProgressValues",
             "http.status.doneValues",
             "http.status.doneWithoutDataValues",
+            "http.status.errorValues",
           ],
           "label": "Configure how to check status",
         },
