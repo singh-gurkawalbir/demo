@@ -14,7 +14,7 @@ export default {
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },
-          { label: 'EDIX12', value: 'filedefinition' },
+          { label: 'EDI X12', value: 'filedefinition' },
           { label: 'Fixed Width', value: 'fixed' },
           { label: 'EDIFACT', value: 'delimited/edifact' },
         ],
