@@ -16,6 +16,7 @@ import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
+import AnalyticsPanel from './panels/Analytics';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
@@ -33,7 +34,7 @@ const getTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
+    Icon: DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -60,6 +61,12 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     Icon: GroupOfUsersIcon,
     Panel: UsersPanel,
   },
+  ...(isUserInErrMgtTwoDotZero
+    ? [{ path: 'analytics',
+      label: 'Analytics',
+      Icon: GraphIcon,
+      Panel: AnalyticsPanel }]
+    : []),
   {
     path: 'admin',
     label: 'Admin',

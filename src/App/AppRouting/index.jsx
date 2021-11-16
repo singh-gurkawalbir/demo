@@ -171,6 +171,15 @@ export default function AppRouting() {
           )}
         />
       <Route
+        path={getRoutePath('/integrations/:integrationId/dashboard')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/integrations/${match.params.integrationId}/dashboard/runningFlows`)
+          );
+        }}
+        />
+      <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId')}
         exact
         render={({ history, match }) =>
@@ -230,6 +239,7 @@ export default function AppRouting() {
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
           getRoutePath('/integrations/:integrationId/:tab/sections/:sectionId'),
+          getRoutePath('/integrations/:integrationId/:tab/:dashboardTab'),
           getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
@@ -263,7 +273,7 @@ export default function AppRouting() {
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
       <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
-      <Route path={getRoutePath('/dashboard/:tab')} component={Dashboard} />
+      <Route path={getRoutePath('/dashboard/:dashboardTab')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route
         path={[

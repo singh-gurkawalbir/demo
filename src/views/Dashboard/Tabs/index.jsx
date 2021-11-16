@@ -53,10 +53,9 @@ export default function DashboardTabs() {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const { tab } = match.params;
-  let currentTabIndex = tabs.findIndex(t => t.path === tab);
+  const { dashboardTab } = match.params;
 
-  currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
+  const currentTabIndex = tabs.findIndex(t => t.path === dashboardTab);
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;
@@ -64,7 +63,7 @@ export default function DashboardTabs() {
       history.push(
         generatePath(match.path, {
           ...match.params,
-          tab: newTab,
+          dashboardTab: newTab,
         })
       );
     },
