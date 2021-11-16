@@ -7,7 +7,7 @@ cache:
 script:
   - yarn test
   - yarn run lint 
-  - yarn build-storybook
+  - yarn build-storybook 
 
 # Deployment information
 deploy:
