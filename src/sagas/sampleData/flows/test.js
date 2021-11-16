@@ -21,7 +21,7 @@ import {
 } from '.';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
-
+import { getConstructedResourceObj } from './utils';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import {
   requestSampleDataForExports,
@@ -44,7 +44,7 @@ describe('flow sample data sagas', () => {
     const exportResource = { _id: exportId, name: 'rest export' };
     const importResource = { _id: importId, name: 'rest import'};
 
-    test('should dispatch init action if the flowId and resourceId are not new, with only refresh as a new property in addition to flow doc ', () => {
+    test('should dispatch init action if the flowId and resourceId are not new, with refresh and formKey as a new property in addition to flow doc ', () => {
       const flow = { _id: flowId, pageGenerators: [exportResource], pageProcessors: [importResource]};
 
       const test1 = expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports'})
@@ -53,11 +53,11 @@ describe('flow sample data sagas', () => {
         ])
         .put(actions.flowData.init({...flow, refresh: false}))
         .run();
-      const test2 = expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports', refresh: true})
+      const test2 = expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports', refresh: true, formKey: 'form-123'})
         .provide([
           [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
         ])
-        .put(actions.flowData.init({...flow, refresh: true}))
+        .put(actions.flowData.init({...flow, refresh: true, formKey: 'form-123'}))
         .run();
 
       return test1 && test2;
@@ -456,20 +456,26 @@ describe('flow sample data sagas', () => {
     test('should call pageProcessorPreview and the result is dispatched to receivedPreviewData action', () => {
       const flowId = 'flow-123';
       const _pageProcessorId = 'export-123';
+      const resourceType = 'exports';
 
       return expectSaga(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId,
         previewType: 'raw',
-        resourceType: 'exports',
+        resourceType,
         hidden: true,
       })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageProcessorId, SCOPES.VALUE), { merged: {} }],
+          [call(getConstructedResourceObj, {
+            resourceId: _pageProcessorId,
+            resourceType,
+            formKey: undefined,
+          }), {}],
         ])
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          _pageProcessorDoc: undefined,
           previewType: 'raw',
           resourceType: 'exports',
           throwOnError: true,
@@ -479,84 +485,75 @@ describe('flow sample data sagas', () => {
         })
         .run();
     });
-    test('should call pageProcessorPreview with refresh true if the flow sampledata state has refresh as true', () => {
+    test('should consider resourceObj constructed from form state incase of formKey and construct body to make pp preview call', () => {
       const flowId = 'flow-123';
       const _pageProcessorId = 'export-123';
-      const flow = { _id: flowId, pageGenerators: [], pageProcessors: []};
-      const flowData = {...flow, refresh: true};
+      const resourceType = 'exports';
+      const formKey = 'form-export-123';
+      const resourceObj = { _id: _pageProcessorId, name: 'test', adaptorType: 'RESTExport'};
 
       return expectSaga(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId,
         previewType: 'raw',
-        resourceType: 'exports',
+        resourceType,
         hidden: true,
       })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageProcessorId, SCOPES.VALUE), { merged: {} }],
-          [select(selectors.getFlowDataState, flowId), flowData],
+          [select(selectors.getFlowDataState, flowId), { formKey }],
+          [call(getConstructedResourceObj, {
+            resourceId: _pageProcessorId,
+            resourceType,
+            formKey,
+          }), resourceObj],
         ])
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          _pageProcessorDoc: resourceObj,
           previewType: 'raw',
           resourceType: 'exports',
           throwOnError: true,
-          refresh: true,
+          refresh: undefined,
           hidden: true,
           runOffline: true,
         })
         .run();
     });
-    test('should process previewData incase of oneToMany resource and pass the processed data to receivedPreviewData action', () => {
+
+    test('should call pageProcessorPreview with refresh true if the flow sampledata state has refresh as true', () => {
       const flowId = 'flow-123';
       const _pageProcessorId = 'export-123';
+      const resourceType = 'exports';
       const flow = { _id: flowId, pageGenerators: [], pageProcessors: []};
       const flowData = {...flow, refresh: true};
-      const oneToManyResource = {
-        _id: _pageProcessorId,
-        oneToMany: true,
-        pathToMany: 'e.check.f',
-      };
-      const previewData = {
-        a: 5,
-        c: { d: 7 },
-        e: { check: { f: [{ a: 1}]} },
-      };
-      const oneToManyData = {
-        _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
-        a: 1,
-      };
 
       return expectSaga(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId,
         previewType: 'raw',
-        resourceType: 'exports',
+        resourceType,
         hidden: true,
       })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageProcessorId, SCOPES.VALUE), { merged: oneToManyResource }],
+          [call(getConstructedResourceObj, {
+            resourceId: _pageProcessorId,
+            resourceType,
+            formKey: undefined,
+          }), { merged: {} }],
           [select(selectors.getFlowDataState, flowId), flowData],
-          [call(pageProcessorPreview, {
-            flowId,
-            _pageProcessorId,
-            previewType: 'raw',
-            resourceType: 'exports',
-            throwOnError: true,
-            refresh: true,
-            hidden: true,
-            runOffline: true,
-          }), previewData],
         ])
-        .put(
-          actions.flowData.receivedPreviewData(
-            flowId,
-            _pageProcessorId,
-            oneToManyData,
-            'raw'
-          )
-        )
+        .call(pageProcessorPreview, {
+          flowId,
+          _pageProcessorId,
+          _pageProcessorDoc: undefined,
+          previewType: 'raw',
+          resourceType,
+          throwOnError: true,
+          refresh: true,
+          hidden: true,
+          runOffline: true,
+        })
         .run();
     });
   });
@@ -633,9 +630,9 @@ describe('flow sample data sagas', () => {
       return expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
           [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: ftpResource }],
-          [call(requestFileAdaptorSampleData, { resource: ftpResource }), fileSampleData],
+          [call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined }), fileSampleData],
         ])
-        .call(requestFileAdaptorSampleData, { resource: ftpResource })
+        .call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined })
         .put(
           actions.flowData.receivedPreviewData(
             flowId,
@@ -687,12 +684,17 @@ describe('flow sample data sagas', () => {
 
       return expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: restExport }],
+          [call(getConstructedResourceObj, {
+            resourceId: _pageGeneratorId,
+            resourceType: 'exports',
+            formKey: undefined,
+          }), restExport],
           [call(exportPreview, {
             resourceId: _pageGeneratorId,
             runOffline: true,
             throwOnError: true,
             flowId,
+            formKey: undefined,
           }), previewResponse],
         ])
         .call(exportPreview, {
@@ -700,6 +702,55 @@ describe('flow sample data sagas', () => {
           runOffline: true,
           throwOnError: true,
           flowId,
+          formKey: undefined,
+        })
+        .put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            _pageGeneratorId,
+            previewData,
+            'raw'
+          )
+        )
+        .run();
+    });
+    test('should call exportPreview saga incase of PG being a preview based adaptor like REST/HTTP/DB and the result is dispatched to receivedPreviewData action', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+      };
+      const formKey = 'form-export-123';
+      const previewResponse = {
+        stages: [{
+          name: 'parse',
+          data: [{ test: 5 }],
+        }],
+      };
+      const previewData = { test: 5 };
+
+      return expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
+        .provide([
+          [select(selectors.getFlowDataState, flowId), {formKey}],
+          [call(getConstructedResourceObj, {
+            resourceId: _pageGeneratorId,
+            resourceType: 'exports',
+            formKey,
+          }), restExport],
+          [call(exportPreview, {
+            resourceId: _pageGeneratorId,
+            runOffline: true,
+            throwOnError: true,
+            flowId,
+            formKey,
+          }), previewResponse],
+        ])
+        .call(exportPreview, {
+          resourceId: _pageGeneratorId,
+          runOffline: true,
+          throwOnError: true,
+          flowId,
+          formKey,
         })
         .put(
           actions.flowData.receivedPreviewData(
@@ -1009,6 +1060,86 @@ describe('flow sample data sagas', () => {
           adaptorType: restExport.adaptorType,
         })
         .call.fn(_processMappingData)
+        .run();
+    });
+    test('should process oneToMany path on flowInput data and update the state incase of oneToMany for processedFlowInput stage', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+        oneToMany: true,
+        pathToMany: 'e.check.f',
+      };
+      const sampleData = {
+        a: 5,
+        c: { d: 7 },
+        e: { check: { f: [{ a: 1}]} },
+      };
+      const stage = 'processedFlowInput';
+      const formKey = 'form-123';
+      const oneToManySampleData = {
+        _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+        a: 1,
+      };
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: sampleData}],
+          [select(selectors.getFlowDataState, flowId), { formKey }],
+          [call(getConstructedResourceObj, {
+            resourceId,
+            resourceType,
+            formKey,
+          }), restExport],
+        ])
+        .put(actions.flowData.receivedProcessorData(flowId, resourceId, stage, { data: [oneToManySampleData]}))
+        .run();
+    });
+    test('should update the state with flowInput data if the resource is not oneToMany for processedFlowInput stage', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+      };
+      const sampleData = {
+        a: 5,
+        c: { d: 7 },
+        e: { check: { f: [{ a: 1}]} },
+      };
+      const stage = 'processedFlowInput';
+      const formKey = 'form-123';
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: sampleData}],
+          [select(selectors.getFlowDataState, flowId), { formKey }],
+          [call(getConstructedResourceObj, {
+            resourceId,
+            resourceType,
+            formKey,
+          }), restExport],
+        ])
+        .put(actions.flowData.receivedProcessorData(flowId, resourceId, stage, { data: [sampleData]}))
         .run();
     });
     test('should do nothing if mappings does not exist for responseMapping stage', () => {

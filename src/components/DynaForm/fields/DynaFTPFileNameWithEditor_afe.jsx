@@ -8,6 +8,7 @@ import AfeIcon from '../../icons/AfeIcon';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import useFormContext from '../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
@@ -48,7 +49,7 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: IMPORT_FLOW_DATA_STAGE,
       onSave: handleSave,
     }));
 

@@ -2214,6 +2214,7 @@ export default {
   'myaccount.timeFormat':
     'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
   'myaccount.developer': 'Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an \'Export\' or an \'Import\' there are \'Hooks\' fields available in the UI where custom code can be configured.',
+  'myaccount.showRelativeDateTime': 'Check this box to view the amount of time elapsed since an event occurred, such as <b>1 hour ago</b> or <b>1 day ago</b>. Otherwise, the display format is absolute, such as <b>2021-10-25 7:47:33 PM</b>.',
   'hooks.insertFunction':
     'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
   'hooks.scriptContent':

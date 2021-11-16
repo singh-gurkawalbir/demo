@@ -17,6 +17,7 @@ export default function DynaHttpRequestBody_afe(props) {
     flowId,
     arrayIndex,
     formKey,
+    stage,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -41,6 +42,8 @@ export default function DynaHttpRequestBody_afe(props) {
     }
   }, [arrayIndex, id, onFieldChange, value]);
 
+  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'postMapOutput');
+
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
@@ -48,14 +51,14 @@ export default function DynaHttpRequestBody_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: flowDataStage,
       onSave: handleSave,
       parentType,
       parentId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
 
   return (
     <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />
