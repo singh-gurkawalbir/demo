@@ -52,10 +52,12 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []);
   let groupName;
+  let flowGroupId;
   let flowsWithGroupId = [];
 
   if (isEdit) {
     groupName = integration.flowGroupings.find(group => group._id === groupId)?.name;
+    flowGroupId = groupId;
     flowsWithGroupId = flowsTiedToIntegrations.filter(flow => flow._flowGroupingId === groupId);
   }
   const formValues = useSelector(state => selectors.formState(state, formKey)?.fields);
@@ -73,11 +75,11 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     const { name, _flowIds } = formValues;
     const deSelectedFlows = flowsWithGroupId.filter(flow => !_flowIds.value.find(id => id === flow._id));
 
-    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, name.value, _flowIds.value, deSelectedFlows, formKey));
+    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, name.value, flowGroupId, _flowIds.value, deSelectedFlows, formKey));
     if (closeAfterSave) {
       handleClose();
     }
-  }, [formValues, flowsWithGroupId, dispatch, integrationId, handleClose]);
+  }, [formValues, flowsWithGroupId, dispatch, integrationId, flowGroupId, handleClose]);
   const remountForm = useCallback(() => {
     setRemountCount(remountCount => remountCount + 1);
   }, []);

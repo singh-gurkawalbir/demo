@@ -1,3 +1,4 @@
+import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -5,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
+import { UNASSIGNED_SECTION_ID } from '../../../../utils/constants';
 import { TextButton } from '../../../Buttons';
 import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
@@ -23,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const title = 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.';
 export default function TextFieldWithDeleteSupport(props) {
   const classes = useStyles();
   const history = useHistory();
@@ -30,8 +33,9 @@ export default function TextFieldWithDeleteSupport(props) {
   const [currentValue, setValue] = useState(value);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId) || {};
-  const isValidName = (value === currentValue) || !integration?.flowGroupings.find(flowGroup => flowGroup.name === value);
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
+  const isValidName = value ? (value === currentValue) || (!flowGroupings.find(flowGroup => flowGroup.name === value) && value?.toLowerCase() !== UNASSIGNED_SECTION_ID) : false;
+  const flowGroupId = flowGroupings.find(flowGroup => flowGroup.name === currentValue)?._id;
 
   const handleDeleteFlowGroupClick = useCallback(
     () => {
@@ -42,8 +46,8 @@ export default function TextFieldWithDeleteSupport(props) {
           {
             label: 'Delete',
             onClick: () => {
+              dispatch(actions.resource.integrations.flowGroups.delete(integrationId, flowGroupId, flows));
               setValue(value);
-              dispatch(actions.resource.integrations.flowGroups.delete(integration, value, flows));
               history.goBack();
             },
           },
@@ -54,7 +58,7 @@ export default function TextFieldWithDeleteSupport(props) {
         ],
       });
     },
-    [confirmDialog, dispatch, flows, history, integration, value]
+    [confirmDialog, dispatch, flows, history, integrationId, flowGroupId, value]
   );
 
   useEffect(() => {
@@ -64,9 +68,18 @@ export default function TextFieldWithDeleteSupport(props) {
 
         return;
       }
+      let errorMessages;
+
+      if (value === UNASSIGNED_SECTION_ID) {
+        errorMessages = '<Group_Name> cannot be “Unassigned” as this is a reserved value. Please provide a different name.';
+      } else if (value) {
+        errorMessages = '<Group_Name> already exists. Please provide a different name.';
+      } else {
+        errorMessages = 'A value must be provided';
+      }
       dispatch(actions.form.forceFieldState(formKey)(id, {
         isValid: false,
-        errorMessages: value ? 'There is already a flow group with the given name' : 'A value must be provided',
+        errorMessages,
       }));
     }
   }, [dispatch, formKey, id, isEdit, isValidName, required, value]);
@@ -79,12 +92,14 @@ export default function TextFieldWithDeleteSupport(props) {
   return isEdit ? (
     <div className={classes.textFieldWithDeleteSupport}>
       <DynaText {...props} className={classes.dynaTextField} />
-      <TextButton
-        onClick={handleDeleteFlowGroupClick}
-        startIcon={<TrashIcon />}
-        className={classes.deleteFlowBtn}>
-        Delete flow group
-      </TextButton>
+      <Tooltip data-public title={title} placement="bottom" >
+        <TextButton
+          onClick={handleDeleteFlowGroupClick}
+          startIcon={<TrashIcon />}
+          className={classes.deleteFlowBtn}>
+          Delete flow group
+        </TextButton>
+      </Tooltip>
     </div>
   ) : (
     <DynaText {...props} />

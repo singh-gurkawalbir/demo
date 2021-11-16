@@ -6,11 +6,13 @@ import { call, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
+import { getResourceCollection } from '../resources';
 import {
   updateFlowsWithFlowGroupId,
   deleteFlowGroup,
-  deleteFlowGroupIdFromFlow,
+  updateIntegration,
   createOrUpdateFlowGroup,
+  deleteFlowGroupIdFromFlow,
   flowGroupsShiftOrder,
 } from '.';
 
@@ -29,17 +31,23 @@ describe('updateFlowsWithFlowGroupId saga', () => {
     hidden: false,
     message: 'Updating flow group',
   };
-  const response = {};
-  const error = {};
+  const error = {
+    code: 200,
+    message: 'something',
+  };
   const asyncKey = 'something';
 
-  test('pass', () =>
+  test('On successful api call, should call getResourceCollection api for flows', () =>
     expectSaga(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, asyncKey })
-      .provide([[call(apiCallWithRetry, args), response]])
+      .provide([
+        [call(apiCallWithRetry, args)],
+        [call(getResourceCollection, { resourceType: 'flows'})],
+      ])
       .call(apiCallWithRetry, args)
+      .call(getResourceCollection, { resourceType: 'flows' })
       .run()
   );
-  test('fail', () =>
+  test('if api call fails should dispatch flowGroups createOrUpdateFailed action', () =>
     expectSaga(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, asyncKey })
       .provide([[call(apiCallWithRetry, args), throwError(error)]])
       .call(apiCallWithRetry, args)
@@ -67,16 +75,19 @@ describe('deleteFlowGroupIdFromFlow saga', () => {
     message: 'Updating flow group',
   };
   const response = { ...payload };
-  const error = {};
+  const error = {
+    code: 200,
+    message: 'something',
+  };
 
-  test('pass', () =>
+  test('On successful api call, should dispatch resource received action for flows', () =>
     expectSaga(deleteFlowGroupIdFromFlow, { flow })
       .provide([[call(apiCallWithRetry, args), response]])
       .call(apiCallWithRetry, args)
       .put(actions.resource.received('flows', response))
       .run()
   );
-  test('fail', () =>
+  test('if api call fails should dispatch flowGroups deleteFailed action', () =>
     expectSaga(deleteFlowGroupIdFromFlow, { flow })
       .provide([[call(apiCallWithRetry, args), throwError(error)]])
       .call(apiCallWithRetry, args)
@@ -85,9 +96,63 @@ describe('deleteFlowGroupIdFromFlow saga', () => {
   );
 });
 
+describe('updateIntegration saga', () => {
+  const integrationId = 'i1';
+  const payload = {
+    _id: integrationId,
+    flowGroupings: [
+      {
+        name: 'flow group 1',
+        _id: 'fg1',
+      },
+    ],
+  };
+  const args = {
+    path: `/integrations/${integrationId}`,
+    opts: {
+      method: 'PUT',
+      body: payload,
+    },
+    hidden: false,
+    message: 'Updating flow groups',
+  };
+  const response = {
+    _id: integrationId,
+    flowGroupings: [
+      {
+        name: 'flow group 1',
+        _id: 'fg1',
+      },
+    ],
+  };
+  const error = {
+    code: '200',
+    message: 'something',
+  };
+  const asyncKey = 'something';
+
+  test('On successful api call, should disaptch resource received action for integrations', () =>
+    expectSaga(updateIntegration, { integrationId, payload, asyncKey })
+      .provide([[call(apiCallWithRetry, args), response]])
+      .call(apiCallWithRetry, args)
+      .put(actions.resource.received('integrations', response))
+      .returns(response)
+      .run()
+  );
+  test('if api call fails should dispatch flowGroups createOrUpdateFailed action', () =>
+    expectSaga(updateIntegration, { integrationId, payload, asyncKey })
+      .provide([[call(apiCallWithRetry, args), throwError(error)]])
+      .call(apiCallWithRetry, args)
+      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error))
+      .put(actions.asyncTask.failed(asyncKey))
+      .run()
+  );
+});
+
 describe('createOrUpdateFlowGroup saga', () => {
   const integrationId = 'id1';
   const groupName = 'group1';
+  let flowGroupId;
   const flowIds = ['f1', 'f2'];
   const deSelectedFlows = [
     {
@@ -96,25 +161,17 @@ describe('createOrUpdateFlowGroup saga', () => {
     },
   ];
   const asyncKey = 'something';
-  const integrationWithoutFlowGropings = {
+  const integrationWithoutFlowGroupings = {
     _id: integrationId,
     flowGroupings: [],
   };
-  const args = {
-    path: `/integrations/${integrationId}`,
-    opts: {
-      method: 'PUT',
-      body: {
-        _id: integrationId,
-        flowGroupings: [
-          {
-            name: groupName,
-          },
-        ],
+  const payload = {
+    _id: integrationId,
+    flowGroupings: [
+      {
+        name: 'group1',
       },
-    },
-    hidden: false,
-    message: 'Updating flow groups',
+    ],
   };
   const response = {
     _id: integrationId,
@@ -125,24 +182,61 @@ describe('createOrUpdateFlowGroup saga', () => {
       },
     ],
   };
-  const error = {};
 
-  test('pass', () =>
-    expectSaga(createOrUpdateFlowGroup, { integrationId, groupName, flowIds, deSelectedFlows, asyncKey })
+  test('if flowGroupId is not present should call updateIntegration and updateFlowsWithFlowGroupId api calls', () =>
+    expectSaga(createOrUpdateFlowGroup, { integrationId, groupName, flowGroupId, flowIds, deSelectedFlows, asyncKey })
       .provide([
-        [select(selectors.resource, 'integrations', integrationId), integrationWithoutFlowGropings],
-        [call(apiCallWithRetry, args), response],
+        [select(selectors.resource, 'integrations', integrationId), integrationWithoutFlowGroupings],
+        [call(updateIntegration, { integrationId, payload, asyncKey}), response],
         [call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: 'fg1', asyncKey })],
       ])
       .put(actions.asyncTask.start(asyncKey))
-      .call(apiCallWithRetry, args)
+      .call(updateIntegration, { integrationId, payload, asyncKey})
       .call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: 'fg1', asyncKey })
-      .put(actions.resource.received('integrations', response))
       .put(actions.asyncTask.success(asyncKey))
       .run()
   );
 
-  test('pass 2', () => {
+  test('if flowGroup is present and corresponding groupName is different to the name present in flowGroupings, should call updateIntegration, updateFlowsWithFlowGroupId and updateFlowsWithFlowGroupId', () => {
+    flowGroupId = 'fg2';
+    const integrationId2 = 'i2';
+    const groupName2 = 'newGroupName';
+    const intgegrationWithFlowGroupings = {
+      _id: 'integrationId2',
+      flowGroupings: [
+        {
+          name: 'group2',
+          _id: 'fg2',
+        },
+      ],
+    };
+    const payload = {
+      _id: 'integrationId2',
+      flowGroupings: [
+        {
+          name: groupName2,
+          _id: 'fg2',
+        },
+      ],
+    };
+
+    const saga = expectSaga(createOrUpdateFlowGroup, { integrationId: integrationId2, groupName: groupName2, flowGroupId, flowIds, deSelectedFlows, asyncKey })
+      .provide([
+        [select(selectors.resource, 'integrations', integrationId2), intgegrationWithFlowGroupings],
+        [call(updateIntegration, {integrationId, payload, asyncKey})],
+        [call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: 'fg2', asyncKey })],
+        ...deSelectedFlows.map(flow => [call(deleteFlowGroupIdFromFlow, {flow})]),
+      ])
+      .put(actions.asyncTask.start(asyncKey))
+      .call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: 'fg2', asyncKey });
+
+    deSelectedFlows.map(flow => saga.call(deleteFlowGroupIdFromFlow, { flow }));
+
+    return saga.put(actions.asyncTask.success(asyncKey)).run();
+  });
+
+  test('if flowGroup is present and corresponding groupName is same as the name present in flowGroupings, should call updateFlowsWithFlowGroupId and updateFlowsWithFlowGroupId', () => {
+    flowGroupId = 'fg2';
     const integrationId2 = 'i2';
     const groupName2 = 'group2';
     const intgegrationWithFlowGroupings = {
@@ -155,7 +249,7 @@ describe('createOrUpdateFlowGroup saga', () => {
       ],
     };
 
-    const saga = expectSaga(createOrUpdateFlowGroup, { integrationId: integrationId2, groupName: groupName2, flowIds, deSelectedFlows, asyncKey })
+    const saga = expectSaga(createOrUpdateFlowGroup, { integrationId: integrationId2, groupName: groupName2, flowGroupId, flowIds, deSelectedFlows, asyncKey })
       .provide([
         [select(selectors.resource, 'integrations', integrationId2), intgegrationWithFlowGroupings],
         [call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: 'fg2', asyncKey })],
@@ -168,22 +262,11 @@ describe('createOrUpdateFlowGroup saga', () => {
 
     return saga.put(actions.asyncTask.success(asyncKey)).run();
   });
-  test('error', () =>
-    expectSaga(createOrUpdateFlowGroup, { integrationId, groupName, flowIds, deSelectedFlows, asyncKey })
-      .provide([
-        [select(selectors.resource, 'integrations', integrationId), integrationWithoutFlowGropings],
-        [call(apiCallWithRetry, args), throwError(error)],
-      ])
-      .call(apiCallWithRetry, args)
-      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error))
-      .put(actions.asyncTask.failed(asyncKey))
-      .run()
-  );
 });
 
 describe('deleteFlowGroup saga', () => {
   const integrationId = 'i1';
-  const groupName = 'group1';
+  const flowGroupId = 'fg1';
   const flows = [
     {
       _id: 'f1',
@@ -197,7 +280,7 @@ describe('deleteFlowGroup saga', () => {
     _id: integrationId,
     flowGroupings: [
       {
-        name: groupName,
+        name: 'group1',
         _id: 'fg1',
       },
       {
@@ -232,10 +315,13 @@ describe('deleteFlowGroup saga', () => {
       },
     ],
   };
-  const error = {};
+  const error = {
+    code: '200',
+    message: 'something',
+  };
 
-  test('pass', () => {
-    const saga = expectSaga(deleteFlowGroup, {integrationId, groupName, flows})
+  test('Should call deleteFlowGroupIdFromFlow api call for every Flow and call apiCallWithRetry with new payload', () => {
+    const saga = expectSaga(deleteFlowGroup, {integrationId, flowGroupId, flows})
       .provide([
         [select(selectors.resource, 'integrations', integrationId), integration],
         [call(apiCallWithRetry, args), response],
@@ -250,8 +336,8 @@ describe('deleteFlowGroup saga', () => {
       .run();
   });
 
-  test('fail', () => {
-    const saga = expectSaga(deleteFlowGroup, {integrationId, groupName, flows})
+  test('If apiCallWithRetry fails, should dispatch flowGroups deleteFailed action', () => {
+    const saga = expectSaga(deleteFlowGroup, {integrationId, flowGroupId, flows})
       .provide([
         [select(selectors.resource, 'integrations', integrationId), integration],
         [call(apiCallWithRetry, args), throwError(error)],
@@ -269,13 +355,13 @@ describe('deleteFlowGroup saga', () => {
 
 describe('flowGroupsShiftOrder saga', () => {
   const integrationId = 'i1';
-  const groupName = 'group1';
+  const flowGroupId = 'fg1';
   const newIndex = 1;
   const integration = {
     _id: integrationId,
     flowGroupings: [
       {
-        name: groupName,
+        name: 'group1',
         _id: 'fg1',
       },
       {
@@ -296,7 +382,7 @@ describe('flowGroupsShiftOrder saga', () => {
             _id: 'fg2',
           },
           {
-            name: groupName,
+            name: 'group1',
             _id: 'fg1',
           },
         ],
@@ -313,15 +399,18 @@ describe('flowGroupsShiftOrder saga', () => {
         _id: 'fg2',
       },
       {
-        name: groupName,
+        name: 'group1',
         _id: 'fg1',
       },
     ],
   };
-  const error = {};
+  const error = {
+    code: '200',
+    message: 'something',
+  };
 
-  test('pass', () =>
-    expectSaga(flowGroupsShiftOrder, {integrationId, groupName, newIndex})
+  test('On Successful api call, should dispatch resource resource action for integrations', () =>
+    expectSaga(flowGroupsShiftOrder, {integrationId, flowGroupId, newIndex})
       .provide([
         [select(selectors.resource, 'integrations', integrationId), integration],
         [call(apiCallWithRetry, args), response],
@@ -330,8 +419,8 @@ describe('flowGroupsShiftOrder saga', () => {
       .put(actions.resource.received('integrations', response))
       .run()
   );
-  test('fail', () =>
-    expectSaga(flowGroupsShiftOrder, {integrationId, groupName, newIndex})
+  test('If api call fails, should dispatch flowGroups createOrUpdateFailed action', () =>
+    expectSaga(flowGroupsShiftOrder, {integrationId, flowGroupId, newIndex})
       .provide([
         [select(selectors.resource, 'integrations', integrationId), integration],
         [call(apiCallWithRetry, args), throwError(error)],

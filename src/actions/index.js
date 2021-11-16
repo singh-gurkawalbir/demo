@@ -349,28 +349,29 @@ const resource = {
         integrationId,
       }),
     flowGroups: {
-      createOrUpdate: (integrationId, groupName, flowIds, deSelectedFlows, asyncKey) =>
+      createOrUpdate: (integrationId, groupName, flowGroupId, flowIds, deSelectedFlows, asyncKey) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
           integrationId,
           groupName,
+          flowGroupId,
           flowIds,
           deSelectedFlows,
           asyncKey,
         }),
       createOrUpdateFailed: error =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {error}),
-      delete: (integrationId, groupName, flows) =>
+      delete: (integrationId, flowGroupId, flows) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, {
           integrationId,
-          groupName,
+          flowGroupId,
           flows,
         }),
       deleteFailed: error =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
-      shiftOrder: (integrationId, groupName, newIndex) =>
+      shiftOrder: (integrationId, flowGroupId, newIndex) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
           integrationId,
-          groupName,
+          flowGroupId,
           newIndex,
         }),
     },

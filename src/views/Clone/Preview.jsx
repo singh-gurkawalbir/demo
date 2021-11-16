@@ -430,6 +430,7 @@ export default function ClonePreview(props) {
   const clone = ({ name, environment, integration, flowGroup, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
+    const _flowGroupingId = flowGroup && flowGroup !== UNASSIGNED_SECTION_ID ? flowGroup : undefined;
 
     if (resourceType === 'integrations') {
       dispatch(
@@ -468,7 +469,7 @@ export default function ClonePreview(props) {
             name,
             sandbox: environment === 'sandbox',
             _integrationId: integration,
-            _flowGroupingId: flowGroup,
+            _flowGroupingId,
           }
         )
       );
@@ -483,7 +484,7 @@ export default function ClonePreview(props) {
             name,
             sandbox: environment === 'sandbox',
             _integrationId: integration,
-            _flowGroupingId: flowGroup,
+            _flowGroupingId,
           }
         )
       );
