@@ -223,7 +223,7 @@ describe('createOrUpdateFlowGroup saga', () => {
     const saga = expectSaga(createOrUpdateFlowGroup, { integrationId: integrationId2, groupName: groupName2, flowGroupId, flowIds, deSelectedFlows, asyncKey })
       .provide([
         [select(selectors.resource, 'integrations', integrationId2), intgegrationWithFlowGroupings],
-        [call(updateIntegration, {integrationId, payload, asyncKey})],
+        [call(updateIntegration, {integrationId: integrationId2, payload, asyncKey})],
         [call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId: 'fg2', asyncKey })],
         ...deSelectedFlows.map(flow => [call(deleteFlowGroupIdFromFlow, {flow})]),
       ])
