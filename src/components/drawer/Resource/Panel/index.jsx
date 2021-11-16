@@ -17,6 +17,7 @@ import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
+import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
@@ -206,6 +207,7 @@ export default function Panel(props) {
 
   const isNew = operation === 'add';
 
+  useHandleResourceFormFlowSampleData(formKey);
   useResourceFormRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,

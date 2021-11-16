@@ -21,6 +21,7 @@ export default function DynaRelativeUri_afe(props) {
     deltaFieldsToValidate,
     validateInComponent,
     required,
+    stage,
   } = rest;
 
   const dispatch = useDispatch();
@@ -53,9 +54,12 @@ export default function DynaRelativeUri_afe(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
+  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+
   return (
     <DynaURI
       {...rest}
+      stage={flowDataStage}
       value={inputValue}
       description={description}
     />

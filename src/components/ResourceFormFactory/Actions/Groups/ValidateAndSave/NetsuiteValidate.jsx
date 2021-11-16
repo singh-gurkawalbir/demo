@@ -112,7 +112,7 @@ export default function NetsuiteValidateButton(props) {
       color="secondary"
       disabled={disabled || isValidatingNetsuiteUserRoles}
       onClick={handleValidate}>
-      {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test Connection'}
+      {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test connection'}
     </OutlinedButton>
   );
 }

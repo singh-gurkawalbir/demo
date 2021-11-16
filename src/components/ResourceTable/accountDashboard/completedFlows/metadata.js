@@ -110,7 +110,7 @@ export default {
       key: 'success',
       heading: 'Success',
       Value: ({rowData: r}) => r.numSuccess,
-      orderBy: 'success',
+      orderBy: 'numSuccess',
     },
     {
       key: 'numIgnore',

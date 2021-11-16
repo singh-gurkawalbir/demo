@@ -385,18 +385,25 @@ export default function ClonePreview(props) {
       'message',
       'components',
     ];
-  } else {
+  } else if (isIAIntegration) {
     fieldMeta.fieldMap.tag = {
       id: 'tag',
       name: 'tag',
       type: 'text',
       label: 'Tag',
       defaultValue: `Clone - ${resource ? resource.name : ''}`,
-      visible: isIAIntegration,
     };
     fieldMeta.layout.fields = [
       'name',
       'tag',
+      'environment',
+      'description',
+      'message',
+      'components',
+    ];
+  } else {
+    fieldMeta.layout.fields = [
+      'name',
       'environment',
       'description',
       'message',

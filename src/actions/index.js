@@ -1378,13 +1378,14 @@ const flowData = {
       stage,
       error,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh, formKey) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
       refresh,
+      formKey,
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
@@ -1414,6 +1415,7 @@ const resourceFormSampleData = {
   setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),

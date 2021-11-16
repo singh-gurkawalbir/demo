@@ -51,7 +51,7 @@ export default function DynaCheckbox(props) {
             className={classes.dynaCheckbox}
             // isInvalid={!isValid}
             data-test={id}
-            value={typeof value === 'string' ? value : value.toString()}
+            value={String(!!value)}
             checked={inverse ? !value : !!value}
             onChange={evt =>
               onFieldChange(

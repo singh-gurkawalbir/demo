@@ -1,5 +1,6 @@
 export default {
   'export.netsuite.restlet.recordType': {
+    loggable: true,
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
@@ -12,6 +13,7 @@ export default {
     connectionId: r => r && r.ssLinkedConnectionId,
   },
   'export.netsuite.restlet.searchId': {
+    loggable: true,
     type: 'nssavedsearch',
     label: 'Saved search',
     required: true,
@@ -21,6 +23,7 @@ export default {
     connectionId: r => r && r.ssLinkedConnectionId,
   },
   'export.type': {
+    loggable: true,
     type: 'select',
     label: 'Export type',
     options: [
@@ -38,6 +41,7 @@ export default {
     required: true,
   },
   'export.delta.dateField': {
+    loggable: true,
     id: 'export.delta.dateField',
     label: 'Date field',
     type: 'refreshableselect',
@@ -52,6 +56,7 @@ export default {
     ],
   },
   'export.once.booleanField': {
+    loggable: true,
     id: 'export.once.booleanField',
     label: 'Boolean field',
     type: 'refreshableselect',
@@ -66,6 +71,7 @@ export default {
     ],
   },
   'export.valueDelta.exportedField': {
+    loggable: true,
     id: 'export.valueDelta.exportedField',
     label: 'Quantity exported column',
     type: 'refreshableselect',
@@ -80,6 +86,7 @@ export default {
     ],
   },
   'export.valueDelta.pendingField': {
+    loggable: true,
     id: 'export.valueDelta.pendingField',
     label: 'Quantity pending export column',
     type: 'refreshableselect',
@@ -94,6 +101,7 @@ export default {
     ],
   },
   'export.netsuite.realtime.recordType': {
+    loggable: true,
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
@@ -106,6 +114,7 @@ export default {
     connectionId: r => r && r.ssLinkedConnectionId,
   },
   'export.netsuite.realtime.executionContext': {
+    loggable: true,
     type: 'multiselect',
     label: 'Execution context',
     options: [
@@ -130,6 +139,7 @@ export default {
     required: true,
   },
   'export.netsuite.realtime.executionType': {
+    loggable: true,
     type: 'multiselect',
     label: 'Execution type',
     options: [
@@ -154,6 +164,7 @@ export default {
     required: true,
   },
   'export.netsuite.realtime.exportType': {
+    loggable: true,
     type: 'select',
     label: 'Export type',
     options: [
@@ -167,6 +178,7 @@ export default {
     required: true,
   },
   'export.netsuite.realtime.checkboxField': {
+    loggable: true,
     id: 'export.netsuite.realtime.checkboxField',
     label: 'Checkbox field',
     type: 'refreshableselect',
