@@ -163,14 +163,14 @@ export default function ConnectorInstallation(props) {
 
           return {
             ...step,
-            connectionId: connStep?._connectionId,
+            connectionId: connStep._connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connStep = bundleInstallationForSalesforceConnections.shift();
 
           return {
             ...step,
-            connectionId: connStep?._connectionId,
+            connectionId: connStep._connectionId,
           };
         }
       }
