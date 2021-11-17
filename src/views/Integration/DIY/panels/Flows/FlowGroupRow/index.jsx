@@ -44,6 +44,15 @@ const useStyles = makeStyles(theme => ({
     },
   },
   active: {
+    '&:before': {
+      content: '""',
+      width: '3px',
+      top: 0,
+      height: '100%',
+      position: 'absolute',
+      left: '0px',
+      background: theme.palette.primary.main,
+    },
     '&>a': {
       color: theme.palette.primary.main,
     },
