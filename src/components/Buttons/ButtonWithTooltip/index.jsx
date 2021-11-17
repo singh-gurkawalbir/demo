@@ -7,8 +7,6 @@ export default function ButtonWithTooltip({
 }) {
   return (
     <Tooltip data-public key={tooltipProps.title} {...tooltipProps}>
-      {/* Icon button also accepts disabled property. Tooltip expects its children to be in active state and listen to events.
-      Hence wrapping it with div */}
       <span>
         {children}
       </span>
