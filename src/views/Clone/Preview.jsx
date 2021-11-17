@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
+import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
@@ -21,7 +22,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
-import { emptyObject, HOME_PAGE_PATH } from '../../utils/constants';
+import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../utils/constants';
 import { CLONE_DESCRIPTION } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
@@ -68,6 +69,19 @@ const useStyles = makeStyles(theme => ({
   componentsTable: {
     paddingTop: '20px',
   },
+  flowGroupTitle: {
+    textTransform: 'uppercase',
+    paddingTop: theme.spacing(1),
+  },
+  flowGroupDescription: {
+    marginTop: theme.spacing(2),
+  },
+  flowInFlowGroupName: {
+    border: 'none',
+  },
+  flowInFlowGroupNameHover: {
+    backgroundColor: theme.palette.background.paper,
+  },
 }));
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -81,13 +95,31 @@ const useColumns = () => [
     key: 'name',
     heading: 'Name',
     width: '40%',
-    Value: ({rowData: r}) => r?.doc?.name || r?.doc?._id,
+    GetClassName: ({rowData: r}) => {
+      const classes = useStyles();
+
+      return clsx(r?.groupName || r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
+    },
+    Value: ({rowData: r}) => {
+      const classes = useStyles();
+
+      if (r?.groupName) {
+        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+      }
+
+      return r?.doc?.name || r?.doc?._id;
+    },
   },
   {
     key: 'description',
     heading: 'Description',
     width: '60%',
-    Value: ({rowData: r}) => r.doc?.description,
+    GetClassName: ({rowData: r}) => {
+      const classes = useStyles();
+
+      return clsx(r?.groupName || r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
+    },
+    Value: ({rowData: r}) => r?.doc?.description,
   },
 ];
 export default function ClonePreview(props) {
@@ -225,6 +257,10 @@ export default function ClonePreview(props) {
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
   const { objects = [] } = components || {};
+
+  // if (resourceType === 'integrations' && resource.flowGrouings.length > 1) {
+  //   objects = [...objects.filter()];
+  // }
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -313,6 +349,7 @@ export default function ClonePreview(props) {
       type: 'select',
       label: 'Integration',
       required: true,
+      defaultValue: '',
       refreshOptionsOnChangesTo: ['environment'],
       options: [
         {
@@ -325,10 +362,25 @@ export default function ClonePreview(props) {
         },
       ],
     };
+    fieldMeta.fieldMap.flowGroup = {
+      id: 'flowGroup',
+      name: 'flowGroup',
+      type: 'flowgroupstiedtointegrations',
+      label: 'Flow Group',
+      refreshOptionsOnChangesTo: ['environment', 'integration'],
+      defaultValue: UNASSIGNED_SECTION_ID,
+      visibleWhen: [
+        {
+          field: 'integration',
+          isNot: [''],
+        },
+      ],
+    };
     fieldMeta.layout.fields = [
       'name',
       'environment',
       'integration',
+      'flowGroup',
       'description',
       'message',
       'components',
@@ -382,9 +434,10 @@ export default function ClonePreview(props) {
     );
   }
 
-  const clone = ({ name, environment, integration, tag }) => {
+  const clone = ({ name, environment, integration, flowGroup, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
+    const _flowGroupingId = flowGroup && flowGroup !== UNASSIGNED_SECTION_ID ? flowGroup : undefined;
 
     if (resourceType === 'integrations') {
       dispatch(
@@ -423,6 +476,7 @@ export default function ClonePreview(props) {
             name,
             sandbox: environment === 'sandbox',
             _integrationId: integration,
+            _flowGroupingId,
           }
         )
       );
@@ -437,6 +491,7 @@ export default function ClonePreview(props) {
             name,
             sandbox: environment === 'sandbox',
             _integrationId: integration,
+            _flowGroupingId,
           }
         )
       );

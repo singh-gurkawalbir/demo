@@ -348,6 +348,33 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    flowGroups: {
+      createOrUpdate: (integrationId, groupName, flowGroupId, flowIds, deSelectedFlows, asyncKey) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
+          integrationId,
+          groupName,
+          flowGroupId,
+          flowIds,
+          deSelectedFlows,
+          asyncKey,
+        }),
+      createOrUpdateFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {error}),
+      delete: (integrationId, flowGroupId, flows) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, {
+          integrationId,
+          flowGroupId,
+          flows,
+        }),
+      deleteFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
+      shiftOrder: (integrationId, flowGroupId, newIndex) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
+          integrationId,
+          flowGroupId,
+          newIndex,
+        }),
+    },
   },
   connections: {
     pingAndUpdate: (connectionId, parentContext) =>

@@ -103,7 +103,7 @@ export default function MappingRow({
   index,
   importId,
   flowId,
-  mappingKey,
+  rowData,
   subRecordMappingId,
   isDragInProgress = false,
   isRowDragged = false,
@@ -112,6 +112,7 @@ export default function MappingRow({
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
 
+  const { key: mappingKey } = rowData;
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
     const mapping = mappings.find(({key}) => key === mappingKey);

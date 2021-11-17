@@ -875,8 +875,47 @@ export const isQueryBuilderSupported = (importResource = {}) => {
   return false;
 };
 
-// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
-export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+// when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
+export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+
+export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsLength) => {
+  if (!flowGroupings?.length) {
+    return flowObjects;
+  }
+
+  const finalFlowObjects = [];
+
+  flowGroupings.forEach(({_id: groupId, name}, index) => {
+    finalFlowObjects.push({
+      groupName: name,
+      _id: index + objectsLength,
+    });
+    const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
+    const lastFlowObject = resultFlowObjects.pop();
+
+    if (lastFlowObject) {
+      lastFlowObject.isLastFlowInFlowGroup = true;
+      finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
+    }
+  });
+
+  const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
+
+  if (flowsWithoutGroupId?.length) {
+    finalFlowObjects.push({
+      groupName: 'Unassigned',
+      _id: objectsLength + flowsWithoutGroupId.length + 1,
+    });
+    const lastFlowObject = flowsWithoutGroupId.pop();
+
+    if (lastFlowObject) {
+      lastFlowObject.isLastFlowInFlowGroup = true;
+      finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
+    }
+  }
+
+  return finalFlowObjects;
+};
 
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;

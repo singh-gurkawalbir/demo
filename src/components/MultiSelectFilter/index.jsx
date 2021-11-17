@@ -91,7 +91,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -238,7 +238,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                                   value="required"
                                   className={classes.selectResourceCheck} />
                                   )}
-                              label={m.name}
+                              label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
                               key={m._id} />
                             {expanded[m._id] && m.children && m.children.map(c => (
                               <ChildDetails
