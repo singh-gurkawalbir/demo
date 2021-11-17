@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {IconButton, makeStyles } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import Applications from './Applications';
+import { APP_WIDTH, MAX_APPLICATIONS, MAX_APPLICATIONS_IN_A_ROW } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   applicationsMenuPopper: {
@@ -37,19 +38,16 @@ const emptyArr = [];
 export default function LogoStrip({applications = emptyArr}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const applicationsCount = applications?.length || 0;
-  const maxApps = 10;
-  const maxAppsInRow = 5;
-  const appWidth = 30;
-  const apps = applicationsCount > maxApps ? applications.slice(0, maxApps - 1) : applications.slice(0, maxApps);
+  const apps = applicationsCount > MAX_APPLICATIONS ? applications.slice(0, MAX_APPLICATIONS - 1) : applications.slice(0, MAX_APPLICATIONS);
   const additionalApps = applications.slice(apps.length, applicationsCount);
   const additionalAppsCount = additionalApps.length;
   const styleProps = {
-    maxAppsInRow,
+    maxAppsInRow: MAX_APPLICATIONS_IN_A_ROW,
     additionalAppsCount,
-    appWidth,
+    appWidth: APP_WIDTH,
   };
   const classes = useStyles(styleProps);
-  const appsPaper = additionalAppsCount > maxAppsInRow ? classes.applicationsMenuPaperMax : classes.applicationsMenuPaper;
+  const appsPaper = additionalAppsCount > MAX_APPLICATIONS_IN_A_ROW ? classes.applicationsMenuPaperMax : classes.applicationsMenuPaper;
 
   const handleClick = useCallback(
     event => {
@@ -64,7 +62,7 @@ export default function LogoStrip({applications = emptyArr}) {
 
   return (
     <>
-      {applicationsCount > maxApps ? (
+      {applicationsCount > MAX_APPLICATIONS ? (
         <Applications apps={apps}>
           <IconButton
             data-test="logoStrip"

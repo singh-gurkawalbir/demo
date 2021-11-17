@@ -74,7 +74,7 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
   const status = tileStatus(tile);
   const {
     urlToIntegrationSettings,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const handleTileClick = useCallback(
     event => {

@@ -23,7 +23,7 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/consta
 import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { isIntegrationAppVerion2 } from '../../../../utils/integrationApps';
+import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 import TileNotification from '../../../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../../../hooks';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
@@ -32,6 +32,7 @@ import Status from '../../../../components/Buttons/Status';
 import TileActions from './TileActions';
 import ActionGroup from '../../../../components/ActionGroup';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
+import { getTextAfterCount } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -123,9 +124,9 @@ function Tile({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const numFlowsText = getTextAfterCount('Flow', tile.numFlows);
   const isIntegrationV2 = useSelector(state =>
-    isIntegrationAppVerion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
+    isIntegrationAppVersion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -138,7 +139,7 @@ function Tile({
     urlToIntegrationSettings,
     urlToIntegrationUsers,
     urlToIntegrationConnections,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const accessLevel = tile.integration?.permissions?.accessLevel;
   const status = tileStatus(tile);

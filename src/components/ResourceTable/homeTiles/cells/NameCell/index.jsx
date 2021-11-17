@@ -39,13 +39,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function NameCell({ tile }) {
-  const { name,
+  const {name,
     description,
     tag,
     ssLinkedConnectionId,
     pinned} = tile;
   const classes = useStyles();
-  const {urlToIntegrationSettings} = useSelectorMemo(selectors.homeTileRedirectUrl, tile);
+  const {urlToIntegrationSettings} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const ssAccessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, ssLinkedConnectionId));
 
