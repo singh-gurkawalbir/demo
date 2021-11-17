@@ -280,6 +280,15 @@ export default {
     if (retValues['/http/requestMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
     }
+    if (!retValues['/http/requestMediaType']) {
+      retValues['/http/requestMediaType'] = undefined;
+    }
+    if (!retValues['/http/successMediaType']) {
+      retValues['/http/successMediaType'] = undefined;
+    }
+    if (!retValues['/http/errorMediaType']) {
+      retValues['/http/errorMediaType'] = undefined;
+    }
     retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
     delete retValues['/http/existingLookupType'];
