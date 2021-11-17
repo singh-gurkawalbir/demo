@@ -1,44 +1,53 @@
 import React, {useCallback, useState} from 'react';
 import clsx from 'clsx';
-import {makeStyles } from '@material-ui/core';
+import {IconButton, makeStyles } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import Applications from './Applications';
-import {TextButton} from '../Buttons';
+import { APP_WIDTH, MAX_APPLICATIONS, MAX_APPLICATIONS_IN_A_ROW } from '../../utils/constants';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   applicationsMenuPopper: {
     border: 'none',
   },
   applicationsMenuPaper: {
-    right: styleProps => styleProps.additionalAppsCount >= 3 ? 60 : 30,
+    right: styleProps => styleProps.additionalAppsCount >= 3 ? styleProps.appWidth : styleProps.appWidth / 2,
   },
   applicationsMenuPaperMax: {
-    right: 120,
+    right: styleProps => styleProps.appWidth * 2,
   },
   applicationsMenuPaperPlaceholder: {
     position: 'relative',
-    maxHeight: 160,
+    maxHeight: styleProps => styleProps.appWidth * 4,
     overflowY: 'auto',
   },
   moreLogoStrip: {
-    gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.maxAppsInRow ? styleProps.maxAppsInRow : styleProps.additionalAppsCount}, minmax(40px, 60px))`,
+    gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.maxAppsInRow ? styleProps.maxAppsInRow : styleProps.additionalAppsCount}, ${styleProps.appWidth})`,
   },
-});
+  logoStripBtn: {
+    padding: 0,
+    '& >* span': {
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: 12,
+      color: theme.palette.secondary.main,
+    },
+  },
+}));
 
-export default function LogoStrip({applications}) {
+const emptyArr = [];
+export default function LogoStrip({applications = emptyArr}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const applicationsCount = applications?.length || 0;
-  const maxApps = 10;
-  const maxAppsInRow = 5;
-  const apps = applicationsCount > maxApps ? applications.slice(0, maxApps - 1) : applications.slice(0, maxApps);
+  const apps = applicationsCount > MAX_APPLICATIONS ? applications.slice(0, MAX_APPLICATIONS - 1) : applications.slice(0, MAX_APPLICATIONS);
   const additionalApps = applications.slice(apps.length, applicationsCount);
   const additionalAppsCount = additionalApps.length;
   const styleProps = {
-    maxAppsInRow,
+    maxAppsInRow: MAX_APPLICATIONS_IN_A_ROW,
     additionalAppsCount,
+    appWidth: APP_WIDTH,
   };
   const classes = useStyles(styleProps);
-  const appsPaper = additionalAppsCount > maxAppsInRow ? classes.applicationsMenuPaperMax : classes.applicationsMenuPaper;
+  const appsPaper = additionalAppsCount > MAX_APPLICATIONS_IN_A_ROW ? classes.applicationsMenuPaperMax : classes.applicationsMenuPaper;
 
   const handleClick = useCallback(
     event => {
@@ -53,16 +62,17 @@ export default function LogoStrip({applications}) {
 
   return (
     <>
-      {applicationsCount > maxApps ? (
+      {applicationsCount > MAX_APPLICATIONS ? (
         <Applications apps={apps}>
-          <TextButton
+          <IconButton
             data-test="logoStrip"
+            className={classes.logoStripBtn}
             aria-label="additional apps"
             aria-controls="additionalApps"
             aria-haspopup="true"
             onClick={handleClick}>
-            + {applicationsCount - apps.length}
-          </TextButton>
+            <span>+{applicationsCount - apps.length}</span>
+          </IconButton>
           <ArrowPopper
             placement="bottom"
             open={open}
