@@ -1,4 +1,3 @@
-import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,6 +7,7 @@ import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { UNASSIGNED_SECTION_ID } from '../../../../utils/constants';
 import { TextButton } from '../../../Buttons';
+import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
 import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
 import DynaText from '../DynaText';
@@ -15,6 +15,7 @@ import DynaText from '../DynaText';
 const useStyles = makeStyles(theme => ({
   textFieldWithDeleteSupport: {
     display: 'flex',
+    alignItems: 'center',
   },
   dynaTextField: {
     flex: 1,
@@ -24,8 +25,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
 }));
-
-const title = 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.';
 export default function TextFieldWithDeleteSupport(props) {
   const classes = useStyles();
   const history = useHistory();
@@ -92,14 +91,15 @@ export default function TextFieldWithDeleteSupport(props) {
   return isEdit ? (
     <div className={classes.textFieldWithDeleteSupport}>
       <DynaText {...props} className={classes.dynaTextField} />
-      <Tooltip data-public title={title} placement="bottom" >
+      <ButtonWithTooltip
+        tooltipProps={{title: 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.'}}>
         <TextButton
           onClick={handleDeleteFlowGroupClick}
           startIcon={<TrashIcon />}
           className={classes.deleteFlowBtn}>
           Delete flow group
         </TextButton>
-      </Tooltip>
+      </ButtonWithTooltip>
     </div>
   ) : (
     <DynaText {...props} />
