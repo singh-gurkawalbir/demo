@@ -2,14 +2,14 @@ import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual, difference } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { selectors } from '../../reducers';
-import actions from '../../actions';
-import { getTileId } from './util';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import { getTileId } from '../../../../utils/home';
 import Tile from './Tile';
 import SuiteScriptTile from './SuiteScriptTile';
-import SortableList from '../../components/Sortable/SortableList';
-import SortableItem from '../../components/Sortable/SortableItem';
-import useSortableList from '../../hooks/useSortableList';
+import SortableList from '../../../../components/Sortable/SortableList';
+import SortableItem from '../../../../components/Sortable/SortableItem';
+import useSortableList from '../../../../hooks/useSortableList';
 
 const useStyles = makeStyles(theme => ({
   container: {

@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
   fourAppImages: {
     '& img': {
-      maxWidth: theme.spacing(7),
+      maxWidth: theme.spacing(6),
       maxHeight: theme.spacing(6),
     },
     '& > span': {
