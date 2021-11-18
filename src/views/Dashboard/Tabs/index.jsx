@@ -3,8 +3,8 @@ import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
-import RunningIcon from '../../../components/icons/DashboardIcon';
-import CompletedIcon from '../../../components/icons/ViewResolvedHistoryIcon';
+import RunningIcon from '../../../components/icons/RunningFlowsIcon';
+import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
 
 const useStyles = makeStyles(theme => ({
   tabContainer: {

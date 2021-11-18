@@ -4,10 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import JobDashboard from '../../../../../components/JobDashboard';
-import IntegrationDashboard from '../../../../Dashboard';
 import PanelHeader from '../../../../../components/PanelHeader';
 import LoadResources from '../../../../../components/LoadResources';
+import ChartsDrawer from '../../../../../components/LineGraph/Dashboard';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,14 +23,8 @@ export default function DashboardPanel({ integrationId, childId }) {
   const filterChildId = useSelector(
     state => selectors.filter(state, 'jobs').childId
   );
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
-  let infoTextDashboard;
 
-  if (isUserInErrMgtTwoDotZero) {
-    infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year.';
-  }
+  const infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year.';
 
   // We may not have an IA that supports children, but those who do,
   // we want to reset the jobs filter any time the child changes.
@@ -50,10 +43,8 @@ export default function DashboardPanel({ integrationId, childId }) {
   return (
     <div className={classes.root}>
       <LoadResources required resources="flows">
-        {!isUserInErrMgtTwoDotZero ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} /> : ''}
-        {isUserInErrMgtTwoDotZero
-          ? <IntegrationDashboard integrationId={integrationId} childId={childId} />
-          : <JobDashboard integrationId={integrationId} />}
+        <PanelHeader title="Analytics" infoText={infoTextDashboard} />
+        <ChartsDrawer integrationId={integrationId} childId={childId} />
       </LoadResources>
     </div>
   );

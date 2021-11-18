@@ -180,6 +180,69 @@ export default function AppRouting() {
         }}
         />
       <Route
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/sections/:sectionId')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/child/${match.params.childId}/dashboard/runningFlows/sections/${match.params.sectionId}`)
+          );
+        }}
+        />
+      <Route
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/child/${match.params.childId}/dashboard/runningFlows`)
+          );
+        }}
+        />
+      <Route
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/sections/:sectionId')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/dashboard/runningFlows/sections/${match.params.sectionId}`)
+          );
+        }}
+        />
+      <Route
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/dashboard/runningFlows`)
+          );
+        }}
+        />
+      <Route
+        path={getRoutePath('/integrations/:integrationId/dashboard/sections/:sectionId')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/integrations/${match.params.integrationId}/dashboard/runningFlows/sections/${match.params.sectionId}`)
+          );
+        }}
+        />
+      <Route
+        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/sections/:sectionId')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/templates/${match.params.templateName}/${match.params.integrationId}/dashboard/runningFlows/sections/${match.params.sectionId}`)
+          );
+        }}
+        />
+      <Route
+        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/templates/${match.params.templateName}/${match.params.integrationId}/dashboard/runningFlows`)
+          );
+        }}
+        />
+      <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId')}
         exact
         render={({ history, match }) =>
@@ -232,12 +295,17 @@ export default function AppRouting() {
 
       <Route
         path={[
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/:dashboardTab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/:dashboardTab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/:dashboardTab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/:dashboardTab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
+          getRoutePath('/integrations/:integrationId/:tab/:dashboardTab/sections/:sectionId'),
           getRoutePath('/integrations/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrations/:integrationId/:tab/:dashboardTab'),
           getRoutePath('/integrations/:integrationId/:tab'),
@@ -247,14 +315,16 @@ export default function AppRouting() {
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')}
+        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:dashboardTab/sections/:sectionId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')]}
         component={Integration}
         />
 
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')}
+        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/:dashboardTab'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')]}
         component={Integration}
         />
 

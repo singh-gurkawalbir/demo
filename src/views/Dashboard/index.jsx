@@ -25,12 +25,8 @@ export default function Dashboard() {
 
   const { paging, sort, ...nonPagingFilters } = filters || {};
   const filterHash = hashCode(nonPagingFilters);
-  let infoTextDashboard =
-    'You can view the flows that have run or are currently running for each flow in your integration, as well as how many pages of data were sent, how long it took and when each job completed. If there are child jobs within a parent job, you can expand the parent to view the children. If there are errors, click the number of errors in the Error column to retry and resolve errors. You can cancel jobs that are in progress, edit jobs, and resolve errors directly from this view.';
-
-  if (isUserInErrMgtTwoDotZero) {
-    infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year.';
-  }
+  const infoTextDashboard =
+    'Use these dashboards to see a comprehensive view of all the running and completed flows in each integration.';
 
   useEffect(() => {
     dispatch(
@@ -64,8 +60,6 @@ export default function Dashboard() {
   return (
     <LoadResources required resources="flows,integrations">
       <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
-
-      {/* <CeligoPageBar title="Dashboard" /> */}
       <Tabs />
       <QueuedJobsDrawer />
     </LoadResources>

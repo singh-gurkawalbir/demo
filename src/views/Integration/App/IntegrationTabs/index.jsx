@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -18,6 +18,7 @@ import UsersPanel from '../../../../components/ManageUsersPanel';
 import ConnectionsPanel from '../panels/Connections';
 import DashboardPanel from '../panels/Dashboard';
 import AddOnsPanel from '../panels/AddOns';
+import AnalyticsPanel from '../panels/Analytics';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import AddIcon from '../../../../components/icons/AddIcon';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
@@ -25,6 +26,8 @@ import GroupOfUsersIcon from '../../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../../components/icons/SingleUserIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getAdminLevelTabs } from '../../../../utils/integrationApps';
+import actions from '../../../../actions';
+import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 
 const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -32,7 +35,7 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
+    Icon: DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -42,7 +45,7 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'notifications',
+    path: 'notifications', // rr
     label: 'Notifications',
     Icon: NotificationsIcon,
     Panel: NotificationsPanel,
@@ -59,6 +62,12 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
     Icon: GroupOfUsersIcon,
     Panel: UsersPanel,
   },
+  ...(isUserInErrMgtTwoDotZero
+    ? [{ path: 'analytics',
+      label: 'Analytics',
+      Icon: GraphIcon,
+      Panel: AnalyticsPanel }]
+    : []),
   {
     path: 'admin',
     label: 'Admin',
@@ -83,7 +92,8 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function IntegrationTabsComponent() {
   const match = useRouteMatch();
-  const {integrationId} = match.params;
+  const dispatch = useDispatch();
+  const {integrationId, childId} = match.params;
   const classes = useStyles();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -124,6 +134,29 @@ export default function IntegrationTabsComponent() {
 
     return getAllTabs(isUserInErrMgtTwoDotZero).filter(tab => !filterTabs.includes(tab.path));
   }, [hasAddOns, isUserInErrMgtTwoDotZero, showAdminTab]);
+
+  useEffect(
+    () => {
+      dispatch(
+        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
+          integrationId: childId ? `store${childId}pid${integrationId}` : integrationId,
+          isIntegrationDashboard: true,
+        })
+      );
+    },
+    [childId, dispatch, integrationId]
+  );
+  useEffect(
+    () => () => {
+      dispatch(
+        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
+          isIntegrationDashboard: false,
+          integrationId: undefined,
+        })
+      );
+    },
+    [dispatch]
+  );
 
   return (
 
