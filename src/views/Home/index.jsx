@@ -2,12 +2,11 @@ import { difference } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
 import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
 import ResourceDrawer from '../../components/drawer/Resource';
 import { selectors } from '../../reducers';
-import DashboardPageBar from './PageBar';
-import DashboardTiles from './Tiles';
+import HomePageBar from './PageBar';
+import HomeView from './View';
 import InstallZip from './InstallZip';
 import OfflineConnectionDrawer from './OfflineConnectionDrawer';
 
@@ -60,11 +59,10 @@ export default function Dashboard() {
       <LoadTiles />
       <InstallZip />
       <ResourceDrawer />
-      <DownloadIntegrationDrawer />
       <InstallIntegrationDrawer />
       <OfflineConnectionDrawer />
-      <DashboardPageBar />
-      <DashboardTiles />
+      <HomePageBar />
+      <HomeView />
     </>
   );
 }

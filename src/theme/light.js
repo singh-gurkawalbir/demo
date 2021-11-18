@@ -9,6 +9,7 @@ export default {
   drawerWidthMinimized: 60,
   appBarHeight,
   pageBarHeight: 88,
+  showMoreHeight: 96,
 
   palette: {
     type: 'light',
@@ -602,6 +603,9 @@ export default {
         color: colors.celigoNeutral6,
         '&: disabled': {
           cursor: 'not-allowed',
+        },
+        '&:hover': {
+          backgroundColor: colors.celigoNeutral2,
         },
       },
       label: {
