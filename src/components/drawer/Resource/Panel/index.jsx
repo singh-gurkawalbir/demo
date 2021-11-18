@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
-    padding: theme.spacing(3),
+    padding: theme.spacing(3, 3, 1),
     '& > div:first-child': {
       padding: 0,
       paddingRight: theme.spacing(2),
