@@ -252,11 +252,7 @@ export default {
   'file.batchSize': {
     type: 'text',
     label: 'Batch size',
-    defaultValue: r => {
-      console.log('resource: ', r);
-
-      return r?.file?.batchSize || '';
-    },
+    defaultValue: r => r?.file?.batchSize || '',
     helpKey: 'import.file.batchSize',
     validWhen: {
       matchesRegEx: {

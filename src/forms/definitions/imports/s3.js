@@ -78,7 +78,6 @@ export default {
         label: 'Advanced',
         fields: [
           'fileAdvanced',
-          'file.batchSize',
           'file.backupPath',
           'file.encoding',
           'blobKeyPath',

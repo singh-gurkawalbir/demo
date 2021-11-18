@@ -10614,7 +10614,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "fileAdvanced",
-                "file.batchSize",
                 "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
