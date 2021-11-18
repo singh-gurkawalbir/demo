@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import DynaSelect from '../DynaSelect';
 import { useSelectorMemo } from '../../../../hooks';
-import { emptyObject, UNASSIGNED_SECTION_ID } from '../../../../utils/constants';
+import { emptyObject, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
 
 export default function DynaFlowGroupsTiedToIntegrations(props) {
   const { formKey } = props;
@@ -18,7 +18,7 @@ export default function DynaFlowGroupsTiedToIntegrations(props) {
 
     if (items.length > 0) {
       items.push({
-        label: 'Unassigned',
+        label: UNASSIGNED_SECTION_NAME,
         value: UNASSIGNED_SECTION_ID,
       });
     }

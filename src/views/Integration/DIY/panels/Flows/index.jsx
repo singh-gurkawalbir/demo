@@ -18,7 +18,7 @@ import flowTableMeta from '../../../../../components/ResourceTable/flows/metadat
 import Spinner from '../../../../../components/Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { UNASSIGNED_SECTION_ID } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
 import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
@@ -122,7 +122,7 @@ const SortableItemComponent = props => (
 );
 const LastRowSortableItemComponent = props => {
   const lastRow = {
-    title: 'Unassigned',
+    title: UNASSIGNED_SECTION_NAME,
     sectionId: UNASSIGNED_SECTION_ID,
   };
   const classes = useStyles();
@@ -431,7 +431,7 @@ export default function FlowsPanel({ integrationId, childId }) {
               setSelectedComponent={setSelectedComponent}
               useRowActions={useRowActions}
               rowData={rowData}
-              isIntegrationPage
+              isMoreEllipsisButton
             />
             )}
           </ActionGroup>

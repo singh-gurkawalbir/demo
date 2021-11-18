@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, isIntegrationPage}) {
+export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, isMoreEllipsisButton}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -33,7 +33,7 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
 
   return (
     <>
-      {isIntegrationPage
+      {isMoreEllipsisButton
         ? (
           <TextButton
             startIcon={<EllipsisIcon />}

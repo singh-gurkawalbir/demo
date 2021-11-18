@@ -4,11 +4,12 @@ import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
 import NameCell from '../../../commonCells/Name';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
 
 export const FlowGroupName = ({ integrationId, flowId }) => {
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
-  let flowGroupName = 'Unassigned';
+  let flowGroupName = UNASSIGNED_SECTION_NAME;
 
   if (!flowGroupings?.length) return null;
 

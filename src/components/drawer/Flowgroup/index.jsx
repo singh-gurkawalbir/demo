@@ -15,7 +15,7 @@ import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
-const formKey = 'flow-flowgroup';
+const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 const paths = ['flowgroups/add', 'flowgroups/edit'];
 
 const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
@@ -60,11 +60,11 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     flowGroupId = groupId;
     flowsWithGroupId = flowsTiedToIntegrations.filter(flow => flow._flowGroupingId === groupId);
   }
-  const formValues = useSelector(state => selectors.formState(state, formKey)?.fields);
+  const formValues = useSelector(state => selectors.formState(state, FLOW_GROUP_FORM_KEY)?.fields);
   const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit);
   const { status: flowGroupSaveStatus, message } = useSelector(state => selectors.flowGroupStatus(state, integrationId)) || {};
 
-  useFormInitWithPermissions({formKey, fieldMeta, remount: remountCount});
+  useFormInitWithPermissions({FLOW_GROUP_FORM_KEY, fieldMeta, remount: remountCount});
 
   useEffect(() => {
     if (flowGroupSaveStatus === 'Failed') {
@@ -75,7 +75,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     const { name, _flowIds } = formValues;
     const deSelectedFlows = flowsWithGroupId.filter(flow => !_flowIds.value.find(id => id === flow._id));
 
-    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, name.value, flowGroupId, _flowIds.value, deSelectedFlows, formKey));
+    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, name.value, flowGroupId, _flowIds.value, deSelectedFlows, FLOW_GROUP_FORM_KEY));
     if (closeAfterSave) {
       handleClose();
     }
@@ -87,12 +87,12 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   return (
     <LoadResources required resources="flows">
       <DrawerContent>
-        <DynaForm formKey={formKey} />
+        <DynaForm formKey={FLOW_GROUP_FORM_KEY} />
       </DrawerContent>
 
       <DrawerFooter>
         <SaveAndCloseButtonGroupForm
-          formKey={formKey}
+          formKey={FLOW_GROUP_FORM_KEY}
           onSave={handleSave}
           onClose={handleClose}
           remountAfterSaveFn={remountForm}
@@ -102,7 +102,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   );
 }
 export default function FlowgroupDrawer({ integrationId }) {
-  const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
+  const {disabled, setCancelTriggered} = useFormOnCancel(FLOW_GROUP_FORM_KEY);
   const history = useHistory();
   const isEdit = history.location.pathname.includes('/edit');
   const match = useRouteMatch();

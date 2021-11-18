@@ -54,7 +54,8 @@ import {
   UNASSIGNED_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
-  AFE_SAVE_STATUS} from '../utils/constants';
+  AFE_SAVE_STATUS,
+  UNASSIGNED_SECTION_NAME} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -2195,7 +2196,7 @@ selectors.mkIntegrationFlowGroups = () => {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
 
         if (shouldHaveUnassignedSection(flowGroupings, integrationFlows)) {
-          return [...flowGroupings, {title: 'Unassigned', sectionId: UNASSIGNED_SECTION_ID}];
+          return [...flowGroupings, {title: UNASSIGNED_SECTION_NAME, sectionId: UNASSIGNED_SECTION_ID}];
         }
       }
 

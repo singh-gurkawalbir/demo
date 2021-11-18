@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { UNASSIGNED_SECTION_ID } from '../../../../utils/constants';
+import { FLOW_GROUP_DELETE_MESSAGE } from '../../../../utils/messageStore';
 import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
 import useConfirmDialog from '../../../ConfirmDialog';
@@ -92,7 +93,7 @@ export default function TextFieldWithDeleteSupport(props) {
     <div className={classes.textFieldWithDeleteSupport}>
       <DynaText {...props} className={classes.dynaTextField} />
       <ButtonWithTooltip
-        tooltipProps={{title: 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.'}}>
+        tooltipProps={{title: FLOW_GROUP_DELETE_MESSAGE}}>
         <TextButton
           onClick={handleDeleteFlowGroupClick}
           startIcon={<TrashIcon />}

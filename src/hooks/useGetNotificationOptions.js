@@ -1,6 +1,6 @@
 import { useSelectorMemo } from '.';
 import { selectors } from '../reducers';
-import { emptyObject, STANDALONE_INTEGRATION } from '../utils/constants';
+import { emptyObject, STANDALONE_INTEGRATION, UNASSIGNED_SECTION_NAME } from '../utils/constants';
 
 export default function useGetNotificationOptions({ integrationId, flows = [], connections = []}) {
   const initialValue = integrationId !== STANDALONE_INTEGRATION.id ? [{ value: integrationId, label: 'All flows' }] : [];
@@ -11,7 +11,7 @@ export default function useGetNotificationOptions({ integrationId, flows = [], c
     if (hasFlowGroupings) {
       const flowGroupName = flowGroupings.find(flowGroup => flowGroup._id === f._flowGroupingId)?.name;
 
-      finalOps.push({ value: f._id, label: f.name, groupName: flowGroupName || 'Unassigned' });
+      finalOps.push({ value: f._id, label: f.name, groupName: flowGroupName || UNASSIGNED_SECTION_NAME });
     } else {
       finalOps.push({ value: f._id, label: f.name });
     }

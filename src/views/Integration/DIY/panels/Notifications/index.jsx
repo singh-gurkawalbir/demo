@@ -12,6 +12,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -55,7 +56,7 @@ const SelectedOptionIml = ({ item, className, processedValue}) => {
       {item.groupName && (
         <Typography
           variant="body1"
-          className={clsx(classes.optionFlowGroupName, item.groupName === 'Unassigned' ? classes.optionFlowGroupUnassigned : '')}
+          className={clsx(classes.optionFlowGroupName, item.groupName === UNASSIGNED_SECTION_NAME ? classes.optionFlowGroupUnassigned : '')}
         >
           {item.groupName}
         </Typography>

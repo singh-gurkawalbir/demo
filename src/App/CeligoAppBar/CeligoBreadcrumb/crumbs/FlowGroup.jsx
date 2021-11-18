@@ -1,22 +1,21 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
+import { UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export default function FlowGroupCrumb({ integrationId, sectionId }) {
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
 
-  let flowGroupName = integration?.flowGroupings?.find(flowGroup => flowGroup._id === sectionId)?.name;
+  let flowGroupName = flowGroupings?.find(flowGroup => flowGroup._id === sectionId)?.name;
 
-  if (!flowGroupName && integration?.flowGroupings?.length > 0) {
-    flowGroupName = 'Unassigned';
+  if (!flowGroupName && flowGroupings?.length > 0) {
+    flowGroupName = UNASSIGNED_SECTION_NAME;
   }
 
   return (
     <LoadResources resources="integrations">
-      {integration ? flowGroupName : 'Flow Group'}
+      {flowGroupings?.length ? flowGroupName : 'Flow Group'}
     </LoadResources>
   );
 }

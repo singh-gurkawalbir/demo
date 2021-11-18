@@ -1,7 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, UNASSIGNED_SECTION_NAME } from './constants';
 import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
@@ -903,7 +903,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
 
   if (flowsWithoutGroupId?.length) {
     finalFlowObjects.push({
-      groupName: 'Unassigned',
+      groupName: UNASSIGNED_SECTION_NAME,
       _id: objectsLength + flowsWithoutGroupId.length + 1,
     });
     const lastFlowObject = flowsWithoutGroupId.pop();
