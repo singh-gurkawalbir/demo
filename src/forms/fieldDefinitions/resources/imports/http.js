@@ -70,7 +70,7 @@ export default {
   },
   'http.requestMediaType': {
     loggable: true,
-    type: 'selectrequestmediatype',
+    type: 'selectmediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
@@ -343,7 +343,7 @@ export default {
   },
   'http.successMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectmediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
     visibleWhenAll: [
@@ -353,17 +353,14 @@ export default {
       },
     ],
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.errorMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectmediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     visibleWhen: [
@@ -373,13 +370,10 @@ export default {
       },
     ],
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.ignoreEmptyNodes': {
     loggable: true,
