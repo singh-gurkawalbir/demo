@@ -4308,7 +4308,7 @@ describe('resource region selector testcases', () => {
     });
     describe('suitescript tiles', () => {
       // no connector id
-      test('no connectorId, no status', () => {
+      test('tile has no connectorId, no status', () => {
         expect(homeTileRedirectUrl(state, suiteScriptTiles[0])).toEqual(
           {
             urlToIntegrationSettings: '/suitescript/suitescript0/integrations/suitescript0',
@@ -4317,7 +4317,7 @@ describe('resource region selector testcases', () => {
         );
       });
 
-      test('no connectorId, status is pending_setup', () => {
+      test('tile has no connectorId, status is pending_setup', () => {
         expect(homeTileRedirectUrl(state, suiteScriptTiles[1])).toEqual(
           {
             urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/setup',
@@ -4325,7 +4325,7 @@ describe('resource region selector testcases', () => {
           }
         );
       });
-      test('no connectorId, status is uninstall', () => {
+      test('tile has no connectorId, status is uninstall', () => {
         expect(homeTileRedirectUrl(state, suiteScriptTiles[2])).toEqual(
           {
             urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/suitescript2/uninstall',
@@ -4335,7 +4335,7 @@ describe('resource region selector testcases', () => {
       });
 
       // connectorId
-      test('connectorId, no status', () => {
+      test('tile has connectorId, no status', () => {
         expect(homeTileRedirectUrl(state, suiteScriptTiles[3])).toEqual(
           {
             urlToIntegrationSettings: '/suitescript/suitescript0/integrations/suitescript3',
@@ -4343,7 +4343,7 @@ describe('resource region selector testcases', () => {
           }
         );
       });
-      test('connectorId, status is pending setup', () => {
+      test('tile has connectorId, status is pending setup', () => {
         expect(homeTileRedirectUrl(state, suiteScriptTiles[4])).toEqual(
           {
             urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/setup',
@@ -4351,7 +4351,7 @@ describe('resource region selector testcases', () => {
           }
         );
       });
-      test('connectorId, status is uninstall', () => {
+      test('tile has connectorId, status is uninstall', () => {
         expect(homeTileRedirectUrl(state, suiteScriptTiles[5])).toEqual(
           {
             urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/suitescript5/uninstall',
@@ -4372,7 +4372,7 @@ describe('resource region selector testcases', () => {
             }
           );
         });
-        test('has connectorId', () => {
+        test('tile has connectorId', () => {
           expect(homeTileRedirectUrl(state, tiles[1])).toEqual(
             {
               urlToIntegrationConnections: '/integrationapps/IntegrationTwo/integration2/connections',
@@ -4382,7 +4382,7 @@ describe('resource region selector testcases', () => {
             }
           );
         });
-        test('no connectorId', () => {
+        test('tile has no connectorId', () => {
           expect(homeTileRedirectUrl(state, tiles[2])).toEqual(
             {
               urlToIntegrationConnections: '/integrations/integration3/connections',
@@ -4413,7 +4413,7 @@ describe('resource region selector testcases', () => {
       );
 
       describe('tile has connectorId', () => {
-        test('has connectorId', () => {
+        test('tile has connectorId', () => {
           expect(homeTileRedirectUrl(state, tiles[4])).toEqual(
             {
               urlToIntegrationConnections: '/integrationapps/1/integration5/connections',
@@ -4423,7 +4423,7 @@ describe('resource region selector testcases', () => {
             }
           );
         });
-        test('isUserInErrMgtTwoDotZero', () => {
+        test('user is in error management 2.0', () => {
           expect(homeTileRedirectUrl(errMgt2State, tiles[5])).toEqual(
             {
               urlToIntegrationConnections: '/integrationapps/1/integration6/connections',
@@ -4435,7 +4435,7 @@ describe('resource region selector testcases', () => {
         });
       });
       describe('tile has template name', () => {
-        test('has no status, no connectorId, not in err mgt 2', () => {
+        test('tile has no status, no connectorId, not in err mgt 2', () => {
           expect(homeTileRedirectUrl(state, tiles[6])).toEqual(
             {
               urlToIntegrationConnections: '/integrations/integration7/connections',
@@ -4445,7 +4445,7 @@ describe('resource region selector testcases', () => {
             }
           );
         });
-        test('has no status, no connectorId, in err mgt 2', () => {
+        test('tile has no status, no connectorId, in err mgt 2', () => {
           expect(homeTileRedirectUrl(errMgt2State, tiles[7])).toEqual(
             {
               urlToIntegrationConnections: '/integrationapps/2/integration8/connections',
