@@ -50,8 +50,10 @@ export default function RunHistoryDrawer() {
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [match.url, history]);
+  const integrationId = useSelector(state =>
+    selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
   const filter = useSelector(state =>
-    selectors.filter(state, FILTER_KEYS_AD.COMPLETED),
+    selectors.filter(state, `${integrationId}${FILTER_KEYS_AD.COMPLETED}`),
   shallowEqual
   );
   let selectedDate;

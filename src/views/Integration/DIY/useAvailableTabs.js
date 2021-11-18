@@ -118,13 +118,7 @@ export function useAvailableTabs() {
   useEffect(
     () => {
       dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
-          integrationId: childId || integrationId,
-          isIntegrationDashboard: true,
-        })
-      );
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.RUNNING, {
+        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
           integrationId: childId || integrationId,
           isIntegrationDashboard: true,
         })
@@ -135,13 +129,7 @@ export function useAvailableTabs() {
   useEffect(
     () => () => {
       dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
-          isIntegrationDashboard: false,
-          integrationId: undefined,
-        })
-      );
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.RUNNING, {
+        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
           isIntegrationDashboard: false,
           integrationId: undefined,
         })

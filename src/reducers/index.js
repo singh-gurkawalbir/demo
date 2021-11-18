@@ -944,10 +944,9 @@ selectors.getAllAccountDashboardFlows = (state, filterKey) => {
     type: 'flows',
   }).resources || [];
   let allStoreFlows = [];
-  const {isIntegrationDashboard, integrationId} = selectors.filter(state, filterKey);
-  let jobFilter = selectors.filter(state, filterKey);
+  const {isIntegrationDashboard, integrationId} = selectors.filter(state, FILTER_KEYS_AD.DASHBOARD);
+  const jobFilter = selectors.filter(state, filterKey);
 
-  jobFilter = jobFilter[integrationId];
   let storeId;
   let parentIntegrationId;
   let selectedIntegrations;
@@ -1019,7 +1018,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   } else {
     path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
   }
-  const {isIntegrationDashboard, integrationId} = selectors.filter(state, filterKey);
+  const {isIntegrationDashboard, integrationId} = selectors.filter(state, FILTER_KEYS_AD.DASHBOARD);
   const jobFilter = selectors.filter(state, `${integrationId || ''}${filterKey}`);
 
   const userPreferences = selectors.userPreferences(state);

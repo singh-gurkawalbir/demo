@@ -31,7 +31,7 @@ export default function RunningFlows() {
 
   const dispatch = useDispatch();
 
-  const { integrationId} = useSelector(state => selectors.filter(state, filterKey));
+  const integrationId = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
   const integrationFilterKey = `${integrationId || ''}${filterKey}`;
 
   const filters = useSelector(state => selectors.filter(state, integrationFilterKey));

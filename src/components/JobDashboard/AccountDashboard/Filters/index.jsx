@@ -59,9 +59,9 @@ const useStyles = makeStyles(theme => ({
 export default function Filters({filterKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { integrationId } = useSelector(state => selectors.filter(state, filterKey));
+  const integrationId = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
   const integrationFilterKey = `${integrationId || ''}${filterKey}`;
-  const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, integrationFilterKey));
+  const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, filterKey));
 
   const jobFilter = useSelector(state => selectors.filter(state, integrationFilterKey));
   const {currPage = 0,

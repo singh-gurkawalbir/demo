@@ -13,7 +13,7 @@ import {FILTER_KEYS_AD, RUNNNING_STATUS_OPTIONS} from '../../../../utils/account
 
 export default {
   useColumns: () => {
-    const {isIntegrationDashboard, integrationId } = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.RUNNING));
+    const {isIntegrationDashboard, integrationId } = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD));
     const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.RUNNING}`;
 
     return [
@@ -24,7 +24,7 @@ export default {
           const integrationOptions = useSelector(state => selectors.getAllAccountDashboardIntegrations(state));
           const handleSave = useCallback(
             () => {
-              dispatch(actions.patchFilter(FILTER_KEYS_AD.RUNNING, {
+              dispatch(actions.patchFilter(integrationFilterKey, {
                 flowIds: ['all'],
               }));
             },
@@ -49,7 +49,7 @@ export default {
       {
         key: '_flowId',
         HeaderValue: function FlowSearchFilter() {
-          const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, FILTER_KEYS_AD.RUNNING));
+          const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, integrationFilterKey));
 
           return (
             <MultiSelectColumnFilter

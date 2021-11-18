@@ -19,10 +19,9 @@ export default function Dashboard() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  let filters = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
-  const {integrationId} = filters;
+  const integrationId = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
 
-  filters = useSelector(state => selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`));
+  const filters = useSelector(state => selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`));
 
   const { paging, sort, ...nonPagingFilters } = filters || {};
   const filterHash = hashCode(nonPagingFilters);

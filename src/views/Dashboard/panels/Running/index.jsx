@@ -7,8 +7,7 @@ import {FILTER_KEYS_AD, DEFAULTS_RUNNING_JOBS_FILTER} from '../../../../utils/ac
 
 export default function RunningFlowsPanel() {
   const dispatch = useDispatch();
-  const filters = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
-  const { integrationId } = filters;
+  const integrationId = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
 
   useEffect(() => {
     dispatch(actions.patchFilter(`${integrationId || ''}${FILTER_KEYS_AD.RUNNING}`, {...DEFAULTS_RUNNING_JOBS_FILTER }));

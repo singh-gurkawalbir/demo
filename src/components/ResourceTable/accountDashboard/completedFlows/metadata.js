@@ -13,8 +13,8 @@ import Status from '../../../Buttons/Status';
 
 export default {
   useColumns: () => {
-    const {isIntegrationDashboard, integrationId} = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
-    const integrationFilterKey = `${integrationId || ''}completedFlows`;
+    const {isIntegrationDashboard, integrationId} = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD));
+    const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
 
     return [
       ...(!isIntegrationDashboard ? [{
@@ -24,9 +24,9 @@ export default {
           const integrationOptions = useSelector(state => selectors.getAllAccountDashboardIntegrations(state));
           const handleSave = useCallback(
             () => {
-              dispatch(actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {[integrationId]: {
+              dispatch(actions.patchFilter(integrationFilterKey, {
                 flowIds: ['all'],
-              }}));
+              }));
             },
             [dispatch],
           );
@@ -49,7 +49,7 @@ export default {
       {
         key: '_flowId',
         HeaderValue: function FlowSearchFilter() {
-          const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, FILTER_KEYS_AD.COMPLETED));
+          const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, integrationFilterKey));
 
           return (
             <MultiSelectColumnFilter
