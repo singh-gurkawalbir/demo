@@ -423,10 +423,16 @@ describe('suiteScriptLinkedTiles selector', () => {
     {
       user: {
         org: {
-          accounts: [{_id: 'own', accessLevel: 'owner'}],
+          accounts: [
+            {
+              _id: ACCOUNT_IDS.OWN,
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+            },
+          ],
+          users: [],
         },
         preferences: {
-          defaultAShareId: 'own',
+          defaultAShareId: ACCOUNT_IDS.OWN,
           dashboard: {
             pinnedIntegrations: ['connection1|suitescript1'],
           },

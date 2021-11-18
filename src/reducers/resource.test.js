@@ -2798,6 +2798,10 @@ describe('resource region selector testcases', () => {
         numFlows: 5,
       },
     ];
+    const flows = [
+      {_id: 1, _integrationId: 'integration2', _connectorId: 'connector2', name: 'integration app'},
+      {_id: 2, _integrationId: 'integration1', name: 'search2', description: 'searchflow'},
+    ];
 
     test('should return correct tiles info for account owner', () => {
       const state = reducer(
@@ -2819,6 +2823,7 @@ describe('resource region selector testcases', () => {
             resources: {
               published,
               integrations,
+              flows,
             },
           },
         },
@@ -2834,183 +2839,104 @@ describe('resource region selector testcases', () => {
           edit: true,
         },
       };
-      const expectedResult = [
+      const defaultProps = {
+        sortablePropType: -1,
+        totalErrorCount: -1,
+      };
+      const expectedStandalone = [{
+        _integrationId: 'none',
+        flowsNameAndDescription: '',
+        integration: {permissions: expectedIntegrationPermissions },
+        key: 'none',
+        name: 'Standalone flows',
+        numError: 0,
+        numFlows: 5,
+        offlineConnections: ['conn1', 'conn2'],
+        sortablePropType: 5,
+        status: 'success',
+        totalErrorCount: 2,
+      }];
+      const expected = [
         {
-          _integrationId: 'none',
-          name: 'Standalone flows',
-          numError: 0,
-          offlineConnections: ['conn1', 'conn2'],
-          numFlows: 5,
-          key: 'none',
-          flowsNameAndDescription: '',
-          sortablePropType: 5,
-          totalErrorCount: 2,
-          integration: {
-            permissions: expectedIntegrationPermissions,
-          },
-          status: TILE_STATUS.SUCCESS,
-        },
-        {
-          _integrationId: 'integration1',
-          name: 'Integration One',
-          numError: 0,
-          numFlows: 2,
+          flowsNameAndDescription: '|search2|searchflow',
+          integration: {permissions: expectedIntegrationPermissions },
           key: 'integration1',
-          flowsNameAndDescription: '',
           sortablePropType: 2,
-          totalErrorCount: 0,
-          integration: {
-            permissions: expectedIntegrationPermissions,
-          },
           status: TILE_STATUS.SUCCESS,
+          totalErrorCount: 0,
         },
         {
-          _integrationId: 'integration2',
-          name: 'Integration Two',
-          numError: 4,
-          numFlows: 3,
+          flowsNameAndDescription: '|integration app|',
+          integration: {permissions: expectedIntegrationPermissions },
           key: 'integration2',
-          flowsNameAndDescription: '',
           sortablePropType: 3,
+          status: TILE_STATUS.HAS_ERRORS,
           totalErrorCount: 4,
-          integration: {
-            permissions: expectedIntegrationPermissions,
-          },
-          status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration3',
-          name: 'Integration Three',
-          numError: 9,
-          offlineConnections: ['conn1', 'conn2'],
-          numFlows: 4,
+          flowsNameAndDescription: '',
+          integration: {permissions: expectedIntegrationPermissions},
           key: 'integration3',
-          flowsNameAndDescription: '',
           sortablePropType: 4,
+          status: TILE_STATUS.HAS_ERRORS,
           totalErrorCount: 11,
-          integration: {
-            permissions: expectedIntegrationPermissions,
-          },
-          status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration4',
-          name: 'Integration Four',
-          numError: 0,
-          offlineConnections: ['conn1', 'conn2'],
-          numFlows: 5,
+          flowsNameAndDescription: '',
+          integration: {permissions: expectedIntegrationPermissions },
           key: 'integration4',
-          flowsNameAndDescription: '',
           sortablePropType: 5,
+          status: TILE_STATUS.SUCCESS,
           totalErrorCount: 2,
-          integration: {
-            permissions: expectedIntegrationPermissions,
-          },
-          status: TILE_STATUS.SUCCESS,
         },
         {
-          _integrationId: 'integration5',
-          _connectorId: 'connector1',
-          name: 'Connector 1',
-          numFlows: 6,
-          connector: {
-            owner: 'Company 1',
-            applications: ['app1', 'app2'],
-          },
+          connector: {applications: ['app1', 'app2'], owner: 'Company 1' },
+          flowsNameAndDescription: '',
+          integration: {mode: 'settings', permissions: expectedIntegrationPermissions},
           key: 'integration5',
-          flowsNameAndDescription: '',
           sortablePropType: -1,
-          totalErrorCount: 0,
-          integration: {
-            mode: 'settings',
-            permissions: expectedIntegrationPermissions,
-          },
           status: TILE_STATUS.SUCCESS,
+          totalErrorCount: 0,
         },
         {
-          _integrationId: 'integration6',
-          _connectorId: 'connector1',
-          tag: 'tag 1',
-          name: 'Connector 1',
-          numError: 36,
-          numFlows: 7,
-          connector: {
-            owner: 'Company 1',
-            applications: ['app1', 'app2'],
-          },
+          connector: {applications: ['app1', 'app2'], owner: 'Company 1'},
+          flowsNameAndDescription: '',
+          integration: {mode: 'settings', permissions: expectedIntegrationPermissions},
           key: 'integration6',
-          flowsNameAndDescription: '',
           sortablePropType: -1,
+          status: TILE_STATUS.HAS_ERRORS,
           totalErrorCount: 36,
-          integration: {
-            mode: 'settings',
-            permissions: expectedIntegrationPermissions,
-          },
-          status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration7',
-          _connectorId: 'connector1',
-          tag: 'tag 2',
-          name: 'Connector 1',
-          numError: 49,
-          numFlows: 8,
-          offlineConnections: ['conn1'],
-          connector: {
-            owner: 'Company 1',
-            applications: ['app1', 'app2'],
-          },
+          connector: { applications: ['app1', 'app2'], owner: 'Company 1'},
+          flowsNameAndDescription: '',
+          integration: {mode: 'settings', permissions: expectedIntegrationPermissions},
           key: 'integration7',
-          flowsNameAndDescription: '',
           sortablePropType: -1,
-          totalErrorCount: 50,
-          integration: {
-            mode: 'settings',
-            permissions: expectedIntegrationPermissions,
-          },
           status: TILE_STATUS.HAS_ERRORS,
+          totalErrorCount: 50,
         },
         {
-          _integrationId: 'integration8',
-          _connectorId: 'connector2',
-          name: 'Connector 2',
-          numFlows: 9,
-          connector: {
-            owner: 'User 2',
-            applications: [],
-          },
+          connector: { applications: [], owner: 'User 2'},
+          flowsNameAndDescription: '|integration app|',
+          integration: { mode: 'install', permissions: expectedIntegrationPermissions},
           key: 'integration8',
-          flowsNameAndDescription: '',
-          sortablePropType: -1,
-          totalErrorCount: -1,
-          integration: {
-            mode: 'install',
-            permissions: expectedIntegrationPermissions,
-          },
           status: TILE_STATUS.IS_PENDING_SETUP,
+          ...defaultProps,
         },
         {
-          _integrationId: 'integration9',
-          _connectorId: 'connector2',
-          name: 'Connector 2',
-          tag: 'test tag',
-          numFlows: 10,
-          offlineConnections: ['conn1', 'conn2'],
-          connector: {
-            owner: 'User 2',
-            applications: [],
-          },
+          connector: { applications: [], owner: 'User 2'},
+          flowsNameAndDescription: '|integration app|',
+          integration: {mode: 'install', permissions: expectedIntegrationPermissions},
           key: 'integration9',
-          flowsNameAndDescription: '',
-          sortablePropType: -1,
-          totalErrorCount: -1,
-          integration: {
-            mode: 'install',
-            permissions: expectedIntegrationPermissions,
-          },
           status: TILE_STATUS.IS_PENDING_SETUP,
+          ...defaultProps,
         },
       ];
+      const expectedResult = [...expectedStandalone, ...expected.map((e, idx) => ({
+        ...e,
+        ...tilesCollection[idx],
+      }))];
 
       expect(tiles).toEqual(expectedResult);
     });
@@ -3079,6 +3005,7 @@ describe('resource region selector testcases', () => {
             resources: {
               published,
               integrations,
+              flows,
             },
           },
         },
@@ -3087,180 +3014,95 @@ describe('resource region selector testcases', () => {
           ...tilesCollection,
         ])
       );
-      const expected = [
+      const expectedStandalone = [{
+        _integrationId: 'none',
+        name: 'Standalone flows',
+        numError: 0,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 5,
+        key: 'none',
+        flowsNameAndDescription: '',
+        sortablePropType: 5,
+        totalErrorCount: 2,
+        integration: {permissions: {}},
+        status: TILE_STATUS.SUCCESS,
+      }];
+      const expectedResult = [
         {
-          _integrationId: 'none',
-          name: 'Standalone flows',
-          numError: 0,
-          offlineConnections: ['conn1', 'conn2'],
-          numFlows: 5,
-          key: 'none',
-          flowsNameAndDescription: '',
-          sortablePropType: 5,
-          totalErrorCount: 2,
-          integration: {
-            permissions: {},
-          },
-          status: TILE_STATUS.SUCCESS,
-        },
-        {
-          _integrationId: 'integration1',
-          name: 'Integration One',
-          numError: 0,
-          numFlows: 2,
           key: 'integration1',
-          flowsNameAndDescription: '',
+          flowsNameAndDescription: '|search2|searchflow',
           sortablePropType: 2,
           totalErrorCount: 0,
-          integration: {
-            permissions: {},
-          },
+          integration: {permissions: {} },
           status: TILE_STATUS.SUCCESS,
         },
         {
-          _integrationId: 'integration2',
-          name: 'Integration Two',
-          numError: 4,
-          numFlows: 3,
+          flowsNameAndDescription: '|integration app|',
           key: 'integration2',
-          flowsNameAndDescription: '',
           sortablePropType: 3,
           totalErrorCount: 4,
-          integration: {
-            permissions: {},
-          },
+          integration: {permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration3',
-          name: 'Integration Three',
-          numError: 9,
-          offlineConnections: ['conn1', 'conn2'],
-          numFlows: 4,
           key: 'integration3',
           flowsNameAndDescription: '',
           sortablePropType: 4,
           totalErrorCount: 11,
-          integration: {
-            permissions: {},
-          },
+          integration: {permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration4',
-          name: 'Integration Four',
-          numError: 0,
-          offlineConnections: ['conn1', 'conn2'],
-          numFlows: 5,
           key: 'integration4',
           flowsNameAndDescription: '',
           sortablePropType: 5,
           totalErrorCount: 2,
-          integration: {
-            permissions: {},
-          },
+          integration: {permissions: {} },
           status: TILE_STATUS.SUCCESS,
         },
         {
-          _integrationId: 'integration5',
-          _connectorId: 'connector1',
-          name: 'Connector 1',
-          numFlows: 6,
-          connector: {
-            owner: 'Company 1',
-            applications: ['app1', 'app2'],
-          },
+          connector: {owner: 'Company 1', applications: ['app1', 'app2'] },
           key: 'integration5',
           flowsNameAndDescription: '',
           sortablePropType: -1,
           totalErrorCount: 0,
-          integration: {
-            mode: 'settings',
-            permissions: {},
-          },
+          integration: {mode: 'settings', permissions: {} },
           status: TILE_STATUS.SUCCESS,
         },
         {
-          _integrationId: 'integration6',
-          _connectorId: 'connector1',
-          tag: 'tag 1',
-          name: 'Connector 1',
-          numError: 36,
-          numFlows: 7,
-          connector: {
-            owner: 'Company 1',
-            applications: ['app1', 'app2'],
-          },
+          connector: {owner: 'Company 1', applications: ['app1', 'app2'] },
           key: 'integration6',
           flowsNameAndDescription: '',
           sortablePropType: -1,
           totalErrorCount: 36,
-          integration: {
-            mode: 'settings',
-            permissions: {},
-          },
+          integration: {mode: 'settings', permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration7',
-          _connectorId: 'connector1',
-          tag: 'tag 2',
-          name: 'Connector 1',
-          numError: 49,
-          numFlows: 8,
-          offlineConnections: ['conn1'],
-          connector: {
-            owner: 'Company 1',
-            applications: ['app1', 'app2'],
-          },
+          connector: {owner: 'Company 1', applications: ['app1', 'app2'] },
           key: 'integration7',
           flowsNameAndDescription: '',
           sortablePropType: -1,
           totalErrorCount: 50,
-          integration: {
-            mode: 'settings',
-            permissions: {},
-          },
+          integration: {mode: 'settings', permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
         {
-          _integrationId: 'integration8',
-          _connectorId: 'connector2',
-          name: 'Connector 2',
-          numFlows: 9,
-          connector: {
-            owner: 'User 2',
-            applications: [],
-          },
+          flowsNameAndDescription: '|integration app|',
+          connector: {owner: 'User 2', applications: [] },
           key: 'integration8',
-          flowsNameAndDescription: '',
           sortablePropType: -1,
           totalErrorCount: -1,
-          integration: {
-            mode: 'install',
-            permissions: {},
-          },
+          integration: {mode: 'install', permissions: {} },
           status: TILE_STATUS.IS_PENDING_SETUP,
         },
         {
-          _integrationId: 'integration9',
-          _connectorId: 'connector2',
-          name: 'Connector 2',
-          tag: 'test tag',
-          numFlows: 10,
-          offlineConnections: ['conn1', 'conn2'],
-          connector: {
-            owner: 'User 2',
-            applications: [],
-          },
+          flowsNameAndDescription: '|integration app|',
+          connector: {owner: 'User 2', applications: [] },
           key: 'integration9',
-          flowsNameAndDescription: '',
           sortablePropType: -1,
           totalErrorCount: -1,
-          integration: {
-            mode: 'install',
-            permissions: {},
-          },
+          integration: {mode: 'install', permissions: {} },
           status: TILE_STATUS.IS_PENDING_SETUP,
         },
       ];
@@ -3278,6 +3120,10 @@ describe('resource region selector testcases', () => {
           },
         },
       };
+      const expected = [...expectedStandalone, ...expectedResult.map((e, idx) => ({
+        ...e,
+        ...tilesCollection[idx],
+      }))];
 
       expected.forEach(t => {
         // eslint-disable-next-line no-param-reassign
@@ -3371,16 +3217,6 @@ describe('resource region selector testcases', () => {
         lastErrorAt: 3,
       },
     ];
-    // const suiteScriptTiles = [
-    //   {
-    //     _integrationId: 'suitescript0',
-    //     name: 'Connector 2',
-    //     tag: 'test tag',
-    //     numFlows: 10,
-    //     offlineConnections: ['conn1', 'conn2'],
-    //     ssLinkedConnectionId: 'suitescript0',
-    //   },
-    // ];
     const standaloneTiles = [
       {
         _integrationId: 'none',
@@ -3437,11 +3273,34 @@ describe('resource region selector testcases', () => {
         mode: 'install',
       },
     ];
+    const connections = [
+      {
+        _id: 'connection1',
+      },
+      {
+        _id: 'connection2',
+      },
+      {
+        _id: 'connection3',
+      },
+      {
+        _id: 'connection4',
+      },
+    ];
     const initialState = reducer(
       {
         user: {
           profile: {},
-          preferences: { defaultAShareId: ACCOUNT_IDS.OWN, environment: 'production' },
+          preferences: {
+            defaultAShareId: ACCOUNT_IDS.OWN,
+            environment: 'production',
+            ssConnectionIds: [
+              'connection1',
+              'connection2',
+              'connection3',
+              'connection4',
+            ],
+          },
           org: {
             accounts: [
               {
@@ -3456,6 +3315,50 @@ describe('resource region selector testcases', () => {
           resources: {
             published,
             integrations,
+            connections,
+          },
+          suiteScript: {
+            connection1: {
+              tiles: [
+                {
+                  _integrationId: 'suitescript1',
+                  ssLinkedConnectionId: 'connection1',
+                  displayName: 'salesforce netsuite',
+                },
+                {
+                  _integrationId: 'suitescript2',
+                  ssLinkedConnectionId: 'connection1',
+                  _connectorId: 'connector1',
+                  numFlows: 10,
+                },
+              ],
+            },
+            connection2: {
+              tiles: [
+                {
+                  _integrationId: 'suitescript1',
+                  ssLinkedConnectionId: 'connection2',
+                  displayName: 'salesforce netsuite',
+                  numError: 10,
+                  status: TILE_STATUS.HAS_ERRORS,
+                },
+              ],
+            },
+            connection3: {
+              tiles: [
+                {
+                  _integrationId: 'suitescript1',
+                  ssLinkedConnectionId: 'connection3',
+                  _connectorId: 'suitescript-svb-netsuite',
+                  status: TILE_STATUS.IS_PENDING_SETUP,
+                },
+                {
+                  _integrationId: 'suitescript2',
+                  ssLinkedConnectionId: 'connection3',
+                },
+              ],
+            },
+            connection4: {},
           },
         },
       },
@@ -3477,8 +3380,28 @@ describe('resource region selector testcases', () => {
 
     test('should return tiles sorted by name if default filter is applied', () => {
       const expected = {
-        filteredCount: 4,
+        filteredCount: 8,
         filteredTiles: [
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1|suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _integrationId: 'suitescript2',
+            key: 'connection3|suitescript2',
+            name: undefined,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection3',
+            totalErrorCount: 0,
+          },
           {
             _integrationId: 'integration3',
             applications: [],
@@ -3557,6 +3480,28 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 4,
           },
           {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection1|suitescript1',
+            name: 'salesforce netsuite',
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection2|suitescript1',
+            name: 'salesforce netsuite',
+            numError: 10,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection2',
+            status: 'has_errors',
+            totalErrorCount: 10,
+          },
+          {
             _integrationId: 'none',
             applications: [],
             flowsNameAndDescription: '',
@@ -3582,7 +3527,7 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 2,
           },
         ],
-        perPageCount: 4,
+        perPageCount: 8,
         totalCount: 4,
       };
 
@@ -3597,7 +3542,7 @@ describe('resource region selector testcases', () => {
           },
         }));
       const expected = {
-        filteredCount: 4,
+        filteredCount: 8,
         filteredTiles: [
           {
             _integrationId: 'integration3',
@@ -3624,6 +3569,18 @@ describe('resource region selector testcases', () => {
             sortablePropType: 4,
             status: 'has_errors',
             totalErrorCount: 11,
+          },
+          {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection2|suitescript1',
+            name: 'salesforce netsuite',
+            numError: 10,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection2',
+            status: 'has_errors',
+            totalErrorCount: 10,
           },
           {
             _connectorId: 'connector1',
@@ -3701,8 +3658,38 @@ describe('resource region selector testcases', () => {
             status: 'success',
             totalErrorCount: 0,
           },
+          {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection1|suitescript1',
+            name: 'salesforce netsuite',
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1|suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _integrationId: 'suitescript2',
+            key: 'connection3|suitescript2',
+            name: undefined,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection3',
+            totalErrorCount: 0,
+          },
         ],
-        perPageCount: 4,
+        perPageCount: 8,
         totalCount: 4,
       };
 
@@ -3717,7 +3704,7 @@ describe('resource region selector testcases', () => {
           },
         }));
       const expected = {
-        filteredCount: 4,
+        filteredCount: 8,
         filteredTiles: [
           {
             _integrationId: 'none',
@@ -3743,6 +3730,48 @@ describe('resource region selector testcases', () => {
             sortablePropType: 5,
             status: 'success',
             totalErrorCount: 2,
+          },
+          {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection1|suitescript1',
+            name: 'salesforce netsuite',
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1|suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection2|suitescript1',
+            name: 'salesforce netsuite',
+            numError: 10,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection2',
+            status: 'has_errors',
+            totalErrorCount: 10,
+          },
+          {
+            _integrationId: 'suitescript2',
+            key: 'connection3|suitescript2',
+            name: undefined,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection3',
+            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -3822,7 +3851,7 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 11,
           },
         ],
-        perPageCount: 4,
+        perPageCount: 8,
         totalCount: 4,
       };
 
@@ -3837,7 +3866,7 @@ describe('resource region selector testcases', () => {
           },
         }));
       const expected = {
-        filteredCount: 4,
+        filteredCount: 8,
         filteredTiles: [
           {
             _integrationId: 'none',
@@ -3913,6 +3942,37 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 0,
           },
           {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection1|suitescript1',
+            name: 'salesforce netsuite',
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _integrationId: 'suitescript1',
+            displayName: 'salesforce netsuite',
+            key: 'connection2|suitescript1',
+            name: 'salesforce netsuite',
+            numError: 10,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection2',
+            status: 'has_errors',
+            totalErrorCount: 10,
+          },
+          {
+            _integrationId: 'suitescript2',
+            key: 'connection3|suitescript2',
+            name: undefined,
+            pinned: false,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection3',
+            totalErrorCount: 0,
+          },
+          {
             _connectorId: 'connector1',
             _integrationId: 'connector1',
             applications: [
@@ -3941,8 +4001,19 @@ describe('resource region selector testcases', () => {
             status: 'has_errors',
             totalErrorCount: 4,
           },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1|suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
         ],
-        perPageCount: 4,
+        perPageCount: 8,
         totalCount: 4,
       };
 
@@ -4000,7 +4071,7 @@ describe('resource region selector testcases', () => {
           keyword: 'http',
         }));
 
-      test('should return tiles filterd by search filter by integration name', () => {
+      test('should return tiles filterd by integration name', () => {
         const expected = {
           filteredCount: 1,
           filteredTiles: [
@@ -4086,7 +4157,7 @@ describe('resource region selector testcases', () => {
       });
     });
   });
-  describe('selectors.homeTileRedirectUrl test cases', () => {
+  describe('selectors.mkHomeTileRedirectUrl test cases', () => {
     const homeTileRedirectUrl = selectors.mkHomeTileRedirectUrl();
     const tiles = [
       {
