@@ -23,6 +23,7 @@ export default {
     },
     'http.submit.resourcePath': { fieldId: 'http.submit.resourcePath' },
     'http.status.doneValues': { fieldId: 'http.status.doneValues' },
+    'http.status.errorValues': { fieldId: 'http.status.errorValues' },
     'http.result._exportId': { fieldId: 'http.result._exportId' },
     'http.submit.sameAsStatus': { fieldId: 'http.submit.sameAsStatus' },
     'http.submit.transform': { fieldId: 'http.submit.transform' },
@@ -44,7 +45,8 @@ export default {
           'http.status.statusPath',
           'http.status.inProgressValues',
           'http.status.doneValues',
-          'http.status.doneWithoutDataValues'],
+          'http.status.doneWithoutDataValues',
+          'http.status.errorValues'],
       },
       {
         collapsed: false,
