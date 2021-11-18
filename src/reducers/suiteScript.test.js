@@ -419,6 +419,150 @@ describe('suiteScriptLinkedTiles selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptLinkedTiles(undefined, {})).toEqual([]);
   });
+  const state = reducer(
+    {
+      user: {
+        org: {
+          accounts: [{_id: 'own', accessLevel: 'owner'}],
+        },
+        preferences: {
+          defaultAShareId: 'own',
+          dashboard: {
+            pinnedIntegrations: ['connection1|suitescript1'],
+          },
+          ssConnectionIds: [
+            'connection1',
+            'connection2',
+            'connection3',
+            'connection4',
+          ],
+        },
+      },
+      data: {
+        suiteScript: {
+          connection1: {
+            tiles: [
+              {
+                _integrationId: 'suitescript1',
+                ssLinkedConnectionId: 'connection1',
+                displayName: 'salesforce netsuite',
+              },
+              {
+                _integrationId: 'suitescript2',
+                ssLinkedConnectionId: 'connection1',
+                _connectorId: 'connector1',
+                numFlows: 10,
+              },
+            ],
+          },
+          connection2: {
+            tiles: [
+              {
+                _integrationId: 'suitescript1',
+                ssLinkedConnectionId: 'connection2',
+                displayName: 'salesforce netsuite',
+                numError: 10,
+                status: TILE_STATUS.HAS_ERRORS,
+              },
+            ],
+          },
+          connection3: {
+            tiles: [
+              {
+                _integrationId: 'suitescript1',
+                ssLinkedConnectionId: 'connection3',
+              },
+              {
+                _integrationId: 'suitescript2',
+                ssLinkedConnectionId: 'connection3',
+              },
+            ],
+          },
+          connection4: {},
+        },
+        resources: {
+          connections: [
+            {
+              _id: 'connection1',
+            },
+            {
+              _id: 'connection2',
+            },
+            {
+              _id: 'connection3',
+            },
+            {
+              _id: 'connection4',
+            },
+          ],
+        },
+      },
+    },
+    'someAction'
+  );
+  const emptyState = reducer(undefined, 'someActions');
+
+  test('should return empty array if there are no linked connections', () => {
+    expect(selectors.suiteScriptLinkedTiles(emptyState)).toEqual([]);
+  });
+
+  test('should return tiles with correct props', () => {
+    const expected = [
+      {
+        _integrationId: 'suitescript1',
+        key: 'connection1|suitescript1',
+        displayName: 'salesforce netsuite',
+        name: 'salesforce netsuite',
+        pinned: true,
+        sortablePropType: 0,
+        ssLinkedConnectionId: 'connection1',
+        totalErrorCount: 0,
+      },
+      {
+        _integrationId: 'suitescript2',
+        key: 'connection1|suitescript2',
+        _connectorId: 'connector1',
+        name: undefined,
+        numFlows: 10,
+        pinned: false,
+        sortablePropType: -1,
+        ssLinkedConnectionId: 'connection1',
+        totalErrorCount: 0,
+      },
+      {
+        _integrationId: 'suitescript1',
+        key: 'connection2|suitescript1',
+        displayName: 'salesforce netsuite',
+        name: 'salesforce netsuite',
+        numError: 10,
+        status: TILE_STATUS.HAS_ERRORS,
+        pinned: false,
+        sortablePropType: 0,
+        ssLinkedConnectionId: 'connection2',
+        totalErrorCount: 10,
+      },
+      {
+        _integrationId: 'suitescript1',
+        key: 'connection3|suitescript1',
+        name: undefined,
+        pinned: false,
+        sortablePropType: 0,
+        ssLinkedConnectionId: 'connection3',
+        totalErrorCount: 0,
+      },
+      {
+        _integrationId: 'suitescript2',
+        key: 'connection3|suitescript2',
+        name: undefined,
+        pinned: false,
+        sortablePropType: 0,
+        ssLinkedConnectionId: 'connection3',
+        totalErrorCount: 0,
+      },
+    ];
+
+    expect(selectors.suiteScriptLinkedTiles(state)).toEqual(expected);
+  });
 });
 
 describe('makeSuiteScriptIAFlowSections selector', () => {

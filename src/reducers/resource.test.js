@@ -4,6 +4,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, MISCELLANEOUS_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
+import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 
@@ -111,71 +112,136 @@ const suitescriptConnectors = [
 
 describe('resource region selector testcases', () => {
   describe('selectors.mkTileApplications test cases', () => {
+    const selector = selectors.mkTileApplications();
     const state = {
       data: {
         resources: {
-          integrations: [{
-            _id: 'diyIntegration',
-            name: 'DIY integration',
-          }, {
-            _id: 'iaIntegration',
-            _connectorId: 'connector1',
-            name: 'DIY integration',
-          }, {
-            _id: 'ia2Integration',
-            _connectorId: 'connector2',
-            installSteps: ['1'],
-            initChild: () => {},
-            name: 'IA2.0 parent integration',
-          }, {
-            _id: 'ia2IntegrationChild',
-            _parentId: 'ia2Integration',
-            installSteps: ['1'],
-            _connectorId: 'connector2',
-            name: 'IA2.0 child integration',
-          }],
-          connections: [{
-            _id: 'connection1',
-            assistant: 'assistant1',
-            _integrationId: 'ia2IntegrationChild',
-          },
-          {
-            _id: 'connection2',
-            type: 'assistant2',
-            _integrationId: 'ia2IntegrationChild',
-
-          },
-          {
-            _id: 'connection3',
-            assistant: 'assistant3',
-            _integrationId: 'ia2IntegrationChild',
-
-          },
-          {
-            _id: 'connection4',
-            assistant: 'assistant4',
-            _integrationId: 'ia2Integration',
-
-          },
-          {
-            _id: 'connection5',
-            type: 'assistant5',
-            _integrationId: 'ia2Integration',
-
-          },
-          {
-            _id: 'connection6',
-            assistant: 'assistant1',
-            _integrationId: 'ia2IntegrationChild',
-
-          }],
+          integrations: [
+            {
+              _id: 'diyIntegration',
+              _registeredConnectionIds: [1, 2],
+            },
+            {
+              _id: 'diyIntegration1',
+              _registeredConnectionIds: [3, 4],
+            },
+            {
+              _id: 'diyIntegration2',
+              _registeredConnectionIds: [1, 3],
+            },
+            {
+              _id: 'iaIntegration',
+              _connectorId: 'connector1',
+              name: 'DIY integration',
+            }, {
+              _id: 'ia2Integration',
+              _connectorId: 'connector2',
+              installSteps: ['1'],
+              initChild: () => {},
+              name: 'IA2.0 parent integration',
+            }, {
+              _id: 'ia2IntegrationChild',
+              _parentId: 'ia2Integration',
+              installSteps: ['1'],
+              _connectorId: 'connector2',
+              name: 'IA2.0 child integration',
+            },
+            {
+              _id: 'ia2Integration1',
+              _connectorId: 'connector2',
+              installSteps: ['1'],
+              initChild: () => {},
+              name: 'IA2.0 parent integration 1',
+            }, {
+              _id: 'ia2IntegrationChild1',
+              _parentId: 'ia2Integration1',
+              installSteps: ['1'],
+              _connectorId: 'connector2',
+              name: 'IA2.0 child integration 1',
+            },
+          ],
+          connections: [
+            {
+              _id: 'connection1',
+              assistant: 'assistant1',
+              _integrationId: 'ia2IntegrationChild',
+            },
+            {
+              _id: 'connection2',
+              type: 'assistant2',
+              _integrationId: 'ia2IntegrationChild',
+            },
+            {
+              _id: 'connection3',
+              assistant: 'assistant3',
+              _integrationId: 'ia2IntegrationChild',
+            },
+            {
+              _id: 'connection4',
+              assistant: 'assistant4',
+              _integrationId: 'ia2Integration',
+            },
+            {
+              _id: 'connection5',
+              type: 'netsuite',
+              _integrationId: 'ia2Integration',
+            },
+            {
+              _id: 'connection6',
+              assistant: 'assistant1',
+              _integrationId: 'ia2IntegrationChild',
+            },
+            {
+              _id: 'connection7',
+              type: 'assistant1',
+              _integrationId: 'ia2Integration1',
+            },
+            {
+              _id: 'connection8',
+              type: 'assistant2',
+              _integrationId: 'ia2Integration1',
+            },
+            {
+              _id: 'connection9',
+              type: 'netsuite',
+              _integrationId: 'ia2IntegrationChild1',
+            },
+            {
+              _id: 'connection10',
+              type: 'assistant4',
+              _integrationId: 'ia2IntegrationChild1',
+            },
+            {
+              _id: 'connection11',
+              type: 'assistant5',
+              _integrationId: 'ia2IntegrationChild1',
+            },
+            {
+              _id: 1,
+              assistant: 'Square',
+            },
+            {
+              _id: 2,
+              rdbms: {
+                type: 'mssql',
+              },
+            },
+            {
+              _id: 3,
+              http: {
+                formType: 'rest',
+              },
+            },
+            {
+              _id: 4,
+              type: 'http',
+            },
+          ],
         },
       },
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      const selector = selectors.mkTileApplications();
-
       expect(selector()).toEqual([]);
       expect(selector({})).toEqual([]);
       expect(selector({_connectorId: 'yes'})).toEqual([]);
@@ -186,55 +252,89 @@ describe('resource region selector testcases', () => {
       expect(selector(null, {_integrationId: 'yes'})).toEqual([]);
       expect(selector({}, {_integrationId: 'yes'})).toEqual([]);
     });
-
-    test('should return empty array for diy integrations', () => {
-      const selector = selectors.mkTileApplications();
-
+    test('should return empty array if dashboard view is tile and tile is not IA', () => {
       expect(selector(state, {_integrationId: 'diyIntegration'})).toEqual([]);
-      expect(selector(state, {_integrationId: 'none'})).toEqual([]);
+    });
+    const listViewState = {...state,
+      user: {
+        preferences: {
+          dashboard: {
+            view: LIST_VIEW,
+          },
+        },
+      } };
+
+    test('should return all applications from registered connections for diy integrations for list view', () => {
+      expect(selector(listViewState, {_integrationId: 'diyIntegration'})).toEqual(['Square', 'mssql']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration1'})).toEqual(['rest', 'http']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration2'})).toEqual(['Square', 'rest']);
+      expect(selector(listViewState, {_integrationId: 'none'})).toEqual([]);
     });
 
-    test('should return correct application list for integrationApp', () => {
-      const selector = selectors.mkTileApplications();
-
-      expect(selector(state, {
-        _connectorId: 'connector1',
-        connector: {
-          applications: ['app1', 'app2'],
-        },
-      })).toEqual(['app1', 'app2']);
-
-      expect(selector(state, {
-        _connectorId: 'connector1',
-        connector: {
-          applications: ['app1', 'app2', 'app3', 'app4', 'app5'],
-        },
-      })).toEqual(['app1', 'app2', 'app3', 'app4']);
-
-      expect(selector(state, {
-        _connectorId: 'connector1',
-        name: 'Magento 1 - NetSuite',
-        connector: {
-          applications: ['magento', 'app2'],
-        },
-      })).toEqual(['magento1', 'app2']);
+    describe('should return correct application list for integrationApp', () => {
+      test('should return all applications in the tile', () => {
+        expect(selector(state, {
+          _connectorId: 'connector1',
+          connector: {
+            applications: ['app1', 'app2'],
+          },
+        })).toEqual(['app1', 'app2']);
+      });
+      test('should return all applications (more than 4) in the tile for list view', () => {
+        expect(selector(listViewState, {
+          _connectorId: 'connector1',
+          connector: {
+            applications: ['app1', 'app2', 'app3', 'app4', 'app5', 'app6', 'app7', 'app8', 'app9', 'app10'],
+          },
+        })).toEqual(['app1', 'app2', 'app3', 'app4', 'app5', 'app6', 'app7', 'app8', 'app9', 'app10']);
+      });
+      test('should return only 4 applications for tile view', () => {
+        expect(selector(state, {
+          _connectorId: 'connector1',
+          connector: {
+            applications: ['app1', 'app2', 'app3', 'app4', 'app5'],
+          },
+        })).toEqual(['app1', 'app2', 'app3', 'app4']);
+      });
+      test('should return magento1 as application if tile name contains magento1 and magento exists in application list', () => {
+        expect(selector(state, {
+          _connectorId: 'connector1',
+          name: 'Magento 1 - NetSuite',
+          connector: {
+            applications: ['magento', 'app2'],
+          },
+        })).toEqual(['magento1', 'app2']);
+      });
+      test('should return netsuite as the last application for tile view', () => {
+        expect(selector(state, {
+          _connectorId: 'connector1',
+          connector: {
+            applications: ['app1', 'app2', 'netsuite', 'app3'],
+          },
+        })).toEqual(['app1', 'app2', 'app3', 'netsuite']);
+      });
     });
 
-    test('should return correct application list for integrationApp 2.0', () => {
-      const selector = selectors.mkTileApplications();
-
-      expect(selector(state, {
-        _connectorId: 'connector1',
-        _integrationId: 'ia2Integration',
-        connector: {
-          applications: ['app1', 'app2'],
-        },
-      })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
-
-      expect(selector(state, {
-        _connectorId: 'connector1',
-        _integrationId: 'ia2Integration',
-      })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
+    describe('should return correct application list for integrationApp 2.0', () => {
+      test('should return all applications limit to 4 for tile view and netsuite as last application', () => {
+        expect(selector(state, {
+          _connectorId: 'connector1',
+          _integrationId: 'ia2Integration',
+          connector: {
+            applications: ['app1', 'app2'],
+          },
+        })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
+        expect(selector(state, {
+          _connectorId: 'connector1',
+          _integrationId: 'ia2Integration',
+        })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
+      });
+      test('should return all application (more than 4) for list view and netsuite should not be the last application', () => {
+        expect(selector(listViewState, {
+          _connectorId: 'connector1',
+          _integrationId: 'ia2Integration1',
+        })).toEqual(['netsuite', 'assistant4', 'assistant5', 'assistant1', 'assistant2']);
+      });
     });
   });
 
@@ -3244,6 +3344,1080 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.mkFilteredHomeTiles test cases', () => {
+    const filteredHomeTiles = selectors.mkFilteredHomeTiles();
+    const tiles = [
+      {
+        _integrationId: 'integration1',
+        name: 'Integration One',
+        numError: 0,
+        numFlows: 2,
+        lastErrorAt: 2,
+      },
+      {
+        _integrationId: 'connector1',
+        name: 'Integration Two',
+        numError: 4,
+        numFlows: 3,
+        lastErrorAt: 1,
+        _connectorId: 'connector1',
+      },
+      {
+        _integrationId: 'integration3',
+        name: 'HTTP Integration Three',
+        numError: 9,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 4,
+        lastErrorAt: 3,
+      },
+    ];
+    // const suiteScriptTiles = [
+    //   {
+    //     _integrationId: 'suitescript0',
+    //     name: 'Connector 2',
+    //     tag: 'test tag',
+    //     numFlows: 10,
+    //     offlineConnections: ['conn1', 'conn2'],
+    //     ssLinkedConnectionId: 'suitescript0',
+    //   },
+    // ];
+    const standaloneTiles = [
+      {
+        _integrationId: 'none',
+        name: 'Standalone flows',
+        numError: 0,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 5,
+      },
+    ];
+    const published = [
+      {
+        _id: 'connector1',
+        name: 'Connector 1',
+        user: { name: 'User 1', company: 'Company 1' },
+        applications: ['http', 'app2'],
+      },
+      {
+        _id: 'connector2',
+        name: 'Connector 2',
+        user: { name: 'User 2' },
+      },
+    ];
+    const integrations = [
+      {
+        _id: 'integration1',
+      },
+      {
+        _id: 'integration2',
+      },
+      {
+        _id: 'integration3',
+      },
+      {
+        _id: 'integration4',
+      },
+      {
+        _id: 'integration5',
+        mode: 'settings',
+      },
+      {
+        _id: 'integration6',
+        mode: 'settings',
+      },
+      {
+        _id: 'integration7',
+        mode: 'settings',
+      },
+      {
+        _id: 'integration8',
+        mode: 'install',
+      },
+      {
+        _id: 'integration9',
+        mode: 'install',
+      },
+    ];
+    const initialState = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN, environment: 'production' },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              },
+            ],
+            users: [],
+          },
+        },
+        data: {
+          resources: {
+            published,
+            integrations,
+          },
+        },
+      },
+      actions.resource.receivedCollection('tiles', [
+        ...standaloneTiles,
+        ...tiles,
+      ])
+    );
+    const state = reducer(
+      initialState,
+      actions.patchFilter(FILTER_KEY,
+        {
+          sort: { order: 'asc', orderBy: 'name' },
+          searchBy: ['name', 'description', 'flowsNameAndDescription'],
+          take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+        }
+      )
+    );
+
+    test('should return tiles sorted by name if default filter is applied', () => {
+      const expected = {
+        filteredCount: 4,
+        filteredTiles: [
+          {
+            _integrationId: 'integration3',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration3',
+            lastErrorAt: 3,
+            name: 'HTTP Integration Three',
+            numError: 9,
+            numFlows: 4,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 4,
+            status: 'has_errors',
+            totalErrorCount: 11,
+          },
+          {
+            _integrationId: 'integration1',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration1',
+            lastErrorAt: 2,
+            name: 'Integration One',
+            numError: 0,
+            numFlows: 2,
+            pinned: false,
+            sortablePropType: 2,
+            status: 'success',
+            totalErrorCount: 0,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'connector1',
+            applications: [
+              'http',
+              'app2',
+            ],
+            connector: {
+              applications: [
+                'http',
+                'app2',
+              ],
+              owner: 'Company 1',
+            },
+            flowsNameAndDescription: '',
+            integration: {
+              mode: undefined,
+              permissions: undefined,
+            },
+            key: 'connector1',
+            lastErrorAt: 1,
+            name: 'Integration Two',
+            numError: 4,
+            numFlows: 3,
+            pinned: false,
+            sortablePropType: -1,
+            status: 'has_errors',
+            totalErrorCount: 4,
+          },
+          {
+            _integrationId: 'none',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'none',
+            name: 'Standalone flows',
+            numError: 0,
+            numFlows: 5,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 5,
+            status: 'success',
+            totalErrorCount: 2,
+          },
+        ],
+        perPageCount: 4,
+        totalCount: 4,
+      };
+
+      expect(filteredHomeTiles(state)).toEqual(expected);
+    });
+    test('should return tiles sorted by status', () => {
+      const newState = reducer(state, actions.patchFilter(FILTER_KEY,
+        {
+          sort: {
+            order: 'desc',
+            orderBy: 'totalErrorCount',
+          },
+        }));
+      const expected = {
+        filteredCount: 4,
+        filteredTiles: [
+          {
+            _integrationId: 'integration3',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration3',
+            lastErrorAt: 3,
+            name: 'HTTP Integration Three',
+            numError: 9,
+            numFlows: 4,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 4,
+            status: 'has_errors',
+            totalErrorCount: 11,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'connector1',
+            applications: [
+              'http',
+              'app2',
+            ],
+            connector: {
+              applications: [
+                'http',
+                'app2',
+              ],
+              owner: 'Company 1',
+            },
+            flowsNameAndDescription: '',
+            integration: {
+              mode: undefined,
+              permissions: undefined,
+            },
+            key: 'connector1',
+            lastErrorAt: 1,
+            name: 'Integration Two',
+            numError: 4,
+            numFlows: 3,
+            pinned: false,
+            sortablePropType: -1,
+            status: 'has_errors',
+            totalErrorCount: 4,
+          },
+          {
+            _integrationId: 'none',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'none',
+            name: 'Standalone flows',
+            numError: 0,
+            numFlows: 5,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 5,
+            status: 'success',
+            totalErrorCount: 2,
+          },
+          {
+            _integrationId: 'integration1',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration1',
+            lastErrorAt: 2,
+            name: 'Integration One',
+            numError: 0,
+            numFlows: 2,
+            pinned: false,
+            sortablePropType: 2,
+            status: 'success',
+            totalErrorCount: 0,
+          },
+        ],
+        perPageCount: 4,
+        totalCount: 4,
+      };
+
+      expect(filteredHomeTiles(newState)).toEqual(expected);
+    });
+    test('should return tiles sorted by last open error', () => {
+      const newState = reducer(state, actions.patchFilter(FILTER_KEY,
+        {
+          sort: {
+            order: 'asc',
+            orderBy: 'lastErrorAt',
+          },
+        }));
+      const expected = {
+        filteredCount: 4,
+        filteredTiles: [
+          {
+            _integrationId: 'none',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'none',
+            name: 'Standalone flows',
+            numError: 0,
+            numFlows: 5,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 5,
+            status: 'success',
+            totalErrorCount: 2,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'connector1',
+            applications: [
+              'http',
+              'app2',
+            ],
+            connector: {
+              applications: [
+                'http',
+                'app2',
+              ],
+              owner: 'Company 1',
+            },
+            flowsNameAndDescription: '',
+            integration: {
+              mode: undefined,
+              permissions: undefined,
+            },
+            key: 'connector1',
+            lastErrorAt: 1,
+            name: 'Integration Two',
+            numError: 4,
+            numFlows: 3,
+            pinned: false,
+            sortablePropType: -1,
+            status: 'has_errors',
+            totalErrorCount: 4,
+          },
+          {
+            _integrationId: 'integration1',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration1',
+            lastErrorAt: 2,
+            name: 'Integration One',
+            numError: 0,
+            numFlows: 2,
+            pinned: false,
+            sortablePropType: 2,
+            status: 'success',
+            totalErrorCount: 0,
+          },
+          {
+            _integrationId: 'integration3',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration3',
+            lastErrorAt: 3,
+            name: 'HTTP Integration Three',
+            numError: 9,
+            numFlows: 4,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 4,
+            status: 'has_errors',
+            totalErrorCount: 11,
+          },
+        ],
+        perPageCount: 4,
+        totalCount: 4,
+      };
+
+      expect(filteredHomeTiles(newState)).toEqual(expected);
+    });
+    test('should return tiles sorted by type', () => {
+      const newState = reducer(state, actions.patchFilter(FILTER_KEY,
+        {
+          sort: {
+            order: 'desc',
+            orderBy: 'sortablePropType',
+          },
+        }));
+      const expected = {
+        filteredCount: 4,
+        filteredTiles: [
+          {
+            _integrationId: 'none',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'none',
+            name: 'Standalone flows',
+            numError: 0,
+            numFlows: 5,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 5,
+            status: 'success',
+            totalErrorCount: 2,
+          },
+          {
+            _integrationId: 'integration3',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration3',
+            lastErrorAt: 3,
+            name: 'HTTP Integration Three',
+            numError: 9,
+            numFlows: 4,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 4,
+            status: 'has_errors',
+            totalErrorCount: 11,
+          },
+          {
+            _integrationId: 'integration1',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration1',
+            lastErrorAt: 2,
+            name: 'Integration One',
+            numError: 0,
+            numFlows: 2,
+            pinned: false,
+            sortablePropType: 2,
+            status: 'success',
+            totalErrorCount: 0,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'connector1',
+            applications: [
+              'http',
+              'app2',
+            ],
+            connector: {
+              applications: [
+                'http',
+                'app2',
+              ],
+              owner: 'Company 1',
+            },
+            flowsNameAndDescription: '',
+            integration: {
+              mode: undefined,
+              permissions: undefined,
+            },
+            key: 'connector1',
+            lastErrorAt: 1,
+            name: 'Integration Two',
+            numError: 4,
+            numFlows: 3,
+            pinned: false,
+            sortablePropType: -1,
+            status: 'has_errors',
+            totalErrorCount: 4,
+          },
+        ],
+        perPageCount: 4,
+        totalCount: 4,
+      };
+
+      expect(filteredHomeTiles(newState)).toEqual(expected);
+    });
+    test('should return tiles filtered by applications', () => {
+      const newState = reducer(state, actions.patchFilter(FILTER_KEY,
+        {
+          applications: [
+            'http',
+          ],
+        }));
+      const expected = {
+        filteredCount: 1,
+        filteredTiles: [
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'connector1',
+            applications: [
+              'http',
+              'app2',
+            ],
+            connector: {
+              applications: [
+                'http',
+                'app2',
+              ],
+              owner: 'Company 1',
+            },
+            flowsNameAndDescription: '',
+            integration: {
+              mode: undefined,
+              permissions: undefined,
+            },
+            key: 'connector1',
+            lastErrorAt: 1,
+            name: 'Integration Two',
+            numError: 4,
+            numFlows: 3,
+            pinned: false,
+            sortablePropType: -1,
+            status: 'has_errors',
+            totalErrorCount: 4,
+          },
+        ],
+        perPageCount: 1,
+        totalCount: 4,
+      };
+
+      expect(filteredHomeTiles(newState)).toEqual(expected);
+    });
+    describe('should return tiles filtered by the search filter applied', () => {
+      const newState = reducer(state, actions.patchFilter(FILTER_KEY,
+        {
+          keyword: 'http',
+        }));
+
+      test('should return tiles filterd by search filter by integration name', () => {
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _integrationId: 'integration3',
+              applications: [],
+              flowsNameAndDescription: '',
+              integration: {
+                permissions: {
+                  accessLevel: 'owner',
+                  connections: {
+                    edit: true,
+                  },
+                },
+              },
+              key: 'integration3',
+              lastErrorAt: 3,
+              name: 'HTTP Integration Three',
+              numError: 9,
+              numFlows: 4,
+              offlineConnections: [
+                'conn1',
+                'conn2',
+              ],
+              pinned: false,
+              sortablePropType: 4,
+              status: 'has_errors',
+              totalErrorCount: 11,
+            },
+          ],
+          perPageCount: 1,
+          totalCount: 4,
+        };
+
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
+      test('should return tiled filtered by flow name and description', () => {
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _integrationId: 'integration1',
+              applications: [],
+              flowsNameAndDescription: '|search2|searchflow',
+              integration: {
+                permissions: {
+                  accessLevel: 'owner',
+                  connections: {
+                    edit: true,
+                  },
+                },
+              },
+              key: 'integration1',
+              lastErrorAt: 2,
+              name: 'Integration One',
+              numError: 0,
+              numFlows: 2,
+              pinned: false,
+              sortablePropType: 2,
+              status: 'success',
+              totalErrorCount: 0,
+            },
+          ],
+          perPageCount: 1,
+          totalCount: 4,
+        };
+        const flows = [
+          {_id: 1, _connectorId: 'connector1', name: 'integration app'},
+          {_id: 2, _integrationId: 'integration1', name: 'search2', description: 'searchflow'},
+          {_id: 3, name: 'standalone flow'},
+        ];
+        let localState = reducer(
+          newState,
+          actions.resource.receivedCollection('flows', flows)
+        );
+
+        localState = reducer(
+          localState,
+          actions.patchFilter(FILTER_KEY, {keyword: 'search' }
+          )
+        );
+        expect(filteredHomeTiles(localState)).toEqual(expected);
+      });
+    });
+  });
+  describe('selectors.homeTileRedirectUrl test cases', () => {
+    const homeTileRedirectUrl = selectors.mkHomeTileRedirectUrl();
+    const tiles = [
+      {
+        _integrationId: 'integration1',
+        name: 'Integration One',
+        numError: 0,
+        numFlows: 2,
+      },
+      {
+        _integrationId: 'integration2',
+        name: 'Integration Two',
+        _connectorId: 'connector1',
+        numError: 4,
+        numFlows: 3,
+      },
+      {
+        _integrationId: 'integration3',
+        name: 'Integration Three',
+        numError: 9,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 4,
+      },
+      {
+        _integrationId: 'integration4',
+        name: 'Integration Four',
+        numError: 0,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 5,
+        status: TILE_STATUS.UNINSTALL,
+      },
+      {
+        _integrationId: 'integration5',
+        _connectorId: 'connector1',
+        name: 'Connector 1',
+        numFlows: 6,
+      },
+      {
+        _integrationId: 'integration6',
+        _connectorId: 'connector1',
+        tag: 'tag 1',
+        name: 'Connector 1',
+        numError: 36,
+        numFlows: 7,
+      },
+      {
+        _integrationId: 'integration7',
+        tag: 'tag 2',
+        name: 'Connector 1',
+        numError: 49,
+        offlineConnections: ['conn1'],
+        numFlows: 8,
+      },
+      {
+        _integrationId: 'integration8',
+        _connectorId: 'connector2',
+        name: 'Connector 2',
+        numFlows: 9,
+      },
+      {
+        _integrationId: 'integration9',
+        _connectorId: 'connector2',
+        name: 'Connector 2',
+        tag: 'test tag',
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+      },
+    ];
+    const suiteScriptTiles = [
+      {
+        _integrationId: 'suitescript0',
+        name: 'Connector 1',
+        tag: 'test tag',
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+        ssLinkedConnectionId: 'suitescript0',
+      },
+      {
+        _integrationId: 'suitescript1',
+        name: 'Connector 2',
+        tag: 'test tag',
+        numFlows: 10,
+        status: TILE_STATUS.IS_PENDING_SETUP,
+        offlineConnections: ['conn1', 'conn2'],
+        ssLinkedConnectionId: 'suitescript0',
+      },
+      {
+        _integrationId: 'suitescript2',
+        name: 'Connector 3',
+        tag: 'test tag',
+        numFlows: 10,
+        status: TILE_STATUS.UNINSTALL,
+        offlineConnections: ['conn1', 'conn2'],
+        ssLinkedConnectionId: 'suitescript0',
+      },
+      {
+        _integrationId: 'suitescript3',
+        name: 'Connector 4',
+        tag: 'test tag',
+        connectorId: 'connector4',
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+        ssLinkedConnectionId: 'suitescript0',
+      },
+      {
+        _integrationId: 'suitescript4',
+        name: 'Connector 5',
+        tag: 'test tag',
+        connectorId: 'connector5',
+        status: TILE_STATUS.IS_PENDING_SETUP,
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+        ssLinkedConnectionId: 'suitescript0',
+      },
+      {
+        _integrationId: 'suitescript5',
+        name: 'Connector 6',
+        connectorId: 'connector6',
+        status: TILE_STATUS.UNINSTALL,
+        tag: 'test tag',
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+        ssLinkedConnectionId: 'suitescript0',
+      },
+    ];
+    const standaloneTile =
+      {
+        _integrationId: 'none',
+        name: 'Standalone flows',
+        numError: 0,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 5,
+      };
+
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('tiles', tiles)
+    );
+
+    test('should return correct values for standalone tiles', () => {
+      expect(homeTileRedirectUrl(state, standaloneTile)).toEqual(
+        {
+          urlToIntegrationConnections: '/integrations/none/connections',
+          urlToIntegrationSettings: '/integrations/none',
+          urlToIntegrationStatus: '/integrations/none/dashboard',
+          urlToIntegrationUsers: '/integrations/none/users',
+        }
+      );
+    });
+    describe('suitescript tiles', () => {
+      // no connector id
+      test('no connectorId, no status', () => {
+        expect(homeTileRedirectUrl(state, suiteScriptTiles[0])).toEqual(
+          {
+            urlToIntegrationSettings: '/suitescript/suitescript0/integrations/suitescript0',
+            urlToIntegrationStatus: '/suitescript/suitescript0/integrations/suitescript0/dashboard',
+          }
+        );
+      });
+
+      test('no connectorId, status is pending_setup', () => {
+        expect(homeTileRedirectUrl(state, suiteScriptTiles[1])).toEqual(
+          {
+            urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/setup',
+            urlToIntegrationStatus: '/suitescript/suitescript0/integrationapps/undefined/setup',
+          }
+        );
+      });
+      test('no connectorId, status is uninstall', () => {
+        expect(homeTileRedirectUrl(state, suiteScriptTiles[2])).toEqual(
+          {
+            urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/suitescript2/uninstall',
+            urlToIntegrationStatus: '/suitescript/suitescript0/integrations/suitescript2/dashboard',
+          }
+        );
+      });
+
+      // connectorId
+      test('connectorId, no status', () => {
+        expect(homeTileRedirectUrl(state, suiteScriptTiles[3])).toEqual(
+          {
+            urlToIntegrationSettings: '/suitescript/suitescript0/integrations/suitescript3',
+            urlToIntegrationStatus: '/suitescript/suitescript0/integrations/suitescript3/dashboard',
+          }
+        );
+      });
+      test('connectorId, status is pending setup', () => {
+        expect(homeTileRedirectUrl(state, suiteScriptTiles[4])).toEqual(
+          {
+            urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/setup',
+            urlToIntegrationStatus: '/suitescript/suitescript0/integrationapps/undefined/setup',
+          }
+        );
+      });
+      test('connectorId, status is uninstall', () => {
+        expect(homeTileRedirectUrl(state, suiteScriptTiles[5])).toEqual(
+          {
+            urlToIntegrationSettings: '/suitescript/suitescript0/integrationapps/undefined/suitescript5/uninstall',
+            urlToIntegrationStatus: '/suitescript/suitescript0/integrations/suitescript5/dashboard',
+          }
+        );
+      });
+    });
+    describe('IO tiles', () => {
+      describe('tile status is pending setup', () => {
+        test('tile is cloned', () => {
+          expect(homeTileRedirectUrl(state, tiles[0])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrations/integration1/connections',
+              urlToIntegrationSettings: '/integrations/integration1',
+              urlToIntegrationStatus: '/integrations/integration1/dashboard',
+              urlToIntegrationUsers: '/integrations/integration1/users',
+            }
+          );
+        });
+        test('has connectorId', () => {
+          expect(homeTileRedirectUrl(state, tiles[1])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrationapps/IntegrationTwo/integration2/connections',
+              urlToIntegrationSettings: '/integrationapps/IntegrationTwo/integration2',
+              urlToIntegrationStatus: '/integrationapps/IntegrationTwo/integration2/dashboard',
+              urlToIntegrationUsers: '/integrationapps/IntegrationTwo/integration2/users',
+            }
+          );
+        });
+        test('no connectorId', () => {
+          expect(homeTileRedirectUrl(state, tiles[2])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrations/integration3/connections',
+              urlToIntegrationSettings: '/integrations/integration3',
+              urlToIntegrationStatus: '/integrations/integration3/dashboard',
+              urlToIntegrationUsers: '/integrations/integration3/users',
+            }
+          );
+        });
+      });
+      test('tile status is uninstall', () => {
+        expect(homeTileRedirectUrl(state, tiles[3])).toEqual(
+          {
+            urlToIntegrationConnections: '/integrations/integration4/connections',
+            urlToIntegrationSettings: '/integrationapps//integration4/uninstall',
+            urlToIntegrationStatus: '/integrations/integration4/dashboard',
+            urlToIntegrationUsers: '/integrationapps//integration4/uninstall',
+          }
+        );
+      });
+      const errMgt2State = reducer(
+        {
+          user: {
+            profile: { email: 'something@test.com', name: 'First Last', _id: 'owner', useErrMgtTwoDotZero: true },
+          },
+        },
+        'some action'
+      );
+
+      describe('tile has connectorId', () => {
+        test('has connectorId', () => {
+          expect(homeTileRedirectUrl(state, tiles[4])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrationapps/1/integration5/connections',
+              urlToIntegrationSettings: '/integrationapps/1/integration5',
+              urlToIntegrationStatus: '/integrationapps/1/integration5/dashboard',
+              urlToIntegrationUsers: '/integrationapps/1/integration5/users',
+            }
+          );
+        });
+        test('isUserInErrMgtTwoDotZero', () => {
+          expect(homeTileRedirectUrl(errMgt2State, tiles[5])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrationapps/1/integration6/connections',
+              urlToIntegrationSettings: '/integrationapps/1/integration6',
+              urlToIntegrationStatus: '/integrationapps/1/integration6',
+              urlToIntegrationUsers: '/integrationapps/1/integration6/users',
+            }
+          );
+        });
+      });
+      describe('tile has template name', () => {
+        test('has no status, no connectorId, not in err mgt 2', () => {
+          expect(homeTileRedirectUrl(state, tiles[6])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrations/integration7/connections',
+              urlToIntegrationSettings: '/integrations/integration7',
+              urlToIntegrationStatus: '/integrations/integration7/dashboard',
+              urlToIntegrationUsers: '/integrations/integration7/users',
+            }
+          );
+        });
+        test('has no status, no connectorId, in err mgt 2', () => {
+          expect(homeTileRedirectUrl(errMgt2State, tiles[7])).toEqual(
+            {
+              urlToIntegrationConnections: '/integrationapps/2/integration8/connections',
+              urlToIntegrationSettings: '/integrationapps/2/integration8',
+              urlToIntegrationStatus: '/integrationapps/2/integration8',
+              urlToIntegrationUsers: '/integrationapps/2/integration8/users',
+            }
+          );
+        });
+      });
+    });
+  });
+  describe('selectors.isHomeListView test cases', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.isHomeListView()).toEqual(false);
+    });
+
+    test('should return true if dashboard view is list view', () => {
+      const state = reducer(
+        undefined,
+        actions.user.preferences.update({
+          dashboard: {
+            view: LIST_VIEW,
+          },
+        })
+      );
+
+      expect(selectors.isHomeListView(state)).toBeTruthy();
+    });
+
+    test('should return false if dashboard view is not list view', () => {
+      const state = reducer(
+        undefined,
+        actions.user.preferences.update({
+          dashboard: {
+            view: TILE_VIEW,
+          },
+        })
+      );
+
+      expect(selectors.isHomeListView(state)).toBeFalsy();
+    });
+  });
   describe('selectors.isResourceCollectionLoading test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isResourceCollectionLoading()).toEqual(false);
