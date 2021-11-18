@@ -2734,13 +2734,17 @@ describe('resource region selector testcases', () => {
           edit: true,
         },
       };
-      const expected = [
+      const expectedResult = [
         {
           _integrationId: 'none',
           name: 'Standalone flows',
           numError: 0,
           offlineConnections: ['conn1', 'conn2'],
           numFlows: 5,
+          key: 'none',
+          flowsNameAndDescription: '',
+          sortablePropType: 5,
+          totalErrorCount: 2,
           integration: {
             permissions: expectedIntegrationPermissions,
           },
@@ -2751,6 +2755,10 @@ describe('resource region selector testcases', () => {
           name: 'Integration One',
           numError: 0,
           numFlows: 2,
+          key: 'integration1',
+          flowsNameAndDescription: '',
+          sortablePropType: 2,
+          totalErrorCount: 0,
           integration: {
             permissions: expectedIntegrationPermissions,
           },
@@ -2761,6 +2769,10 @@ describe('resource region selector testcases', () => {
           name: 'Integration Two',
           numError: 4,
           numFlows: 3,
+          key: 'integration2',
+          flowsNameAndDescription: '',
+          sortablePropType: 3,
+          totalErrorCount: 4,
           integration: {
             permissions: expectedIntegrationPermissions,
           },
@@ -2772,6 +2784,10 @@ describe('resource region selector testcases', () => {
           numError: 9,
           offlineConnections: ['conn1', 'conn2'],
           numFlows: 4,
+          key: 'integration3',
+          flowsNameAndDescription: '',
+          sortablePropType: 4,
+          totalErrorCount: 11,
           integration: {
             permissions: expectedIntegrationPermissions,
           },
@@ -2783,6 +2799,10 @@ describe('resource region selector testcases', () => {
           numError: 0,
           offlineConnections: ['conn1', 'conn2'],
           numFlows: 5,
+          key: 'integration4',
+          flowsNameAndDescription: '',
+          sortablePropType: 5,
+          totalErrorCount: 2,
           integration: {
             permissions: expectedIntegrationPermissions,
           },
@@ -2797,6 +2817,10 @@ describe('resource region selector testcases', () => {
             owner: 'Company 1',
             applications: ['app1', 'app2'],
           },
+          key: 'integration5',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: 0,
           integration: {
             mode: 'settings',
             permissions: expectedIntegrationPermissions,
@@ -2814,6 +2838,10 @@ describe('resource region selector testcases', () => {
             owner: 'Company 1',
             applications: ['app1', 'app2'],
           },
+          key: 'integration6',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: 36,
           integration: {
             mode: 'settings',
             permissions: expectedIntegrationPermissions,
@@ -2832,6 +2860,10 @@ describe('resource region selector testcases', () => {
             owner: 'Company 1',
             applications: ['app1', 'app2'],
           },
+          key: 'integration7',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: 50,
           integration: {
             mode: 'settings',
             permissions: expectedIntegrationPermissions,
@@ -2847,6 +2879,10 @@ describe('resource region selector testcases', () => {
             owner: 'User 2',
             applications: [],
           },
+          key: 'integration8',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: -1,
           integration: {
             mode: 'install',
             permissions: expectedIntegrationPermissions,
@@ -2864,6 +2900,10 @@ describe('resource region selector testcases', () => {
             owner: 'User 2',
             applications: [],
           },
+          key: 'integration9',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: -1,
           integration: {
             mode: 'install',
             permissions: expectedIntegrationPermissions,
@@ -2872,7 +2912,7 @@ describe('resource region selector testcases', () => {
         },
       ];
 
-      expect(tiles).toEqual(expected);
+      expect(tiles).toEqual(expectedResult);
     });
     test('should return correct tiles info for org users', () => {
       const state = reducer(
@@ -2954,6 +2994,10 @@ describe('resource region selector testcases', () => {
           numError: 0,
           offlineConnections: ['conn1', 'conn2'],
           numFlows: 5,
+          key: 'none',
+          flowsNameAndDescription: '',
+          sortablePropType: 5,
+          totalErrorCount: 2,
           integration: {
             permissions: {},
           },
@@ -2964,6 +3008,10 @@ describe('resource region selector testcases', () => {
           name: 'Integration One',
           numError: 0,
           numFlows: 2,
+          key: 'integration1',
+          flowsNameAndDescription: '',
+          sortablePropType: 2,
+          totalErrorCount: 0,
           integration: {
             permissions: {},
           },
@@ -2974,6 +3022,10 @@ describe('resource region selector testcases', () => {
           name: 'Integration Two',
           numError: 4,
           numFlows: 3,
+          key: 'integration2',
+          flowsNameAndDescription: '',
+          sortablePropType: 3,
+          totalErrorCount: 4,
           integration: {
             permissions: {},
           },
@@ -2985,6 +3037,10 @@ describe('resource region selector testcases', () => {
           numError: 9,
           offlineConnections: ['conn1', 'conn2'],
           numFlows: 4,
+          key: 'integration3',
+          flowsNameAndDescription: '',
+          sortablePropType: 4,
+          totalErrorCount: 11,
           integration: {
             permissions: {},
           },
@@ -2996,6 +3052,10 @@ describe('resource region selector testcases', () => {
           numError: 0,
           offlineConnections: ['conn1', 'conn2'],
           numFlows: 5,
+          key: 'integration4',
+          flowsNameAndDescription: '',
+          sortablePropType: 5,
+          totalErrorCount: 2,
           integration: {
             permissions: {},
           },
@@ -3010,6 +3070,10 @@ describe('resource region selector testcases', () => {
             owner: 'Company 1',
             applications: ['app1', 'app2'],
           },
+          key: 'integration5',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: 0,
           integration: {
             mode: 'settings',
             permissions: {},
@@ -3027,6 +3091,10 @@ describe('resource region selector testcases', () => {
             owner: 'Company 1',
             applications: ['app1', 'app2'],
           },
+          key: 'integration6',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: 36,
           integration: {
             mode: 'settings',
             permissions: {},
@@ -3045,6 +3113,10 @@ describe('resource region selector testcases', () => {
             owner: 'Company 1',
             applications: ['app1', 'app2'],
           },
+          key: 'integration7',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: 50,
           integration: {
             mode: 'settings',
             permissions: {},
@@ -3060,6 +3132,10 @@ describe('resource region selector testcases', () => {
             owner: 'User 2',
             applications: [],
           },
+          key: 'integration8',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: -1,
           integration: {
             mode: 'install',
             permissions: {},
@@ -3077,6 +3153,10 @@ describe('resource region selector testcases', () => {
             owner: 'User 2',
             applications: [],
           },
+          key: 'integration9',
+          flowsNameAndDescription: '',
+          sortablePropType: -1,
+          totalErrorCount: -1,
           integration: {
             mode: 'install',
             permissions: {},
