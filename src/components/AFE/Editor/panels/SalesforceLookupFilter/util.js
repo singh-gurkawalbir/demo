@@ -43,7 +43,7 @@ export function convertSalesforceLookupFilterExpression(expression, data = [], s
         id: value.left.value,
         field: value.left.value,
         operator: operatorsMap.ioFiltersToJQuery[value.operator.toLowerCase()],
-        value: (typeof rightValue.value === 'string')
+        value: (typeof rightValue?.value === 'string')
           ? rightValue.value?.replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2') // support double, triple braces
           ?.replace(/(^'\{{2})(.*)(\}{2}')$/g, '$2')
           ?.replace(/(^')(.*)(')$/g, '$2') // single braces will be considered as hard-coded input so remove qoutes
