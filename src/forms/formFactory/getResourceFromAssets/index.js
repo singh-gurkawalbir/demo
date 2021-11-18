@@ -384,7 +384,7 @@ const getResourceFormAssets = ({
   } catch (e) {
     throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);
   }
-  if (!meta || !meta.fieldMap) { throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`); }
+  if (!meta || !meta.fieldMap) { throw new Error(`cannot load metadata assets ${resourceType} resourceId:${resource?._id} assistant:${resource?.assistant}`); }
 
   let fieldMap;
   let layout = {};
