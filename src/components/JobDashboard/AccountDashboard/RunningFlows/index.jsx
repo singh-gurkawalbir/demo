@@ -31,8 +31,13 @@ export default function RunningFlows() {
 
   const dispatch = useDispatch();
 
-  const filters = useSelector(state => selectors.filter(state, filterKey));
-  const { paging, sort, ...nonPagingFilters } = filters;
+  const { integrationId} = useSelector(state => selectors.filter(state, filterKey));
+  const integrationFilterKey = `${integrationId || ''}${filterKey}`;
+
+  const filters = useSelector(state => selectors.filter(state, integrationFilterKey));
+
+  const { paging, sort, ...nonPagingFilters } = filters || {};
+
   const filterHash = hashCode(nonPagingFilters);
 
   const jobs = useSelector(state => selectors.accountDashboardRunningJobs(state));

@@ -5,6 +5,7 @@ import { JOB_UI_STATUS } from '../jobdashboard';
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
   COMPLETED: 'completedFlows',
+  DASHBOARD: 'dashboard',
 };
 
 export const DEFAULT_ROWS_PER_PAGE = 50;

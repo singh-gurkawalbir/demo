@@ -19,8 +19,12 @@ export default function Dashboard() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const filters = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
-  const { paging, sort, ...nonPagingFilters } = filters;
+  let filters = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.COMPLETED));
+  const {integrationId} = filters;
+
+  filters = useSelector(state => selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`));
+
+  const { paging, sort, ...nonPagingFilters } = filters || {};
   const filterHash = hashCode(nonPagingFilters);
   let infoTextDashboard =
     'You can view the flows that have run or are currently running for each flow in your integration, as well as how many pages of data were sent, how long it took and when each job completed. If there are child jobs within a parent job, you can expand the parent to view the children. If there are errors, click the number of errors in the Error column to retry and resolve errors. You can cancel jobs that are in progress, edit jobs, and resolve errors directly from this view.';
@@ -42,7 +46,7 @@ export default function Dashboard() {
       // To DO: Ashok to research on this and try to get better logic than below one.
       if (!(window.location.href.includes('/integrations') || window.location.href.includes('/integrationapps')) || window.location.href.includes('/new-')) {
         dispatch(
-          actions.patchFilter(FILTER_KEYS_AD.COMPLETED, {
+          actions.patchFilter(`${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`, {
             range: DEFAULT_RANGE,
           })
         );
