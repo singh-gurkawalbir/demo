@@ -59,6 +59,11 @@ export default {
     type: 'textlist',
     label: 'Done without data values',
   },
+  'http.status.errorValues': {
+    loggable: true,
+    type: 'textlist',
+    label: 'Error values',
+  },
   'http.submit.resourcePath': {
     loggable: true,
     type: 'text',
