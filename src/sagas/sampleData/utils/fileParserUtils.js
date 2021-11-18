@@ -166,7 +166,7 @@ export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
     }
 
     // If there is no resourcePath, returns the resulting parsedFileDefinitionData
-    return {data: sampleParsedFileDefinitionData};
+    return { data: sampleParsedFileDefinitionData };
   } catch (e) {
     // Handle errors
   }
