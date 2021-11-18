@@ -85,6 +85,7 @@ export default {
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
+          'file.batchSize',
           'file.backupPath',
           'deleteAfterImport',
           'traceKeyTemplate',
