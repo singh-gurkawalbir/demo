@@ -217,7 +217,7 @@ export default function DateTimePicker(props) {
               disableToolbar
               className={classes.keyBoardDateTimeWrapper}
               fullWidth
-              InputProps={{ className: classes.inputDateTime, disabled: true }}
+              InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...datePickerProps}
       />
           </div>
@@ -244,7 +244,7 @@ export default function DateTimePicker(props) {
               onChange={setFormatTimeValue}
               fullWidth
               className={classes.keyBoardDateTimeWrapper}
-              InputProps={{ className: classes.inputDateTime, disabled: true}}
+              InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...timePickerProps}
       />
           </div>

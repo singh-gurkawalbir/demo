@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
 import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -15,6 +15,7 @@ import CloseIconButton from './CloseIconButton';
 import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
+import useKeepUserSessionAlive from '../../../hooks/useKeepUserSessionAlive';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -48,11 +49,24 @@ function RouterWrappedContent({ hideSave }) {
   const match = useRouteMatch();
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
-  const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
-  const editorTitle = useSelector(state => selectors.editor(state, editorId).editorTitle);
+  const {editorType, editorTitle, initStatus} = useSelector(state => {
+    const e = selectors.editor(state, editorId);
+
+    return {
+      editorType: e.editorType,
+      editorTitle: e.editorTitle,
+      initStatus: e.initStatus,
+    };
+  }, shallowEqual);
 
   useEffect(() => {
-    if (!editorType) {
+    // we want to redirect to parent url only if the editor init is not in progress
+
+    // this works for 'mappings' editor for now as there is another RightDrawer to render mappings path which does the editor init
+    // but 'responseMappings' is now completely an editor so it lands here directly on page reload and editor init does not happen,
+    // hence it gets redirected to parent url
+    // if we decide to support page reload for mappings, we somehow need to do editor init here for such use case
+    if (initStatus !== 'inProgress' && !editorType) {
       // redirect to parent url
       const urlFields = match.url.split('/');
 
@@ -63,11 +77,11 @@ function RouterWrappedContent({ hideSave }) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useKeepUserSessionAlive();
 
   if (!editorType) {
     return null;
   }
-
   const { label } = editorMetadata[editorType] || {};
   const handleClose = () => {
     dispatch(actions.editor.clear(editorId));

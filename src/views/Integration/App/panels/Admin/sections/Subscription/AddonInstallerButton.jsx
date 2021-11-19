@@ -48,7 +48,7 @@ export default function AddonInstallerButton({ resource, ...rest }) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });

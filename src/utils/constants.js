@@ -1,5 +1,8 @@
 import invert from 'lodash/invert';
 
+export const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
+// eslint-disable-next-line no-undef
+export const CDN_BASE_URL = CDN_BASE_URI || PRODUCTION_CDN_BASE_URL;
 export const emptyList = Object.freeze([]);
 export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
@@ -32,6 +35,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   INSTALL_PACKAGE: 'installPackage',
   STACK: 'Stack',
   FORM: 'form',
+  URL: 'url',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
@@ -746,3 +750,14 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
+export const POLLING_STATUS = {
+  SLOW: 'slow down polling',
+  RESUME: 'resume polling',
+  STOP: 'stop polling',
+};
+
+export const MAX_APPLICATIONS = 10;
+export const MAX_APPLICATIONS_IN_A_ROW = 5;
+export const APP_WIDTH = 30;
+
+Object.freeze(POLLING_STATUS);

@@ -44,7 +44,7 @@ export default function DynaFeatureCheck(props) {
           buttons: [
             {
               label: 'No',
-              color: 'secondary',
+              variant: 'text',
             },
             {
               label: 'Yes',

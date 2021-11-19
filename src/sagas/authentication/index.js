@@ -145,10 +145,12 @@ export function* fetchUIVersion() {
   try {
     resp = yield call(apiCallWithRetry, {
       path: '/ui/version?app=react',
+      // this is necessary because this route does not update the session
+      shouldNotUpdateAuthTimestamp: true,
     });
+
   // eslint-disable-next-line no-empty
-  } catch (e) {
-  }
+  } catch (e) {}
   if (resp?.version) {
     yield put(actions.app.updateUIVersion(resp.version));
   }

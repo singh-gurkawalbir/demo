@@ -1,5 +1,5 @@
 import { stringCompare } from '../utils/sort';
-import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
+import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
 
 // Schema details:
 // ---------------
@@ -410,7 +410,7 @@ export const applicationsList = () => {
     // once constantcontactv2 & v3 are migrated to constantcontact in db
     // this should be removed https://celigo.atlassian.net/browse/IO-23182
     if (asst.id.includes('constantcontact')) {
-      name = 'Constant contact';
+      name = 'Constant Contact';
     }
     applications.push({
       id: asst.id,
@@ -444,6 +444,23 @@ export const getApp = (type, assistant) => {
 
   return applications.find(c => c.id === id) || {};
 };
+
+export function getImportAdaptorType(resource) {
+  const {adaptorType, assistant, http} = resource;
+
+  if (adaptorType === 'HTTPImport') {
+    if (http?.formType === 'assistant') {
+      return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
+    }
+
+    return http?.formType === 'rest' ? 'rest' : 'http';
+  }
+
+  // for rest adaptors search by assistant type
+
+  return REST_ASSISTANTS.includes(assistant) ? 'rest' : 'http';
+}
+
 export const getAssistantConnectorType = assistant => {
   const connectorType = getApp(null, assistant)?.type;
 

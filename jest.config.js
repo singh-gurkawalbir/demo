@@ -37,5 +37,6 @@ module.exports = {
     RELEASE_VERSION: 'some release version',
     LOGROCKET_IDENTIFIER: 'some logrocket identifier',
     LOGROCKET_IDENTIFIER_EU: 'some logrocket identifier europe',
+    CDN_BASE_URI: 'CDN_BASE_URI'
   },
 };

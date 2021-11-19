@@ -10,6 +10,14 @@ export const safeParse = o => {
   }
 };
 
+export const camelCase = (str = '') => {
+  if (typeof str === 'string' && str.length) {
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  }
+
+  return str;
+};
+
 export const hashCode = (s, stable) => {
   let hash = 0;
   let i;
@@ -45,3 +53,4 @@ export const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() +
 export default { hashCode, isJsonString, safeParse, capitalizeFirstLetter };
 export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
 
+export const getTextAfterCount = (displayText, valueCount) => `${valueCount} ${valueCount === 1 ? displayText : `${displayText}s`}`;

@@ -46,6 +46,7 @@ export default function Editor({ editorId }) {
       formKey: e.formKey,
       supportsDefaultData: e.supportsDefaultData,
       saveError: e.saveMessage,
+      resourceType: e.resourceType,
     };
   }, shallowEqual);
 

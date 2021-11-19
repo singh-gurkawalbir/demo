@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginRight: theme.spacing(2),
     textTransform: 'none',
+    alignItems: 'center',
     '&:hover': {
       backgroundColor: 'transparent',
       '& svg': {
