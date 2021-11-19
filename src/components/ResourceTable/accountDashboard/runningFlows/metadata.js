@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import NameCell from '../../commonCells/Name';
+import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
 import JobStatus from '../../../JobDashboard/JobStatus';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import { getPages, getSuccess } from '../../../../utils/jobdashboard';
@@ -111,7 +112,7 @@ export default {
       },
       {
         key: 'numResolved',
-        heading: 'Auto-resolved',
+        HeaderValue: () => <HeaderWithHelpText title="Auto-resolved" helpKey="accountdashboard.numResolvedByAuto" />,
         Value: ({rowData: r}) => r.numResolved,
         width: '10%',
         orderBy: 'numResolved',
