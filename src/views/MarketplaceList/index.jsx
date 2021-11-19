@@ -140,6 +140,7 @@ export default function MarketplaceList() {
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
   const applicationName = connector?.name || capitalizeFirstLetter(application);
+  const currentMarketPlaceLocation = location?.pathname?.replace(/\/installTemplate\/(.*)/g, '') || '';
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -309,7 +310,7 @@ export default function MarketplaceList() {
               <FilledButton
                 data-test="installTemplate"
                 component={Link}
-                to={`${location.pathname}/installTemplate/preview/${template._id}`}>
+                to={`${currentMarketPlaceLocation}/installTemplate/preview/${template._id}`}>
                 Preview
               </FilledButton>
             </CardActions>
