@@ -57,18 +57,18 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
-  {
-    path: 'users',
-    label: 'Users',
-    Icon: GroupOfUsersIcon,
-    Panel: UsersPanel,
-  },
   ...(isUserInErrMgtTwoDotZero
     ? [{ path: 'analytics',
       label: 'Analytics',
       Icon: GraphIcon,
       Panel: AnalyticsPanel }]
     : []),
+  {
+    path: 'users',
+    label: 'Users',
+    Icon: GroupOfUsersIcon,
+    Panel: UsersPanel,
+  },
   {
     path: 'admin',
     label: 'Admin',

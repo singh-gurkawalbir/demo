@@ -10,6 +10,8 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import {FILTER_KEYS_AD, getTimeString} from '../../../../utils/accountDashboard';
 import Status from '../../../Buttons/Status';
+import Run from './actions/Run';
+import Edit from './actions/Edit';
 
 export default {
   useColumns: () => {
@@ -150,4 +152,5 @@ export default {
       },
     ];
   },
+  useRowActions: () => [Run, Edit],
 };

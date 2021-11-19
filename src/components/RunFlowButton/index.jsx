@@ -84,6 +84,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
 export default function RunFlowButton({
   flowId,
   onRunStart,
+  runWithoutClick,
   variant = 'icon',
   label = 'Run now',
 }) {
@@ -236,6 +237,13 @@ export default function RunFlowButton({
   const isDataLoaderFileProcessRequested =
     isDataLoaderFlow && uploadedFile && uploadedFile.status !== 'error';
 
+  useEffect(() => {
+    if (runWithoutClick) {
+      handleClick();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       {showDeltaStartDateDialog && flowDetails.isDeltaFlow && (
@@ -245,13 +253,16 @@ export default function RunFlowButton({
           onRun={handleRunFlow}
         />
       )}
-      <RunFlowLabel
-        isRequested={isDataLoaderFileProcessRequested}
-        onRunClick={handleClick}
-        variant={variant}
-        disabled={disabled}
-        label={label}
+      {!runWithoutClick
+        ? (
+          <RunFlowLabel
+            isRequested={isDataLoaderFileProcessRequested}
+            onRunClick={handleClick}
+            variant={variant}
+            disabled={disabled}
+            label={label}
       />
+        ) : ''}
 
       {isDataLoaderFlow && !hasRunKey && (
         <input
