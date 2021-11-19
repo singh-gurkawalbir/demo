@@ -45,7 +45,7 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'notifications', // rr
+    path: 'notifications',
     label: 'Notifications',
     Icon: NotificationsIcon,
     Panel: NotificationsPanel,

@@ -5,7 +5,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import Tabs from './Tabs';
 import LoadResources from '../../components/LoadResources';
-// import CeligoPageBar from '../../components/CeligoPageBar';
+import CeligoPageBar from '../../components/CeligoPageBar';
 import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
 import {HOME_PAGE_PATH} from '../../utils/constants';
@@ -59,7 +59,7 @@ export default function Dashboard() {
 
   return (
     <LoadResources required resources="flows,integrations">
-      <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
+      {integrationId ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} /> : <CeligoPageBar title="Dashboard" infoText={infoTextDashboard} />}
       <Tabs />
       <QueuedJobsDrawer />
     </LoadResources>

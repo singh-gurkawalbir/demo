@@ -66,7 +66,7 @@ export default function Filters({filterKey}) {
   const jobFilter = useSelector(state => selectors.filter(state, integrationFilterKey));
   const {currPage = 0,
     rowsPerPage = DEFAULT_ROWS_PER_PAGE,
-  } = jobFilter?.paging || {}; // Here i need to add
+  } = jobFilter?.paging || {};
 
   const patchFilter = useCallback(
     (key, value) => {
