@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
+import {useSelector} from 'react-redux';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { selectors } from '../../../../reducers';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
 const useStyles = makeStyles(theme => ({
@@ -27,21 +29,32 @@ export default function IntegrationTabs({ tabs, className }) {
   const match = useRouteMatch();
   const { tab, childId } = match.params;
   let currentTabIndex = tabs.findIndex(t => t.path === tab);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
 
   // if you cant find tab index default it to zero
   currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;
+      let path = generatePath(match.path, {
+        ...match.params,
+        tab: newTab,
+      });
 
-      history.push(
-        generatePath(match.path, {
-          ...match.params,
-          tab: newTab,
-        })
-      );
+      if (isUserInErrMgtTwoDotZero) {
+        if (newTab === 'dashboard') {
+          path = path.replace('/dashboard', '/dashboard/runningFlows');
+        } else if (path.includes('/runningFlows') || path.includes('/completedFlows')) {
+          path = path.replace('/runningFlows', '');
+          path = path.replace('/completedFlows', '');
+        }
+      }
+
+      history.push(path);
     },
-    [history, match.params, match.path, tabs]
+    [history, isUserInErrMgtTwoDotZero, match.params, match.path, tabs]
   );
 
   return (
