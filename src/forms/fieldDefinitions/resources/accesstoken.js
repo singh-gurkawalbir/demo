@@ -15,17 +15,20 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   name: {
+    loggable: true,
     type: 'text',
     label: 'Name',
     defaultValue: r => r.name || '',
     required: true,
   },
   description: {
+    loggable: true,
     type: 'text',
     label: 'Description',
     defaultValue: r => r.description || '',
   },
   autoPurgeAt: {
+    loggable: true,
     type: 'expirytime',
     label: 'Auto purge token',
     required: r => isNewId(r?._id) || !!r?._connectorId,
@@ -73,6 +76,7 @@ export default {
     },
   },
   fullAccess: {
+    loggable: true,
     type: 'radiogroup',
     label: 'Scope',
     defaultValue: r =>
@@ -101,6 +105,7 @@ export default {
     required: true,
   },
   _connectionIds: {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'connections',
     label: 'Connections',
@@ -121,6 +126,7 @@ export default {
     ignoreEnvironmentFilter: true,
   },
   _exportIds: {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'exports',
     label: 'Exports',
@@ -140,6 +146,7 @@ export default {
     ignoreEnvironmentFilter: true,
   },
   _importIds: {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'imports',
     label: 'Imports',
@@ -159,6 +166,7 @@ export default {
     ignoreEnvironmentFilter: true,
   },
   _apiIds: {
+    loggable: true,
     type: 'selectresource',
     resourceType: 'apis',
     label: 'My APIs',

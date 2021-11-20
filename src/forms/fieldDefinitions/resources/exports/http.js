@@ -1,5 +1,6 @@
 export default {
   'http.successMediaType': {
+    loggable: true,
     type: 'select',
     placeholder: 'Do not override',
     label: 'Override media type for success responses',
@@ -20,6 +21,7 @@ export default {
     ],
   },
   'http.requestMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Override request media type',
     placeholder: 'Do not override',
@@ -45,6 +47,7 @@ export default {
     ],
   },
   'http.errorMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
@@ -64,6 +67,7 @@ export default {
     ],
   },
   'http.relativeURI': {
+    loggable: true,
     type: 'relativeuri',
     showLookup: false,
     label: 'Relative URI',
@@ -88,6 +92,7 @@ export default {
     ],
   },
   'http.method': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     required: true,
@@ -108,6 +113,7 @@ export default {
     ],
   },
   'http.blobMethod': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     helpKey: 'export.http.method',
@@ -129,6 +135,7 @@ export default {
     ],
   },
   'http.body': {
+    loggable: true,
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'HTTP request body',
@@ -157,6 +164,7 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.paging.method': {
+    loggable: true,
     type: 'selectwithvalidations',
     label: 'Paging method',
     options: [
@@ -199,6 +207,7 @@ export default {
     ],
   },
   'http.paging.skip': {
+    loggable: true,
     type: 'text',
     label: 'Override skip number start index',
     visibleWhenAll: [
@@ -213,6 +222,7 @@ export default {
     ],
   },
   'http.paging.body': {
+    loggable: true,
     type: 'httprequestbody',
     label: 'Override HTTP request body for subsequent page requests',
     visibleWhenAll: [
@@ -227,6 +237,7 @@ export default {
     ],
   },
   'http.paging.page': {
+    loggable: true,
     type: 'text',
     label: 'Override page number start index',
     validWhen: [
@@ -246,10 +257,12 @@ export default {
     ],
   },
   configureAsyncHelper: {
+    loggable: true,
     type: 'checkbox',
     label: 'Configure async helper',
   },
   'http.paging.token': {
+    loggable: true,
     type: 'text',
     label: 'Override initial token value',
     visibleWhenAll: [
@@ -267,6 +280,7 @@ export default {
   // added 2 separate UI fields for paths for url and token methods
   // to have diff help texts and labels
   'http.paging.urlPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to next page URL field in HTTP response body',
     required: true,
@@ -283,6 +297,7 @@ export default {
     ],
   },
   'http.paging.tokenPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to next page token field in HTTP response body',
     required: true,
@@ -299,6 +314,7 @@ export default {
     ],
   },
   'http.paging.relativeURI': {
+    loggable: true,
     type: 'relativeuri',
     label: 'Override relative URI for subsequent page requests',
     visibleWhenAll: [
@@ -313,6 +329,7 @@ export default {
     ],
   },
   'http.paging.pathAfterFirstRequest': {
+    loggable: true,
     type: 'text',
     label: 'Override path to next page token field for subsequent page requests',
     visibleWhenAll: [
@@ -327,6 +344,7 @@ export default {
     ],
   },
   'http.paging.resourcePath': {
+    loggable: true,
     type: 'text',
     label: 'Override path to records for subsequent page requests',
     visibleWhenAll: [
@@ -341,6 +359,7 @@ export default {
     ],
   },
   'http.paging.maxPagePath': {
+    loggable: true,
     type: 'text',
     label: 'Path to total number of pages field in HTTP response body',
     visibleWhenAll: [
@@ -355,6 +374,7 @@ export default {
     ],
   },
   'http.paging.maxCountPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to total number of results field in HTTP response body',
     visibleWhenAll: [
@@ -369,6 +389,7 @@ export default {
     ],
   },
   'http.paging.lastPageStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'Override HTTP status code for last page',
     visibleWhen: [
@@ -384,6 +405,7 @@ export default {
     ],
   },
   'http.paging.lastPagePath': {
+    loggable: true,
     type: 'text',
     label: 'Path to paging complete field in HTTP response body',
     visibleWhen: [
@@ -394,6 +416,7 @@ export default {
     ],
   },
   'http.paging.lastPageValues': {
+    loggable: true,
     type: 'text',
     label: 'Paging complete values',
     visibleWhen: [
@@ -405,6 +428,7 @@ export default {
     delimiter: ',',
   },
   'http.paging.linkHeaderRelation': {
+    loggable: true,
     type: 'text',
     label: 'Override link header relation name',
     visibleWhenAll: [
@@ -419,6 +443,7 @@ export default {
     ],
   },
   'http._asyncHelperId': {
+    loggable: true,
     label: 'Async helper',
     type: 'selectresource',
     resourceType: 'asyncHelpers',
@@ -435,6 +460,7 @@ export default {
     ],
   },
   'http.response.resourcePath': {
+    loggable: true,
     type: 'text',
     label: r => {
       if (r?.resourceType === 'lookupFiles' || r?.type === 'blob') { return 'Path to file in HTTP response body'; }
@@ -460,6 +486,7 @@ export default {
     ],
   },
   'http.response.resourceIdPath': {
+    loggable: true,
     type: 'text',
     label: 'Http response resource ID path',
     visibleWhen: [
@@ -470,6 +497,7 @@ export default {
     ],
   },
   'http.response.successPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to success field in HTTP response body',
     requiredWhen: [
@@ -490,6 +518,7 @@ export default {
     ],
   },
   'http.response.successValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Success values',
@@ -505,6 +534,7 @@ export default {
     ],
   },
   'http.response.errorPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to detailed error message field in HTTP response body',
     visibleWhenAll: [
@@ -519,6 +549,7 @@ export default {
     ],
   },
   'http.response.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to error field in HTTP response body',
     requiredWhen: [
@@ -539,6 +570,7 @@ export default {
     ],
   },
   'http.response.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Error values',
@@ -556,21 +588,25 @@ export default {
 
   // #region transform
   'transform.expression.rules': {
+    loggable: true,
     type: 'transformeditor',
     label: 'Transform expression rules',
     sampleData: r => r.sampleData,
     rules: r => r && r.transform && r.transform.rules,
   },
   'transform.script._scriptId': {
+    loggable: true,
     type: 'text',
     label: 'Transform script _script id',
   },
   'transform.script.function': {
+    loggable: true,
     type: 'text',
     label: 'Transform script function',
   },
   // #endregion transform
   'http.once.relativeURI': {
+    loggable: true,
     type: 'relativeuri',
     showLookup: false,
     label: 'Relative URI to update records',
@@ -585,6 +621,7 @@ export default {
     ],
   },
   'http.once.body': {
+    loggable: true,
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'HTTP request body to update records',
@@ -601,6 +638,7 @@ export default {
     ],
   },
   'http.once.method': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method to update records',
     required: true,
@@ -624,6 +662,7 @@ export default {
     ],
   },
   'http.response.blobFormat': {
+    loggable: true,
     type: 'select',
     label: 'File encoding',
     options: [
@@ -646,6 +685,7 @@ export default {
     ],
   },
   'unencrypted.apiType': {
+    loggable: true,
     type: 'selectAmazonSellerCentralAPIType',
     label: 'API type',
     skipDefault: true,
