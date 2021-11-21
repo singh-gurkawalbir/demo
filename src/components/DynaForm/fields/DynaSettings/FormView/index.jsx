@@ -27,11 +27,8 @@ export default function FormView({
     selectors.customSettingsForm(state, resourceId)
   );
 
-  // this hook evaluates if any of the settings props are different thereby if an initialization call is necessary
-  // const isCustomsettingsPropsDiff = useIsCustomSettingsFormPropsDiff({settingsForm, settings, script});
-
   useEffect(() => {
-    // reinitialize when resourceType, resourceId, sectionId changes...this is applicable for flowGroup settings
+    // reinitialize when resourceType, resourceId, sectionId changes...this is applicable for flowGroup settings use case
     dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId));
 
     return () => { // clear settings on unmount

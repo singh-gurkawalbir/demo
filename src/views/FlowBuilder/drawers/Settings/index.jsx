@@ -165,6 +165,8 @@ function Settings({
   const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
+    // settings form was remounting twice every time we open the settings drawer..this piece of code
+    // prevents that redundant action
     if (componentMounted) {
       setRemountKey(remountKey => remountKey + 1);
     }
