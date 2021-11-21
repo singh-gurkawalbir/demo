@@ -19,7 +19,6 @@ export default function FormView({
   resourceType,
   sectionId,
   disabled,
-  customSettingsEditorId,
 }) {
   const settingsFormKey = `settingsForm-${resourceId}`;
   const classes = useStyles();
@@ -27,30 +26,20 @@ export default function FormView({
   const settingsFormState = useSelector(state =>
     selectors.customSettingsForm(state, resourceId)
   );
-  const editorSaveStatus = useSelector(state => selectors.editor(state, customSettingsEditorId)?.saveStatus);
 
   // this hook evaluates if any of the settings props are different thereby if an initialization call is necessary
   // const isCustomsettingsPropsDiff = useIsCustomSettingsFormPropsDiff({settingsForm, settings, script});
 
   useEffect(() => {
-    // only if settingsForm, settings, script is different do you reinitialize
+    // reinitialize when resourceType, resourceId, sectionId changes...this is applicable for flowGroup settings
     dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  useEffect(() => {
-    // when editor has completed to we fetch custom settings
-    if (editorSaveStatus === 'success') { dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId)); }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorSaveStatus]);
 
-  useEffect(
-    () => () => {
-      // clear settings on unmount
+    return () => { // clear settings on unmount
       dispatch(actions.customSettings.formClear(resourceId));
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceType, resourceId, sectionId]);
+
   const updatedMeta = useMemo(() => {
     // sanitize all a tag elements within help texts
 
