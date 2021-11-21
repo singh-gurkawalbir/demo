@@ -7,7 +7,7 @@ import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FormBuilderButton from '../../../FormBuilderButton';
+import FormBuilderButton, { getSettingsEditorId } from '../../../FormBuilderButton';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { useUpdateParentForm } from '../DynaCsvGenerate_afe';
 
@@ -99,6 +99,7 @@ export default function DynaSettings(props) {
   if (!allowFormEdit && !hasSettingsForm) {
     return null;
   }
+  const customSettingsEditorId = getSettingsEditorId(resourceId, sectionId);
 
   function renderSettings() {
     if (hasSettingsForm) {
@@ -109,6 +110,7 @@ export default function DynaSettings(props) {
           resourceType={resourceType}
           sectionId={sectionId}
           disabled={disabled}
+          customSettingsEditorId={customSettingsEditorId}
       />
       );
     }
