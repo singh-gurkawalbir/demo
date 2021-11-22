@@ -756,4 +756,8 @@ export const POLLING_STATUS = {
   STOP: 'stop polling',
 };
 
+export const MAX_APPLICATIONS = 10;
+export const MAX_APPLICATIONS_IN_A_ROW = 5;
+export const APP_WIDTH = 30;
+
 Object.freeze(POLLING_STATUS);

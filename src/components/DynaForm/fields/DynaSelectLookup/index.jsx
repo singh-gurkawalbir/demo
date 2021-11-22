@@ -103,12 +103,12 @@ export default function DynaSelectLookup(props) {
         <DynaSelect {...props} options={lookupOptions} />
         <div className={classes.actions} >
           <ActionButton
-            data-test="addNewLookup"
+            data-test="addNewConditionalLookup"
             onClick={handleAddLookupClick}>
             <AddIcon />
           </ActionButton>
           <ActionButton
-            data-test="addEditLookup"
+            data-test="addEditConditionalLookup"
             disabled={!value}
             onClick={handleEditLookupClick}>
             <EditIcon />

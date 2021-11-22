@@ -127,13 +127,15 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat };
+    const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
     dispatch(actions.user.preferences.update(preferencesPayload));
-    // deleting preferenecs from completePayloadCopy
+    // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
+    delete completePayloadCopy.showRelativeDateTime;
+
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch]);
 
@@ -235,6 +237,14 @@ export default function ProfilePanel() {
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,
       },
+      showRelativeDateTime: {
+        id: 'showRelativeDateTime',
+        name: 'showRelativeDateTime',
+        type: 'checkbox',
+        helpKey: 'myaccount.showRelativeDateTime',
+        label: 'Show timestamps as relative',
+        defaultValue: preferences?.showRelativeDateTime,
+      },
       developer: {
         id: 'developer',
         name: 'developer',
@@ -255,6 +265,7 @@ export default function ProfilePanel() {
         'timezone',
         'dateFormat',
         'timeFormat',
+        'showRelativeDateTime',
         'developer',
       ],
     },

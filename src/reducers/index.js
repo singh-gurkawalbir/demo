@@ -76,7 +76,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -94,12 +94,14 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
-import { capitalizeFirstLetter } from '../utils/string';
+import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp } from '../utils/home';
+import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -185,6 +187,7 @@ selectors.userProfilePreferencesProps = createSelector(
       email,
       company,
       role,
+      showRelativeDateTime,
       developer,
       phone,
       dateFormat,
@@ -208,6 +211,7 @@ selectors.userProfilePreferencesProps = createSelector(
       timeFormat,
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
+      showRelativeDateTime,
     };
   });
 
@@ -533,53 +537,69 @@ selectors.sessionValidTimestamp = state => state && state.auth && state.auth.aut
 
 // #region resource selectors
 
-selectors.mkTileApplications = () => createSelector(
-  (_, tile) => tile,
-  state => state?.data?.resources?.integrations,
-  state => state?.data?.resources?.connections,
-  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
-  (tile, integrations = emptyArray, connections = emptyArray, isIAV2) => {
-    let applications = [];
+selectors.mkTileApplications = () => {
+  const resourceSel = selectors.makeResourceSelector();
 
-    if (!tile || !tile._connectorId) {
-      return emptyArray;
-    }
-    if (!isIAV2) {
-      applications = tile?.connector?.applications || emptyArray;
-      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
-        applications[0] = 'magento1';
+  return createSelector(
+    (_, tile) => tile,
+    state => state?.data?.resources?.integrations,
+    state => state?.data?.resources?.connections,
+    (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
+    (state, tile) => resourceSel(state, 'integrations', tile?._integrationId),
+    state => selectors.isHomeListView(state),
+    (tile, integrations = emptyArray, connections = emptyArray, isIAV2, integration, isListView) => {
+      let applications = [];
+
+      if (!tile || (!isListView && !tile._connectorId)) {
+        return emptyArray;
       }
-    } else {
-      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
-      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+      if (!tile._connectorId) {
+        integration?._registeredConnectionIds?.forEach(r => {
+          const connection = connections.find(c => c._id === r);
 
-      childIntegrations.forEach(i => {
-        const integrationConnections = connections.filter(c => c._integrationId === i._id);
+          applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
+        });
 
-        integrationConnections.forEach(c => {
+        return uniq(applications);
+      }
+
+      if (!isIAV2) {
+        applications = tile?.connector?.applications || emptyArray;
+        // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+        if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
+          applications[0] = 'magento1';
+        }
+      } else {
+        const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+        const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+
+        childIntegrations.forEach(i => {
+          const integrationConnections = connections.filter(c => c._integrationId === i._id);
+
+          integrationConnections.forEach(c => {
+            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+          });
+        });
+
+        const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+
+        parentIntegrationConnections.forEach(c => {
           applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
         });
-      });
+        applications = uniq(applications);
+      }
 
-      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+      // Make NetSuite always the last application only for tile view
+      if (applications.length && !isListView) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
+      // Only consider up to four applications only for tile view
+      if (applications.length > 4 && !isListView) {
+        applications.length = 4;
+      }
 
-      parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
-      });
-      applications = uniq(applications);
+      return applications;
     }
-
-    // Make NetSuite always the last application
-    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
-    // Only consider up to four applications
-    if (applications.length > 4) {
-      applications.length = 4;
-    }
-
-    return applications;
-  }
-);
+  );
+};
 
 const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
@@ -1285,7 +1305,7 @@ selectors.mkFlowAttributes = () => createSelector(
     const exportIdToExport = {};
     const flowExports = {};
     // eslint-disable-next-line no-use-before-define
-    const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
+    const isIntegrationV2 = isIntegrationAppVersion2(integration, true);
 
     exps.forEach(exp => {
       exportIdToExport[exp._id] = exp;
@@ -1610,10 +1630,11 @@ selectors.makeMarketPlaceConnectorsSelector = () => {
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
   state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.flows,
   state => selectors.currentEnvironment(state),
   state => selectors.publishedConnectors(state),
   state => selectors.userPermissions(state),
-  (allTiles = emptyArray, integrations = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
+  (allTiles = emptyArray, integrations = emptyArray, flows = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
     const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
 
     const hasStandaloneTile = tiles.find(
@@ -1664,6 +1685,8 @@ selectors.mkTiles = () => createSelector(
 
     return tiles.map(t => {
       integration = integrations.find(i => i._id === t._integrationId) || {};
+      const integrationId = integration._id;
+      let flowsNameAndDescription = '';
 
       if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
         status = TILE_STATUS.UNINSTALL;
@@ -1678,13 +1701,22 @@ selectors.mkTiles = () => createSelector(
       }
 
       if (t._connectorId) {
+        // adding flow names and descriptions to be used for searching tiles
+        flowsNameAndDescription = flows
+          .filter(f => f._connectorId === t._connectorId)
+          .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
+
         connector = published.find(i => i._id === t._connectorId) || {
           user: {},
         };
 
         return {
           ...t,
+          key: t._integrationId, // for Celigo table unique key
           status,
+          flowsNameAndDescription,
+          sortablePropType: -1,
+          totalErrorCount: getStatusSortableProp({...t, status}),
           integration: {
             mode: integration.mode,
             permissions: integration.permissions,
@@ -1696,15 +1728,208 @@ selectors.mkTiles = () => createSelector(
         };
       }
 
+      // adding flow names and descriptions to be used for searching tiles
+      flowsNameAndDescription = flows
+        .filter(f => {
+          if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+            return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+          }
+
+          return f._integrationId === integrationId;
+        })
+        .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
+
       return {
         ...t,
+        key: t._integrationId,
         status,
+        flowsNameAndDescription,
+        sortablePropType: t.numFlows || 0,
+        totalErrorCount: getStatusSortableProp({...t, status}),
         integration: {
           permissions: integration.permissions,
         },
       };
     });
   });
+
+selectors.mkFilteredHomeTiles = () => {
+  const tilesSelector = selectors.mkTiles();
+  const appSel = selectors.mkTileApplications();
+
+  return createSelector(
+    state => {
+      const tiles = tilesSelector(state);
+
+      return tiles.map(t => {
+        const applications = appSel(state, t);
+        const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
+
+        return {...t, applications, pinned: pinnedIntegrations.includes(t._integrationId)};
+      });
+    },
+    state => selectors.suiteScriptLinkedTiles(state),
+    state => selectors.userPreferences(state).dashboard,
+    state => selectors.isHomeListView(state),
+    state => selectors.filter(state, HOME_FILTER_KEY),
+    (tiles = emptyArray, ssTiles = emptyArray, homePreferences, isListView, filterConfig) => {
+      const {tilesOrder, pinnedIntegrations} = homePreferences || emptyObject;
+      const {take, applications} = filterConfig || emptyObject;
+
+      const suiteScriptLinkedTiles = ssTiles.filter(t => {
+        // only fully configured svb tile should be shown on dashboard
+        const isPendingSVB = t._connectorId === 'suitescript-svb-netsuite' && (t.status === TILE_STATUS.IS_PENDING_SETUP || t.status === TILE_STATUS.UNINSTALL);
+
+        return !isPendingSVB;
+      });
+      const homeTiles = tiles.concat(suiteScriptLinkedTiles);
+
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
+
+      if (applications && !applications.includes('all')) {
+        // filter on applications
+        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
+      }
+
+      if (pinnedIntegrations?.length && filteredTiles.length && isListView) {
+        // move pinned integrations to the top, not affected by sorting
+        pinnedIntegrations.forEach(p => {
+          const index = filteredTiles.findIndex(t => t.key === p);
+
+          // only push to beginning if the tile exists in filteredTiles
+          if (index !== -1) {
+            const pinnedInt = filteredTiles.splice(index, 1);
+
+            filteredTiles.unshift(pinnedInt[0]);
+          }
+        });
+      }
+
+      if (typeof take !== 'number' || take < 1 || !isListView) {
+        return {
+          filteredTiles: isListView ? filteredTiles : sortTiles(
+            filteredTiles,
+            tilesOrder
+          ),
+          filteredCount: filteredTiles.length,
+          perPageCount: filteredTiles.length,
+          totalCount: tiles.length,
+        };
+      }
+      const slicedTiles = filteredTiles.slice(0, take);
+
+      return {
+        filteredTiles: isListView ? slicedTiles : sortTiles(
+          slicedTiles,
+          tilesOrder
+        ),
+        filteredCount: filteredTiles.length,
+        perPageCount: slicedTiles.length,
+        totalCount: tiles.length,
+      };
+    });
+};
+
+selectors.mkHomeTileRedirectUrl = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+  const marketplaceResourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (_, tile) => tile,
+    state => selectors.isOwnerUserInErrMgtTwoDotZero(state),
+    (state, tile) => resourceSelector(state, 'integrations', tile?._integrationId),
+    (state, tile) => {
+      const integration = resourceSelector(state, 'integrations', tile?._integrationId);
+
+      if (integration?._templateId) {
+        const template = marketplaceResourceSel(state, 'marketplacetemplates', integration._templateId);
+
+        return getTemplateUrlName(template?.applications);
+      }
+
+      return null;
+    },
+    (tile, isUserInErrMgtTwoDotZero, integration, templateName) => {
+      // separate logic for suitescript tiles
+      if (tile.ssLinkedConnectionId) {
+        let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
+        let urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`;
+
+        if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`;
+          urlToIntegrationStatus = urlToIntegrationSettings;
+        } else if (tile.status === TILE_STATUS.UNINSTALL) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
+        } else if (tile._connectorId) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
+        }
+
+        if (tile._connectorId) {
+          urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`;
+        }
+
+        return {
+          urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
+          urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
+        };
+      }
+
+      const isCloned = integration?.install?.find(step => step?.isClone);
+      const integrationAppTileName =
+        tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
+
+      let urlToIntegrationSettings = templateName
+        ? `/templates/${templateName}/${tile._integrationId}`
+        : `/integrations/${tile._integrationId}`;
+
+      let urlToIntegrationUsers = templateName
+        ? `/templates/${templateName}/${tile._integrationId}/users`
+        : `/integrations/${tile._integrationId}/users`;
+
+      let urlToIntegrationStatus = `/integrations/${tile._integrationId}/dashboard`;
+      let urlToIntegrationConnections = `/integrations/${tile._integrationId}/connections`;
+
+      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+        if (tile._connectorId) {
+          urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+        } else {
+          urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
+        }
+        urlToIntegrationUsers = urlToIntegrationSettings;
+        urlToIntegrationStatus = urlToIntegrationSettings;
+      } else if (tile.status === TILE_STATUS.UNINSTALL) {
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
+        urlToIntegrationUsers = urlToIntegrationSettings;
+      } else if (tile._connectorId) {
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+        urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+      }
+
+      if (tile._connectorId) {
+        urlToIntegrationConnections = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`;
+      }
+
+      if (isUserInErrMgtTwoDotZero) {
+        urlToIntegrationStatus = urlToIntegrationSettings;
+      } else if (tile._connectorId) {
+        urlToIntegrationStatus = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`;
+      }
+
+      return {
+        urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
+        urlToIntegrationUsers: getRoutePath(urlToIntegrationUsers),
+        urlToIntegrationConnections: getRoutePath(urlToIntegrationConnections),
+        urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
+      };
+    }
+  );
+};
+
+selectors.isHomeListView = state => {
+  const homePreferences = selectors.userPreferences(state).dashboard || emptyObject;
+
+  return homePreferences.view === LIST_VIEW;
+};
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
@@ -2823,7 +3048,7 @@ selectors.integrationAppFlowIds = (state, integrationId, childId) => {
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
   const integration = selectors.resource(state, 'integrations', integrationId);
 
-  return isIntegrationAppVerion2(integration, skipCloneCheck);
+  return isIntegrationAppVersion2(integration, skipCloneCheck);
 };
 
 selectors.isIntegrationAppV1 = (state, integrationId) => {
@@ -3948,14 +4173,20 @@ selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnection
 selectors.suiteScriptLinkedTiles = createSelector(
   selectors.suiteScriptLinkedConnections,
   state => state?.data?.suiteScript,
-  (linkedConnections, suiteScriptTiles = {}) => {
+  state => selectors.userPreferences(state).dashboard?.pinnedIntegrations,
+  (linkedConnections, suiteScriptTiles = {}, pinnedIntegrations = emptyArray) => {
     let tiles = [];
 
     linkedConnections.forEach(connection => {
       tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles || []);
     });
 
-    return tiles;
+    return tiles.map(t => ({ ...t,
+      key: `${t.ssLinkedConnectionId}|${t._integrationId}`, // for Celigo Table unique key
+      name: t.displayName,
+      totalErrorCount: getStatusSortableProp(t),
+      sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
+      pinned: pinnedIntegrations.includes(`${t.ssLinkedConnectionId}|${t._integrationId}`) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
@@ -5947,6 +6178,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
 
   let licenseMessageContent = '';
+  let listViewLicenseMesssage = '';
   let expired = false;
   let trialExpired = false;
   let showTrialLicenseMessage = false;
@@ -5956,19 +6188,23 @@ selectors.tileLicenseDetails = (state, tile) => {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    listViewLicenseMesssage = `Expired ${Math.abs(trialExpiresInDays)} days ago`;
     showTrialLicenseMessage = true;
     trialExpired = true;
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays > 0) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
+    listViewLicenseMesssage = `Expiring in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {
     expired = true;
-    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
+    licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
+    listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+    licenseMessageContent = `Your subscription will expire in ${getTextAfterCount('day', expiresInDays)}. Contact sales to renew your subscription.`;
+    listViewLicenseMesssage = `Expiring in ${getTextAfterCount('day', expiresInDays)}`;
   }
 
-  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id};
+  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id, listViewLicenseMesssage};
 };
 
 // #region listener request logs selectors

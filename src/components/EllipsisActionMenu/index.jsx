@@ -1,7 +1,9 @@
 import React, { useCallback, useState} from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
+import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
+import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
+import {TextButton} from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -19,7 +21,7 @@ const ActionLabel = (({ label, Icon }) => {
   return label;
 });
 
-export default function EllipsisActionMenu({ actionsMenu, onAction }) {
+export default function EllipsisActionMenu({ actionsMenu, label, onAction, alignment }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
@@ -36,16 +38,28 @@ export default function EllipsisActionMenu({ actionsMenu, onAction }) {
 
   return (
     <>
-      <IconButton
-        data-test="openActionsMenu"
-        aria-label="more"
-        aria-controls={actionsPopoverId}
-        aria-haspopup="true"
-        size="small"
-        onClick={handleMenuClick}>
-        <EllipsisIcon />
-      </IconButton>
-
+      {label ? (
+        <TextButton
+          data-test="openActionsMenu"
+          aria-label="more"
+          aria-controls={actionsPopoverId}
+          aria-haspopup="true"
+          onClick={handleMenuClick}
+          startIcon={alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal />} >
+          {label}
+        </TextButton>
+      )
+        : (
+          <IconButton
+            data-test="openActionsMenu"
+            aria-label="more"
+            aria-controls={actionsPopoverId}
+            aria-haspopup="true"
+            size="small"
+            onClick={handleMenuClick}>
+            {alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal />}
+          </IconButton>
+        )}
       <Menu
         elevation={2}
         variant="menu"
@@ -54,7 +68,7 @@ export default function EllipsisActionMenu({ actionsMenu, onAction }) {
         className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
-        {actionsMenu.map(({ action, label, Icon, disabled }) => (
+        {actionsMenu?.map(({ action, label, Icon, disabled }) => (
           <MenuItem
             key={label}
             data-test={`${action}`}

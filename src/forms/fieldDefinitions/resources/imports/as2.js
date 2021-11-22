@@ -1,5 +1,6 @@
 export default {
   'as2.fileNameTemplate': {
+    loggable: true,
     type: 'uri',
     showLookup: false,
     showExtract: false,
@@ -12,6 +13,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'as2.messageIdTemplate': {
+    loggable: true,
     type: 'uri',
     showLookup: false,
     showExtract: false,
@@ -26,6 +28,7 @@ export default {
     label: 'Configure HTTP Headers',
   },
   'as2.maxRetries': {
+    loggable: true,
     type: 'select',
     label: 'Max retries',
     defaultValue: r => (r && r.as2 && r.as2.maxRetries) || 0,

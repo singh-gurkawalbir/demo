@@ -22,6 +22,7 @@ import orgUsers from './users/Metadata/orgUsers';
 import listenerLogs from './listenerLogs/metadata';
 import runningFlows from './accountDashboard/runningFlows/metadata';
 import completedFlows from './accountDashboard/completedFlows/metadata';
+import homeTiles from './homeTiles/metadata';
 
 const metadata = {
   agents,
@@ -47,6 +48,7 @@ const metadata = {
   listenerLogs,
   runningFlows,
   completedFlows,
+  homeTiles,
 };
 
 export default function (resourceType) {

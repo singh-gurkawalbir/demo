@@ -1844,7 +1844,7 @@ export default {
   'import.salesforce.api':
     'Salesforce supports both SOAP and REST API types.  Salesforce actually supports a multitude of different API types, but SOAP and REST are the most relevant for importing data via integrator.io.  SOAP is recommended here because SOAP supports the ability to submit more than one record at a time (i.e. in a single API request).  Salesforce governs its API based on the total number of API requests per day, so it is important to batch up your data wherever possible; and with the REST API you are limited to only one record per API request.  The REST API can be a slightly better option when the data being imported is guaranteed to come in one record at a time, or if you are using the integrator.io API to invoke the import from your own application and you prefer the REST paradigm.\n\n<b>Composite:</b> This enables you to import a parent record along with its child record to leverage the composite requests of Salesforce.',
   'import.http.compositeType':
-    "Choose 'Create New and Update Existing' to dynamically create vs update records in the import application based on their existence in that application already. Choose 'Create New Data and Ignore Existing Data' to only create new records, and this option will ignore records that exist already. Choose 'Update Existing Data and Ignore New Data' to only update existing records, and this option will ignore records that cannot be found.",
+    "Choose 'Create new records & update existing records' to dynamically create vs update records in the import application based on their existence in that application already. Choose 'Create new records & ignore existing records' to only create new records, and this option will ignore records that exist already. Choose 'Ignore new records & update existing records' to only update existing records, and this option will ignore records that cannot be found.",
   'import.hooks.preMap.scriptFunction':
     'The name of the preMap hook function (in your script) that you want to invoke.',
   'import.hooks.postMap.scriptFunction':
@@ -2216,6 +2216,7 @@ export default {
   'myaccount.timeFormat':
     'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
   'myaccount.developer': 'Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an \'Export\' or an \'Import\' there are \'Hooks\' fields available in the UI where custom code can be configured.',
+  'myaccount.showRelativeDateTime': 'Check this box to view the amount of time elapsed since an event occurred, such as <b>1 hour ago</b> or <b>1 day ago</b>. Otherwise, the display format is absolute, such as <b>2021-10-25 7:47:33 PM</b>.',
   'hooks.insertFunction':
     'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
   'hooks.scriptContent':
