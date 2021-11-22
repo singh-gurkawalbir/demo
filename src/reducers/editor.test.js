@@ -35,11 +35,11 @@ describe('AFE region selectors test cases', () => {
     });
     test('should return original helper functions if timestamp function is not present', () => {
       delete state.session.editors.helperFunctions.timestamp;
-      expect(selectors.editorHelperFunctions(state)).toBe(state.session.editors.helperFunctions);
+      expect(selectors.editorHelperFunctions(state)).toEqual(state.session.editors.helperFunctions);
     });
     test('should return original helper functions if user timezone is empty', () => {
       delete state.user.profile.timezone;
-      expect(selectors.editorHelperFunctions(state)).toBe(state.session.editors.helperFunctions);
+      expect(selectors.editorHelperFunctions(state)).toEqual(state.session.editors.helperFunctions);
     });
     test('should return updated timestamp function if user timezone is present', () => {
       const expectedOutput = {
