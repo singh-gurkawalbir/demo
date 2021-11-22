@@ -217,6 +217,7 @@ import zenefits from './zenefits';
 import saphana from './saphana';
 import mixpanel from './mixpanel';
 import copper from './copper';
+import fifteenfive from './fifteenfive';
 
 export default {
   channelape,
@@ -438,4 +439,5 @@ export default {
   saphana,
   mixpanel,
   copper,
+  '15five': fifteenfive,
 };
