@@ -1,5 +1,5 @@
-import { shallowEqual, useSelector, useDispatch } from 'react-redux';
-import { useMemo, useEffect } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
+import { useMemo } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
@@ -22,8 +22,6 @@ import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import actions from '../../../actions';
-import {FILTER_KEYS_AD} from '../../../utils/accountDashboard';
 
 const getTabs = isUserInErrMgtTwoDotZero => [
   {
@@ -80,7 +78,6 @@ const emptyObj = {};
 
 export function useAvailableTabs() {
   const match = useRouteMatch();
-  const dispatch = useDispatch();
 
   const { integrationId, childId } = match?.params;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
@@ -115,28 +112,6 @@ export function useAvailableTabs() {
     return emptyObj;
   }, shallowEqual);
 
-  useEffect(
-    () => {
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
-          integrationId: childId || integrationId,
-          isIntegrationDashboard: true,
-        })
-      );
-    },
-    [childId, dispatch, integrationId]
-  );
-  useEffect(
-    () => () => {
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
-          isIntegrationDashboard: false,
-          integrationId: undefined,
-        })
-      );
-    },
-    [dispatch]
-  );
   // Addons are currently not supported in 2.0.
   // This piece of code works when addon structure is introduced and may require minor changes.
   const { hasAddOns} = useSelector(state => {

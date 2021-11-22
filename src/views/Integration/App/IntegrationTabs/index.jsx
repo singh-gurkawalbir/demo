@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -26,8 +26,6 @@ import GroupOfUsersIcon from '../../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../../components/icons/SingleUserIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getAdminLevelTabs } from '../../../../utils/integrationApps';
-import actions from '../../../../actions';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 
 const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -92,8 +90,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function IntegrationTabsComponent() {
   const match = useRouteMatch();
-  const dispatch = useDispatch();
-  const {integrationId, childId} = match.params;
+  const {integrationId} = match.params;
   const classes = useStyles();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -134,29 +131,6 @@ export default function IntegrationTabsComponent() {
 
     return getAllTabs(isUserInErrMgtTwoDotZero).filter(tab => !filterTabs.includes(tab.path));
   }, [hasAddOns, isUserInErrMgtTwoDotZero, showAdminTab]);
-
-  useEffect(
-    () => {
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
-          integrationId: childId ? `store${childId}pid${integrationId}` : integrationId,
-          isIntegrationDashboard: true,
-        })
-      );
-    },
-    [childId, dispatch, integrationId]
-  );
-  useEffect(
-    () => () => {
-      dispatch(
-        actions.patchFilter(FILTER_KEYS_AD.DASHBOARD, {
-          isIntegrationDashboard: false,
-          integrationId: undefined,
-        })
-      );
-    },
-    [dispatch]
-  );
 
   return (
 

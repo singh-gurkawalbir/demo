@@ -96,7 +96,7 @@ describe('jobs reducer', () => {
   });
 
   describe('should update the state properly when job collection requested', () => {
-    const jobsRequestedAction = actions.job.dashboard.running.requestCollection();
+    const jobsRequestedAction = actions.job.dashboard.running.requestCollection({});
 
     test('should update the state properly when the current state is undefined', () => {
       const state = reducer(undefined, jobsRequestedAction);
@@ -357,7 +357,7 @@ describe('Running jobs selectors', () => {
     });
 
     describe('should return true when state contains status as loading', () => {
-      const jobsRequestedAction = actions.job.dashboard.running.requestCollection();
+      const jobsRequestedAction = actions.job.dashboard.running.requestCollection({});
       const state = reducer(undefined, jobsRequestedAction);
 
       expect(selectors.isRunningJobsCollectionLoading(state)).toEqual(true);

@@ -939,19 +939,18 @@ selectors.getEventReportIntegrationName = (state, r) => {
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
-selectors.getAllAccountDashboardFlows = (state, filterKey) => {
+selectors.getAllAccountDashboardFlows = (state, filterKey, integrationId) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources || [];
   let allStoreFlows = [];
-  const {isIntegrationDashboard, integrationId} = selectors.filter(state, FILTER_KEYS_AD.DASHBOARD);
   const jobFilter = selectors.filter(state, filterKey);
 
   let storeId;
   let parentIntegrationId;
   let selectedIntegrations;
 
-  if (isIntegrationDashboard) {
+  if (integrationId) {
     selectedIntegrations = [integrationId];
   } else {
     selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
@@ -1010,7 +1009,7 @@ selectors.accountDashboardJobs = (state, filterKey) => {
 
   return {jobs: totalJobs, nextPageURL, status};
 };
-selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integrationId }) => {
   let path;
 
   if (nextPageURL) {
@@ -1018,7 +1017,6 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   } else {
     path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
   }
-  const {isIntegrationDashboard, integrationId} = selectors.filter(state, FILTER_KEYS_AD.DASHBOARD);
   const jobFilter = selectors.filter(state, `${integrationId || ''}${filterKey}`);
 
   const userPreferences = selectors.userPreferences(state);
@@ -1039,7 +1037,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
     if (startDate) { body.time_gt = startDate.getTime(); }
     if (endDate) { body.time_lte = endDate.getTime(); }
   }
-  if (isIntegrationDashboard) {
+  if (integrationId) {
     selectedIntegrations = [integrationId];
   }
 

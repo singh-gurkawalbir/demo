@@ -15,11 +15,14 @@ import Edit from './actions/Edit';
 
 export default {
   useColumns: () => {
-    const {isIntegrationDashboard, integrationId} = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD));
-    const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
+    const match = useRouteMatch();
+    let { integrationId } = match.params;
+    const { childId } = match.params;
+
+    integrationId = childId ? `store${childId}pid${integrationId}` : integrationId; const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
 
     return [
-      ...(!isIntegrationDashboard ? [{
+      ...(!integrationId ? [{
         key: '_integrationId',
         HeaderValue: function IntegrationSearchFilter() {
           const dispatch = useDispatch();
@@ -51,7 +54,7 @@ export default {
       {
         key: '_flowId',
         HeaderValue: function FlowSearchFilter() {
-          const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, integrationFilterKey));
+          const flowOptions = useSelector(state => selectors.getAllAccountDashboardFlows(state, integrationFilterKey, integrationId));
 
           return (
             <MultiSelectColumnFilter

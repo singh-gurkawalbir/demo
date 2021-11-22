@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import Tabs from './Tabs';
@@ -16,10 +16,14 @@ import { hashCode } from '../../utils/string';
 export default function Dashboard() {
   const history = useHistory();
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  let { integrationId } = match.params;
+  const { childId } = match.params;
+
+  integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const integrationId = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
 
   const filters = useSelector(state => selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`));
 
@@ -30,10 +34,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     dispatch(
-      actions.job.dashboard.completed.requestCollection()
+      actions.job.dashboard.completed.requestCollection({ integrationId})
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, filterHash]);
+  }, [dispatch, filterHash, integrationId]);
 
   useEffect(
     () => () => {

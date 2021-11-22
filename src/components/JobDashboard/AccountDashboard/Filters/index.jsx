@@ -4,6 +4,7 @@ import {
   makeStyles, Typography,
 } from '@material-ui/core';
 import { addDays, startOfDay } from 'date-fns';
+import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -59,7 +60,11 @@ const useStyles = makeStyles(theme => ({
 export default function Filters({filterKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const integrationId = useSelector(state => selectors.filter(state, FILTER_KEYS_AD.DASHBOARD)?.integrationId);
+  const match = useRouteMatch();
+  let { integrationId } = match.params;
+  const { childId } = match.params;
+
+  integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
   const integrationFilterKey = `${integrationId || ''}${filterKey}`;
   const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, filterKey));
 
@@ -83,9 +88,9 @@ export default function Filters({filterKey}) {
 
   const loadMoreJobs = useCallback(
     () => {
-      if (integrationFilterKey === `${integrationId}${FILTER_KEYS_AD.RUNNING}`) { return dispatch(actions.job.dashboard.running.requestCollection(nextPageURL)); }
+      if (integrationFilterKey === `${integrationId}${FILTER_KEYS_AD.RUNNING}`) { return dispatch(actions.job.dashboard.running.requestCollection({nextPageURL, integrationId})); }
 
-      return dispatch(actions.job.dashboard.completed.requestCollection(nextPageURL));
+      return dispatch(actions.job.dashboard.completed.requestCollection({nextPageURL, integrationId}));
     },
     [dispatch, integrationFilterKey, integrationId, nextPageURL],
   );
