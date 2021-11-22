@@ -55,7 +55,9 @@ export default function DashboardTabs() {
 
   const { dashboardTab } = match.params;
 
-  const currentTabIndex = tabs.findIndex(t => t.path === dashboardTab);
+  let currentTabIndex = tabs.findIndex(t => t.path === dashboardTab);
+
+  currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;

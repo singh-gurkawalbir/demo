@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import {useRouteMatch, useHistory} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
@@ -21,6 +22,8 @@ const useStyles = makeStyles(theme => ({
 export default function DashboardPanel({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const history = useHistory();
   const filterChildId = useSelector(
     state => selectors.filter(state, 'jobs').childId
   );
@@ -46,6 +49,9 @@ export default function DashboardPanel({ integrationId, childId }) {
       );
     }
   }, [dispatch, filterChildId, childId]);
+  if (isUserInErrMgtTwoDotZero && !(match.url?.includes('/runningFlows') || match.url?.includes('/completedFlows'))) {
+    history.replace(`${match.url}/runningFlows`);
+  }
 
   return (
     <div className={classes.root}>

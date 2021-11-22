@@ -32,6 +32,7 @@ export default function IntegrationTabs({ tabs, className }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  // dashboardTab: isUserInErrMgtTwoDotZero && newTab === 'dashboard' && 'runningFlows',
 
   // if you cant find tab index default it to zero
   currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
@@ -43,15 +44,13 @@ export default function IntegrationTabs({ tabs, className }) {
         tab: newTab,
       });
 
-      if (isUserInErrMgtTwoDotZero) {
-        if (newTab === 'dashboard') {
-          path = path.replace('/dashboard', '/dashboard/runningFlows');
-        } else if (path.includes('/runningFlows') || path.includes('/completedFlows')) {
+      if (isUserInErrMgtTwoDotZero && newTab !== 'dashboard') {
+        if (path.includes('/runningFlows')) {
           path = path.replace('/runningFlows', '');
+        } else {
           path = path.replace('/completedFlows', '');
         }
       }
-
       history.push(path);
     },
     [history, isUserInErrMgtTwoDotZero, match.params, match.path, tabs]

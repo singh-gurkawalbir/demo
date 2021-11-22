@@ -2,6 +2,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { useSelector } from 'react-redux';
+import {useHistory, useRouteMatch} from 'react-router-dom';
 import IntegrationDashboard from '../../../../Dashboard';
 import JobDashboard from '../../../../../components/JobDashboard';
 import LoadResources from '../../../../../components/LoadResources';
@@ -19,6 +20,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function DashboardPanel({ integrationId, childId }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
+
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -27,6 +31,9 @@ export default function DashboardPanel({ integrationId, childId }) {
 
   if (isUserInErrMgtTwoDotZero) {
     infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year.';
+  }
+  if (isUserInErrMgtTwoDotZero && !(match.url?.includes('/runningFlows') || match.url?.includes('/completedFlows'))) {
+    history.replace(`${match.url}/runningFlows`);
   }
 
   return (
