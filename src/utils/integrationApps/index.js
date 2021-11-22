@@ -187,6 +187,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
       'Salesforce - Subscription Billing Connector': 'salesforceSubscription',
       'Vendor Payment Manager': 'vendorPaymentManager',
       'Salesforce - NetSuite Connector': 'sfnsio',
+      'Salesforce - NetSuite': 'sfnsio',
     },
   };
 

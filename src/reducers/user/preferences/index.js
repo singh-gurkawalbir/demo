@@ -17,6 +17,16 @@ export const GLOBAL_PREFERENCES = [
   'lastLoginAt',
 ];
 
+const getAccountPreferences = draft => {
+  const { defaultAShareId } = draft;
+
+  if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+    return draft;
+  }
+
+  return draft.accounts?.[defaultAShareId] || {};
+};
+
 const updatePreferences = (draft, preferences) => {
   const { defaultAShareId } = draft;
 
@@ -67,7 +77,7 @@ export default (state = { environment: 'production' }, action) => {
 
       case actionTypes.PIN_INTEGRATION:
         {
-          let {dashboard} = draft;
+          let {dashboard} = getAccountPreferences(draft);
 
           if (!dashboard) {
             dashboard = {};
@@ -84,7 +94,7 @@ export default (state = { environment: 'production' }, action) => {
 
       case actionTypes.UNPIN_INTEGRATION:
         {
-          const {dashboard} = draft;
+          const {dashboard} = getAccountPreferences(draft);
 
           if (!dashboard || !dashboard.pinnedIntegrations) {
             break;
