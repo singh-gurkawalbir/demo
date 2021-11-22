@@ -503,6 +503,8 @@ export default {
   'sugarcrm.connection.http.encrypted.clientSecret': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.http.auth.token.token':
     'The access token of your Tableau account.',
+  'copper.connection.http.auth.token.token': 'Enter the API key of your Copper account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Copper account.<br>2. Navigate to <b>Settings > Integrations > API Keys</b>.<br>3. Copy your <b>API key</b>. (If none exists yet, then create a new API key by clicking on <b>Generate API Key </b>button.)<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'copper.connection.http.unencrypted.email': 'Enter the email address that you use to login to Copper.',
   'connection.http.marketoSubdomain':
     "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
   'marketo.connection.http.unencrypted.clientId':

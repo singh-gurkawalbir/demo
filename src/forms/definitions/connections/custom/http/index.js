@@ -216,6 +216,7 @@ import braintree from './braintree';
 import zenefits from './zenefits';
 import saphana from './saphana';
 import mixpanel from './mixpanel';
+import copper from './copper';
 
 export default {
   channelape,
@@ -436,4 +437,5 @@ export default {
   zenefits,
   saphana,
   mixpanel,
+  copper,
 };
