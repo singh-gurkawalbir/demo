@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch, Link, generatePath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardActions, Typography } from '@material-ui/core';
 import {applicationsList} from '../../constants/applications';
@@ -140,7 +140,7 @@ export default function MarketplaceList() {
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
   const applicationName = connector?.name || capitalizeFirstLetter(application);
-  const currentMarketPlaceLocation = location?.pathname?.replace(/\/installTemplate\/(.*)/g, '') || '';
+  // const currentMarketPlaceLocation = location?.pathname?.replace(/\/installTemplate\/(.*)/g, '') || '';
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -310,7 +310,7 @@ export default function MarketplaceList() {
               <FilledButton
                 data-test="installTemplate"
                 component={Link}
-                to={`${currentMarketPlaceLocation}/installTemplate/preview/${template._id}`}>
+                to={`${match.url}/installTemplate/preview/${template._id}`}>
                 Preview
               </FilledButton>
             </CardActions>
