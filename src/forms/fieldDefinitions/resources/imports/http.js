@@ -70,7 +70,7 @@ export default {
   },
   'http.requestMediaType': {
     loggable: true,
-    type: 'selectmediatype',
+    type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
@@ -343,7 +343,7 @@ export default {
   },
   'http.successMediaType': {
     loggable: true,
-    type: 'selectmediatype',
+    type: 'selectoverridemediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
     visibleWhenAll: [
@@ -360,7 +360,7 @@ export default {
   },
   'http.errorMediaType': {
     loggable: true,
-    type: 'selectmediatype',
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     visibleWhen: [

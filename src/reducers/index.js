@@ -2532,6 +2532,7 @@ selectors.mkGetMediaTypeOptions = () => {
       }
 
       // remove the media type which is set on connection/dependent field , from options
+      // cloning options so as to not affect original options
       const modifiedOptions = cloneDeep(options);
 
       if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);

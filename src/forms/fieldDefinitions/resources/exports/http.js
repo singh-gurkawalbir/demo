@@ -1,7 +1,7 @@
 export default {
   'http.successMediaType': {
     loggable: true,
-    type: 'selectmediatype',
+    type: 'selectoverridemediatype',
     placeholder: 'Do not override',
     label: 'Override media type for success responses',
     options: [
@@ -19,7 +19,7 @@ export default {
   },
   'http.requestMediaType': {
     loggable: true,
-    type: 'selectmediatype',
+    type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
     options: [
@@ -41,7 +41,7 @@ export default {
   },
   'http.errorMediaType': {
     loggable: true,
-    type: 'selectmediatype',
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     options: [
