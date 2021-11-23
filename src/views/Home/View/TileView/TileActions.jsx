@@ -10,13 +10,13 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import useHandleDelete from '../../../Integration/hooks/useHandleDelete';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../../utils/constants';
 import { useSelectorMemo } from '../../../../hooks';
 
 export default function TileActions({tile}) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const {_integrationId, _connectorId, name} = tile || {};
+  const {_integrationId, _connectorId, name, status} = tile || {};
   const isStandalone = STANDALONE_INTEGRATION.id === _integrationId;
   const supportsMultiStore = useSelector(state =>
     selectors.resource(state, 'integrations', _integrationId)?.settings?.supportsMultiStore
@@ -31,6 +31,8 @@ export default function TileActions({tile}) {
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId) || {};
 
   const canUninstallIA = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
+  const isConfigPending = status === TILE_STATUS.IS_PENDING_SETUP || status === TILE_STATUS.UNINSTALL;
+
   const canCloneIA = integration &&
             integrationAppUtil.isCloningSupported(
               _connectorId,
@@ -68,7 +70,7 @@ export default function TileActions({tile}) {
   const tileActions = [];
 
   if (!_connectorId && !isStandalone) { // diy / template integrations except standalone flows
-    if (canCloneDiy) {
+    if (canCloneDiy && !isConfigPending) {
       tileActions.push(
         {
           Icon: CopyIcon,
@@ -77,7 +79,7 @@ export default function TileActions({tile}) {
         }
       );
     }
-    if (canDownloadDiy) {
+    if (canDownloadDiy && !isConfigPending) {
       tileActions.push({
         Icon: DownloadIcon,
         action: 'generateTemplateZip',
@@ -94,7 +96,7 @@ export default function TileActions({tile}) {
       );
     }
   } else if (_connectorId) { // Integration app
-    if (canCloneIA) {
+    if (canCloneIA && !isConfigPending) {
       tileActions.push(
         {
           Icon: CopyIcon,

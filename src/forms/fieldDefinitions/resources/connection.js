@@ -820,7 +820,13 @@ export default {
     type: 'select',
     label: 'Header scheme',
     skipDefault: true,
-    defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
+    defaultValue: r => {
+      if (!r?.http?.auth?.token?.scheme) return ' ';
+
+      if (!['Bearer', 'MAC', ' '].includes(r.http.auth.token.scheme)) return 'Custom';
+
+      return r.http.auth.token.scheme;
+    },
     options: [
       {
         items: [
