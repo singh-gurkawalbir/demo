@@ -100,7 +100,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
-import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp } from '../utils/home';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp, getTileId } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
@@ -1712,7 +1712,7 @@ selectors.mkTiles = () => createSelector(
 
         return {
           ...t,
-          key: t._integrationId, // for Celigo table unique key
+          key: getTileId(t), // for Celigo table unique key
           status,
           flowsNameAndDescription,
           sortablePropType: -1,
@@ -1741,7 +1741,7 @@ selectors.mkTiles = () => createSelector(
 
       return {
         ...t,
-        key: t._integrationId,
+        key: getTileId(t),
         status,
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
@@ -1786,12 +1786,12 @@ selectors.mkFilteredHomeTiles = () => {
 
       let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
 
-      if (applications && !applications.includes('all')) {
+      if (isListView && applications && !applications.includes('all')) {
         // filter on applications
         filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
       }
 
-      if (pinnedIntegrations?.length && filteredTiles.length && isListView) {
+      if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
         // move pinned integrations to the top, not affected by sorting
         pinnedIntegrations.forEach(p => {
           const index = filteredTiles.findIndex(t => t.key === p);
@@ -1820,7 +1820,7 @@ selectors.mkFilteredHomeTiles = () => {
 
       return {
         filteredTiles: isListView ? slicedTiles : sortTiles(
-          slicedTiles,
+          filteredTiles,
           tilesOrder
         ),
         filteredCount: filteredTiles.length,
@@ -4182,11 +4182,11 @@ selectors.suiteScriptLinkedTiles = createSelector(
     });
 
     return tiles.map(t => ({ ...t,
-      key: `${t.ssLinkedConnectionId}|${t._integrationId}`, // for Celigo Table unique key
+      key: getTileId(t), // for Celigo Table unique key
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
-      pinned: pinnedIntegrations.includes(`${t.ssLinkedConnectionId}|${t._integrationId}`) }));
+      pinned: pinnedIntegrations.includes(getTileId(t)) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
