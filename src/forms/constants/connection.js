@@ -130,6 +130,7 @@ export default {
     'mixpanel',
     'copper',
     '15five',
+    'breezyhr',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
