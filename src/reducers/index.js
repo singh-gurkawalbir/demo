@@ -590,8 +590,8 @@ selectors.mkTileApplications = () => {
         applications = uniq(applications);
       }
 
-      // Make NetSuite always the last application
-      if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
+      // Make NetSuite always the last application only for tile view
+      if (applications.length && !isListView) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
       // Only consider up to four applications only for tile view
       if (applications.length > 4 && !isListView) {
         applications.length = 4;
