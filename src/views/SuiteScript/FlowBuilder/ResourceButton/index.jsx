@@ -49,7 +49,7 @@ export default function ResourceButton({ onClick, variant = 'export', isFileTran
       color="secondary"
       className={classes.blockButton}
       data-test={block.label}
-      startIcon={<block.icon className={classes.blockIcon} />}
+      startIcon={<block.Icon className={classes.blockIcon} />}
       onClick={onClick}>
       {block.label}
     </OutlinedButton>

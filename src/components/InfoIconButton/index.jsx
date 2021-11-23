@@ -16,8 +16,10 @@ const useStyles = makeStyles(theme => ({
   },
   xs: {
     marginTop: theme.spacing(-0.5),
-    '& svg': {
-      fontSize: '1rem',
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    '& >* svg': {
+      fontSize: theme.spacing(2),
     },
   },
 }));
