@@ -50,7 +50,7 @@ export function isTileStatusConnectionDown(tile) {
 }
 
 export function tileStatus(tile) {
-  const { status, numError } = tile;
+  const { status, numError } = tile || {};
   let label;
   let variant;
 
@@ -75,13 +75,16 @@ export function tileStatus(tile) {
   return { label, variant };
 }
 
-export const getTileId = tile =>
-  tile.ssLinkedConnectionId
+export const getTileId = tile => {
+  if (!tile) return '';
+
+  return tile.ssLinkedConnectionId
     ? `${tile.ssLinkedConnectionId}_${tile._integrationId}`
     : tile._integrationId;
+};
 
 export const getStatusSortableProp = tile => {
-  const { status, numError = 0, offlineConnections } = tile;
+  const { status, numError = 0, offlineConnections } = tile || {};
   let statusSortableProp = 0;
 
   if (offlineConnections?.length) {
