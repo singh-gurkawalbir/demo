@@ -218,6 +218,7 @@ import saphana from './saphana';
 import mixpanel from './mixpanel';
 import copper from './copper';
 import fifteenfive from './fifteenfive';
+import docebo from './docebo';
 
 export default {
   channelape,
@@ -440,4 +441,5 @@ export default {
   mixpanel,
   copper,
   '15five': fifteenfive,
+  docebo,
 };
