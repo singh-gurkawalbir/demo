@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
+import cloneDeep from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -2485,6 +2486,60 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   }
 
   return updatedResourceType;
+};
+
+// this selector updates the field options based on the
+// parent field media type
+selectors.mkGetMediaTypeOptions = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, {formKey}) => selectors.formState(state, formKey)?.value || {},
+
+    (state, {formKey}) => {
+      const formValues = selectors.formState(state, formKey)?.value || {};
+      const connectionId = formValues['/_connectionId'];
+      const connection = resourceSelector(state, 'connections', connectionId) || {};
+
+      return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
+    },
+    (_, {resourceType}) => resourceType,
+    (_, {dependentFieldForMediaType}) => dependentFieldForMediaType,
+    (_, {options}) => options,
+    (_, {fieldId}) => fieldId,
+    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, options, fieldId) => {
+      if (resourceType === 'imports' && fieldId === 'http.requestMediaType') {
+        const inputMode = formValues['/inputMode'];
+
+        options = inputMode === 'blob' ? [
+          { label: 'Multipart / form-data', value: 'form-data' },
+          { label: 'JSON', value: 'json' },
+        ] : [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'URL encoded', value: 'urlencoded' },
+          { label: 'Multipart / form-data', value: 'form-data' },
+        ];
+      }
+
+      let mediaTypeIndex = -1;
+      const parentFieldMediaType = formValues[dependentFieldForMediaType] || connectionMediaType;
+
+      // find the media type in the options
+      if (parentFieldMediaType && options) {
+        mediaTypeIndex = options.findIndex(o => o.value === parentFieldMediaType);
+      }
+
+      // remove the media type which is set on connection/dependent field , from options
+      // cloning options so as to not affect original options
+      const modifiedOptions = cloneDeep(options);
+
+      if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);
+
+      return {modifiedOptions: [{ items: modifiedOptions}], parentFieldMediaType};
+    }
+  );
 };
 
 // #endregion resource selectors
