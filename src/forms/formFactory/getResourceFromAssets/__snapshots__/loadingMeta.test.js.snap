@@ -8319,6 +8319,9 @@ Object {
       "file.backupPath": Object {
         "fieldId": "file.backupPath",
       },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
       },
@@ -8528,6 +8531,7 @@ Object {
                 "ftp.inProgressFileName",
                 "ftp.blobUseTempFile",
                 "ftp.blobInProgressFileName",
+                "file.batchSize",
                 "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
@@ -10274,6 +10278,9 @@ Object {
       },
       "file.backupPath": Object {
         "fieldId": "file.backupPath",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
       },
       "file.csv": Object {
         "fieldId": "file.csv",
