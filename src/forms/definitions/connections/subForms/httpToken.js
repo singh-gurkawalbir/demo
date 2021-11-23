@@ -31,6 +31,13 @@ export default {
         { field: 'http.auth.token.scheme', is: ['Custom'] },
       ],
       required: true,
+      defaultValue: r => {
+        if (!r?.http?.auth?.token?.scheme) return '';
+        // custom auth scheme gets saved in 'scheme' field
+        if (['Bearer', 'MAC', ' '].includes(r.http.auth.token.scheme)) return '';
+
+        return r.http.auth.token.scheme;
+      },
     },
     'http.auth.token.paramName': {
       fieldId: 'http.auth.token.paramName',
