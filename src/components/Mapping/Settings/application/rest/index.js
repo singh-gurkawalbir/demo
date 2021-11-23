@@ -17,7 +17,8 @@ export default {
     importResource = {},
     isGroupedSampleData,
   }) => {
-    const {generate, lookupName} = value;
+    const { generate, lookupName, extract } = value;
+
     const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importResource;
 
     const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
@@ -586,7 +587,7 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1 || extract.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }
