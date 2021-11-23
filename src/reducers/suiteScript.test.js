@@ -434,7 +434,7 @@ describe('suiteScriptLinkedTiles selector', () => {
         preferences: {
           defaultAShareId: ACCOUNT_IDS.OWN,
           dashboard: {
-            pinnedIntegrations: ['connection1|suitescript1'],
+            pinnedIntegrations: ['connection1_suitescript1'],
           },
           ssConnectionIds: [
             'connection1',
@@ -516,7 +516,7 @@ describe('suiteScriptLinkedTiles selector', () => {
     const expected = [
       {
         _integrationId: 'suitescript1',
-        key: 'connection1|suitescript1',
+        key: 'connection1_suitescript1',
         displayName: 'salesforce netsuite',
         name: 'salesforce netsuite',
         pinned: true,
@@ -526,7 +526,7 @@ describe('suiteScriptLinkedTiles selector', () => {
       },
       {
         _integrationId: 'suitescript2',
-        key: 'connection1|suitescript2',
+        key: 'connection1_suitescript2',
         _connectorId: 'connector1',
         name: undefined,
         numFlows: 10,
@@ -537,7 +537,7 @@ describe('suiteScriptLinkedTiles selector', () => {
       },
       {
         _integrationId: 'suitescript1',
-        key: 'connection2|suitescript1',
+        key: 'connection2_suitescript1',
         displayName: 'salesforce netsuite',
         name: 'salesforce netsuite',
         numError: 10,
@@ -549,7 +549,7 @@ describe('suiteScriptLinkedTiles selector', () => {
       },
       {
         _integrationId: 'suitescript1',
-        key: 'connection3|suitescript1',
+        key: 'connection3_suitescript1',
         name: undefined,
         pinned: false,
         sortablePropType: 0,
@@ -558,7 +558,7 @@ describe('suiteScriptLinkedTiles selector', () => {
       },
       {
         _integrationId: 'suitescript2',
-        key: 'connection3|suitescript2',
+        key: 'connection3_suitescript2',
         name: undefined,
         pinned: false,
         sortablePropType: 0,
