@@ -1,5 +1,4 @@
 /* global expect, describe, test */
-
 import sortBy from 'lodash/sortBy';
 import { getAllApplications, getStatusSortableProp, getTileId, sortTiles, tileStatus } from '.';
 import { applicationsList } from '../../constants/applications';
@@ -193,12 +192,12 @@ describe('tileStatus util', () => {
 
 describe('getTileId util', () => {
   test('should not throw error for invalid argumets', () => {
-    expect(getTileId()).toBeUndefined();
+    expect(getTileId()).toEqual('');
   });
-  test('should return integration id if tile is not suitescript', () => {
+  test('should return integrationId if tile is not suitescript', () => {
     expect(getTileId(tiles[0])).toEqual('integration1');
   });
-  test('should return a combination of ssLinkedConnectionId and integration if tile is suitescript', () => {
+  test('should return a combination of ssLinkedConnectionId and integrationId if tile is suitescript', () => {
     const ssTile = {
       _integrationId: 'ssIntegration1',
       ssLinkedConnectionId: 'suitescript1',

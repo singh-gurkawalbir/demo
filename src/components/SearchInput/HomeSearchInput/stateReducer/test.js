@@ -1,14 +1,13 @@
 /* global describe,test,expect */
-
 import reducer from '.';
 
-const initialState = {
-  isSearchFocused: false,
-  isSearchIconHidden: false,
-  isCloseIconHidden: true,
-};
-
 describe('home search input reducer', () => {
+  const initialState = {
+    isSearchFocused: false,
+    isSearchIconHidden: false,
+    isCloseIconHidden: true,
+  };
+
   test('should return correct state when input field changes', () => {
     const state = reducer(initialState, {type: 'onInputChange'});
 

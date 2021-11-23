@@ -1,5 +1,4 @@
 /* global describe, test, expect */
-
 import { getTextAfterCount } from './string';
 
 describe('getTextAfterCount util test cases', () => {

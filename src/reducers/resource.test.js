@@ -255,6 +255,21 @@ describe('resource region selector testcases', () => {
     test('should return empty array if dashboard view is tile and tile is not IA', () => {
       expect(selector(state, {_integrationId: 'diyIntegration'})).toEqual([]);
     });
+    test('should return empty array for suitescript tile', () => {
+      const suiteScriptTile = {
+        name: 'SVB - NetSuite Connector',
+        isNotEditable: false,
+        isConnector: true,
+        _integrationId: '101',
+        displayName: 'SVB - NetSuite Connector',
+        _connectorId: 'suitescript-svb-netsuite',
+        urlName: 'svbns',
+        status: 'has_errors',
+        ssLinkedConnectionId: '5cbdeecb0c8f006904be68db',
+      };
+
+      expect(selector(state, suiteScriptTile)).toEqual([]);
+    });
     const listViewState = {...state,
       user: {
         preferences: {
@@ -4326,7 +4341,7 @@ describe('resource region selector testcases', () => {
         expect(filteredHomeTiles(localState)).toEqual(expected);
       });
     });
-    test('should return tiles by tilesOrder for grid view', () => {
+    test('should return tiles by tilesOrder for tile view', () => {
       const initialState = reducer(state, actions.user.preferences.update({
         dashboard: {
           view: TILE_VIEW,
@@ -4490,7 +4505,7 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(finalState)).toEqual(expected);
     });
-    test('should not return pinned tiles before unpinned tiles for grid view', () => {
+    test('should not return pinned tiles before unpinned tiles for tile view', () => {
       const newState = reducer(state, actions.user.preferences.update({
         dashboard: {
           view: TILE_VIEW,
