@@ -219,6 +219,7 @@ import mixpanel from './mixpanel';
 import copper from './copper';
 import fifteenfive from './fifteenfive';
 import docebo from './docebo';
+import breezyhr from './breezyhr';
 
 export default {
   channelape,
@@ -441,5 +442,6 @@ export default {
   mixpanel,
   copper,
   '15five': fifteenfive,
+  breezyhr,
   docebo,
 };
