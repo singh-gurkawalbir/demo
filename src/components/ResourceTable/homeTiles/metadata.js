@@ -59,11 +59,7 @@ export default {
       key: 'lastErrorAt',
       orderBy: 'lastErrorAt',
       heading: 'Last open error',
-      Value: ({rowData: r}) => {
-        if (r.ssLinkedConnectionId) return 'Not available';
-
-        return <CeligoTimeAgo date={r.lastErrorAt} />;
-      },
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
     },
     {
       key: 'type',
