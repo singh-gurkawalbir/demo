@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import clsx from 'clsx';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import Completed from '../panels/Completed';
@@ -19,6 +20,9 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       border: 'none',
     },
+  },
+  integrationPageWrapper: {
+    padding: theme.spacing(0, 3),
   },
   tabPanel: {
     background: theme.palette.background.paper,
@@ -53,7 +57,7 @@ export default function DashboardTabs() {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const { dashboardTab } = match.params;
+  const { dashboardTab, integrationId } = match.params;
 
   let currentTabIndex = tabs.findIndex(t => t.path === dashboardTab);
 
@@ -73,7 +77,7 @@ export default function DashboardTabs() {
   );
 
   return (
-    <div className={(classes.tabContainer, classes.pageWrapper)}>
+    <div className={clsx(classes.tabContainer, classes.pageWrapper, { [classes.integrationPageWrapper]: integrationId })}>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}

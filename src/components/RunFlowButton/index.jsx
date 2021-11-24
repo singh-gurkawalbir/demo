@@ -84,7 +84,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
 export default function RunFlowButton({
   flowId,
   onRunStart,
-  runWithoutClick,
+  runOnMount,
   variant = 'icon',
   label = 'Run now',
 }) {
@@ -238,7 +238,7 @@ export default function RunFlowButton({
     isDataLoaderFlow && uploadedFile && uploadedFile.status !== 'error';
 
   useEffect(() => {
-    if (runWithoutClick) {
+    if (runOnMount) {
       handleClick();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,7 +253,7 @@ export default function RunFlowButton({
           onRun={handleRunFlow}
         />
       )}
-      {!runWithoutClick
+      {!runOnMount
         ? (
           <RunFlowLabel
             isRequested={isDataLoaderFileProcessRequested}

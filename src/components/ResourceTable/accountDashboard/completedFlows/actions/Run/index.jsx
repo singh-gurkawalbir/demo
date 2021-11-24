@@ -10,7 +10,7 @@ export default {
 
     <RunFlowButton
       flowId={rowData?._flowId}
-      runWithoutClick
+      runOnMount
           />
   ),
 };

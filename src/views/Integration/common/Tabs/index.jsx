@@ -27,12 +27,14 @@ export default function IntegrationTabs({ tabs, className }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { tab, childId } = match.params;
+  const { dashboardTab, childId } = match.params;
+  let {tab} = match.params;
+
+  tab = dashboardTab ? 'dashboard' : tab;
   let currentTabIndex = tabs.findIndex(t => t.path === tab);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  // dashboardTab: isUserInErrMgtTwoDotZero && newTab === 'dashboard' && 'runningFlows',
 
   // if you cant find tab index default it to zero
   currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
@@ -45,6 +47,9 @@ export default function IntegrationTabs({ tabs, className }) {
       });
 
       if (isUserInErrMgtTwoDotZero && newTab !== 'dashboard') {
+        if (path.includes('/dashboard')) {
+          path = path.replace('dashboard', newTab);
+        }
         if (path.includes('/runningFlows')) {
           path = path.replace('/runningFlows', '');
         } else {

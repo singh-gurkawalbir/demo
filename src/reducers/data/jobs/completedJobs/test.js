@@ -85,7 +85,7 @@ describe('jobs reducer', () => {
     });
   });
 
-  describe('', () => {
+  describe('should update the state properly when job collection requested', () => {
     const jobsRequestedAction = actions.job.dashboard.completed.requestCollection({});
 
     test('should update the state properly when the current state is undefined', () => {

@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DashboardPanel({ integrationId, childId }) {
+export default function AnalyticsPanel({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filterChildId = useSelector(
