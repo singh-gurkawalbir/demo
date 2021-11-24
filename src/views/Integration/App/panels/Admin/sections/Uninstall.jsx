@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
   message: {
     padding: theme.spacing(0, 2),
   },
+  parentViewMessage: {
+    padding: theme.spacing(2),
+  },
 }));
 
 export default function UninstallSection({ childId, integrationId }) {
@@ -65,7 +68,7 @@ export default function UninstallSection({ childId, integrationId }) {
       <div className={classes.root}>
         <PanelHeader title="Uninstall" />
         <Divider />
-        <div className={classes.content}>
+        <div className={classes.parentViewMessage}>
           <span>
             {getEmptyMessage(integration?.settings?.storeLabel, 'uninstall')}
           </span>
@@ -78,7 +81,7 @@ export default function UninstallSection({ childId, integrationId }) {
     <>
       <PanelHeader title="Uninstall" />
 
-      <div className={classes.content}>
+      <div>
         <Typography className={classes.message}>
           Use this page to uninstall this instance (i.e. this tile) of the
           Integration App. Uninstalling an Integration App will remove all
