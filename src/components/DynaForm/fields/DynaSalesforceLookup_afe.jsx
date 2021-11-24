@@ -50,6 +50,7 @@ export default function DynaSalesforceLookup_afe(props) {
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
   const dispatch = useDispatch();
+  const isFilterIconDisabled = options?.disableFetch || false;
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
@@ -99,7 +100,8 @@ export default function DynaSalesforceLookup_afe(props) {
           <ActionButton
             data-test={id}
             onClick={handleEditorClick}
-            className={classes.exitButton}>
+            className={classes.exitButton}
+            disabled={isFilterIconDisabled}>
             <FilterIcon />
           </ActionButton>
         </div>
