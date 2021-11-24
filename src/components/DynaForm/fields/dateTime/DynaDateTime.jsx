@@ -198,7 +198,9 @@ export default function DateTimePicker(props) {
             <KeyboardDatePicker
               disabled={disabled}
               variant="inline"
+              data-test="date"
               format={dateFormat}
+              placeholder={dateFormat}
               value={dateValue}
               label={dateLabel || 'Date'}
               onKeyDown={e => {
@@ -225,9 +227,11 @@ export default function DateTimePicker(props) {
             <KeyboardTimePicker
               disabled={disabled}
               variant="inline"
+              data-test="time"
               label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
               format={timeFormat}
+              placeholder={timeFormat}
               onKeyDown={e => {
                 // this is specifically for qa to inject their date time string
                 // they should alter the input dom to add a qa attribute prior to injection for date time

@@ -146,38 +146,42 @@ export default function ConnectorInstallation(props) {
     selectors.integrationInstallSteps(state, integrationId)
   );
   const templateInstallSteps = useMemo(() => {
-    const bundleInstallationForNetsuiteConnections = [];
-    const bundleInstallationForSalesforceConnections = [];
+    if (!isTemplate) return installSteps;
+
+    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
+    const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
+
+    let netsuiteConnIndex = 0;
+    let salesforceConnIndex = 0;
 
     return installSteps.map(step => {
-      if (step.sourceConnection?.type === 'netsuite') {
-        bundleInstallationForNetsuiteConnections.push(step);
-      } else if (step.sourceConnection?.type === 'salesforce') {
-        bundleInstallationForSalesforceConnections.push(step);
-      }
       if (step.installURL || step.url) {
         if (
           step.name.includes('Integrator Bundle')
         ) {
-          const connStep = bundleInstallationForNetsuiteConnections.shift();
+          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+
+          netsuiteConnIndex += 1;
 
           return {
             ...step,
-            connectionId: connStep._connectionId,
+            connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
-          const connStep = bundleInstallationForSalesforceConnections.shift();
+          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
+
+          salesforceConnIndex += 1;
 
           return {
             ...step,
-            connectionId: connStep._connectionId,
+            connectionId,
           };
         }
       }
 
       return step;
     });
-  }, [installSteps]);
+  }, [installSteps, isTemplate]);
   const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
     installSteps,
   ]);

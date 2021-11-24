@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
+import { useHistory, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardActions, Typography } from '@material-ui/core';
 import {applicationsList} from '../../constants/applications';
@@ -117,7 +117,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function MarketplaceList() {
   const match = useRouteMatch();
-  const location = useLocation();
   const history = useHistory();
   const { application } = match.params;
   const [fetchedCollection, setFetchedCollection] = useState(false);
@@ -309,7 +308,7 @@ export default function MarketplaceList() {
               <FilledButton
                 data-test="installTemplate"
                 component={Link}
-                to={`${location.pathname}/installTemplate/preview/${template._id}`}>
+                to={`${match.url}/installTemplate/preview/${template._id}`}>
                 Preview
               </FilledButton>
             </CardActions>

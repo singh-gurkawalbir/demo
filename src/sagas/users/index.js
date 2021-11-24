@@ -556,7 +556,9 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
 export const userSagas = [
   takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
   takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
-  takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
+  takeLatest([actionTypes.UPDATE_PREFERENCES,
+    actionTypes.PIN_INTEGRATION,
+    actionTypes.UNPIN_INTEGRATION], updatePreferences),
   takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
   takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),

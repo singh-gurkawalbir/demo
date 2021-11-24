@@ -1,7 +1,8 @@
 import React, { useCallback, useState} from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
+import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
+import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
 import {TextButton} from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -20,7 +21,7 @@ const ActionLabel = (({ label, Icon }) => {
   return label;
 });
 
-export default function EllipsisActionMenu({ actionsMenu, label, onAction }) {
+export default function EllipsisActionMenu({ actionsMenu, label, onAction, alignment }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
@@ -44,7 +45,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction }) {
           aria-controls={actionsPopoverId}
           aria-haspopup="true"
           onClick={handleMenuClick}
-          startIcon={<EllipsisIcon />}>
+          startIcon={alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal />} >
           {label}
         </TextButton>
       )
@@ -56,7 +57,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction }) {
             aria-haspopup="true"
             size="small"
             onClick={handleMenuClick}>
-            <EllipsisIcon />
+            {alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal />}
           </IconButton>
         )}
       <Menu
@@ -67,7 +68,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction }) {
         className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
-        {actionsMenu.map(({ action, label, Icon, disabled }) => (
+        {actionsMenu?.map(({ action, label, Icon, disabled }) => (
           <MenuItem
             key={label}
             data-test={`${action}`}
