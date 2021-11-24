@@ -8,7 +8,7 @@ import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import {FILTER_KEYS_AD, getTimeString} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, getTimeString, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 import Status from '../../../Buttons/Status';
 import Run from './actions/Run';
 import Edit from './actions/Edit';
@@ -19,7 +19,8 @@ export default {
     let { integrationId } = match.params;
     const { childId } = match.params;
 
-    integrationId = childId ? `store${childId}pid${integrationId}` : integrationId; const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
+    integrationId = getDashboardIntegrationId(integrationId, childId);
+    const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
 
     return [
       ...(!integrationId ? [{

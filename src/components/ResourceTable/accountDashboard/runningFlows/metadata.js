@@ -11,7 +11,7 @@ import Cancel from './actions/Cancel';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import {FILTER_KEYS_AD, RUNNNING_STATUS_OPTIONS} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, RUNNNING_STATUS_OPTIONS, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 
 export default {
   useColumns: () => {
@@ -19,7 +19,7 @@ export default {
     let { integrationId } = match.params;
     const { childId } = match.params;
 
-    integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
+    integrationId = getDashboardIntegrationId(integrationId, childId);
     const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.RUNNING}`;
 
     return [

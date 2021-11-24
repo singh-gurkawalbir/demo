@@ -10,7 +10,7 @@ import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
 import {HOME_PAGE_PATH} from '../../utils/constants';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import {FILTER_KEYS_AD, DEFAULT_RANGE} from '../../utils/accountDashboard';
+import {FILTER_KEYS_AD, DEFAULT_RANGE, getDashboardIntegrationId} from '../../utils/accountDashboard';
 import { hashCode } from '../../utils/string';
 
 export default function Dashboard() {
@@ -20,7 +20,7 @@ export default function Dashboard() {
   let { integrationId } = match.params;
   const { childId } = match.params;
 
-  integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
+  integrationId = getDashboardIntegrationId(integrationId, childId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );

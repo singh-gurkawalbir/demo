@@ -8,7 +8,7 @@ import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -36,7 +36,7 @@ export default function RunningFlows() {
   let { integrationId } = match.params;
   const { childId } = match.params;
 
-  integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
+  integrationId = getDashboardIntegrationId(integrationId, childId);
   const integrationFilterKey = `${integrationId || ''}${filterKey}`;
 
   const filters = useSelector(state => selectors.filter(state, integrationFilterKey));

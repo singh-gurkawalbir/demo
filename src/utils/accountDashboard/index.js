@@ -67,3 +67,5 @@ export const RUN_HISTORY_STATUS_OPTIONS = [
   ['completed', 'Completed'],
   ['failed', 'Failed']];
 
+export const getDashboardIntegrationId = (integrationId, childId) => childId ? `store${childId}pid${integrationId}` : integrationId;
+

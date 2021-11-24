@@ -10,7 +10,7 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
-import {FILTER_KEYS_AD} from '../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
@@ -53,7 +53,7 @@ export default function RunHistoryDrawer() {
   let { integrationId } = match.params;
   const { childId } = match.params;
 
-  integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
+  integrationId = getDashboardIntegrationId(integrationId, childId);
   const filter = useSelector(state =>
     selectors.filter(state, `${integrationId}${FILTER_KEYS_AD.COMPLETED}`),
   shallowEqual

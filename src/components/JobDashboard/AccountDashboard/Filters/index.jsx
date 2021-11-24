@@ -15,6 +15,7 @@ import { FILTER_KEYS_AD,
   DEFAULTS_COMPLETED_JOBS_FILTER,
   DEFAULTS_RUNNING_JOBS_FILTER,
   DEFAULT_ROWS_PER_PAGE,
+  getDashboardIntegrationId,
   DEFAULT_RANGE,
   ROWS_PER_PAGE_OPTIONS } from '../../../../utils/accountDashboard';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
@@ -64,7 +65,7 @@ export default function Filters({filterKey}) {
   let { integrationId } = match.params;
   const { childId } = match.params;
 
-  integrationId = childId ? `store${childId}pid${integrationId}` : integrationId;
+  integrationId = getDashboardIntegrationId(integrationId, childId);
   const integrationFilterKey = `${integrationId || ''}${filterKey}`;
   const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, filterKey));
 
