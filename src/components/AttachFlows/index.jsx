@@ -8,10 +8,11 @@ import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import {OutlinedButton, TextButton} from '../Buttons';
+import { UNASSIGNED_SECTION_ID } from '../../utils/constants';
 
 const flowsFilterConfig = { type: 'flows' };
 
-export default function AttachFlows({ onClose, integrationId }) {
+export default function AttachFlows({ onClose, integrationId, flowGroupingId }) {
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -47,6 +48,14 @@ export default function AttachFlows({ onClose, integrationId }) {
         },
       ];
 
+      if (flowGroupingId && flowGroupingId !== UNASSIGNED_SECTION_ID) {
+        patchSet.push({
+          op: 'add',
+          path: '/_flowGroupingId',
+          value: flowGroupingId,
+        });
+      }
+
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     });
@@ -65,6 +74,7 @@ export default function AttachFlows({ onClose, integrationId }) {
     integrationId,
     onClose,
     selected,
+    flowGroupingId,
   ]);
 
   return (

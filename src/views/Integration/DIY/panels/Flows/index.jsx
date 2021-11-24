@@ -4,7 +4,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import ActionGroup from '../../../../../components/ActionGroup';
-import AttachFlowsDialog from '../../../../../components/AttachFlows';
 import { TextButton } from '../../../../../components/Buttons';
 import Status from '../../../../../components/Buttons/Status';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -28,7 +27,7 @@ import Attach from '../../../../../components/ResourceTable/flows/actions/Attach
 import CreateFlowGroup from '../../../../../components/ResourceTable/flows/actions/CreateFlowGroup';
 import EditFlowGroup from '../../../../../components/ResourceTable/flows/actions/EditFlowGroup';
 import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
-import DragContainer from '../../../../../components/Mapping/DragContainer';
+import DragContainer from '../../../../../components/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
 import { shouldHaveUnassignedSection } from '../../../../../utils/resource';
 
@@ -195,7 +194,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const history = useHistory();
   const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
 
-  const flowGroupingsSections = useSelector(state => selectors.flowGroupingsSections(state, integrationId));
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
 
   const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
 
@@ -290,7 +289,7 @@ const useRowActions = resource => {
 
   actions = [...actions, CreateFlowGroup];
 
-  if (resource.flowGroupings?.length > 0) {
+  if (resource.flowGroupings?.length) {
     actions.push(EditFlowGroup);
   }
 
@@ -301,7 +300,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const [showDialog, setShowDialog] = useState(false);
   const sectionId = match?.params?.sectionId;
   const currentIntegrationId = childId || integrationId;
   const filterKey = `${currentIntegrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
@@ -334,10 +332,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   },
   shallowEqual);
   const flowErrorCountStatus = useSelector(state => selectors.openErrorsStatus(state, integrationId));
-
-  const handleClose = useCallback(() => {
-    setShowDialog();
-  }, [setShowDialog]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -375,6 +369,12 @@ export default function FlowsPanel({ integrationId, childId }) {
       templateName,
     }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, integrationChildren, appName, flowAttributes, integration, templateName]);
 
+  const rowData = useMemo(() => ({
+    ...integration,
+    canAttach,
+    sectionId,
+  }), [integration, canAttach, sectionId]);
+
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
       <Spinner centerAll />
@@ -384,18 +384,11 @@ export default function FlowsPanel({ integrationId, childId }) {
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
   const basePath = getBasePath(match);
-  const rowData = { ...integration, canAttach, sectionId };
 
   return (
     <>
       <div className={classes.root}>
         {selectedComponent}
-        {showDialog && (
-        <AttachFlowsDialog
-          integrationId={integrationId}
-          onClose={handleClose}
-        />
-        )}
         <MappingDrawerRoute integrationId={integrationId} />
         {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
         <ScheduleDrawer />
@@ -406,7 +399,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           <ActionGroup>
             <KeywordSearch
               filterKey={filterKey}
-        />
+            />
             {canCreate && !isIntegrationApp && (
             <TextButton
               component={Link}
@@ -426,12 +419,12 @@ export default function FlowsPanel({ integrationId, childId }) {
               Load data
             </TextButton>
             )}
-            {!isStandalone && !isMonitorLevelUser && (
+            {!isStandalone && !isMonitorLevelUser && !isIntegrationApp && (
             <ActionMenu
               setSelectedComponent={setSelectedComponent}
               useRowActions={useRowActions}
               rowData={rowData}
-              isMoreEllipsisButton
+              iconLabel="More"
             />
             )}
           </ActionGroup>

@@ -7,7 +7,7 @@ import Spinner from '../Spinner';
 import TopPanel from './TopPanel';
 import ButtonPanel from './ButtonPanel';
 import PreviewPanel from './Preview/Panel';
-import DragContainer from './DragContainer';
+import DragContainer from '../DragContainer';
 import SettingsDrawer from './Settings';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';

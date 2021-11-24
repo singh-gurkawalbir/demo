@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -14,6 +14,8 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { emptyList, emptyObject } from '../../../utils/constants';
+import { getFlowGroup } from '../../../utils/resource';
 
 const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 const paths = ['flowgroups/add', 'flowgroups/edit'];
@@ -26,7 +28,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
       label: 'Name',
       integrationId,
       defaultValue: groupName,
-      flows: flowsWithGroupId,
+      flowIds: flowsWithGroupId.map(flow => flow._id),
       isEdit,
       required: true,
     },
@@ -41,45 +43,48 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
       integrationId,
     },
   },
+  layout: {
+    fields: ['name', '_flowIds'],
+  },
 });
 
 function FlowgroupForm({ integrationId, groupId, isEdit }) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const [enqueuesnackbar] = useEnqueueSnackbar();
   const [remountCount, setRemountCount] = useState(0);
   const handleClose = history.goBack;
-  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []);
-  let groupName;
-  let flowGroupId;
-  let flowsWithGroupId = [];
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
+  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []) || emptyList;
 
-  if (isEdit) {
-    groupName = integration.flowGroupings.find(group => group._id === groupId)?.name;
-    flowGroupId = groupId;
-    flowsWithGroupId = flowsTiedToIntegrations.filter(flow => flow._flowGroupingId === groupId);
-  }
-  const formValues = useSelector(state => selectors.formState(state, FLOW_GROUP_FORM_KEY)?.fields);
+  const { groupName, flowGroupId, flowsWithGroupId = [] } = useMemo(() => {
+    if (!isEdit) return {};
+
+    return {
+      groupName: getFlowGroup(flowGroupings, '', groupId).name,
+      flowGroupId: groupId,
+      flowsWithGroupId: flowsTiedToIntegrations.filter(flow => flow._flowGroupingId === groupId),
+    };
+  }, [isEdit, flowGroupings, groupId, flowsTiedToIntegrations]);
+
   const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit);
-  const { status: flowGroupSaveStatus, message } = useSelector(state => selectors.flowGroupStatus(state, integrationId)) || {};
+  const { status: flowGroupSaveStatus, message } = useSelector(state => selectors.flowGroupStatus(state, integrationId), shallowEqual) || emptyObject;
 
-  useFormInitWithPermissions({FLOW_GROUP_FORM_KEY, fieldMeta, remount: remountCount});
+  useFormInitWithPermissions({formKey: FLOW_GROUP_FORM_KEY, fieldMeta, remount: remountCount});
 
   useEffect(() => {
     if (flowGroupSaveStatus === 'Failed') {
-      enquesnackbar({ message: message || 'Flow goup failed to save' });
+      enqueuesnackbar({ message: message || 'Flow group failed to save' });
     }
-  }, [enquesnackbar, flowGroupSaveStatus, message]);
-  const handleSave = useCallback(closeAfterSave => {
-    const { name, _flowIds } = formValues;
-    const deSelectedFlows = flowsWithGroupId.filter(flow => !_flowIds.value.find(id => id === flow._id));
+  }, [enqueuesnackbar, flowGroupSaveStatus, message]);
 
-    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, name.value, flowGroupId, _flowIds.value, deSelectedFlows, FLOW_GROUP_FORM_KEY));
+  const handleSave = useCallback(closeAfterSave => {
+    dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, flowGroupId, FLOW_GROUP_FORM_KEY));
     if (closeAfterSave) {
       handleClose();
     }
-  }, [formValues, flowsWithGroupId, dispatch, integrationId, flowGroupId, handleClose]);
+  }, [dispatch, integrationId, flowGroupId, handleClose]);
+
   const remountForm = useCallback(() => {
     setRemountCount(remountCount => remountCount + 1);
   }, []);

@@ -7,7 +7,7 @@ export default function DragContainer({
   onDrop,
   disabled,
   className,
-  items,
+  items = [],
   SortableItemComponent,
   LastRowSortableItemComponent,
   onSortEnd,

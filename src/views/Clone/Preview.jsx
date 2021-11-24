@@ -97,8 +97,11 @@ const useColumns = () => [
     width: '40%',
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
+      const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
+      const classFlowInFlowGroupName = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(r?.groupName || r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
+      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
@@ -116,8 +119,11 @@ const useColumns = () => [
     width: '60%',
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
+      const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
+      const classLastFlowInGroup = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(r?.groupName || r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
+      return clsx(classLastFlowInGroup, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
@@ -258,9 +264,6 @@ export default function ClonePreview(props) {
 
   const { objects = [] } = components || {};
 
-  // if (resourceType === 'integrations' && resource.flowGrouings.length > 1) {
-  //   objects = [...objects.filter()];
-  // }
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -366,7 +369,7 @@ export default function ClonePreview(props) {
       id: 'flowGroup',
       name: 'flowGroup',
       type: 'flowgroupstiedtointegrations',
-      label: 'Flow Group',
+      label: 'Flow group',
       refreshOptionsOnChangesTo: ['environment', 'integration'],
       defaultValue: UNASSIGNED_SECTION_ID,
       visibleWhen: [

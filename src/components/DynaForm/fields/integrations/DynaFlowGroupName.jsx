@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
-import { UNASSIGNED_SECTION_ID } from '../../../../utils/constants';
+import { UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
 import { FLOW_GROUP_DELETE_MESSAGE } from '../../../../utils/messageStore';
 import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
@@ -26,16 +26,19 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
 }));
-export default function TextFieldWithDeleteSupport(props) {
+export default function DynaFlowGroupName(props) {
   const classes = useStyles();
   const history = useHistory();
-  const { integrationId, flows, isEdit, formKey, id, value, required } = props;
-  const [currentValue, setValue] = useState(value);
+  const { integrationId, flowIds, isEdit, formKey, id, value, required } = props;
+  const [currentSavedValue, setValue] = useState(value);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
-  const isValidName = value ? (value === currentValue) || (!flowGroupings.find(flowGroup => flowGroup.name === value) && value?.toLowerCase() !== UNASSIGNED_SECTION_ID) : false;
-  const flowGroupId = flowGroupings.find(flowGroup => flowGroup.name === currentValue)?._id;
+  // A flow group name is valid if it equals to currently saved value
+  // or it is different from other flow group names
+  // or is is not equal to "Unassigned"
+  const isValidName = value ? (value === currentSavedValue) || (!flowGroupings.find(flowGroup => flowGroup.name === value) && value !== UNASSIGNED_SECTION_NAME) : false;
+  const flowGroupId = flowGroupings.find(flowGroup => flowGroup.name === currentSavedValue)?._id;
 
   const handleDeleteFlowGroupClick = useCallback(
     () => {
@@ -46,7 +49,7 @@ export default function TextFieldWithDeleteSupport(props) {
           {
             label: 'Delete',
             onClick: () => {
-              dispatch(actions.resource.integrations.flowGroups.delete(integrationId, flowGroupId, flows));
+              dispatch(actions.resource.integrations.flowGroups.delete(integrationId, flowGroupId, flowIds));
               setValue(value);
               history.goBack();
             },
@@ -58,33 +61,33 @@ export default function TextFieldWithDeleteSupport(props) {
         ],
       });
     },
-    [confirmDialog, dispatch, flows, history, integrationId, flowGroupId, value]
+    [confirmDialog, dispatch, flowIds, history, integrationId, flowGroupId, value]
   );
 
   useEffect(() => {
-    if (required) {
-      if (isValidName) {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+    if (!required) return;
 
-        return;
-      }
-      let errorMessages;
+    if (isValidName) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
 
-      if (value === UNASSIGNED_SECTION_ID) {
-        errorMessages = '<Group_Name> cannot be “Unassigned” as this is a reserved value. Please provide a different name.';
-      } else if (value) {
-        errorMessages = '<Group_Name> already exists. Please provide a different name.';
-      } else {
-        errorMessages = 'A value must be provided';
-      }
-      dispatch(actions.form.forceFieldState(formKey)(id, {
-        isValid: false,
-        errorMessages,
-      }));
+      return;
     }
+    let errorMessages;
+
+    if (value === UNASSIGNED_SECTION_NAME) {
+      errorMessages = 'Group name cannot be “Unassigned”.';
+    } else if (value) {
+      errorMessages = 'A group with this name already exists.';
+    } else {
+      errorMessages = 'A value must be provided';
+    }
+    dispatch(actions.form.forceFieldState(formKey)(id, {
+      isValid: false,
+      errorMessages,
+    }));
   }, [dispatch, formKey, id, isEdit, isValidName, required, value]);
 
-  // suspend force field state compuation once the component turns invisible
+  // suspend force field state computation once the component turns invisible
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);

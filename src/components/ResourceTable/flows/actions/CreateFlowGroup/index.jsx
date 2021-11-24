@@ -4,8 +4,8 @@ import AddIcon from '../../../../icons/AddIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  key: 'addFlowGroup',
-  useLabel: () => 'Add Flow Group',
+  key: 'createFlowGroup',
+  useLabel: () => 'Create flow group',
   icon: AddIcon,
   useOnClick: () => {
     const history = useHistory();

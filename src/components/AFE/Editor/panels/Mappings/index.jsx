@@ -5,7 +5,7 @@ import {selectors} from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 import actions from '../../../../../actions';
 import TopPanel from '../../../../Mapping/TopPanel';
-import DragContainer from '../../../../Mapping/DragContainer';
+import DragContainer from '../../../../DragContainer';
 import SettingsDrawer from '../../../../Mapping/Settings';
 import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
 import { dataAsString } from '../../../../../utils/editor';

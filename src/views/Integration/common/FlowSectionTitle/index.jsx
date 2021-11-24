@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const NoFlowsSection = () => (
-  <Typography variant="caption" color="textSecondary">No Flows</Typography>
+  <Typography variant="caption" color="textSecondary">No flows</Typography>
 );
 
 export default function FlowSectionTitle({ title, errorCount = 0, groupHasNoFlows }) {

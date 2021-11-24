@@ -118,11 +118,16 @@ export default function DynaMultiSelect(props) {
         option.items.map(item => {
           if (SelectedOptionIml) {
             return (
-              <SelectedOptionIml
-                item={item}
-                className={classes.menuItems}
-                processedValue={processedValue}
-            />
+              <MenuItem
+                key={item.value}
+                value={item.value}
+                disabled={item.disabled}
+                className={classes.menuItems}>
+                <SelectedOptionIml
+                  item={item}
+                  processedValue={processedValue}
+                />
+              </MenuItem>
             );
           }
           if (typeof item === 'string') {

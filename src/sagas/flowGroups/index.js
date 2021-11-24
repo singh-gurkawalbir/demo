@@ -1,11 +1,11 @@
-import { call, put, all, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { getResourceCollection } from '../resources';
 
-export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, asyncKey }) {
+export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, formKey }) {
   try {
     yield call(apiCallWithRetry, {
       path: '/flows/updateFlowGrouping',
@@ -23,33 +23,14 @@ export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, asyncKey }) 
     yield call(getResourceCollection, { resourceType: 'flows' });
   } catch (error) {
     yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
-    yield put(actions.asyncTask.failed(asyncKey));
+
+    if (formKey) {
+      yield put(actions.asyncTask.failed(formKey));
+    }
   }
 }
 
-export function* deleteFlowGroupIdFromFlow({ flow }) {
-  const path = `/flows/${flow?._id}`;
-  const payload = { ...flow };
-
-  delete payload._flowGroupingId;
-
-  try {
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'put',
-        body: payload,
-      },
-      hidden: false,
-      message: 'Updating flow group',
-    });
-
-    yield put(actions.resource.received('flows', response));
-  } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.deleteFailed(error));
-  }
-}
-export function* updateIntegration({ integrationId, payload, asyncKey }) {
+export function* updateIntegrationFlowGroups({ integrationId, payload, formKey }) {
   let response;
 
   try {
@@ -64,7 +45,7 @@ export function* updateIntegration({ integrationId, payload, asyncKey }) {
     });
   } catch (error) {
     yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
-    yield put(actions.asyncTask.failed(asyncKey));
+    yield put(actions.asyncTask.failed(formKey));
 
     return;
   }
@@ -73,54 +54,75 @@ export function* updateIntegration({ integrationId, payload, asyncKey }) {
 
   return response;
 }
-export function* createOrUpdateFlowGroup({ integrationId, groupName, flowGroupId, flowIds, deSelectedFlows, asyncKey }) {
+export function* addFlowGroup({ integrationId, groupName, flowIds, formKey }) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const updatedFlowGroupings = [...integration.flowGroupings];
 
-  yield put(actions.asyncTask.start(asyncKey));
+  updatedFlowGroupings.push({
+    name: groupName,
+  });
+  const payload = { ...integration, flowGroupings: updatedFlowGroupings };
+  const response = yield call(updateIntegrationFlowGroups, { integrationId, payload, formKey});
 
-  if (!flowGroupId) {
-    const updatedFlowGroupings = [...integration.flowGroupings];
+  if (response && flowIds.length) {
+    const { _id: flowGroupId } = response.flowGroupings?.find(flowGroup => flowGroup.name === groupName);
 
-    updatedFlowGroupings.push({
-      name: groupName,
+    yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, formKey });
+  }
+  yield put(actions.asyncTask.success(formKey));
+}
+export function* editFlowGroup({ integrationId, flowGroupId, groupName, flowIds, deSelectedFlowIds, formKey }) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const isGroupNameChanged = integration.flowGroupings.find(flowGroup => flowGroup._id === flowGroupId)?.name !== groupName;
+
+  if (isGroupNameChanged) {
+    const updatedFlowGroupings = [...integration.flowGroupings].map(flowGroup => {
+      if (flowGroup._id === flowGroupId) {
+        return {
+          _id: flowGroupId,
+          name: groupName,
+        };
+      }
+
+      return flowGroup;
     });
     const payload = { ...integration, flowGroupings: updatedFlowGroupings };
-    const response = yield call(updateIntegration, { integrationId, payload, asyncKey});
 
-    if (response) {
-      const { _id: flowGroupId } = response.flowGroupings?.find(flowGroup => flowGroup.name === groupName);
-
-      yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, asyncKey });
-      yield put(actions.resource.received('integrations', response));
-    }
-  } else {
-    const isGroupNameChanged = integration.flowGroupings.find(flowGroup => flowGroup._id === flowGroupId)?.name !== groupName;
-
-    if (isGroupNameChanged) {
-      const updatedFlowGroupings = [...integration.flowGroupings].map(flowGroup => {
-        if (flowGroup._id === flowGroupId) {
-          return {
-            _id: flowGroupId,
-            name: groupName,
-          };
-        }
-
-        return flowGroup;
-      });
-      const payload = { ...integration, flowGroupings: updatedFlowGroupings };
-
-      yield call(updateIntegration, { integrationId, payload, asyncKey});
-    }
-
-    yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, asyncKey});
-    yield all(deSelectedFlows.map(flow => call(deleteFlowGroupIdFromFlow, { flow })));
+    yield call(updateIntegrationFlowGroups, { integrationId, payload, formKey});
   }
 
-  yield put(actions.asyncTask.success(asyncKey));
+  if (flowIds.length) {
+    yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, formKey});
+  }
+
+  if (deSelectedFlowIds.length) {
+    yield call(updateFlowsWithFlowGroupId, { flowIds: deSelectedFlowIds, flowGroupId: undefined, formKey});
+  }
+  yield put(actions.asyncTask.success(formKey));
 }
-export function* deleteFlowGroup({ integrationId, flowGroupId, flows }) {
-  if (flows) {
-    yield all(flows?.map(flow => call(deleteFlowGroupIdFromFlow, {flow})));
+export function* createOrUpdateFlowGroup({ integrationId, flowGroupId, formKey }) {
+  const flowsTiedToIntegrations = yield select(selectors.allFlowsTiedToIntegrations, integrationId);
+  const flowsWithSelectedGroupId = flowsTiedToIntegrations.filter(flow => flow._flowGroupingId === flowGroupId);
+  const formState = yield select(selectors.formState, formKey);
+  const { fields: formFields } = formState || {};
+
+  const newGroupName = formFields?.name?.value;
+  const flowIds = formFields?._flowIds?.value;
+
+  yield put(actions.asyncTask.start(formKey));
+
+  if (!flowGroupId) {
+    yield call(addFlowGroup, { integrationId, groupName: newGroupName, flowIds, formKey });
+  } else {
+    const selectedFlowIds = flowIds.filter(flowId => !flowsWithSelectedGroupId.some(flow => flow._id === flowId));
+    const deSelectedFlowIds = flowsWithSelectedGroupId.filter(flow => !flowIds.some(flowId => flowId === flow._id)).map(flow => flow._id);
+
+    yield call(editFlowGroup, { integrationId, flowGroupId, groupName: newGroupName, flowIds: selectedFlowIds, deSelectedFlowIds, formKey });
+  }
+}
+export function* deleteFlowGroup({ integrationId, flowGroupId, flowIds }) {
+  if (flowIds.length) {
+    yield call(updateFlowsWithFlowGroupId, { flowIds });
   }
 
   const integration = yield select(selectors.resource, 'integrations', integrationId);
@@ -152,8 +154,8 @@ export function* flowGroupsShiftOrder({ integrationId, flowGroupId, newIndex}) {
 
   const updatedFlowGroupings = [...integration.flowGroupings];
 
-  const flowGroupIndex = updatedFlowGroupings.findIndex(flowGroup => flowGroup._id === flowGroupId);
-  const [removed] = updatedFlowGroupings.splice(flowGroupIndex, 1);
+  const oldFlowGroupIndex = updatedFlowGroupings.findIndex(flowGroup => flowGroup._id === flowGroupId);
+  const [removed] = updatedFlowGroupings.splice(oldFlowGroupIndex, 1);
 
   updatedFlowGroupings.splice(newIndex, 0, removed);
   const payload = { ...integration, flowGroupings: updatedFlowGroupings };
@@ -178,5 +180,5 @@ export function* flowGroupsShiftOrder({ integrationId, flowGroupId, newIndex}) {
 export default [
   takeEvery(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, createOrUpdateFlowGroup),
   takeEvery(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, deleteFlowGroup),
-  takeEvery(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, flowGroupsShiftOrder),
+  takeLatest(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, flowGroupsShiftOrder),
 ];

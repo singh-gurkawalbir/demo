@@ -6,7 +6,7 @@ import { UNASSIGNED_SECTION_ID } from '../../../../../utils/constants';
 
 export default {
   key: 'editFlowGroup',
-  useLabel: () => 'Edit Flow Group',
+  useLabel: () => 'Edit flow group',
   icon: EditIcon,
   useDisabledActionText: rowData => {
     if (rowData.sectionId === UNASSIGNED_SECTION_ID) {

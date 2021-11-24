@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   spinnerPreview: {
@@ -35,8 +36,11 @@ const useColumns = () => [
     width: '40%',
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
+      const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
+      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(!r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
+      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
@@ -54,8 +58,11 @@ const useColumns = () => [
     width: '60%',
     GetClassName: ({rowData: r}) => {
       const classes = useStyles();
+      const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
+      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(!r?.isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '', r?.groupName ? classes.flowInFlowGroupNameHover : '');
+      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },

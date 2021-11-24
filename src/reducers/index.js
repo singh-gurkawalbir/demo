@@ -840,45 +840,6 @@ selectors.isParentChildIntegration = (state, integrationId) => {
 
   return !!integrationSettings?.settings?.supportsMultiStore;
 };
-selectors.mkAllFlowsTiedToIntegrations = () => {
-  const resourceListSel = selectors.makeResourceListSelector();
-
-  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
-
-  return createSelector(
-    state => resourceListSel(state, flowsFilter).resources,
-    (_1, parentIntegrationId) => parentIntegrationId,
-    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
-    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
-    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
-    (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
-      if (!flows || !parentIntegrationId) return null;
-
-      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
-        return flows.filter(({_integrationId}) => !_integrationId);
-      }
-
-      if (isV2 || isDiy) {
-        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
-
-        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
-      }
-      // v1
-
-      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
-        // no child filter in this case...just return all parent integrations
-
-        return flowsFromAllChildren;
-      }
-
-      // filter based on selected childIntegrations
-
-      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
-    }
-  );
-};
-
 selectors.mkFlowGroupingsTiedToIntegrations = () => {
   const resourceSel = selectors.makeResourceSelector();
 
@@ -2783,6 +2744,46 @@ selectors.makeIntegrationAppSectionFlows = () =>
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
+
+selectors.mkAllFlowsTiedToIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, parentIntegrationId) => parentIntegrationId,
+    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
+    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
+    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
+    (_1, _2, childIntegrationIds) => childIntegrationIds,
+    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
+      if (!flows || !parentIntegrationId) return null;
+
+      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
+        return flows.filter(({_integrationId}) => !_integrationId);
+      }
+
+      if (isV2 || isDiy) {
+        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
+
+        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
+      }
+      // v1
+
+      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
+        // no child filter in this case...just return all parent integrations
+
+        return flowsFromAllChildren;
+      }
+
+      // filter based on selected childIntegrations
+
+      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
+selectors.allFlowsTiedToIntegrations = selectors.mkAllFlowsTiedToIntegrations();
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.

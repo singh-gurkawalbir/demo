@@ -77,10 +77,11 @@ export default function FlowGroupRow({
   );
 
   const handleOnMouseEnter = useCallback(() => {
-    if (!isDragInProgress) {
+    // We don't show sortable Handle for Unassigned flow group
+    if (!isDragInProgress && sectionId !== UNASSIGNED_SECTION_ID) {
       setShowGripper(true);
     }
-  }, [isDragInProgress]);
+  }, [isDragInProgress, sectionId]);
   const handleOnMouseLeave = useCallback(() => {
     setShowGripper(false);
   }, []);

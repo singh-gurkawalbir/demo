@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Checkbox, ListItemText, makeStyles, MenuItem, Typography } from '@material-ui/core';
+import { Checkbox, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import map from 'lodash/map';
 import clsx from 'clsx';
 import { selectors } from '../../../../../reducers';
@@ -37,18 +37,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const options = { ignoreUnusedConnections: true };
-const SelectedOptionIml = ({ item, className, processedValue}) => {
+const SelectedOptionIml = ({ item, processedValue}) => {
   const classes = useStyles();
 
   return (
-    <MenuItem
-      key={item.value}
-      value={item.value}
-      disabled={item.disabled}
-      className={className}>
+    <>
       {!item.disabled && (
         <Checkbox
-          checked={processedValue.indexOf(item.value) !== -1}
+          checked={processedValue.some(value => value === item.value)}
           color="primary"
         />
       )}
@@ -61,7 +57,7 @@ const SelectedOptionIml = ({ item, className, processedValue}) => {
           {item.groupName}
         </Typography>
       )}
-    </MenuItem>
+    </>
   );
 };
 export default function NotificationsSection({ integrationId, childId }) {

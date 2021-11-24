@@ -1,7 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, UNASSIGNED_SECTION_NAME } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, UNASSIGNED_SECTION_NAME, UNASSIGNED_SECTION_ID } from './constants';
 import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
@@ -877,7 +877,20 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 
 // when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
 export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+export const getFlowGroup = (flowGroupings, name, id) => {
+  if (!flowGroupings.length) return emptyObject;
 
+  const unassignedFlowGroup = {
+    _id: UNASSIGNED_SECTION_ID,
+    name: UNASSIGNED_SECTION_NAME,
+  };
+  const requiredFlowGroup = flowGroupings.find(flowGroup => flowGroup.name === name || flowGroup._id === id);
+
+  return requiredFlowGroup || unassignedFlowGroup;
+};
+
+// for every flowGroup pushing the linked flows into finalObject
+// adding isLastFlowInFlowGroup flag for every last flow in the flow group
 export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsLength) => {
   if (!flowGroupings?.length) {
     return flowObjects;
