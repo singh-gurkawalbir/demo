@@ -1,5 +1,8 @@
 import invert from 'lodash/invert';
 
+export const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
+// eslint-disable-next-line no-undef
+export const CDN_BASE_URL = CDN_BASE_URI || PRODUCTION_CDN_BASE_URL;
 export const emptyList = Object.freeze([]);
 export const emptyObject = Object.freeze({});
 export const ACCOUNT_IDS = Object.freeze({
@@ -32,6 +35,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   INSTALL_PACKAGE: 'installPackage',
   STACK: 'Stack',
   FORM: 'form',
+  URL: 'url',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
@@ -429,6 +433,7 @@ export const SUBMIT_TICKET_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
+export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics';
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
@@ -668,7 +673,7 @@ export const CONNECTORS_TO_IGNORE = [
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
-export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];
+export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
 export const LINE_GRAPH_TYPES = Object.freeze({
   SUCCESS: 'success',
   AVERAGE_TIME_TAKEN: 'averageTimeTaken',
@@ -745,3 +750,14 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
+export const POLLING_STATUS = {
+  SLOW: 'slow down polling',
+  RESUME: 'resume polling',
+  STOP: 'stop polling',
+};
+
+export const MAX_APPLICATIONS = 10;
+export const MAX_APPLICATIONS_IN_A_ROW = 5;
+export const APP_WIDTH = 30;
+
+Object.freeze(POLLING_STATUS);

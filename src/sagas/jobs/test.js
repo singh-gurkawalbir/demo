@@ -59,6 +59,7 @@ import { selectors } from '../../reducers';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
 import openExternalUrl from '../../utils/window';
 import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
+import { pollApiRequests } from '../app';
 
 describe('job sagas', () => {
   describe('getJobFamily saga', () => {
@@ -168,12 +169,11 @@ describe('job sagas', () => {
   });
 
   describe('pollForInProgressJobs saga', () => {
-    test('should call getInProgressJobsStatus after 5 seconds delay continuously', () => {
+    test('should call getInProgressJobsStatus wihin pollApiRequests with a 5 second polling duration', () => {
       const saga = pollForInProgressJobs();
 
-      expect(saga.next().value).toEqual(delay(5000));
-      expect(saga.next().value).toEqual(call(getInProgressJobsStatus));
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getInProgressJobsStatus, pollSagaArgs: {}, duration: 5000}));
+      expect(saga.next().done).toEqual(true);
     });
   });
 

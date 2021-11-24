@@ -6,8 +6,8 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { APIException } from '../api';
 import exportDataSagas from './index';
+import { APIException } from '../api/requestInterceptors/utils';
 
 describe('exportData saga', () => {
   // this is how we combine all things at the root saga

@@ -42,7 +42,7 @@ export default function OAuthAndTest({
         formKey={formKey}
         disabled={pingLoading}
         submitTransientLabel="Authorizing..."
-        submitButtonLabel="Save & authorize"
+        submitButtonLabel="Save & Authorize"
         formSaveStatus={formSaveStatus}
         handleSave={handleSave}
         handleCancel={onCancel}

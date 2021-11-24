@@ -4,6 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
+import AutoRetryIcon from '../../../components/icons/AutoRetryIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
 import MultiFieldIcon from '../../../components/icons/MultiFieldIcon';
@@ -32,6 +33,7 @@ import CloudTransferIcon from '../../../components/icons/CloudTransferIcon';
 import CeligoMarkIcon from '../../../components/icons/CeligoMarkIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import ConfigureSettingIcon from '../../../components/icons/ConfigureSettingIcon';
+import CommunityIcon from '../../../components/icons/CommunityIcon';
 import TransformIcon from '../../../components/icons/TransformIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
@@ -71,6 +73,7 @@ import InstallationGuideIcon from '../../../components/icons/InstallationGuideIc
 import InstallIntegrationIcon from '../../../components/icons/InstallIntegrationIcon';
 import IntegrationAppsIcon from '../../../components/icons/IntegrationAppsIcon';
 import ImportsIcon from '../../../components/icons/ImportsIcon';
+import IntegrationPinnedIcon from '../../../components/icons/IntegrationPinnedIcon';
 import InputFilterIcon from '../../../components/icons/InputFilterIcon';
 import KnowledgeBaseIcon from '../../../components/icons/KnowledgeBaseIcon';
 import LayoutFourPanelIcon from '../../../components/icons/LayoutFourPanelIcon';
@@ -79,6 +82,7 @@ import LayoutLgLeftSmrightIcon from '../../../components/icons/LayoutLgLeftSmrig
 import LayoutLgTopSmBottomIcon from '../../../components/icons/LayoutLgTopSmBottomIcon';
 import ListenerIcon from '../../../components/icons/ListenerIcon';
 import LicensesIcon from '../../../components/icons/licensesIcon';
+import ListViewIcon from '../../../components/icons/ListViewIcon';
 import LookUpIcon from '../../../components/icons/LookUpIcon';
 import LockIcon from '../../../components/icons/LockIcon';
 import MapDataIcon from '../../../components/icons/MapDataIcon';
@@ -96,6 +100,7 @@ import PreferredIcon from '../../../components/icons/PreferredIcon';
 import PermissionsMonitorIcon from '../../../components/icons/PermissionsMonitorIcon';
 import PermissionExplorerIcon from '../../../components/icons/PermissionExplorerIcon';
 import PentagonIcon from '../../../components/icons/PentagonIcon';
+import PinIntegrationIcon from '../../../components/icons/PinIntegrationIcon';
 import RadioBtnSelectedIcon from '../../../components/icons/RadioBtnSelectedIcon';
 import RadioBtnUnselectedIcon from '../../../components/icons/RadioBtnUnselectedIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
@@ -105,6 +110,8 @@ import RefreshIcon from '../../../components/icons/RefreshIcon';
 import RestoreIcon from '../../../components/icons/RestoreIcon';
 import RevokeTokenIcon from '../../../components/icons/RevokeTokenIcon';
 import ReactivateTokenIcon from '../../../components/icons/ReactivateTokenIcon';
+import ReactivateIcon from '../../../components/icons/ReactivateIcon';
+import RenewIcon from '../../../components/icons/RenewIcon';
 import RequiredIcon from '../../../components/icons/RequiredIcon';
 import RunIcon from '../../../components/icons/RunIcon';
 import RecycleBinIcon from '../../../components/icons/RecycleBinIcon';
@@ -122,6 +129,7 @@ import SubmitTicketIcon from '../../../components/icons/SubmitTicketIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import SquareIcon from '../../../components/icons/SquareIcon';
 import StarIcon from '../../../components/icons/StarIcon';
+import TilesViewIcon from '../../../components/icons/TilesViewIcon';
 import TransferOrderIcon from '../../../components/icons/TransferOrderIcon';
 import ToolsIcon from '../../../components/icons/ToolsIcon';
 import TokensApiIcon from '../../../components/icons/TokensApiIcon';
@@ -136,6 +144,7 @@ import UnlinkedIcon from '../../../components/icons/unLinkedIcon';
 import UploadIcon from '../../../components/icons/UploadIcon';
 import UnpublishedIcon from '../../../components/icons/UnpublishedIcon';
 import UniversityIcon from '../../../components/icons/UniversityIcon';
+import UnpinIntegrationIcon from '../../../components/icons/UnpinIntegrationIcon';
 import ViewReferencesIcon from '../../../components/icons/ViewReferencesIcon';
 import ViewResolvedHistoryIcon from '../../../components/icons/ViewResolvedHistoryIcon';
 import ViewDetailsIcon from '../../../components/icons/ViewDetailsIcon';
@@ -145,6 +154,7 @@ import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
 const icons =
     {
       AddIcon,
+      AutoRetryIcon,
       HardCodedIcon,
       LookupLetterIcon,
       MultiFieldIcon,
@@ -173,6 +183,7 @@ const icons =
       CeligoMarkIcon,
       ConnectionsIcon,
       ConfigureSettingIcon,
+      CommunityIcon,
       TransformIcon,
       DataLoaderIcon,
       DashboardIcon,
@@ -212,6 +223,7 @@ const icons =
       InstallIntegrationIcon,
       IntegrationAppsIcon,
       ImportsIcon,
+      IntegrationPinnedIcon,
       InputFilterIcon,
       KnowledgeBaseIcon,
       LayoutFourPanelIcon,
@@ -220,6 +232,7 @@ const icons =
       LayoutLgTopSmBottomIcon,
       ListenerIcon,
       LicensesIcon,
+      ListViewIcon,
       LookUpIcon,
       LockIcon,
       MapDataIcon,
@@ -237,6 +250,7 @@ const icons =
       PermissionsMonitorIcon,
       PermissionExplorerIcon,
       PentagonIcon,
+      PinIntegrationIcon,
       RadioBtnSelectedIcon,
       RadioBtnUnselectedIcon,
       ResourcesIcon,
@@ -246,6 +260,8 @@ const icons =
       RestoreIcon,
       RevokeTokenIcon,
       ReactivateTokenIcon,
+      ReactivateIcon,
+      RenewIcon,
       RequiredIcon,
       RunIcon,
       RecycleBinIcon,
@@ -263,6 +279,7 @@ const icons =
       SingleUserIcon,
       SquareIcon,
       StarIcon,
+      TilesViewIcon,
       TransferOrderIcon,
       ToolsIcon,
       TokensApiIcon,
@@ -277,6 +294,7 @@ const icons =
       UploadIcon,
       UnpublishedIcon,
       UniversityIcon,
+      UnpinIntegrationIcon,
       ViewReferencesIcon,
       ViewResolvedHistoryIcon,
       ViewDetailsIcon,

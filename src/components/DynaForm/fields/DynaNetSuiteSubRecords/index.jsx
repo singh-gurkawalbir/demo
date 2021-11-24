@@ -18,8 +18,9 @@ import {
 } from '../../../../utils/resource';
 import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import ActionGroup from '../../../ActionGroup';
 
-const useStyles = makeStyles(theme => ({
+export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
   subrecords: {
     padding: theme.spacing(2),
     background: theme.palette.background.default,
@@ -28,7 +29,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     marginLeft: 12,
     marginRight: theme.spacing(4),
-    marginTop: theme.spacing(-3),
     '&:before': {
       position: 'absolute',
       content: '""',
@@ -58,9 +58,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     marginTop: theme.spacing(2),
   },
-  actionBtns: {
-    display: 'flex',
-  },
 }));
 
 export default function DynaNetSuiteSubRecords(props) {
@@ -74,7 +71,7 @@ export default function DynaNetSuiteSubRecords(props) {
     value,
     flowId,
   } = props;
-  const classes = useStyles();
+  const classes = UseDynaNetsuiteSubRecordsStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
@@ -190,7 +187,7 @@ export default function DynaNetSuiteSubRecords(props) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -226,7 +223,7 @@ export default function DynaNetSuiteSubRecords(props) {
               <Typography component="span">
                 {getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}
               </Typography>
-              <div className={classes.actionBtns}>
+              <ActionGroup>
                 <ActionButton
                   fontSize="small"
                   data-test="edit-subrecord"
@@ -240,7 +237,7 @@ export default function DynaNetSuiteSubRecords(props) {
                   onClick={() => handleDeleteClick(sr.fieldId)}>
                   <DeleteIcon />
                 </ActionButton>
-              </div>
+              </ActionGroup>
             </div>
           ))}
       </div>

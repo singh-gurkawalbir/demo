@@ -8,6 +8,7 @@ export default {
   // TODO: develop code for this two components
   // agent list handleBars evaluated its a dynamicList
   _borrowConcurrencyFromConnectionId: {
+    loggable: true,
     resourceType: 'connections',
     filter: r => {
       const expression = [
@@ -45,6 +46,7 @@ export default {
     label: 'Borrow concurrency from',
   },
   _agentId: {
+    loggable: true,
     type: 'selectresource',
     label: 'Agent',
     resourceType: 'agents',
@@ -55,16 +57,19 @@ export default {
     resourceType: 'connections',
   },
   scope: {
+    loggable: true,
     type: 'selectscopes',
     label: 'Configure scopes',
   },
   name: {
+    loggable: true,
     type: 'text',
     label: 'Name',
     defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
   application: {
+    loggable: true,
     id: 'application',
     type: 'text',
     label: 'Application',
@@ -90,11 +95,13 @@ export default {
   // #endregion common
   // #region rdbms
   'rdbms.host': {
+    loggable: true,
     type: 'text',
     label: 'Host',
     required: true,
   },
   'rdbms.port': {
+    loggable: true,
     type: 'text',
     label: 'Port',
     validWhen: [
@@ -109,11 +116,13 @@ export default {
     ],
   },
   'rdbms.database': {
+    loggable: true,
     type: 'text',
     label: 'Database name',
     required: true,
   },
   'rdbms.instanceName': {
+    loggable: true,
     type: 'text',
     label: 'Instance name',
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
@@ -152,6 +161,7 @@ export default {
     label: 'Certificate',
   },
   'rdbms.version': {
+    loggable: true,
     type: 'select',
     label: 'SQL server version',
     required: true,
@@ -177,6 +187,7 @@ export default {
     label: 'Configure properties',
   },
   'rdbms.concurrencyLevel': {
+    loggable: true,
     label: 'Concurrency level',
     type: 'select',
     options: [
@@ -220,6 +231,7 @@ export default {
   // #endregion rdbms
   // #region rest
   'rest.mediaType': {
+    loggable: true,
     type: 'select',
     label: 'Media type',
     helpKey: 'connection.http.mediaType',
@@ -236,6 +248,7 @@ export default {
       r && r.rest && r.rest.mediaType ? r.rest.mediaType : 'json',
   },
   'rest.baseURI': {
+    loggable: true,
     type: 'text',
     label: 'Base URI',
     required: true,
@@ -250,6 +263,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'rest.tokenLocation': {
+    loggable: true,
     type: 'select',
     label: 'Send token via',
     helpKey: 'connection.http.auth.token.location',
@@ -270,6 +284,7 @@ export default {
   },
 
   'rest.authType': {
+    loggable: true,
     type: 'select',
     label: 'Auth type',
     helpKey: 'connection.http.auth.type',
@@ -286,6 +301,7 @@ export default {
   },
 
   'rest.authScheme': {
+    loggable: true,
     type: 'select',
     label: 'Header scheme',
     helpKey: 'connection.http.auth.token.scheme',
@@ -335,11 +351,13 @@ export default {
     description: 'Note: for security reasons this field must always be re-entered.',
   },
   'rest.unencrypted': {
+    loggable: true,
     type: 'editor',
     label: 'Unencrypted',
     mode: 'json',
   },
   'rest.refreshTokenMethod': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     helpKey: 'connection.http.auth.token.refreshMethod',
@@ -358,6 +376,7 @@ export default {
     helpKey: 'connection.http.auth.token.refreshBody',
   },
   'rest.refreshTokenMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Override media type',
     placeholder: 'Do not override',
@@ -374,6 +393,7 @@ export default {
   },
 
   'rest.pingMethod': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     helpKey: 'connection.http.ping.method',
@@ -389,6 +409,7 @@ export default {
   // #endregion rest
   // #region http
   'http.auth.type': {
+    loggable: true,
     type: 'select',
     label: 'Auth type',
     required: true,
@@ -407,6 +428,7 @@ export default {
     ],
   },
   'http.mediaType': {
+    loggable: true,
     type: 'select',
     label: 'Media type',
     required: true,
@@ -423,52 +445,53 @@ export default {
     ],
   },
   'http.successMediaType': {
-    type: 'select',
+    loggable: true,
+    type: 'selectoverridemediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-          { label: 'CSV', value: 'csv' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
+      { label: 'CSV', value: 'csv' },
     ],
+    dependentFieldForMediaType: '/http/mediaType',
   },
   'http.errorMediaType': {
-    type: 'select',
+    loggable: true,
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/mediaType',
   },
   configureApiRateLimits: {
+    loggable: true,
     label: 'Configure api rate limits',
     type: 'checkbox',
     defaultValue: r =>
       r && r.http && r.http.rateLimit && r.http.rateLimit.limit,
   },
   'http.baseURI': {
+    loggable: true,
     type: 'text',
     label: 'Base URI',
     required: true,
   },
   'http.disableStrictSSL': {
+    loggable: true,
     type: 'checkbox',
     label: 'Disable strict SSL',
   },
   'rdbms.disableStrictSSL': {
+    loggable: true,
     type: 'checkbox',
     label: 'Disable strict SSL',
   },
   'http.concurrencyLevel': {
+    loggable: true,
     label: 'Concurrency level',
     type: 'select',
     options: [
@@ -514,12 +537,14 @@ export default {
     label: 'Override retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
+    loggable: true,
     type: 'relativeuri',
     showLookup: false,
     showExtract: false,
     label: 'Relative URI',
   },
   'http.ping.method': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     options: [
@@ -533,19 +558,23 @@ export default {
     ],
   },
   'http.ping.body': {
+    loggable: true,
     type: 'httprequestbody',
     label: 'HTTP request body',
   },
   'http.ping.successPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to success field in HTTP response body',
   },
   'http.ping.successValues': {
+    loggable: true,
     type: 'text',
     label: 'Success values',
     delimiter: ',',
   },
   'http.ping.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to error field in HTTP response body',
     visibleWhen: [
@@ -556,6 +585,7 @@ export default {
     ],
   },
   'http.ping.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Error values',
@@ -567,10 +597,12 @@ export default {
     ],
   },
   'http.ping.errorPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to detailed error message field in HTTP response body',
   },
   'http.auth.failStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'Override HTTP status code for auth errors',
     validWhen: [
@@ -580,10 +612,12 @@ export default {
     ],
   },
   'http.auth.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to auth error field in HTTP response body',
   },
   'http.auth.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Auth error values',
@@ -611,10 +645,12 @@ export default {
     label: 'Configure scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
+    loggable: true,
     type: 'text',
     label: 'Override default scope delimiter',
   },
   'http.auth.oauth.accessTokenPath': {
+    loggable: true,
     type: 'text',
     label: 'Http auth oauth access token path',
   },
@@ -623,6 +659,7 @@ export default {
     label: 'Authorization URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
+    loggable: true,
     type: 'select',
     label: 'Send client credentials via',
     defaultValue: r =>
@@ -654,6 +691,7 @@ export default {
     label: 'Override access token HTTP request body',
   },
   'http._iClientId': {
+    loggable: true,
     label: 'IClient',
     type: 'selectresource',
     resourceType: 'iClients',
@@ -661,6 +699,7 @@ export default {
     allowEdit: true,
   },
   'http.auth.oauth.grantType': {
+    loggable: true,
     type: 'select',
     label: 'Grant type',
     options: [
@@ -678,6 +717,7 @@ export default {
     label: 'Http auth oauth username',
   },
   'http.auth.oauth.applicationType': {
+    loggable: true,
     type: 'select',
     label: 'Provider',
     defaultValue: r =>
@@ -699,12 +739,14 @@ export default {
     ],
   },
   'http.auth.oauth.callbackURL': {
+    loggable: true,
     type: 'text',
     label: 'Redirect URL',
     defaultDisabled: true,
     defaultValue: () => `${getDomainUrl()}/connection/oauth2callback`,
   },
   'http.auth.oauth.type': {
+    loggable: true,
     defaultValue: 'custom',
   },
   'http.auth.token.revoke.uri': {
@@ -741,6 +783,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'http.auth.token.location': {
+    loggable: true,
     type: 'select',
     label: 'Send token via',
     required: true,
@@ -755,6 +798,7 @@ export default {
     ],
   },
   'http.auth.token.headerName': {
+    loggable: true,
     type: 'text',
     label: 'Header name',
     defaultValue: r =>
@@ -766,10 +810,17 @@ export default {
       'Authorization',
   },
   'http.auth.token.scheme': {
+    loggable: true,
     type: 'select',
     label: 'Header scheme',
     skipDefault: true,
-    defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
+    defaultValue: r => {
+      if (!r?.http?.auth?.token?.scheme) return ' ';
+
+      if (!['Bearer', 'MAC', ' '].includes(r.http.auth.token.scheme)) return 'Custom';
+
+      return r.http.auth.token.scheme;
+    },
     options: [
       {
         items: [
@@ -782,11 +833,13 @@ export default {
     ],
   },
   'http.auth.token.paramName': {
+    loggable: true,
     type: 'text',
     label: 'Parameter name',
     required: true,
   },
   'http.auth.token.refreshMethod': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     defaultValue: r =>
@@ -805,6 +858,7 @@ export default {
     ],
   },
   'http.auth.token.refreshRelativeURI': {
+    loggable: true,
     type: 'relativeuri',
     showLookup: false,
     showExtract: false,
@@ -819,6 +873,7 @@ export default {
     label: 'Path to token field in HTTP response body',
   },
   'http.auth.token.refreshMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Override media type',
     placeholder: 'Do not override',
@@ -849,9 +904,9 @@ export default {
     label: 'Refresh token',
   },
   'http.auth.cookie.uri': {
-    type: 'text',
-    // showLookup: false,
-    // showExtract: false,
+    type: 'uri',
+    showLookup: false,
+    showExtract: false,
     label: 'Absolute URL',
   },
   'http.auth.cookie.body': {
@@ -859,6 +914,7 @@ export default {
     label: 'HTTP request body',
   },
   'http.auth.cookie.method': {
+    loggable: true,
     type: 'select',
     label: 'HTTP method',
     options: [
@@ -871,6 +927,7 @@ export default {
     ],
   },
   'http.auth.cookie.successStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'Override HTTP status code for success',
     validWhen: [
@@ -880,6 +937,7 @@ export default {
     ],
   },
   'http.rateLimit.failStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'Override HTTP status code for rate-limit errors',
     validWhen: [
@@ -889,6 +947,7 @@ export default {
     ],
   },
   'http.rateLimit.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to rate-limit error field in HTTP response body',
   },
@@ -898,6 +957,7 @@ export default {
     delimiter: ',',
   },
   'http.rateLimit.limit': {
+    loggable: true,
     type: 'text',
     label: 'Wait time between HTTP requests',
     validWhen: [
@@ -907,6 +967,7 @@ export default {
     ],
   },
   'http.headers': {
+    loggable: true,
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
@@ -915,6 +976,7 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.unencrypted': {
+    loggable: true,
     type: 'editor',
     mode: 'json',
     label: 'Unencrypted',
@@ -945,6 +1007,7 @@ export default {
   // #endregion http
   // #region ftp
   'ftp.hostURI': {
+    loggable: true,
     type: 'text',
     label: 'Host',
     required: true,
@@ -952,6 +1015,7 @@ export default {
       'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
   },
   'ftp.type': {
+    loggable: true,
     type: 'radiogroup',
     label: 'Protocol',
     required: true,
@@ -996,6 +1060,7 @@ export default {
     multiline: true,
   },
   'ftp.port': {
+    loggable: true,
     type: 'ftpport',
     label: 'Port',
     required: true,
@@ -1009,11 +1074,13 @@ export default {
     },
   },
   'ftp.usePassiveMode': {
+    loggable: true,
     type: 'checkbox',
     label: 'Use passive mode',
     defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
   },
   'ftp.entryParser': {
+    loggable: true,
     type: 'select',
     label: 'Entry parser',
     options: [
@@ -1035,21 +1102,25 @@ export default {
     ],
   },
   'ftp.userDirectoryIsRoot': {
+    loggable: true,
     type: 'checkbox',
     label: 'User directory is root',
     defaultValue: r => !!(r?.ftp?.userDirectoryIsRoot),
   },
   'ftp.useImplicitFtps': {
+    loggable: true,
     type: 'checkbox',
     label: 'Use implicit ftps',
     defaultValue: r => !!(r?.ftp?.useImplicitFtps),
   },
   'ftp.requireSocketReUse': {
+    loggable: true,
     type: 'checkbox',
     label: 'Require socket reuse',
     defaultValue: r => !!(r?.ftp?.requireSocketReUse),
   },
   'ftp.usePgp': {
+    loggable: true,
     type: 'checkbox',
     defaultValue: r =>
       !!(r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey)),
@@ -1069,6 +1140,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.pgpKeyAlgorithm': {
+    loggable: true,
     type: 'select',
     label: 'PGP encryption algorithm',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
@@ -1113,12 +1185,14 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   usePgp: {
+    loggable: true,
     type: 'checkbox',
     defaultValue: r =>
       !!(r?.pgp?.publicKey || r?.pgp?.privateKey),
     label: 'Enable PGP cryptographic',
   },
   'pgp.publicKey': {
+    loggable: true,
     type: 'text',
     multiline: true,
     label: 'PGP public key',
@@ -1133,6 +1207,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'pgp.compressionAlgorithm': {
+    loggable: true,
     type: 'select',
     label: 'Compression algorithm',
     skipSort: true,
@@ -1146,6 +1221,7 @@ export default {
     ],
   },
   'pgp.asciiArmored': {
+    loggable: true,
     label: 'ASCII armor',
     type: 'radiogroup',
     defaultValue: r => r?.pgp?.asciiArmored === false ? 'false' : 'true',
@@ -1186,6 +1262,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.concurrencyLevel': {
+    loggable: true,
     label: 'Concurrency level',
     type: 'select',
     options: [
@@ -1202,6 +1279,7 @@ export default {
   // #endregion ftp
   // #region s3
   's3.accessKeyId': {
+    loggable: true,
     type: 'text',
     label: 'Access key ID',
   },
@@ -1214,6 +1292,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   's3.pingBucket': {
+    loggable: true,
     type: 'text',
     label: 'Ping bucket',
   },
@@ -1282,6 +1361,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.failStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'Authentication fail status code',
     validWhen: [
@@ -1297,6 +1377,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.type': {
+    loggable: true,
     type: 'select',
     label: 'Authentication type',
     required: true,
@@ -1311,6 +1392,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Authentication fail path',
     visibleWhen: [
@@ -1321,6 +1403,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Authentication fail values',
@@ -1367,6 +1450,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.location': {
+    loggable: true,
     type: 'select',
     label: 'Location',
     options: [
@@ -1386,6 +1470,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.headerName': {
+    loggable: true,
     type: 'text',
     label: 'Header name',
     defaultValue: r =>
@@ -1404,6 +1489,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.scheme': {
+    loggable: true,
     type: 'select',
     label: 'Scheme',
     options: [
@@ -1424,6 +1510,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.paramName': {
+    loggable: true,
     type: 'text',
     label: 'Parameter name',
     visibleWhen: [
@@ -1434,6 +1521,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshMethod': {
+    loggable: true,
     type: 'select',
     label: 'Refresh method',
     options: [
@@ -1453,6 +1541,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshRelativeURI': {
+    loggable: true,
     type: 'text',
     label: 'Refresh relative URI',
     visibleWhen: [
@@ -1474,6 +1563,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshTokenPath': {
+    loggable: true,
     type: 'text',
     label: 'Refresh token path',
     visibleWhen: [
@@ -1484,6 +1574,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshMediaType': {
+    loggable: true,
     type: 'select',
     label: 'Refresh media type',
     options: [
@@ -1526,6 +1617,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
+    loggable: true,
     type: 'text',
     label: 'HTTP status code for rate-limit errors',
     visibleWhen: [
@@ -1541,6 +1633,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
+    loggable: true,
     type: 'text',
     label: 'Path to rate-limit errors in HTTP response body',
     visibleWhen: [
@@ -1551,6 +1644,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.rateLimit.failValues': {
+    loggable: true,
     type: 'text',
     delimiter: ',',
     visibleWhen: [
@@ -1562,6 +1656,7 @@ export default {
     label: 'Rate-limit error values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
+    loggable: true,
     type: 'text',
     label: 'Wait time between HTTP requests',
     visibleWhen: [
@@ -1589,6 +1684,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.encryptionType': {
+    loggable: true,
     type: 'select',
     label: 'Encryption type',
     required: true,
@@ -1606,16 +1702,19 @@ export default {
     ],
   },
   requiremdnspartners: {
+    loggable: true,
     type: 'labelvalue',
     label: 'Require MDNs from partners?',
     value: 'Yes',
   },
   requireasynchronousmdns: {
+    loggable: true,
     type: 'labelvalue',
     label: 'Require asynchronous MDNs?',
     value: 'No',
   },
   partnerrequireasynchronousmdns: {
+    loggable: true,
     type: 'checkbox',
     label: 'Partner requires asynchronous MDNs?',
   },
@@ -1625,6 +1724,7 @@ export default {
     value: 'Click here to see the list of IP Addresses.',
   },
   'as2.partnerStationInfo.signing': {
+    loggable: true,
     type: 'select',
     label: 'Signing',
     required: true,
@@ -1640,6 +1740,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.encoding': {
+    loggable: true,
     type: 'select',
     label: 'Encoding',
     options: [
@@ -1658,6 +1759,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.signatureEncoding': {
+    loggable: true,
     type: 'select',
     label: 'Signature encoding',
     options: [
@@ -1681,6 +1783,7 @@ export default {
     ],
   },
   'as2.userStationInfo.mdn.mdnSigning': {
+    loggable: true,
     type: 'select',
     label: 'MDN signing',
     required: true,
@@ -1696,6 +1799,7 @@ export default {
     ],
   },
   'as2.userStationInfo.mdn.mdnEncoding': {
+    loggable: true,
     type: 'select',
     label: 'MDN encoding',
     options: [
@@ -1708,6 +1812,7 @@ export default {
     ],
   },
   'as2.userStationInfo.encryptionType': {
+    loggable: true,
     type: 'select',
     label: 'Decryption algorithm',
     required: true,
@@ -1725,6 +1830,7 @@ export default {
     ],
   },
   'as2.userStationInfo.signing': {
+    loggable: true,
     type: 'select',
     label: 'Signature verification algorithm',
     required: true,
@@ -1740,6 +1846,7 @@ export default {
     ],
   },
   'as2.partnerStationInfo.mdnSigning': {
+    loggable: true,
     type: 'select',
     label: 'Signature encoding',
     options: [
@@ -1752,6 +1859,7 @@ export default {
     ],
   },
   'as2.userStationInfo.encoding': {
+    loggable: true,
     type: 'select',
     label: 'Incoming message encoding',
     required: true,
@@ -1771,6 +1879,7 @@ export default {
     ],
   },
   'as2.unencrypted.userPublicKey': {
+    loggable: true,
     type: 'editor',
     mode: 'text',
     label: 'X.509 Public Certificate',
@@ -1793,10 +1902,12 @@ export default {
     ],
   },
   'as2.preventCanonicalization': {
+    loggable: true,
     label: 'Prevent canonicalization',
     type: 'checkbox',
   },
   'as2.concurrencyLevel': {
+    loggable: true,
     label: 'Concurrency level',
     type: 'select',
     options: [
@@ -1832,6 +1943,7 @@ export default {
     ],
   },
   'as2.contentBasedFlowRouter': {
+    loggable: true,
     type: 'routingrules',
     label: 'Routing rules editor',
     required: false,
@@ -1876,6 +1988,7 @@ export default {
     label: 'Token secret',
   },
   'netsuite.tokenEnvironment': {
+    loggable: true,
     type: 'select',
     label: 'Environment',
     defaultValue: r => r && r.netsuite && r.netsuite.environment,
@@ -1890,10 +2003,12 @@ export default {
     ],
   },
   'netsuite.environment': {
+    loggable: true,
     type: 'netsuiteuserroles',
     label: 'Environment',
   },
   'netsuite.roleId': {
+    loggable: true,
     type: 'netsuiteuserroles',
     label: 'Role',
   },
@@ -1910,10 +2025,12 @@ export default {
     label: 'Password',
   },
   'netsuite.requestLevelCredentials': {
+    loggable: true,
     type: 'checkbox',
     label: 'NetSuite request level credentials',
   },
   'netsuite.dataCenterURLs': {
+    loggable: true,
     type: 'text',
     label: 'NetSuite data center URLs',
   },
@@ -1926,6 +2043,7 @@ export default {
     label: 'NetSuite role name',
   },
   'netsuite.concurrencyLevelRESTlet': {
+    loggable: true,
     type: 'text',
     label: 'NetSuite concurrency level restlet',
     validWhen: [
@@ -1935,6 +2053,7 @@ export default {
     ],
   },
   'netsuite.concurrencyLevelWebServices': {
+    loggable: true,
     type: 'text',
     label: 'NetSuite concurrency level web services',
     validWhen: [
@@ -1944,15 +2063,18 @@ export default {
     ],
   },
   'netsuite.linkSuiteScriptIntegrator': {
+    loggable: true,
     label: 'Link SuiteScript integrator',
     type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
+    loggable: true,
     label: 'IClient',
     type: 'selectresource',
     resourceType: 'iClients',
   },
   'netsuite.concurrencyLevel': {
+    loggable: true,
     label: 'Concurrency level',
     type: 'select',
     defaultValue: r =>
@@ -1998,6 +2120,7 @@ export default {
     ],
   },
   'netsuite.wsdlVersion': {
+    loggable: true,
     type: 'radiogroup',
     label: 'NetSuite wsdl version',
     options: [
@@ -2010,6 +2133,7 @@ export default {
     ],
   },
   'netsuite.applicationId': {
+    loggable: true,
     type: 'text',
     label: 'NetSuite application ID',
   },
@@ -2020,6 +2144,7 @@ export default {
     label: 'Net suite distributed adaptor account ID',
   },
   'netSuiteDistributedAdaptor.environment': {
+    loggable: true,
     type: 'select',
     label: 'Net suite distributed adaptor environment',
     options: [
@@ -2034,6 +2159,7 @@ export default {
     ],
   },
   'netSuiteDistributedAdaptor.connectionId': {
+    loggable: true,
     type: 'text',
     label: 'Net suite distributed adaptor connection ID',
   },
@@ -2042,12 +2168,14 @@ export default {
     label: 'Net suite distributed adaptor username',
   },
   'netSuiteDistributedAdaptor.uri': {
+    loggable: true,
     type: 'text',
     label: 'Net suite distributed adaptor URI',
   },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
   'salesforce.sandbox': {
+    loggable: true,
     type: 'select',
     label: 'Account type',
     required: true,
@@ -2061,10 +2189,12 @@ export default {
     ],
   },
   'salesforce.baseURI': {
+    loggable: true,
     type: 'text',
     label: 'Salesforce base URI',
   },
   'salesforce.oauth2FlowType': {
+    loggable: true,
     type: 'select',
     label: 'OAuth 2.0 flow type',
     required: true,
@@ -2107,10 +2237,12 @@ export default {
     label: 'Salesforce scope',
   },
   'salesforce.info': {
+    loggable: true,
     type: 'text',
     label: 'Salesforce info',
   },
   'salesforce.concurrencyLevel': {
+    loggable: true,
     type: 'select',
     label: 'Concurrency level',
     defaultValue: r =>
@@ -2162,6 +2294,7 @@ export default {
   // #endregion salesforce
   // #region wrapper
   'wrapper.unencrypted': {
+    loggable: true,
     type: 'editor',
     mode: 'json',
     label: 'Unencrypted',
@@ -2173,12 +2306,14 @@ export default {
     defaultValue: '',
   },
   'wrapper.pingFunction': {
+    loggable: true,
     type: 'text',
     label: 'Ping function',
     required: true,
     visible: r => !(r && r._connectorId),
   },
   'wrapper._stackId': {
+    loggable: true,
     label: 'Stack',
     type: 'selectresource',
     placeholder: 'Please select a stack',
@@ -2187,6 +2322,7 @@ export default {
     visible: r => !(r && r._connectorId),
   },
   'wrapper.concurrencyLevel': {
+    loggable: true,
     type: 'select',
     label: 'Concurrency level',
     options: [
@@ -2236,6 +2372,7 @@ export default {
   // #endregion wrapper
   // #region mongodb
   'mongodb.host': {
+    loggable: true,
     type: 'text',
     required: true,
     omitWhenValueIs: [''],
@@ -2243,6 +2380,7 @@ export default {
     defaultValue: r => r && r.mongodb && r.mongodb.host[0],
   },
   'mongodb.database': {
+    loggable: true,
     type: 'text',
     label: 'Database',
   },
@@ -2261,10 +2399,12 @@ export default {
     label: 'Password',
   },
   'mongodb.replicaSet': {
+    loggable: true,
     type: 'text',
     label: 'Replica set',
   },
   'mongodb.ssl': {
+    loggable: true,
     type: 'checkbox',
     label: 'TLS/SSL',
     defaultValue: r => (r && r.mongodb && r.mongodb.ssl) || false,
@@ -2295,6 +2435,7 @@ export default {
   // #region custom connection
   // #region constant contact
   versionType: {
+    loggable: true,
     type: 'select',
     label: 'Version type',
     required: true,

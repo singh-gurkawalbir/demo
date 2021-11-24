@@ -106,7 +106,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearc
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -174,7 +174,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApp
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -254,7 +254,7 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });

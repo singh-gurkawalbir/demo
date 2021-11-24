@@ -264,6 +264,7 @@ describe('runDataLoader saga', () => {
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [select(selectors.resource, 'exports', 'export-123'), dlExport],
+        [call(run, { flowId, options }), {}],
       ])
       .call(run, { flowId, options })
       .put(actions.resource.patchStaged(_exportId, patchSet, SCOPES.VALUE))

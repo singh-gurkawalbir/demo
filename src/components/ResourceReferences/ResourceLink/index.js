@@ -9,9 +9,16 @@ export default function ResourceLink({ name, id, resourceType, onClick }) {
     selectors.getResourceEditUrl(state, resourceType, id)
   );
 
+  const resourceName = name || id;
+
+  if (resourceType === 'asynchelpers') {
+    // @Bug: IO-23050 No link to navigate for asyncHelpers. So just display the name
+    return resourceName;
+  }
+
   return (
     <LoadResources resources={resourceType}>
-      <Link onClick={onClick} to={routePath}>{name || id}</Link>
+      <Link onClick={onClick} to={routePath}>{resourceName}</Link>
     </LoadResources>
   );
 }

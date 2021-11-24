@@ -5,12 +5,15 @@ export const MULTIPLE_INSTALLS =
 export const INTEGRATION_DELETE_VALIDATE =
   'All Flows within an integration tile must be removed before the integration tile can be deleted.';
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
-  'Your request for a license upgrade has been received. We will contact you soon via email once the upgrade is done.';
+'Thanks for your interest! We’ll be in touch shortly to get your license upgraded.';
 export default {
   CONTACT_SALES_MESSAGE,
   MULTIPLE_INSTALLS,
   INTEGRATION_DELETE_VALIDATE,
 };
+export const CLONE_DESCRIPTION = `
+Cloning can be used to create a copy of a flow, export, import, orchestration, or an entire integration. Cloning is useful for testing changes without affecting your production integrations (i.e. when you clone something you can choose a different set of connection records). Cloning supports both sandbox and production environments.`;
+
 export const NO_PENDING_QUEUED_JOBS =
   'This connection queue does not have any pending jobs. You can use the connection drop-down in the top right to see the status of a different connection queue.';
 export const LICENSE_EXPIRED =

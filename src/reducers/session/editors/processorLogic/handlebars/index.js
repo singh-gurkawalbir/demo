@@ -1,5 +1,5 @@
 import util from '../../../../../utils/json';
-import { isOldRestAdaptor } from '../../../../../utils/resource';
+import { isOldRestAdaptor, inferResourceType } from '../../../../../utils/resource';
 import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
 
 /* this util is used to read field label and generate editor title from it
@@ -29,7 +29,7 @@ export function _constructEditorTitle(label) {
 
   return `Build ${title[0].toLowerCase()}${title.slice(1)}`;
 }
-export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport}) {
+export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneResource}) {
   const {adaptorType} = resource || {};
   const {isHTTP} = connection || {};
   const isOldRestResource = isOldRestAdaptor(resource, connection);
@@ -48,9 +48,12 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
   // for below fields,
   // the whole adaptor is not yet supported (except for native REST)
   // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-  if (fieldId === 'idLockTemplate' ||
-  fieldId === 'dataURITemplate' ||
-  fieldId?.includes('once')) {
+  const isStandaloneImport = inferResourceType(adaptorType) === 'imports' && isStandaloneResource;
+
+  if (
+    ((fieldId === 'idLockTemplate' || fieldId === 'dataURITemplate') && !isStandaloneImport) ||
+    fieldId?.includes('once')
+  ) {
     if (['RESTImport', 'RESTExport'].includes(adaptorType)) {
       return isHTTP;
     }
@@ -76,7 +79,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
   }
 
   // no AFE1/2 is shown for PG/Standalone export (with some exceptions)
-  if (isPageGenerator || isStandaloneExport) {
+  if (isPageGenerator || isStandaloneResource) {
     return false;
   }
 
@@ -109,7 +112,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneExport, formValues, ...rest} = props;
+    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
     const {fieldId} = options;
     const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
@@ -123,7 +126,7 @@ export default {
       rule = value?.query;
     }
 
-    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneExport});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneResource});
     let v1Rule;
     let v2Rule;
 

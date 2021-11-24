@@ -4,6 +4,7 @@ import { generatePath, Redirect, useHistory, useRouteMatch } from 'react-router-
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import { HOME_PAGE_PATH } from '../../../../utils/constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import { getTemplateUrlName } from '../../../../utils/template';
@@ -128,17 +129,25 @@ export default function TabRedirection({children: componentChildren}) {
   }, [dispatch, isIntegrationApp, integrationAppMetadata, integrationId]);
 
   useEffect(() => {
-    if (redirectTo) {
-      const path = generatePath(match.path, {
+    if (!redirectTo) return;
+
+    let path;
+
+    // in cases like deleting integrations we redirect the user to homepage
+    if (redirectTo === HOME_PAGE_PATH) {
+      path = getRoutePath(redirectTo);
+    } else {
+      // these are tab based redirects
+      path = generatePath(match.path, {
         integrationId,
         integrationAppName,
         childId,
         tab: redirectTo,
       });
-
-      dispatch(actions.resource.integrations.clearRedirect(integrationId));
-      history.push(path);
     }
+
+    dispatch(actions.resource.integrations.clearRedirect(integrationId));
+    history.push(path);
   }, [
     dispatch,
     history,

@@ -2,7 +2,7 @@
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
-import { call, fork, take, cancel, select, delay, put, all } from 'redux-saga/effects';
+import { call, fork, take, cancel, select, put, all } from 'redux-saga/effects';
 import { createMockTask } from '@redux-saga/testing-utils';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
@@ -27,6 +27,7 @@ import {
 } from '.';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
+import { pollApiRequests } from '../../app';
 
 describe('suitescript jobs testcases', () => {
   const ssLinkedConnectionId = 'c1';
@@ -411,18 +412,17 @@ describe('suitescript jobs testcases', () => {
   });
 
   describe('pollForInProgressJobs saga tests', () => {
-    test('should call getInProgressJobsStatus after 5 seconds delay continuously', () => {
+    test('should call getInProgressJobsStatus within pollApiRequests with a polling duration 5 seconds', () => {
       const saga = pollForInProgressJobs({
         ssLinkedConnectionId,
         integrationId,
       });
 
-      expect(saga.next().value).toEqual(delay(5000));
-      expect(saga.next().value).toEqual(call(getInProgressJobsStatus, {
-        ssLinkedConnectionId,
-        integrationId,
-      }));
-      expect(saga.next().done).toEqual(false);
+      expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getInProgressJobsStatus,
+        pollSagaArgs: { ssLinkedConnectionId,
+          integrationId },
+        duration: 5000}));
+      expect(saga.next().done).toEqual(true);
     });
   });
 

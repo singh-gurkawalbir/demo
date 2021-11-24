@@ -15,6 +15,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
+import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -87,12 +88,11 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(_integrationId));
     // For connections resource table, we need to poll the connection status and queueSize
-    const interval = setInterval(() => {
-      dispatch(actions.resource.connections.refreshStatus(_integrationId));
-    }, 10 * 1000);
+
+    dispatch(actions.app.polling.start(actions.resource.connections.refreshStatus(_integrationId), 10 * 1000));
 
     return () => {
-      clearInterval(interval);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus(_integrationId)));
     };
   }, [dispatch, _integrationId]);
   const handleClick = useCallback(e => {
@@ -149,22 +149,22 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       )}
 
       <PanelHeader title="Connections">
-        <>
+        <ActionGroup>
           {permission.create && (
-            <TextButton
-              startIcon={<AddIcon />}
-              onClick={handleClick}>
-              Create connection
-            </TextButton>
+          <TextButton
+            startIcon={<AddIcon />}
+            onClick={handleClick}>
+            Create connection
+          </TextButton>
           )}
           {permission.register && !isStandalone && (
-            <TextButton
-              startIcon={<ConnectionsIcon />}
-              onClick={() => setShowRegister(true)}>
-              Register connections
-            </TextButton>
+          <TextButton
+            startIcon={<ConnectionsIcon />}
+            onClick={() => setShowRegister(true)}>
+            Register connections
+          </TextButton>
           )}
-        </>
+        </ActionGroup>
       </PanelHeader>
 
       <LoadResources required resources="connections">

@@ -62,7 +62,7 @@ describe('AFE region selectors test cases', () => {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
-        stage: 'exportFilter',
+        editorType: 'exportFilter',
       };
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
@@ -213,6 +213,28 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
     });
+    test('should return true for monitor user for mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{_id: 'someid', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR}],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'mappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'importMappingExtract',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+    });
     test('should return false for manage user if stage is input/output filter and active mode is filter', () => {
       state.user = {
         org: {
@@ -239,6 +261,109 @@ describe('AFE region selectors test cases', () => {
         flowId: 'flow-456',
         stage: 'outputFilter',
         activeProcessor: 'filter',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+    });
+    test('should return false for manage user for mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{
+            _id: 'someid',
+            accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+            integrationAccessLevel: [
+              {accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                _integrationId: 'int-id'},
+            ],
+          }],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'mappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'importMappingExtract',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+    });
+    test('should return false for IA for response mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{_id: 'someid', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR}],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+        _connectorId: 'co-123',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'responseMappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'responseMappingExtract',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+    });
+    test('should return true for monitor non IA user for response mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{_id: 'someid', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR}],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'responseMappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'responseMappingExtract',
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+    });
+    test('should return false for manage user for response mappings editor', () => {
+      state.user = {
+        org: {
+          accounts: [{
+            _id: 'someid',
+            accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+            integrationAccessLevel: [
+              {accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                _integrationId: 'int-id'},
+            ],
+          }],
+        },
+        preferences: { defaultAShareId: 'someid' },
+      };
+      state.data.resources.flows = [{
+        _id: 'flow-456',
+        _integrationId: 'int-id',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'responseMappings',
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'responseMappingExtract',
       };
 
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
@@ -427,6 +552,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'inputFilter',
+        editorType: 'inputFilter',
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
@@ -458,6 +584,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'exportFilter',
+        editorType: 'exportFilter',
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
@@ -490,6 +617,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'transform',
+        editorType: 'flowTransform',
       };
       state.session.editors.def = {
         id: 'def',
@@ -497,6 +625,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '999',
         flowId: 'flow-456',
         stage: 'postResponseMapHook',
+        editorType: 'postResponseMapHook',
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
@@ -513,7 +642,7 @@ describe('AFE region selectors test cases', () => {
       state.data.resources = {
         exports: [{
           _id: '123',
-          type: 'webhook',
+          adaptorType: 'HTTPExport',
           _connectionId: 'conn-id',
         }],
       };
@@ -527,6 +656,9 @@ describe('AFE region selectors test cases', () => {
       };
       const expectedOutput = {
         shouldGetContextFromBE: false,
+        sampleData: {
+          data: sampleData,
+        },
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);
@@ -561,6 +693,71 @@ describe('AFE region selectors test cases', () => {
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);
+    });
+  });
+
+  describe('selectors.isEditorSaveInProgress test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isEditorSaveInProgress()).toBeFalsy();
+    });
+    test('should return true if editor state has in progress save status', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'inputFilter',
+        saveStatus: 'requested',
+      };
+
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(true);
+    });
+    test('should return true if mapping state has in progress save status', () => {
+      state.session.mapping = {
+        mapping: {
+          resourceType: 'imports',
+          resourceId: '123',
+          flowId: 'flow-456',
+          saveStatus: 'requested',
+        }};
+
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(true);
+    });
+    test('should return true if response mapping state has in progress save status', () => {
+      state.session.responseMapping = {
+        mapping: {
+          resourceType: 'imports',
+          resourceId: '123',
+          flowId: 'flow-456',
+          saveStatus: 'requested',
+        }};
+
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(true);
+    });
+    test('should return false if no save is in progress', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        stage: 'inputFilter',
+        saveStatus: 'completed',
+      };
+      state.session.mapping = {
+        mapping: {
+          resourceType: 'imports',
+          resourceId: '123',
+          flowId: 'flow-456',
+          saveStatus: 'failed',
+        }};
+      state.session.responseMapping = {
+        mapping: {
+          resourceType: 'imports',
+          resourceId: '123',
+          flowId: 'flow-456',
+        }};
+
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(false);
     });
   });
 });
