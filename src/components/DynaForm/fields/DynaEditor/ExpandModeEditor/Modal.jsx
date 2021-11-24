@@ -47,22 +47,21 @@ export default function EditorModal(props) {
       onClose={handleClose}
       aria-labelledby="form-dialog-title">
       <div>{label}</div>
-      <div className={classes.editorContainer}>
-        <CodeEditor
-          name={id}
-          value={content}
-          mode={mode}
-          readOnly={disabled}
-          onChange={setContent}
-        />
-        <div>
-          <FieldMessage
-            errorMessages={errorMessage}
-            isValid={false}
-        />
+      <div>
+        <div className={classes.editorContainer}>
+          <CodeEditor
+            name={id}
+            value={content}
+            mode={mode}
+            readOnly={disabled}
+            onChange={setContent}
+          />
         </div>
+        <FieldMessage
+          errorMessages={errorMessage}
+          isValid={false}
+        />
       </div>
-
       <div>
         <OutlinedButton
           data-test="showEditor"
