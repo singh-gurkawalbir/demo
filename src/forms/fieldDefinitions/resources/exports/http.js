@@ -1,18 +1,15 @@
 export default {
   'http.successMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     placeholder: 'Do not override',
     label: 'Override media type for success responses',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'CSV', value: 'csv' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'CSV', value: 'csv' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -22,18 +19,14 @@ export default {
   },
   'http.requestMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'URL encoded', value: 'urlencoded' },
-          { label: 'JSON', value: 'json' },
-          { label: 'Multipart / form-data', value: 'form-data' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'URL encoded', value: 'urlencoded' },
+      { label: 'JSON', value: 'json' },
+      { label: 'Multipart / form-data', value: 'form-data' },
     ],
     visibleWhenAll: [
       {
@@ -48,17 +41,14 @@ export default {
   },
   'http.errorMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
     visibleWhen: [
       {
         field: 'outputMode',

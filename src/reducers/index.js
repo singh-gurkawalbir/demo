@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
+import cloneDeep from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -100,7 +101,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
-import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp } from '../utils/home';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp, getTileId } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
@@ -1712,7 +1713,7 @@ selectors.mkTiles = () => createSelector(
 
         return {
           ...t,
-          key: t._integrationId, // for Celigo table unique key
+          key: getTileId(t), // for Celigo table unique key
           status,
           flowsNameAndDescription,
           sortablePropType: -1,
@@ -1741,7 +1742,7 @@ selectors.mkTiles = () => createSelector(
 
       return {
         ...t,
-        key: t._integrationId,
+        key: getTileId(t),
         status,
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
@@ -1786,12 +1787,12 @@ selectors.mkFilteredHomeTiles = () => {
 
       let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
 
-      if (applications && !applications.includes('all')) {
+      if (isListView && applications && !applications.includes('all')) {
         // filter on applications
         filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
       }
 
-      if (pinnedIntegrations?.length && filteredTiles.length && isListView) {
+      if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
         // move pinned integrations to the top, not affected by sorting
         pinnedIntegrations.forEach(p => {
           const index = filteredTiles.findIndex(t => t.key === p);
@@ -1820,7 +1821,7 @@ selectors.mkFilteredHomeTiles = () => {
 
       return {
         filteredTiles: isListView ? slicedTiles : sortTiles(
-          slicedTiles,
+          filteredTiles,
           tilesOrder
         ),
         filteredCount: filteredTiles.length,
@@ -2485,6 +2486,60 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   }
 
   return updatedResourceType;
+};
+
+// this selector updates the field options based on the
+// parent field media type
+selectors.mkGetMediaTypeOptions = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, {formKey}) => selectors.formState(state, formKey)?.value || {},
+
+    (state, {formKey}) => {
+      const formValues = selectors.formState(state, formKey)?.value || {};
+      const connectionId = formValues['/_connectionId'];
+      const connection = resourceSelector(state, 'connections', connectionId) || {};
+
+      return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
+    },
+    (_, {resourceType}) => resourceType,
+    (_, {dependentFieldForMediaType}) => dependentFieldForMediaType,
+    (_, {options}) => options,
+    (_, {fieldId}) => fieldId,
+    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, options, fieldId) => {
+      if (resourceType === 'imports' && fieldId === 'http.requestMediaType') {
+        const inputMode = formValues['/inputMode'];
+
+        options = inputMode === 'blob' ? [
+          { label: 'Multipart / form-data', value: 'form-data' },
+          { label: 'JSON', value: 'json' },
+        ] : [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'URL encoded', value: 'urlencoded' },
+          { label: 'Multipart / form-data', value: 'form-data' },
+        ];
+      }
+
+      let mediaTypeIndex = -1;
+      const parentFieldMediaType = formValues[dependentFieldForMediaType] || connectionMediaType;
+
+      // find the media type in the options
+      if (parentFieldMediaType && options) {
+        mediaTypeIndex = options.findIndex(o => o.value === parentFieldMediaType);
+      }
+
+      // remove the media type which is set on connection/dependent field , from options
+      // cloning options so as to not affect original options
+      const modifiedOptions = cloneDeep(options);
+
+      if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);
+
+      return {modifiedOptions: [{ items: modifiedOptions}], parentFieldMediaType};
+    }
+  );
 };
 
 // #endregion resource selectors
@@ -4182,11 +4237,11 @@ selectors.suiteScriptLinkedTiles = createSelector(
     });
 
     return tiles.map(t => ({ ...t,
-      key: `${t.ssLinkedConnectionId}|${t._integrationId}`, // for Celigo Table unique key
+      key: getTileId(t), // for Celigo Table unique key
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
-      pinned: pinnedIntegrations.includes(`${t.ssLinkedConnectionId}|${t._integrationId}`) }));
+      pinned: pinnedIntegrations.includes(getTileId(t)) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
