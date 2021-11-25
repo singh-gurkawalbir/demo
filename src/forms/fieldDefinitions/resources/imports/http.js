@@ -70,7 +70,7 @@ export default {
   },
   'http.requestMediaType': {
     loggable: true,
-    type: 'selectrequestmediatype',
+    type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
@@ -83,15 +83,15 @@ export default {
       {
         items: [
           {
-            label: 'Create New Data & Update Existing Data',
+            label: 'Create new records & update existing records',
             value: 'createandupdate',
           },
           {
-            label: 'Create New Data & Ignore Existing Data',
+            label: 'Create new records & ignore existing records',
             value: 'createandignore',
           },
           {
-            label: 'Update Existing Data & Ignore New Data',
+            label: 'Ignore new records & update existing records',
             value: 'updateandignore',
           },
         ],
@@ -343,7 +343,7 @@ export default {
   },
   'http.successMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
     visibleWhenAll: [
@@ -353,17 +353,14 @@ export default {
       },
     ],
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.errorMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     visibleWhen: [
@@ -373,13 +370,10 @@ export default {
       },
     ],
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.ignoreEmptyNodes': {
     loggable: true,

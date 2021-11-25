@@ -7488,7 +7488,7 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.getResourceType saga', () => {
+  describe('selectors.getResourceType test cases', () => {
     const state = {
       session: {
         resource: {
@@ -7524,6 +7524,144 @@ describe('resource region selector testcases', () => {
     });
     test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => {
       expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toEqual('imports');
+    });
+  });
+
+  describe('selectors.mkGetMediaTypeOptions test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          connections: [{
+            _id: 'connection1',
+            type: 'http',
+            http: {mediaType: 'xml'},
+          },
+
+          ],
+        },
+      },
+      session: {
+        form: {
+          'exports-1234': {
+            parentContext: {
+              resourceId: '1234',
+              resourceType: 'exports',
+            },
+            value: {
+              '/_connectionId': 'connection1',
+              '/http/requestMediaType': 'json',
+            },
+          },
+          'imports-1234': {
+            parentContext: {
+              resourceId: '1234',
+              resourceType: 'imports',
+            },
+            value: {
+              '/_connectionId': 'connection1',
+              '/http/requestMediaType': 'json',
+            },
+          },
+          'imports-1111': {
+            parentContext: {
+              resourceId: '1111',
+              resourceType: 'imports',
+            },
+            value: {
+              '/_connectionId': 'connection1',
+              '/inputMode': 'blob',
+            },
+          },
+          'connections-1234': {
+            parentContext: {
+              resourceId: '1234',
+              resourceType: 'connections',
+            },
+            value: {
+              '/http/mediaType': 'json',
+            },
+          },
+        },
+      },
+    };
+
+    const getMediaTypeOptions = selectors.mkGetMediaTypeOptions();
+
+    test('should return correct options for requestMediaType field if resource type is imports and input type is blob', () => {
+      const expectedOutput = {
+        modifiedOptions: [{ items: [
+          { label: 'Multipart / form-data', value: 'form-data' },
+          { label: 'JSON', value: 'json' },
+        ]}],
+        parentFieldMediaType: 'xml',
+      };
+
+      expect(getMediaTypeOptions(state, {
+        formKey: 'imports-1111',
+        resourceType: 'imports',
+        fieldId: 'http.requestMediaType',
+
+      })).toEqual(expectedOutput);
+    });
+    test('should return updated options after removing dependent field media type for exports', () => {
+      const expectedOutput = {
+        modifiedOptions: [{ items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'CSV', value: 'csv' },
+        ]}],
+        parentFieldMediaType: 'json',
+      };
+
+      expect(getMediaTypeOptions(state, {
+        formKey: 'exports-1234',
+        resourceType: 'exports',
+        fieldId: 'http.successMediaType',
+        dependentFieldForMediaType: '/http/requestMediaType',
+        options: [
+          { label: 'XML', value: 'xml' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' },
+        ],
+      })).toEqual(expectedOutput);
+    });
+    test('should return updated options after removing connection media type for imports', () => {
+      const expectedOutput = {
+        modifiedOptions: [{ items: [
+          { label: 'JSON', value: 'json' },
+        ]}],
+        parentFieldMediaType: 'xml',
+      };
+
+      expect(getMediaTypeOptions(state, {
+        formKey: 'imports-1234',
+        resourceType: 'imports',
+        fieldId: 'http.errorMediaType',
+        options: [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+        ],
+      })).toEqual(expectedOutput);
+    });
+    test('should return updated options after removing dependent field media type for connections', () => {
+      const expectedOutput = {
+        modifiedOptions: [{ items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'CSV', value: 'csv' },
+        ]}],
+        parentFieldMediaType: 'json',
+      };
+
+      expect(getMediaTypeOptions(state, {
+        formKey: 'connections-1234',
+        resourceType: 'connections',
+        fieldId: 'http.successMediaType',
+        dependentFieldForMediaType: '/http/mediaType',
+        options: [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+        ],
+      })).toEqual(expectedOutput);
     });
   });
 });

@@ -116,6 +116,12 @@ export default {
     if (retValues['/http/requestMediaType'] === ' ' || !retValues['/http/requestMediaType']) {
       retValues['/http/requestMediaType'] = undefined;
     }
+    if (!retValues['/http/successMediaType']) {
+      retValues['/http/successMediaType'] = undefined;
+    }
+    if (!retValues['/http/errorMediaType']) {
+      retValues['/http/errorMediaType'] = undefined;
+    }
     delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 
