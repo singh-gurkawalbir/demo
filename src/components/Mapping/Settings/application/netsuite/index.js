@@ -668,7 +668,7 @@ export default {
     }
 
     // removing useFirstRow in case of non-grouped sample data or non-list field
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1 || extract.indexOf('[*].') > -1) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1 || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }
