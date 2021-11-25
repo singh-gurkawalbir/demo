@@ -423,11 +423,13 @@ const resource = {
           values,
           hideNotificationMessage: true,
         }),
-      testConnection: (connectionId, values) =>
+      testConnection: (connectionId, values, parentContext, shouldPingConnection) =>
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
           hideNotificationMessage: false,
+          parentContext,
+          shouldPingConnection,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
