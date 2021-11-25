@@ -220,6 +220,7 @@ import copper from './copper';
 import fifteenfive from './fifteenfive';
 import docebo from './docebo';
 import breezyhr from './breezyhr';
+import mercadolibre from './mercadolibre';
 
 export default {
   channelape,
@@ -444,4 +445,5 @@ export default {
   '15five': fifteenfive,
   breezyhr,
   docebo,
+  mercadolibre,
 };
