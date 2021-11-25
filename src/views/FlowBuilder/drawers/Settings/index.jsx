@@ -162,9 +162,16 @@ function Settings({
     }
     handleSubmit(formValues);
   }, [formValues, handleSubmit]);
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
-    setRemountKey(remountKey => remountKey + 1);
+    // settings form was remounting twice every time we open the settings drawer..this piece of code
+    // prevents that redundant action
+    if (componentMounted) {
+      setRemountKey(remountKey => remountKey + 1);
+    }
+    setComponentMounted(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFlowSubscribed]);
 
   const remountFn = useCallback(() => {

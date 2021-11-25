@@ -20,7 +20,7 @@ import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
   useColumns: () => {
-    const actionProps = useGetTableContext();
+    const actionProps = useGetTableContext() || {};
 
     let columns = [
       {

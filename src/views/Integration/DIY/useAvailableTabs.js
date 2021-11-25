@@ -16,6 +16,7 @@ import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
+import AnalyticsPanel from './panels/Analytics';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
@@ -33,7 +34,7 @@ const getTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
+    Icon: DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -54,6 +55,12 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
+  ...(isUserInErrMgtTwoDotZero
+    ? [{ path: 'analytics',
+      label: 'Analytics',
+      Icon: GraphIcon,
+      Panel: AnalyticsPanel }]
+    : []),
   {
     path: 'users',
     label: 'Users',
@@ -71,6 +78,7 @@ const emptyObj = {};
 
 export function useAvailableTabs() {
   const match = useRouteMatch();
+
   const { integrationId, childId } = match?.params;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -103,6 +111,7 @@ export function useAvailableTabs() {
 
     return emptyObj;
   }, shallowEqual);
+
   // Addons are currently not supported in 2.0.
   // This piece of code works when addon structure is introduced and may require minor changes.
   const { hasAddOns} = useSelector(state => {

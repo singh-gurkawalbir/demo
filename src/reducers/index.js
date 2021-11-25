@@ -911,15 +911,22 @@ selectors.getEventReportIntegrationName = (state, r) => {
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
-selectors.getAllAccountDashboardFlows = (state, filterKey) => {
+selectors.getAllAccountDashboardFlows = (state, filterKey, integrationId) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources || [];
   let allStoreFlows = [];
   const jobFilter = selectors.filter(state, filterKey);
+
   let storeId;
   let parentIntegrationId;
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations;
+
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
+  } else {
+    selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  }
 
   // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
   // below logic is used to extact store id and integration id from this.
@@ -974,7 +981,7 @@ selectors.accountDashboardJobs = (state, filterKey) => {
 
   return {jobs: totalJobs, nextPageURL, status};
 };
-selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integrationId }) => {
   let path;
 
   if (nextPageURL) {
@@ -982,11 +989,12 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   } else {
     path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
   }
-  const jobFilter = selectors.filter(state, filterKey);
+  const jobFilter = selectors.filter(state, `${integrationId || ''}${filterKey}`);
+
   const userPreferences = selectors.userPreferences(state);
   const sandbox = userPreferences.environment === 'sandbox';
   // If 'all' selected, it can be filtered out, as by defaults it considered "all".
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
   const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
   const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
   const body = {sandbox};
@@ -1000,6 +1008,9 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
     if (endDate) { body.time_lte = endDate.getTime(); }
+  }
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
   }
 
   if (selectedStatus.length) {
@@ -1756,7 +1767,7 @@ selectors.mkFilteredHomeTiles = () => {
       });
       const homeTiles = tiles.concat(suiteScriptLinkedTiles);
 
-      let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
 
       if (isListView && applications && !applications.includes('all')) {
         // filter on applications

@@ -1646,8 +1646,8 @@ const accessToken = {
 const job = {
   dashboard: {
     running: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
@@ -1666,8 +1666,8 @@ const job = {
       receivedFamily: ({ collection }) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,

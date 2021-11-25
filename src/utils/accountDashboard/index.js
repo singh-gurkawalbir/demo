@@ -5,6 +5,7 @@ import { JOB_UI_STATUS } from '../jobdashboard';
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
   COMPLETED: 'completedFlows',
+  DASHBOARD: 'dashboard',
 };
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
@@ -65,4 +66,6 @@ export const RUN_HISTORY_STATUS_OPTIONS = [
   ['canceled', 'Canceled'],
   ['completed', 'Completed'],
   ['failed', 'Failed']];
+
+export const getDashboardIntegrationId = (integrationId, childId) => childId ? `store${childId}pid${integrationId}` : integrationId;
 

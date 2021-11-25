@@ -128,6 +128,9 @@ export default {
     'zenefits',
     'saphana',
     'mixpanel',
+    'copper',
+    '15five',
+    'breezyhr',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -208,6 +211,8 @@ export default {
     'googleads',
     'pagerduty',
     'pandadoc',
+    'docebo',
+    'mercadolibre',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
