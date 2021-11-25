@@ -1785,7 +1785,7 @@ selectors.mkFilteredHomeTiles = () => {
       });
       const homeTiles = tiles.concat(suiteScriptLinkedTiles);
 
-      let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
 
       if (isListView && applications && !applications.includes('all')) {
         // filter on applications
