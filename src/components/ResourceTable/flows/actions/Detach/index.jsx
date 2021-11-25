@@ -35,8 +35,7 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
+      dispatch(actions.resource.patchAndCommitStaged('flows', resourceId, patchSet));
     }, [dispatch, resourceId]);
     const confirmDetachFlow = useCallback(() => {
       confirmDialog({

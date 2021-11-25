@@ -315,6 +315,13 @@ const resource = {
   undoStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
+  patchAndCommitStaged: (resourceType, resourceId, patch, ops = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
+    resourceType,
+    id: resourceId,
+    patch,
+    ops,
+  }),
+
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
