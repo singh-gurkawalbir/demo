@@ -78,7 +78,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections, childId });
 
   const fieldMeta = {
     fieldMap: {

@@ -6,16 +6,31 @@ import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { stringCompare } from '../../utils/sort';
+import { getFlowGroup } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   flow: {
     minWidth: 130,
-    maxWidth: 200,
+    maxWidth: 400,
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4.5),
   },
+  flowGroupName: {
+    color: theme.palette.text.secondary,
+  },
 }));
+const OptionIml = ({ item, integrationId}) => {
+  const classes = useStyles();
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
+  const groupName = getFlowGroup(flowGroupings, '', item._flowGroupingId).name;
 
+  return (
+    <div>
+      <span>{item.name || item._id}</span>
+      {groupName && (<span className={classes.flowGroupName}>{` | ${groupName}`}</span>)}
+    </div>
+  );
+};
 export default function FlowSelector({
   integrationId,
   childId,
@@ -70,7 +85,7 @@ export default function FlowSelector({
       <MenuItem value="">Select flow</MenuItem>
       {filteredFlows.sort(stringCompare('name')).map(opt => (
         <MenuItem key={opt._id} value={opt._id}>
-          {opt.name || opt._id}
+          <OptionIml item={opt} integrationId={integrationId} />
         </MenuItem>
       ))}
     </CeligoSelect>

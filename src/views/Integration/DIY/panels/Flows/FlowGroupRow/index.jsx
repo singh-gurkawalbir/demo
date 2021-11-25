@@ -54,6 +54,7 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.primary.main,
     },
     '&>a': {
+      fontWeight: 'bold',
       color: theme.palette.primary.main,
     },
   },
@@ -70,7 +71,7 @@ export default function FlowGroupRow({
   const { params } = useRouteMatch();
   const { sectionId, title } = rowData;
   const [showGripper, setShowGripper] = useState(false);
-  const groupHasNoFlows = sectionId === UNASSIGNED_SECTION_ID ? false : !flows.find(flow => flow._flowGroupingId === sectionId);
+  const groupHasNoFlows = sectionId === UNASSIGNED_SECTION_ID ? false : !flows.some(flow => flow._flowGroupingId === sectionId);
   const errorCountByFlowGroup = useSelector(
     state =>
       selectors.integrationErrorsPerFlowGroup(state, integrationId)

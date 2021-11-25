@@ -18,7 +18,7 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
         .join('/');
     }
 
-    if (!isMatchingAValidSection) {
+    if (!isMatchingAValidSection && flowGroupings.length) {
       return generatePath(path, {
         ...match.params, sectionId: defaultSectionId,
       });
@@ -40,10 +40,10 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
 export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
   const firstFlowGroupingSectionId = flowGroupingsSections?.[0]?.sectionId;
 
-  const flowGroupingsWithMiscSec = shouldHaveUnassignedSection(flowGroupingsSections, flows)
+  const flowGroupingsWithUnassignedSec = shouldHaveUnassignedSection(flowGroupingsSections, flows)
     ? [...flowGroupingsSections, {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
 
   // if there is no unassigned sectionId and the user has provided invalid section id then
   // the first sectionId of the flowGrouping is considered the defaultSectionId
-  return flowgroupingsRedirectTo(match, flowGroupingsWithMiscSec, firstFlowGroupingSectionId);
+  return flowgroupingsRedirectTo(match, flowGroupingsWithUnassignedSec, firstFlowGroupingSectionId);
 };

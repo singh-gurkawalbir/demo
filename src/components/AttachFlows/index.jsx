@@ -12,7 +12,7 @@ import { UNASSIGNED_SECTION_ID } from '../../utils/constants';
 
 const flowsFilterConfig = { type: 'flows' };
 
-export default function AttachFlows({ onClose, integrationId, flowGroupingId }) {
+export default function AttachFlows({ integrationId, flowGroupingId }) {
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -22,6 +22,10 @@ export default function AttachFlows({ onClose, integrationId, flowGroupingId }) 
   ]);
   const hasFlows = !!flows.length;
   const [selected, setSelected] = useState([]);
+  const [showDialog, setShowDialog] = useState(true);
+  const toggleDialog = useCallback(() => {
+    setShowDialog(!showDialog);
+  }, [showDialog]);
   const handleSelectChange = flows => {
     const selectedFlows = [];
 
@@ -66,48 +70,52 @@ export default function AttachFlows({ onClose, integrationId, flowGroupingId }) 
         integrationId
       )
     );
-    onClose();
+    toggleDialog();
   }, [
     connectionIdsToRegister,
     dispatch,
     flows,
     integrationId,
-    onClose,
+    toggleDialog,
     selected,
     flowGroupingId,
   ]);
 
   return (
-    <ModalDialog show maxWidth={false} onClose={onClose}>
-      <div>Attach flows</div>
-      {hasFlows && (
+    <>
+      {showDialog && (
+        <ModalDialog show maxWidth={false} onClose={toggleDialog}>
+          <div>Attach flows</div>
+          {hasFlows && (
 
-      <div>
-        <LoadResources
-          required
-          resources="flows, connections, exports, imports">
-          <CeligoTable
-            data={flows}
-            onSelectChange={handleSelectChange}
-            {...metadata}
-            selectableRows
-          />
-        </LoadResources>
-      </div>
+          <div>
+            <LoadResources
+              required
+              resources="flows, connections, exports, imports">
+              <CeligoTable
+                data={flows}
+                onSelectChange={handleSelectChange}
+                {...metadata}
+                selectableRows
+              />
+            </LoadResources>
+          </div>
+          )}
+          {hasFlows ? (
+            <div>
+              <OutlinedButton
+                data-test="attachFlows"
+                onClick={handleAttachFlowsClick}>
+                Attach
+              </OutlinedButton>
+              <TextButton
+                onClick={toggleDialog}>
+                Cancel
+              </TextButton>
+            </div>
+          ) : <div>No flows found</div>}
+        </ModalDialog>
       )}
-      {hasFlows ? (
-        <div>
-          <OutlinedButton
-            data-test="attachFlows"
-            onClick={handleAttachFlowsClick}>
-            Attach
-          </OutlinedButton>
-          <TextButton
-            onClick={onClose}>
-            Cancel
-          </TextButton>
-        </div>
-      ) : <div>No flows found</div>}
-    </ModalDialog>
+    </>
   );
 }

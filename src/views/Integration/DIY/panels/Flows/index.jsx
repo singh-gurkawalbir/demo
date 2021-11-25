@@ -144,20 +144,11 @@ const FlowListingTable = ({
 
   const sectionId = match?.params?.sectionId;
   const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
-  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
-  const flowGroups = useMemo(() => {
-    if (flowFilter.keyword) {
-      return flowGroupingsSections.filter(({ sectionId }) =>
-        flows.find(flow => (flow._flowGroupingId === sectionId) || (sectionId === UNASSIGNED_SECTION_ID && !flow._flowGroupingId)));
-    }
-
-    return flowGroupingsSections;
-  }, [flowFilter, flowGroupingsSections, flows]);
   const groupedFlows = useMemo(() => flows.filter(flow => sectionId === UNASSIGNED_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
   const onSortEnd = useCallback(({oldIndex, newIndex}) => {
-    dispatch(actions.resource.integrations.flowGroups.shiftOrder(integrationId, flowGroupingsSections[oldIndex].title, newIndex));
+    dispatch(actions.resource.integrations.flowGroups.shiftOrder(integrationId, flowGroupingsSections[oldIndex].sectionId, newIndex));
   }, [dispatch, flowGroupingsSections, integrationId]);
 
   return (
@@ -168,7 +159,7 @@ const FlowListingTable = ({
           classes={classes}
           SortableItemComponent={SortableItemComponent}
           LastRowSortableItemComponent={LastRowSortableItemComponent}
-          items={flowGroups}
+          items={flowGroupingsSections}
           onSortEnd={onSortEnd}
           flows={flows}
           hasUnassignedSection={hasUnassignedSection}
@@ -189,14 +180,23 @@ const FlowListingTable = ({
   );
 };
 
-const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
+const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, flows}) => {
   const match = useRouteMatch();
   const history = useHistory();
   const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
 
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
+  const flowGroups = useMemo(() => {
+    if (searchFilter.keyword) {
+      return flowGroupingsSections.filter(({ sectionId }) =>
+        flows.find(flow => (flow._flowGroupingId === sectionId) || (sectionId === UNASSIGNED_SECTION_ID && !flow._flowGroupingId)));
+    }
 
-  const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
+    return flowGroupingsSections;
+  }, [searchFilter, flowGroupingsSections, flows]);
+
+  const redirectTo = redirectToFirstFlowGrouping(flows, flowGroups, match);
 
   useEffect(() => {
     // redirect should only happen if integration is still present and not deleted
@@ -226,7 +226,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
       flowTableMeta={flowTableMeta}
       actionProps={actionProps}
       integrationId={integrationId}
-      flowGroupingsSections={flowGroupingsSections}
+      flowGroupingsSections={flowGroups}
     />
   );
 };
@@ -235,6 +235,7 @@ const defaultFilter = {
   sort: { orderBy: 'name', order: 'asc' },
   searchBy: [
     'name',
+    'description',
   ],
 };
 const Title = ({flows, integrationId}) => {
@@ -302,6 +303,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const match = useRouteMatch();
   const sectionId = match?.params?.sectionId;
   const currentIntegrationId = childId || integrationId;
+  const searchFilterKey = `${currentIntegrationId}-flows`;
   const filterKey = `${currentIntegrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
 
   // Celigo table and Keyword components are patching the same time...the order of
@@ -311,7 +313,16 @@ export default function FlowsPanel({ integrationId, childId }) {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
   }, [dispatch, filterKey]);
   const [selectedComponent, setSelectedComponent] = useState(null);
+
+  // if there are flow groups present, search filter should apply across all the flow groups
+  // so searchFilter is defined independently from flowFilter applied at every flow group
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
+
+  const finalFilter = {
+    ...flowFilter,
+    keyword: searchFilter.keyword,
+  };
 
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
@@ -319,7 +330,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
-  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, flowFilter);
+  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, finalFilter);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
@@ -398,7 +409,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
           <ActionGroup>
             <KeywordSearch
-              filterKey={filterKey}
+              filterKey={searchFilterKey}
             />
             {canCreate && !isIntegrationApp && (
             <TextButton
@@ -434,13 +445,14 @@ export default function FlowsPanel({ integrationId, childId }) {
           <FlowListing
             integrationId={currentIntegrationId}
             filterKey={filterKey}
+            searchFilterKey={searchFilterKey}
             actionProps={actionProps}
             flows={flows}
         />
         </LoadResources>
       </div>
       <div className={classes.noSearchResults}>
-        {(flowFilter.keyword && flows.length === 0) ? (
+        {(finalFilter.keyword && flows.length === 0) ? (
           <Typography variant="body1">
             Your search didn’t return any matching results. Try expanding your search criteria.
           </Typography>
