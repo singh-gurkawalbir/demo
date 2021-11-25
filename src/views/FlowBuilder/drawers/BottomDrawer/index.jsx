@@ -11,7 +11,8 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
-import RunHistoryIcon from '../../../../components/icons/ViewResolvedHistoryIcon';
+import RunningFlowsIcon from '../../../../components/icons/RunningFlowsIcon';
+import RunHistoryIcon from '../../../../components/icons/CompletedFlowsIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
@@ -330,7 +331,7 @@ export default function BottomDrawer({
                       {...tabProps(tabIndex++)}
                       id={tabType}
                       key={tabType}
-                      icon={<DashboardIcon />}
+                      icon={isUserInErrMgtTwoDotZero ? <RunningFlowsIcon /> : <DashboardIcon />}
                       label={dashboardLabel} />
                   );
                 case 'runHistory':
