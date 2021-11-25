@@ -332,4 +332,15 @@ export default {
       },
     }),
   },
+  breezyhr: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: 'https://api.breezy.hr/v3/signin',
+      body: { email: form['/http/unencrypted/email'],
+        password: form['/http/encrypted/password'],
+      },
+    }),
+  },
 };

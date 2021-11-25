@@ -163,47 +163,6 @@ describe('customSettings reducer', () => {
       expect(newState).toEqual(expectedState);
     });
   });
-
-  describe('RESOURCE.UPDATED action', () => {
-    test('should not modify state if correct patches not applied', () => {
-      const state = { 123: { status: 'request' }, 456: { status: 'request' } };
-      const somePatch = [{ path: '/somePath', value: 'someValue' }];
-      const newState = reducer(
-        state,
-        actions.resource.updated(resourceType, resourceId, [], somePatch)
-      );
-
-      expect(newState).toEqual(state);
-    });
-
-    test('should delete resource reference if form patches applied', () => {
-      const state = { 123: { status: 'request' }, 456: { status: 'request' } };
-      const somePatch = [{ path: '/settingsForm', value: 'someValue' }];
-      const expectedState = { 456: { status: 'request' } };
-      const newState = reducer(
-        state,
-        actions.resource.updated(resourceType, resourceId, [], somePatch)
-      );
-
-      expect(newState).toEqual(expectedState);
-    });
-
-    test('should delete all resource references if script patches applied', () => {
-      const state = {
-        123: { status: 'received', scriptId: '888' },
-        456: { status: 'received', scriptId: '999' },
-        789: { status: 'received', scriptId: '888' },
-      };
-      const somePatch = [{ path: '/content', value: 'someValue' }];
-      const expectedState = { 456: { status: 'received', scriptId: '999' } };
-      const newState = reducer(
-        state,
-        actions.resource.updated('scripts', '888', [], somePatch)
-      );
-
-      expect(newState).toEqual(expectedState);
-    });
-  });
 });
 
 describe('customSettings selectors', () => {

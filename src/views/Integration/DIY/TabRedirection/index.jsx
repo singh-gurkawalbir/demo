@@ -14,7 +14,11 @@ const emptyObj = {};
 export default function TabRedirection({children: componentChildren}) {
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId, templateName, childId, tab} = match?.params;
+  const { integrationId, templateName, childId, dashboardTab} = match?.params;
+  let {tab} = match?.params;
+
+  tab = dashboardTab ? 'dashboard' : tab;
+
   const dispatch = useDispatch();
 
   const {
@@ -164,6 +168,7 @@ export default function TabRedirection({children: componentChildren}) {
         getRoutePath(`templates/${templateUrlName}/${integrationId}/${tab || 'flows'}`)
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, integrationId, templateName, templateUrlName]);
   useEffect(() => {
     if (

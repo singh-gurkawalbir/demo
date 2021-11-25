@@ -1,4 +1,5 @@
 import React from 'react';
+import { Typography } from '@material-ui/core';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
@@ -41,6 +42,14 @@ export default {
       ),
       Value: ({rowData: r}) => {
         const applications = useSelectorMemo(selectors.mkTileApplications, r);
+
+        if (r._integrationId === STANDALONE_INTEGRATION.id || r.ssLinkedConnectionId) {
+          return (
+            <Typography variant="caption" color="textSecondary">
+              N/A
+            </Typography>
+          );
+        }
 
         return (
           <LogoStrip applications={applications} />
