@@ -32,7 +32,7 @@ export default function EditorModal(props) {
     if (id === 'settings') {
       if (content && typeof content === 'string' && !isJsonString(content)) {
         setErrorMessage('Settings must be a valid JSON');
-      } else if (errorMessage) {
+      } else {
         setErrorMessage('');
       }
     }
@@ -57,10 +57,12 @@ export default function EditorModal(props) {
             onChange={setContent}
           />
         </div>
-        <FieldMessage
-          errorMessages={errorMessage}
-          isValid={false}
-        />
+        { !!errorMessage && (
+          <FieldMessage
+            errorMessages={errorMessage}
+            isValid={false}
+          />
+        )}
       </div>
       <div>
         <OutlinedButton
