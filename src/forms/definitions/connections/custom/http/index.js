@@ -216,6 +216,11 @@ import braintree from './braintree';
 import zenefits from './zenefits';
 import saphana from './saphana';
 import mixpanel from './mixpanel';
+import copper from './copper';
+import fifteenfive from './fifteenfive';
+import docebo from './docebo';
+import breezyhr from './breezyhr';
+import mercadolibre from './mercadolibre';
 
 export default {
   channelape,
@@ -436,4 +441,9 @@ export default {
   zenefits,
   saphana,
   mixpanel,
+  copper,
+  '15five': fifteenfive,
+  breezyhr,
+  docebo,
+  mercadolibre,
 };

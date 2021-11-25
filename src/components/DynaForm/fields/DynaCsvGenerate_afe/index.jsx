@@ -41,14 +41,21 @@ const getParserValue = ({customHeaderRows, resourceId, resourceType, ...rest}) =
 
 export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
   const { value: secondaryFormValue, fields, isValid} = useFormContext(secondaryFormKey);
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
     if (secondaryFormValue) {
+      // let parent component state settle after that we can decide if the child form is touched or not
+      // this is to prevent it from considering the previous child form touched state
+      if (!componentMounted) {
+        return handleFormChange(secondaryFormValue, isValid, true);
+      }
       const isFormTouched = Object.values(fields).some(val => val.touched);
 
       // skip updates till secondary form is touched
       handleFormChange(secondaryFormValue, isValid, !isFormTouched);
     }
+    setComponentMounted(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondaryFormValue, fields, isValid]);
 };

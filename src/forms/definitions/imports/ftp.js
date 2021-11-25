@@ -99,6 +99,7 @@ export default {
           'ftp.inProgressFileName',
           'ftp.blobUseTempFile',
           'ftp.blobInProgressFileName',
+          'file.batchSize',
           'file.backupPath',
           'file.encoding',
           'blobKeyPath',

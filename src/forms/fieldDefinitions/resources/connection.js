@@ -446,32 +446,26 @@ export default {
   },
   'http.successMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-          { label: 'CSV', value: 'csv' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
+      { label: 'CSV', value: 'csv' },
     ],
+    dependentFieldForMediaType: '/http/mediaType',
   },
   'http.errorMediaType': {
     loggable: true,
-    type: 'select',
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/mediaType',
   },
   configureApiRateLimits: {
     loggable: true,
@@ -820,7 +814,13 @@ export default {
     type: 'select',
     label: 'Header scheme',
     skipDefault: true,
-    defaultValue: r => r?.http?.auth?.token?.scheme || ' ',
+    defaultValue: r => {
+      if (!r?.http?.auth?.token?.scheme) return ' ';
+
+      if (!['Bearer', 'MAC', ' '].includes(r.http.auth.token.scheme)) return 'Custom';
+
+      return r.http.auth.token.scheme;
+    },
     options: [
       {
         items: [

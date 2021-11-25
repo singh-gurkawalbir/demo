@@ -130,7 +130,7 @@ export function getResourceSubType(resource) {
   return out;
 }
 
-export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false) {
   if (!Array.isArray(resources)) {
     return emptyList;
   }
@@ -148,7 +148,9 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
   const comparer = ({ order = 'asc', orderBy = 'name' }) =>
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
 
-  return resources.filter(stringTest).sort(comparer(sort));
+  const filteredResources = resources.filter(stringTest);
+
+  return skipSort ? filteredResources : filteredResources.sort(comparer(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {

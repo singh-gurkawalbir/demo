@@ -1,11 +1,12 @@
 import React from 'react';
+import { Typography } from '@material-ui/core';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {FILTER_KEY, getAllApplications} from '../../../utils/home';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../utils/constants';
 import DIYClone from './actions/diy/Clone';
 import DIYDelete from './actions/diy/Delete';
 import DIYDownload from './actions/diy/Download';
@@ -42,6 +43,14 @@ export default {
       Value: ({rowData: r}) => {
         const applications = useSelectorMemo(selectors.mkTileApplications, r);
 
+        if (r._integrationId === STANDALONE_INTEGRATION.id || r.ssLinkedConnectionId) {
+          return (
+            <Typography variant="caption" color="textSecondary">
+              N/A
+            </Typography>
+          );
+        }
+
         return (
           <LogoStrip applications={applications} />
         );
@@ -59,17 +68,7 @@ export default {
       key: 'lastErrorAt',
       orderBy: 'lastErrorAt',
       heading: 'Last open error',
-      Value: ({rowData: r}) => {
-        if (r.ssLinkedConnectionId) return 'Not available';
-
-        return <CeligoTimeAgo date={r.lastErrorAt} />;
-      },
-    },
-    {
-      key: 'lastModified',
-      orderBy: 'lastModified',
-      heading: 'Last updated',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified && new Date(r.lastModified)} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
     },
     {
       key: 'type',
@@ -80,14 +79,20 @@ export default {
       ),
     },
   ],
-  useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId, pinned }) => {
+  useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId, pinned, status }) => {
     if (_integrationId === STANDALONE_INTEGRATION.id) return [];
     const pinUnpin = pinned ? UnpinAction : PinAction;
 
     if (ssLinkedConnectionId) return [pinUnpin];
+    // clone and download actions are not valid for tiles with pending config
+    const isConfigPending = status === TILE_STATUS.IS_PENDING_SETUP || status === TILE_STATUS.UNINSTALL;
+
     if (_connectorId) {
+      if (isConfigPending) return [IARenew, IAReactivate, pinUnpin, IAUninstall];
+
       return [IARenew, IAReactivate, pinUnpin, IAClone, IAUninstall];
     }
+    if (isConfigPending) return [pinUnpin, DIYDelete];
 
     return [pinUnpin, DIYClone, DIYDownload, DIYDelete];
   },
