@@ -212,6 +212,7 @@ export default {
     'pagerduty',
     'pandadoc',
     'docebo',
+    'mercadolibre',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

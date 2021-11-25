@@ -510,6 +510,8 @@ export default {
   'breezyhr.connection.http.unencrypted.email': 'Enter the email of your Breezy HR account.',
   'breezyhr.connection.http.encrypted.password': 'Enter the password of your Breezy HR account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'breezyhr.connection.http.auth.token.token': 'The access token of your Breezy HR account',
+  'mercadolibre.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your MercadoLibre developer account.<br>2. Navigate to <b>Profile → My Apps</b>.<br>3. Click on <b>Edit</b> after selecting the app to copy <b>Client ID</b> and <b>Client Select</b>.(If none exists yet,click to <b>Create new app</b> option to create a new pair.)',
+  'mercadolibre.connection.http.unencrypted.region': 'Select the region of your MercadoLibre account.',
   'connection.http.marketoSubdomain':
     "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
   'marketo.connection.http.unencrypted.clientId':
