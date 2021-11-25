@@ -3,13 +3,10 @@ import shortid from 'shortid';
 import actionTypes from '../../../actions/types';
 
 export default function reducer(state = {}, action) {
-  const { type, resourceId, formMeta, scriptId, patch, error } = action;
+  const { type, resourceId, formMeta, scriptId, error } = action;
 
   // state = {status, scriptId, meta, error, key}
   return produce(state, draft => {
-    let formPatches;
-    let scriptPatches;
-
     switch (type) {
       case actionTypes.CUSTOM_SETTINGS.FORM_REQUEST:
         draft[resourceId] = { status: 'request' };
@@ -32,28 +29,6 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.CUSTOM_SETTINGS.FORM_CLEAR:
         delete draft[resourceId];
-        break;
-
-      case actionTypes.RESOURCE.UPDATED:
-        // console.log(patch);
-        formPatches = patch.filter(patch => patch.path === '/settingsForm');
-
-        scriptPatches = patch.filter(patch => patch.path === '/content');
-
-        if (formPatches?.length) {
-          delete draft[resourceId];
-        } else if (scriptPatches?.length) {
-          // We need to iterate over all cached items in the state object
-          // and check if any resource with a cached form result uses a 'scriptId'
-          // matching the resourceId in the action payload.
-          Object.keys(draft).forEach(key => {
-            if (draft[key].scriptId === resourceId) {
-              delete draft[key];
-              // no need to break the loop here as there can be multiple resources using same scriptId (rare though)
-            }
-          });
-        }
-
         break;
 
       default:
