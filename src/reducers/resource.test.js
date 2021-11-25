@@ -3409,27 +3409,7 @@ describe('resource region selector testcases', () => {
         filteredCount: 8,
         filteredTiles: [
           {
-            _connectorId: 'connector1',
-            _integrationId: 'suitescript2',
-            key: 'connection1_suitescript2',
-            name: undefined,
-            numFlows: 10,
-            pinned: false,
-            sortablePropType: -1,
-            ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
-          },
-          {
-            _integrationId: 'suitescript2',
-            key: 'connection3_suitescript2',
-            name: undefined,
-            pinned: false,
-            sortablePropType: 0,
-            ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
-          },
-          {
-            _integrationId: 'integration3',
+            _integrationId: 'none',
             applications: [],
             flowsNameAndDescription: '',
             integration: {
@@ -3440,19 +3420,18 @@ describe('resource region selector testcases', () => {
                 },
               },
             },
-            key: 'integration3',
-            lastErrorAt: 3,
-            name: 'HTTP Integration Three',
-            numError: 9,
-            numFlows: 4,
+            key: 'none',
+            name: 'Standalone flows',
+            numError: 0,
+            numFlows: 5,
             offlineConnections: [
               'conn1',
               'conn2',
             ],
             pinned: false,
-            sortablePropType: 4,
-            status: 'has_errors',
-            totalErrorCount: 11,
+            sortablePropType: 5,
+            status: 'success',
+            totalErrorCount: 2,
           },
           {
             _integrationId: 'integration1',
@@ -3506,12 +3485,49 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 4,
           },
           {
+            _integrationId: 'integration3',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration3',
+            lastErrorAt: 3,
+            name: 'HTTP Integration Three',
+            numError: 9,
+            numFlows: 4,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: false,
+            sortablePropType: 4,
+            status: 'has_errors',
+            totalErrorCount: 11,
+          },
+          {
             _integrationId: 'suitescript1',
             displayName: 'salesforce netsuite',
             key: 'connection1_suitescript1',
             name: 'salesforce netsuite',
             pinned: false,
             sortablePropType: 0,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1_suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
             totalErrorCount: 0,
           },
@@ -3528,29 +3544,13 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 10,
           },
           {
-            _integrationId: 'none',
-            applications: [],
-            flowsNameAndDescription: '',
-            integration: {
-              permissions: {
-                accessLevel: 'owner',
-                connections: {
-                  edit: true,
-                },
-              },
-            },
-            key: 'none',
-            name: 'Standalone flows',
-            numError: 0,
-            numFlows: 5,
-            offlineConnections: [
-              'conn1',
-              'conn2',
-            ],
+            _integrationId: 'suitescript2',
+            key: 'connection3_suitescript2',
+            name: undefined,
             pinned: false,
-            sortablePropType: 5,
-            status: 'success',
-            totalErrorCount: 2,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection3',
+            totalErrorCount: 0,
           },
         ],
         perPageCount: 8,
@@ -3559,7 +3559,8 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(finalState)).toEqual(expected);
     });
-    test('should return tiles sorted by name if default filter is applied', () => {
+    test('should return tiles sorted by name if default filter is applied for list view', () => {
+      const finalState = reducer(state, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
       const expected = {
         filteredCount: 8,
         filteredTiles: [
@@ -3712,9 +3713,9 @@ describe('resource region selector testcases', () => {
         totalCount: 4,
       };
 
-      expect(filteredHomeTiles(state)).toEqual(expected);
+      expect(filteredHomeTiles(finalState)).toEqual(expected);
     });
-    test('should return tiles sorted by status', () => {
+    test('should return tiles sorted by status for list view', () => {
       const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
         {
           sort: {
@@ -3877,7 +3878,7 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles sorted by last open error', () => {
+    test('should return tiles sorted by last open error for list view', () => {
       const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
         {
           sort: {
@@ -4040,7 +4041,7 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles sorted by type', () => {
+    test('should return tiles sorted by type for list view', () => {
       const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
         {
           sort: {
@@ -4203,7 +4204,7 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles filtered by applications', () => {
+    test('should return tiles filtered by applications for list view', () => {
       const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
         {
           applications: [
@@ -4345,7 +4346,7 @@ describe('resource region selector testcases', () => {
       const initialState = reducer(state, actions.user.preferences.update({
         dashboard: {
           view: TILE_VIEW,
-          tilesOrder: ['integration1', 'integration3', 'none', 'connector1', 'suitescript1', 'suitescript2', 'suitescript1', 'suitescript2']},
+          tilesOrder: ['integration1', 'integration3', 'none', 'connector1']},
       }));
       const finalState = reducer(initialState, actions.patchFilter(FILTER_KEY, {sort: {
         order: 'desc',
@@ -4467,6 +4468,17 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 0,
           },
           {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1_suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
             _integrationId: 'suitescript1',
             displayName: 'salesforce netsuite',
             key: 'connection2_suitescript1',
@@ -4487,17 +4499,6 @@ describe('resource region selector testcases', () => {
             ssLinkedConnectionId: 'connection3',
             totalErrorCount: 0,
           },
-          {
-            _connectorId: 'connector1',
-            _integrationId: 'suitescript2',
-            key: 'connection1_suitescript2',
-            name: undefined,
-            numFlows: 10,
-            pinned: false,
-            sortablePropType: -1,
-            ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
-          },
         ],
         perPageCount: 8,
         totalCount: 4,
@@ -4515,27 +4516,7 @@ describe('resource region selector testcases', () => {
         filteredCount: 8,
         filteredTiles: [
           {
-            _connectorId: 'connector1',
-            _integrationId: 'suitescript2',
-            key: 'connection1_suitescript2',
-            name: undefined,
-            numFlows: 10,
-            pinned: false,
-            sortablePropType: -1,
-            ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
-          },
-          {
-            _integrationId: 'suitescript2',
-            key: 'connection3_suitescript2',
-            name: undefined,
-            pinned: false,
-            sortablePropType: 0,
-            ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
-          },
-          {
-            _integrationId: 'integration3',
+            _integrationId: 'none',
             applications: [],
             flowsNameAndDescription: '',
             integration: {
@@ -4546,19 +4527,18 @@ describe('resource region selector testcases', () => {
                 },
               },
             },
-            key: 'integration3',
-            lastErrorAt: 3,
-            name: 'HTTP Integration Three',
-            numError: 9,
-            numFlows: 4,
+            key: 'none',
+            name: 'Standalone flows',
+            numError: 0,
+            numFlows: 5,
             offlineConnections: [
               'conn1',
               'conn2',
             ],
-            pinned: true,
-            sortablePropType: 4,
-            status: 'has_errors',
-            totalErrorCount: 11,
+            pinned: false,
+            sortablePropType: 5,
+            status: 'success',
+            totalErrorCount: 2,
           },
           {
             _integrationId: 'integration1',
@@ -4612,12 +4592,49 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 4,
           },
           {
+            _integrationId: 'integration3',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
+            key: 'integration3',
+            lastErrorAt: 3,
+            name: 'HTTP Integration Three',
+            numError: 9,
+            numFlows: 4,
+            offlineConnections: [
+              'conn1',
+              'conn2',
+            ],
+            pinned: true,
+            sortablePropType: 4,
+            status: 'has_errors',
+            totalErrorCount: 11,
+          },
+          {
             _integrationId: 'suitescript1',
             displayName: 'salesforce netsuite',
             key: 'connection1_suitescript1',
             name: 'salesforce netsuite',
             pinned: false,
             sortablePropType: 0,
+            ssLinkedConnectionId: 'connection1',
+            totalErrorCount: 0,
+          },
+          {
+            _connectorId: 'connector1',
+            _integrationId: 'suitescript2',
+            key: 'connection1_suitescript2',
+            name: undefined,
+            numFlows: 10,
+            pinned: false,
+            sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
             totalErrorCount: 0,
           },
@@ -4634,29 +4651,13 @@ describe('resource region selector testcases', () => {
             totalErrorCount: 10,
           },
           {
-            _integrationId: 'none',
-            applications: [],
-            flowsNameAndDescription: '',
-            integration: {
-              permissions: {
-                accessLevel: 'owner',
-                connections: {
-                  edit: true,
-                },
-              },
-            },
-            key: 'none',
-            name: 'Standalone flows',
-            numError: 0,
-            numFlows: 5,
-            offlineConnections: [
-              'conn1',
-              'conn2',
-            ],
+            _integrationId: 'suitescript2',
+            key: 'connection3_suitescript2',
+            name: undefined,
             pinned: false,
-            sortablePropType: 5,
-            status: 'success',
-            totalErrorCount: 2,
+            sortablePropType: 0,
+            ssLinkedConnectionId: 'connection3',
+            totalErrorCount: 0,
           },
         ],
         perPageCount: 8,
