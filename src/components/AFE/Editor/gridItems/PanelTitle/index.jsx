@@ -27,7 +27,7 @@ export default function PanelTitle({ title, children, className, helpKey}) {
       {title ? <Typography variant="body1" component="div" className={className}>{title}</Typography> : children}
       {helpKey && (
         <Help
-          title={helpKey}
+          title={title}
           className={classes.helpButton}
           helpKey={helpKey}
         />
