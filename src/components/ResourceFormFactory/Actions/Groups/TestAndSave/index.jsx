@@ -75,7 +75,7 @@ function reducer(state, action) {
       throw new Error();
   }
 }
-export default function TestSaveAndClose(props) {
+export function TestSaveAndClose(props) {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const {
     resourceType,
@@ -87,6 +87,7 @@ export default function TestSaveAndClose(props) {
     integrationId,
     parentType,
     parentId,
+    children,
   } = props;
   const dispatch = useDispatch();
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
@@ -220,11 +221,18 @@ export default function TestSaveAndClose(props) {
         onClose={onCancel}
         onSave={handleTestAndSave}
   />
-      <TestButton
-        disabled={savingForm}
-        resourceId={resourceId}
-        formKey={formKey}
-      />
+      {React.cloneElement(children, {disabled: savingForm, resourceId, formKey })}
+
     </>
+  );
+}
+
+export default function TestSaveAndCloseWithTest(props) {
+  return (
+
+    <TestSaveAndClose {...props} >
+      <TestButton />
+    </TestSaveAndClose>
+
   );
 }

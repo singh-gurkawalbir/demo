@@ -18,6 +18,7 @@ export default function NetsuiteValidateButton(props) {
     formKey,
   } = props;
 
+  console.log('check props', props);
   const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
   const { disabled = formDisabled } = props;
   const onFieldChange = useCallback(

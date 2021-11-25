@@ -1,14 +1,12 @@
 import React from 'react';
+import { TestSaveAndClose } from '../TestAndSave';
 import NetsuiteValidateButton from './NetsuiteValidate';
-import SaveAndClose from '../SaveAndClose';
 
 export default function ValidateAndSave(props) {
   return (
-    <>
-      <SaveAndClose {...props} />
+    <TestSaveAndClose {...props} >
       <NetsuiteValidateButton {...props} />
-
-    </>
+    </TestSaveAndClose>
   );
 }
 
