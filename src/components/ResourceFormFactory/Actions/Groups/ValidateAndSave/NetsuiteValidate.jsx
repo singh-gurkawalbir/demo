@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
@@ -65,17 +65,10 @@ export default function NetsuiteValidateButton(props) {
   );
   const matchingActionField = fields && Object.values(fields)?.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
-  const [isTesting, setIsTesting] = useState(false);
   const testConnectionCommState = useSelector(state =>
     selectors.testConnectionCommState(state, resourceId)
   );
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
-
-  useEffect(() => {
-    if (isTesting && !pingLoading) {
-      setIsTesting(false);
-    }
-  }, [testConnectionCommState, isTesting, pingLoading]);
 
   useEffect(() => {
     if (resourceId && fieldsIsVisible && !isOffline) {
