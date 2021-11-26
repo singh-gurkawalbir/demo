@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { NavLink, useRouteMatch } from 'react-router-dom';
+import { NavLink, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import SortableHandle from '../../../../../../components/Sortable/SortableHandle';
@@ -68,7 +68,7 @@ export default function FlowGroupRow({
   hasUnassignedSection,
   flows,
 }) {
-  const { params } = useRouteMatch();
+  const match = useRouteMatch();
   const { sectionId, title } = rowData;
   const [showGripper, setShowGripper] = useState(false);
   const groupHasNoFlows = sectionId === UNASSIGNED_SECTION_ID ? false : !flows.some(flow => flow._flowGroupingId === sectionId);
@@ -104,13 +104,13 @@ export default function FlowGroupRow({
     <div
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
-      className={clsx(classes.rowContainer, params?.sectionId === sectionId ? classes.active : '', className)}>
+      className={clsx(classes.rowContainer, match.params?.sectionId === sectionId ? classes.active : '', className)}>
       <SortableHandle isVisible={showGripper} />
       <NavLink
         data-public
         className={classes.listItem}
         activeClassName={classes.activeListItem}
-        to={sectionId}
+        to={generatePath(match.path, { ...match.params, sectionId })}
         data-test={sectionId}>
         <FlowSectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} groupHasNoFlows={groupHasNoFlows} />
       </NavLink>
