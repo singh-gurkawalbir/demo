@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import Status from '../../../../components/Buttons/Status';
 import StatusCircle from '../../../../components/StatusCircle';
@@ -24,7 +24,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowSectionTitle({ title, errorCount = 0 }) {
+const NoFlowsSection = () => (
+  <Typography variant="caption" color="textSecondary">No flows</Typography>
+);
+
+export default function FlowSectionTitle({ title, errorCount = 0, groupHasNoFlows }) {
   const classes = useStyles();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -49,7 +53,7 @@ export default function FlowSectionTitle({ title, errorCount = 0 }) {
   return (
     <span className={classes.gridContainer}>
       <span> { title }</span>
-      <span> {errorStatus} </span>
+      <span> { groupHasNoFlows ? <NoFlowsSection /> : errorStatus} </span>
     </span>
   );
 }

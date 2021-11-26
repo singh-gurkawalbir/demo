@@ -1,6 +1,5 @@
 import { generatePath } from 'react-router-dom';
-import { MISCELLANEOUS_SECTION_ID } from './constants';
-import { shouldHaveMiscellaneousSection } from './resource';
+import { UNASSIGNED_SECTION_ID } from './constants';
 
 export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute
@@ -18,7 +17,7 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
         .join('/');
     }
 
-    if (!isMatchingAValidSection) {
+    if (!isMatchingAValidSection && flowGroupings.length) {
       return generatePath(path, {
         ...match.params, sectionId: defaultSectionId,
       });
@@ -37,13 +36,12 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
   return null;
 }
 
-export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
-  const firstFlowGroupingSectionId = flowGroupingsSections?.[0]?.sectionId;
+export const redirectToFirstFlowGrouping = (flowGroupingsSections, match, hasUnassignedSection) => {
+  const flowGroupingsWithUnassignedSec = hasUnassignedSection ? [...flowGroupingsSections, {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
 
-  const flowGroupingsWithMiscSec = shouldHaveMiscellaneousSection(flowGroupingsSections, flows)
-    ? [...flowGroupingsSections, {sectionId: MISCELLANEOUS_SECTION_ID}] : flowGroupingsSections;
+  const firstFlowGroupingSectionId = flowGroupingsWithUnassignedSec?.[0]?.sectionId;
 
-  // if there is no miscellaneous sectionId and the user has provided invalid section id then
+  // if there is no unassigned sectionId and the user has provided invalid section id then
   // the first sectionId of the flowGrouping is considered the defaultSectionId
-  return flowgroupingsRedirectTo(match, flowGroupingsWithMiscSec, firstFlowGroupingSectionId);
+  return flowgroupingsRedirectTo(match, flowGroupingsWithUnassignedSec, firstFlowGroupingSectionId);
 };

@@ -34,6 +34,7 @@ export default {
               flowId={r._id}
               integrationId={parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
+              flowGroupId={r._flowGroupingId}
               name={r.name}
               description={r.description}
               isFree={r.free}
