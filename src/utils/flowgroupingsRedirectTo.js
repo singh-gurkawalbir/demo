@@ -1,6 +1,5 @@
 import { generatePath } from 'react-router-dom';
 import { UNASSIGNED_SECTION_ID } from './constants';
-import { shouldHaveUnassignedSection } from './resource';
 
 export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute
@@ -37,11 +36,10 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
   return null;
 }
 
-export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
-  const firstFlowGroupingSectionId = flowGroupingsSections?.[0]?.sectionId;
+export const redirectToFirstFlowGrouping = (flowGroupingsSections, match, hasUnassignedSection) => {
+  const flowGroupingsWithUnassignedSec = hasUnassignedSection ? [...flowGroupingsSections, {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
 
-  const flowGroupingsWithUnassignedSec = shouldHaveUnassignedSection(flowGroupingsSections, flows)
-    ? [...flowGroupingsSections, {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
+  const firstFlowGroupingSectionId = flowGroupingsWithUnassignedSec?.[0]?.sectionId;
 
   // if there is no unassigned sectionId and the user has provided invalid section id then
   // the first sectionId of the flowGrouping is considered the defaultSectionId

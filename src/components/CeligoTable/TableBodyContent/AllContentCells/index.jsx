@@ -6,9 +6,9 @@ const ContentCell = ({
   rowData,
   index,
 }) => {
-  const { Value, align, GetClassName} = meta;
+  const { Value, align, useGetCellStyling = () => {}} = meta;
   const val = Value({rowData});
-
+  const className = useGetCellStyling({rowData});
   const cellValue = val === undefined ? null : val;
 
   if (index === 0) {
@@ -17,7 +17,7 @@ const ContentCell = ({
         component="th"
         scope="row"
         align={align || 'left'}
-        className={GetClassName ? GetClassName({rowData}) : ''}>
+        className={className}>
         {cellValue}
       </TableCell>
     );
@@ -26,7 +26,7 @@ const ContentCell = ({
   return (
     <TableCell
       align={align || 'left'}
-      className={GetClassName ? GetClassName({rowData}) : ''}>
+      className={className}>
       {cellValue}
     </TableCell>
   );

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR, RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import DynaCeligoTable from './DynaCeligoTable';
-import { mappingFlowsToFlowGroupings } from '../../../utils/resource';
+import { mappingFlowsToFlowGroupings } from '../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   previewTableWrapper: {

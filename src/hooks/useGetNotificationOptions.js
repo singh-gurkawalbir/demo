@@ -1,7 +1,7 @@
 import { useSelectorMemo } from '.';
 import { selectors } from '../reducers';
 import { emptyList, STANDALONE_INTEGRATION } from '../utils/constants';
-import { getFlowGroup } from '../utils/resource';
+import { getFlowGroup } from '../utils/flows';
 
 export default function useGetNotificationOptions({ integrationId, flows = [], connections = [], childId}) {
   const initialValue = integrationId !== STANDALONE_INTEGRATION.id ? [{ value: integrationId, label: 'All flows' }] : emptyList;
@@ -20,7 +20,7 @@ export default function useGetNotificationOptions({ integrationId, flows = [], c
     } else if (hasFlowSections) {
       // if it is an integration app and has sections
       // should add corresponding section title for every flow option
-      const sectionName = flowSections.find(flowSection => flowSection.flows?.some(flow => flow._id === f._id)).title;
+      const sectionName = flowSections.find(flowSection => flowSection.flows?.some(flow => flow._id === f._id))?.title;
 
       finalOps.push({ value: f._id, label: f.name, groupName: sectionName });
     } else {

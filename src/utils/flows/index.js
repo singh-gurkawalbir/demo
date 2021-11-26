@@ -11,7 +11,7 @@ import {
   isValidResourceReference,
   isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
 import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
@@ -1195,3 +1195,58 @@ export function flowLastModifiedPatch(flow, resource) {
     value: resource.lastModified,
   }];
 }
+
+// when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
+export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+export const getFlowGroup = (flowGroupings, name, id) => {
+  if (!flowGroupings.length) return emptyObject;
+
+  const unassignedFlowGroup = {
+    _id: UNASSIGNED_SECTION_ID,
+    name: UNASSIGNED_SECTION_NAME,
+  };
+  const requiredFlowGroup = flowGroupings.find(flowGroup => flowGroup.name === name || flowGroup._id === id);
+
+  return requiredFlowGroup || unassignedFlowGroup;
+};
+
+// for every flowGroup pushing the linked flows into finalObject
+// adding isLastFlowInFlowGroup flag for every last flow in the flow group
+export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsLength) => {
+  if (!flowGroupings?.length) {
+    return flowObjects;
+  }
+
+  const finalFlowObjects = [];
+
+  flowGroupings.forEach(({_id: groupId, name}, index) => {
+    finalFlowObjects.push({
+      groupName: name,
+      _id: index + objectsLength,
+    });
+    const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
+    const lastFlowObject = resultFlowObjects.pop();
+
+    if (lastFlowObject) {
+      lastFlowObject.isLastFlowInFlowGroup = true;
+      finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
+    }
+  });
+
+  const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
+
+  if (flowsWithoutGroupId?.length) {
+    finalFlowObjects.push({
+      groupName: UNASSIGNED_SECTION_NAME,
+      _id: objectsLength + flowsWithoutGroupId.length + 1,
+    });
+    const lastFlowObject = flowsWithoutGroupId.pop();
+
+    if (lastFlowObject) {
+      lastFlowObject.isLastFlowInFlowGroup = true;
+      finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
+    }
+  }
+
+  return finalFlowObjects;
+};

@@ -40,6 +40,7 @@ import {
   flowSupportsSettings,
   isRealtimeExport,
   addLastExecutedAtSortableProp,
+  shouldHaveUnassignedSection,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -70,7 +71,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  shouldHaveUnassignedSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {

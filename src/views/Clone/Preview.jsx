@@ -95,7 +95,7 @@ const useColumns = () => [
     key: 'name',
     heading: 'Name',
     width: '40%',
-    GetClassName: ({rowData: r}) => {
+    useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
       const classFlowInFlowGroupName = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
@@ -117,7 +117,7 @@ const useColumns = () => [
     key: 'description',
     heading: 'Description',
     width: '60%',
-    GetClassName: ({rowData: r}) => {
+    useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
       const classLastFlowInGroup = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';

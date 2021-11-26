@@ -29,7 +29,7 @@ import EditFlowGroup from '../../../../../components/ResourceTable/flows/actions
 import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
 import DragContainer from '../../../../../components/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
-import { shouldHaveUnassignedSection } from '../../../../../utils/resource';
+import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -186,17 +186,17 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
   const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
 
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
   const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
-  const flowGroups = useMemo(() => {
+  const filteredFlowGroups = useMemo(() => {
     if (searchFilter.keyword) {
-      return flowGroupingsSections.filter(({ sectionId }) =>
-        flows.find(flow => (flow._flowGroupingId === sectionId) || (sectionId === UNASSIGNED_SECTION_ID && !flow._flowGroupingId)));
+      return flowGroupingsSections.filter(({ sectionId }) => flows.find(flow => (flow._flowGroupingId === sectionId)));
     }
 
     return flowGroupingsSections;
   }, [searchFilter, flowGroupingsSections, flows]);
 
-  const redirectTo = redirectToFirstFlowGrouping(flows, flowGroups, match);
+  const redirectTo = redirectToFirstFlowGrouping(filteredFlowGroups, match, hasUnassignedSection);
 
   useEffect(() => {
     // redirect should only happen if integration is still present and not deleted
@@ -226,7 +226,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
       flowTableMeta={flowTableMeta}
       actionProps={actionProps}
       integrationId={integrationId}
-      flowGroupingsSections={flowGroups}
+      flowGroupingsSections={filteredFlowGroups}
     />
   );
 };
@@ -314,15 +314,15 @@ export default function FlowsPanel({ integrationId, childId }) {
   }, [dispatch, filterKey]);
   const [selectedComponent, setSelectedComponent] = useState(null);
 
-  // if there are flow groups present, search filter should apply across all the flow groups
-  // so searchFilter is defined independently from flowFilter applied at every flow group
-  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
-  const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
+  const finalFilter = useSelector(state => {
+    const flowFilter = selectors.filter(state, filterKey);
+    const searchFilter = selectors.filter(state, searchFilterKey);
 
-  const finalFilter = {
-    ...flowFilter,
-    keyword: searchFilter.keyword,
-  };
+    return {
+      ...flowFilter,
+      keyword: searchFilter.keyword,
+    };
+  }, shallowEqual);
 
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));

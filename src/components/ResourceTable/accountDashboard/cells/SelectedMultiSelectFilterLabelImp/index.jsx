@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
-import { getFlowGroup } from '../../../../../utils/resource';
+import { getFlowGroup } from '../../../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   flowGroupName: {

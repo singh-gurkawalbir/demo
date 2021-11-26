@@ -4,7 +4,7 @@ import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
 import NameCell from '../../../commonCells/Name';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
-import { getFlowGroup } from '../../../../../utils/resource';
+import { getFlowGroup } from '../../../../../utils/flows';
 
 const FlowGroupName = ({ integrationId, flowId }) => {
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);

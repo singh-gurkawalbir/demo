@@ -15,7 +15,7 @@ import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { emptyList, emptyObject } from '../../../utils/constants';
-import { getFlowGroup } from '../../../utils/resource';
+import { getFlowGroup } from '../../../utils/flows';
 
 const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 const paths = ['flowgroups/add', 'flowgroups/edit'];

@@ -56,7 +56,7 @@ export default function DynaFlowGroupName(props) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
