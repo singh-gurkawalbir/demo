@@ -139,6 +139,64 @@ describe('user reducers', () => {
 
         expect(state).toEqual({ environment: 'production' });
       });
+      test('should return correct preferences object for pinnedIntegrations for account owner', () => {
+        const newState = reducer(
+          {
+            defaultAShareId: ACCOUNT_IDS.OWN,
+          },
+          actions.user.preferences.pinIntegration('integration1')
+        );
+
+        expect(selectors.userOwnPreferences(newState)).toEqual(
+          {dashboard: {pinnedIntegrations: ['integration1']}, defaultAShareId: 'own'}
+        );
+      });
+      test('should return correct preferences object for pinnedIntegrations for shared account', () => {
+        const newState = reducer(
+          {
+            defaultAShareId: '1',
+            accounts: {1: {} },
+          },
+          actions.user.preferences.pinIntegration('integration1')
+        );
+
+        expect(selectors.userOwnPreferences(newState)).toEqual(
+          {accounts: {1: {dashboard: {pinnedIntegrations: ['integration1']}}}, defaultAShareId: '1'}
+        );
+      });
+      test('should return correct preferences object for unpinned integrations for account owner', () => {
+        const newState = reducer(
+          {
+            defaultAShareId: ACCOUNT_IDS.OWN,
+          },
+          actions.user.preferences.pinIntegration('integration1')
+        );
+        const finalState = reducer(
+          newState,
+          actions.user.preferences.unpinIntegration('integration1')
+        );
+
+        expect(selectors.userOwnPreferences(finalState)).toEqual(
+          {dashboard: {pinnedIntegrations: []}, defaultAShareId: 'own'}
+        );
+      });
+      test('should return correct preferences object for unpinned integrations for shared account', () => {
+        const newState = reducer(
+          {
+            defaultAShareId: '1',
+            accounts: {1: {} },
+          },
+          actions.user.preferences.pinIntegration('integration1')
+        );
+        const finalState = reducer(
+          newState,
+          actions.user.preferences.unpinIntegration('integration1')
+        );
+
+        expect(selectors.userOwnPreferences(finalState)).toEqual(
+          {accounts: {1: {dashboard: {pinnedIntegrations: []}}}, defaultAShareId: '1'}
+        );
+      });
     });
   });
   describe('user preferences selectors', () => {

@@ -7,7 +7,7 @@ export default {
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
-      '/adaptorType': `${app.type?.toUpperCase()}Connection`,
+      '/adaptorType': `${app.type.toUpperCase()}Connection`,
       '/type': app.type,
       '/application': app.name,
     };
