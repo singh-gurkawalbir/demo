@@ -2,7 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
-import { JOB_STATUS, JOB_TYPES, MISCELLANEOUS_SECTION_ID } from '../utils/constants';
+import { JOB_STATUS, JOB_TYPES, UNASSIGNED_SECTION_ID } from '../utils/constants';
 
 const flowId = 'flowId-1234';
 const resourceId = 'export-1234';
@@ -2069,16 +2069,16 @@ describe('Error Management region selector testcases', () => {
         group1: 35,
         group2: 0,
         group3: 0,
-        [MISCELLANEOUS_SECTION_ID]: 65,
+        [UNASSIGNED_SECTION_ID]: 65,
       });
     });
 
     test('should return empty object if integration does not exist', () => {
       expect(selectors.integrationErrorsPerFlowGroup(state, 'int-not-exists')).toEqual({});
     });
-    test('should return error count for miscellaneous section if the flows of an intergration are not under any flow group', () => {
+    test('should return error count for Unassigned section if the flows of an intergration are not under any flow group', () => {
       expect(selectors.integrationErrorsPerFlowGroup(state, 'int2')).toEqual({
-        [MISCELLANEOUS_SECTION_ID]: 60,
+        [UNASSIGNED_SECTION_ID]: 60,
       });
     });
 
@@ -2091,7 +2091,7 @@ describe('Error Management region selector testcases', () => {
         group1: 0,
         group2: 0,
         group3: 0,
-        [MISCELLANEOUS_SECTION_ID]: 0,
+        [UNASSIGNED_SECTION_ID]: 0,
       });
     });
 
