@@ -221,6 +221,7 @@ import fifteenfive from './fifteenfive';
 import docebo from './docebo';
 import breezyhr from './breezyhr';
 import mercadolibre from './mercadolibre';
+import confluencecloud from './confluencecloud';
 
 export default {
   channelape,
@@ -446,4 +447,5 @@ export default {
   breezyhr,
   docebo,
   mercadolibre,
+  confluencecloud,
 };
