@@ -221,6 +221,10 @@ export function TestSaveAndClose(props) {
         onClose={onCancel}
         onSave={handleTestAndSave}
   />
+      {/* Child provided is a TestButton which would appear on the right side of the actions panel
+     they are depended on the TestAndSave button group in the case when a testAndSave group is saving we have to disable the child button through the disabled prop
+
+    */}
       {React.cloneElement(children, {disabled: savingForm, resourceId, formKey })}
 
     </>

@@ -417,17 +417,11 @@ const resource = {
       action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
-      requestUserRoles: (connectionId, values) =>
+      testConnection: ({connectionId, values, hideNotificationMessage, parentContext, shouldPingConnection}) =>
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
-          hideNotificationMessage: true,
-        }),
-      testConnection: (connectionId, values, parentContext, shouldPingConnection) =>
-        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
-          connectionId,
-          values,
-          hideNotificationMessage: false,
+          hideNotificationMessage,
           parentContext,
           shouldPingConnection,
         }),

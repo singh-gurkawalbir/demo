@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -50,8 +49,8 @@ export default function NetsuiteValidateButton(props) {
     dispatch(actions.resource.connections.testClear(resourceId));
     dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
     dispatch(
-      actions.resource.connections.netsuite.testConnection(resourceId, values, parentContext, true)
-    );
+      actions.resource.connections.netsuite.testConnection(
+        {connectionId: resourceId, values, parentContext, shouldPingConnection: true}));
   };
 
   const { status, message, hideNotificationMessage } = useSelector(state =>
@@ -73,7 +72,8 @@ export default function NetsuiteValidateButton(props) {
   useEffect(() => {
     if (resourceId && fieldsIsVisible && !isOffline) {
       dispatch(
-        actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
+        actions.resource.connections.netsuite.testConnection(
+          {connectionId: resourceId, hideNotificationMessage: true, shouldPingConnection: false})
       );
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
