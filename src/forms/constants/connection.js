@@ -131,6 +131,7 @@ export default {
     'copper',
     '15five',
     'breezyhr',
+    'confluencecloud',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
