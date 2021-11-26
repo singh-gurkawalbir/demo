@@ -1,10 +1,10 @@
 import { useSelectorMemo } from '.';
 import { selectors } from '../reducers';
-import { emptyList, STANDALONE_INTEGRATION } from '../utils/constants';
+import { STANDALONE_INTEGRATION } from '../utils/constants';
 import { getFlowGroup } from '../utils/flows';
 
 export default function useGetNotificationOptions({ integrationId, flows = [], connections = [], childId}) {
-  const initialValue = integrationId !== STANDALONE_INTEGRATION.id ? [{ value: integrationId, label: 'All flows' }] : emptyList;
+  const initialValue = integrationId !== STANDALONE_INTEGRATION.id ? [{ value: integrationId, label: 'All flows' }] : [];
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
   const hasFlowGroupings = !!flowGroupings?.length;
