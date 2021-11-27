@@ -1,5 +1,9 @@
+import { cloneDeep } from 'lodash';
+
 export function generateLayoutColumns(layoutSection) {
-  layoutSection.forEach(section => {
+  return layoutSection.map(sec => {
+    const section = cloneDeep(sec);
+
     if (['System Information', 'Custom Links'].indexOf(section.heading) > -1) {
       return false;
     }
@@ -41,9 +45,9 @@ export function generateLayoutColumns(layoutSection) {
         });
       });
     });
-  });
 
-  return layoutSection;
+    return section;
+  });
 }
 
 export function generateFieldHTML(loc) {

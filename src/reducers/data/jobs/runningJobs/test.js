@@ -347,7 +347,7 @@ describe('Running jobs selectors', () => {
     });
 
     test('should return true when state contains status as loading', () => {
-      const jobsRequestedAction = actions.job.dashboard.running.requestCollection();
+      const jobsRequestedAction = actions.job.dashboard.running.requestCollection({});
       const state = reducer(undefined, jobsRequestedAction);
 
       expect(selectors.isRunningJobsCollectionLoading(state)).toEqual(true);
