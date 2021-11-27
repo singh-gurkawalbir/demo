@@ -32,7 +32,8 @@ export default {
     importResource,
     isGroupedSampleData,
   }) => {
-    const {generate, lookupName} = value;
+    const { generate, extract, lookupName } = value;
+
     const {_connectionId: connectionId, _id: resourceId } = importResource;
     const isComposite = importResource.netsuite_da?.operation === 'addupdate' || importResource.netsuite?.operation === 'addupdate';
 
@@ -667,7 +668,7 @@ export default {
     }
 
     // removing useFirstRow in case of non-grouped sample data or non-list field
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1 || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

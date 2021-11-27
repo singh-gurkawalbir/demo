@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
@@ -7,7 +7,7 @@ import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FormBuilderButton from '../../../FormBuilderButton';
+import FormBuilderButton, { getSettingsEditorId } from '../../../FormBuilderButton';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { useUpdateParentForm } from '../DynaCsvGenerate_afe';
 
@@ -61,7 +61,6 @@ export default function DynaSettings(props) {
   const hasSettingsForm = useSelector(state =>
     selectors.hasSettingsForm(state, resourceType, resourceId, sectionId)
   );
-
   const handleSettingFormChange = useCallback(
     (values, isValid, skipFieldTouched) => {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -93,7 +92,16 @@ export default function DynaSettings(props) {
       setIsCollapsed(!isCollapsed);
     }
   }, [isCollapsed, match]);
+  const customSettingsEditorId = getSettingsEditorId(resourceId, sectionId);
+  const editorSaveStatus = useSelector(state => selectors.editor(state, customSettingsEditorId)?.saveStatus);
+  const [remountFormView, setRemountFormView] = useState(0);
 
+  useEffect(() => {
+    // when you a settings through the editor after it completes u perform a remount
+    if (editorSaveStatus === 'success') {
+      setRemountFormView(count => count + 1);
+    }
+  }, [editorSaveStatus]);
   // Only developers can see/edit raw settings!
   // thus, if there is no settings form and the user is not a dev, render nothing.
   if (!allowFormEdit && !hasSettingsForm) {
@@ -104,7 +112,7 @@ export default function DynaSettings(props) {
     if (hasSettingsForm) {
       return (
         <FormView
-          onFormChange={handleSettingFormChange}
+          key={remountFormView}
           resourceId={resourceId}
           resourceType={resourceType}
           sectionId={sectionId}

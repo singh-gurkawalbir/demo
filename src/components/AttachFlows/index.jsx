@@ -8,10 +8,11 @@ import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import {OutlinedButton, TextButton} from '../Buttons';
+import { UNASSIGNED_SECTION_ID } from '../../utils/constants';
 
 const flowsFilterConfig = { type: 'flows' };
 
-export default function AttachFlows({ onClose, integrationId }) {
+export default function AttachFlows({ integrationId, flowGroupingId }) {
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -21,6 +22,10 @@ export default function AttachFlows({ onClose, integrationId }) {
   ]);
   const hasFlows = !!flows.length;
   const [selected, setSelected] = useState([]);
+  const [showDialog, setShowDialog] = useState(true);
+  const toggleDialog = useCallback(() => {
+    setShowDialog(!showDialog);
+  }, [showDialog]);
   const handleSelectChange = flows => {
     const selectedFlows = [];
 
@@ -47,6 +52,14 @@ export default function AttachFlows({ onClose, integrationId }) {
         },
       ];
 
+      if (flowGroupingId && flowGroupingId !== UNASSIGNED_SECTION_ID) {
+        patchSet.push({
+          op: 'add',
+          path: '/_flowGroupingId',
+          value: flowGroupingId,
+        });
+      }
+
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     });
@@ -57,47 +70,52 @@ export default function AttachFlows({ onClose, integrationId }) {
         integrationId
       )
     );
-    onClose();
+    toggleDialog();
   }, [
     connectionIdsToRegister,
     dispatch,
     flows,
     integrationId,
-    onClose,
+    toggleDialog,
     selected,
+    flowGroupingId,
   ]);
 
   return (
-    <ModalDialog show maxWidth={false} onClose={onClose}>
-      <div>Attach flows</div>
-      {hasFlows && (
+    <>
+      {showDialog && (
+        <ModalDialog show maxWidth={false} onClose={toggleDialog}>
+          <div>Attach flows</div>
+          {hasFlows && (
 
-      <div>
-        <LoadResources
-          required
-          resources="flows, connections, exports, imports">
-          <CeligoTable
-            data={flows}
-            onSelectChange={handleSelectChange}
-            {...metadata}
-            selectableRows
-          />
-        </LoadResources>
-      </div>
+          <div>
+            <LoadResources
+              required
+              resources="flows, connections, exports, imports">
+              <CeligoTable
+                data={flows}
+                onSelectChange={handleSelectChange}
+                {...metadata}
+                selectableRows
+              />
+            </LoadResources>
+          </div>
+          )}
+          {hasFlows ? (
+            <div>
+              <OutlinedButton
+                data-test="attachFlows"
+                onClick={handleAttachFlowsClick}>
+                Attach
+              </OutlinedButton>
+              <TextButton
+                onClick={toggleDialog}>
+                Cancel
+              </TextButton>
+            </div>
+          ) : <div>No flows found</div>}
+        </ModalDialog>
       )}
-      {hasFlows ? (
-        <div>
-          <OutlinedButton
-            data-test="attachFlows"
-            onClick={handleAttachFlowsClick}>
-            Attach
-          </OutlinedButton>
-          <TextButton
-            onClick={onClose}>
-            Cancel
-          </TextButton>
-        </div>
-      ) : <div>No flows found</div>}
-    </ModalDialog>
+    </>
   );
 }

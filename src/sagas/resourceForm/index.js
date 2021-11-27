@@ -163,8 +163,7 @@ function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
     resourceId
   );
 
-  // TODO: make a generic fix on raw data and not specific to netsuite. Ref: IO-18967 for netsuite specific fix
-  if (resourceObj?.adaptorType === 'NetSuiteExport' || !resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
+  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
     return values;
   }
 

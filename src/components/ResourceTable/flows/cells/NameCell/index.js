@@ -29,6 +29,7 @@ export default function NameCell({
   isFree,
   flowId,
   isIntegrationApp,
+  flowGroupId,
   integrationId,
   childId,
   actionProps,
@@ -36,7 +37,7 @@ export default function NameCell({
   const classes = useStyles();
   const isDataLoader = !!actionProps?.flowAttributes[flowId]?.isDataLoader;
   const flowName = name || `Unnamed (id: ${flowId})`;
-  const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {childId, isIntegrationApp, appName: actionProps?.appName, isDataLoader});
+  const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {childId, isIntegrationApp, appName: actionProps?.appName, isDataLoader, flowGroupId});
 
   return (
     <div className={classes.root}>

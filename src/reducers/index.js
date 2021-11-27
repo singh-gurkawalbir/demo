@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
+import cloneDeep from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -39,6 +40,7 @@ import {
   flowSupportsSettings,
   isRealtimeExport,
   addLastExecutedAtSortableProp,
+  shouldHaveUnassignedSection,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -51,10 +53,11 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID,
+  UNASSIGNED_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
-  AFE_SAVE_STATUS} from '../utils/constants';
+  AFE_SAVE_STATUS,
+  UNASSIGNED_SECTION_NAME} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -68,7 +71,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  shouldHaveMiscellaneousSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -100,7 +102,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
-import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp } from '../utils/home';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp, getTileId } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
@@ -857,42 +859,12 @@ selectors.isParentChildIntegration = (state, integrationId) => {
 
   return !!integrationSettings?.settings?.supportsMultiStore;
 };
-selectors.mkAllFlowsTiedToIntegrations = () => {
-  const resourceListSel = selectors.makeResourceListSelector();
-
-  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+selectors.mkFlowGroupingsTiedToIntegrations = () => {
+  const resourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    state => resourceListSel(state, flowsFilter).resources,
-    (_1, parentIntegration) => parentIntegration,
-    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
-    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
-    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
-    (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegration, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
-      if (!flows || !parentIntegration) return null;
-
-      if (parentIntegration === STANDALONE_INTEGRATION.id) {
-        return flows.filter(({_integrationId}) => !_integrationId);
-      }
-
-      if (isV2 || isDiy) {
-        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
-
-        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
-      }
-      // v1
-
-      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
-        // no child filter in this case...just return all parent integrations
-
-        return flowsFromAllChildren;
-      }
-
-      // filter based on selected childIntegrations
-
-      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
-    }
+    (state, id) => resourceSel(state, 'integrations', id)?.flowGroupings,
+    flowGroupings => flowGroupings || [],
   );
 };
 
@@ -939,15 +911,22 @@ selectors.getEventReportIntegrationName = (state, r) => {
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
-selectors.getAllAccountDashboardFlows = (state, filterKey) => {
+selectors.getAllAccountDashboardFlows = (state, filterKey, integrationId) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources || [];
   let allStoreFlows = [];
   const jobFilter = selectors.filter(state, filterKey);
+
   let storeId;
   let parentIntegrationId;
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations;
+
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
+  } else {
+    selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  }
 
   // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
   // below logic is used to extact store id and integration id from this.
@@ -1002,7 +981,7 @@ selectors.accountDashboardJobs = (state, filterKey) => {
 
   return {jobs: totalJobs, nextPageURL, status};
 };
-selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integrationId }) => {
   let path;
 
   if (nextPageURL) {
@@ -1010,11 +989,12 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   } else {
     path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
   }
-  const jobFilter = selectors.filter(state, filterKey);
+  const jobFilter = selectors.filter(state, `${integrationId || ''}${filterKey}`);
+
   const userPreferences = selectors.userPreferences(state);
   const sandbox = userPreferences.environment === 'sandbox';
   // If 'all' selected, it can be filtered out, as by defaults it considered "all".
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
   const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
   const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
   const body = {sandbox};
@@ -1028,6 +1008,9 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
     if (endDate) { body.time_lte = endDate.getTime(); }
+  }
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
   }
 
   if (selectedStatus.length) {
@@ -1712,7 +1695,7 @@ selectors.mkTiles = () => createSelector(
 
         return {
           ...t,
-          key: t._integrationId, // for Celigo table unique key
+          key: getTileId(t), // for Celigo table unique key
           status,
           flowsNameAndDescription,
           sortablePropType: -1,
@@ -1741,7 +1724,7 @@ selectors.mkTiles = () => createSelector(
 
       return {
         ...t,
-        key: t._integrationId,
+        key: getTileId(t),
         status,
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
@@ -1784,14 +1767,14 @@ selectors.mkFilteredHomeTiles = () => {
       });
       const homeTiles = tiles.concat(suiteScriptLinkedTiles);
 
-      let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
 
-      if (applications && !applications.includes('all')) {
+      if (isListView && applications && !applications.includes('all')) {
         // filter on applications
         filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
       }
 
-      if (pinnedIntegrations?.length && filteredTiles.length && isListView) {
+      if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
         // move pinned integrations to the top, not affected by sorting
         pinnedIntegrations.forEach(p => {
           const index = filteredTiles.findIndex(t => t.key === p);
@@ -1820,7 +1803,7 @@ selectors.mkFilteredHomeTiles = () => {
 
       return {
         filteredTiles: isListView ? slicedTiles : sortTiles(
-          slicedTiles,
+          filteredTiles,
           tilesOrder
         ),
         filteredCount: filteredTiles.length,
@@ -2408,8 +2391,8 @@ selectors.mkIntegrationFlowGroups = () => {
       if (flowGroupings) {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
 
-        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
-          return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+        if (shouldHaveUnassignedSection(flowGroupings, integrationFlows)) {
+          return [...flowGroupings, {title: UNASSIGNED_SECTION_NAME, sectionId: UNASSIGNED_SECTION_ID}];
         }
       }
 
@@ -2452,7 +2435,7 @@ selectors.mkIntegrationFlowsByGroup = () => {
         }
 
         if (groupId) {
-          if (groupId === MISCELLANEOUS_SECTION_ID) {
+          if (groupId === UNASSIGNED_SECTION_ID) {
             isValid = isValid && !flow._flowGroupingId;
           } else {
             isValid = isValid && flow._flowGroupingId === groupId;
@@ -2485,6 +2468,60 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   }
 
   return updatedResourceType;
+};
+
+// this selector updates the field options based on the
+// parent field media type
+selectors.mkGetMediaTypeOptions = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, {formKey}) => selectors.formState(state, formKey)?.value || {},
+
+    (state, {formKey}) => {
+      const formValues = selectors.formState(state, formKey)?.value || {};
+      const connectionId = formValues['/_connectionId'];
+      const connection = resourceSelector(state, 'connections', connectionId) || {};
+
+      return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
+    },
+    (_, {resourceType}) => resourceType,
+    (_, {dependentFieldForMediaType}) => dependentFieldForMediaType,
+    (_, {options}) => options,
+    (_, {fieldId}) => fieldId,
+    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, options, fieldId) => {
+      if (resourceType === 'imports' && fieldId === 'http.requestMediaType') {
+        const inputMode = formValues['/inputMode'];
+
+        options = inputMode === 'blob' ? [
+          { label: 'Multipart / form-data', value: 'form-data' },
+          { label: 'JSON', value: 'json' },
+        ] : [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'URL encoded', value: 'urlencoded' },
+          { label: 'Multipart / form-data', value: 'form-data' },
+        ];
+      }
+
+      let mediaTypeIndex = -1;
+      const parentFieldMediaType = formValues[dependentFieldForMediaType] || connectionMediaType;
+
+      // find the media type in the options
+      if (parentFieldMediaType && options) {
+        mediaTypeIndex = options.findIndex(o => o.value === parentFieldMediaType);
+      }
+
+      // remove the media type which is set on connection/dependent field , from options
+      // cloning options so as to not affect original options
+      const modifiedOptions = cloneDeep(options);
+
+      if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);
+
+      return {modifiedOptions: [{ items: modifiedOptions}], parentFieldMediaType};
+    }
+  );
 };
 
 // #endregion resource selectors
@@ -2996,6 +3033,46 @@ selectors.makeIntegrationAppSectionFlows = () =>
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
+
+selectors.mkAllFlowsTiedToIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, parentIntegrationId) => parentIntegrationId,
+    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
+    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
+    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
+    (_1, _2, childIntegrationIds) => childIntegrationIds,
+    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
+      if (!flows || !parentIntegrationId) return null;
+
+      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
+        return flows.filter(({_integrationId}) => !_integrationId);
+      }
+
+      if (isV2 || isDiy) {
+        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
+
+        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
+      }
+      // v1
+
+      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
+        // no child filter in this case...just return all parent integrations
+
+        return flowsFromAllChildren;
+      }
+
+      // filter based on selected childIntegrations
+
+      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
+selectors.allFlowsTiedToIntegrations = selectors.mkAllFlowsTiedToIntegrations();
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
@@ -4182,11 +4259,11 @@ selectors.suiteScriptLinkedTiles = createSelector(
     });
 
     return tiles.map(t => ({ ...t,
-      key: `${t.ssLinkedConnectionId}|${t._integrationId}`, // for Celigo Table unique key
+      key: getTileId(t), // for Celigo Table unique key
       name: t.displayName,
       totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
-      pinned: pinnedIntegrations.includes(`${t.ssLinkedConnectionId}|${t._integrationId}`) }));
+      pinned: pinnedIntegrations.includes(getTileId(t)) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
@@ -5511,7 +5588,7 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
-    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
     if (!groupErrorMap[groupId]) {
