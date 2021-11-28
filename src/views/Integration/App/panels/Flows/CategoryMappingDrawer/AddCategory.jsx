@@ -1,10 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Route, useHistory,
-
-  useLocation, useRouteMatch,
-} from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
@@ -12,17 +8,23 @@ import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import Spinner from '../../../../../../components/Spinner';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import DrawerTitleBar from './TitleBar';
 import { TextButton } from '../../../../../../components/Buttons';
 import RightDrawer from '../../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
+import { getTrimmedTitle } from '../../../../../../utils/string';
 
 function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId } = match.params;
   const dispatch = useDispatch();
   const history = useHistory();
+  const flowName = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    return flow ? flow.name : flowId;
+  });
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
@@ -195,11 +197,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerTitleBar
-        flowId={flowId}
-        addCategory
-        onClose={handleClose}
-        backToParent
+      <DrawerHeader
+        title={`Add category: ${getTrimmedTitle(flowName)}`}
+        handleClose={handleClose}
       />
       <DrawerContent>
         <DynaForm formKey={formKey} />
@@ -219,24 +219,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   );
 }
 
-export function CategoryMappingDrawerRoute1(props) {
-  const match = useRouteMatch();
-  const location = useLocation();
-
-  return (
-    <Route
-      exact
-      path={`${match.url}/:flowId/utilitymapping/:categoryId/addCategory`}>
-      <LoadResources required resources="flows,exports,imports,connections">
-        <AddCategoryMappingDrawer
-          {...props}
-          parentUrl={location.pathname.replace(/\/addCategory$/, '')}
-        />
-      </LoadResources>
-    </Route>
-  );
-}
-export default function CategoryMappingDrawerRoute(props) {
+export default function AddCategoryMappingDrawerRoute(props) {
   const location = useLocation();
 
   return (
