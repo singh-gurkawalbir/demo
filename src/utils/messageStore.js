@@ -4,6 +4,8 @@ export const MULTIPLE_INSTALLS =
   'Looks like this Integration App is already installed in your account. If you would like to install another instance please provide a unique tag name so that we can help you differentiate this install from the others.';
 export const INTEGRATION_DELETE_VALIDATE =
   'All Flows within an integration tile must be removed before the integration tile can be deleted.';
+export const FLOW_GROUP_DELETE_MESSAGE =
+  'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.';
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
 'Thanks for your interest! We’ll be in touch shortly to get your license upgraded.';
 export default {

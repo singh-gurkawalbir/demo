@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import {useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 import actions from '../../../../../actions';
 import TopPanel from '../../../../Mapping/TopPanel';
-import DragContainer from '../../../../Mapping/DragContainer';
+import DragContainer from '../../../../DragContainer';
 import SettingsDrawer from '../../../../Mapping/Settings';
 import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
 import { dataAsString } from '../../../../../utils/editor';
+import MappingRow from '../../../../Mapping/MappingRow';
+import { emptyObject } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -32,7 +34,12 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2, 3),
   },
 }));
-
+const SortableItemComponent = props => (
+  <MappingRow {...props} />
+);
+const LastRowSortableItemComponent = props => (
+  <MappingRow rowData={emptyObject} {...props} />
+);
 const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
@@ -46,6 +53,11 @@ const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
     return generateFields.length > 0 && extractFields.length > 0;
   });
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const mappings = useSelector(state => selectors.mapping(state).mappings);
+  const onSortEnd = useCallback(({oldIndex, newIndex}) => {
+    dispatch(actions.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
+  }, [dispatch, mappings]);
 
   return (
     <>
@@ -59,6 +71,10 @@ const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
               disabled={disabled}
               importId={importId}
               flowId={flowId}
+              items={mappings}
+              SortableItemComponent={SortableItemComponent}
+              LastRowSortableItemComponent={LastRowSortableItemComponent}
+              onSortEnd={onSortEnd}
               subRecordMappingId={subRecordMappingId}
               />
             {canAutoMap && (
