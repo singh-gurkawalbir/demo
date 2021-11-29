@@ -131,6 +131,7 @@ export default {
     'copper',
     '15five',
     'breezyhr',
+    'confluencecloud',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -212,6 +213,7 @@ export default {
     'pagerduty',
     'pandadoc',
     'docebo',
+    'mercadolibre',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

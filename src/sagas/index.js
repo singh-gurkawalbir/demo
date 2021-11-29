@@ -58,6 +58,7 @@ import ssoSagas from './sso';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import flowGroupSagas from './flowGroups';
 import { appSagas } from './app';
 import { sendRequest } from './api';
 
@@ -168,6 +169,7 @@ export function* allSagas() {
     ...logsSagas,
     ...ssoSagas,
     ...bottomDrawerSagas,
+    ...flowGroupSagas,
   ]);
 }
 

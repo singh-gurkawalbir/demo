@@ -12,6 +12,8 @@ import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import {FILTER_KEYS_AD, RUNNNING_STATUS_OPTIONS, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
+import FlowNameWithFlowGroupCell from '../cells/FlowNameWithFlowGroupCell';
+import SelectedLabelImp from '../cells/SelectedMultiSelectFilterLabelImp';
 
 export default {
   useColumns: () => {
@@ -62,14 +64,11 @@ export default {
               title="Flow"
               filterBy="flowIds"
               filterKey={integrationFilterKey}
+              SelectedLabelImp={SelectedLabelImp}
               options={flowOptions.map(({ _id, name}) => ({_id, name }))} />
           );
         },
-        Value: ({rowData: al}) => {
-          const tableContext = useGetTableContext();
-
-          return <NameCell al={{resourceType: 'flow', _resourceId: al._flowId}} actionProps={tableContext} />;
-        },
+        Value: ({rowData: al}) => (<FlowNameWithFlowGroupCell integrationId={al._integrationId} flowId={al._flowId} />),
         width: '10%',
       },
       {

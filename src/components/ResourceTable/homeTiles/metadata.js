@@ -1,4 +1,6 @@
 import React from 'react';
+import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
@@ -18,6 +20,13 @@ import UnpinAction from './actions/common/Unpin';
 import LogoStrip from '../../LogoStrip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
+
+const useStyles = makeStyles(theme => ({
+  appsNotAvailable: {
+    color: theme.palette.secondary.light,
+    fontSize: '13px',
+  },
+}));
 
 export default {
   useColumns: () => [
@@ -40,7 +49,16 @@ export default {
             />
       ),
       Value: ({rowData: r}) => {
+        const classes = useStyles();
         const applications = useSelectorMemo(selectors.mkTileApplications, r);
+
+        if (r._integrationId === STANDALONE_INTEGRATION.id || r.ssLinkedConnectionId) {
+          return (
+            <Typography component="span" className={classes.appsNotAvailable}>
+              N/A
+            </Typography>
+          );
+        }
 
         return (
           <LogoStrip applications={applications} />

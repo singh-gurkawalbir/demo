@@ -32,7 +32,7 @@ export default function EditorModal(props) {
     if (id === 'settings') {
       if (content && typeof content === 'string' && !isJsonString(content)) {
         setErrorMessage('Settings must be a valid JSON');
-      } else if (errorMessage) {
+      } else {
         setErrorMessage('');
       }
     }
@@ -47,22 +47,23 @@ export default function EditorModal(props) {
       onClose={handleClose}
       aria-labelledby="form-dialog-title">
       <div>{label}</div>
-      <div className={classes.editorContainer}>
-        <CodeEditor
-          name={id}
-          value={content}
-          mode={mode}
-          readOnly={disabled}
-          onChange={setContent}
-        />
-        <div>
+      <div>
+        <div className={classes.editorContainer}>
+          <CodeEditor
+            name={id}
+            value={content}
+            mode={mode}
+            readOnly={disabled}
+            onChange={setContent}
+          />
+        </div>
+        { !!errorMessage && (
           <FieldMessage
             errorMessages={errorMessage}
             isValid={false}
-        />
-        </div>
+          />
+        )}
       </div>
-
       <div>
         <OutlinedButton
           data-test="showEditor"
