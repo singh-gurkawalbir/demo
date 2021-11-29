@@ -24,6 +24,8 @@ const useStyles = makeStyles(theme => ({
   nameCellLink: {
     marginRight: theme.spacing(0.5),
     marginLeft: theme.spacing(1),
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
   },
   nameCellTags: {
     marginTop: theme.spacing(1),

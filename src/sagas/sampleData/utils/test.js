@@ -521,7 +521,7 @@ describe('Flow sample data utility sagas', () => {
           .returns(processedData)
           .run();
       });
-      test('should invoke file definition processor api and return the target data when resourcePath is provided', () => {
+      test('should invoke file definition processor api and return the target data which is an object when resourcePath is provided', () => {
         const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
         const _fileDefinitionId = '5fda05801730a97681d30444';
         const ftpFileDefResource = {
@@ -547,6 +547,60 @@ describe('Flow sample data utility sagas', () => {
               'Syntax identifier': 'UNOC',
               'Syntax version number': '3',
             },
+          },
+        };
+        const processedDataWithResourcePath = {
+          data: {
+            'Syntax identifier': 'UNOC',
+            'Syntax version number': '3',
+          },
+        };
+
+        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+          .provide([
+            [call(apiCallWithRetry, {
+              path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
+              opts: {
+                method: 'POST',
+                body: {
+                  data: sampleData,
+                  _fileDefinitionId,
+                },
+              },
+              message: 'Loading',
+              hidden: true,
+            }), processedData],
+          ])
+          .call.fn(apiCallWithRetry)
+          .returns(processedDataWithResourcePath)
+          .run();
+      });
+      test('should invoke file definition processor api and return the target data which is an array when resourcePath is provided', () => {
+        const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
+        const _fileDefinitionId = '5fda05801730a97681d30444';
+        const ftpFileDefResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          ftp: {
+            directoryPath: '/test',
+          },
+          file: {
+            output: 'records',
+            skipDelete: false,
+            type: 'filedefinition',
+            fileDefinition: {
+              resourcePath: 'SYNTAX IDENTIFIER',
+              _fileDefinitionId,
+            },
+          },
+        };
+        const processedData = {
+          data: {
+            'SYNTAX IDENTIFIER': [{
+              'Syntax identifier': 'UNOC',
+              'Syntax version number': '3',
+            }],
           },
         };
         const processedDataWithResourcePath = {

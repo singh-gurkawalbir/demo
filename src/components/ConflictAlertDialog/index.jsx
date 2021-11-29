@@ -17,7 +17,6 @@ import { FilledButton } from '../Buttons';
 const useStyles = makeStyles(theme => ({
   table: {
     paddingTop: theme.spacing(1),
-    // minWidth: 700,
   },
 }));
 const SingleResourceConflictsTable = ({ resourceId, conflict }) => {

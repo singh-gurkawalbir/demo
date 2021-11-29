@@ -11,7 +11,7 @@ export default {
     isGroupedSampleData,
     importResource,
   }) => {
-    const {generate, lookupName } = value;
+    const { generate, lookupName, extract } = value;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const extractfieldsOpts = [];
 
@@ -443,7 +443,7 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!isGroupedSampleData) {
+    if (!isGroupedSampleData || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

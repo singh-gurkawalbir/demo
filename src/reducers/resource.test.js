@@ -3,7 +3,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, MISCELLANEOUS_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -7212,8 +7212,8 @@ describe('resource region selector testcases', () => {
       ]);
     });
 
-    test('should return correct flows for IA2.0 integration with no childId and sectionId is miscellaneous', () => {
-      expect(integrationFlowsByGroup(state, 'integration3', undefined, MISCELLANEOUS_SECTION_ID)).toEqual([
+    test('should return correct flows for IA2.0 integration with no childId and sectionId is Unassigned', () => {
+      expect(integrationFlowsByGroup(state, 'integration3', undefined, UNASSIGNED_SECTION_ID)).toEqual([
 
         {
           _connectorId: 'connectorId3',
@@ -7245,8 +7245,8 @@ describe('resource region selector testcases', () => {
       ]);
     });
 
-    test('should return correct flows for IA2.0 integration with childId and sectionId is miscellaneous', () => {
-      expect(integrationFlowsByGroup(state, 'integration3', 'integration5', MISCELLANEOUS_SECTION_ID)).toEqual([
+    test('should return correct flows for IA2.0 integration with childId and sectionId is unassigned', () => {
+      expect(integrationFlowsByGroup(state, 'integration3', 'integration5', UNASSIGNED_SECTION_ID)).toEqual([
 
         {
           _id: 'flow8',
@@ -7481,8 +7481,8 @@ describe('resource region selector testcases', () => {
           title: 'Grouping2 name',
         },
         {
-          sectionId: 'miscellaneous',
-          title: 'Miscellaneous',
+          sectionId: 'unassigned',
+          title: 'Unassigned',
         },
       ]);
     });

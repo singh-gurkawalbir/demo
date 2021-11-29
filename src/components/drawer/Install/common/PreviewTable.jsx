@@ -1,27 +1,71 @@
 import React, { useMemo } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
+import { emptyObject } from '../../../../utils/constants';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   spinnerPreview: {
     position: 'relative',
     height: '100%',
   },
-});
+  flowGroupTitle: {
+    textTransform: 'uppercase',
+    paddingTop: theme.spacing(1),
+  },
+  firstFlowName: {
+    marginTop: theme.spacing(1),
+  },
+  flowGroupDescription: {
+    marginTop: theme.spacing(3),
+  },
+  flowInFlowGroupName: {
+    border: 'none',
+  },
+  flowInFlowGroupNameHover: {
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 const useColumns = () => [
   {
     key: 'name',
     heading: 'Name',
-    Value: ({rowData: r}) => r?.doc?.name || r?.doc?._id,
-    width: '50%',
+    width: '40%',
+    useGetCellStyling: ({rowData: r}) => {
+      const classes = useStyles();
+      const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
+      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
+
+      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+    },
+    Value: ({rowData: r}) => {
+      const classes = useStyles();
+
+      if (r?.groupName) {
+        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+      }
+
+      return r?.doc?.name || r?.doc?._id;
+    },
   },
   {
     key: 'description',
     heading: 'Description',
-    Value: ({rowData: r}) => r.doc?.description },
+    width: '60%',
+    useGetCellStyling: ({rowData: r}) => {
+      const classes = useStyles();
+      const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
+      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
+
+      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+    },
+    Value: ({rowData: r}) => r?.doc?.description,
+  },
 ];
 
 export default function PreviewTable({ templateId }) {
