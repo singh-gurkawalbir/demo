@@ -5,12 +5,12 @@ export default {
     '/assistant': 'sapbusinessone',
     '/http/auth/type': 'cookie',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://${formValues['/http/unencrypted/serverNameOrIP']}:${formValues['/http/unencrypted/port']}/b1s/v1/`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/serverNameOrIP']}:${formValues['/http/unencrypted/port']}/b1s/v1`,
     '/http/ping/relativeURI': '/BusinessPartners',
     '/http/auth/cookie/method': 'POST',
     '/http/auth/cookie/uri': `https://${formValues['/http/unencrypted/serverNameOrIP']}:${formValues['/http/unencrypted/port']}/b1s/v1/Login`,
     '/http/ping/method': 'GET',
-    '/http/auth/cookie/body': '{"CompanyDB": "{{{connection.http.unencrypted.companyDataBase}}}", "UserName": "{{{connection.http.unencrypted.userName}}}","Password": "{{{connection.http.encrypted.password}}}" }',
+    '/http/auth/cookie/body': '{"CompanyDB": "{{{connection.http.unencrypted.companyDatabase}}}", "UserName": "{{{connection.http.unencrypted.userName}}}","Password": "{{{connection.http.encrypted.password}}}" }',
 
   }),
   fieldMap: {
@@ -18,7 +18,7 @@ export default {
     'http.unencrypted.serverNameOrIP': {
       id: 'http.unencrypted.serverNameOrIP',
       type: 'text',
-      label: 'Server name/IP',
+      label: 'Server Name/IP',
       required: true,
       helpKey: 'sapbusinessone.connection.http.unencrypted.serverNameOrIP',
     },
@@ -29,17 +29,17 @@ export default {
       required: true,
       helpKey: 'sapbusinessone.connection.http.unencrypted.port',
     },
-    'http.unencrypted.companyDataBase': {
-      id: 'http.unencrypted.companyDataBase',
+    'http.unencrypted.companyDatabase': {
+      id: 'http.unencrypted.companyDatabase',
       type: 'text',
-      label: 'Company DataBase',
+      label: 'Company Database',
       required: true,
-      helpKey: 'sapbusinessone.connection.http.unencrypted.companyDataBase',
+      helpKey: 'sapbusinessone.connection.http.unencrypted.companyDatabase',
     },
     'http.unencrypted.userName': {
       id: 'http.unencrypted.userName',
       type: 'text',
-      label: 'User Name',
+      label: 'Username',
       required: true,
       helpKey: 'sapbusinessone.connection.http.unencrypted.userName',
     },
@@ -66,7 +66,7 @@ export default {
         fields: [
           'http.unencrypted.serverNameOrIP',
           'http.unencrypted.port',
-          'http.unencrypted.companyDataBase',
+          'http.unencrypted.companyDatabase',
           'http.unencrypted.userName',
           'http.encrypted.password'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },

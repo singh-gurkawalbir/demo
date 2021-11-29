@@ -593,9 +593,9 @@ export default {
   '3plcentral.connection.http.unencrypted.userLoginId':
     'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
   'sapbusinessone.connection.http.unencrypted.serverNameOrIP': 'Enter the Server Name/IP. Contact your SAP Admin for further details.',
-  'sapbusinessone.connection.http.unencrypted.port': 'Enter the Port Number. Contact your SAP Admin for further details.',
-  'sapbusinessone.connection.http.unencrypted.companyDataBase': 'Enter the Company DataBase. Contact your SAP Admin for further details.',
-  'sapbusinessone.connection.http.unencrypted.userName': 'Enter the User Name. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.port': 'Enter the Port number. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.companyDatabase': 'Enter the Company Database. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.userName': 'Enter the Username. Contact your SAP Admin for further details.',
   'sapbusinessone.connection.http.encrypted.password': 'Enter the Password. Contact your SAP Admin for further details.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bartender.connection.http.unencrypted.printPortalBaseURL': 'Enter the Print portal Base URL for BarTender. For example, if your print portal is located at http://localhost/BarTender, enter <b>http://localhost</b>.',
   'bartender.connection.http.unencrypted.userName': 'The username of your BarTender print portal account.',
