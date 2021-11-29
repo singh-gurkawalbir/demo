@@ -2209,6 +2209,7 @@ export default {
   'accountdashboard.numRuns': 'The number of times the flow has completed for the selected date range.',
   'accountdashboard.avgRuntime': 'The average time the flow takes to complete running. The run time includes the time the flow is “Waiting in queue” status.',
   'accountdashboard.numResolvedByAuto': 'The number of errors that were auto-resolved, based on a match to another error’s <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a> (unique field identifier).',
+  'runConsole.resolved': 'This column displays the total number of duplicate errors in each flow step that were resolved as a result of automatic identification with a matching <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a>.',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':
