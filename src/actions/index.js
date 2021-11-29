@@ -1875,6 +1875,9 @@ const errorManager = {
     request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
     received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
     clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
+    requestFamily: ({ jobId }) =>
+      action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST_FAMILY, { jobId }),
+    receivedFamily: ({ job }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY, { job }),
   },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
