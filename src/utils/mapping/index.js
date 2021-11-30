@@ -804,6 +804,7 @@ export default {
     }
   },
   getApplicationName: (resource = {}, conn) => {
+    if (!resource) { return ''; }
     if (resource.assistant || conn?.assistant) {
       const connectors = applicationsList();
       const assistant = connectors.find(
