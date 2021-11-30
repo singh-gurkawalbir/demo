@@ -6037,7 +6037,7 @@ selectors.flowConnectionsWithLogEntry = () => {
 selectors.mkEditorHelperFunctions = () => createSelector(
   state => state?.session?.editors?.helperFunctions || emptyObject,
   selectors.userTimezone,
-  (helperFunctions = emptyObject, userTimezone) => {
+  (helperFunctions, userTimezone) => {
     const functions = {...helperFunctions};
     const timestampFunc = functions.timestamp;
 
