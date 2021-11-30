@@ -5,6 +5,7 @@ import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
+import { simplifyFileSampleData } from '../rawDataUpdates/fileAdaptorUpdates';
 import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
@@ -131,9 +132,14 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
     case 'json':
     case 'csv':
     case 'xml': {
+      let fileSampleData = fileContent;
+
+      if (isNewSampleData) {
+        fileSampleData = yield call(simplifyFileSampleData, { resourceId, fileType, sampleData: fileContent});
+      }
       const processorData = {
         rule: parserOptions,
-        data: fileContent,
+        data: fileSampleData,
         editorType: PARSERS[fileType],
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
@@ -158,6 +164,9 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
       // Incase of file upload from the user, fileContent is xlsx and we extract csv content out of it
       if (typeof fileContent !== 'string') {
         csvFileContent = (yield call(getCsvFromXlsx, fileContent))?.result;
+      }
+      if (isNewSampleData) {
+        csvFileContent = yield call(simplifyFileSampleData, { resourceId, fileType, sampleData: fileContent});
       }
       const processorData = {
         rule: parserOptions,

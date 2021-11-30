@@ -17,7 +17,7 @@ import {
   isAS2Resource,
   isRestCsvMediaTypeExport,
 } from '../../utils/resource';
-import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
+import { _fetchRawDataForFileAdaptors, simplifyFileSampleData } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../utils/constants';
@@ -27,6 +27,7 @@ import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
+import { constructResourceFromFormValues } from '../utils';
 
 export const SCOPES = {
   META: 'meta',
@@ -127,11 +128,7 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
 }
 
 export function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
-  const { merged: resourceObj } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
+  const resourceObj = yield call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values });
   const connectionObj = yield select(
     selectors.resource,
     'connections',
@@ -145,11 +142,14 @@ export function* updateFileAdaptorSampleData({ resourceId, resourceType, values 
   ) {
     const sampleData = yield call(_fetchRawDataForFileAdaptors, {
       resourceId,
-      type: resourceType,
+      resourceType,
+      values,
     });
 
     if (sampleData !== undefined) {
-      return { ...values, '/sampleData': sampleData };
+      const fileSampleData = yield call(simplifyFileSampleData, { resourceId, fileType: resourceObj?.file?.type, sampleData });
+
+      return { ...values, '/sampleData': fileSampleData };
     }
   }
 
@@ -163,6 +163,7 @@ function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
     resourceId
   );
 
+  // TODO: Handle Data loader use case
   if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
     return values;
   }
