@@ -592,6 +592,17 @@ export default {
     'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
   '3plcentral.connection.http.unencrypted.userLoginId':
     'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
+  'sapbusinessone.connection.http.unencrypted.serverNameOrIP': 'Enter the Server name/IP. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.port': 'Enter the Port number. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.companyDatabase': 'Enter the Company Database. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.userName': 'Enter the Username. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.encrypted.password': 'Enter the Password. Contact your SAP Admin for further details.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'bartender.connection.http.unencrypted.printPortalBaseURL': 'Enter the Print portal Base URL for BarTender. For example, if your print portal is located at http://localhost/BarTender, enter <b>http://localhost</b>.',
+  'bartender.connection.http.unencrypted.userName': 'The username of your BarTender print portal account.',
+  'bartender.connection.http.encrypted.password': 'The password of your BarTender print portal account.',
+  'bartender.connection.http.auth.token.token': 'The token is auto-generated once the <b>Generate token</b> button is clicked.',
+  'zohoexpense.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><b>Steps to get the client ID and client secret:</b><br>1. Sign in to your <a href= https://api-console.zoho.com>Zoho Expense API console</a>.<br>2. Click the "Add Client" and Choose Client Type as <b>Server-based Applications</b>.<br> 3. Provide all the necessary details along with the integrator.io Callback URL.<br> 4. Once your application is registered, client ID and client secret will be displayed.',
+  'zohoexpense.connection.http.unencrypted.organizationId': 'Enter your Organization ID. <br><b>Steps to get the Organization ID:</b><br>1. Sign in to your Zoho Expense account.<br>2. Copy your Organization ID from the top right corner in the <b>My Organizations</b> tab.',
   'loopreturns.connection.http.auth.token.token': `Please enter your API key here. Log into your Loop Returns Account. Go to Settings > Developers, you can generate an API key or use an existing one.
  <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.`,
   'clover.connection.http.unencrypted.environment': 'Please select the environment of your Clover account.',

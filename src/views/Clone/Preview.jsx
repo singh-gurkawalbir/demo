@@ -440,7 +440,7 @@ export default function ClonePreview(props) {
   const clone = ({ name, environment, integration, flowGroup, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
-    const _flowGroupingId = flowGroup && flowGroup !== UNASSIGNED_SECTION_ID ? flowGroup : undefined;
+    const _flowGroupingId = flowGroup && flowGroup !== UNASSIGNED_SECTION_ID ? flowGroup : null;
 
     if (resourceType === 'integrations') {
       dispatch(
