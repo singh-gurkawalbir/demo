@@ -222,6 +222,9 @@ import docebo from './docebo';
 import breezyhr from './breezyhr';
 import mercadolibre from './mercadolibre';
 import confluencecloud from './confluencecloud';
+import sapbusinessone from './sapbusinessone';
+import bartender from './bartender';
+import zohoexpense from './zohoexpense';
 
 export default {
   channelape,
@@ -448,4 +451,7 @@ export default {
   docebo,
   mercadolibre,
   confluencecloud,
+  sapbusinessone,
+  bartender,
+  zohoexpense,
 };
