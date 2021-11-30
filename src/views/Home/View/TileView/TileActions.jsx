@@ -16,7 +16,7 @@ import { useSelectorMemo } from '../../../../hooks';
 export default function TileActions({tile}) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const {_integrationId, _connectorId, name, status} = tile || {};
+  const {_integrationId, _connectorId, name, status, numFlows} = tile || {};
   const isStandalone = STANDALONE_INTEGRATION.id === _integrationId;
   const supportsMultiStore = useSelector(state =>
     selectors.resource(state, 'integrations', _integrationId)?.settings?.supportsMultiStore
@@ -44,7 +44,7 @@ export default function TileActions({tile}) {
     history.push(getRoutePath(`/clone/integrations/${_integrationId}/preview`));
   };
 
-  const handleDelete = useHandleDelete(_integrationId);
+  const handleDelete = useHandleDelete(_integrationId, numFlows);
 
   const handleDownload = useCallback(() => { // for DIY/templates
     dispatch(actions.template.generateZip(_integrationId));

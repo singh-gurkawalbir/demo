@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSelectorMemo } from '../../../hooks';
@@ -6,12 +6,12 @@ import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
-import { emptyObject, INTEGRATION_ACCESS_LEVELS, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../utils/constants';
+import { emptyObject, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import actions from '../../../actions';
 
-export default function useHandleDelete(_integrationId) {
+export default function useHandleDelete(_integrationId, numFlows) {
   // this hook returns a callback function to handle deleting/uninstalling integrations
   const history = useHistory();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -24,23 +24,6 @@ export default function useHandleDelete(_integrationId) {
   );
   const {_connectorId} = integration;
   const dispatch = useDispatch();
-  const flowsFilterConfig = useMemo(
-    () => ({
-      type: 'flows',
-      filter: {
-        _integrationId:
-          _integrationId === STANDALONE_INTEGRATION.id
-            ? undefined
-            : _integrationId,
-      },
-    }),
-    [_integrationId]
-  );
-  const flows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
-  const cantDelete = flows.length > 0;
 
   // For IA
   const handleUninstall = useCallback(() => {
@@ -74,7 +57,7 @@ export default function useHandleDelete(_integrationId) {
 
   // For Diy/templates
   const handleDelete = useCallback(() => {
-    if (cantDelete) {
+    if (numFlows > 0) {
       enqueueSnackbar({
         message: INTEGRATION_DELETE_VALIDATE,
         variant: 'info',
@@ -98,7 +81,7 @@ export default function useHandleDelete(_integrationId) {
         },
       ],
     });
-  }, [cantDelete, confirmDialog, enqueueSnackbar, dispatch, _integrationId]);
+  }, [numFlows, confirmDialog, enqueueSnackbar, dispatch, _integrationId]);
 
   return _connectorId ? handleUninstall : handleDelete;
 }

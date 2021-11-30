@@ -16,5 +16,5 @@ export default {
 
     return canDelete;
   },
-  useOnClick: ({_integrationId}) => useHandleDelete(_integrationId),
+  useOnClick: ({_integrationId, numFlows}) => useHandleDelete(_integrationId, numFlows),
 };
