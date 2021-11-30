@@ -16,7 +16,6 @@ import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { emptyList, emptyObject, UNASSIGNED_SECTION_ID } from '../../../utils/constants';
 import { getFlowGroup } from '../../../utils/flows';
-import useFormContext from '../../Form/FormContext';
 import getRoutePath from '../../../utils/routePaths';
 
 const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
@@ -59,7 +58,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
   const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []) || emptyList;
 
-  const formContext = useFormContext(FLOW_GROUP_FORM_KEY);
+  const formFlowGroupName = useSelector(state => selectors.formState(state, FLOW_GROUP_FORM_KEY)?.fields?.name.value);
   const [isFormSaved, setFormSaved] = useState(false);
 
   const { groupName, flowGroupId, flowsWithGroupId = [] } = useMemo(() => {
@@ -86,15 +85,14 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   // if the create flow group form is saved
   // we will open the edit flow group form of the newly created flow group
   useEffect(() => {
-    const groupName = formContext.fields?.name?.value;
-    const groupId = getFlowGroup(flowGroupings, groupName, '')?._id;
+    const groupId = getFlowGroup(flowGroupings, formFlowGroupName, '')?._id;
 
     if (isFormSaved && !isEdit && groupId !== UNASSIGNED_SECTION_ID) {
       history.replace(
         getRoutePath(`/integrations/${integrationId}/flows/sections/${groupId}/flowgroups/edit`)
       );
     }
-  }, [history, formContext, flowGroupings, isFormSaved, integrationId, isEdit]);
+  }, [history, formFlowGroupName, flowGroupings, isFormSaved, integrationId, isEdit]);
 
   const handleSave = useCallback(closeAfterSave => {
     dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, flowGroupId, FLOW_GROUP_FORM_KEY));
