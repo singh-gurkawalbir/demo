@@ -592,7 +592,7 @@ export default {
     'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
   '3plcentral.connection.http.unencrypted.userLoginId':
     'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
-  'sapbusinessone.connection.http.unencrypted.serverNameOrIP': 'Enter the Server Name/IP. Contact your SAP Admin for further details.',
+  'sapbusinessone.connection.http.unencrypted.serverNameOrIP': 'Enter the Server name/IP. Contact your SAP Admin for further details.',
   'sapbusinessone.connection.http.unencrypted.port': 'Enter the Port number. Contact your SAP Admin for further details.',
   'sapbusinessone.connection.http.unencrypted.companyDatabase': 'Enter the Company Database. Contact your SAP Admin for further details.',
   'sapbusinessone.connection.http.unencrypted.userName': 'Enter the Username. Contact your SAP Admin for further details.',

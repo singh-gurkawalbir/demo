@@ -18,7 +18,7 @@ export default {
     'http.unencrypted.serverNameOrIP': {
       id: 'http.unencrypted.serverNameOrIP',
       type: 'text',
-      label: 'Server Name/IP',
+      label: 'Server name/IP',
       required: true,
       helpKey: 'sapbusinessone.connection.http.unencrypted.serverNameOrIP',
     },
