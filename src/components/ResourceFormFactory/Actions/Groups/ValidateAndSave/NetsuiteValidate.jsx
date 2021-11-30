@@ -46,7 +46,7 @@ export default function NetsuiteValidateButton(props) {
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
   const handleValidate = () => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
-    dispatch(actions.resource.connections.testClear(resourceId));
+    dispatch(actions.resource.connections.testClear(resourceId, true));
     dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
     dispatch(
       actions.resource.connections.netsuite.testConnection(
