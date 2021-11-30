@@ -343,4 +343,15 @@ export default {
       },
     }),
   },
+  bartender: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: `${form['/http/unencrypted/printPortalBaseURL']}/BarTender/api/v1/Authenticate`,
+      body: { userName: form['/http/unencrypted/userName'],
+        password: form['/http/encrypted/password'],
+      },
+    }),
+  },
 };

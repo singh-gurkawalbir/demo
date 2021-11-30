@@ -131,6 +131,9 @@ export default {
     'copper',
     '15five',
     'breezyhr',
+    'confluencecloud',
+    'sapbusinessone',
+    'bartender',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -212,6 +215,8 @@ export default {
     'pagerduty',
     'pandadoc',
     'docebo',
+    'mercadolibre',
+    'zohoexpense',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -251,5 +256,6 @@ export default {
     'googledrive',
     'microsoftteams',
     'adobesign',
+    'zohoexpense',
   ],
 };

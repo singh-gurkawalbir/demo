@@ -6,7 +6,6 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
-import { multiStepSaveResourceTypes } from '../../utils/resource';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 
@@ -125,10 +124,12 @@ export const ResourceFormFactory = props => {
     },
     [connection, isNew, resource, resourceType, integrationId]
   );
-  const { fieldMeta } = formState;
+  const { fieldMeta, skipClose } = formState;
 
-  // do not reinitialize the form on submit if it is a multistep save resource
-  const skipInitFormOnSubmit = isNew && multiStepSaveResourceTypes.includes(resourceType);
+  // do not reinitialize the form on submit if it is a multistep save resource..during these transitions skipClose is false
+  // operations like saveAndClose should also skip initialization...its only when ur performing just save do you perform initialization
+  // during that case does skipClose become false
+  const skipInitFormOnSubmit = !skipClose;
 
   return (
     <FormStateManager

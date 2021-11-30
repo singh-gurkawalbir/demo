@@ -1,48 +1,10 @@
 import {
   Table,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React from 'react';
 import TableBodyContent from './TableBodyContent';
 import { TableContextWrapper } from './TableContext';
 import TableHeader from './TableHeader';
-
-const useStyles = makeStyles(theme => ({
-  visuallyHidden: {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: 1,
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    top: 20,
-    width: 1,
-  },
-  row: {
-    '& > td:last-child': {
-      minWidth: '125px',
-    },
-    '&:hover > td:last-child > svg': {
-      display: 'none',
-    },
-  },
-  actionCell: {
-    padding: '5px !important',
-    textAlign: 'center',
-  },
-  actionContainer: {
-    position: 'sticky',
-    display: 'flex',
-  },
-  action: {
-    padding: theme.spacing(0, 0),
-  },
-  actionColHead: {
-    width: 125,
-  },
-}));
 
 const emptyObj = {};
 const emptySet = [];
@@ -62,15 +24,13 @@ export default function CeligoTable({
   size,
   actionProps = emptyObj,
 }) {
-  const classes = useStyles();
-
   // if no useColumns hook no means to generate table
   if (!useColumns) { return null; }
 
   return (
-    <div className={clsx(classes.tableContainer, className)}>
+    <div className={className}>
       <TableContextWrapper value={actionProps}>
-        <Table data-public size={size || 'medium'} className={classes.table}>
+        <Table data-public size={size || 'medium'}>
           <TableHeader
             data={data}
             onSelectChange={onSelectChange}

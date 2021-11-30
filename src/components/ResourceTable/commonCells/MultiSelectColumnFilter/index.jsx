@@ -26,6 +26,7 @@ export default function MultiSelectColumnFilter({
   options = emptyArr,
   handleSave,
   helpKey,
+  SelectedLabelImp,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -92,6 +93,7 @@ export default function MultiSelectColumnFilter({
         selected={selected}
         onSave={onSaveHandler}
         onSelect={handleSelect}
+        SelectedLabelImp={SelectedLabelImp}
         />
       {helpKey && (
         <Help

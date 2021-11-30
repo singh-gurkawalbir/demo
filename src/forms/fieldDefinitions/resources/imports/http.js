@@ -73,7 +73,6 @@ export default {
     type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
-    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
     loggable: true,

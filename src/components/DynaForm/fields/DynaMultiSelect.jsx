@@ -99,6 +99,7 @@ export default function DynaMultiSelect(props) {
     removeInvalidValues = false,
     selectAllIdentifier,
     dataPublic,
+    SelectedOptionIml,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -115,6 +116,20 @@ export default function DynaMultiSelect(props) {
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
+          if (SelectedOptionIml) {
+            return (
+              <MenuItem
+                key={item.value}
+                value={item.value}
+                disabled={item.disabled}
+                className={classes.menuItems}>
+                <SelectedOptionIml
+                  item={item}
+                  processedValue={processedValue}
+                />
+              </MenuItem>
+            );
+          }
           if (typeof item === 'string') {
             return (
               <MenuItem key={item} value={item} className={classes.menuItems}>
