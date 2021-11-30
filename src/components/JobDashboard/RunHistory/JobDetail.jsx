@@ -120,7 +120,7 @@ export default function JobDetail({
                 data-test="toggleJobDetail"
                 className={classes.moreIcon}
                 onClick={handleExpandCollapseClick}>
-                <RowIcon expanded={expanded} childLoaded={job.children} />
+                <RowIcon expanded={expanded && job.children} childLoaded={job.children} />
               </IconButton>
               {job.name || flow?.name || job._flowId}
             </li>
