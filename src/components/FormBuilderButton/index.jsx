@@ -13,14 +13,13 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto400',
   },
 }));
-
+export const getSettingsEditorId = (resourceId, sectionId) => `settings-${resourceId}-${sectionId || 'general'}`;
 export default function FormBuilderButton({resourceId, resourceType, integrationId, sectionId}) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const editorId = `settings-${resourceId}-${sectionId || 'general'}`;
-
+  const customSettingsEditorId = getSettingsEditorId(resourceId, sectionId);
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -29,16 +28,16 @@ export default function FormBuilderButton({resourceId, resourceType, integration
     e => {
       e.stopPropagation();
       dispatch(
-        actions.editor.init(editorId, 'settingsForm', {
+        actions.editor.init(customSettingsEditorId, 'settingsForm', {
           integrationId,
           resourceId,
           resourceType,
           sectionId,
         })
       );
-      history.push(`${match.url}/editor/${editorId}`);
+      history.push(`${match.url}/editor/${customSettingsEditorId}`);
     },
-    [dispatch, editorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
+    [dispatch, customSettingsEditorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
   );
 
   if (!allowFormEdit) return null;

@@ -43,7 +43,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
       disabled={disableButton}
       className={classes.chartsIcon}
       data-test="charts"
-      tooltipProps={{title: 'Dashboard'}}
+      tooltipProps={{title: 'View analytics'}}
       onClick={onClickHandler('charts')}>
       <GraphIcon className={classes.iconGraph} />
     </IconButtonWithTooltip>

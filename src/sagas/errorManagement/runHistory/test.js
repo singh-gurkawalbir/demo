@@ -8,7 +8,7 @@ import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import { requestRunHistory } from '.';
+import { requestRunHistory, getJobFamily } from '.';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import getRequestOptions from '../../../utils/requestOptions';
 
@@ -26,7 +26,45 @@ const sampleHistory = [
   {type: 'flow', _exportId: 'id2', _flowId: flowId, status: 'failed'},
   {type: 'flow', _exportId: 'id2', _flowId: flowId, status: 'cancelled'},
 ];
+const sampleJob = {type: 'flow', _exportId: 'id1', _flowId: flowId, status: 'completed'};
 
+describe('getJobFamily saga', () => {
+  test('should succeed on successful api call for job', () => {
+    const dataIn = { jobId: 'brj1' };
+    const { path, opts } = getRequestOptions(actionTypes.JOB.REQUEST_FAMILY, {
+      resourceId: dataIn.jobId,
+    });
+
+    return expectSaga(getJobFamily, dataIn)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), sampleJob],
+      ])
+      .call(apiCallWithRetry, {
+        path,
+        opts,
+      })
+      .put(
+        actions.errorManager.runHistory.receivedFamily({ job: sampleJob})
+      )
+      .run();
+  });
+  test('should handle api error properly', () => {
+    const dataIn = { jobId: 'brj1' };
+
+    return expectSaga(getJobFamily, dataIn)
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError(new Error('error'))],
+      ])
+      .call.fn(apiCallWithRetry)
+      .not.put(
+        actions.errorManager.runHistory.receivedFamily({ job: sampleJob})
+      )
+      .run();
+  });
+});
 describe('requestRunHistory saga test cases', () => {
   test('should have updated url with request params if there are filters and make api request to get runHistory', () => {
     const filters = {

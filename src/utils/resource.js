@@ -130,7 +130,7 @@ export function getResourceSubType(resource) {
   return out;
 }
 
-export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false) {
   if (!Array.isArray(resources)) {
     return emptyList;
   }
@@ -148,7 +148,9 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
   const comparer = ({ order = 'asc', orderBy = 'name' }) =>
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
 
-  return resources.filter(stringTest).sort(comparer(sort));
+  const filteredResources = resources.filter(stringTest);
+
+  return skipSort ? filteredResources : filteredResources.sort(comparer(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -874,9 +876,6 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 
   return false;
 };
-
-// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
-export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;

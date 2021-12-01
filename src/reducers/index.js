@@ -40,6 +40,7 @@ import {
   flowSupportsSettings,
   isRealtimeExport,
   addLastExecutedAtSortableProp,
+  shouldHaveUnassignedSection,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -52,10 +53,11 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID,
+  UNASSIGNED_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
-  AFE_SAVE_STATUS} from '../utils/constants';
+  AFE_SAVE_STATUS,
+  UNASSIGNED_SECTION_NAME} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -69,7 +71,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  shouldHaveMiscellaneousSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -858,42 +859,12 @@ selectors.isParentChildIntegration = (state, integrationId) => {
 
   return !!integrationSettings?.settings?.supportsMultiStore;
 };
-selectors.mkAllFlowsTiedToIntegrations = () => {
-  const resourceListSel = selectors.makeResourceListSelector();
-
-  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+selectors.mkFlowGroupingsTiedToIntegrations = () => {
+  const resourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    state => resourceListSel(state, flowsFilter).resources,
-    (_1, parentIntegration) => parentIntegration,
-    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
-    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
-    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
-    (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegration, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
-      if (!flows || !parentIntegration) return null;
-
-      if (parentIntegration === STANDALONE_INTEGRATION.id) {
-        return flows.filter(({_integrationId}) => !_integrationId);
-      }
-
-      if (isV2 || isDiy) {
-        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
-
-        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
-      }
-      // v1
-
-      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
-        // no child filter in this case...just return all parent integrations
-
-        return flowsFromAllChildren;
-      }
-
-      // filter based on selected childIntegrations
-
-      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
-    }
+    (state, id) => resourceSel(state, 'integrations', id)?.flowGroupings,
+    flowGroupings => flowGroupings || [],
   );
 };
 
@@ -940,15 +911,22 @@ selectors.getEventReportIntegrationName = (state, r) => {
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
-selectors.getAllAccountDashboardFlows = (state, filterKey) => {
+selectors.getAllAccountDashboardFlows = (state, filterKey, integrationId) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources || [];
   let allStoreFlows = [];
   const jobFilter = selectors.filter(state, filterKey);
+
   let storeId;
   let parentIntegrationId;
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations;
+
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
+  } else {
+    selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  }
 
   // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
   // below logic is used to extact store id and integration id from this.
@@ -1003,7 +981,7 @@ selectors.accountDashboardJobs = (state, filterKey) => {
 
   return {jobs: totalJobs, nextPageURL, status};
 };
-selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integrationId }) => {
   let path;
 
   if (nextPageURL) {
@@ -1011,11 +989,12 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   } else {
     path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
   }
-  const jobFilter = selectors.filter(state, filterKey);
+  const jobFilter = selectors.filter(state, `${integrationId || ''}${filterKey}`);
+
   const userPreferences = selectors.userPreferences(state);
   const sandbox = userPreferences.environment === 'sandbox';
   // If 'all' selected, it can be filtered out, as by defaults it considered "all".
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
   const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
   const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
   const body = {sandbox};
@@ -1029,6 +1008,9 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
     if (endDate) { body.time_lte = endDate.getTime(); }
+  }
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
   }
 
   if (selectedStatus.length) {
@@ -1785,7 +1767,7 @@ selectors.mkFilteredHomeTiles = () => {
       });
       const homeTiles = tiles.concat(suiteScriptLinkedTiles);
 
-      let filteredTiles = filterAndSortResources(homeTiles, filterConfig);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
 
       if (isListView && applications && !applications.includes('all')) {
         // filter on applications
@@ -2409,8 +2391,8 @@ selectors.mkIntegrationFlowGroups = () => {
       if (flowGroupings) {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
 
-        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
-          return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+        if (shouldHaveUnassignedSection(flowGroupings, integrationFlows)) {
+          return [...flowGroupings, {title: UNASSIGNED_SECTION_NAME, sectionId: UNASSIGNED_SECTION_ID}];
         }
       }
 
@@ -2453,7 +2435,7 @@ selectors.mkIntegrationFlowsByGroup = () => {
         }
 
         if (groupId) {
-          if (groupId === MISCELLANEOUS_SECTION_ID) {
+          if (groupId === UNASSIGNED_SECTION_ID) {
             isValid = isValid && !flow._flowGroupingId;
           } else {
             isValid = isValid && flow._flowGroupingId === groupId;
@@ -3051,6 +3033,46 @@ selectors.makeIntegrationAppSectionFlows = () =>
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
+
+selectors.mkAllFlowsTiedToIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, parentIntegrationId) => parentIntegrationId,
+    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
+    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
+    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
+    (_1, _2, childIntegrationIds) => childIntegrationIds,
+    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
+      if (!flows || !parentIntegrationId) return null;
+
+      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
+        return flows.filter(({_integrationId}) => !_integrationId);
+      }
+
+      if (isV2 || isDiy) {
+        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
+
+        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
+      }
+      // v1
+
+      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
+        // no child filter in this case...just return all parent integrations
+
+        return flowsFromAllChildren;
+      }
+
+      // filter based on selected childIntegrations
+
+      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
+selectors.allFlowsTiedToIntegrations = selectors.mkAllFlowsTiedToIntegrations();
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
@@ -5566,7 +5588,7 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
-    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
     if (!groupErrorMap[groupId]) {

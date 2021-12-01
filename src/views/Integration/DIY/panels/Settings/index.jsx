@@ -47,6 +47,33 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  flowTitle: {
+    display: 'flex',
+    minHeight: 42,
+    alignItems: 'center',
+    position: 'relative',
+    '&>div': {
+      paddingTop: 0,
+      minWidth: theme.spacing(3),
+    },
+    '&>a': {
+      padding: theme.spacing(0),
+    },
+    '&:before': {
+      content: '""',
+      width: '3px',
+      top: 0,
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
+    '&:hover': {
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
 }));
 
 export const useSettingsPatch = (integrationId, sectionId, path) => {

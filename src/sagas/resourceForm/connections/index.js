@@ -68,7 +68,9 @@ export function* createPayload({ values, resourceId }) {
   return returnData;
 }
 
-export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessage }) {
+export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessage, parentContext, shouldPingConnection }) {
+  const asyncKey = getAsyncKey('connections', connectionId);
+
   // '/netsuite/alluserroles'
   let reqPayload = {};
 
@@ -84,6 +86,7 @@ export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessa
 
     reqPayload = { email, password };
   }
+  yield put(actions.asyncTask.start(asyncKey));
 
   try {
     const resp = yield call(apiCallWithRetry, {
@@ -114,7 +117,12 @@ export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessa
           errorMessage || 'Invalid netsuite credentials provided')
         );
       }
-    } else if (values) {
+      yield put(actions.asyncTask.failed(asyncKey));
+
+      return;
+    }
+    // on success of netsuite userroles
+    if (values) {
       // for a new connection we fetch userRoles
       // remove non success user environments
       const successOnlyEnvs = Object.keys(resp)
@@ -144,6 +152,8 @@ export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessa
     }
   } catch (e) {
     if (e.status === 403 || e.status === 401) {
+      yield put(actions.asyncTask.failed(asyncKey));
+
       return;
     }
 
@@ -156,7 +166,24 @@ export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessa
     if (!hideNotificationMessage) {
       yield put(actions.resource.connections.testErrored(connectionId, inferErrorMessages(e.message)?.[0]));
     }
+    yield put(actions.asyncTask.failed(asyncKey));
+
+    return;
   }
+  yield put(actions.asyncTask.success(asyncKey));
+
+  // if the user selects 2 factor authentication for a netsuite account,
+  // the netsuite user roles fetch call can succeed but the ping call can fail
+  // for this reason we have to perform another ping
+  if (!shouldPingConnection) {
+    return;
+  }
+  const newValues = { ...values };
+
+  if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+    newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+  }
+  yield put(actions.resource.connections.test(connectionId, newValues, parentContext));
 }
 
 export function* requestToken({ resourceId, fieldId, values }) {

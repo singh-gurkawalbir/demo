@@ -11,18 +11,7 @@ import DataRow from '../DataRow';
 import AllContentCells from './AllContentCells';
 import SelectableCheckBoxCell from './SelectableCheckBoxCell';
 
-const useStyles = makeStyles(theme => ({
-  visuallyHidden: {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: 1,
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    top: 20,
-    width: 1,
-  },
+const useStyles = makeStyles(({
   row: {
     '& > td:last-child': {
       minWidth: '125px',
@@ -34,16 +23,6 @@ const useStyles = makeStyles(theme => ({
   actionCell: {
     padding: '5px !important',
     textAlign: 'center',
-  },
-  actionContainer: {
-    position: 'sticky',
-    display: 'flex',
-  },
-  action: {
-    padding: theme.spacing(0, 0),
-  },
-  actionColHead: {
-    width: 125,
   },
 }));
 

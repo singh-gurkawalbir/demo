@@ -343,6 +343,7 @@ const resource = {
 
   integrations: {
     fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
+    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
     updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
@@ -355,6 +356,30 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    flowGroups: {
+      createOrUpdate: (integrationId, flowGroupId, formKey) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
+          integrationId,
+          flowGroupId,
+          formKey,
+        }),
+      createOrUpdateFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {error}),
+      delete: (integrationId, flowGroupId, flowIds) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, {
+          integrationId,
+          flowGroupId,
+          flowIds,
+        }),
+      deleteFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
+      shiftOrder: (integrationId, flowGroupId, newIndex) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
+          integrationId,
+          flowGroupId,
+          newIndex,
+        }),
+    },
   },
   connections: {
     pingAndUpdate: (connectionId, parentContext) =>
@@ -424,17 +449,13 @@ const resource = {
       action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
-      requestUserRoles: (connectionId, values) =>
+      testConnection: ({connectionId, values, hideNotificationMessage, parentContext, shouldPingConnection}) =>
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
-          hideNotificationMessage: true,
-        }),
-      testConnection: (connectionId, values) =>
-        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
-          connectionId,
-          values,
-          hideNotificationMessage: false,
+          hideNotificationMessage,
+          parentContext,
+          shouldPingConnection,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -1629,8 +1650,8 @@ const accessToken = {
 const job = {
   dashboard: {
     running: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
@@ -1649,8 +1670,8 @@ const job = {
       receivedFamily: ({ collection }) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
@@ -1858,6 +1879,9 @@ const errorManager = {
     request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
     received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
     clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
+    requestFamily: ({ jobId }) =>
+      action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST_FAMILY, { jobId }),
+    receivedFamily: ({ job }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY, { job }),
   },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>

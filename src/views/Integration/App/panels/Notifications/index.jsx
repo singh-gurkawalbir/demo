@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
+import { Checkbox, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -10,6 +11,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -26,7 +28,39 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     paddingBottom: theme.spacing(1),
   },
+  flowName: {
+    flex: 1,
+  },
+  optionFlowGroupName: {
+    width: 200,
+  },
+  optionFlowGroupUnassigned: {
+    fontStyle: 'italic',
+  },
 }));
+const SelectedOptionIml = ({ item, processedValue}) => {
+  const classes = useStyles();
+
+  return (
+    <>
+      {!item.disabled && (
+        <Checkbox
+          checked={processedValue.some(value => value === item.value)}
+          color="primary"
+        />
+      )}
+      <ListItemText primary={item.label || item.value} className={classes.flowName} />
+      {item.groupName && (
+        <Typography
+          variant="body1"
+          className={clsx(classes.optionFlowGroupName, item.groupName === UNASSIGNED_SECTION_NAME ? classes.optionFlowGroupUnassigned : '')}
+        >
+          {item.groupName}
+        </Typography>
+      )}
+    </>
+  );
+};
 
 export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
@@ -44,7 +78,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections, childId });
 
   const fieldMeta = {
     fieldMap: {
@@ -57,6 +91,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
+        SelectedOptionIml,
         selectAllIdentifier: integrationId,
       },
       connections: {

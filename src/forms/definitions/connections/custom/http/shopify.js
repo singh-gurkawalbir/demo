@@ -146,7 +146,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.myshopify.com',
       type: 'text',
-      label: 'Store url',
+      label: 'Store URL',
       helpKey: 'shopify.connection.http.storeURL',
       required: true,
       validWhen: {
