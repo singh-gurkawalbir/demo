@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../../reducers';
+import { PING_STATES } from '../../../../../reducers/comms/ping';
 import { OutlinedButton } from '../../../../Buttons';
 import useFormContext from '../../../../Form/FormContext';
 
@@ -16,6 +17,10 @@ export default function NetsuiteValidateButton(props) {
     visibleWhen,
     visibleWhenAll,
     formKey,
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
   } = props;
 
   const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
@@ -31,14 +36,21 @@ export default function NetsuiteValidateButton(props) {
     field => dispatch(actions.form.registerField(formKey)(field)),
     [dispatch, formKey]
   );
+
+  const parentContext = useMemo(() => ({
+    flowId,
+    integrationId,
+    parentType,
+    parentId,
+  }), [flowId, integrationId, parentId, parentType]);
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
   const handleValidate = () => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
-    dispatch(actions.resource.connections.testClear(resourceId));
+    dispatch(actions.resource.connections.testClear(resourceId, true));
     dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
     dispatch(
-      actions.resource.connections.netsuite.testConnection(resourceId, values)
-    );
+      actions.resource.connections.netsuite.testConnection(
+        {connectionId: resourceId, values, parentContext, shouldPingConnection: true}));
   };
 
   const { status, message, hideNotificationMessage } = useSelector(state =>
@@ -52,16 +64,22 @@ export default function NetsuiteValidateButton(props) {
   );
   const matchingActionField = fields && Object.values(fields)?.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
+  const testConnectionCommState = useSelector(state =>
+    selectors.testConnectionCommState(state, resourceId)
+  );
+  const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
 
   useEffect(() => {
     if (resourceId && fieldsIsVisible && !isOffline) {
       dispatch(
-        actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
+        actions.resource.connections.netsuite.testConnection(
+          {connectionId: resourceId, hideNotificationMessage: true, shouldPingConnection: false})
       );
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, fieldsIsVisible, resourceId]);
 
+  // This piece of marks the form valid or invalid based on a successful fetch of user roles
   useEffect(() => {
     if (fieldsIsVisible) {
       if (status === 'success') {
@@ -105,14 +123,16 @@ export default function NetsuiteValidateButton(props) {
   if (id) {
     if (!fieldsIsVisible) return null;
   }
+  // during the validate process we fetch for userRoles and also perform a ping
+  const isButtonTesting = isValidatingNetsuiteUserRoles || pingLoading;
 
   return (
     <OutlinedButton
       data-test={id}
       color="secondary"
-      disabled={disabled || isValidatingNetsuiteUserRoles}
+      disabled={disabled || isButtonTesting}
       onClick={handleValidate}>
-      {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test connection'}
+      {(isButtonTesting && !hideNotificationMessage) ? 'Testing' : 'Test connection'}
     </OutlinedButton>
   );
 }
