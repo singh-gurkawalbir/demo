@@ -225,6 +225,7 @@ import confluencecloud from './confluencecloud';
 import sapbusinessone from './sapbusinessone';
 import bartender from './bartender';
 import zohoexpense from './zohoexpense';
+import jazzhr from './jazzhr';
 
 export default {
   channelape,
@@ -454,4 +455,5 @@ export default {
   sapbusinessone,
   bartender,
   zohoexpense,
+  jazzhr,
 };
