@@ -33,7 +33,7 @@ export const CANCEL_JOB =
 export const REQUIRED_MESSAGE = 'A value must be provided';
 // #endregion form messages
 
-export const NETSUITE_ASSISTANT_LOADING_ERROR = `Unable to load NetSuite Assistant for one of the following reasons:
+export const NETSUITE_ASSISTANT_LAUNCH_ERROR = `Unable to load NetSuite Assistant for one of the following reasons:
 • It is disabled in recent versions of Google Chrome (and available in other browsers)
 • Newer NetSuite record types are not yet supported 
 We are currently working with NetSuite to resolve these problems.`;

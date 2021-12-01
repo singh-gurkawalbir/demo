@@ -4,8 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { getDomain } from '../../utils/resource';
-import { NETSUITE_ASSISTANT_LOADING_ERROR } from '../../utils/messageStore';
-import nsUtils from '../../utils/mapping/application/netsuite';
+import { NETSUITE_ASSISTANT_LAUNCH_ERROR } from '../../utils/messageStore';
+import nsMappingUtils from '../../utils/mapping/application/netsuite';
 import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -64,7 +64,6 @@ export default function NetSuiteMappingAssistant({
   const [netSuiteFormIsLoading, setNetSuiteFormIsLoading] = useState(false);
   const [suiteletUrl, setSuiteletUrl] = useState();
   const handleSuiteletFrameLoad = () => {
-    console.log('entered , suitelet loaded');
     setNetSuiteFormIsLoading(false);
   };
 
@@ -84,7 +83,7 @@ export default function NetSuiteMappingAssistant({
         return true;
       }
       if (e.data.op === 'loadError') {
-        enquesnackbar({ message: NETSUITE_ASSISTANT_LOADING_ERROR, variant: 'error' });
+        enquesnackbar({ message: NETSUITE_ASSISTANT_LAUNCH_ERROR, variant: 'error' });
       } else if (e.data.op === 'loadCompleted') {
         setNSAssistantFormLoaded(true);
         document
@@ -149,8 +148,8 @@ export default function NetSuiteMappingAssistant({
   }, [connection, data, isNSAssistantFormLoaded]);
 
   const handleLaunchAssistantClick = () => {
-    if (!nsUtils.isNSMappingAssistantSupported()) {
-      return enquesnackbar({ message: NETSUITE_ASSISTANT_LOADING_ERROR, variant: 'error' });
+    if (!nsMappingUtils.isNSMappingAssistantSupported()) {
+      return enquesnackbar({ message: NETSUITE_ASSISTANT_LAUNCH_ERROR, variant: 'error' });
     }
     setNetSuiteFormIsLoading(true);
     const ioDomain = getDomain();
