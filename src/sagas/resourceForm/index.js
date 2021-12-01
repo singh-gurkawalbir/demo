@@ -292,6 +292,7 @@ export function* submitFormValues({
   });
 
   if (resourceType === 'exports') {
+    formValues = yield call(clearRawDataFromFormValues, { resourceId, resourceType, values: formValues });
     // We have a special case for exports that define a "Data loader" flow.
     // We need to store the raw data s3 key so that when a user 'runs' the flow,
     // we can post the runKey to the api. For file connectors, we do not use rawData
@@ -303,7 +304,6 @@ export function* submitFormValues({
     });
   }
   if (['exports', 'imports'].includes(resourceType)) {
-    formValues = yield call(clearRawDataFromFormValues, { resourceId, resourceType, values: formValues });
     formValues = yield call(updateFileAdaptorSampleData, { resourceId, resourceType, values: formValues });
   }
 
