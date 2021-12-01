@@ -226,7 +226,7 @@ module.exports = (env, argv) => {
       hot: true,
       contentBase: path.join(__dirname, 'build'),
       compress: true,
-      port: 4000,
+      port: 5000,
       publicPath: '/',
       host: 'localhost.io',
       historyApiFallback: {
