@@ -44,7 +44,7 @@ export const getBrowserInfo = () => {
     }
   }
 
-  match = match[2] ? [match[1], match[2]] : [navigator.appName, navigator.appVersion, '-?'];
+  match = match[2] ? [match[1], match[2]] : [navigator.appName, navigator.appVersion];
   temp = userAgent.match(/version\/(\d+)/i);
 
   if (temp !== null) {
