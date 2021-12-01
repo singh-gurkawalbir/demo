@@ -219,11 +219,12 @@ export default function RunHistory({ flowId, className }) {
           </ActionGroup>
         </>
       </div>
-      {isLoadingHistory && <Spinner centerAll />}
-      <JobTable
-        classes={classes.jobTable}
-        jobsInCurrentPage={jobsInCurrentPage || []}
-      />
+      {isLoadingHistory ? <Spinner centerAll />
+        : (
+          <JobTable
+            classes={classes.jobTable}
+            jobsInCurrentPage={jobsInCurrentPage || []} />
+        )}
 
       {!hasFlowRunHistory &&
         (
