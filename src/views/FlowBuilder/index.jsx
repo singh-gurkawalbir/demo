@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import { selectors } from '../../reducers';
 import ResourceDrawer from '../../components/drawer/Resource';
+import { selectors } from '../../reducers';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
 import MappingDrawerRoute from '../MappingDrawer';
@@ -46,7 +47,6 @@ function FBComponent({flowId, integrationId, childId}) {
 }
 export default function FlowBuilder() {
   const match = useRouteMatch();
-
   const dispatch = useDispatch();
   const { flowId, integrationId, childId } = match.params;
   const dependenciesResolved = useSelector(state => selectors.resolvedIntegrationDependencies(state, integrationId));
