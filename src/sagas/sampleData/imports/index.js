@@ -74,7 +74,7 @@ function convertToVirtualExportFromPreviewConfig(assistantConfig, assistantMetad
 
 export function* _fetchAssistantSampleData({ resource }) {
   if (!resource) return;
-  const {assistant, _id} = resource;
+  const {assistant, _id, type} = resource;
 
   yield put(actions.metadata.requestAssistantImportPreview(_id));
 
@@ -97,7 +97,7 @@ export function* _fetchAssistantSampleData({ resource }) {
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,
-    adaptorType,
+    adaptorType: type,
   });
 
   assistantConfig.adaptorType = adaptorType;
