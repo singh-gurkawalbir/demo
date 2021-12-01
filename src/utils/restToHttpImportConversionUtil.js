@@ -207,7 +207,6 @@ function convertImportJSONObjRESTtoHTTP(imp) {
     httpSubDoc.sendPostMappedData = true;
   }
   httpSubDoc.batchSize = 1;
-  httpSubDoc.strictHandlebarEvaluation = true;
 
   if (Array.isArray(httpSubDoc.lookups)) {
     httpSubDoc.lookups.forEach(lookup => {
