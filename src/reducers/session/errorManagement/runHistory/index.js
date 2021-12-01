@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 const defaultObject = {};
 
 export default (state = {}, action) => {
-  const { type, flowId, runHistory } = action;
+  const { type, flowId, runHistory, job } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -20,6 +20,15 @@ export default (state = {}, action) => {
         }
         draft[flowId].status = 'received';
         draft[flowId].data = runHistory || [];
+        break;
+      case actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY:
+        {
+          const index = draft[job?._flowId]?.data?.findIndex(j => j._id === job._id);
+
+          if (index > -1) {
+            draft[job._flowId].data[index] = {...job};
+          }
+        }
         break;
       case actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR:
         delete draft[flowId];

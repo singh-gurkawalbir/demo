@@ -28,6 +28,7 @@ export default function SelectSource({flowId, resourceId, isResolved, title, fil
         filterBy={filterBy}
         filterKey={filterKey}
         handleChange={handleChange}
+        showTime
         customPresets={ERROR_MANAGEMENT_RANGE_FILTERS} />
     ),
     [filterBy, filterKey, handleChange, title])
