@@ -86,24 +86,6 @@ describe('fetchRequiredMappingData saga', () => {
       .run();
   });
 
-  test('should make requestFlowSampleData call', () => {
-    const flowId = 'f1';
-    const importId = 'imp1';
-
-    return expectSaga(fetchRequiredMappingData, { flowId, importId })
-      .provide([
-        [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test'}],
-        [select(selectors.getImportSampleData, importId, {}), {status: 'received'}],
-      ])
-      .call(requestFlowSampleData, {
-        flowId,
-        resourceId: importId,
-        resourceType: 'imports',
-        stage: 'importMappingExtract',
-      })
-      .run();
-  });
-
   test('should not make requestAssistantMetadata call in case of  non-assistant resource', () => {
     const flowId = 'f1';
     const importId = 'imp1';
@@ -137,6 +119,10 @@ describe('fetchRequiredMappingData saga', () => {
       .provide([
         [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test', assistant: 'any_other', type: 'rest'}],
         [select(selectors.getImportSampleData, importId, {}), {status: 'received'}],
+        [call(requestAssistantMetadata, {
+          adaptorType: 'rest',
+          assistant: 'any_other',
+        }), {}],
       ])
       .call(requestAssistantMetadata, {
         adaptorType: 'rest',
@@ -151,7 +137,7 @@ describe('fetchRequiredMappingData saga', () => {
 
     return expectSaga(fetchRequiredMappingData, { flowId, importId })
       .provide([
-        [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test', assistant: 'any_other', type: 'rest'}],
+        [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test', type: 'rest'}],
         [select(selectors.getImportSampleData, importId, {}), {status: 'received'}],
       ])
       .not.call(getIAMappingMetadata)
@@ -165,6 +151,7 @@ describe('fetchRequiredMappingData saga', () => {
       .provide([
         [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test', _connectorId: 'c1', _integrationId: 'iA1'}],
         [select(selectors.getImportSampleData, importId, {}), {status: 'received'}],
+        [call(getIAMappingMetadata, {integrationId: 'iA1'}), undefined],
       ])
       .call(getIAMappingMetadata, {integrationId: 'iA1'})
       .run();
@@ -1151,6 +1138,7 @@ describe('validateMappings saga', () => {
         lookups: [],
         importId: '123',
       }],
+      [call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' }), undefined],
     ])
     .not.put(actions.mapping.setValidationMsg())
     .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
@@ -1164,6 +1152,7 @@ describe('validateMappings saga', () => {
         lookups: [],
         importId: '123',
       }],
+      [call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' }), undefined],
     ])
     .put(actions.mapping.setValidationMsg(undefined))
     .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
@@ -1176,6 +1165,7 @@ describe('validateMappings saga', () => {
         lookups: [],
         importId: '123',
       }],
+      [call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' }), undefined],
     ])
     .put(actions.mapping.setValidationMsg('Extract Fields missing for field(s): g2'))
     .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })

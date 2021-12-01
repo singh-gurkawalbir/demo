@@ -6,6 +6,24 @@ import getRequestOptions from '../../../utils/requestOptions';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import { selectors } from '../../../reducers';
 
+export function* getJobFamily({ jobId }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.JOB.REQUEST_FAMILY,
+    {
+      resourceId: jobId,
+    }
+  );
+  const { path, opts } = requestOptions;
+  let job;
+
+  try {
+    job = yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return true;
+  }
+
+  yield put(actions.errorManager.runHistory.receivedFamily({ job }));
+}
 export function* requestRunHistory({ flowId }) {
   const filters = yield select(selectors.filter, FILTER_KEYS.RUN_HISTORY);
   const flow = yield select(selectors.resource, 'flows', flowId);
@@ -34,4 +52,6 @@ export function* requestRunHistory({ flowId }) {
 }
 export default [
   takeLatest(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, requestRunHistory),
+  takeLatest(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST_FAMILY, getJobFamily),
+
 ];

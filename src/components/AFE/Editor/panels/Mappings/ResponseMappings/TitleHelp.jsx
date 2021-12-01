@@ -15,11 +15,14 @@ const useStyles = makeStyles(theme => ({
 export default function TitleHelp({ editorId }) {
   const classes = useStyles();
   const resourceType = useSelector(state => selectors.editor(state, editorId).resourceType);
+  const editorTitle = useSelector(state => selectors.editor(state, editorId).editorTitle);
   const helpKey = resourceType === 'exports' ? 'lookup.response.mapping' : 'import.response.mapping';
 
   return (
     <div className={classes.helpTextButton}>
       <FieldHelp
+        noApi
+        label={editorTitle}
         helpKey={helpKey} />
     </div>
   );
