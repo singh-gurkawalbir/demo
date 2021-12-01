@@ -46,6 +46,7 @@ function FBComponent({flowId, integrationId, childId}) {
 }
 export default function FlowBuilder() {
   const match = useRouteMatch();
+
   const dispatch = useDispatch();
   const { flowId, integrationId, childId } = match.params;
   const dependenciesResolved = useSelector(state => selectors.resolvedIntegrationDependencies(state, integrationId));
