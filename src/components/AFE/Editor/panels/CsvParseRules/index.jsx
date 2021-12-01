@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CsvParseRules({ editorId }) {
+export default function CsvParseRules({ editorId, isLoggable }) {
   const formKey = `csvParse-${editorId}`;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -65,7 +65,7 @@ export default function CsvParseRules({ editorId }) {
 
   return (
     <div className={classes.container}>
-      <DynaForm formKey={formKey} />
+      <DynaForm formKey={formKey} isLoggable={isLoggable} />
     </div>
   );
 }

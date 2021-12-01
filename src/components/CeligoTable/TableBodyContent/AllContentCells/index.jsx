@@ -36,8 +36,9 @@ export default function AllContentCells({useColumns, rowData}) {
   const columns = useColumns();
 
   return (
-    columns.map(({key, ...meta}, index) => (
+    columns.map(({key, isLoggable, ...meta}, index) => (
       <ContentCell
+        data-private={!isLoggable}
         key={key}
         meta={meta}
         rowData={rowData}

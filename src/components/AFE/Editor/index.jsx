@@ -70,9 +70,12 @@ export default function Editor({ editorId }) {
           <SinglePanelGridItem
             key={p.area}
             area={p.area}
+            isLoggable={!!p.isLoggable}
             title={resolveValue(p.title, editorContext)}
             helpKey={resolveValue(p.helpKey, editorContext)}>
-            <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
+            <p.Panel
+              editorId={editorId} isLoggable={!!p.isLoggable}
+              {...resolveValue(p.props, editorContext)} />
           </SinglePanelGridItem>
         )
         : (

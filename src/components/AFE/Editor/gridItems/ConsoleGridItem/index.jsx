@@ -41,6 +41,7 @@ export default function ConsoleGridItem({ editorId }) {
           <Typography>Console</Typography>
         </PanelTitle>
         <CodePanel
+          data-private
           readOnly
           overrides={overrides}
           mode="text"

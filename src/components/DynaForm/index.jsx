@@ -6,6 +6,7 @@ import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import DynaFormGenerator from './DynaFormGenerator';
 import { selectors } from '../../reducers';
 import useAutoScrollErrors from './useAutoScrollErrors';
+import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -37,6 +38,7 @@ export default function DynaForm(props) {
     className,
     formKey,
     autoFocus,
+    isLoggable,
     ...rest
   } = props;
   const classes = useStyles();
@@ -61,7 +63,7 @@ export default function DynaForm(props) {
   if (!fieldMap) return null;
 
   return (
-    <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
+    <div ref={formRef} className={clsx(classes.fieldContainer, className)} {...isLoggableAttr(isLoggable)}>
       <DynaFormGenerator
         {...rest}
         layout={layout}

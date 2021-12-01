@@ -122,6 +122,7 @@ export default function TableBodyContent({
             />
 
             <AllContentCells
+              data-private
               useColumns={useColumns}
               rowData={rowData}
             />

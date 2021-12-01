@@ -39,6 +39,7 @@ export default function WarningGridItem({ editorId }) {
         <PanelTitle className={classes.title} title="Warning" />
         <div className={classes.panel}>
           <CodePanel
+            data-private
             readOnly
             overrides={overrides}
             mode="text"

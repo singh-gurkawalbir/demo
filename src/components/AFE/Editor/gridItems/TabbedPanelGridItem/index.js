@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles, Tab, Tabs } from '@material-ui/core';
 import PanelGridItem from '../PanelGridItem';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -31,6 +32,7 @@ export default function TabbedPanelGridItem({ editorId, area, panelGroup }) {
   const {
     key: activeKey,
     Panel: ActivePanel,
+    isLoggable,
     props: activePanelProps } = panelGroup.panels[tabValue];
 
   return (
@@ -57,6 +59,7 @@ export default function TabbedPanelGridItem({ editorId, area, panelGroup }) {
         <div className={classes.panel}>
 
           <div
+            {...isLoggableAttr(isLoggable)}
             role="tabpanel"
             id={`tabpanel-${activeKey}`}
             aria-labelledby={`tab-${tabValue}`}
