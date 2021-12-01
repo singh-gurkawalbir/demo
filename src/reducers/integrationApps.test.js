@@ -3,7 +3,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
-export const integrations = [
+const integrations = [
   {
     _id: 'integrationId',
     name: 'Cash Application Manager for NetSuite',

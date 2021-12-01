@@ -4,10 +4,6 @@ import { filter, isEmpty, uniqBy } from 'lodash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
 
-export function getFilterRuleId(rule) {
-  return rule.id.split('_rule_')[1];
-}
-
 const updateRulesForSOQL = (dataIn = { rules: [] }) => {
   const referenceFieldsUsed = [];
 
@@ -130,7 +126,7 @@ const getFilterTypeAndOperators = field => {
   return { type, operators };
 };
 
-export function getFilterConfig(field, options = {}) {
+function getFilterConfig(field, options = {}) {
   const config = getFilterTypeAndOperators(field);
   const filter = {
     id: field.id,
@@ -220,28 +216,6 @@ export function getFilterList(jsonPaths, rules) {
   }
 
   return jsonPaths;
-}
-
-export function generateRulesState(rules) {
-  const rulesState = {};
-  let ruleIndex = -1;
-
-  function iterate(r) {
-    r.rules.forEach(rr => {
-      if (rr.condition) {
-        iterate(rr);
-      } else {
-        ruleIndex += 1;
-        rulesState[ruleIndex] = {
-          data: rr.data,
-        };
-      }
-    });
-  }
-
-  iterate(rules);
-
-  return rulesState;
 }
 
 export function validateFilterRule(queryBuilder) {

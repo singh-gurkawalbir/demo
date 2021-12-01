@@ -211,7 +211,7 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
-export function populateDefaults({
+function populateDefaults({
   child = {},
   parent = {},
   isChildAnOperation = false,
@@ -331,7 +331,7 @@ export function getExportVersionAndResource({
   return versionAndResource;
 }
 
-export function getImportVersionAndResource({
+function getImportVersionAndResource({
   assistantVersion,
   assistantOperation,
   assistantData,

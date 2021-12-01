@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const useSettingsPatch = (integrationId, sectionId, path) => {
+const useSettingsPatch = (integrationId, sectionId, path) => {
   const allSections = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId)?.allSections;
 
   if (!sectionId || sectionId === 'general') return path;
