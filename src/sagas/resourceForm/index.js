@@ -17,7 +17,7 @@ import {
   isAS2Resource,
   isRestCsvMediaTypeExport,
 } from '../../utils/resource';
-import { _fetchRawDataForFileAdaptors, simplifyFileSampleData } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
+import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../utils/constants';
@@ -147,9 +147,7 @@ export function* updateFileAdaptorSampleData({ resourceId, resourceType, values 
     });
 
     if (sampleData !== undefined) {
-      const fileSampleData = yield call(simplifyFileSampleData, { resourceId, fileType: resourceObj?.file?.type, sampleData });
-
-      return { ...values, '/sampleData': fileSampleData };
+      return { ...values, '/sampleData': sampleData };
     }
   }
 
@@ -163,8 +161,8 @@ function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
     resourceId
   );
 
-  // TODO: Handle Data loader use case
-  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
+  // Incase of Data loader, no need to remove rawData as it is handled when the flow is run
+  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA || resourceObj?.type === 'simple') {
     return values;
   }
 
@@ -294,7 +292,6 @@ export function* submitFormValues({
   });
 
   if (resourceType === 'exports') {
-    formValues = yield call(clearRawDataFromFormValues, { resourceId, resourceType, values: formValues });
     // We have a special case for exports that define a "Data loader" flow.
     // We need to store the raw data s3 key so that when a user 'runs' the flow,
     // we can post the runKey to the api. For file connectors, we do not use rawData
@@ -306,6 +303,7 @@ export function* submitFormValues({
     });
   }
   if (['exports', 'imports'].includes(resourceType)) {
+    formValues = yield call(clearRawDataFromFormValues, { resourceId, resourceType, values: formValues });
     formValues = yield call(updateFileAdaptorSampleData, { resourceId, resourceType, values: formValues });
   }
 

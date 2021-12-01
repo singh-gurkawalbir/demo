@@ -178,12 +178,3 @@ export const getFileColumns = result => {
 
   return Object.keys(sampleRecord);
 };
-
-export function extractCsvSampleData(csvData) {
-  if (!csvData || typeof csvData !== 'string') return '';
-  const rowDelimiter = '\n';
-  const csvRecords = csvData.split(rowDelimiter);
-  const sampleCsvRecords = csvRecords.slice(0, 20);
-
-  return sampleCsvRecords.join(rowDelimiter);
-}

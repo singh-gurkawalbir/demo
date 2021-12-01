@@ -2,8 +2,6 @@ import { select, call } from 'redux-saga/effects';
 import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
 import { constructResourceFromFormValues } from '../../../utils';
-import { getUnionObject } from '../../../../utils/jsonPaths';
-import { extractCsvSampleData } from '../../../../utils/file';
 
 export function* _fetchRawDataForFileAdaptors({ resourceId, resourceType, values }) {
   if (!resourceId) return;
@@ -44,26 +42,4 @@ export function* _fetchRawDataForFileAdaptors({ resourceId, resourceType, values
   }
 
   return rawData;
-}
-
-export function* simplifyFileSampleData({resourceId, fileType, sampleData }) {
-  const uploadedFile = yield select(selectors.getUploadedFile, `${resourceId}-uploadFile`);
-  const MAX_SAMPLEDATA_SIZE = 5;
-
-  if (!fileType || !uploadedFile || uploadedFile.size < MAX_SAMPLEDATA_SIZE) {
-    // No need of any simplification
-    return sampleData;
-  }
-  if (fileType === 'json') {
-    // if the data is an array - push single object
-    if (Array.isArray(sampleData)) {
-      return [getUnionObject(sampleData)];
-    }
-  }
-  if (fileType === 'csv' || fileType === 'xlsx') {
-    // get only 10 records
-    return extractCsvSampleData(sampleData);
-  }
-
-  return sampleData;
 }
