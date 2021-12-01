@@ -1,14 +1,15 @@
-import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
+import { TextButton, FilledButton } from '../Buttons';
+import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,21 +50,13 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
+    maxWidth: 600,
+    '&>div': {
+      maxWidth: 'inherit',
+    },
   },
   actions: {
     marginTop: theme.spacing(2),
-  },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
-    fontSize: 15,
-    lineHeight: 2,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
-    },
   },
   selectResourceItem: {
     display: 'flex',
@@ -102,7 +95,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -249,7 +242,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                                   value="required"
                                   className={classes.selectResourceCheck} />
                                   )}
-                              label={m.name}
+                              label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
                               key={m._id} />
                             {expanded[m._id] && m.children && m.children.map(c => (
                               <ChildDetails
@@ -265,14 +258,14 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                 </FormControl>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="contained" color="primary" onClick={handleSave} disabled={isEqual(checked, selected)}>
+                <ActionGroup>
+                  <FilledButton onClick={handleSave} disabled={isEqual(checked, selected)}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="secondary" onClick={handleClose}>
+                  </FilledButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

@@ -4,11 +4,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import IconTextButton from '../IconTextButton';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import Spinner from '../Spinner';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -135,29 +135,25 @@ export default function Pagination(props) {
         </div>
       ) : null}
       <div className={classes.pagesCountWrapper}>
-        <IconTextButton
+        <TextButton
           onClick={handlePrevPage}
           className={classes.arrowBtn}
-          disabled={page === 0}>
-          <ArrowLeftIcon />
-        </IconTextButton>
+          disabled={page === 0}
+          startIcon={<ArrowLeftIcon />} />
         <span className={classes.label}>{label}</span>
         {loading ? (
           <div className={classes.spinnerWrapper}>
             <Spinner
               className={classes.spinner}
-              size={24}
-              color="primary"
               />
           </div>
 
         ) : (
-          <IconTextButton
+          <TextButton
             onClick={handleNextPage}
             className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
-            disabled={disableNextPage}>
-            <ArrowRightIcon />
-          </IconTextButton>
+            disabled={disableNextPage}
+            startIcon={<ArrowRightIcon />} />
         )}
       </div>
     </div>

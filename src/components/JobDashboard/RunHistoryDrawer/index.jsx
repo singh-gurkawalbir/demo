@@ -10,7 +10,7 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
-import {FILTER_KEYS_AD} from '../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
@@ -50,8 +50,12 @@ export default function RunHistoryDrawer() {
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [match.url, history]);
+  let { integrationId } = match.params;
+  const { childId } = match.params;
+
+  integrationId = getDashboardIntegrationId(integrationId, childId);
   const filter = useSelector(state =>
-    selectors.filter(state, FILTER_KEYS_AD.COMPLETED),
+    selectors.filter(state, `${integrationId}${FILTER_KEYS_AD.COMPLETED}`),
   shallowEqual
   );
   let selectedDate;

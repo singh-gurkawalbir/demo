@@ -166,6 +166,14 @@ function DynaAssistantOptions(props) {
         });
       }
 
+      if (assistantFieldType === 'operation') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operationChanged',
+          value: true,
+        });
+      }
+
       dispatch(
         actions.resource.patchStaged(
           resourceContext.resourceId,

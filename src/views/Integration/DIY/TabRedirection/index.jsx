@@ -4,6 +4,7 @@ import { generatePath, Redirect, useHistory, useRouteMatch } from 'react-router-
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import { HOME_PAGE_PATH } from '../../../../utils/constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import { getTemplateUrlName } from '../../../../utils/template';
@@ -13,7 +14,11 @@ const emptyObj = {};
 export default function TabRedirection({children: componentChildren}) {
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId, templateName, childId, tab} = match?.params;
+  const { integrationId, templateName, childId, dashboardTab} = match?.params;
+  let {tab} = match?.params;
+
+  tab = dashboardTab ? 'dashboard' : tab;
+
   const dispatch = useDispatch();
 
   const {
@@ -128,17 +133,25 @@ export default function TabRedirection({children: componentChildren}) {
   }, [dispatch, isIntegrationApp, integrationAppMetadata, integrationId]);
 
   useEffect(() => {
-    if (redirectTo) {
-      const path = generatePath(match.path, {
+    if (!redirectTo) return;
+
+    let path;
+
+    // in cases like deleting integrations we redirect the user to homepage
+    if (redirectTo === HOME_PAGE_PATH) {
+      path = getRoutePath(redirectTo);
+    } else {
+      // these are tab based redirects
+      path = generatePath(match.path, {
         integrationId,
         integrationAppName,
         childId,
         tab: redirectTo,
       });
-
-      dispatch(actions.resource.integrations.clearRedirect(integrationId));
-      history.push(path);
     }
+
+    dispatch(actions.resource.integrations.clearRedirect(integrationId));
+    history.push(path);
   }, [
     dispatch,
     history,
@@ -155,6 +168,7 @@ export default function TabRedirection({children: componentChildren}) {
         getRoutePath(`templates/${templateUrlName}/${integrationId}/${tab || 'flows'}`)
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, integrationId, templateName, templateUrlName]);
   useEffect(() => {
     if (

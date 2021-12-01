@@ -2,8 +2,6 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
@@ -19,8 +17,9 @@ import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import ActionButton from '../../../../ActionButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import ButtonGroup from '../../../../ButtonGroup';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import ActionGroup from '../../../../ActionGroup';
+import { FilledButton, TextButton } from '../../../../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
@@ -192,7 +191,7 @@ function EditListItemModal(props) {
         }}>
         Add selected
       </DynaSubmit>
-      <Button variant="text" color="primary" onClick={handleClose}>Cancel</Button>
+      <TextButton onClick={handleClose}>Cancel</TextButton>
     </>
   );
 }
@@ -270,18 +269,17 @@ function FirstLevelModal(props) {
       <div>
         {!editListItemModelOpen ? (
           <>
-            <IconTextButton
-              variant="outlined"
-              color="secondary"
+            <TextButton
               className={classes.relatedListBtn}
               data-test="addOrEditNewRelatedList"
+              startIcon={<AddIcon />}
               onClick={() => {
                 toggleListItemModelOpen();
                 setSelectedElement(null);
               }}>
-              <AddIcon />
+
               Add new related list
-            </IconTextButton>
+            </TextButton>
 
             <RelatedListView
               {...rest}
@@ -293,16 +291,15 @@ function FirstLevelModal(props) {
           </>
         ) : (
           <>
-            <IconTextButton
-              variant="outlined"
-              color="secondary"
+            <TextButton
+              startIcon={<ArrowLeftIcon />}
               className={classes.relatedListBtn}
               onClick={() => {
                 toggleListItemModelOpen();
               }} >
-              <ArrowLeftIcon /> Back to related list
+              Back to related list
 
-            </IconTextButton>
+            </TextButton>
 
             <EditListItemModal
               {...rest}
@@ -315,25 +312,21 @@ function FirstLevelModal(props) {
         )}
       </div>
       {!editListItemModelOpen && (
-        <ButtonGroup>
-          <Button
+        <ActionGroup>
+          <FilledButton
             data-test="saveRelatedList"
-            variant="outlined"
-            color="primary"
             onClick={() => {
               onFieldChange(id, value);
               handleClose();
             }}>
             Save
-          </Button>
-          <Button
+          </FilledButton>
+          <TextButton
             data-test="closeRelatedListModal"
-            onClick={handleClose}
-            variant="text"
-            color="primary">
+            onClick={handleClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       )}
     </ModalDialog>
   );

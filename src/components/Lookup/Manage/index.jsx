@@ -1,19 +1,17 @@
 import React, { useMemo, useCallback } from 'react';
 import shortid from 'shortid';
-import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
-import { Button } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import defaultMetadata from './metadata/default';
-import getFormattedSampleData from '../../../utils/sampleData';
 import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
+import { TextButton } from '../../Buttons';
 
 export default function ManageLookup({
   onSave,
@@ -37,27 +35,6 @@ export default function ManageLookup({
   )?.merged || emptyObject;
 
   const { _connectionId: connectionId } = resource;
-  const sampleData = useSelector(state =>
-    selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    }).data
-  );
-  // TODO: @aditya, check if we can get rid of getFormattedSampleData and use wrapSampleDataWithContext instead
-  const formattedSampleData = useMemo(
-    () =>
-      JSON.stringify(
-        getFormattedSampleData({
-          sampleData,
-          resourceType,
-        }),
-        null,
-        2
-      ),
-    [resourceType, sampleData]
-  );
   const isEdit = !!value.name;
   const handleSubmit = useCallback(formVal => {
     let lookupObj = {};
@@ -76,7 +53,7 @@ export default function ManageLookup({
         lookupTmp.expression = formVal._expression;
       } else {
         lookupTmp.map = {};
-        formVal._mapList.forEach(obj => {
+        (formVal._mapList || []).forEach(obj => {
           if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
         });
       }
@@ -90,7 +67,7 @@ export default function ManageLookup({
         lookupTmp.expression = formVal._expression;
       } else {
         lookupTmp.map = {};
-        formVal._mapList.forEach(obj => {
+        (formVal._mapList || []).forEach(obj => {
           if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
         });
       }
@@ -99,7 +76,7 @@ export default function ManageLookup({
     } else {
       if (formVal._mode === 'static') {
         lookupObj.map = {};
-        formVal._mapList.forEach(obj => {
+        (formVal._mapList || []).forEach(obj => {
           lookupObj.map[obj.export] = obj.import;
         });
       } else {
@@ -162,7 +139,6 @@ export default function ManageLookup({
       return rdbmsMetadata.getLookupMetadata({
         lookup: value,
         showDynamicLookupOnly,
-        sampleData: formattedSampleData,
         connectionId,
         resourceId,
         resourceType,
@@ -178,7 +154,7 @@ export default function ManageLookup({
       resourceType,
       flowId,
     });
-  }, [connectionId, extractFields, flowId, formattedSampleData, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
+  }, [connectionId, extractFields, flowId, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
 
   const formKey = useFormInitWithPermissions({
     disabled,
@@ -207,13 +183,11 @@ export default function ManageLookup({
         onClick={handleSubmit}>
         Save
       </DynaSubmit>
-      <Button
+      <TextButton
         data-test="cancelLookupForm"
-        onClick={onCancel}
-        variant="text"
-        color="secondary">
-        Close
-      </Button>
+        onClick={onCancel}>
+        Cancel
+      </TextButton>
     </div>
   );
 }

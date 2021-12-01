@@ -1,10 +1,11 @@
 /* eslint-disable react/state-in-constructor */
 /* eslint-disable react/no-unused-state */
 import React from 'react';
-import { Typography, Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import LogRocket from 'logrocket';
 import ModalDialog from '../../components/ModalDialog';
 import getRoutePath from '../../utils/routePaths';
+import { FilledButton } from '../../components/Buttons';
 
 export default class CrashReporter extends React.Component {
   constructor(props) {
@@ -35,16 +36,14 @@ export default class CrashReporter extends React.Component {
             Oops! Something caused our app to crash. <br />
             To resume working, please reload.
           </Typography>
-          <Button
+          <FilledButton
             data-test="reload"
-            variant="contained"
-            color="primary"
             onClick={() => {
               this.state.crashed = false;
               window.location.replace(getRoutePath(''));
             }}>
             Reload
-          </Button>
+          </FilledButton>
         </ModalDialog>
       );
     }

@@ -14,6 +14,7 @@ import { selectors } from '../../../../reducers';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { isMetaRequiredValuesMet } from '../../../../utils/assistant';
 import actions from '../../../../actions';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -123,15 +124,14 @@ export default function DynaApiParameters(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
+          color="secondary"
           disabled={disabled}
           data-test={id}
-          variant="outlined"
-          color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowApiParametersModal(true)}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
       <FieldMessage
         isValid={isValid}

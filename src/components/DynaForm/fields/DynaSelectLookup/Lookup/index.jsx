@@ -1,8 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import ManageLookup from '../../../../Lookup/Manage';
+import ManageLookup from '../../../../drawer/Lookup/Manage';
 import EditorDrawer from '../../../../AFE/Drawer';
+import { LOOKUP_FORM_KEY } from '../../../../../utils/constants';
+import DrawerContent from '../../../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
+import SaveButtonGroup from '../../../../drawer/Lookup/Manage/SaveButtonGroup';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -20,15 +24,16 @@ export default function Lookup({onSave, disabled, importId, flowId, lookups, ...
   const history = useHistory();
   const isEdit = history.location.pathname.includes('/lookups/edit');
   const {lookupName} = match.params;
+  const [remountCount, setRemountCount] = useState(0);
   const value = (lookups || []).find(({ name}) => name === lookupName);
 
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
   const handleSave = useCallback((id, val) => {
+    setRemountCount(remountCount => remountCount + 1);
     onSave(isEdit, val);
-    handleClose();
-  }, [handleClose, isEdit, onSave]);
+  }, [isEdit, onSave]);
 
   if (isEdit && !value?.name) {
     return null;
@@ -36,18 +41,32 @@ export default function Lookup({onSave, disabled, importId, flowId, lookups, ...
 
   return (
     <>
-      <ManageLookup
-        className={classes.wrapper}
-        onSave={handleSave}
-        value={value}
-        onCancel={handleClose}
-        disabled={disabled}
-        resourceId={importId}
-        resourceType="imports"
-        flowId={flowId}
-        {...props}
-        showDynamicLookupOnly
+      <DrawerContent>
+        <ManageLookup
+          className={classes.wrapper}
+          value={value}
+          onCancel={handleClose}
+          disabled={disabled}
+          resourceId={importId}
+          resourceType="imports"
+          flowId={flowId}
+          {...props}
+          showDynamicLookupOnly
+          formKey={LOOKUP_FORM_KEY}
+          remountCount={remountCount}
       />
+      </DrawerContent>
+      <DrawerFooter>
+        <SaveButtonGroup
+          parentOnSave={handleSave}
+          value={value}
+          onCancel={handleClose}
+          disabled={disabled}
+          resourceId={importId}
+          resourceType="imports"
+          formKey={LOOKUP_FORM_KEY}
+      />
+      </DrawerFooter>
       <EditorDrawer />
     </>
   );

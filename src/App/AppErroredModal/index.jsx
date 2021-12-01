@@ -1,11 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, useHistory } from 'react-router-dom';
-import { Typography, Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import ModalDialog from '../../components/ModalDialog';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import { FilledButton } from '../../components/Buttons';
 
 function AppErroredModal() {
   const history = useHistory();
@@ -21,17 +22,15 @@ function AppErroredModal() {
         Oops! Something caused our app to crash. <br />
         To resume working, please reload.
       </Typography>
-      <Button
+      <FilledButton
         data-test="reload"
-        variant="contained"
-        color="primary"
         onClick={() => {
           dispatch(actions.app.clearError());
           history.replace(getRoutePath(''));
           window.location.reload();
         }}>
         Reload
-      </Button>
+      </FilledButton>
     </ModalDialog>
   ) : null;
 }

@@ -1,13 +1,13 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import FormLabel from '@material-ui/core/FormLabel';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refreshFiltersButton: {
@@ -88,15 +88,14 @@ export default function RefreshSearchFilters({ editorId }) {
         <FormLabel disabled={disabled} required={required} >
           Refresh  search filters
         </FormLabel>
-        <Button
+        {/* Todo: (Karthik) please check,there is no text in children in that case we can use the IconButton */}
+        <TextButton
           disabled={disabled}
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
-          variant="text"
-          color="primary"
           onClick={handleRefreshFiltersClick}>
           <RefreshIcon />
-        </Button>
+        </TextButton>
       </div>
     </>
   );

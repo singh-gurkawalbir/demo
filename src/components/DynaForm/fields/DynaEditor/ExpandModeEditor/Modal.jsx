@@ -1,8 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import ModalDialog from '../../../../ModalDialog';
+import { OutlinedButton } from '../../../../Buttons';
+import FieldMessage from '../../FieldMessage';
+import { isJsonString } from '../../../../../utils/string';
 
 const useStyles = makeStyles(() => ({
   editorContainer: {
@@ -18,12 +20,24 @@ export default function EditorModal(props) {
   const { handleClose, label, editorProps } = props;
   const { id, value, mode, disabled, handleUpdate } = editorProps;
   const [content, setContent] = useState(value);
+  const [errorMessage, setErrorMessage] = useState('');
   const classes = useStyles();
 
   const handleSaveAndClose = useCallback(() => {
     handleUpdate(content);
     handleClose();
   }, [content, handleClose, handleUpdate]);
+
+  useEffect(() => {
+    if (id === 'settings') {
+      if (content && typeof content === 'string' && !isJsonString(content)) {
+        setErrorMessage('Settings must be a valid JSON');
+      } else {
+        setErrorMessage('');
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, id]);
 
   return (
     <ModalDialog
@@ -33,23 +47,31 @@ export default function EditorModal(props) {
       onClose={handleClose}
       aria-labelledby="form-dialog-title">
       <div>{label}</div>
-      <div className={classes.editorContainer}>
-        <CodeEditor
-          name={id}
-          value={content}
-          mode={mode}
-          readOnly={disabled}
-          onChange={setContent}
-        />
+      <div>
+        <div className={classes.editorContainer}>
+          <CodeEditor
+            name={id}
+            value={content}
+            mode={mode}
+            readOnly={disabled}
+            onChange={setContent}
+          />
+        </div>
+        { !!errorMessage && (
+          <FieldMessage
+            errorMessages={errorMessage}
+            isValid={false}
+          />
+        )}
       </div>
       <div>
-        <Button
+        <OutlinedButton
           data-test="showEditor"
           variant="contained"
           onClick={handleSaveAndClose}
           color="primary">
           Done
-        </Button>
+        </OutlinedButton>
       </div>
     </ModalDialog>
   );

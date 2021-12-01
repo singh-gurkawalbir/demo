@@ -2,7 +2,6 @@ import {
   call,
   put,
   takeEvery,
-  takeLeading,
   all,
   select,
 } from 'redux-saga/effects';
@@ -146,10 +145,12 @@ export function* fetchUIVersion() {
   try {
     resp = yield call(apiCallWithRetry, {
       path: '/ui/version?app=react',
+      // this is necessary because this route does not update the session
+      shouldNotUpdateAuthTimestamp: true,
     });
+
   // eslint-disable-next-line no-empty
-  } catch (e) {
-  }
+  } catch (e) {}
   if (resp?.version) {
     yield put(actions.app.updateUIVersion(resp.version));
   }
@@ -355,7 +356,7 @@ export function* initializeSession() {
     // Important: intializeApp should be the last thing to happen in this function
     } else {
       // existing session is invalid
-      yield put(actions.auth.logout({ isExistingSessionInvalid: true }));
+      yield put(actions.auth.logout(true));
     }
   } catch (e) {
     yield put(actions.auth.logout());
@@ -385,7 +386,6 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   // clear the store
   yield call(removeCSRFToken);
   yield put(actions.auth.clearStore());
-  yield put(actions.auth.abortAllSagasAndReset());
 }
 
 export function* signInWithGoogle({ returnTo }) {
@@ -449,7 +449,6 @@ export function* linkWithGoogle({ returnTo }) {
 }
 
 export const authenticationSagas = [
-  takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
   takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),

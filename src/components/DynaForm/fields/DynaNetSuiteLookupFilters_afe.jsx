@@ -2,7 +2,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import FormLabel from '@material-ui/core/FormLabel';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -10,6 +9,7 @@ import FilterPanel from '../../AFE/Editor/panels/NetSuiteLookupFilter';
 import Spinner from '../../Spinner';
 import RefreshIcon from '../../icons/RefreshIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refreshFilters: {
@@ -85,14 +85,11 @@ export default function DynaNetSuiteLookupFilters_afe(props) {
         <FormLabel disabled={disabled} required={required} >
           Refresh  search filters
         </FormLabel>
-        <Button
+        <TextButton
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
-          variant="text"
-          color="primary"
-          onClick={handleRefreshFiltersClick}>
-          <RefreshIcon />
-        </Button>
+          onClick={handleRefreshFiltersClick}
+          startIcon={<RefreshIcon />} />
       </div>
       {isEditorInitialized && (
       <FilterPanel

@@ -50,6 +50,9 @@ const useStyles = makeStyles(theme => ({
       color: 'inherit',
     },
   },
+  labelSpace: {
+    marginRight: 0,
+  },
 }));
 
 export default function DynaNSSavedSearch(props) {
@@ -138,6 +141,7 @@ export default function DynaNSSavedSearch(props) {
                   value="private"
                   control={<Radio color="primary" />}
                   label="Private"
+                  className={classes.labelSpace}
                 />
               </RadioGroup>
               <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />

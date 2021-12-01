@@ -1,13 +1,12 @@
-import Button from '@material-ui/core/Button';
 import React, { useCallback, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
-
 import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import ModalDialog from '../../../ModalDialog';
 import ActionButton from '../../../ActionButton';
-import ButtonGroup from '../../../ButtonGroup';
+import { OutlinedButton, TextButton } from '../../../Buttons';
+import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
@@ -50,21 +49,19 @@ export const ReferencedFieldsModal = props => {
         />
       </div>
 
-      <ButtonGroup>
-        <Button
+      <ActionGroup>
+        <OutlinedButton
           data-test="addSelected"
-          variant="outlined"
-          color="primary"
           onClick={() => {
             onFieldChange(id, selectedValues);
             handleClose();
           }}>
           Add Selected
-        </Button>
-        <Button data-test="closeReferencedFieldsDialog" onClick={handleClose}>
+        </OutlinedButton>
+        <TextButton data-test="closeReferencedFieldsDialog" onClick={handleClose}>
           Cancel
-        </Button>
-      </ButtonGroup>
+        </TextButton>
+      </ActionGroup>
     </ModalDialog>
   );
 };

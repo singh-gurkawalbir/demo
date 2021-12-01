@@ -3,18 +3,30 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
-import IntegrationInstallation from '../../views/Integration/App/drawers/Install';
-import IntegrationAppAddNewChild from '../../views/Integration/App/drawers/AddChild';
-import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
-import Marketplace from '../../views/MarketPlace';
-import MarketplaceList from '../../views/MarketplaceList';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../utils/constants';
 import retry from '../../utils/retry';
-import UpgradeEM from '../../views/UpgradeErrorManagement';
 import ResourceListInfo from '../../views/ResourceList/infoText';
 
+const IntegrationAppAddNewChild = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationAppAddNewChild' */ '../../views/Integration/App/drawers/AddChild'))
+);
+const IntegrationAppUninstallation = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationAppUninstallation' */ '../../views/Integration/App/drawers/Uninstall/index'))
+);
+const IntegrationInstallation = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'IntegrationInstallation' */ '../../views/Integration/App/drawers/Install'))
+);
+const Marketplace = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'Marketplace' */ '../../views/Marketplace'))
+);
+const MarketplaceList = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'MarketplaceList' */ '../../views/MarketplaceList'))
+);
+const UpgradeEM = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'UpgradeErrorManagement' */ '../../views/UpgradeErrorManagement'))
+);
 const RecycleBin = loadable(() =>
   retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
 );
@@ -33,7 +45,6 @@ const Permissions = loadable(() =>
 const Reports = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Reports' */ '../../views/Reports'))
 );
-
 const Playground = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );
@@ -181,11 +192,13 @@ export default function AppRouting() {
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flowBuilder/:flowId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/integrations/:integrationId/flows/sections/:sectionId/flowBuilder/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dataLoader/:flowId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId/dataLoader/:flowId'),
+          getRoutePath('/integrations/:integrationId/flows/sections/:sectionId/dataLoader/:flowId'),
         ]}>
         <FlowBuilder />
       </Route>
@@ -212,13 +225,19 @@ export default function AppRouting() {
 
       <Route
         path={[
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/sections/:sectionId/:dashboardTab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/:dashboardTab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/sections/:sectionId/:dashboardTab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/:dashboardTab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
+          getRoutePath('/integrations/:integrationId/dashboard/sections/:sectionId/:dashboardTab'),
           getRoutePath('/integrations/:integrationId/:tab/sections/:sectionId'),
+          getRoutePath('/integrations/:integrationId/dashboard/:dashboardTab'),
           getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
@@ -226,14 +245,16 @@ export default function AppRouting() {
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')}
+        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/sections/:sectionId/:dashboardTab'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')]}
         component={Integration}
         />
 
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')}
+        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/:dashboardTab'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')]}
         component={Integration}
         />
 
@@ -252,7 +273,7 @@ export default function AppRouting() {
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
       <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
-      <Route path={getRoutePath('/dashboard/:tab')} component={Dashboard} />
+      <Route path={getRoutePath('/dashboard/:dashboardTab')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route
         path={[

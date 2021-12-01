@@ -342,6 +342,9 @@ export const refGeneration = field => {
 export const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   const newField = { ...field };
 
+  if (newField.value === undefined) {
+    newField.value = (newField.type === 'multiselect') ? [] : null;
+  }
   if (!newField.type || newField.type === 'input') {
     if (!newField.type && newField?.supportsRefresh) {
       // specific to suitescript

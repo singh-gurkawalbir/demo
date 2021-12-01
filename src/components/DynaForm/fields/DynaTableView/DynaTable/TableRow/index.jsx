@@ -170,8 +170,9 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
   return null;
 };
 
-export const isCellValid = ({fieldValue, required, rowIndex, tableSize, touched}) => {
-  if (rowIndex === tableSize - 1 || !touched) { return true; }
+export const isCellValid = ({fieldValue, required, touched}) => {
+  if (!touched) return true;
+  if (touched && required && !fieldValue) return false;
 
   return !required || (required && fieldValue);
 };

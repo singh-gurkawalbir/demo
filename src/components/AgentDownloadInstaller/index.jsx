@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import Menu from '@material-ui/core/Menu';
-import { Button, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import actions from '../../actions';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles({
   donwloadInstallerBtn: {
@@ -37,9 +38,13 @@ export default function AgentDownloadInstaller({ agentId }) {
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleMenuClose}>
         <MenuItem onClick={handleInstallerClick('windows')}>Windows</MenuItem>
       </Menu>
-      <Button className={classes.donwloadInstallerBtn} data-test="downloadAgentInstaller" onClick={handleMenuClick}>
-        Download <ArrowDownIcon />
-      </Button>
+      <TextButton
+        endIcon={<ArrowDownIcon />}
+        className={classes.donwloadInstallerBtn}
+        data-test="downloadAgentInstaller"
+        onClick={handleMenuClick}>
+        Download
+      </TextButton>
     </>
   );
 }

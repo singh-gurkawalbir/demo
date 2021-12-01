@@ -232,6 +232,16 @@ describe('selectors testcases', () => {
     {
       _time: '2021-03-25T07:38:00.000Z',
       attribute: 'r',
+      by: 'auto',
+      flowId: 'flowId1',
+      resourceId: 'id3',
+      timeInMills: 1616657880000,
+      type: 'seir',
+      value: 30,
+    },
+    {
+      _time: '2021-03-25T07:38:00.000Z',
+      attribute: 'r',
       by: 'autopilot',
       flowId: 'flowId1',
       resourceId: 'id3',
@@ -325,7 +335,16 @@ describe('selectors testcases', () => {
       const data = selector(state, 'integrations', resourceId, 'resolved', ['flowId1', 'id3']);
 
       expect(data).toEqual({
-        autopilot: [{
+        auto: [{
+          _time: '2021-03-25T07:38:00.000Z',
+          attribute: 'r',
+          by: 'auto',
+          flowId: 'flowId1',
+          resourceId: 'id3',
+          timeInMills: 1616657880000,
+          type: 'seir',
+          value: 30,
+        }, {
           _time: '2021-03-25T07:38:00.000Z',
           attribute: 'r',
           by: 'autopilot',
@@ -352,7 +371,16 @@ describe('selectors testcases', () => {
       const data = selector(state, 'flows', resourceId, 'resolved', ['flowId1', 'id3']);
 
       expect(data).toEqual({
-        autopilot: [{
+        auto: [{
+          _time: '2021-03-25T07:38:00.000Z',
+          attribute: 'r',
+          by: 'auto',
+          flowId: 'flowId1',
+          resourceId: 'id3',
+          timeInMills: 1616657880000,
+          type: 'seir',
+          value: 30,
+        }, {
           _time: '2021-03-25T07:38:00.000Z',
           attribute: 'r',
           by: 'autopilot',

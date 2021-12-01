@@ -67,10 +67,12 @@ describe('isPreviewPanelAvailable util', () => {
     expect(isPreviewPanelAvailable(resource, 'imports')).toBe(false);
   });
   test('should return false if the resource is of blob type is not exports', () => {
-    const resource = { _id: 1, adaptorType: 'HTTPExport', type: 'blob'};
+    const blobResource1 = { _id: 1, adaptorType: 'HTTPExport', type: 'blob'};
+    const blobResource2 = { _id: 2, adaptorType: 'HTTPExport', file: {output: 'blobKeys'}};
     const newBlobResource = { _id: 'newID', resourceType: 'lookupFiles' };
 
-    expect(isPreviewPanelAvailable(resource, 'exports')).toBe(false);
+    expect(isPreviewPanelAvailable(blobResource1, 'exports')).toBe(false);
+    expect(isPreviewPanelAvailable(blobResource2, 'exports')).toBe(false);
     expect(isPreviewPanelAvailable(newBlobResource, 'exports')).toBe(false);
   });
   test('should return true for assistants', () => {

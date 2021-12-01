@@ -61,17 +61,15 @@ export default function DynaForm(props) {
   if (!fieldMap) return null;
 
   return (
-    <>
-      <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
-        <DynaFormGenerator
-          {...rest}
-          layout={layout}
-          fieldMap={fieldMap}
-          formKey={formKey}
-          key={remountKey}
+    <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
+      <DynaFormGenerator
+        {...rest}
+        layout={layout}
+        fieldMap={fieldMap}
+        formKey={formKey}
+        key={remountKey}
         />
-      </div>
-    </>
+    </div>
   );
 }
 

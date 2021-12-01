@@ -18,6 +18,7 @@ import UsersPanel from '../../../../components/ManageUsersPanel';
 import ConnectionsPanel from '../panels/Connections';
 import DashboardPanel from '../panels/Dashboard';
 import AddOnsPanel from '../panels/AddOns';
+import AnalyticsPanel from '../panels/Analytics';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import AddIcon from '../../../../components/icons/AddIcon';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
@@ -32,7 +33,7 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
+    Icon: DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -53,6 +54,12 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
+  ...(isUserInErrMgtTwoDotZero
+    ? [{ path: 'analytics',
+      label: 'Analytics',
+      Icon: GraphIcon,
+      Panel: AnalyticsPanel }]
+    : []),
   {
     path: 'users',
     label: 'Users',
@@ -71,7 +78,7 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(3),
-    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px + 96px))`,
+    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
     overflowY: 'auto',
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     '& > [role = tabpanel]': {

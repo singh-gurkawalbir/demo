@@ -1,17 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ArrowPopper from '../ArrowPopper';
-import ButtonGroup from '../ButtonGroup';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
-import IconTextButton from '../IconTextButton';
+import ActionGroup from '../ActionGroup';
+import { OutlinedButton, TextButton} from '../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -142,15 +141,15 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
 
   return (
     <>
-      <IconTextButton
+      <TextButton
         disabled={disabled}
+        startIcon={<DebugIcon />}
         onClick={toggleClick}
         data-test="refreshResource">
-        <DebugIcon />
         {debugUntil ? (
           <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
-      </IconTextButton>
+      </TextButton>
       <ArrowPopper
         disabled={disabled}
         open={!!anchorEl}
@@ -189,14 +188,14 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
                 </div>
               </div>
               <div className={classes.actions}>
-                <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                <ActionGroup>
+                  <OutlinedButton onClick={handleSave}>
                     Apply
-                  </Button>
-                  <Button variant="text" color="primary" onClick={handleClose}>
+                  </OutlinedButton>
+                  <TextButton onClick={handleClose}>
                     Cancel
-                  </Button>
-                </ButtonGroup>
+                  </TextButton>
+                </ActionGroup>
               </div>
             </div>
           </div>

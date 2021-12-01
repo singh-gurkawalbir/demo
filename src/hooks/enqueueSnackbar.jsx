@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import CloseIcon from '../components/icons/CloseIcon';
+import { TextButton } from '../components/Buttons';
 
 export default function useEnqueueSnackbar() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -31,13 +31,13 @@ export default function useEnqueueSnackbar() {
         action: key => (
           <>
             {showUndo && (
-              <Button
+              <TextButton
                 onClick={() => {
                   closeSnackbar(key);
                   handleClose && handleClose(null, 'undo');
                 }}>
                 UNDO
-              </Button>
+              </TextButton>
             )}
             <IconButton
               key="close"

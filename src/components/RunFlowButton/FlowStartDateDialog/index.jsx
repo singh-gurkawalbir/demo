@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ModalDialog from '../../ModalDialog';
@@ -9,9 +8,10 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
 import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import ButtonGroup from '../../ButtonGroup';
 import adjustTimezone from '../../../utils/adjustTimezone';
 import { convertUtcToTimezone } from '../../../utils/date';
+import ActionGroup from '../../ActionGroup';
+import { TextButton } from '../../Buttons';
 
 export default function FlowStartDateDialog(props) {
   const [defaultDate] = useState(new Date());
@@ -81,7 +81,7 @@ export default function FlowStartDateDialog(props) {
       <div>Delta flow</div>
       <div>
         <DynaForm formKey={formKey} />
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             ignoreFormTouchedCheck
             formKey={formKey}
@@ -89,10 +89,10 @@ export default function FlowStartDateDialog(props) {
             onClick={handleSubmit}>
             Run
           </DynaSubmit>
-          <Button data-test="close" onClick={cancelDialog}>
+          <TextButton data-test="close" onClick={cancelDialog}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </div>
     </ModalDialog>
   );

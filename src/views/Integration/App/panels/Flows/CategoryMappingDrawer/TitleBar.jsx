@@ -7,9 +7,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../reducers';
 import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import Help from '../../../../../../components/Help';
 import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
+import { TextButton } from '../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -102,14 +102,13 @@ export default function DrawerTitleBar({
             }`}
       </Typography>
       {!addCategory && (
-      <IconTextButton
-        variant="text"
+      <TextButton
+        startIcon={<AddIcon />}
         data-test="addCategory"
         onClick={handleAddCategoryClick}
-        color="primary"
         className={classes.button}>
-        <AddIcon /> Add Category
-      </IconTextButton>
+        Add Category
+      </TextButton>
       )}
       {/* TODO:Sravan we need to add the help for add category and variation mapping */}
       {help && (

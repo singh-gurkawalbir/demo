@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
@@ -10,11 +9,12 @@ import {
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';
-import ButtonGroup from '../../../ButtonGroup';
+import ActionGroup from '../../../ActionGroup';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
+import { TextButton } from '../../../Buttons';
 
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -209,7 +209,7 @@ export default function UserForm({
           formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
             disabled={disableSave}
@@ -217,14 +217,12 @@ export default function UserForm({
             onClick={onSaveClick}>
             {disableSave ? 'Saving...' : 'Save'}
           </DynaSubmit>
-          <Button
+          <TextButton
             data-test="cancelUserForm"
-            onClick={onCancelClick}
-            variant="text"
-            color="primary">
+            onClick={onCancelClick}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </LoadResources>
   );

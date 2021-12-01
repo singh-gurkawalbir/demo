@@ -1229,7 +1229,7 @@ describe('convertToReactFormFields', () => {
             showLookup: false,
             required: false,
             readOnly: false,
-            defaultValue: 'abc',
+            defaultValue: '',
           },
         },
         layout: {
@@ -1542,7 +1542,7 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             { id: 'id_some.thing', fieldType: 'something' },
           ],
@@ -1603,7 +1603,7 @@ describe('convertToReactFormFields', () => {
             required: true,
             readOnly: false,
             type: 'multiselect',
-            defaultValue: [],
+            defaultValue: '',
           },
           id_text: {
             id: 'id_text',
@@ -1681,7 +1681,7 @@ describe('convertToReactFormFields', () => {
                 pattern: '^[\\d]+$',
               },
             },
-            defaultValue: 121,
+            defaultValue: '',
           },
           id_input2: {
             id: 'id_input2',
@@ -1690,7 +1690,7 @@ describe('convertToReactFormFields', () => {
             required: false,
             readOnly: false,
             type: 'textwithflowsuggestion',
-            defaultValue: '123',
+            defaultValue: '',
             showLookup: false,
           },
           'id_some/thing': {
@@ -1821,12 +1821,12 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             {
               id: 'id_input2',
               name: 'Input2',
-              defaultValue: 123,
+              defaultValue: '',
             },
             { id: 'id_some.thing', fieldType: 'something' },
           ],
@@ -1883,7 +1883,7 @@ describe('convertToReactFormFields', () => {
             required: true,
             readOnly: false,
             type: 'multiselect',
-            defaultValue: [],
+            defaultValue: '',
           },
           id_text: {
             id: 'id_text',
@@ -1961,7 +1961,7 @@ describe('convertToReactFormFields', () => {
                 pattern: '^[\\d]+$',
               },
             },
-            defaultValue: 121,
+            defaultValue: '',
           },
           id_input2: {
             id: 'id_input2',
@@ -1970,7 +1970,7 @@ describe('convertToReactFormFields', () => {
             required: false,
             readOnly: false,
             type: 'textwithflowsuggestion',
-            defaultValue: '123',
+            defaultValue: '',
             showLookup: false,
           },
           'id_some/thing': {
@@ -2100,7 +2100,7 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             {
               id: 'id_input2',
@@ -2262,6 +2262,30 @@ const assistantData = {
                 paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
               },
             ],
+          },
+          {
+            id: 'projects',
+            name: 'Projects',
+            endpoints: [{
+              id: 'get_projects',
+              url: '/api/workspaces/:_workspace_id/projects',
+              name: 'Get Projects',
+              resourcePath: '',
+              pathParameters: [
+                {
+                  id: 'workspace_id',
+                  name: 'Workspace Id',
+                  fieldType: 'integer',
+                },
+              ],
+              queryParameters: [
+                {
+                  id: 'filter[]=name',
+                  name: 'Name',
+                  fieldType: 'input',
+                },
+              ],
+            }],
           },
         ],
       },
@@ -2618,6 +2642,65 @@ describe('convertFromExport', () => {
           allowUndefinedResource: false,
           pagingMethod: 'nextpageurl',
           nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'get_projects',
+        operationDetails: {
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
+          headersMetadata: [],
+          id: 'get_projects',
+          name: 'Get Projects',
+          pathParameters: [
+            {
+              fieldType: 'integer',
+              id: 'workspace_id',
+              name: 'Workspace Id',
+            },
+          ],
+          queryParameters: [
+            {
+              fieldType: 'input',
+              id: 'filter[]=name',
+              name: 'Name',
+            },
+          ],
+          resourcePath: '',
+          url: '/api/workspaces/:_workspace_id/projects',
+        },
+        pathParams: {
+          workspace_id: '111',
+        },
+        queryParams: {
+          'filter[]=name': '123',
+        },
+        resource: 'projects',
+        version: 'v1',
+      },
+      {
+        assistant: 'liquidplanner',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'projects',
+          version: 'v1',
+          operation: 'get_projects',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          relativeURI: '/api/workspaces/111/projects?filter[]=name=123',
+          method: 'GET',
+          pagingMethod: 'linkheader',
+          allowUndefinedResource: false,
+          linkHeaderRelation: 'next',
         },
       },
       assistantData,
@@ -3147,6 +3230,182 @@ describe('convertFromImport', () => {
       adaptorType: 'RESTImport',
 
     }, restAssistantData, 'rest'],
+    [
+      {
+        bodyParams: {},
+        lookupType: 'lookup',
+        lookupQueryParams: {
+          'filter[]=name': '{{test123}}',
+        },
+        lookupUrl: '/api/workspaces/:_workspace_id/projects',
+        lookups: {
+          project_id: {
+            operation: 'get_projects',
+          },
+        },
+        operation: 'create_or_update_a_project',
+        operationDetails: {
+          headers: {},
+          headersMetadata: [],
+          howToFindIdentifier: {
+            lookup: {
+              extract: 'id',
+              id: 'get_projects',
+              url: '/api/workspaces/:_workspace_id/projects',
+            },
+          },
+          id: 'create_or_update_a_project',
+          lookupOperationDetails: {
+            headers: {},
+            headersMetadata: [],
+            id: 'get_projects',
+            name: 'Get Projects',
+            paging: {
+              pageArgument: 'page',
+              pagingMethod: 'pageargument',
+            },
+            pathParameters: [
+              {
+                fieldType: 'integer',
+                id: 'workspace_id',
+                name: 'Workspace Id',
+              },
+            ],
+            queryParameters: [
+              {
+                fieldType: 'input',
+                id: 'filter[]=name',
+                name: 'Name',
+              },
+            ],
+            resourcePath: '',
+            url: '/api/workspaces/:_workspace_id/projects',
+          },
+          method: [
+            'PUT',
+            'POST',
+          ],
+          name: 'Create or Update a Project',
+          parameters: [
+            {
+              id: 'workspace_id',
+              in: 'path',
+              name: 'Workspace Id',
+              required: true,
+            },
+            {
+              id: 'project_id',
+              in: 'path',
+              isIdentifier: true,
+              required: true,
+            },
+          ],
+          pathParameters: [],
+          queryParameters: [],
+          url: [
+            '/api/workspaces/:_workspace_id/projects/:_project_id',
+            '/api/workspaces/:_workspace_id/projects',
+          ],
+        },
+        pathParams: {
+          project_id: 'project_id',
+          workspace_id: '{{id}}',
+        },
+        queryParams: {},
+        resource: 'projects',
+        sampleData: undefined,
+        version: 'v1',
+      },
+      {
+        assistant: 'liquidplanner',
+        assistantMetadata: {
+          resource: 'projects',
+          version: 'v1',
+          operation: 'create_or_update_a_project',
+          lookups: {
+            project_id: {
+              operation: 'get_projects',
+            },
+          },
+        },
+        lookups: [
+          {
+            method: 'GET',
+            postBody: '',
+            name: 'project_id',
+            extract: 'id',
+            relativeURI: '/api/workspaces/{{id}}/projects?filter[]=name={{test123}}',
+          },
+        ],
+        http: {
+          relativeURI: [
+            '/api/workspaces/{{{id}}}/projects/{{{lookup.project_id}}}',
+            '/api/workspaces/{{{id}}}/projects',
+          ],
+          method: [
+            'PUT',
+            'POST',
+          ],
+          body: [
+            null,
+            null,
+          ],
+          batchSize: 1,
+          ignoreLookupName: 'project_id',
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          requestType: [
+            'UPDATE',
+            'CREATE',
+          ],
+          strictHandlebarEvaluation: true,
+          sendPostMappedData: true,
+          formType: 'assistant',
+          lookups: [
+            {
+              method: 'GET',
+              name: 'project_id',
+              extract: 'id',
+              relativeURI: '/api/workspaces/{{{id}}}/projects?filter[]=name={{{test123}}}',
+              body: '',
+              useImportHeaders: false,
+            },
+          ],
+        },
+        rest: {
+          relativeURI: [
+            '/api/workspaces/{{id}}/projects/{{{project_id}}}',
+            '/api/workspaces/{{id}}/projects',
+          ],
+          method: [
+            'PUT',
+            'POST',
+          ],
+          body: [
+            null,
+            null,
+          ],
+          ignoreLookupName: 'project_id',
+          requestType: [
+            'UPDATE',
+            'CREATE',
+          ],
+          lookups: [
+            {
+              method: 'GET',
+              postBody: '',
+              name: 'project_id',
+              extract: 'id',
+              relativeURI: '/api/workspaces/{{id}}/projects?filter[]=name={{test123}}',
+            },
+          ],
+        },
+        adaptorType: 'RESTImport',
+
+      },
+      restAssistantData,
+      'rest'],
   ];
 
   each(testCases).test(

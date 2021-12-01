@@ -516,25 +516,6 @@ export default {
     blobKeyPath: { fieldId: 'blobKeyPath' },
     'http.response.successValues': { fieldId: 'http.response.successValues' },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
-    createNewData: {
-      id: 'createNewData',
-      type: 'labeltitle',
-      label: 'Create new data',
-      visibleWhenAll: [
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
       helpKey: 'import.http.method',
@@ -765,29 +746,6 @@ export default {
         return '';
       },
     },
-    upateExistingData: {
-      id: 'upateExistingData',
-      type: 'labeltitle',
-      label: 'Upate existing data',
-      visibleWhenAll: [
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
       helpKey: 'import.http.method',
@@ -992,44 +950,6 @@ export default {
         return '';
       },
     },
-    ignoreExistingData: {
-      id: 'ignoreExistingData',
-      type: 'labeltitle',
-      label: 'Ignore existing records',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    ignoreNewData: {
-      id: 'ignoreNewData',
-      type: 'labeltitle',
-      label: 'Ignore new data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.existingLookupType': {
       fieldId: 'http.existingLookupType',
     },
@@ -1047,21 +967,6 @@ export default {
     },
     'http.ignoreNewLookupName': {
       fieldId: 'http.ignoreNewLookupName',
-    },
-    sampleDataTitle: {
-      id: 'sampleDataTitle',
-      type: 'labeltitle',
-      label: 'Do you have sample data?',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-        {
-          field: 'http.method',
-          isNot: ['DELETE'],
-        },
-      ],
     },
     sampleData: {
       fieldId: 'sampleData',
@@ -1121,7 +1026,7 @@ export default {
         containers: [
           {
             collapsed: true,
-            label: 'Create new data',
+            label: 'Create new records',
             fields: [
               'http.compositeMethodCreate',
               'http.relativeURICreate',
@@ -1130,17 +1035,17 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Ignore existing records',
+            label: 'Identify existing records',
             fields: ['http.existingLookupType', 'http.ignoreExistingExtract', 'http.ignoreExistingLookupName'],
           },
           {
             collapsed: true,
-            label: 'Ignore new data',
+            label: 'Identify existing records',
             fields: ['http.newLookupType', 'http.ignoreNewExtract', 'http.ignoreNewLookupName'],
           },
           {
             collapsed: true,
-            label: 'Update existing data',
+            label: 'Update existing records',
             fields: [
               'http.compositeMethodUpdate',
               'http.relativeURIUpdate',
@@ -1166,7 +1071,7 @@ export default {
         containers: [
           {
             collapsed: true,
-            label: 'Create new data',
+            label: 'Create new records',
             fields: [
               'http.responseIdPathCreate',
               'http.successPathCreate',
@@ -1175,7 +1080,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Update existing data',
+            label: 'Update existing records',
             fields: [
               'http.responseIdPathUpdate',
               'http.successPathUpdate',

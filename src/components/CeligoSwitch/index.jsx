@@ -3,6 +3,7 @@ import Toggle from 'react-toggle';
 import clsx from 'clsx';
 import 'react-toggle/style.css';
 import { makeStyles } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import SwitchOffIcon from '../icons/Switch/Off';
 import SwitchOnIcon from '../icons/Switch/On';
 
@@ -75,7 +76,7 @@ export default function CeligoSwitch({
   return (
     <Toggle
       {...props}
-      className={clsx(classes.customSwitch, className, {[classes.customSwitchChecked]: checked})}
+      className={clsx(classes.customSwitch, {[classes.customSwitchChecked]: checked}, className)}
       disabled={disabled}
       onChange={onChange}
       checked={checked}
@@ -86,3 +87,13 @@ export default function CeligoSwitch({
     />
   );
 }
+
+CeligoSwitch.propTypes = {
+  disabled: PropTypes.bool,
+  checked: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
+};
+
+CeligoSwitch.defaultProps = {
+  checked: false,
+};

@@ -1,8 +1,8 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import openExternalUrl from '../../utils/window';
 import RawHtml from '../RawHtml';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles({
   jobErrorMessage: {
@@ -51,25 +51,23 @@ export default function JobErrorMessage({
       <RawHtml className={classes.jobErrorMessage} html={message} options={{ allowedTags: ['a'] }} />
       <div>
         {exportRecordLink && (
-          <Button
+          <TextButton
             data-test="viewExportRecord"
-            variant="text"
             onClick={() => {
               handleRecordLinkClick(exportRecordLink);
             }}>
             View export record
-          </Button>
+          </TextButton>
         )}
         {exportRecordText}
         {importRecordLink && (
-          <Button
+          <TextButton
             data-test="viewImportRecord"
-            variant="text"
             onClick={() => {
               handleRecordLinkClick(importRecordLink);
             }}>
             View import record
-          </Button>
+          </TextButton>
         )}
         {importRecordText}
       </div>

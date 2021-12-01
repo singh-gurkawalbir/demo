@@ -18,9 +18,10 @@ import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL, HOME_PAGE_PATH} from '../../utils/constants';
+import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL, HOME_PAGE_PATH, COMMUNITY_URL} from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
+import CommunityIcon from '../../components/icons/CommunityIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
 import MyApiIcon from '../../components/icons/MyApiIcon';
 import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
@@ -127,6 +128,13 @@ export default function menuItems(
           dataTest: 'help_center',
         },
         {
+          label: 'Community',
+          Icon: CommunityIcon,
+          component: 'a',
+          href: COMMUNITY_URL,
+          dataTest: 'community',
+        },
+        {
           label: "What's new",
           Icon: WhatsNewIcon,
           component: 'a',
@@ -157,8 +165,13 @@ export default function menuItems(
   if (['monitor', 'tile'].includes(accessLevel)) {
     items = items.filter(i => !['Resources'].includes(i.label));
     const toolsSubSectIndex = items.findIndex(i => i.label === 'Tools');
+    let toolsSectionMenuItems = ['Reports'];
 
-    items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => ['Reports', 'Dev playground'].includes(i.label));
+    if (isDeveloper) {
+      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Dev playground'];
+    }
+
+    items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => toolsSectionMenuItems.includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
     const toolItems = items.find(i => i.label === 'Tools');

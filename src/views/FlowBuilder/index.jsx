@@ -3,11 +3,11 @@ import React, { useEffect } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
+import { selectors } from '../../reducers';
 import ResourceDrawer from '../../components/drawer/Resource';
 import { selectors } from '../../reducers';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
-import ResponseMappingDrawer from '../../components/ResponseMapping/Drawer';
 import MappingDrawerRoute from '../MappingDrawer';
 import BottomDrawer from './drawers/BottomDrawer';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
@@ -17,10 +17,17 @@ import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
-import FlowBuilderBody from './FlowBuilderBody';
-import Redirection from './Redirection';
+import loadable from '../../utils/loadable';
+import retry from '../../utils/retry';
 import Spinner from '../../components/Spinner';
 import actions from '../../actions';
+
+const FlowBuilderBody = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
+);
+const Redirection = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
+);
 
 function FBComponent({flowId, integrationId, childId}) {
   return (
@@ -82,7 +89,6 @@ export default function FlowBuilder() {
 
         <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
         <MappingDrawerRoute integrationId={integrationId} />
-        <ResponseMappingDrawer integrationId={integrationId} />
       </Redirection>
     </LoadResources>
   );

@@ -1,12 +1,14 @@
-import Button from '@material-ui/core/Button';
+
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, ButtonGroup } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-
 import RefreshableTreeComponent from './RefreshableTreeComponent';
 import ModalDialog from '../../../../components/ModalDialog';
+import FilledButton from '../../../../components/Buttons/FilledButton';
+import TextButton from '../../../../components/Buttons/TextButton';
+import ActionGroup from '../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
@@ -94,18 +96,18 @@ export default function SalesforceSubListDialog() {
       </div>
 
       <div className={classes.btnGroup}>
-        <ButtonGroup>
-          <Button
+        <ActionGroup>
+          <FilledButton
             data-test="addSelected"
-            variant="outlined"
-            color="primary"
             onClick={handleSave}>
             Add Selected
-          </Button>
-          <Button data-test="closeReferencedFieldsDialog" onClick={handleClose}>
+          </FilledButton>
+          <TextButton
+            data-test="closeReferencedFieldsDialog"
+            onClick={handleClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </div>
     </ModalDialog>
   );

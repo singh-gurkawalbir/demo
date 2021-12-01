@@ -101,6 +101,7 @@ const config = {
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
       LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
+      CDN_BASE_URI: JSON.stringify(process.env.CDN_BASE_URI),
       SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER: JSON.stringify(process.env.SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER),
       SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER: JSON.stringify(process.env.SECOND_SCHEDULE_SHIFT_FOR_FLOWS_CREATED_AFTER),
       GA_KEY_1: JSON.stringify(process.env.GA_KEY_1),
@@ -128,6 +129,7 @@ module.exports = (env, argv) => {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const k of ['RELEASE_VERSION', 'LOGROCKET_IDENTIFIER', 'LOGROCKET_IDENTIFIER_EU']) {
+    // eslint-disable-next-line no-console
     console.log('Custom Environment Variable:', k, '=', process.env[k]);
   }
 
@@ -165,13 +167,18 @@ module.exports = (env, argv) => {
     config.optimization.minimize = false;
   }
   const getProxyOpts = () => {
+    // eslint-disable-next-line no-console
     console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
 
     const target = dotenv.API_ENDPOINT || '';
     const secure = target && target.toLowerCase().startsWith('https://');
 
+    // eslint-disable-next-line no-console
     console.log(`API Target: ${target}`);
-    if (secure) console.log('Cookie rewrite needed for secure API host.');
+    if (secure) {
+      // eslint-disable-next-line no-console
+      console.log('Cookie rewrite needed for secure API host.');
+    }
 
     const opts = {
       target,
@@ -198,6 +205,7 @@ module.exports = (env, argv) => {
         const setCookie = proxyRes.headers['set-cookie'];
 
         if (setCookie) {
+          // eslint-disable-next-line no-param-reassign
           proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
             ? setCookie.map(c => swapDomain(removeSecure(c)))
             : swapDomain(removeSecure(setCookie));

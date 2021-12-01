@@ -1,19 +1,16 @@
 import React, {useCallback, useState} from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
-import ButtonGroup from '../../ButtonGroup';
 import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
-import getRoutePath from '../../../utils/routePaths';
 import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
-import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import ActionGroup from '../../ActionGroup';
+import { FilledButton, TextButton} from '../../Buttons';
+import useHandleDelete from '../../../views/Integration/hooks/useHandleDelete';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -30,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     display: 'flex',
     width: '89%',
-    height: 45,
+    maxHeight: 45,
     overflowY: 'auto',
     wordBreak: 'break-word',
   },
@@ -53,13 +50,6 @@ const useStyles = makeStyles(theme => ({
   expiredIcon: {
     color: theme.palette.error.main,
   },
-  closeIconBtn: {
-    float: 'right',
-    padding: 0,
-  },
-  closeIcon: {
-    fontSize: 18,
-  },
   contentWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -69,11 +59,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired, supportsMultiStore}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
   const classes = useStyles();
-  const history = useHistory();
   const dispatch = useDispatch();
-  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
@@ -97,35 +85,8 @@ export default function TileNotification({ content, expired, connectorId, licens
     setUpgradeRequested(true);
     dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
   }, [connectorId, dispatch, licenseId]);
-  const handleUninstall = useCallback(event => {
-    event.stopPropagation();
-    if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
-      enquesnackbar({ message: 'Contact your account owner to uninstall this integration app.' });
-    } else if (supportsMultiStore) {
-      enquesnackbar({ message: 'To uninstall, please navigate to Admin → Uninstall inside the Integration App and select the desired store.', variant: 'error' });
-    } else {
-      confirmDialog({
-        title: 'Confirm uninstall',
-        message: 'Are you sure you want to uninstall?',
-        buttons: [
-          {
-            label: 'Uninstall',
-            onClick: () => {
-              history.push(
-                getRoutePath(
-                  `integrationapps/${integrationAppTileName}/${integrationId}/uninstall`
-                )
-              );
-            },
-          },
-          {
-            label: 'Cancel',
-            color: 'secondary',
-          },
-        ],
-      });
-    }
-  }, [accessLevel, confirmDialog, enquesnackbar, history, integrationAppTileName, integrationId, supportsMultiStore]);
+
+  const handleUninstall = useHandleDelete(integrationId);
 
   return (
     <div className={classes.trialExpireWrapper}>
@@ -140,30 +101,38 @@ export default function TileNotification({ content, expired, connectorId, licens
       </div>
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
         {single && !showTrialLicenseMessage && (
-          <Button
-            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivate" variant="outlined"
-            color="primary">
+          <FilledButton
+            disabled={upgradeRequested}
+            onClick={onClickRenewOrReactivateButton}
+            data-test="RenewOrReactivate"
+           >
             {resumable ? 'Reactivate' : 'Renew'}
-          </Button>
+          </FilledButton>
         )}
         {single && showTrialLicenseMessage && (
-          <Button
-            disabled={upgradeRequested} onClick={onClickBuyButton} data-test="buy" variant="outlined"
-            color="primary">
+          <FilledButton
+            disabled={upgradeRequested}
+            onClick={onClickBuyButton}
+            data-test="buy"
+            >
             Buy
-          </Button>
+          </FilledButton>
         )}
         {!single && (
-        <ButtonGroup>
-          <Button
-            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
-            color="primary">
+        <ActionGroup>
+          <FilledButton
+            disabled={upgradeRequested}
+            onClick={onClickRenewOrReactivateButton}
+            data-test="RenewOrReactivateDouble"
+           >
             {showTrialLicenseMessage ? 'Buy' : 'Renew'}
-          </Button>
-          <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
+          </FilledButton>
+          <TextButton
+            data-test="uninstall"
+            onClick={handleUninstall}>
             Uninstall
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
         )}
       </div>
       <div />

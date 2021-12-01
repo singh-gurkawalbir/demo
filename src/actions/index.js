@@ -109,8 +109,6 @@ const auth = {
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-
-  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, { accountToResetTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -351,6 +349,30 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    flowGroups: {
+      createOrUpdate: (integrationId, flowGroupId, formKey) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
+          integrationId,
+          flowGroupId,
+          formKey,
+        }),
+      createOrUpdateFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {error}),
+      delete: (integrationId, flowGroupId, flowIds) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, {
+          integrationId,
+          flowGroupId,
+          flowIds,
+        }),
+      deleteFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
+      shiftOrder: (integrationId, flowGroupId, newIndex) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
+          integrationId,
+          flowGroupId,
+          newIndex,
+        }),
+    },
   },
   connections: {
     pingAndUpdate: (connectionId, parentContext) =>
@@ -927,12 +949,13 @@ const integrationApp = {
         formSubmission,
         stackId,
       }),
-    updateStep: (integrationId, installerFunction, update, formMeta) =>
+    updateStep: (integrationId, installerFunction, update, formMeta, url) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
         formMeta,
+        url,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
@@ -984,6 +1007,17 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
       }),
+  },
+  templates: {
+    intsaller: {
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+          id,
+          connectionId,
+          installerFunction,
+          isFrameWork2,
+        }),
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1273,6 +1307,8 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+    pinIntegration: integrationKey => action(actionTypes.PIN_INTEGRATION, { integrationKey }),
+    unpinIntegration: integrationKey => action(actionTypes.UNPIN_INTEGRATION, { integrationKey }),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id, isAccountTransfer) =>
@@ -1342,13 +1378,14 @@ const flowData = {
       stage,
       error,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh, formKey) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
       refresh,
+      formKey,
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
@@ -1378,11 +1415,19 @@ const resourceFormSampleData = {
   setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
+  polling: {
+    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.POLLING.SLOW),
+    resume: () => action(actionTypes.POLLING.RESUME),
+    stop: () => action(actionTypes.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+  },
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
   reload: () => action(actionTypes.APP_RELOAD),
@@ -1602,8 +1647,8 @@ const accessToken = {
 const job = {
   dashboard: {
     running: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
@@ -1622,8 +1667,8 @@ const job = {
       receivedFamily: ({ collection }) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
@@ -2077,10 +2122,11 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: ({ flowId, resourceId }) =>
+  init: ({ flowId, resourceId, resourceType }) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
       resourceId,
       flowId,
+      resourceType,
     }),
   initComplete: (options = {}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),

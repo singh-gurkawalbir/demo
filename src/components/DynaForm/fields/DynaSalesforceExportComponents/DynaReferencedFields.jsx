@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import { selectors } from '../../../../reducers';
@@ -12,6 +11,7 @@ import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
@@ -97,13 +97,11 @@ const FirstLevelModal = props => {
         }}>
         Save
       </DynaSubmit>
-      <Button
+      <TextButton
         data-test="closeReferencedFields"
-        onClick={handleClose}
-        variant="text"
-        color="primary">
+        onClick={handleClose}>
         Cancel
-      </Button>
+      </TextButton>
     </ModalDialog>
   );
 };

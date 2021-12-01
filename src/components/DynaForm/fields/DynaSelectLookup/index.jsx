@@ -11,6 +11,7 @@ import ManageLookupDrawer from '../../../drawer/Lookup';
 import lookupUtil from '../../../../utils/lookup';
 import useFormContext from '../../../Form/FormContext';
 import EllipsisActionMenu from '../../../EllipsisActionMenu';
+import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,9 +20,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   actions: {
-    flexDirection: 'row !important',
-    display: 'flex',
-    alignItems: 'flex-start',
     marginTop: theme.spacing(4),
   },
 
@@ -81,8 +79,9 @@ export default function DynaSelectLookup(props) {
         onFieldChange(lookupFieldId, modifiedLookup);
       }
       onFieldChange(id, newValue.name);
+      history.replace(`${match.url}/lookups/edit/${newValue.name}`);
     },
-    [adaptorType, id, lookups, onFieldChange, value],
+    [adaptorType, history, id, lookups, match.url, onFieldChange, value],
   );
   const handleManageLookupsSave = useCallback(
     lookups => {
@@ -100,7 +99,7 @@ export default function DynaSelectLookup(props) {
     <>
       <div className={classes.root}>
         <DynaSelect {...props} options={lookupOptions} />
-        <div className={classes.actions} >
+        <ActionGroup className={classes.actions}>
           <ActionButton
             data-test="addNewConditionalLookup"
             onClick={handleAddLookupClick}>
@@ -113,7 +112,7 @@ export default function DynaSelectLookup(props) {
             <EditIcon />
           </ActionButton>
           <EllipsisActionMenu actionsMenu={actionsMenu} onAction={handleManageLookupsClick} />
-        </div>
+        </ActionGroup>
       </div>
 
       <ManageLookupDrawer

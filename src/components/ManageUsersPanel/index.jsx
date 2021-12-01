@@ -3,10 +3,10 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
-import IconTextButton from '../IconTextButton';
 import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   userListWrapper: {
@@ -47,9 +47,9 @@ export default function ManageUsersPanel({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
-          <IconTextButton onClick={handleInvite}>
-            <AddIcon /> Invite user
-          </IconTextButton>
+          <TextButton onClick={handleInvite} startIcon={<AddIcon />}>
+            Invite user
+          </TextButton>
         )}
       </PanelHeader>
       <UsersList integrationId={integrationId} childId={childId} className={classes.userListWrapper} />

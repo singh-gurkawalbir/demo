@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Typography, Button, Divider } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
@@ -9,26 +9,20 @@ import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
-  content: {
-    marginLeft: theme.spacing(2),
-  },
   button: {
-    margin: theme.spacing(3, 0),
-    color: theme.palette.error.main,
-    borderColor: theme.palette.error.main,
-    '&:hover': {
-      borderColor: theme.palette.error.main,
-      color: theme.palette.error.light,
-    },
-  },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
+    margin: theme.spacing(3, 0, 3, 2),
   },
   divider: {
-    marginTop: '30px',
-    marginBottom: '30px',
+    margin: theme.spacing(2, 0),
+  },
+  message: {
+    padding: theme.spacing(0, 2),
+  },
+  parentViewMessage: {
+    padding: theme.spacing(2),
   },
 }));
 
@@ -63,7 +57,7 @@ export default function UninstallSection({ childId, integrationId }) {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -74,7 +68,7 @@ export default function UninstallSection({ childId, integrationId }) {
       <div className={classes.root}>
         <PanelHeader title="Uninstall" />
         <Divider />
-        <div className={classes.content}>
+        <div className={classes.parentViewMessage}>
           <span>
             {getEmptyMessage(integration?.settings?.storeLabel, 'uninstall')}
           </span>
@@ -87,8 +81,8 @@ export default function UninstallSection({ childId, integrationId }) {
     <>
       <PanelHeader title="Uninstall" />
 
-      <div className={classes.content}>
-        <Typography>
+      <div>
+        <Typography className={classes.message}>
           Use this page to uninstall this instance (i.e. this tile) of the
           Integration App. Uninstalling an Integration App will remove all
           components, including the integration tile, from your integrator.io
@@ -97,19 +91,18 @@ export default function UninstallSection({ childId, integrationId }) {
           want to uninstall as this action cannot be undone.
         </Typography>
         <Divider className={classes.divider} />
-        <Typography>
+        <Typography className={classes.message}>
           Once you uninstall this Integration App there is no going back. Please
           be certain.
         </Typography>
-        <Button
+        <OutlinedButton
           data-test="uninstallConnector"
-          variant="outlined"
-          color="secondary"
+          error
           className={classes.button}
+          startIcon={<DeleteIcon />}
           onClick={handleUninstall}>
           Uninstall
-          <DeleteIcon className={classes.rightIcon} />
-        </Button>
+        </OutlinedButton>
       </div>
     </>
   );

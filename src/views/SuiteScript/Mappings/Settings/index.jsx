@@ -1,6 +1,4 @@
 import React, { useMemo, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
-import { ButtonGroup } from '@material-ui/core';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import { isEqual } from 'lodash';
@@ -17,6 +15,8 @@ import RightDrawer from '../../../../components/drawer/Right';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import actions from '../../../../actions';
+import ActionGroup from '../../../../components/ActionGroup';
+import { TextButton } from '../../../../components/Buttons';
 
 /**
  *
@@ -146,7 +146,7 @@ function MappingSettings({disabled, mappingKey}) {
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <DynaSubmit
             formKey={formKey}
             disabled={disabled}
@@ -154,14 +154,12 @@ function MappingSettings({disabled, mappingKey}) {
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
-          <Button
+          <TextButton
             data-test="fieldMappingSettingsCancel"
-            onClick={handleClose}
-            variant="text"
-            color="primary">
+            onClick={handleClose}>
             Cancel
-          </Button>
-        </ButtonGroup>
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </>
   );

@@ -4,9 +4,10 @@ import { debounce } from 'lodash';
 import actions from '../../actions';
 import SearchInput from '../SearchInput';
 import { selectors } from '../../reducers';
+import HomeSearchInput from '../SearchInput/HomeSearchInput';
 
 const DEBOUNCE_DURATION = 300;
-export default function KeywordSearch({ filterKey }) {
+export default function KeywordSearch({ filterKey, isHomeSearch }) {
   const dispatch = useDispatch();
   const filter =
     useSelector(state => selectors.filter(state, filterKey));
@@ -35,10 +36,16 @@ export default function KeywordSearch({ filterKey }) {
     debouncePatchTextInput(e.target.value);
   }, [debouncePatchTextInput]);
 
-  return (
-    <SearchInput
+  return isHomeSearch ? (
+    <HomeSearchInput
       value={text}
       onChange={handleKeywordChange}
+  />
+  )
+    : (
+      <SearchInput
+        value={text}
+        onChange={handleKeywordChange}
     />
-  );
+    );
 }

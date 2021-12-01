@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import {
-  Button,
   makeStyles,
   TableCell,
   TableRow,
@@ -12,6 +11,7 @@ import { filter } from 'lodash';
 import ModalDialog from '../ModalDialog';
 import ManageLookup from './Manage';
 import LookupListRow from './LookupListRow';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(() => ({
   listing: {
@@ -154,9 +154,9 @@ export default function Lookup(props) {
         />
       )}
       {showListView && (
-        <Button data-test="closeLookupListing" onClick={onCancel}>
+        <TextButton data-test="closeLookupListing" onClick={onCancel}>
           Close
-        </Button>
+        </TextButton>
       )}
     </ModalDialog>
   );
