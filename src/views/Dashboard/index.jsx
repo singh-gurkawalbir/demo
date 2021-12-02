@@ -29,8 +29,8 @@ export default function Dashboard() {
 
   const { paging, sort, ...nonPagingFilters } = filters || {};
   const filterHash = hashCode(nonPagingFilters);
-  const infoTextDashboard =
-    'Use these dashboards to see a comprehensive view of all the running and completed flows in each integration.';
+  const infoTextDashboard = integrationId ? 'This dashboard offers a comprehensive view of all running and completed flows in each integration.'
+    : 'This dashboard offers a comprehensive view of all running and completed flows in your account.';
 
   useEffect(() => {
     dispatch(

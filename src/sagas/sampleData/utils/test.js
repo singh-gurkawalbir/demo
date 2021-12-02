@@ -79,6 +79,64 @@ describe('Flow sample data utility sagas', () => {
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
       });
+      test('should return correct csv parse rules object incase of csv file resource which uses key columns for grouping', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+              keyColumns: ['column0'],
+            },
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
+      });
       test('should return csv parse rules object incase of csv rest resource', () => {
         const restCsvResource = {
           _id: 'export-123',
