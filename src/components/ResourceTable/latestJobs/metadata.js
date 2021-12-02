@@ -1,4 +1,5 @@
 import React from 'react';
+import HeaderWithHelpText from '../commonCells/HeaderWithHelpText';
 import FlowStepName from './cells/FlowStepName';
 import FlowStepStatus from './cells/FlowStepStatus';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
@@ -38,6 +39,7 @@ export default {
       key: 'resolved',
       heading: 'Resolved',
       isLoggable: true,
+      HeaderValue: () => <HeaderWithHelpText title="Auto-resolved" helpKey="runConsole.resolved" />,
       Value: ({rowData: r}) => r.numResolved },
     {
       key: 'pages',
