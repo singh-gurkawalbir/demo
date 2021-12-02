@@ -13,17 +13,20 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="exports" resource={r} />,
       orderBy: 'name',
     },
     {
       key: 'application',
       heading: 'Application',
+      isLoggable: true,
       Value: ({rowData: r}) => <ConnectorName resource={r} />,
     },
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },

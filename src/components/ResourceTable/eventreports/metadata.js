@@ -49,6 +49,7 @@ const metadata = {
             options={integrationOptions.map(({ _id, name}) => ({_id, name }))} />
         );
       },
+      isLoggable: true,
       Value: function IntegrationName({rowData: r}) {
         return useSelector(state => selectors.getEventReportIntegrationName(state, r));
       },
@@ -68,6 +69,7 @@ const metadata = {
             options={flowOptions.map(({ _id, name}) => ({ _id, name }))} />
         );
       },
+      isLoggable: true,
       Value: function FlowsPertainingToEventReport({rowData: r}) {
         const allFlows = useSelectorMemo(
           selectors.makeResourceListSelector,
@@ -95,7 +97,7 @@ const metadata = {
             showTime />
         );
       },
-
+      isLoggable: true,
       Value: function EventReportStartDate({rowData: r}) {
         return <DateTimeDisplay dateTime={r?.startTime} />;
       },
@@ -112,6 +114,7 @@ const metadata = {
             showTime />
         );
       },
+      isLoggable: true,
       Value: function EventReportEndDate({rowData: r}) {
         return <DateTimeDisplay dateTime={r?.endTime} />;
       },
@@ -119,6 +122,7 @@ const metadata = {
     {
       key: 'timestamp',
       heading: 'Timestamp',
+      isLoggable: true,
       Value: function Timestamp({rowData: r}) {
         return <DateTimeDisplay dateTime={r?.createdAt} />;
       },
@@ -135,6 +139,7 @@ const metadata = {
             options={ALL_EVENT_STATUS.map(status => ({_id: status, name: capitalize(status) }))} />
         );
       },
+      isLoggable: true,
       Value: function EventReportStatus({rowData: r}) {
         if ([EVENT_REPORT_STATUS.QUEUED, EVENT_REPORT_STATUS.RUNNING].includes(r.status)) {
           return <Spinner size="small"> {capitalize(r?.status)}</Spinner>;

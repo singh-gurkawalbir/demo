@@ -36,10 +36,10 @@ export default function ConsoleGridItem({ editorId }) {
 
   return (
     <div className={classes.gridItem}>
-      <div className={classes.flexContainer}>
-        <PanelTitle>
-          <Typography>Console</Typography>
-        </PanelTitle>
+      <PanelTitle>
+        <Typography>Console</Typography>
+      </PanelTitle>
+      <div className={classes.flexContainer} data-private>
         <CodePanel
           data-private
           readOnly

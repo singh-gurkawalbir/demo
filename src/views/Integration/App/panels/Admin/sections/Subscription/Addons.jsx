@@ -19,6 +19,7 @@ const metadata = {
       {
         key: 'name',
         heading: 'Name',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <>
             {r?.name}
@@ -29,16 +30,19 @@ const metadata = {
       {
         key: 'storeLabel',
         heading: storeLabel,
+        isLoggable: true,
         Value: ({rowData: r}) => children.find(c => c.value === r.storeId)?.label || r.storeId,
       },
       {
         key: 'installedOn',
         heading: 'Installed on',
+        isLoggable: true,
         Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
       },
       {
         key: 'action',
         heading: 'Action',
+        isLoggable: true,
         Value: ({rowData: r}) => <AddonInstallerButton resource={r} />,
       },
     ];

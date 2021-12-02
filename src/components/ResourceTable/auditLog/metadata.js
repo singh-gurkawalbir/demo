@@ -15,12 +15,14 @@ export default {
     {
       key: 'time',
       heading: 'Time',
+      isLoggable: true,
       Value: ({rowData: al}) => <DateTimeDisplay dateTime={al.time} />,
       width: '10%',
     },
     {
       key: 'source',
       heading: 'Source',
+      isLoggable: true,
       Value: ({rowData: al}) => AUDIT_LOG_SOURCE_LABELS[al.source] || al.source,
       width: '11%',
     },
@@ -33,12 +35,15 @@ export default {
     {
       key: 'resource',
       heading: 'Resource',
+      isLoggable: true,
       Value: ({rowData: al}) => RESOURCE_TYPE_SINGULAR_TO_LABEL[al.resourceType],
       width: '10%',
     },
     {
       key: 'nameId',
       heading: 'Name/ID',
+      isLoggable: true,
+      // this will be a resource name or id which should be loggable
       Value: ({rowData: al}) => {
         const tableContext = useGetTableContext();
 
@@ -49,18 +54,23 @@ export default {
     {
       key: 'action',
       heading: 'Action',
+      isLoggable: true,
       Value: ({rowData: al}) => AUDIT_LOG_EVENT_LABELS[al.event] || al.event,
       width: '8%',
     },
     {
       key: 'field',
       heading: 'Field',
+      // what is this? is it loggable
+      isLoggable: true,
       Value: ({rowData: al}) => al.fieldChange && al.fieldChange.fieldPath,
       width: '13%',
     },
     {
       key: 'oldValue',
       heading: 'Old value',
+      // what is this? is it loggable
+      isLoggable: true,
       Value: ({rowData: al}) => (
         <OldValue
           auditLog={al}
@@ -73,6 +83,8 @@ export default {
     {
       key: 'newValue',
       heading: 'New value',
+      // what is this? is it loggable
+      isLoggable: true,
       Value: ({rowData: al}) => (
         <NewValue
           oldValue={al.fieldChange.oldValue}

@@ -196,7 +196,8 @@ export default function SignIn({dialogOpen}) {
       location && location.state && location.state.attemptedRoute;
 
   return (
-    <div className={classes.editableFields}>
+  // user's email can be listed here ...type passwords is anyways redacted by logrocket
+    <div className={classes.editableFields} data-private>
       <form onSubmit={handleOnSubmit}>
 
         <TextField

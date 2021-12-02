@@ -102,7 +102,8 @@ function Notifications() {
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleClose}>
-        <div className={classes.notificationContainer}>
+        {/* a user's email can be shown */}
+        <div className={classes.notificationContainer} data-private>
           {notifications.map((n, i) => (
             <Fragment key={n.id}>
               <InvitationItem

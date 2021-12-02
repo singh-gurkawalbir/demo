@@ -24,6 +24,7 @@ export default {
       {
         key: 'accessLevelHeader',
         HeaderValue: AccessLevelHeader,
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -33,6 +34,7 @@ export default {
       {
         key: 'statusHeader',
         HeaderValue: StatusHeader,
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -57,6 +59,7 @@ export default {
         key: 'notifications',
         heading: 'Notifications',
         align: 'center',
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -67,6 +70,7 @@ export default {
       ...((!integrationId && isSSOEnabled) ? [
         {
           key: 'accountSSOLinked',
+          isLoggable: true,
           HeaderValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
           Value: ({rowData: r}) => {
             const { sharedWithUser = {}, _id: userId } = r;
@@ -82,6 +86,7 @@ export default {
         {
           key: 'requireAccountSSO',
           HeaderValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
+          // will this redact enqueue snackbar notification
           Value: ({rowData: r}) => <RequireAccountSSO user={r} />,
           align: 'center',
         },

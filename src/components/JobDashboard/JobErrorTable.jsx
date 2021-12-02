@@ -545,6 +545,7 @@ export default function JobErrorTable({
                   {
                     key: 'expandClick',
                     heading: '',
+                    isLoggable: true,
                     Value: ({rowData: r}) =>
                       r.similarErrors?.length > 0 && (
                         <IconButton
@@ -564,6 +565,7 @@ export default function JobErrorTable({
                     key: 'resolved',
                     heading: 'Resolved?',
                     align: 'center',
+                    isLoggable: true,
                     Value: ({rowData: r}) => r.resolved
                       ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
@@ -597,12 +599,14 @@ export default function JobErrorTable({
                     key: 'time',
                     heading: 'Time',
                     width: '15%',
+                    isLoggable: true,
                     Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                   {
                     key: 'retryData',
                     heading: 'Retry data',
                     align: 'center',
+                    isLoggable: true,
                     Value: ({rowData: r}) => (
                       <EditRetryCell
                         retryId={r._retryId}

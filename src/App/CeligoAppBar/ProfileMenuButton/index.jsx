@@ -125,7 +125,8 @@ function ProfileMenuButton() {
         placement="bottom-end"
         open={open}
         onClose={handleClose}>
-        <div data-public className={classes.profileArea}>
+        {/* private to logrocket because user email and avatar can be disclosed */}
+        <div data-public className={classes.profileArea} data-private>
           <div>
             <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
           </div>
@@ -163,7 +164,8 @@ function ProfileMenuButton() {
           </div>
 
         </div>
-        <div className={classes.bottomActions}>
+        {/* private to logrocket because it could be construed as a user's personalized information to celigo ? */}
+        <div className={classes.bottomActions} data-private>
           <TextButton
             data-test="uxFeedback"
             component="a"

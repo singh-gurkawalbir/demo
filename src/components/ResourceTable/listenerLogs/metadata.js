@@ -36,6 +36,7 @@ export default {
             skipLastEndDate />
         );
       },
+      isLoggable: true,
       Value: ({rowData: log}) => {
         const {exportId} = useGetTableContext();
 
@@ -45,6 +46,7 @@ export default {
     {
       key: 'method',
       heading: 'Method',
+      isLoggable: true,
       Value: ({rowData: log}) => log.method,
     },
     {
@@ -68,6 +70,7 @@ export default {
             options={LISTENER_LOGS_STATUS_CODES} />
         );
       },
+      isLoggable: true,
       Value: ({rowData: log}) => log.statusCode,
     },
   ],

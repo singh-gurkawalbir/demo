@@ -15,18 +15,21 @@ export default {
     {
       key: 'applications',
       heading: 'Applications',
+      isLoggable: true,
       Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
     },
     {
       key: 'name',
       heading: 'Name',
       width: '25%',
+      isLoggable: true,
       Value: ({rowData: r}) => <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />,
       orderBy: 'name',
     },
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
@@ -47,6 +50,7 @@ export default {
     {
       key: 'published',
       heading: 'Published',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <OnOffCell
           connectorId={r._id}

@@ -28,6 +28,7 @@ export default {
         return <SelectAllErrors {...tableContext} />;
       },
       heading: 'Select All',
+      isLoggable: true,
       Value: ({rowData: error}) => {
         const tableContext = useGetTableContext();
 
@@ -76,11 +77,13 @@ export default {
 
         return <SelectClassification {...tableContext} />;
       },
+      isLoggable: true,
       Value: ({rowData: r}) => <Classification error={r} />,
       width: '10%',
     },
     {
       key: 'selectDate',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
