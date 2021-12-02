@@ -94,7 +94,7 @@ export default {
       },
       {
         key: 'lastExecutedAt',
-        heading: 'Last run completed',
+        heading: 'Last run',
         Value: ({rowData: r}) => <CeligoTimeAgo date={new Date(r.lastExecutedAt)} />,
         orderBy: 'lastExecutedAt',
       },

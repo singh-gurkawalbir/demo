@@ -12,6 +12,18 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     // eslint-disable-next-line default-case
     switch (type) {
+      case actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS:
+        if (draft[integrationId]) {
+          draft[integrationId].resolvedResources = false;
+        }
+        draft[integrationId] = { resolvedResources: false };
+        break;
+      case actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES:
+        if (draft[integrationId]) {
+          draft[integrationId].resolvedResources = true;
+        }
+        draft[integrationId] = { resolvedResources: true };
+        break;
       case actionTypes.INTEGRATION.CLEAR_REDIRECT:
         if (draft[integrationId]) delete draft[integrationId].redirectTo;
         break;
@@ -47,6 +59,14 @@ selectors.shouldRedirect = (state, integrationId) => {
   }
 
   return state[integrationId].redirectTo;
+};
+
+selectors.resolvedIntegrationDependencies = (state, integrationId) => {
+  if (!state || !state[integrationId]) {
+    return true;
+  }
+
+  return !!state[integrationId].resolvedResources;
 };
 
 selectors.flowGroupStatus = (state, integrationId) => {
