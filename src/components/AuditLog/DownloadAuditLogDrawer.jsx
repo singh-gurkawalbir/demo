@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from 'react';
-// import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
@@ -30,14 +29,11 @@ const fieldMeta = {
       closeOnSelect: true,
     },
   },
-}; // This one i need to copy
+};
 
 const INVALID_DATE = 'Invalid date';
-const VALID_ERROR_TYPES = ['open', 'resolved'];
 
 function DownloadAuditLogs({ onClose }) {
-  const match = useRouteMatch();
-  const {type: errorType} = match.params || {};
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
@@ -66,24 +62,10 @@ function DownloadAuditLogs({ onClose }) {
           variant: 'error',
         });
       }
-      //   dispatch(actions.errorManager.flowErrorDetails.download(
-      //     {
-      //       flowId,
-      //       resourceId,
-      //       isResolved: errorType === 'resolved',
-      //       filters: { fromDate, toDate },
-      //     }
-      //   ));
       onClose();
     },
     [onClose, formContext, enqueueSnackbar],
   );
-
-  if (!VALID_ERROR_TYPES.includes(errorType)) {
-    onClose();
-
-    return null;
-  }
 
   return (
     <>
@@ -107,7 +89,7 @@ function DownloadAuditLogs({ onClose }) {
     </>
   );
 }
-export default function DownloadAuditLogsDrawer({ resourceType, resourceId, childId }) {
+export default function DownloadAuditLogDrawer({ resourceType, resourceId, childId }) {
   const history = useHistory();
   const match = useRouteMatch();
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
