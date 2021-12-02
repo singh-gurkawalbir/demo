@@ -94,6 +94,9 @@ export function* _fetchAssistantSampleData({ resource }) {
     });
   }
 
+  if (!assistantMetadata?.import) {
+    return yield put(actions.metadata.failedAssistantImportPreview(_id));
+  }
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,

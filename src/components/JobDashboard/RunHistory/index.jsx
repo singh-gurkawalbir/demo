@@ -7,7 +7,6 @@ import CeligoSelect from '../../CeligoSelect';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import ResourceTable from '../../ResourceTable';
 import { isNewId } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import { getSelectedRange } from '../../../utils/flowMetrics';
@@ -19,6 +18,7 @@ import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
+import JobTable from './JobTable';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -219,9 +219,12 @@ export default function RunHistory({ flowId, className }) {
           </ActionGroup>
         </>
       </div>
-      {isLoadingHistory && <Spinner centerAll />}
-
-      <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
+      {isLoadingHistory ? <Spinner centerAll />
+        : (
+          <JobTable
+            classes={classes.jobTable}
+            jobsInCurrentPage={jobsInCurrentPage || []} />
+        )}
 
       {!hasFlowRunHistory &&
         (

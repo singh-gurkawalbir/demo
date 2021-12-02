@@ -336,6 +336,7 @@ const resource = {
 
   integrations: {
     fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
+    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
     updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
@@ -441,17 +442,13 @@ const resource = {
       action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
-      requestUserRoles: (connectionId, values) =>
+      testConnection: ({connectionId, values, hideNotificationMessage, parentContext, shouldPingConnection}) =>
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
-          hideNotificationMessage: true,
-        }),
-      testConnection: (connectionId, values) =>
-        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
-          connectionId,
-          values,
-          hideNotificationMessage: false,
+          hideNotificationMessage,
+          parentContext,
+          shouldPingConnection,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -1875,6 +1872,9 @@ const errorManager = {
     request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
     received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
     clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
+    requestFamily: ({ jobId }) =>
+      action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST_FAMILY, { jobId }),
+    receivedFamily: ({ job }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY, { job }),
   },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>

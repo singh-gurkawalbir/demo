@@ -54,7 +54,7 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       hasHeaderRow: fields.hasHeaderRow,
       rowDelimiter: fields.rowDelimiter,
       sortByFields,
-      groupByFields,
+      groupByFields: groupByFields.length ? groupByFields : fields.keyColumns || [],
     };
   }
 
@@ -73,7 +73,6 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
     };
   }
 
-  // no additional props for json - Add in future if updated
   if (fileType === 'json') {
     return {
       resourcePath: fields.resourcePath,

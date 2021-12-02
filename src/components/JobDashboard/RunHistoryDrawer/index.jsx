@@ -55,7 +55,7 @@ export default function RunHistoryDrawer() {
 
   integrationId = getDashboardIntegrationId(integrationId, childId);
   const filter = useSelector(state =>
-    selectors.filter(state, `${integrationId}${FILTER_KEYS_AD.COMPLETED}`),
+    selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`),
   shallowEqual
   );
   let selectedDate;
