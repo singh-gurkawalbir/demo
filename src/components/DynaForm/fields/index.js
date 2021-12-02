@@ -114,7 +114,7 @@ import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 import DynaReplaceConnection from './DynaReplaceConnection';
-import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
+import DynaSelectOverrideMediaType from './DynaSelectOverrideMediaType';
 import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
@@ -139,6 +139,8 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
+import DynaFlowGroupName from './integrations/DynaFlowGroupName';
+import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -202,7 +204,7 @@ export default {
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
-  selectrequestmediatype: DynaSelectRequestMediaType,
+  selectoverridemediatype: DynaSelectOverrideMediaType,
   nssavedsearch: DynaNSSavedSearch,
   nswssavedsearch: DynaNSWSSavedSearch,
   webhooksampledata: DynaWebHookSampleData,
@@ -274,6 +276,8 @@ export default {
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor_afe,
   as2Mode: DynaAs2Mode,
   childlicenses: DynaChildLicenses,
+  flowgroupname: DynaFlowGroupName,
+  flowgroupstiedtointegrations: DynaFlowGroupsTiedToIntegrations,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,

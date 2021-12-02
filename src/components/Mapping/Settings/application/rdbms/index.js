@@ -8,7 +8,7 @@ export default {
     extractFields,
     isGroupedSampleData,
   }) => {
-    const {generate} = value;
+    const { generate, extract } = value;
     const extractfieldsOpts = [];
 
     if (extractFields) {
@@ -33,7 +33,6 @@ export default {
               items: [
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
-                { label: 'Absolute number', value: 'absolutenumber' },
                 { label: 'Boolean', value: 'boolean' },
                 { label: 'Date', value: 'date' },
                 { label: 'Number array', value: 'numberarray' },
@@ -342,7 +341,7 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1 || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

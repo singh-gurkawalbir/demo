@@ -1,5 +1,4 @@
 /* global describe, test, expect */
-
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -76,6 +75,64 @@ describe('Flow sample data utility sagas', () => {
           trimSpaces: true,
           sortByFields: [],
           groupByFields: [],
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which uses key columns for grouping', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+              keyColumns: ['column0'],
+            },
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
@@ -464,7 +521,7 @@ describe('Flow sample data utility sagas', () => {
           .returns(processedData)
           .run();
       });
-      test('should invoke file definition processor api and return the target data when resourcePath is provided', () => {
+      test('should invoke file definition processor api and return the target data which is an object when resourcePath is provided', () => {
         const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
         const _fileDefinitionId = '5fda05801730a97681d30444';
         const ftpFileDefResource = {
@@ -490,6 +547,60 @@ describe('Flow sample data utility sagas', () => {
               'Syntax identifier': 'UNOC',
               'Syntax version number': '3',
             },
+          },
+        };
+        const processedDataWithResourcePath = {
+          data: {
+            'Syntax identifier': 'UNOC',
+            'Syntax version number': '3',
+          },
+        };
+
+        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+          .provide([
+            [call(apiCallWithRetry, {
+              path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
+              opts: {
+                method: 'POST',
+                body: {
+                  data: sampleData,
+                  _fileDefinitionId,
+                },
+              },
+              message: 'Loading',
+              hidden: true,
+            }), processedData],
+          ])
+          .call.fn(apiCallWithRetry)
+          .returns(processedDataWithResourcePath)
+          .run();
+      });
+      test('should invoke file definition processor api and return the target data which is an array when resourcePath is provided', () => {
+        const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
+        const _fileDefinitionId = '5fda05801730a97681d30444';
+        const ftpFileDefResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          ftp: {
+            directoryPath: '/test',
+          },
+          file: {
+            output: 'records',
+            skipDelete: false,
+            type: 'filedefinition',
+            fileDefinition: {
+              resourcePath: 'SYNTAX IDENTIFIER',
+              _fileDefinitionId,
+            },
+          },
+        };
+        const processedData = {
+          data: {
+            'SYNTAX IDENTIFIER': [{
+              'Syntax identifier': 'UNOC',
+              'Syntax version number': '3',
+            }],
           },
         };
         const processedDataWithResourcePath = {
@@ -860,6 +971,8 @@ describe('Flow sample data utility sagas', () => {
           errors: '',
           ignored: '',
           statusCode: '',
+          _json: '',
+          dataURI: '',
           headers: '',
         };
         const lookupResponseData = {
@@ -867,6 +980,7 @@ describe('Flow sample data utility sagas', () => {
           errors: '',
           ignored: '',
           statusCode: '',
+          dataURI: '',
         };
 
         const flowResourcesMap = {
@@ -1588,6 +1702,7 @@ describe('Flow sample data utility sagas', () => {
 
       test('should return defaultExtractsObj without data prop incase of export lookups with no preProcessedData', () => {
         const lookupDefaultExtracts = {
+          dataURI: '',
           errors: '',
           ignored: '',
           statusCode: '',
@@ -1598,6 +1713,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should return defaultExtractsObj incase of imports with no/empty preProcessedData', () => {
         const importDefaultExtracts = {
+          _json: '',
+          dataURI: '',
           errors: '',
           id: '',
           ignored: '',
@@ -1617,6 +1734,7 @@ describe('Flow sample data utility sagas', () => {
           users: [{ _id: 'user1', name: 'user1'}],
         };
         const expectedOutput = {
+          dataURI: '',
           errors: '',
           ignored: '',
           statusCode: '',
@@ -2690,6 +2808,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should throw error when apiCall throws error and throwOnError is true', () => {
         const resourceId = 'export-123';
+        const flowId = '23';
+        const _integrationId = '34';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2703,6 +2823,8 @@ describe('Flow sample data utility sagas', () => {
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
+          _integrationId,
+          _flowId: flowId,
           rest: {
             relativeURI: '/api/v2/INVALID_URI.json',
           },
@@ -2712,7 +2834,7 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, throwOnError: true })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, throwOnError: true, flowId})
           .provide([
             [select(
               selectors.resourceData,
@@ -2720,6 +2842,10 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               SCOPES.VALUE
             ), { merged: resource }],
+            [select(
+              selectors.resource,
+              'flows',
+              flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
               path: '/exports/preview',
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
@@ -2732,6 +2858,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should not throw error when apiCall throws error and throwOnError is false', () => {
         const resourceId = 'export-123';
+        const flowId = '23';
+        const _integrationId = '34';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2745,6 +2873,8 @@ describe('Flow sample data utility sagas', () => {
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
+          _integrationId,
+          _flowId: flowId,
           rest: {
             relativeURI: '/api/v2/INVALID_URI.json',
           },
@@ -2754,7 +2884,7 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
             [select(
               selectors.resourceData,
@@ -2762,6 +2892,10 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               SCOPES.VALUE
             ), { merged: resource }],
+            [select(
+              selectors.resource,
+              'flows',
+              flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
               path: '/exports/preview',
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
@@ -2774,6 +2908,8 @@ describe('Flow sample data utility sagas', () => {
       });
       test('should not throw error when apiCall throws error for Offline mode and call exportPreview saga again without runOffline', () => {
         const resourceId = 'export-123';
+        const flowId = '23';
+        const _integrationId = '34';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2796,6 +2932,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const body = {
           ...formattedResourceWithoutOnceDoc,
+          _integrationId,
+          _flowId: flowId,
           verbose: true,
           runOfflineOptions: {
             runOffline: true,
@@ -2808,7 +2946,7 @@ describe('Flow sample data utility sagas', () => {
         const hidden = false;
         const throwOnError = true;
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, throwOnError })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, throwOnError, flowId})
           .provide([
             [select(
               selectors.resourceData,
@@ -2816,6 +2954,10 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               SCOPES.VALUE
             ), { merged: resource }],
+            [select(
+              selectors.resource,
+              'flows',
+              flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
               path: '/exports/preview',
               opts: { method: 'POST', body },

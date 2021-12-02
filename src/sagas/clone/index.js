@@ -49,6 +49,7 @@ export function* createComponents({ resourceType, resourceId }) {
           name: data.name,
           tag: data.tag,
           _integrationId: data._integrationId,
+          _flowGroupingId: data._flowGroupingId,
           newTemplateInstaller: data.newTemplateInstaller,
         },
       },

@@ -284,7 +284,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
 
     return { error };
   }
-  if (options?.action === 'UpdatedIA2.0Settings') {
+  if (options?.refetchResources) {
+    yield put(actions.resource.requestCollection('flows', null, true));
+    yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
   }
@@ -971,6 +973,7 @@ export function* fetchUnloadedIntegrationResources({ integrationId }) {
   yield all(
     ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
   );
+  yield put(actions.resource.integrations.resolveUnloadedResources(integrationId));
 }
 
 export function* receivedResource({ resourceType, resource }) {

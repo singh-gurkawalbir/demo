@@ -48,6 +48,33 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  flowTitle: {
+    display: 'flex',
+    minHeight: 42,
+    alignItems: 'center',
+    position: 'relative',
+    '&>div': {
+      paddingTop: 0,
+      minWidth: theme.spacing(3),
+    },
+    '&>a': {
+      padding: theme.spacing(0),
+    },
+    '&:before': {
+      content: '""',
+      width: '3px',
+      top: 0,
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
+    '&:hover': {
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
 }));
 
 export const useSettingsPatch = (integrationId, sectionId, path) => {
@@ -69,6 +96,11 @@ function CustomSettings({ integrationId, sectionId }) {
 
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
+  const hasPreSaveHook = useSelector(state => {
+    const integration = selectors.resourceData(state, 'integrations', integrationId);
+
+    return !!(integration?.preSave?._scriptId && integration.preSave?.function);
+  });
   const canEditIntegration = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
@@ -132,6 +164,7 @@ function CustomSettings({ integrationId, sectionId }) {
           value,
         },
       ];
+      const refetchResources = isFrameWork2 || hasPreSaveHook;
 
       dispatch(
         actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
@@ -141,11 +174,11 @@ function CustomSettings({ integrationId, sectionId }) {
           'integrations',
           integrationId,
           SCOPES.VALUE,
-          {action: isFrameWork2 ? 'UpdatedIA2.0Settings' : 'DIYSettings'}
+          { refetchResources }
         )
       );
     },
-    [dispatch, integrationId, isFrameWork2, patchPath]
+    [dispatch, integrationId, isFrameWork2, patchPath, hasPreSaveHook]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(

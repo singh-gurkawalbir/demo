@@ -12,7 +12,10 @@ export default function TabRedirection({children}) {
   const dispatch = useDispatch();
   const location = useLocation();
   const match = useRouteMatch();
-  const { integrationId, childId, tab} = match.params;
+  const { integrationId, childId, dashboardTab} = match.params;
+  let {tab} = match.params;
+
+  tab = dashboardTab ? 'dashboard' : tab;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.

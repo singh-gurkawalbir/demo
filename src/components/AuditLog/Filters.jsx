@@ -47,7 +47,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-
     '& > *': {
       marginRight: 10,
       '&:first-child': {

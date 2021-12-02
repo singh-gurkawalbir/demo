@@ -5,10 +5,12 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
+import { requestSampleData } from '../sampleData/flows';
 import responseMappingUtil from '../../utils/responseMapping';
 import { emptyObject } from '../../utils/constants';
+import { autoEvaluateProcessorWithCancel } from '../editor';
 
-export function* responseMappingInit({ flowId, resourceId }) {
+export function* responseMappingInit({ flowId, resourceId, resourceType }) {
   const flow = (yield select(
     selectors.resourceData,
     'flows',
@@ -19,27 +21,41 @@ export function* responseMappingInit({ flowId, resourceId }) {
   if (!pageProcessor) {
     return yield put(actions.responseMapping.initFailed());
   }
-  const isImport = pageProcessor.type === 'import';
 
-  if (isImport) {
-    // check if responseMappingExtract is loaded
-    const {data: extractFields} = yield select(selectors.getSampleDataContext, {
+  // responseMappingExtract must be loaded as it is used to show input data to response mapper
+  // we also need to explicitly request for flowInput stage which is used to show output to response mapper
+  const responseMappingInput = yield select(selectors.getSampleDataContext, {
+    flowId,
+    resourceId,
+    stage: 'responseMappingExtract',
+    resourceType,
+  });
+
+  if (responseMappingInput.status !== 'received') {
+    yield call(requestSampleData, {
       flowId,
       resourceId,
+      resourceType,
       stage: 'responseMappingExtract',
-      resourceType: 'imports',
     });
-
-    if (!extractFields) {
-      // fetch can be made in parallel without masking response mapping
-      yield put(actions.flowData.requestSampleData(
-        flowId,
-        resourceId,
-        'imports',
-        'responseMappingExtract',
-      ));
-    }
   }
+
+  const flowInputStage = yield select(selectors.getSampleDataContext, {
+    flowId,
+    resourceId,
+    stage: 'inputFilter',
+    resourceType,
+  });
+
+  if (flowInputStage.status !== 'received') {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'inputFilter',
+    });
+  }
+
   const mappings = responseMappingUtil.getFieldsAndListMappings(pageProcessor.responseMapping);
 
   yield put(
@@ -50,7 +66,7 @@ export function* responseMappingInit({ flowId, resourceId }) {
       })),
       flowId,
       resourceId,
-      resourceType: isImport ? 'imports' : 'exports',
+      resourceType,
     })
   );
 }
@@ -94,8 +110,15 @@ export function* responseMappingSave() {
   yield put(actions.responseMapping.saveComplete());
 }
 
+export function* autoPreview() {
+  const { resourceId } = yield select(selectors.responseMapping);
+
+  yield call(autoEvaluateProcessorWithCancel, { id: `responseMappings-${resourceId}` });
+}
+
 export const responseMappingSagas = [
   takeLatest(actionTypes.RESPONSE_MAPPING.INIT, responseMappingInit),
   takeEvery(actionTypes.RESPONSE_MAPPING.SAVE, responseMappingSave),
-
+  takeLatest([actionTypes.RESPONSE_MAPPING.PATCH_FIELD,
+    actionTypes.RESPONSE_MAPPING.DELETE], autoPreview),
 ];

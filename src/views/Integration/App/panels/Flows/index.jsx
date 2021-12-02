@@ -24,7 +24,6 @@ import ErrorsListDrawer from '../../../common/ErrorsList';
 import SectionTitle from '../../../common/FlowSectionTitle';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
@@ -420,9 +419,6 @@ function FlowList({ integrationId, childId }) {
         sectionId={sectionId}
       />
       <MappingDrawer
-        integrationId={integrationId}
-      />
-      <ResponseMappingDrawer
         integrationId={integrationId}
       />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}

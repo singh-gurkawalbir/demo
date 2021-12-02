@@ -289,6 +289,9 @@ inputMode: {
 'file.encoding': {
   fieldId: 'file.encoding',
 },
+'file.batchSize': {
+  fieldId: 'file.batchSize',
+},
 'file.backupPath': {
   fieldId: 'file.backupPath',
 },

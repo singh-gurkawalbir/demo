@@ -54,7 +54,7 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       hasHeaderRow: fields.hasHeaderRow,
       rowDelimiter: fields.rowDelimiter,
       sortByFields,
-      groupByFields,
+      groupByFields: groupByFields.length ? groupByFields : fields.keyColumns || [],
     };
   }
 
@@ -73,7 +73,6 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
     };
   }
 
-  // no additional props for json - Add in future if updated
   if (fileType === 'json') {
     return {
       resourcePath: fields.resourcePath,
@@ -145,6 +144,7 @@ export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
       message: 'Loading',
       hidden: true,
     });
+    const sampleParsedFileDefinitionData = Array.isArray(parsedFileDefinitionData?.data) ? parsedFileDefinitionData?.data[0] : parsedFileDefinitionData?.data;
 
     // Incase of resourcePath provided by user for a file definition
     // this util extracts passed path's data from the fileDefinitionSampleData
@@ -154,11 +154,10 @@ export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
       parsedFileDefinitionData &&
       parsedFileDefinitionData.data
     ) {
-      const { data: sampleData } = parsedFileDefinitionData || {};
-      const parsedSampleData = mode === 'parse' ? processJsonSampleData(sampleData, {
+      const parsedSampleData = mode === 'parse' ? processJsonSampleData(sampleParsedFileDefinitionData, {
         resourcePath,
       })
-        : processJsonPreviewData(sampleData, {
+        : processJsonPreviewData(sampleParsedFileDefinitionData, {
           resourcePath,
         });
 
@@ -166,7 +165,7 @@ export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
     }
 
     // If there is no resourcePath, returns the resulting parsedFileDefinitionData
-    return parsedFileDefinitionData;
+    return { data: sampleParsedFileDefinitionData };
   } catch (e) {
     // Handle errors
   }

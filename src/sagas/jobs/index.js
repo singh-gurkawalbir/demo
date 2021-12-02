@@ -235,12 +235,12 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* requestCompletedJobCollection({nextPageURL}) {
+export function* requestCompletedJobCollection({nextPageURL, integrationId}) {
   let collection;
 
   const reqOptions = yield select(
     selectors.requestOptionsOfDashboardJobs,
-    {filterKey: FILTER_KEYS_AD.COMPLETED, nextPageURL}
+    {filterKey: FILTER_KEYS_AD.COMPLETED, nextPageURL, integrationId}
   );
   const {path, opts} = reqOptions || {};
 
@@ -260,12 +260,12 @@ export function* requestCompletedJobCollection({nextPageURL}) {
   yield put(actions.job.dashboard.completed.receivedCollection({ collection: collection?.stats, nextPageURL: collection.nextPageURL, loadMore: !!nextPageURL }));
 }
 
-export function* requestRunningJobCollection({nextPageURL}) {
+export function* requestRunningJobCollection({nextPageURL, integrationId}) {
   let collection;
 
   const reqOptions = yield select(
     selectors.requestOptionsOfDashboardJobs,
-    {filterKey: FILTER_KEYS_AD.RUNNING, nextPageURL}
+    {filterKey: FILTER_KEYS_AD.RUNNING, nextPageURL, integrationId}
   );
   const {path, opts} = reqOptions || {};
 
@@ -294,14 +294,14 @@ export function* getJobCollection({ integrationId, flowId, filters = {}, options
   yield take(actionTypes.JOB.CLEAR);
   yield cancel(watcher);
 }
-export function* getDashboardRunningJobCollection({nextPageURL}) {
-  const watcher = yield fork(requestRunningJobCollection, {nextPageURL});
+export function* getDashboardRunningJobCollection({nextPageURL, integrationId}) {
+  const watcher = yield fork(requestRunningJobCollection, {nextPageURL, integrationId});
 
   yield take(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR);
   yield cancel(watcher);
 }
-export function* getDashboardCompletedJobCollection({nextPageURL}) {
-  const watcher = yield fork(requestCompletedJobCollection, {nextPageURL});
+export function* getDashboardCompletedJobCollection({nextPageURL, integrationId}) {
+  const watcher = yield fork(requestCompletedJobCollection, {nextPageURL, integrationId});
 
   yield take(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR);
   yield cancel(watcher);

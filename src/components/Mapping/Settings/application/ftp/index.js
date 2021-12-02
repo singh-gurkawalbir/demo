@@ -11,7 +11,7 @@ export default {
     isGroupedSampleData,
     importResource,
   }) => {
-    const {generate, lookupName } = value;
+    const { generate, lookupName, extract } = value;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const extractfieldsOpts = [];
 
@@ -37,7 +37,6 @@ export default {
               items: [
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
-                { label: 'Absolute number', value: 'absolutenumber' },
                 { label: 'Boolean', value: 'boolean' },
                 { label: 'Date', value: 'date' },
                 { label: 'Number array', value: 'numberarray' },
@@ -444,7 +443,7 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!isGroupedSampleData) {
+    if (!isGroupedSampleData || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

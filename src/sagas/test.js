@@ -1,4 +1,4 @@
-/* global describe, test, expect, fail,beforeEach,afterEach,jest */
+/* global describe, test, expect, fail,beforeEach,afterEach, jest */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 import {
@@ -12,23 +12,28 @@ import {
   fork,
   spawn,
 } from 'redux-saga/effects';
-import { sendRequest } from 'redux-saga-requests';
+import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from './index';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from '.';
-import { APIException } from './api';
+import { APIException } from './api/requestInterceptors/utils';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 import { initializeApp, initializeLogrocket, invalidateSession } from './authentication';
+import { sendRequest } from './api';
+import { getAsyncKey } from '../utils/saveAndCloseButtons';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {
+  const connectionId = '123';
+  const asyncKey = getAsyncKey('connections', connectionId);
+
   describe('request payload generation', () => {
     test('should utilize the connection id to retrieve userRoles when no form values provided  ', () => {
       const saga = netsuiteUserRoles({ connectionId: '123', values: null });
 
+      expect(saga.next().value).toEqual(put(actions.asyncTask.start(asyncKey)));
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
           path: '/netsuite/alluserroles',
@@ -47,6 +52,8 @@ describe('netsuiteUserRoles', () => {
           '/netsuite/password': password,
         },
       });
+
+      expect(saga.next().value).toEqual(put(actions.asyncTask.start(asyncKey)));
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -67,76 +74,164 @@ describe('netsuiteUserRoles', () => {
   describe('netsuite api call response behavior for an existing connection', () => {
     let saga;
     const connectionId = '123';
+    const someFormValues = {a: 'b' };
+    const parentContext = {b: 'c'};
 
-    beforeEach(() => {
-      saga = netsuiteUserRoles({ connectionId, values: null });
+    const asyncKey = getAsyncKey('connections', connectionId);
 
-      // skipping the api call
-      saga.next();
-    });
+    describe('when shouldPingConnection is false', () => {
+      beforeEach(() => {
+        saga = netsuiteUserRoles({ connectionId,
+          values: someFormValues,
+          parentContext,
+        });
 
-    afterEach(() => {
-      expect(saga.next().done).toEqual(true);
-    });
-    test('should check the response for errors on a successful call and subsequently dispatch an error if all the environments fail', () => {
-      const failedResp = {
-        production: { accounts: {}, success: false },
-        sandbox: { accounts: {}, success: false },
-      };
+        // skipping async start task
+        saga.next();
+        // skipping the api call
+        saga.next();
+      });
 
-      expect(saga.next(failedResp).value).toEqual(
-        put(
-          actions.resource.connections.netsuite.requestUserRolesFailed(
-            connectionId,
-            'Invalid netsuite credentials provided'
+      afterEach(() => {
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should check the response for errors on a successful call and subsequently dispatch an error if all the environments fail', () => {
+        const failedResp = {
+          production: { accounts: {}, success: false },
+          sandbox: { accounts: {}, success: false },
+        };
+
+        expect(saga.next(failedResp).value).toEqual(
+          put(
+            actions.resource.connections.netsuite.requestUserRolesFailed(
+              connectionId,
+              'Invalid netsuite credentials provided'
+            )
           )
-        )
-      );
-    });
-
-    test('should check the response for errors on a successful call and subsequently dispatch a successful netsuite userRoles if any of the environments succeeded', () => {
-      const oneEnvfailedResp = {
-        production: { accounts: {}, success: true },
-        sandbox: { accounts: {}, success: false },
-      };
-
-      expect(saga.next(oneEnvfailedResp).value).toEqual(
-        put(
-          actions.resource.connections.netsuite.receivedUserRoles(
-            connectionId,
-            oneEnvfailedResp
+        );
+        expect(saga.next(failedResp).value).toEqual(
+          put(
+            actions.resource.connections.testErrored(
+              connectionId,
+              'Invalid netsuite credentials provided'
+            )
           )
-        )
-      );
-    });
-    test('should save the userRoles on a successful call', () => {
-      const successResp = {
-        production: { accounts: {}, success: true },
-      };
+        );
+        expect(saga.next().value).toEqual(put(actions.asyncTask.failed(asyncKey)));
+      });
 
-      expect(saga.next(successResp).value).toEqual(
-        put(
-          actions.resource.connections.netsuite.receivedUserRoles(
-            connectionId,
-            successResp
+      test('should check the response for errors on a successful call and subsequently dispatch a successful netsuite userRoles if any of the environments succeeded', () => {
+        const oneEnvfailedResp = {
+          production: { accounts: {}, success: true },
+          sandbox: { accounts: {}, success: false },
+        };
+
+        expect(saga.next(oneEnvfailedResp).value).toEqual(
+          put(
+            actions.resource.connections.netsuite.receivedUserRoles(
+              connectionId,
+              { production: { accounts: {}, success: true }},
+
+            )
           )
-        )
-      );
-    });
-
-    test('should dispatch an Error action when the api call has failed and an exception is thrown ', () => {
-      const errorException = {
-        message: JSON.stringify({ errors: [{ message: 'Some error' }] }),
-      };
-
-      expect(saga.throw(errorException).value).toEqual(
-        put(
-          actions.resource.connections.netsuite.requestUserRolesFailed(
-            connectionId,
-            'Some error'
+        );
+        expect(saga.next(oneEnvfailedResp).value).toEqual(
+          put(
+            actions.resource.connections.testSuccessful(
+              connectionId
+            )
           )
-        )
-      );
+        );
+        expect(saga.next().value).toEqual(put(actions.asyncTask.success(asyncKey)));
+      });
+      test('should save the userRoles on a successful call', () => {
+        const successResp = {
+          production: { accounts: {}, success: true },
+        };
+
+        expect(saga.next(successResp).value).toEqual(
+          put(
+            actions.resource.connections.netsuite.receivedUserRoles(
+              connectionId,
+              successResp
+            )
+          )
+        );
+        expect(saga.next(successResp).value).toEqual(
+          put(
+            actions.resource.connections.testSuccessful(
+              connectionId
+            )
+          )
+        );
+        expect(saga.next(successResp).value).toEqual(put(actions.asyncTask.success(asyncKey)));
+      });
+
+      test('should dispatch an Error action when the api call has failed and an exception is thrown ', () => {
+        const errorException = {
+          message: JSON.stringify({ errors: [{ message: 'Some error' }] }),
+        };
+
+        expect(saga.throw(errorException).value).toEqual(
+          put(
+            actions.resource.connections.netsuite.requestUserRolesFailed(
+              connectionId,
+              'Some error'
+            )
+          )
+        );
+        expect(saga.next(errorException).value).toEqual(
+          put(
+            actions.resource.connections.testErrored(
+              connectionId,
+              'Some error'
+            )
+          )
+        );
+        expect(saga.next().value).toEqual(put(actions.asyncTask.failed(asyncKey)));
+      });
+    });
+    describe('when shouldPingConnection is true', () => {
+      beforeEach(() => {
+        saga = netsuiteUserRoles({ connectionId,
+          values: someFormValues,
+          parentContext,
+          shouldPingConnection: true,
+        });
+
+        // skipping async start task
+        saga.next();
+        // skipping the api call
+        saga.next();
+      });
+
+      afterEach(() => {
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should ping the netsuite connection when the netsuiteUser roles has been fetched ', () => {
+        const successResp = {
+          production: { accounts: {}, success: true },
+        };
+
+        expect(saga.next(successResp).value).toEqual(
+          put(
+            actions.resource.connections.netsuite.receivedUserRoles(
+              connectionId,
+              successResp
+            )
+          )
+        );
+        expect(saga.next(successResp).value).toEqual(
+          put(
+            actions.resource.connections.testSuccessful(
+              connectionId
+            )
+          )
+        );
+        expect(saga.next().value).toEqual(put(actions.asyncTask.success(asyncKey)));
+
+        expect(saga.next().value).toEqual(put(actions.resource.connections.test(connectionId, someFormValues, parentContext)));
+      });
     });
   });
   describe('netsuite api call response behavior for an new connection', () => {
@@ -150,6 +245,8 @@ describe('netsuiteUserRoles', () => {
           '/netsuite/password': password,
         },
       });
+
+      expect(saga.next().value).toEqual(put(actions.asyncTask.start(asyncKey)));
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -192,14 +289,9 @@ describe('apiCallWithRetry saga', () => {
     test('Any successful non signout request return the response back to the parent saga ', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
       const raceBetweenApiCallAndTimeoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, request),
         timeoutEffect: delay(2 * 60 * 1000),
       });
       // if an effect does not succeeds in a race...we get an undefined
@@ -218,14 +310,10 @@ describe('apiCallWithRetry saga', () => {
     test('Any failed non signout request return should bubble the exception to parent ', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
+
       const raceBetweenApiCallAndTimeoutEffect = race([
-        call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        call(sendRequest, request),
         take(actionsTypes.USER_LOGOUT),
       ]);
 
@@ -245,14 +333,10 @@ describe('apiCallWithRetry saga', () => {
     test('In the event of a 204 response apiCallWithRetry saga should return undefined to the parent saga', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
+
       const raceBetweenApiCallAndTimeoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, request),
         timeoutEffect: delay(120000),
       });
 
@@ -276,14 +360,10 @@ describe('apiCallWithRetry saga', () => {
     test('timed out non-logout requests should perform request cleanup and subsequently throw a timed out exception', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: path, args },
-      };
+      const request = { url: path, args };
+
       const raceBetweenApiCallAndTimeoutEffect = race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
+        apiResp: call(sendRequest, request),
         timeoutEffect: delay(120000),
       });
 
@@ -312,14 +392,10 @@ describe('apiCallWithRetry saga', () => {
           message: undefined,
         };
         const saga = apiCallWithRetry(args);
-        const apiRequestAction = {
-          type: 'API_WATCHER',
-          request: { url: path, args },
-        };
+        const request = { url: path, args };
+
         const raceBetweenApiCallAndTimeoutEffect = race({
-          apiResp: call(sendRequest, apiRequestAction, {
-            dispatchRequestAction: false,
-          }),
+          apiResp: call(sendRequest, request),
           timeoutEffect: delay(2 * 60 * 1000),
         });
         // if an effect does not succeeds in a race...we get an undefined
@@ -345,14 +421,10 @@ describe('apiCallWithRetry saga', () => {
           message: undefined,
         };
         const saga = apiCallWithRetry(args);
-        const apiRequestAction = {
-          type: 'API_WATCHER',
-          request: { url: path, args },
-        };
+        const request = { url: path, args };
+
         const raceBetweenApiCallAndTimeoutEffect = race({
-          apiResp: call(sendRequest, apiRequestAction, {
-            dispatchRequestAction: false,
-          }),
+          apiResp: call(sendRequest, request),
           timeoutEffect: delay(2 * 60 * 1000),
         });
         // if an effect does not succeeds in a race...we get an undefined
@@ -378,13 +450,9 @@ describe('apiCallWithRetry saga', () => {
         message: undefined,
       };
       const saga = apiCallWithRetry(args);
-      const apiRequestAction = {
-        type: 'API_WATCHER',
-        request: { url: logoutPath, args },
-      };
-      const sendRequestEffect = call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: false,
-      });
+      const request = { url: logoutPath, args };
+
+      const sendRequestEffect = call(sendRequest, request);
       const resp = { response: { data: 'some response' } };
 
       expect(saga.next().value).toEqual(sendRequestEffect);
@@ -438,9 +506,6 @@ describe('rootSaga', () => {
 
     beforeEach(() => {
       saga = rootSaga();
-
-      // skip the first yield effect
-      saga.next();
     });
 
     test('should initialize logrocket when the logrocket action races', () => {

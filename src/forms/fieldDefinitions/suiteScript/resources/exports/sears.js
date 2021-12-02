@@ -1,5 +1,6 @@
 export default {
   'export.sears.method': {
+    loggable: true,
     type: 'suitescriptapimethod',
     label: 'API',
     _connectionId: r => r && r.export && r.export._connectionId,
@@ -8,6 +9,7 @@ export default {
     required: true,
   },
   'export.sears.methodConfig': {
+    loggable: true,
     type: 'suitescriptapiparameters',
     _connectionId: r => r && r.export && r.export._connectionId,
     ssLinkedConnectionId: r => r && r.ssLinkedConnectionId,

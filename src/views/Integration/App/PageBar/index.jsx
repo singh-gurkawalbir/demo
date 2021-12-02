@@ -142,7 +142,10 @@ export default function PageBar() {
   const classes = useStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { integrationId, childId, tab } = match.params;
+  const { integrationId, childId, dashboardTab } = match.params;
+  let {tab} = match.params;
+
+  tab = dashboardTab ? 'dashboard' : tab;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.

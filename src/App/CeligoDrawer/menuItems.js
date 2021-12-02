@@ -165,8 +165,13 @@ export default function menuItems(
   if (['monitor', 'tile'].includes(accessLevel)) {
     items = items.filter(i => !['Resources'].includes(i.label));
     const toolsSubSectIndex = items.findIndex(i => i.label === 'Tools');
+    let toolsSectionMenuItems = ['Reports'];
 
-    items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => ['Reports', 'Dev playground'].includes(i.label));
+    if (isDeveloper) {
+      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Dev playground'];
+    }
+
+    items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => toolsSectionMenuItems.includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
     const toolItems = items.find(i => i.label === 'Tools');

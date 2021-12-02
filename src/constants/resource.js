@@ -3,9 +3,10 @@ import { invert } from 'lodash';
 export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   accesstoken: 'accesstokens',
   agent: 'agents',
-  asynchelper: 'asynchelpers',
+  asyncHelper: 'asyncHelpers',
   connection: 'connections',
   connector: 'connectors',
+  connectorLicense: 'connectorLicenses',
   export: 'exports',
   filedefinition: 'filedefinitions',
   flow: 'flows',

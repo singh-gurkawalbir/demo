@@ -10,7 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
-import Tag from '../../HomePageCard/Footer/Tag';
+import IntegrationTag from '../../tags/IntegrationTag';
 import shouldUnmaskInLogRocket from '../../../utils/shouldUnmaskInLogRocket';
 
 const useStyles = makeStyles(theme => ({
@@ -65,7 +65,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      <Tag className={classes.tagWrapper} label={tag} />
+      <IntegrationTag className={classes.tagWrapper} label={tag} />
     </>
   );
 };
@@ -99,6 +99,7 @@ export default function DynaMultiSelect(props) {
     removeInvalidValues = false,
     selectAllIdentifier,
     dataPublic,
+    SelectedOptionIml,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -115,6 +116,20 @@ export default function DynaMultiSelect(props) {
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
+          if (SelectedOptionIml) {
+            return (
+              <MenuItem
+                key={item.value}
+                value={item.value}
+                disabled={item.disabled}
+                className={classes.menuItems}>
+                <SelectedOptionIml
+                  item={item}
+                  processedValue={processedValue}
+                />
+              </MenuItem>
+            );
+          }
           if (typeof item === 'string') {
             return (
               <MenuItem key={item} value={item} className={classes.menuItems}>
@@ -140,7 +155,7 @@ export default function DynaMultiSelect(props) {
                 />
               )}
               <ListItemText primary={item.label || item.value} />
-              {item.tag && <Tag className={classes.tagWrapper} label={item.tag} />}
+              {item.tag && <IntegrationTag className={classes.tagWrapper} label={item.tag} />}
             </MenuItem>
           );
         })

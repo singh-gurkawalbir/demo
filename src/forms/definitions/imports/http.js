@@ -280,6 +280,15 @@ export default {
     if (retValues['/http/requestMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
     }
+    if (!retValues['/http/requestMediaType']) {
+      retValues['/http/requestMediaType'] = undefined;
+    }
+    if (!retValues['/http/successMediaType']) {
+      retValues['/http/successMediaType'] = undefined;
+    }
+    if (!retValues['/http/errorMediaType']) {
+      retValues['/http/errorMediaType'] = undefined;
+    }
     retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
     delete retValues['/http/existingLookupType'];
@@ -1303,7 +1312,7 @@ export default {
             containers: [
               {
                 collapsed: true,
-                label: 'Create new data',
+                label: 'Create new records',
                 fields: [
                   'http.compositeMethodCreate',
                   'http.relativeURICreate',
@@ -1312,17 +1321,17 @@ export default {
               },
               {
                 collapsed: true,
-                label: 'Ignore existing records',
+                label: 'Identify existing records',
                 fields: ['http.existingLookupType', 'http.ignoreExistingExtract', 'http.ignoreExistingLookupName'],
               },
               {
                 collapsed: true,
-                label: 'Ignore new data',
+                label: 'Identify existing records',
                 fields: ['http.newLookupType', 'http.ignoreNewExtract', 'http.ignoreNewLookupName'],
               },
               {
                 collapsed: true,
-                label: 'Update existing data',
+                label: 'Update existing records',
                 fields: [
                   'http.compositeMethodUpdate',
                   'http.relativeURIUpdate',
@@ -1342,7 +1351,7 @@ export default {
             containers: [
               {
                 collapsed: true,
-                label: 'Create new data',
+                label: 'Create new records',
                 fields: [
                   'http.resourcePathCreate',
                   'http.resourceIdPathCreate',
@@ -1354,7 +1363,7 @@ export default {
               },
               {
                 collapsed: true,
-                label: 'Update existing data',
+                label: 'Update existing records',
                 fields: [
                   'http.resourcePathUpdate',
                   'http.resourceIdPathUpdate',

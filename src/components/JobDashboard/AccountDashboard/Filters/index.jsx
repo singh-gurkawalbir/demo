@@ -4,6 +4,7 @@ import {
   makeStyles, Typography,
 } from '@material-ui/core';
 import { addDays, startOfDay } from 'date-fns';
+import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -14,6 +15,7 @@ import { FILTER_KEYS_AD,
   DEFAULTS_COMPLETED_JOBS_FILTER,
   DEFAULTS_RUNNING_JOBS_FILTER,
   DEFAULT_ROWS_PER_PAGE,
+  getDashboardIntegrationId,
   DEFAULT_RANGE,
   ROWS_PER_PAGE_OPTIONS } from '../../../../utils/accountDashboard';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
@@ -59,9 +61,15 @@ const useStyles = makeStyles(theme => ({
 export default function Filters({filterKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  let { integrationId } = match.params;
+  const { childId } = match.params;
+
+  integrationId = getDashboardIntegrationId(integrationId, childId);
+  const integrationFilterKey = `${integrationId || ''}${filterKey}`;
   const {jobs, nextPageURL, status} = useSelector(state => selectors.accountDashboardJobs(state, filterKey));
 
-  const jobFilter = useSelector(state => selectors.filter(state, filterKey));
+  const jobFilter = useSelector(state => selectors.filter(state, integrationFilterKey));
   const {currPage = 0,
     rowsPerPage = DEFAULT_ROWS_PER_PAGE,
   } = jobFilter?.paging || {};
@@ -73,20 +81,19 @@ export default function Filters({filterKey}) {
       if (key !== 'currentPage') {
         filter.currentPage = 0;
       }
-
-      dispatch(actions.patchFilter(filterKey, filter));
+      dispatch(actions.patchFilter(integrationFilterKey, filter));
     },
-    [dispatch, filterKey]
+    [dispatch, integrationFilterKey]
   );
-  const defaultFilter = filterKey === FILTER_KEYS_AD.RUNNING ? DEFAULTS_RUNNING_JOBS_FILTER : DEFAULTS_COMPLETED_JOBS_FILTER;
+  const defaultFilter = integrationFilterKey === `${integrationId}${FILTER_KEYS_AD.RUNNING}` ? DEFAULTS_RUNNING_JOBS_FILTER : DEFAULTS_COMPLETED_JOBS_FILTER;
 
   const loadMoreJobs = useCallback(
     () => {
-      if (filterKey === FILTER_KEYS_AD.RUNNING) { return dispatch(actions.job.dashboard.running.requestCollection(nextPageURL)); }
+      if (integrationFilterKey === `${integrationId}${FILTER_KEYS_AD.RUNNING}`) { return dispatch(actions.job.dashboard.running.requestCollection({nextPageURL, integrationId})); }
 
-      return dispatch(actions.job.dashboard.completed.requestCollection(nextPageURL));
+      return dispatch(actions.job.dashboard.completed.requestCollection({nextPageURL, integrationId}));
     },
-    [dispatch, filterKey, nextPageURL],
+    [dispatch, integrationFilterKey, integrationId, nextPageURL],
   );
   const paginationOptions = useMemo(
     () => ({
@@ -99,54 +106,54 @@ export default function Filters({filterKey}) {
   );
   const handleChangeRowsPerPage = useCallback(e => {
     dispatch(
-      actions.patchFilter(filterKey, {
+      actions.patchFilter(integrationFilterKey, {
         paging: {
-          ...jobFilter.paging,
+          ...jobFilter?.paging,
           rowsPerPage: parseInt(e.target.value, 10),
         },
       })
     );
-  }, [dispatch, filterKey, jobFilter?.paging]);
+  }, [dispatch, integrationFilterKey, jobFilter?.paging]);
   const handleChangePage = useCallback(
     (e, newPage) => dispatch(
-      actions.patchFilter(filterKey, {
+      actions.patchFilter(integrationFilterKey, {
         paging: {
-          ...jobFilter.paging,
+          ...jobFilter?.paging,
           currPage: newPage,
         },
       })
     ),
-    [dispatch, filterKey, jobFilter?.paging]
+    [dispatch, integrationFilterKey, jobFilter?.paging]
   );
-  const isDateFilterSelected = !!(jobFilter.range && jobFilter.range.preset !== DEFAULT_RANGE.preset);
+  const isDateFilterSelected = !!(jobFilter?.range && jobFilter?.range.preset !== DEFAULT_RANGE.preset);
 
   const selectedDate = useMemo(() => isDateFilterSelected ? {
-    startDate: new Date(jobFilter.range?.startDate),
-    endDate: new Date(jobFilter.range?.endDate),
-    preset: jobFilter.range?.preset,
-  } : DEFAULT_RANGE, [isDateFilterSelected, jobFilter.range?.endDate, jobFilter.range?.preset, jobFilter.range?.startDate]);
+    startDate: new Date(jobFilter?.range?.startDate),
+    endDate: new Date(jobFilter?.range?.endDate),
+    preset: jobFilter?.range?.preset,
+  } : DEFAULT_RANGE, [isDateFilterSelected, jobFilter?.range?.endDate, jobFilter?.range?.preset, jobFilter?.range?.startDate]);
 
   const handleDateFilter = useCallback(
     dateFilter => {
       const selectedRange = getSelectedRange(dateFilter);
 
       dispatch(
-        actions.patchFilter(filterKey, {
+        actions.patchFilter(integrationFilterKey, {
           ...jobFilter,
           range: selectedRange,
         })
       );
     },
-    [dispatch, filterKey, jobFilter],
+    [dispatch, integrationFilterKey, jobFilter],
   );
 
   const handleRefreshClick = useCallback(() => {
-    dispatch(actions.patchFilter(filterKey, {...defaultFilter }));
+    dispatch(actions.patchFilter(integrationFilterKey, {...defaultFilter }));
     patchFilter(
       'refreshAt',
       new Date().getTime()
     ); /** We are setting the refreshAt (not sending to api) to make sure the filter changes when user clicks refresh.  */
-  }, [defaultFilter, dispatch, filterKey, patchFilter]);
+  }, [defaultFilter, dispatch, integrationFilterKey, patchFilter]);
 
   return (
     <div className={classes.root}>
