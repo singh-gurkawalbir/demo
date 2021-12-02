@@ -1,6 +1,6 @@
 import { uniqBy } from 'lodash';
+import Browser from 'bowser';
 import mappingUtil from '..';
-import { getBrowserInfo } from '../../window';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = (extract, isSS2) => {
@@ -436,7 +436,8 @@ export default {
     return generatedMapping;
   },
   isNSMappingAssistantSupported: () => {
-    const { name, version } = getBrowserInfo();
+    const browser = Browser.getParser(window.navigator.userAgent);
+    const { name, version } = browser.getBrowser();
 
     // Chrome browser with versions >= 91 are not supported for NS Assistant to launch Iframe
     // Ref https://celigo.atlassian.net/browse/IO-21921
