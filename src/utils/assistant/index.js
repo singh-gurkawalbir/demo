@@ -1178,7 +1178,9 @@ export function convertToReactFormFields({
   const paramValues = { ...value };
   let anyParamValuesSet = false;
 
-  paramMeta.fields && paramMeta.fields.forEach(field => {
+  const paramMetaFields = paramMeta?.fields?.map(fld => {
+    const field = {...fld};
+
     if (field.type === 'repeat' && field.indexed) {
       const fieldValue = [];
 
@@ -1195,10 +1197,12 @@ export function convertToReactFormFields({
         field.defaultValue = [];
       }
     }
+
+    return field;
   });
 
-  paramMeta.fields &&
-    paramMeta.fields.forEach(field => {
+  paramMetaFields &&
+    paramMetaFields.forEach(field => {
       if (!field.readOnly && Object.prototype.hasOwnProperty.call(paramValues, field.id) && paramValues[field.id] !== field.defaultValue) {
         anyParamValuesSet = true;
       }
@@ -1245,8 +1249,8 @@ export function convertToReactFormFields({
       fieldDetailsMap[fieldId].inputType = fieldType;
     });
 
-  paramMeta.fields &&
-    paramMeta.fields.forEach(field => {
+  paramMetaFields &&
+    paramMetaFields.forEach(field => {
       const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
       const { inputType, type } = fieldDetailsMap[fieldId];
       const paramValue = getParamValue({
