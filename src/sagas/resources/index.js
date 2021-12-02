@@ -17,7 +17,6 @@ import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import { pollApiRequests } from '../app';
-import { SCOPES } from '../suiteScript/resourceForm';
 
 const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
@@ -418,21 +417,6 @@ export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
   }
 
   return yield call(commitStagedChanges, props);
-}
-
-export function* stageAndCommitChanges(props) {
-  const { id, patch, ops = {} } = props;
-  const { scope, context, asyncKey, parentContext, options } = ops;
-
-  yield put(actions.resource.patchStaged(id, patch, scope || SCOPES.VALUE));
-  yield call(commitStagedChangesWrapper, {
-    ...props,
-    options,
-    scope: scope || SCOPES.VALUE,
-    context,
-    asyncKey,
-    parentContext,
-  });
 }
 
 export function* downloadFile({ resourceType, id }) {
@@ -1155,8 +1139,13 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, stageAndCommitChanges),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
+  takeEvery(
+    [
+      actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT,
+      actionTypes.RESOURCE.STAGE_COMMIT,
+    ],
+    commitStagedChangesWrapper
+  ),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
