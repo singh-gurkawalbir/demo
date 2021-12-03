@@ -145,7 +145,7 @@ export function* _fetchAssistantSampleData({ resource }) {
       hidden: true,
     });
     const previewStageDataList = extractStages(previewData);
-    const record = previewStageDataList?.parse?.[0] || {};
+    const record = previewStageDataList?.parse?.[0] || sampleData || {};
 
     yield put(
       actions.metadata.receivedAssistantImportPreview(
