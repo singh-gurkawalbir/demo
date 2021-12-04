@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
@@ -78,16 +77,8 @@ export default function GeneralSection({ integrationId }) {
         },
       ];
 
-      dispatch(
-        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
-      );
-      dispatch(
-        actions.resource.commitStaged(
-          'integrations',
-          integrationId,
-          SCOPES.VALUE
-        )
-      );
+      dispatch(actions.resource.patchAndCommitStaged('integrations', integrationId, patchSet));
+
       setCount(count => count + 1);
     },
     [dispatch, integrationId]

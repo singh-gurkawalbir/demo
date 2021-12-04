@@ -7,7 +7,6 @@ import { selectors } from '../../reducers';
 import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../utils/constants';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { SCOPES } from '../resourceForm';
 
 export function* run({ flowId, customStartDate, options = {} }) {
   // per PM request to track the run request
@@ -106,8 +105,7 @@ export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
           },
         ];
 
-        yield put(actions.resource.patchStaged(exportId, patchSet, SCOPES.VALUE));
-        yield put(actions.resource.commitStaged('exports', exportId, SCOPES.VALUE));
+        yield put(actions.resource.patchAndCommitStaged('exports', exportId, patchSet));
       }
     }
   }

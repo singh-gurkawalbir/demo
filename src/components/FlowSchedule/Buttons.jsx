@@ -76,8 +76,7 @@ export default function FlowScheduleButtons({
       skipRemovePatches: true,
     });
 
-    dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flow._id, 'value', null, null, formKey));
+    dispatch(actions.resource.patchAndCommitStaged('flows', flow?._id, sanitized, { asyncKey: formKey }));
   }, [dispatch, flow, pg, index, scheduleStartMinute, formKey]);
 
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
