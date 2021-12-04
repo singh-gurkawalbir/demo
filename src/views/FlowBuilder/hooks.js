@@ -19,8 +19,7 @@ export const usePatchFlow = flowId => {
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
 
-      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 
       if (!isNewFlow) {
         dispatch(actions.flowData.updateFlow(flowId));

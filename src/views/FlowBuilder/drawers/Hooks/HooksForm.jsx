@@ -54,8 +54,11 @@ export default function HooksForm({flowId, integrationId, formKey}) {
     selectedHooks => {
       const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }, formKey));
+      dispatch(actions.resource.patchAndCommitStaged(resourceType, resourceId, patchSet, {
+        context: { flowId },
+        asyncKey: formKey,
+      }));
+
       dispatch(actions.hooks.save({ resourceType, resourceId, flowId, match }));
     },
     [resource, dispatch, resourceId, resourceType, flowId, match, formKey]

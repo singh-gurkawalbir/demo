@@ -12,7 +12,6 @@ import { JOB_TYPES, JOB_STATUS, EMPTY_RAW_DATA } from '../../utils/constants';
 import { run, runDataLoader, getLastExportDateTime } from '.';
 import { uploadRawData } from '../uploadFile';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
-import { SCOPES } from '../resourceForm';
 
 describe('run saga', () => {
   const flowId = 'f1';
@@ -267,8 +266,7 @@ describe('runDataLoader saga', () => {
         [call(run, { flowId, options }), {}],
       ])
       .call(run, { flowId, options })
-      .put(actions.resource.patchStaged(_exportId, patchSet, SCOPES.VALUE))
-      .put(actions.resource.commitStaged('exports', _exportId, SCOPES.VALUE))
+      .put(actions.resource.patchAndCommitStaged('exports', _exportId, patchSet))
       .run();
   });
 });
