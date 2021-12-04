@@ -22,10 +22,7 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(
-        actions.resource.commitStaged(resourceType, resourceId, 'value')
-      );
+      dispatch(actions.resource.patchAndCommitStaged(resourceType, resourceId, patchSet));
     }, [dispatch, resourceId, resourceType]);
 
     return reactivateAccessToken;

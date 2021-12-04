@@ -398,6 +398,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     );
   }
 }
+
 export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
   // if asyncKey is defined we should try tagging with async updates
   if (asyncKey) {
@@ -417,6 +418,7 @@ export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
 
   return yield call(commitStagedChanges, props);
 }
+
 export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
     resourceId: id,
@@ -570,9 +572,7 @@ export function* updateIntegrationSettings({
         ];
 
         if (flow.disabled !== values['/disabled']) {
-          yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
-
-          yield put(actions.resource.commitStaged('flows', flowId, 'value'));
+          yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
         }
       }
     } else {
@@ -1139,7 +1139,13 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
+  takeEvery(
+    [
+      actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT,
+      actionTypes.RESOURCE.STAGE_COMMIT,
+    ],
+    commitStagedChangesWrapper
+  ),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),

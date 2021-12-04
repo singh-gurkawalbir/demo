@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions }
+import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogActions }
   from '@material-ui/core';
 import shortid from 'shortid';
 import { selectors } from '../../../reducers';
@@ -82,10 +82,6 @@ export default function ExportExampleButton({ editorId }) {
       <Dialog open={open} onClose={handleClose} aria-labelledby="example-dialog" maxWidth="lg">
         <DialogTitle id="example-dialog">Export example</DialogTitle>
         <DialogContent className={classes.dialogContent}>
-          <DialogContentText>
-            Send this JSON snippet to dave@celigo.com.
-          </DialogContentText>
-
           <CodeEditor onChange={handleChange} value={example} mode="json" />
         </DialogContent>
 
