@@ -1,4 +1,3 @@
-import actions from '../../../../actions';
 import { hooksList, hooksLabelMap } from '../../../../utils/hooks';
 
 export const getCreateScriptMetadata = scriptId => ({
@@ -61,33 +60,3 @@ export const getCreateScriptMetadata = scriptId => ({
     fields: ['name', 'description', 'insertFunction', 'content'],
   },
 });
-
-export const saveScript = (values, options = {}, context = {}, formKey) => {
-  const { name, description, content, scriptId } = values;
-  const { dispatch, isNew = false } = options;
-  const patchSet = [];
-
-  if (isNew) {
-    patchSet.push(
-      {
-        op: 'add',
-        path: '/name',
-        value: name,
-      },
-      {
-        op: 'add',
-        path: '/description',
-        value: description,
-      }
-    );
-  }
-
-  // content gets updated both in new and edit mode
-  patchSet.push({
-    op: isNew ? 'add' : 'replace',
-    path: '/content',
-    value: content,
-  });
-
-  dispatch(actions.resource.patchAndCommitStaged('scripts', scriptId, patchSet, { options, context, asyncKey: formKey }));
-};
