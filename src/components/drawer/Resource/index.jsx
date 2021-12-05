@@ -1,13 +1,10 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Route, useHistory, useRouteMatch } from 'react-router-dom';
-import clsx from 'clsx';
+import { useHistory, useRouteMatch, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
+import RightDrawer from '../Right';
 import Panel, { redirectURlToParentListing } from './Panel';
 import { selectors } from '../../../reducers';
-
-const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 
 const useStyles = makeStyles(theme => ({
   resourceDrawerPaper: {
@@ -26,14 +23,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ResourceDrawer(props) {
+function ResourceDrawerContent(props) {
   const { flowId, integrationId } = props;
   const classes = useStyles();
   const match = useRouteMatch();
-  const open = !!match;
   const history = useHistory();
   const { id, resourceType } = (match && match.params) || {};
-
   // if we pass flowId/integration id to result/status export which we open
   // from asyncHelper, getting sample data preview errors. As result/status export
   // are not related to flow, not passing flowId/integrationId conditionally.
@@ -57,64 +52,49 @@ function ResourceDrawer(props) {
       props.flowId
     )
   );
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <>
-      <Drawer
-        variant="persistent"
-        anchor="right"
-        elevation={3}
-        open={open}
-        classes={{
-          paper: clsx(classes.resourceDrawerPaper, {
-            [classes.fullWidthDrawerClose]:
-              !drawerOpened && isPreviewPanelAvailableForResource,
-            [classes.fullWidthDrawerOpen]:
-              drawerOpened && isPreviewPanelAvailableForResource,
-          }),
-        }}
-        onClose={handleClose}>
-        <div className={classes.panelContainer}>
-          {open && (
-            <Panel
-              {...props}
-              occupyFullWidth={isPreviewPanelAvailableForResource}
-              zIndex={1}
-              onClose={handleClose}
+      <div className={classes.panelContainer}>
+        <Panel
+          {...props}
+          occupyFullWidth={isPreviewPanelAvailableForResource}
+          zIndex={1}
+          onClose={handleClose}
             />
-          )}
-        </div>
-      </Drawer>
-      {open && (
-      <Route
-        path={`${match.url}${DRAWER_PATH}`}>
-        {isAsyncHelper ? <ResourceDrawer /> : (
-          <ResourceDrawer
-            flowId={flowId}
-            integrationId={integrationId}
-        />
+      </div>
+      {isAsyncHelper
+        ? <ResourceDrawer />
+        : (
+          <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         )}
-      </Route>
-      )}
-
     </>
   );
 }
 
-export default function ResourceDrawerRoute({
+export default function ResourceDrawer({
   flowId,
   integrationId,
 }) {
-  const match = useRouteMatch();
+  const { id, resourceType } = useParams();
+  const isPreviewPanelAvailableForResource = useSelector(state =>
+    // Returns a bool whether the resource has a preview panel or not
+    selectors.isPreviewPanelAvailableForResource(
+      state,
+      id,
+      resourceType,
+      flowId
+    )
+  );
 
   return (
-    <Route
-      path={`${match.url}/:operation(add|edit)/:resourceType/:id`}>
-      <ResourceDrawer
-        flowId={flowId}
-        integrationId={integrationId}
-          />
-    </Route>
+    <RightDrawer
+      path=":operation(add|edit)/:resourceType/:id"
+      variant="temporary"
+      width={isPreviewPanelAvailableForResource ? 'full' : undefined}
+      height="tall">
+      <ResourceDrawerContent flowId={flowId} integrationId={integrationId} />
+    </RightDrawer>
   );
 }
+
