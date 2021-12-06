@@ -45,7 +45,7 @@ import {
   getFlowGroup,
   mappingFlowsToFlowGroupings,
 } from '.';
-import { emptyObject, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
 import getRoutePath from '../routePaths';
 
 const integration = {
@@ -3132,10 +3132,10 @@ describe('shouldHaveUnassignedSection', () => {
   test('should return false if there are flowGroupings but no flows', () => {
     expect(shouldHaveUnassignedSection(flowGroupings, null)).toEqual(false);
   });
-  test('should return true if there are flowGroupings and flows, but anyone of the flows do not have _flowGroupingId', () => {
+  test('should return true if there is atleast one flow without a _flowGroupingId assigned to it', () => {
     expect(shouldHaveUnassignedSection(flowGroupings, flowsWithNoFlowGroupingId)).toEqual(true);
   });
-  test('should return false if there are flowGroupings and all the flows have _flowGrupingId', () => {
+  test('should return false if there are flowGroupings and all the flows have a _flowGrupingId', () => {
     expect(shouldHaveUnassignedSection(flowGroupings, allFlowsWithFlowGroupingId)).toEqual(false);
   });
 });
@@ -3153,7 +3153,7 @@ describe('getFlowGroup', () => {
   ];
 
   test('should return emptyObject if there are no flowGroupings', () => {
-    expect(getFlowGroup(null, null, null)).toEqual(emptyObject);
+    expect(getFlowGroup(null, null, null)).toEqual(null);
   });
   test('should return correct object on passing either the groupName or groupId', () => {
     expect(getFlowGroup(flowGroupings, 'Flow Group 1', null)).toEqual({
