@@ -31,13 +31,13 @@ function forEachPlaceHolder(srcString, prcs, options = {}) {
       }
     } else if (/}}+/.test(str)) {
       ct = i;
-      if (strParts[ot].length !== strParts[ct].length) return str; // invalid placeholder i.e. {{..}}} or {{{..}}
+      if (strParts[ot].length !== strParts[ct].length) return srcString; // invalid placeholder i.e. {{..}}} or {{{..}}
       placeHolderIndexes.push(ot + 1);
       // eslint-disable-next-line no-multi-assign
       ot = ct = -1;
       continue;
     } else {
-      if (/{{+/.test(str)) return str; // invalid placeholer i.e. two {{'s before }} - no need to process
+      if (/{{+/.test(str)) return srcString; // invalid placeholer i.e. two {{'s before }} - no need to process
       continue;
     }
   }
