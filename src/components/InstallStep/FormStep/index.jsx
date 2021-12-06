@@ -1,37 +1,43 @@
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { makeStyles, Drawer } from '@material-ui/core';
+import React, { useMemo, useCallback } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
+import { selectors} from '../../../reducers';
 import actions from '../../../actions';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
-import DrawerTitleBar from '../../drawer/TitleBar';
-import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
-const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    width: 824,
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  formStep: {
-    padding: 24,
-  },
-}));
-
-export default function FormStep({
-  integrationId,
-  installerFunction,
-  formMeta,
-  title,
-  formSubmitHandler,
-  formCloseHandler,
-  addChild,
-}) {
-  const classes = useStyles();
+function FormStepContent({ integrationId, addChild, formSubmitHandler, formCloseHandler }) {
+  const { formType, index } = useParams();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const currentStep = useSelector(state => {
+    let steps = [];
 
+    if (formType === 'install') {
+      steps = selectors.integrationInstallSteps(state, integrationId);
+    } else if (formType === 'child') {
+      steps = selectors.addNewChildSteps(state, integrationId)?.steps;
+    } else if (formType === 'uninstall') {
+      steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
+    }
+    const currentStep = steps[index - 1];
+
+    return currentStep;
+  });
+
+  const { installerFunction, name } = currentStep;
+  const formMeta = useMemo(() => {
+    if (formType === 'install') {
+      return currentStep?.formMeta;
+    }
+
+    return currentStep?.form;
+  }, [formType, currentStep]);
   const handleSubmit = useCallback(
     formVal => {
       if (installerFunction) {
@@ -73,53 +79,46 @@ export default function FormStep({
           )
         );
       }
+      history.goBack();
     },
-    [dispatch, installerFunction, integrationId]
+    [dispatch, history, installerFunction, integrationId, addChild]
   );
   const onClose = useCallback(() => {
     dispatch(
       actions.integrationApp.installer.updateStep(integrationId, '', 'failed')
     );
-  }, [dispatch, integrationId]);
+    history.goBack();
+  }, [dispatch, integrationId, history]);
 
   const formKey = useFormInitWithPermissions({ fieldMeta: formMeta });
 
   return (
-  // TODO: @ashu, this needs to be reverted to use RightDrawer,
-  // once the path issue (matching store path) is fixed
-  // <RightDrawer
-  //   path={path || `form/${index}`}
-  //   height="tall"
-  //   width="large"
-  //   title={title}
-  //   variant="temporary"
-  //   onClose={formCloseHandler || onClose}>
-  //   <DynaForm fieldMeta={formMeta} formState={formState}>
-  //     <DynaSubmit
-  //       onClick={formSubmitHandler || handleSubmit}
-  //      >
-  //       Submit
-  //     </DynaSubmit>
-  //   </DynaForm>
-  // </RightDrawer>
+    <>
+      <DrawerHeader title={name} handleClose={formCloseHandler || onClose} />
 
-    <Drawer
-      anchor="right"
-      open
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      >
-      <DrawerTitleBar title={title} onClose={formCloseHandler || onClose} />
-      <div className={classes.formStep} >
-
+      <DrawerContent>
         <DynaForm formKey={formKey} />
-        <DynaSubmit
-          formKey={formKey}
-          onClick={formSubmitHandler || handleSubmit}>
+      </DrawerContent>
+
+      <DrawerFooter>
+        <DynaSubmit formKey={formKey} onClick={formSubmitHandler || handleSubmit} >
           Submit
         </DynaSubmit>
-      </div>
-    </Drawer>
+      </DrawerFooter>
+    </>
+  );
+}
+export default function FormStepDrawer({ integrationId, formSubmitHandler, formCloseHandler }) {
+  return (
+    <RightDrawer
+      path="form/:formType/:index"
+      variant="temporary"
+      height="tall">
+      <FormStepContent
+        integrationId={integrationId}
+        formSubmitHandler={formSubmitHandler}
+        formCloseHandler={formCloseHandler}
+      />
+    </RightDrawer>
   );
 }

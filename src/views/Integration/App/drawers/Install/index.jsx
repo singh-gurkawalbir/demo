@@ -182,13 +182,6 @@ export default function ConnectorInstallation(props) {
       return step;
     });
   }, [installSteps, isTemplate]);
-  const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
-    installSteps,
-  ]);
-  const currStepIndex = useMemo(() => installSteps.indexOf(currentStep), [
-    currentStep,
-    installSteps,
-  ]);
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
@@ -419,7 +412,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = step => {
+  const handleStepClick = (step, _, index) => {
     const {
       _connectionId,
       installURL,
@@ -477,7 +470,7 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        // history.push(`${match.url}/form/${index}`);
+        history.push(`${match.url}/form/install/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
@@ -633,7 +626,7 @@ export default function ConnectorInstallation(props) {
           onSubmitComplete={handleStackSetupDone}
         />
       )}
-      {currentStep && currentStep.formMeta && (
+      {/* {currentStep && currentStep.formMeta && (
         <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
@@ -641,7 +634,7 @@ export default function ConnectorInstallation(props) {
           title={currentStep.name}
           index={currStepIndex + 1}
         />
-      )}
+      )} */}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           {helpUrl ? (
@@ -668,6 +661,7 @@ export default function ConnectorInstallation(props) {
           </div>
         </div>
       </div>
+      <FormStepDrawer integrationId={integrationId} />
     </LoadResources>
   );
 }

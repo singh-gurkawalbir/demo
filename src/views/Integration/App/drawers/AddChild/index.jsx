@@ -22,7 +22,7 @@ import Spinner from '../../../../../components/Spinner';
 import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep/index1';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
