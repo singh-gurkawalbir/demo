@@ -12,7 +12,9 @@ import {
   fork,
   spawn,
 } from 'redux-saga/effects';
-import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from './index';
+import { expectSaga } from 'redux-saga-test-plan';
+import { throwError } from 'redux-saga-test-plan/providers';
+import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas, apiCallWithPaging } from './index';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
 import { APIException } from './api/requestInterceptors/utils';
@@ -497,6 +499,227 @@ describe('apiCallWithRetry saga', () => {
       expect(saga.next().value).toEqual(resourceStatusEffect);
       expect(saga.next(COMM_STATES.SUCCESS).done).toBe(true);
     });
+  });
+});
+
+describe('apiCallWithPaging saga', () => {
+  const path = '/someResource';
+  const opts = {method: 'GET'};
+  const responseData = [
+    {
+      _id: 1,
+      name: 'Test1',
+    },
+    {
+      _id: 2,
+      name: 'Test2',
+    },
+  ];
+  const secondPageData = [
+    {
+      _id: 3,
+      name: 'Test3',
+    },
+    {
+      _id: 4,
+      name: 'Test4',
+    },
+  ];
+  const lastPageData = [
+    {
+      _id: 5,
+      name: 'Test5',
+    },
+  ];
+  const totalCollection = [
+    {
+      _id: 1,
+      name: 'Test1',
+    },
+    {
+      _id: 2,
+      name: 'Test2',
+    },
+    {
+      _id: 3,
+      name: 'Test3',
+    },
+    {
+      _id: 4,
+      name: 'Test4',
+    },
+    {
+      _id: 5,
+      name: 'Test5',
+    },
+  ];
+  const totalCollectionWithoutLastPageData = [
+    {
+      _id: 1,
+      name: 'Test1',
+    },
+    {
+      _id: 2,
+      name: 'Test2',
+    },
+    {
+      _id: 3,
+      name: 'Test3',
+    },
+    {
+      _id: 4,
+      name: 'Test4',
+    },
+  ];
+  const prevLink = '<http://qa.staging.integrator.io/api/connections?after=wteyd>; rel=prev';
+  const nextLink = '<http://qa.staging.integrator.io/api/connections?after=xxxx>; rel=next';
+  const lastLink = '<http://qa.staging.integrator.io/api/connections?after=yyyy>; rel=next';
+
+  const _500Exception = new APIException({
+    status: 500,
+    message: 'unexpected error',
+  });
+
+  test('should call apiCallWithRetry with args and requireHeaders true', () => expectSaga(apiCallWithPaging, {path, opts})
+    .provide([
+      [call(apiCallWithRetry, {path, opts}, true), undefined],
+    ])
+    .call(apiCallWithRetry, {path, opts}, true)
+    .run());
+
+  test('should return the response from apiCallWithRetry if its not truthy', () => expectSaga(apiCallWithPaging, {path, opts})
+    .provide([
+      [call(apiCallWithRetry, {path, opts}, true), null],
+    ])
+    .call(apiCallWithRetry, {path, opts}, true)
+    .returns(null)
+    .run());
+
+  test('should not call apiCallWithPaging if response headers are empty', () => expectSaga(apiCallWithPaging, {path, opts})
+    .provide([
+      [call(apiCallWithRetry, {path, opts}, true), {data: responseData}],
+    ])
+    .call(apiCallWithRetry, {path, opts}, true)
+    .not.call.fn(apiCallWithPaging)
+    .returns(responseData)
+    .run());
+
+  describe('paginated resources', () => {
+    test('should not call apiCallWithPaging if response headers do not contain link header', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts}, true), {data: responseData,
+          headers: {
+            get: jest.fn(() => null), // mocking headers get function to not return a response
+          }}],
+      ])
+      .call(apiCallWithRetry, {path, opts}, true)
+      .not.call.fn(apiCallWithPaging)
+      .returns(responseData)
+      .run());
+
+    test('should not call apiCallWithPaging if link header is not of string type', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts}, true), {data: responseData,
+          headers: {
+            get: jest.fn(() => {}),
+          }}],
+      ])
+      .call(apiCallWithRetry, {path, opts}, true)
+      .not.call.fn(apiCallWithPaging)
+      .returns(responseData)
+      .run());
+
+    test('should not call apiCallWithPaging if link header does not contain "next" relation', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts}, true), {data: responseData,
+          headers: {
+            get: jest.fn(() => prevLink),
+          }}],
+      ])
+      .call(apiCallWithRetry, {path, opts}, true)
+      .not.call.fn(apiCallWithPaging)
+      .returns(responseData)
+      .run());
+
+    test('should recursively call apiCallWithPaging with next url if "next" link header exists and return the total data', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts}, true),
+          {
+            data: responseData,
+            headers: {
+              get: jest.fn(() => nextLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=xxxx'}, true),
+          {
+            data: secondPageData,
+            headers: {
+              get: jest.fn(() => lastLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=yyyy'}, true),
+          {
+            data: lastPageData,
+            headers: {
+              get: jest.fn(() => ''),
+            }}],
+      ])
+      .call(apiCallWithRetry, {path, opts}, true)
+      .call(apiCallWithRetry, {opts, path: '/connections?after=xxxx'}, true)
+      .call(apiCallWithRetry, {opts, path: '/connections?after=yyyy'}, true)
+      .call(apiCallWithPaging, { opts,
+        path: '/connections?after=xxxx'})
+      .call(apiCallWithPaging, { opts,
+        path: '/connections?after=yyyy'})
+      .returns(totalCollection)
+      .run());
+
+    test('should return total data collected so far in case of exception', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts}, true),
+          {
+            data: responseData,
+            headers: {
+              get: jest.fn(() => nextLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=xxxx'}, true),
+          {
+            data: secondPageData,
+            headers: {
+              get: jest.fn(() => lastLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=yyyy'}, true),
+          throwError(_500Exception)],
+      ])
+      .call(apiCallWithRetry, {path, opts}, true)
+      .call(apiCallWithRetry, {opts, path: '/connections?after=xxxx'}, true)
+      .call(apiCallWithRetry, {opts, path: '/connections?after=yyyy'}, true)
+      .call(apiCallWithPaging, { opts,
+        path: '/connections?after=xxxx'})
+      .call(apiCallWithPaging, { opts,
+        path: '/connections?after=yyyy'})
+      .returns(totalCollectionWithoutLastPageData)
+      .run());
+
+    test('should return total data collected so far in case of link header exception', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts}, true),
+          {
+            data: responseData,
+            headers: {
+              get: jest.fn(() => nextLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=xxxx'}, true),
+          {
+            data: secondPageData,
+            headers: {
+              get: jest.fn(() => 'invalid link'),
+            }}],
+      ])
+      .call(apiCallWithRetry, {path, opts}, true)
+      .call(apiCallWithRetry, {opts, path: '/connections?after=xxxx'}, true)
+      .call(apiCallWithPaging, { opts,
+        path: '/connections?after=xxxx'})
+      .returns(totalCollectionWithoutLastPageData)
+      .run());
   });
 });
 
