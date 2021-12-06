@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
@@ -166,17 +165,11 @@ function CustomSettings({ integrationId, sectionId }) {
       ];
       const refetchResources = isFrameWork2 || hasPreSaveHook;
 
-      dispatch(
-        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
-      );
-      dispatch(
-        actions.resource.commitStaged(
-          'integrations',
-          integrationId,
-          SCOPES.VALUE,
-          { refetchResources }
-        )
-      );
+      dispatch(actions.resource.patchAndCommitStaged('integrations', integrationId, patchSet, {
+        options: {
+          refetchResources,
+        },
+      }));
     },
     [dispatch, integrationId, isFrameWork2, patchPath, hasPreSaveHook]
   );

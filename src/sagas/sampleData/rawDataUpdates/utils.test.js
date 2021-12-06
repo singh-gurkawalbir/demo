@@ -4,7 +4,6 @@ import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
 import { saveRawDataOnResource } from './utils';
 import { uploadRawData } from '../../uploadFile';
 
@@ -35,8 +34,7 @@ describe('rawDataUpdates utility sagas', () => {
           }), runKey],
           [select(selectors.ownerUserId), userId],
         ])
-        .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
-        .put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
+        .put(actions.resource.patchAndCommitStaged('exports', resourceId, patchSet))
         .run();
     });
   });

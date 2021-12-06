@@ -2,7 +2,6 @@ import { put, call, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import { uploadRawData } from '../../uploadFile';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
 
 export function* saveRawDataOnResource({
   resourceId,
@@ -25,6 +24,5 @@ export function* saveRawDataOnResource({
   ];
 
   // Save the resource
-  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-  yield put(actions.resource.commitStaged(resourceType, resourceId, SCOPES.VALUE));
+  yield put(actions.resource.patchAndCommitStaged(resourceType, resourceId, patchSet));
 }

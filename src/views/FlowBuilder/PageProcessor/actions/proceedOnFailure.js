@@ -79,8 +79,9 @@ function ProceedOnFailureDialog(props) {
       },
     ];
 
-    dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flowId, 'value', null, null, formKey));
+    dispatch(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {
+      asyncKey: formKey,
+    }));
   }, [dispatch, flowId, formValues, resourceIndex]);
 
   const [count, setCount] = useState(0);
