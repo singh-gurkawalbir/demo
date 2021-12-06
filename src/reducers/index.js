@@ -566,7 +566,7 @@ selectors.mkTileApplications = () => {
       }
 
       if (!isIAV2) {
-        applications = tile?.connector?.applications || emptyArray;
+        applications = [...(tile?.connector?.applications || [])] || emptyArray;
         // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
         if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
           applications[0] = 'magento1';
@@ -5787,13 +5787,12 @@ selectors.transferListWithMetadata = state => {
       type: 'transfers',
     }).resources || [];
 
-  const updatedTransfers = [...transfers];
-
-  updatedTransfers.forEach((transfer, i) => {
+  const updatedTransfers = transfers.map(transfer => {
     let integrations = [];
+    const updatedTransfer = {...transfer};
 
     if (transfer.ownerUser && transfer.ownerUser._id) {
-      updatedTransfers[i].isInvited = true;
+      updatedTransfer.isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -5815,7 +5814,9 @@ selectors.transferListWithMetadata = state => {
     }
 
     integrations = integrations.join('\n');
-    updatedTransfers[i].integrations = integrations;
+    updatedTransfer.integrations = integrations;
+
+    return updatedTransfer;
   });
 
   return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
@@ -6033,17 +6034,22 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors.editorHelperFunctions = state => {
-  const functions = state?.session?.editors?.helperFunctions || {};
-  const userTimezone = selectors.userTimezone(state);
-  const timestampFunc = functions.timestamp;
+selectors.mkEditorHelperFunctions = () => createSelector(
+  state => state?.session?.editors?.helperFunctions || emptyObject,
+  selectors.userTimezone,
+  (helperFunctions, userTimezone) => {
+    const functions = {...helperFunctions};
+    const timestampFunc = functions.timestamp;
 
-  if (timestampFunc && userTimezone) {
-    functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+    if (timestampFunc && userTimezone) {
+      functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+    }
+
+    return functions;
   }
 
-  return functions;
-};
+);
+selectors.editorHelperFunctions = selectors.mkEditorHelperFunctions();
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {

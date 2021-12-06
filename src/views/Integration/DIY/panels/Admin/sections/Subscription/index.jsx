@@ -140,28 +140,29 @@ export default function SubscriptionSection({ childId, integrationId }) {
       return true;
     });
 
-  if (subscribedAddOns) {
-    subscribedAddOns.forEach((f, i) => {
-      const addon =
-        addOnState &&
-        addOnState.addOns &&
-        addOnState.addOns.addOnMetaData &&
-        addOnState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
+  let subscribedAddOnsModified;
 
-      subscribedAddOns[i]._id = i;
-      subscribedAddOns[i].integrationId = integrationId;
-      subscribedAddOns[i].name = addon ? addon.name : f.id;
-      subscribedAddOns[i].description = addon ? addon.description : '';
-      subscribedAddOns[i].uninstallerFunction = addon
+  if (subscribedAddOns) {
+    subscribedAddOnsModified = subscribedAddOns.map((f, i) => {
+      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
+      const addOnObj = {...f};
+
+      addOnObj._id = i;
+      addOnObj.integrationId = integrationId;
+      addOnObj.name = addon ? addon.name : f.id;
+      addOnObj.description = addon ? addon.description : '';
+      addOnObj.uninstallerFunction = addon
         ? addon.uninstallerFunction
         : '';
-      subscribedAddOns[i].installerFunction = addon
+      addOnObj.installerFunction = addon
         ? addon.installerFunction
         : '';
+
+      return addOnObj;
     });
   }
 
-  const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
+  const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
   const hasAddOns =
     addOnState &&
     addOnState.addOns &&
@@ -263,7 +264,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
 
-            <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsChild, children }} />
+            <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children }} />
           </>
         )}
       </div>

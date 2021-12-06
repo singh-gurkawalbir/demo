@@ -61,7 +61,7 @@ const SettingsForm = props => {
   );
 };
 
-export const SuiteScriptForm = props => {
+const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
   const {ssLinkedConnectionId, integrationId } = props;

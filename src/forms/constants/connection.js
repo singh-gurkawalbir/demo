@@ -134,6 +134,7 @@ export default {
     'confluencecloud',
     'sapbusinessone',
     'bartender',
+    'jazzhr',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

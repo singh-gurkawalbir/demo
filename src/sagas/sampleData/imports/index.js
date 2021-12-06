@@ -11,6 +11,7 @@ import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
 import { getAssistantConnectorType, getImportAdaptorType } from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { extractStages } from '../../../reducers/session/sampleData/resourceForm';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -94,6 +95,9 @@ export function* _fetchAssistantSampleData({ resource }) {
     });
   }
 
+  if (!assistantMetadata?.import) {
+    return yield put(actions.metadata.failedAssistantImportPreview(_id));
+  }
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,
@@ -140,11 +144,13 @@ export function* _fetchAssistantSampleData({ resource }) {
       },
       hidden: true,
     });
+    const previewStageDataList = extractStages(previewData);
+    const record = previewStageDataList?.parse?.[0] || sampleData || {};
 
     yield put(
       actions.metadata.receivedAssistantImportPreview(
         _id,
-        sampleDataWrapper ? { [sampleDataWrapper]: previewData } : previewData
+        sampleDataWrapper ? { [sampleDataWrapper]: record } : record
       )
     );
   } catch (e) {

@@ -15,7 +15,7 @@ const stateTiedToAccountType = (state, selectedAccountType) => state?.find(ele =
 
 const allOptionKeys = (values, key) => values?.[key] && Object.keys(values?.[key]);
 
-export const DynaMatchingCriteria = props => {
+const DynaMatchingCriteria = props => {
   const { allValues, accountTypeOptions, setAllValues, required, disabled, id, onFieldChange} = props;
 
   const accountTypeSelectOptions = useMemo(
