@@ -3,50 +3,6 @@
  */
 import { each, filter, reject } from 'lodash';
 
-export const isTransactionWSRecordType = recordId => {
-  if (!recordId) return false;
-  const transactionTypeIds = [
-    'assemblybuild',
-    'assemblyunbuild',
-    'cashrefund',
-    'cashsale',
-    'check',
-    'creditmemo',
-    'customerdeposit',
-    'customerpayment',
-    'customerrefund',
-    'depositapplication',
-    'estimate',
-    'expensereport',
-    'intercompanyjournalentry',
-    'inventoryadjustment',
-    'inventorytransfer',
-    'invoice',
-    'itemfulfillment',
-    'itemreceipt',
-    'journalentry',
-    'opportunity',
-    'purchaseorder',
-    'returnauthorization',
-    'salesorder',
-    'timebill',
-    'transferorder',
-    'vendorbill',
-    'vendorcredit',
-    'vendorpayment',
-    'vendorreturnauthorization',
-    'workorder',
-  ];
-
-  return transactionTypeIds.indexOf(recordId.toLowerCase()) > -1;
-};
-
-export const getWSRecordId = record => {
-  const recordId = record.scriptId || record.metadataId || record.internalId;
-
-  return recordId.toLowerCase();
-};
-
 export const getFormattedNSSalesOrderMetadataData = metadata => {
   const addressFields = [
     'addr1',
@@ -334,23 +290,3 @@ export const filterSubListProperties = eFields => {
       test2: test2
     }
  */
-export const getReferenceFieldsMap = (referenceFields = []) => {
-  const fieldsToAttach = {};
-
-  each(referenceFields, (field = '') => {
-    if (!field) return;
-    const fieldSplit = field.split('.');
-    const key = fieldSplit[0];
-
-    if (fieldSplit[1]) {
-      fieldsToAttach[key] = {
-        ...(fieldsToAttach[key] || {}),
-        [fieldSplit[1]]: field,
-      };
-    } else {
-      fieldsToAttach[key] = key;
-    }
-  });
-
-  return fieldsToAttach;
-};

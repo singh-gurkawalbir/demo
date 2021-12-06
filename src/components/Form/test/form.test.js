@@ -22,7 +22,7 @@ import FormGenerator from '../../DynaForm/DynaFormGenerator';
 // This functional component creates a dummy redux state
 // and wraps out custom component with react router
 
-export const theme = themeProvider();
+const theme = themeProvider();
 
 configure({ testIdAttribute: 'data-test' });
 

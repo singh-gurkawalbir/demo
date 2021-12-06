@@ -427,14 +427,12 @@ export const applicationsList = () => {
   return applications;
 };
 
-export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => {
   const applications = applicationsList();
 
   return applications.filter(c => !!c.webhook);
 };
-export const getDatabaseConnectors = () =>
-  connectors.filter(c => c.group === 'db');
+
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 

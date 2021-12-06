@@ -1197,9 +1197,9 @@ export function flowLastModifiedPatch(flow, resource) {
 }
 
 // when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
-export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => !!(flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId));
 export const getFlowGroup = (flowGroupings, name, id) => {
-  if (!flowGroupings.length) return emptyObject;
+  if (!flowGroupings?.length) return null;
 
   const unassignedFlowGroup = {
     _id: UNASSIGNED_SECTION_ID,
@@ -1235,10 +1235,11 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
 
   const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
 
+  // if there are flows without _flowGroupingId should push Unassigned flow group model
   if (flowsWithoutGroupId?.length) {
     finalFlowObjects.push({
       groupName: UNASSIGNED_SECTION_NAME,
-      _id: objectsLength + flowsWithoutGroupId.length + 1,
+      _id: objectsLength + flowGroupings.length,
     });
     const lastFlowObject = flowsWithoutGroupId.pop();
 

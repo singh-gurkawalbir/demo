@@ -1,5 +1,6 @@
 /* global describe, test, expect, jest */
 import shortid from 'shortid';
+import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../utils/constants';
@@ -1796,15 +1797,17 @@ describe('integrationApps reducer test cases', () => {
           sectionId: 'autoaccessorymisc',
           variation: 'itempackagequantity',
         }));
-        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].mappings = [{
+        let state1 = cloneDeep(state);
+
+        state1['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].mappings = [{
           extract: 'yes',
           generate: 'no',
         }];
-        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].lookups = [{
+        state1['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].lookups = [{
           lookupName: 'yes',
           map: {yes: 'no'},
         }];
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.saveVariationMappings(
+        state1 = reducer(state1, actions.integrationApp.settings.categoryMappings.saveVariationMappings(
           'integrationId',
           'flowId',
           'flowId-autoaccessorymisc-itempackagequantity',
@@ -1815,7 +1818,7 @@ describe('integrationApps reducer test cases', () => {
             depth: 1,
           }
         ));
-        expect(state).toEqual({
+        expect(state1).toEqual({
           'flow1-integration1': {
             dummy: 'value',
           },
@@ -10399,8 +10402,9 @@ describe('integrationApps selectors test cases', () => {
 
     test('should return correct data for amazon category mappings', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+      const state1 = cloneDeep(state);
 
-      state['flow-integration'].mappings = {
+      state1['flow-integration'].mappings = {
         'flow-commonAttributes-0': {
           mappings: [{
             extract: 'first',
@@ -10414,7 +10418,7 @@ describe('integrationApps selectors test cases', () => {
           }],
         },
       };
-      expect(selector(state, 'integration', 'flow')).toEqual(
+      expect(selector(state1, 'integration', 'flow')).toEqual(
         {
           basicMappings: {
             recordMappings: [
@@ -10504,8 +10508,9 @@ describe('integrationApps selectors test cases', () => {
 
     test('should return true when mappings changed', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+      const state1 = cloneDeep(state);
 
-      state['flow-integration'].mappings = {
+      state1['flow-integration'].mappings = {
         'flow-commonAttributes-0': {
           mappings: [{
             extract: 'first',
@@ -10519,7 +10524,7 @@ describe('integrationApps selectors test cases', () => {
           }],
         },
       };
-      expect(selector(state, 'integration', 'flow')).toEqual(true);
+      expect(selector(state1, 'integration', 'flow')).toEqual(true);
     });
   });
 
