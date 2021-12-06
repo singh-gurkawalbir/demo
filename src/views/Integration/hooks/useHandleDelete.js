@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSelectorMemo } from '../../../hooks';
@@ -6,14 +6,15 @@ import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
-import { emptyObject, INTEGRATION_ACCESS_LEVELS, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../utils/constants';
+import { emptyObject, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import actions from '../../../actions';
 
-export default function useHandleDelete(_integrationId, numFlows) {
+export default function useHandleDelete(_integrationId) {
   // this hook returns a callback function to handle deleting/uninstalling integrations
   const history = useHistory();
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId) || emptyObject;
@@ -24,23 +25,12 @@ export default function useHandleDelete(_integrationId, numFlows) {
   );
   const {_connectorId} = integration;
   const dispatch = useDispatch();
-  const flowsFilterConfig = useMemo(
-    () => ({
-      type: 'flows',
-      filter: {
-        _integrationId:
-          _integrationId === STANDALONE_INTEGRATION.id
-            ? undefined
-            : _integrationId,
-      },
-    }),
-    [_integrationId]
+
+  const resourceReferences = useSelector(state =>
+    selectors.resourceReferences(state)
   );
-  const flows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
-  const cantDelete = numFlows > 0 || flows.length > 0;
+
+  const cantDelete = resourceReferences?.some(ref => ref.resourceType === 'flows');
 
   // For IA
   const handleUninstall = useCallback(() => {
@@ -73,15 +63,15 @@ export default function useHandleDelete(_integrationId, numFlows) {
   }, [accessLevel, confirmDialog, enqueueSnackbar, history, integrationAppTileName, _integrationId, supportsMultiStore]);
 
   // For Diy/templates
+  if (showSnackbar && cantDelete) {
+    enqueueSnackbar({
+      message: INTEGRATION_DELETE_VALIDATE,
+      variant: 'info',
+    });
+    dispatch(actions.resource.clearReferences());
+    setShowSnackbar(false);
+  }
   const handleDelete = useCallback(() => {
-    if (cantDelete) {
-      enqueueSnackbar({
-        message: INTEGRATION_DELETE_VALIDATE,
-        variant: 'info',
-      });
-
-      return;
-    }
     confirmDialog({
       title: 'Confirm delete',
       message: 'Are you sure you want to delete this integration?',
@@ -90,6 +80,7 @@ export default function useHandleDelete(_integrationId, numFlows) {
           label: 'Delete',
           onClick: () => {
             dispatch(actions.resource.integrations.delete(_integrationId));
+            setShowSnackbar(true);
           },
         },
         {
@@ -98,7 +89,7 @@ export default function useHandleDelete(_integrationId, numFlows) {
         },
       ],
     });
-  }, [cantDelete, confirmDialog, enqueueSnackbar, dispatch, _integrationId]);
+  }, [confirmDialog, dispatch, _integrationId]);
 
   return _connectorId ? handleUninstall : handleDelete;
 }
