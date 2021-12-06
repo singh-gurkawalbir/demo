@@ -58,6 +58,7 @@
     "moment": "2.24.0",
     "moment-timezone": "0.5.4",
     "notistack": "0.9.17",
+    "parse-link-header": "1.0.1",
     "pixi-viewport": "4.32.0",
     "pixi.js": "6.1.2",
     "prop-types": "15.7.2",

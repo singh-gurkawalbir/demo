@@ -11,6 +11,7 @@ import {
   fork,
   cancelled,
 } from 'redux-saga/effects';
+import parseLinkHeader from 'parse-link-header';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
@@ -58,6 +59,7 @@ import ssoSagas from './sso';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { getDomainUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
 import { appSagas } from './app';
 import { sendRequest } from './api';
@@ -94,7 +96,7 @@ export const CANCELLED_REQ = {
 };
 // TODO: decide if we this saga has to have takeLatest
 // api call
-export function* apiCallWithRetry(args) {
+export function* apiCallWithRetry(args, requireHeaders) {
   const { path, timeout = 2 * 60 * 1000, opts } = args;
   const apiRequestPayload = { url: path, args };
 
@@ -116,7 +118,11 @@ export function* apiCallWithRetry(args) {
       throw new APIException(CANCELLED_REQ);
     }
 
-    const { data } = apiResp?.response || {};
+    const { data, headers } = apiResp?.response || {};
+
+    if (requireHeaders) {
+      return { data, headers};
+    }
 
     return data;
   } finally {
@@ -124,6 +130,45 @@ export function* apiCallWithRetry(args) {
       yield call(requestCleanup, path, opts?.method);
     }
   }
+}
+
+export function* apiCallWithPaging(args) {
+  const response = yield call(apiCallWithRetry, args, true);
+
+  if (!response) return response;
+
+  const linkHeaderRelation = 'next';
+  const { data, headers } = response;
+
+  const link = headers ? headers.get('link') : undefined;
+
+  // BE only supports 'link' pagination for now
+  if (link && (typeof link === 'string' || link instanceof String)) {
+    let domainURL = getDomainUrl();
+
+    if (domainURL.includes('localhost')) {
+      domainURL = 'http://qa.staging.integrator.io';
+    }
+    try {
+      const linkObj = parseLinkHeader(link);
+
+      // if 'next' url exists, recursively call for next page data
+      if (linkObj && linkObj[linkHeaderRelation]?.url) {
+        const nextPageData = yield call(apiCallWithPaging, {
+          ...args,
+          path: linkObj[linkHeaderRelation].url.replace(`${domainURL}/api`, ''),
+        });
+
+        // push next page data to original data
+        return [...(data || []), ...(nextPageData || [])];
+      }
+    } catch (e) {
+      return data;
+    }
+  }
+
+  // return the total accumulated data to parent saga
+  return data;
 }
 
 export function* allSagas() {
