@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const isLoadingANewConnectionForm = ({fieldMeta, operation, resourceType, resourceId }) => {
+const isLoadingANewConnectionForm = ({fieldMeta, operation, resourceType, resourceId }) => {
   // if its new resourceId and its of connections resourceType having a single field
   // its probably a new connections resource form
   const isNew = isNewId(resourceId);

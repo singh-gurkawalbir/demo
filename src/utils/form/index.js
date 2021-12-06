@@ -69,7 +69,7 @@ export const setOptionsInFieldInState = (prevState, field, options) => {
   };
 };
 
-export const valuesMatch = (a, b) => {
+const valuesMatch = (a, b) => {
   if (a && b) {
     return a.toString() === b.toString();
   }
@@ -155,7 +155,7 @@ export const getTouchedStateForField = (currentState, resetState) => {
   return currentState;
 };
 
-export const evaluateAnyAndAllRules = ({
+const evaluateAnyAndAllRules = ({
   anyRules,
   allRules,
   defaultState,
@@ -251,7 +251,7 @@ export const processFields = (
   });
 };
 
-export const processOptions = ({
+const processOptions = ({
   fields: fieldsById,
   lastFieldUpdated,
   optionsHandler,
