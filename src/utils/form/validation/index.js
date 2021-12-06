@@ -5,7 +5,7 @@ import { isValueForceComputed } from '..';
 import { REQUIRED_MESSAGE } from '../../messageStore';
 
 /* eslint-disable no-restricted-globals */
-export const compareSize = (value, comparedTo, type) => {
+const compareSize = (value, comparedTo, type) => {
   const targetValue = parseFloat(value);
   const compareValue = parseFloat(comparedTo.value);
 
@@ -38,7 +38,7 @@ export const findFieldsToCompareTo = (fieldsToFind, allFields) => {
   return targetFields;
 };
 
-export const compareLength = (value, comparedTo, type) => {
+const compareLength = (value, comparedTo, type) => {
   const valueLength = value ? value.toString().length : undefined;
   const compareLength = comparedTo.value
     ? comparedTo.value.toString().length
@@ -56,12 +56,12 @@ export const compareLength = (value, comparedTo, type) => {
 export const isBigger = (value, comparedTo) =>
   compareSize(value, comparedTo, 'BIGGER');
 
-export const isSmaller = (value, comparedTo) =>
+const isSmaller = (value, comparedTo) =>
   compareSize(value, comparedTo, 'SMALLER');
 
 export const isLonger = (value, comparedTo) =>
   compareLength(value, comparedTo, 'LONGER');
-export const isShorter = (value, comparedTo) =>
+const isShorter = (value, comparedTo) =>
   compareLength(value, comparedTo, 'SHORTER');
 
 export const comparedTo = ({
@@ -190,7 +190,7 @@ const validators = {
   someAreTrue,
 };
 
-export const getValueFromField = field => {
+const getValueFromField = field => {
   const { trimValue = false, value } = field;
   let trimmedValue = value;
 
@@ -327,7 +327,7 @@ export const validateAllFields = ({
   });
 };
 
-export const runValidator = (
+const runValidator = (
   validatorKey,
   validWhen,
   valueToTest,

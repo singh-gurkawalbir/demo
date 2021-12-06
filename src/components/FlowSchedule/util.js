@@ -1,7 +1,6 @@
 import { uniq } from 'lodash';
 import moment from 'moment';
 import dateTimezones from '../../utils/dateTimezones';
-import { isDeltaFlow } from '../../utils/flows';
 
 const MINUTES = 1;
 const HOURS = 2;
@@ -27,94 +26,7 @@ const getHours = (startTime, endTime, frequency) => {
   return uniq(values).join(',');
 };
 
-export const getExportsFromSelectedDeltaFlow = (
-  selectedDeltaFlowId,
-  flows,
-  exports
-) => {
-  const temp = [];
-
-  if (selectedDeltaFlowId) {
-    const selectedDeltaFlow = flows.find(
-      flow => flow._id === selectedDeltaFlowId
-    );
-
-    selectedDeltaFlow &&
-      selectedDeltaFlow.pageGenerators.forEach(pg => {
-        temp.push(exports.find(exp => exp._id === pg._exportId));
-      });
-  }
-
-  return [
-    {
-      items:
-        (temp &&
-          temp.map(exp => ({
-            label: exp.name,
-            value: exp._id,
-          }))) ||
-        [],
-    },
-  ];
-};
-
-export const getRelevantDeltaFlows = (flows, flow, exports) => {
-  const deltaFlows = flows.filter(f => {
-    if (f._id === flow._id) {
-      return false;
-    }
-
-    if (flow._connectorId && flow._connectorId !== f._connectorId) {
-      return false; // We link flows from same connector only.
-    }
-
-    if (!flow._connectorId && !!f._connectorId) {
-      return false; // We cant link connector flows to DIY.
-    }
-
-    return isDeltaFlow(f, exports);
-  });
-
-  return [
-    {
-      items:
-        (deltaFlows &&
-          deltaFlows.map(f => ({
-            label: f.name,
-            value: f._id,
-          }))) ||
-        [],
-    },
-  ];
-};
-
-export const isDeltaFlowModel = (pg, exp, flow, exports) => {
-  let isDeltaFlow = false;
-
-  if (pg && pg._exportId) {
-    if (exp && exp.type === 'delta' && !(exp.delta && exp.delta.lagOffset)) {
-      isDeltaFlow = true;
-    }
-  } else {
-    flow &&
-      flow.pageGenerators &&
-      flow.pageGenerators.forEach(pg => {
-        const flowExp = exports && exports.find(e => e._id === pg._exportId);
-
-        if (
-          flowExp &&
-          flowExp.type === 'delta' &&
-          !(flowExp.delta && flowExp.delta.lagOffset)
-        ) {
-          isDeltaFlow = true;
-        }
-      });
-  }
-
-  return isDeltaFlow;
-};
-
-export const getCronExpression = (data, scheduleStartMinute) => {
+const getCronExpression = (data, scheduleStartMinute) => {
   const frequency = data && data.frequency;
   const toReturn = ['?', '*', '*', '*', '*', '*'];
 

@@ -2,7 +2,7 @@ import getRoutePath from '../../../../utils/routePaths';
 import IntegrationCrumb from './crumbs/Integration';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
 
-export const integrationRoutes = [
+const integrationRoutes = [
   {
     path: '/admin',
     breadcrumb: () => 'Admin',

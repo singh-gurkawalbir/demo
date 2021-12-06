@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import { COMM_STATES } from '../../../comms/networkComms';
 
-export const keyGen = (
+const keyGen = (
   ssLinkedConnectionId,
   integrationId,
   featureName,
