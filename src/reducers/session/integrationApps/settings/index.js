@@ -971,25 +971,29 @@ selectors.subscribedAddOns = (state, integrationId, supportsMultiStore, childId)
   const addOnState = state[addOnKey] || emptyObj;
 
   const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => supportsMultiStore && childId ? model.storeId === childId : true);
+  let subscribedAddOnsModified;
 
   if (subscribedAddOns) {
-    subscribedAddOns.forEach((f, i) => {
+    subscribedAddOnsModified = subscribedAddOns.map((f, i) => {
       const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
+      const addOnObj = {...f};
 
-      subscribedAddOns[i]._id = i;
-      subscribedAddOns[i].integrationId = integrationId;
-      subscribedAddOns[i].name = addon ? addon.name : f.id;
-      subscribedAddOns[i].description = addon ? addon.description : '';
-      subscribedAddOns[i].uninstallerFunction = addon
+      addOnObj._id = i;
+      addOnObj.integrationId = integrationId;
+      addOnObj.name = addon ? addon.name : f.id;
+      addOnObj.description = addon ? addon.description : '';
+      addOnObj.uninstallerFunction = addon
         ? addon.uninstallerFunction
         : '';
-      subscribedAddOns[i].installerFunction = addon
+      addOnObj.installerFunction = addon
         ? addon.installerFunction
         : '';
+
+      return addOnObj;
     });
   }
 
-  return subscribedAddOns;
+  return subscribedAddOnsModified;
 };
 
 // #endregion
