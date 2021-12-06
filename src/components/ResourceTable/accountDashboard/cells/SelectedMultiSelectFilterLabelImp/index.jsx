@@ -16,7 +16,7 @@ export default function SelectedLabelImp({name, id}) {
 
   if (!flowGroupings?.length || name === 'All flows') return name;
 
-  const flowGroupName = getFlowGroup(flowGroupings, '', flow._flowGroupingId).name;
+  const flowGroupName = getFlowGroup(flowGroupings, '', flow._flowGroupingId)?.name;
 
   return (
     <div>
