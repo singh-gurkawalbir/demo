@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { SUITESCRIPT_CONNECTORS, TILE_STATUS, INTEGRATION_MODES } from '../../../utils/constants';
 
-export function tileDisplayName(tile) {
+function tileDisplayName(tile) {
   let name;
 
   if (tile.name && tile.name.indexOf('Amazon') === 0) {

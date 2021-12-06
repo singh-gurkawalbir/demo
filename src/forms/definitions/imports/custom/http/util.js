@@ -6,7 +6,7 @@ import {
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
 
-export function hiddenFieldsMeta({ values }) {
+function hiddenFieldsMeta({ values }) {
   return ['assistant', 'adaptorType', 'assistantData', 'lookups'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
@@ -15,7 +15,7 @@ export function hiddenFieldsMeta({ values }) {
   }));
 }
 
-export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -57,7 +57,8 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     return fieldDefinitions[fieldId];
   });
 }
-export function headerFieldsMeta({ operationDetails, headers = [] }) {
+
+function headerFieldsMeta({ operationDetails, headers = [] }) {
   const editableHeaders = Object.keys(operationDetails?.headers || {})
     .filter(key => !operationDetails.headers[key]);
   const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
@@ -86,7 +87,8 @@ export function headerFieldsMeta({ operationDetails, headers = [] }) {
 
   return [];
 }
-export function pathParameterFieldsMeta({ operationParameters = [], values }) {
+
+function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters
     .filter(pathParam => pathParam.in === 'path' && !pathParam.isIdentifier)
     .map(pathParam => {
@@ -128,7 +130,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
     });
 }
 
-export function ignoreConfigFieldsMeta({ operationDetails = {}, values = {} }) {
+function ignoreConfigFieldsMeta({ operationDetails = {}, values = {} }) {
   const fields = [];
 
   if (operationDetails.supportIgnoreExisting) {
@@ -146,7 +148,7 @@ export function ignoreConfigFieldsMeta({ operationDetails = {}, values = {} }) {
   return fields;
 }
 
-export function howToFindIdentifierFieldsMeta({
+function howToFindIdentifierFieldsMeta({
   operationDetails,
   pathParameterValues = {},
   lookupType,

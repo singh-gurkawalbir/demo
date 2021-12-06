@@ -5,7 +5,7 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function isComplexNetSuiteFilterExpression(expression) {
+function isComplexNetSuiteFilterExpression(expression) {
   let isComplexExpression = false;
 
   if (isArray(expression)) {
@@ -23,7 +23,7 @@ export function isComplexNetSuiteFilterExpression(expression) {
   return isComplexExpression;
 }
 
-export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
+function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
   for (let i = 0; i < expression.length; i += 1) {
     if (expression[i] === 'NOT') {
       expression[i] = isArray(expression[i + 1][0])
@@ -43,7 +43,7 @@ export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
   return expression;
 }
 
-export function updateNetSuiteLookupFilterExpressionForConditions(expression) {
+function updateNetSuiteLookupFilterExpressionForConditions(expression) {
   let updatedExpression = [];
   let prevCondition;
 
@@ -98,7 +98,7 @@ export function updateNetSuiteLookupFilterExpressionForConditions(expression) {
   return updatedExpression;
 }
 
-export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
+function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
   expression,
   data
 ) {

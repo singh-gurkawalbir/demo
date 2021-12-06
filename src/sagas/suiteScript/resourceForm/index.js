@@ -85,7 +85,7 @@ export function* createFormValuesPatchSet({
   return { patchSet, finalValues };
 }
 
-export function* submitFormValues({
+function* submitFormValues({
   resourceType,
   resourceId,
   values,
