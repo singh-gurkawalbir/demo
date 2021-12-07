@@ -390,12 +390,12 @@ export default function ConnectorInstallation(props) {
                 );
               } else {
                 history.push(
-                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`)
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${urlExtractFields[index + 1]}`)
                 );
               }
             } else if (supportsMultiStore) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`)
               );
             } else {
               history.push(

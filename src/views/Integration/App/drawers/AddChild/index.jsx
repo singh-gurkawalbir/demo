@@ -275,7 +275,7 @@ export default function IntegrationAppAddNewChild(props) {
   const handleUninstall = () => {
     history.push(
       getRoutePath(
-        `integrationapps/${integrationAppName}/${integrationId}/uninstall/${integration.settings.defaultSectionId}`
+        `integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${integration.settings.defaultSectionId}`
       )
     );
   };
