@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../../CodeEditor';
@@ -7,7 +8,7 @@ import ActionButton from '../../../ActionButton';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
-import ExpandModeEditor from './ExpandModeEditor';
+import ExpandEditorModal from './ExpandModeEditor/Modal';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -44,9 +45,6 @@ const useStyles = makeStyles(theme => ({
 export default function DynaEditor(props) {
   const {
     id,
-    resourceId,
-    resourceType,
-    patchKey,
     mode,
     expandMode = 'modal',
     options,
@@ -64,11 +62,19 @@ export default function DynaEditor(props) {
     skipJsonParse,
     customHandleUpdate,
   } = props;
+  const history = useHistory();
+  const match = useRouteMatch();
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
+    if (expandMode === 'drawer') {
+      const { formKey, id } = props;
+
+      history.push(`${match.url}/expand/${formKey}/${id}`);
+    } else {
+      setShowEditor(!showEditor);
+    }
+  }, [showEditor, expandMode, match, history, props]);
   const handleUpdate = useCallback(
     editorVal => {
       if (customHandleUpdate) {
@@ -104,9 +110,6 @@ export default function DynaEditor(props) {
     },
     [customHandleUpdate, saveMode, mode, value, skipJsonParse, onFieldChange, id]
   );
-  const handleUpdateOnDrawerSave = useCallback(
-    editorVal => handleUpdate(editorVal, true),
-    [handleUpdate]);
   // Options handler would return the selected file type we would use that
   // and inject it as the mode of the editor so that syntax formating would work
   // according to the file format
@@ -129,22 +132,22 @@ export default function DynaEditor(props) {
   return (
     <div className={clsx(classes.wrapper, className)}>
       <div className={classes.dynaEditorWrapper}>
-        {/* Below Component deals with showing editor in Modal/Drawer mode when user clicks on expand icon */}
-        <ExpandModeEditor
-          saveProps={{resourceId, resourceType, patchKey}}
-          expandMode={expandMode}
-          show={showEditor}
-          handleClose={handleEditorClick}
-          label={label}
-          editorProps={{
-            id,
-            value,
-            mode: resultantMode,
-            disabled,
-            handleUpdate,
-            handleUpdateOnDrawerSave,
-          }}
-        />
+        {
+          showEditor && (
+            <ExpandEditorModal
+              show={showEditor}
+              handleClose={handleEditorClick}
+              label={label}
+              editorProps={{
+                id,
+                value,
+                mode: resultantMode,
+                disabled,
+                handleUpdate,
+              }}
+          />
+          )
+        }
         <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel required={required} error={!isValid} >{label}</FormLabel>
           <FieldHelp {...props} />

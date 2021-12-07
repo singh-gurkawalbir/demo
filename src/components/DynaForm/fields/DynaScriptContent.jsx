@@ -79,7 +79,6 @@ export default function DynaScriptContent(props) {
     <EditorField
       {...props}
       editorClassName={classes.editor}
-      patchKey="/content"
       mode="javascript"
       expandMode="drawer"
     />
