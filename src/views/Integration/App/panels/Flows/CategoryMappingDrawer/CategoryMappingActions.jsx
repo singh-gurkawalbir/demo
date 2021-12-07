@@ -26,7 +26,7 @@ export default function CategoryMappingActions() {
       data-test="addCategory"
       onClick={handleAddCategoryClick}
       className={classes.button}>
-      Add Category
+      Add category
       {/* TODO:Sravan we need to add the help for add category and variation mapping */}
     </TextButton>
   );

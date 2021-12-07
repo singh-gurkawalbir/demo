@@ -209,7 +209,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           formKey={formKey}
           data-test="addCategory"
           onClick={handleSave}>
-          Add Category
+          Add category
         </DynaSubmit>
         <TextButton onClick={handleClose}>
           Cancel
@@ -227,6 +227,7 @@ export default function AddCategoryMappingDrawerRoute(props) {
       path=":flowId/utilitymapping/:categoryId/addCategory"
       variant="temporary"
       height="tall"
+      BackdropProps={{ invisible: true }}
       width="large">
       <LoadResources required resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
