@@ -2821,54 +2821,6 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
   }
 );
 
-selectors.mkIntegrationAppFlowSections = () => {
-  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
-
-  return createSelector(
-    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
-    (_1, _2, childId) => childId,
-    (integrationResource, childId) => {
-      let flowSections = [];
-      const { sections = [], supportsMultiStore } =
-      integrationResource.settings || {};
-
-      if (supportsMultiStore) {
-        if (Array.isArray(sections) && sections.length) {
-          if (childId) {
-            flowSections =
-            (sections.find(sec => sec.id === childId) || {}).sections || [];
-          } else {
-            const allFlowsections = sections
-              .filter(sec => sec.mode !== 'install')
-              .map(sec => sec.sections || [])
-              .flat();
-
-            allFlowsections.forEach(section => {
-              const index = flowSections.findIndex(sec => sec.title === section.title);
-
-              if (index === -1) {
-                flowSections.push({...section});
-              } else {
-                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
-              }
-            });
-          }
-        }
-      } else {
-        flowSections = sections;
-      }
-
-      return flowSections
-        .filter(sec => !!sec.title)
-        .map(sec => ({
-          ...sec,
-          titleId: getTitleIdFromSection(sec),
-        }));
-    });
-};
-
-selectors.integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
-
 selectors.mkIntegrationAppGeneralSettings = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
@@ -3033,6 +2985,63 @@ selectors.makeIntegrationAppSectionFlows = () =>
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
+
+selectors.mkIntegrationAppFlowSections = () => {
+  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
+    (_1, _2, childId) => childId,
+    (state, id, childId, flowsFilterConfig, isUserInErrMgtTwoDotZero) => allFlowsFromSections(state, id, '', childId, flowsFilterConfig, isUserInErrMgtTwoDotZero),
+    (_1, _2, _3, flowsFilterConfig) => flowsFilterConfig,
+    (integrationResource, childId, selectedFlows, flowsFilterConfig) => {
+      let flowSections = [];
+      const { sections = [], supportsMultiStore } =
+      integrationResource.settings || {};
+
+      if (supportsMultiStore) {
+        if (Array.isArray(sections) && sections.length) {
+          if (childId) {
+            flowSections =
+            (sections.find(sec => sec.id === childId) || {}).sections || [];
+          } else {
+            const allFlowsections = sections
+              .filter(sec => sec.mode !== 'install')
+              .map(sec => sec.sections || [])
+              .flat();
+
+            allFlowsections.forEach(section => {
+              const index = flowSections.findIndex(sec => sec.title === section.title);
+
+              if (index === -1) {
+                flowSections.push({...section});
+              } else {
+                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
+              }
+            });
+          }
+        }
+      } else {
+        flowSections = sections;
+      }
+
+      return flowSections
+        .filter(sec => {
+          if (!flowsFilterConfig?.keyword) {
+            return !!sec.title;
+          }
+
+          return !!sec.title && sec.flows.some(flow => selectedFlows.some(selectedFlow => selectedFlow._id === flow._id));
+        })
+        .map(sec => ({
+          ...sec,
+          titleId: getTitleIdFromSection(sec),
+        }));
+    });
+};
+
+selectors.integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
 
 selectors.mkAllFlowsTiedToIntegrations = () => {
   const resourceListSel = selectors.makeResourceListSelector();
