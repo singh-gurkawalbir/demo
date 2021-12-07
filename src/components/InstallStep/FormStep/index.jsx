@@ -12,7 +12,7 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
 function FormStepContent({ integrationId, addChild, formSubmitHandler, formCloseHandler }) {
-  const { formType, index } = useParams();
+  const { formType } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
   const currentStep = useSelector(state => {
@@ -25,7 +25,7 @@ function FormStepContent({ integrationId, addChild, formSubmitHandler, formClose
     } else if (formType === 'uninstall') {
       steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
     }
-    const currentStep = steps[index - 1];
+    const currentStep = steps.find(s => !!s.isCurrentStep);
 
     return currentStep;
   });
@@ -111,7 +111,7 @@ function FormStepContent({ integrationId, addChild, formSubmitHandler, formClose
 export default function FormStepDrawer({ integrationId, formSubmitHandler, formCloseHandler }) {
   return (
     <RightDrawer
-      path="form/:formType/:index"
+      path="form/:formType"
       variant="temporary"
       height="tall">
       <FormStepContent

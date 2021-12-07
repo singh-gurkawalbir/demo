@@ -412,7 +412,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = (step, _, index) => {
+  const handleStepClick = step => {
     const {
       _connectionId,
       installURL,
@@ -470,11 +470,13 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        history.push(`${match.url}/form/install/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
+      }
+      if (type === INSTALL_STEP_TYPES.FORM) {
+        history.push(`${match.url}/form/install`);
       }
     } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
