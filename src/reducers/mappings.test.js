@@ -741,24 +741,29 @@ describe('Mappings region selector testcases', () => {
   describe('selectors.responseMappingInput test cases', () => {
     const preProcessedData = {new_test: 123};
 
-    state.session.flowData = {
-      'flow-123': {
-        pageProcessorsMap: {
-          'imp-123': {
-            responseTransform: {
-              status: 'received',
-              data: preProcessedData,
-            },
-          },
-          'exp-123': {
-            preSavePage: {
-              status: 'received',
-              data: preProcessedData,
+    const state = {
+      session: {
+        flowData: {
+          'flow-123': {
+            pageProcessorsMap: {
+              'imp-123': {
+                responseTransform: {
+                  status: 'received',
+                  data: preProcessedData,
+                },
+              },
+              'exp-123': {
+                preSavePage: {
+                  status: 'received',
+                  data: preProcessedData,
+                },
+              },
             },
           },
         },
       },
     };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.responseMappingInput()).toBeUndefined();
     });

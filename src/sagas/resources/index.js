@@ -944,7 +944,7 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-export function* fetchUnloadedResources({ integrationId, resourceType }) {
+function* fetchUnloadedResources({ integrationId, resourceType }) {
   let resources = yield select(selectors.resources, resourceType);
 
   if (!resources || resources.length === 0) {

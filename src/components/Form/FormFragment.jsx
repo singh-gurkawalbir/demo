@@ -59,7 +59,7 @@ const Renderer = props => {
     ) : null
   );
 };
-export const FieldComponent = props => {
+const FieldComponent = props => {
   const { formKey, id, type} = props;
 
   const fieldState = useSelector(

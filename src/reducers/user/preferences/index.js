@@ -7,7 +7,7 @@ import {
 
 const emptyObj = {};
 
-export const GLOBAL_PREFERENCES = [
+const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
   'defaultAShareId',
   'environment',
