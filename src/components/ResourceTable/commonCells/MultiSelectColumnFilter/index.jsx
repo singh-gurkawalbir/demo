@@ -51,7 +51,9 @@ export default function MultiSelectColumnFilter({
         return selectedIds.filter(i => i !== id && !childIds.includes(i));
       }
 
-      return selectedIds.filter(i => i !== id);
+      const filteredIds = selectedIds.filter(i => i !== id);
+
+      return filteredIds.length ? filteredIds : ['all'];
     }
 
     if (selectedIds.includes('all')) {
