@@ -5,7 +5,7 @@
 */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Link } from '@material-ui/core';
 import differenceBy from 'lodash/differenceBy';
@@ -22,7 +22,7 @@ import Spinner from '../../../../../components/Spinner';
 import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import FormStepDrawer from '../../../../../components/InstallStep/FormStep/index1';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -72,6 +72,7 @@ const getConnectionType = resource => {
 export default function IntegrationAppAddNewChild(props) {
   const classes = useStyles();
   const history = useHistory();
+  const match = useRouteMatch();
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -95,7 +96,6 @@ export default function IntegrationAppAddNewChild(props) {
     addNewChildSteps,
   ]);
 
-  const currStepIndex = addNewChildSteps?.indexOf(currentStep);
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
@@ -227,6 +227,7 @@ export default function IntegrationAppAddNewChild(props) {
         undefined,
         true
       ));
+      history.push(`${match.url}/form/install`);
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.child.updateStep(
@@ -312,17 +313,6 @@ export default function IntegrationAppAddNewChild(props) {
           onSubmitComplete={handleSubmitComplete}
         />
       )}
-      {currentStep && currentStep.showForm && (
-        <FormStepDrawer
-          integrationId={integrationId}
-          formMeta={currentStep.form}
-          addChild
-          installerFunction={currentStep.installerFunction}
-          title={currentStep.name}
-          formCloseHandler={formCloseHandler}
-          index={currStepIndex + 1}
-        />
-      )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
 
@@ -341,6 +331,11 @@ export default function IntegrationAppAddNewChild(props) {
             ))}
           </div>
         </div>
+        <FormStepDrawer
+          integrationId={integrationId}
+          formCloseHandler={formCloseHandler}
+          addChild
+        />
       </div>
     </LoadResources>
   );
