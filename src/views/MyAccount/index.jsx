@@ -68,11 +68,7 @@ const tabs = [
 
 const useStyles = makeStyles(theme => ({
   wrapperProfile: {
-    padding: theme.spacing(3),
-    background: theme.palette.background.paper,
     margin: theme.spacing(3),
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
   },
   tabsAccount: {
     padding: theme.spacing(3),
