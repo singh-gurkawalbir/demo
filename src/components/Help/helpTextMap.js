@@ -1168,6 +1168,8 @@ export default {
     'Use this field to handle the use case where an unsuccessful HTTP response returns a different media type than the original HTTP request body sent.',
   'export.http.relativeURI':
     "The typical value of this field is the resource path portion of an API endpoint. Some examples are: '/products' or '/orders'. This relativeURI value is combined with the baseURI defined in the connection resource associated with this export. The baseURI and relativeURI together complete a fully qualified url that describes an API endpoint. Note that occasionally query string parameters can be used to refine the set of resources an API endpoint returns.",
+  'export.http.unencrypted.restrictedReportType':
+    'Check the box if the report to be fetched is of restricted type. Please see <a href="https://github.com/amzn/selling-partner-api-docs/blob/main/guides/en-US/use-case-guides/tokens-api-use-case-guide/tokens-API-use-case-guide-2021-03-01.md#restricted-report-types">here</a> to understand which report type(s) are restricted.',
   'export.http.method':
     "The most common HTTP method used by APIs for the retrieval of resources is 'GET'. In some cases, RPC style or SOAP/XML APIs will require the use of the 'POST' HTTP method.  Both of these scenarios are supported by integrator.io.  If the POST method is used, typically the body of the HTTP request will contain filtering or selection criteria.  This information can be provided in the 'body' field. Refer to this field for more information.",
   'export.http.body':
