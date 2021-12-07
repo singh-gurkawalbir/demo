@@ -14,7 +14,7 @@ export default function useGetNotificationOptions({ integrationId, flows = [], c
     // if it is a DIY integration and has flowGroupings
     // should add corresponding flow group name for every flow option
     if (hasFlowGroupings) {
-      const flowGroupName = getFlowGroup(flowGroupings, '', f._flowGroupingId).name;
+      const flowGroupName = getFlowGroup(flowGroupings, '', f._flowGroupingId)?.name;
 
       finalOps.push({ value: f._id, label: f.name, groupName: flowGroupName });
     } else if (hasFlowSections) {

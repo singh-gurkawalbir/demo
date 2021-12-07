@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3),
   },
   pageWrapper: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(3, 3, 4),
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     overflowY: 'auto',
     '& > [role = tabpanel]': {
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   integrationPageWrapper: {
-    padding: theme.spacing(0, 3),
+    padding: theme.spacing(0, 3, 4),
   },
   tabPanel: {
     background: theme.palette.background.paper,

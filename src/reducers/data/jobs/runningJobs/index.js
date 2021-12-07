@@ -97,10 +97,11 @@ selectors.runningJobs = createSelector(state => state?.runningJobs,
         doneExporting: !!job.doneExporting,
         numPagesProcessed: 0,
       };
+      let jobChildren;
 
       if (job.children && job.children.length > 0) {
         // eslint-disable-next-line no-param-reassign
-        job.children = job.children.filter(cJob => !!cJob).map(cJob => {
+        jobChildren = job.children.filter(cJob => !!cJob).map(cJob => {
           const additionalChildProps = {
             uiStatus: cJob.status,
             duration: getJobDuration(cJob),
@@ -125,7 +126,7 @@ selectors.runningJobs = createSelector(state => state?.runningJobs,
         });
       }
 
-      return { ...job, ...additionalProps };
+      return { ...job, children: jobChildren, ...additionalProps };
     });
 
     return {jobs, status, nextPageURL};

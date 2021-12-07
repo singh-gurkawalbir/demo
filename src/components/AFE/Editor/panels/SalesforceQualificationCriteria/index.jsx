@@ -63,7 +63,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
     };
   }, shallowEqual);
 
-  const filters = useMemo(() => unsortedFilters.sort(stringCompare('label')), [unsortedFilters]);
+  const filters = useMemo(() => [...unsortedFilters].sort(stringCompare('label')), [unsortedFilters]);
 
   const patchEditor = useCallback(
     value => {

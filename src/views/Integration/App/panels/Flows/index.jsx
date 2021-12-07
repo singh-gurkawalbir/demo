@@ -164,7 +164,8 @@ const IAFormActionsPanel = ({isDrawer, onCancel, ...rest}) => {
   />
   );
 };
-export const integrationSettingsKey = 'integrationSettings';
+
+const integrationSettingsKey = 'integrationSettings';
 
 const RegularIAForm = props => {
   const {
