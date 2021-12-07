@@ -957,9 +957,7 @@ describe('updateIntegrationSettings saga', () => {
       ])
       .call.fn(apiCallWithRetry)
       .call(getResource, { resourceType: 'flows', id: flowId })
-      .put(actions.resource.patchStaged(flowId, patchSet, 'value'))
-
-      .put(actions.resource.commitStaged('flows', flowId, 'value'))
+      .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
       .run();
   });
   test('should dispatch requestCollection actions if response exists and options action is not flowEnableDisable', () => expectSaga(updateIntegrationSettings, {

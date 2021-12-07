@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     top: 0,
   },
 }));
-export const ConfirmDialog = (
+const ConfirmDialog = (
   {
     message,
     title = 'Confirm',
@@ -105,7 +105,7 @@ export const ConfirmDialog = (
   );
 };
 
-export const ConfirmDialogContext = React.createContext({
+const ConfirmDialogContext = React.createContext({
   setConfirmDialogProps: () => {},
 });
 

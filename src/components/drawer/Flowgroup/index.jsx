@@ -65,7 +65,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     if (!isEdit) return {};
 
     return {
-      groupName: getFlowGroup(flowGroupings, '', groupId).name,
+      groupName: getFlowGroup(flowGroupings, '', groupId)?.name,
       flowGroupId: groupId,
       flowsWithGroupId: flowsTiedToIntegrations.filter(flow => flow._flowGroupingId === groupId),
     };

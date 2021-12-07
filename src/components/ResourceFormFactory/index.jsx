@@ -52,7 +52,7 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
   return <Form {...props} {...formState} key={count} />;
 };
 
-export const ResourceFormFactory = props => {
+const ResourceFormFactory = props => {
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)

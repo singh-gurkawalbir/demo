@@ -14,12 +14,12 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.MARKETPLACE.CONNECTORS_RECEIVED:
-        draft.connectors = connectors || [];
+        draft.connectors = [
+          ...(connectors || []),
+          // to show v2 SF connector only for non-eu region
+          ...((!isEuRegion() && !connectors.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce)) ? [{...sfConnector, canInstall: true }] : []),
+        ];
 
-        // to show v2 SF connector only for non-eu region
-        if (!isEuRegion()) {
-          draft.connectors.push({...sfConnector, canInstall: true });
-        }
         break;
 
       case actionTypes.MARKETPLACE.TEMPLATES_RECEIVED:

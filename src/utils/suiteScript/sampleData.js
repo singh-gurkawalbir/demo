@@ -1,5 +1,4 @@
-import { each, isArray } from 'lodash';
-import moment from 'moment';
+import { each } from 'lodash';
 
 import {
   getFormattedNSSalesOrderMetadataData,
@@ -18,81 +17,8 @@ import {
  * {'rest.prop1.prop2':'value'} -> {rest:{prop1:{prop2: 'value'}}}
  * {'prop[*].prop1': 'value1'} -> {prop: [{prop1 : 'value1'}]}
  */
-export const getFormattedObject = objData => {
-  const toReturn = {};
-  let keyParts = [];
-  let i = 0;
-  let objTemp;
 
-  each(objData, (v, k) => {
-    keyParts = k.split('.');
-    objTemp = toReturn;
-
-    for (i = 0; i < keyParts.length - 1; i += 1) {
-      const isSublist = /\[\*]$/.test(keyParts[i]);
-      const tempVar = isSublist
-        ? keyParts[i].substring(0, keyParts[i].length - 3)
-        : keyParts[i];
-
-      if (isArray(objTemp)) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (!objTemp[0].hasOwnProperty(tempVar)) {
-          objTemp[0][tempVar] = isSublist ? [{}] : {};
-        }
-
-        objTemp = objTemp[0][tempVar];
-      } else {
-        // eslint-disable-next-line no-prototype-builtins
-        if (!objTemp.hasOwnProperty(tempVar)) {
-          objTemp[tempVar] = isSublist ? [{}] : {};
-        }
-
-        objTemp = objTemp[tempVar];
-      }
-    }
-
-    isArray(objTemp)
-      ? (objTemp[0][keyParts[i]] = v)
-      : (objTemp[keyParts[i]] = v);
-  });
-
-  return toReturn;
-};
-export const getSampleValue = (type, id) => {
-  let sampleValue = id.split('[*].').length === 1 ? id : id.split('[*].')[1];
-
-  if (!id) {
-    return sampleValue;
-  }
-
-  switch (type) {
-    case 'email':
-      sampleValue = 'testemail@domain.com';
-      break;
-    case 'phone':
-      sampleValue = '(917)494-4476';
-      break;
-    case 'checkbox':
-      sampleValue = false;
-      break;
-    case 'integer':
-      sampleValue = 999;
-      break;
-    case 'password':
-      sampleValue = '**********';
-      break;
-    case 'datetime':
-      sampleValue = moment().toISOString();
-      break;
-    case 'date':
-      sampleValue = moment().format('MM/DD/YYYY');
-      break;
-    default:
-  }
-
-  return sampleValue;
-};
-export function getFormattedNetsuiteMetadataData(nsMetaData, nsRecordType) {
+function getFormattedNetsuiteMetadataData(nsMetaData, nsRecordType) {
   const formattedNSMetadata = [];
 
   each(nsMetaData, metadata => {

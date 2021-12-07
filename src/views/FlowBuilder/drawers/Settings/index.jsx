@@ -145,8 +145,7 @@ function Settings({
         });
       }
 
-      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value', null, null, formKey));
+      dispatch(actions.resource.patchAndCommitStaged('flows', flow._id, patchSet, { asyncKey: formKey }));
     },
     [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification, hasFlowSettingsAccess]
   );

@@ -46,7 +46,7 @@ const TabLabel = ({layout, formKey, fieldMap, label, tabType }) => {
     : label);
 };
 
-export function TabComponent(props) {
+function TabComponent(props) {
   const { containers, fieldMap, children, type, className,
     ...rest } = props;
   const {
