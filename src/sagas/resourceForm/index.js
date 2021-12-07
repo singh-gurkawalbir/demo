@@ -126,7 +126,7 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
-export function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
+function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
   const { merged: resourceObj } = yield select(
     selectors.resourceData,
     resourceType,

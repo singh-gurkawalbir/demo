@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const wrapIndex = 5;
 
-export const splitGroupedValuesAr = value => !value || value.includes('/') || value.includes('*') ? [] : value && value.split(',');
+const splitGroupedValuesAr = value => !value || value.includes('/') || value.includes('*') ? [] : value && value.split(',');
 export default function GroupedButton(props) {
   const {
     value,

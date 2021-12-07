@@ -12,7 +12,7 @@ const FlowGroupName = ({ integrationId, flowId }) => {
 
   if (!flowGroupings?.length) return null;
 
-  const flowGroupName = getFlowGroup(flowGroupings, '', flow?._flowGroupingId).name;
+  const flowGroupName = getFlowGroup(flowGroupings, '', flow?._flowGroupingId)?.name;
 
   return (
     <Typography variant="body2" color="textSecondary">{flowGroupName}</Typography>

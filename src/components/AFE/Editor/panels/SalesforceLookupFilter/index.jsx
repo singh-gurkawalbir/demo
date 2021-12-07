@@ -58,7 +58,7 @@ export default function SalesforceLookupFilterPanel({
   const unsortedFilters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
   const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
 
-  const filters = useMemo(() => unsortedFilters.sort(stringCompare('label')), [unsortedFilters]);
+  const filters = useMemo(() => [...unsortedFilters].sort(stringCompare('label')), [unsortedFilters]);
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
