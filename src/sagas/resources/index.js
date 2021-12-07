@@ -1129,21 +1129,31 @@ export function* startPollingForResourceCollection({ resourceType }) {
     }),
   });
 }
-export function* downloadAuditlogs() {
-  let requestOptions;
-  const { path, opts } = requestOptions;
+export function* downloadAuditlogs({resourceType, resourceId, childId}) {
+  const method = resourceType ? 'POST' : 'GET';
+  const path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
+  let flowIds;
+
+  if (childId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      resourceId,
+      childId
+    );
+  }
+  const body = resourceType && {_resourceIds: flowIds || [resourceId]};
 
   try {
     const response = yield call(apiCallWithRetry, {
       path,
-      opts,
+      opts: {method, body},
     });
 
     if (response.signedURL) {
       yield call(openExternalUrl, { url: response.signedURL });
     }
   } catch (e) {
-  //  Handle errors
+    //  Handle errors
   }
 }
 export const resourceSagas = [

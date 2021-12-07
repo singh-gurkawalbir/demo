@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import DynaForm from '../DynaForm';
 import useFormContext from '../Form/FormContext';
@@ -11,6 +12,7 @@ import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
 import {OutlinedButton, TextButton} from '../Buttons';
 import ActionGroup from '../ActionGroup';
+import actions from '../../actions';
 
 const fieldMeta = {
   fieldMap: {
@@ -33,11 +35,12 @@ const fieldMeta = {
 
 const INVALID_DATE = 'Invalid date';
 
-function DownloadAuditLogs({ onClose }) {
+function DownloadAuditLogs({ onClose, resourceType, resourceId, childId }) {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
   const [isValidForm, setIsValidForm] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const values = formContext.value || {};
@@ -62,9 +65,16 @@ function DownloadAuditLogs({ onClose }) {
           variant: 'error',
         });
       }
+      dispatch(actions.auditLogs.download(
+        {
+          resourceType,
+          resourceId,
+          childId,
+        }
+      ));
       onClose();
     },
-    [onClose, formContext, enqueueSnackbar],
+    [formContext, dispatch, resourceType, resourceId, childId, onClose, enqueueSnackbar],
   );
 
   return (
@@ -96,7 +106,7 @@ export default function DownloadAuditLogDrawer({ resourceType, resourceId, child
 
   return (
     <RightDrawer
-      path="download/:resourceId"
+      path="download"
       variant="temporary"
       width="small"
       hideBackButton>
@@ -104,10 +114,6 @@ export default function DownloadAuditLogDrawer({ resourceType, resourceId, child
       <DrawerHeader title="Download audit logs" />
 
       <DownloadAuditLogs
-       // TODO: @Raghu, this is not ideal..pls take to @Dave for details.
-       // It would be best if the error form and buttons were
-       // two separate components so that the DrawerContent and DrawerFooter components could
-       // be user here directly instead of being children of the DownloadErrors component.
         resourceType={resourceType}
         childId={childId}
         resourceId={resourceId}

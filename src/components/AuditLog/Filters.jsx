@@ -33,10 +33,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: theme.spacing(30),
     height: 36,
   },
-  filterWrapper: {
-    padding: 0,
-  },
-  paginationWrapper: {
+  downloadWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
@@ -87,8 +84,8 @@ export default function Filters(props) {
       undefined,
       {childId}
     ));
-  const handleDownload = useCallback(() => { // this one
-    history.push(`${match.url}/download/open`);
+  const handleDownload = useCallback(() => {
+    history.push(`${match.url}/download`);
   }, [history, match.url]);
 
   const getResource = () => {
@@ -183,16 +180,13 @@ export default function Filters(props) {
             ))}
           </CeligoSelect>
         </FormControl>
-        <div className={classes.paginationWrapper}>
-
-          {totalCount ? (
-            <OutlinedButton
-              color="secondary"
-              onClick={handleDownload}>
-              Download
-            </OutlinedButton>
-          ) : ''}
-
+        <div className={classes.downloadWrapper}>
+          <OutlinedButton
+            disabled={!totalCount}
+            color="secondary"
+            onClick={handleDownload}>
+            Download
+          </OutlinedButton>
         </div>
       </form>
     </div>
