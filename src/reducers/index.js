@@ -6101,3 +6101,14 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
     }
   }
 };
+
+selectors.showAmazonRestrictedReportType = (state, formKey) => {
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const apiType = selectors.fieldState(state, formKey, 'unencrypted.apiType')?.value;
+  const relativeURI = selectors.fieldState(state, formKey, 'http.relativeURI')?.value;
+  const connectionType = selectors.resource(state, 'connections', connectionId)?.http?.type;
+
+  return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
+          connectionType === 'Amazon-SP-API') &&
+          relativeURI?.startsWith('/reports/2021-06-30/documents/');
+};
