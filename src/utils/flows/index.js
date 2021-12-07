@@ -1225,7 +1225,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
       _id: index + objectsLength,
     });
     const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
-    const lastFlowObject = resultFlowObjects.pop();
+    const lastFlowObject = { ...resultFlowObjects.pop() };
 
     if (lastFlowObject) {
       lastFlowObject.isLastFlowInFlowGroup = true;
@@ -1241,7 +1241,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
       groupName: UNASSIGNED_SECTION_NAME,
       _id: objectsLength + flowGroupings.length,
     });
-    const lastFlowObject = flowsWithoutGroupId.pop();
+    const lastFlowObject = { ...flowsWithoutGroupId.pop() };
 
     if (lastFlowObject) {
       lastFlowObject.isLastFlowInFlowGroup = true;
