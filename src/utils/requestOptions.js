@@ -340,8 +340,8 @@ export default function getRequestOptions(
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
       const opts = { method, body };
       const { fromDate, toDate } = filters || {};
-      const fromKey = 'occurredAt_gte';
-      const toKey = 'occurredAt_lte';
+      const fromKey = 'from';
+      const toKey = 'to';
 
       if (fromDate && toDate) {
         path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
