@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import { selectors } from '../../../../../../reducers';
 import useHandleDelete from '../../../../../../views/Integration/hooks/useHandleDelete';
@@ -26,6 +26,6 @@ export default {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return (<></>);
+    return null;
   },
 };
