@@ -498,11 +498,11 @@ const auditLogs = {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     message,
   }),
-  download: ({resourceType, resourceId, childId, message}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
+  download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
     resourceType,
     resourceId,
     childId,
-    message,
+    filters,
   }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };

@@ -70,6 +70,7 @@ function DownloadAuditLogs({ onClose, resourceType, resourceId, childId }) {
           resourceType,
           resourceId,
           childId,
+          filters: { fromDate, toDate },
         }
       ));
       onClose();

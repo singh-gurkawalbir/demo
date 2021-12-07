@@ -24,6 +24,8 @@ export default function getRequestOptions(
     isResolved,
     nextPageURL,
     loadMore,
+    childId,
+    flowIds,
   } = {}
 ) {
   switch (action) {
@@ -329,6 +331,29 @@ export default function getRequestOptions(
       return {
         path,
         opts: { method: 'GET'},
+      };
+    }
+    case actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS: {
+      const method = resourceType ? 'POST' : 'GET';
+      let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
+
+      const body = resourceType && {_resourceIds: flowIds || [resourceId]};
+      const opts = { method, body };
+      const { fromDate, toDate } = filters || {};
+      const fromKey = 'occurredAt_gte';
+      const toKey = 'occurredAt_lte';
+
+      if (fromDate && toDate) {
+        path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
+      } else if (fromDate) {
+        path += `?${fromKey}=${fromDate}`;
+      } else if (toDate) {
+        path += `?${toKey}=${toDate}`;
+      }
+
+      return {
+        path,
+        opts,
       };
     }
 

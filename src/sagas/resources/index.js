@@ -1129,9 +1129,7 @@ export function* startPollingForResourceCollection({ resourceType }) {
     }),
   });
 }
-export function* downloadAuditlogs({resourceType, resourceId, childId}) {
-  const method = resourceType ? 'POST' : 'GET';
-  const path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
+export function* downloadAuditlogs({resourceType, resourceId, childId, filters}) {
   let flowIds;
 
   if (childId) {
@@ -1141,12 +1139,17 @@ export function* downloadAuditlogs({resourceType, resourceId, childId}) {
       childId
     );
   }
-  const body = resourceType && {_resourceIds: flowIds || [resourceId]};
+
+  const requestOptions = getRequestOptions(
+    actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+    { resourceType, resourceId, childId, flowIds, filters }
+  );
+  const { path, opts } = requestOptions;
 
   try {
     const response = yield call(apiCallWithRetry, {
       path,
-      opts: {method, body},
+      opts,
     });
 
     if (response.signedURL) {
