@@ -2995,7 +2995,7 @@ selectors.mkIntegrationAppFlowSections = () => {
     (_1, _2, childId) => childId,
     (state, id, childId, flowsFilterConfig, isUserInErrMgtTwoDotZero) => allFlowsFromSections(state, id, '', childId, flowsFilterConfig, isUserInErrMgtTwoDotZero),
     (_1, _2, _3, flowsFilterConfig) => flowsFilterConfig,
-    (integrationResource, childId, selectedFlows, flowsFilterConfig) => {
+    (integrationResource, childId, filteredFlows, flowsFilterConfig) => {
       let flowSections = [];
       const { sections = [], supportsMultiStore } =
       integrationResource.settings || {};
@@ -3032,7 +3032,10 @@ selectors.mkIntegrationAppFlowSections = () => {
             return !!sec.title;
           }
 
-          return !!sec.title && sec.flows.some(flow => selectedFlows.some(selectedFlow => selectedFlow._id === flow._id));
+          // filteredFlows contains flows which have name or description starting with keyword in flowsFilterConfig
+          // a section is selected if atleast one of the flows in the section is present in filteredFlows
+
+          return !!sec.title && sec.flows.some(flow => filteredFlows.some(selectedFlow => selectedFlow._id === flow._id));
         })
         .map(sec => ({
           ...sec,
