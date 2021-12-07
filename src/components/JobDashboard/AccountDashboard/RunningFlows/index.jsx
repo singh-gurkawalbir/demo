@@ -11,16 +11,12 @@ import Spinner from '../../../Spinner';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
-  jobTable: {
-    height: '100%',
-    overflow: 'auto',
-  },
   emptyMessage: {
-    margin: theme.spacing(3, 2),
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 2, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
@@ -77,7 +73,6 @@ export default function RunningFlows() {
             </span>
             <ResourceTable
               resources={jobs}
-              className={classes.jobTable}
               resourceType={filterKey}
           />
           </>
