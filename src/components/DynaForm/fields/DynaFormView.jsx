@@ -15,7 +15,7 @@ import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formF
 const emptyObj = {};
 const isParent = true;
 
-export function FormView(props) {
+export default function FormView(props) {
   const { resourceType, flowId, resourceId, value, formKey } = props;
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
@@ -139,5 +139,3 @@ export function FormView(props) {
     />
   ) : null;
 }
-
-export default FormView;

@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/sap/byd/odata/cust/v1/vmumaterial',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/storeURL']}.sapbydesign.com`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/tenantHostname']}.sapbydesign.com`,
     '/http/headers': [
       {
         name: 'Authorization',
@@ -18,13 +18,13 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    storeURL: {
-      id: 'storeURL',
+    'http.unencrypted.tenantHostname': {
+      id: 'http.unencrypted.tenantHostname',
       startAdornment: 'https://',
       endAdornment: '.sapbydesign.com',
       type: 'text',
-      label: 'Store URL',
-      helpKey: 'sapbydesign.connection.storeURL',
+      label: 'Tenant hostname',
+      helpKey: 'sapbydesign.connection.http.unencrypted.tenantHostname',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -71,7 +71,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['storeURL',
+        fields: ['http.unencrypted.tenantHostname',
           'http.unencrypted.username',
           'http.encrypted.password'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },

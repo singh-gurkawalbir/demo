@@ -75,14 +75,6 @@ export default {
           helpKey: 'mapping.discardIfEmpty',
           label: 'Discard if empty',
         },
-        immutable: {
-          id: 'immutable',
-          name: 'immutable',
-          type: 'checkbox',
-          defaultValue: value.immutable || false,
-          helpKey: 'mapping.immutable',
-          label: 'Immutable (Advanced)',
-        },
         useFirstRow: {
           id: 'useFirstRow',
           name: 'useFirstRow',
@@ -520,7 +512,6 @@ export default {
         fields: [
           'dataType',
           'discardIfEmpty',
-          'immutable',
           'useFirstRow',
           'fieldMappingType',
           'lookup.mode',

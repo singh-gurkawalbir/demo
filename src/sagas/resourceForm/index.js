@@ -127,7 +127,7 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
-export function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
+function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
   const resourceObj = yield call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values });
   const connectionObj = yield select(
     selectors.resource,

@@ -35,7 +35,7 @@ const normalizeAllPropsToFormApi = props => {
   return formApiProps;
 };
 
-export const generateSimpleLayout = fieldMeta => {
+const generateSimpleLayout = fieldMeta => {
   if (!fieldMeta) return null;
   const { fieldMap, layout } = fieldMeta;
 

@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://www.${
-      formValues['/http/accountType'] === 'staging' ? 'faire-stage' : 'cofaire'
+      formValues['/http/accountType'] === 'staging' ? 'faire-stage' : 'faire'
     }.com`,
     '/http/ping/relativeURI': '/api/v1/orders',
     '/http/ping/method': 'GET',
@@ -39,12 +39,12 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('staging') === -1) {
+          if (baseUri.indexOf('faire-stage') !== -1) {
             return 'staging';
           }
-        }
 
-        return 'production';
+          return 'production';
+        }
       },
       helpKey: 'faire.connection.http.accountType',
     },

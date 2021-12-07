@@ -1,6 +1,4 @@
-import invert from 'lodash/invert';
-
-export const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
+const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
 // eslint-disable-next-line no-undef
 export const CDN_BASE_URL = CDN_BASE_URI || PRODUCTION_CDN_BASE_URL;
 export const emptyList = Object.freeze([]);
@@ -438,26 +436,7 @@ export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articl
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
-export const AS2_URLS_STAGING = [
-  {
-    label: 'http://api.staging.integrator.io/v1/as2',
-    value: 'http://api.staging.integrator.io/v1/as2',
-  },
-  {
-    label: 'https://api.staging.integrator.io/v1/as2',
-    value: 'https://api.staging.integrator.io/v1/as2',
-  },
-];
-export const AS2_URLS_PRODUCTION = [
-  {
-    label: 'http://api.integrator.io/v1/as2',
-    value: 'http://api.integrator.io/v1/as2',
-  },
-  {
-    label: 'https://api.integrator.io/v1/as2',
-    value: 'https://api.integrator.io/v1/as2',
-  },
-];
+
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
@@ -695,9 +674,7 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-export const LINE_GRAPH_TYPE_LONG = Object.freeze(
-  invert(LINE_GRAPH_TYPE_SHORTID)
-);
+
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';

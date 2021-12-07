@@ -508,7 +508,7 @@ describe('editor sagas', () => {
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
       expect(effects.call).toHaveLength(3);
-      expect(effects.put).toHaveLength(6);
+      expect(effects.put).toHaveLength(5);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
       expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(editorId)));
     });
@@ -583,7 +583,7 @@ describe('editor sagas', () => {
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
       expect(effects.call).toHaveLength(3);
-      expect(effects.put).toHaveLength(6);
+      expect(effects.put).toHaveLength(5);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
       expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(editorId)));
     });
@@ -613,9 +613,9 @@ describe('editor sagas', () => {
       // contains that many less count of the effects
       // for eg, if we also add assertion in expectSaga like .put(actions.editor.saveComplete(id)), then effects.put
       // will have a length of 5, not 6 as we have already asserted one action
-      expect(effects.put).toHaveLength(6);
-      expect(effects.put[5]).toEqual(
-        put(actions.resource.commitStaged('connections', '111', 'value'))
+      expect(effects.put).toHaveLength(5);
+      expect(effects.put[4]).toEqual(
+        put(actions.resource.patchAndCommitStaged('connections', '111', [{op: 'replace', path: '/connection', value: 'some value'}]))
       );
     });
   });

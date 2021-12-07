@@ -193,8 +193,7 @@ export default function Security() {
       value: formValues.clientSecret,
     });
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('ssoclients', resourceId, 'value'));
+    dispatch(actions.resource.patchAndCommitStaged('ssoclients', resourceId, patchSet));
   }, [dispatch, resourceId]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(

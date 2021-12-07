@@ -1,4 +1,4 @@
-export function getParamValue(fieldId, values = {}) {
+function getParamValue(fieldId, values = {}) {
   let paramValue;
 
   if (values) {
