@@ -36,6 +36,7 @@ export default {
     {
       key: 'websiteUrl',
       heading: 'Website URL',
+      isLoggable: true,
       Value: ({rowData: r}) => {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
         const websiteURL = r.websiteURL?.startsWith('http') ? r.websiteURL : `https://${r.websiteURL}`;

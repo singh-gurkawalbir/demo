@@ -126,7 +126,7 @@ export default function Filters(props) {
               Select user
             </MenuItem>
             {users.map(opt => (
-              <MenuItem key={opt._id} value={opt._id}>
+              <MenuItem key={opt._id} value={opt._id} data-private>
                 {opt.name || opt.email}
               </MenuItem>
             ))}

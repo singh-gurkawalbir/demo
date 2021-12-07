@@ -17,11 +17,13 @@ export default function ViewErrorDetails({ flowId, resourceId, errorId, isResolv
   const errorDetails = useMemo(() => formatErrorDetails(errorDoc), [errorDoc]);
 
   return (
-    <CodeEditor
-      value={errorDetails}
-      mode="text"
-      readOnly
-      showGutter={false}
+    <div data-private>
+      <CodeEditor
+        value={errorDetails}
+        mode="text"
+        readOnly
+        showGutter={false}
     />
+    </div>
   );
 }
