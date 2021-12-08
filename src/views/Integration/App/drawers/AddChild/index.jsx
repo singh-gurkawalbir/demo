@@ -14,7 +14,7 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
-import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
 import { getResourceSubType } from '../../../../../utils/resource';
 import resourceConstants from '../../../../../forms/constants/connection';
@@ -189,6 +189,7 @@ export default function IntegrationAppAddNewChild(props) {
       }
 
       setSelectedConnectionId(_connectionId);
+      history.push(`${match.url}/configure/connections/${_connectionId}`);
       // handle Installation step click
     } else if (installURL) {
       if (!step.isTriggered) {
@@ -227,7 +228,7 @@ export default function IntegrationAppAddNewChild(props) {
         undefined,
         true
       ));
-      history.push(`${match.url}/form/install`);
+      history.push(`${match.url}/form/child`);
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.child.updateStep(
@@ -271,6 +272,7 @@ export default function IntegrationAppAddNewChild(props) {
       )
     );
     setSelectedConnectionId(false);
+    history.goBack();
   };
 
   const handleUninstall = () => {
@@ -283,6 +285,7 @@ export default function IntegrationAppAddNewChild(props) {
 
   const handleClose = () => {
     setSelectedConnectionId(false);
+    history.goBack();
   };
 
   return (
@@ -305,14 +308,14 @@ export default function IntegrationAppAddNewChild(props) {
           )}
         </div>
       </CeligoPageBar>
-      {selectedConnectionId && (
+      {/* {selectedConnectionId && (
         <ResourceSetupDrawer
           resourceId={selectedConnectionId}
           resourceType="connections"
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
-      )}
+      )} */}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
 
@@ -334,7 +337,11 @@ export default function IntegrationAppAddNewChild(props) {
         <FormStepDrawer
           integrationId={integrationId}
           formCloseHandler={formCloseHandler}
-          addChild
+        />
+        <ResourceSetupDrawer
+          onClose={handleClose}
+          onSubmitComplete={handleSubmitComplete}
+          mode="child"
         />
       </div>
     </LoadResources>

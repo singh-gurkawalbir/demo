@@ -23,7 +23,7 @@ import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import resourceConstants from '../../../../../forms/constants/connection';
-import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
@@ -159,7 +159,11 @@ export default function ConnectorInstallation(props) {
       setConnection({
         _connectionId: connectionId,
       });
+      // previously we opened newId drawer - then saved and authenticated
+      // we get connectionId - replace the drawer
+      history.replace(`${match.url}/configure/connections/${connectionId}`);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
 
   const selectedConnectionType = useSelector(state => {
@@ -175,7 +179,8 @@ export default function ConnectorInstallation(props) {
   const integrationChildAppName = getIntegrationAppUrlName(childIntegrationName);
   const handleClose = useCallback(() => {
     setConnection(false);
-  }, []);
+    history.goBack();
+  }, [history]);
   const isCloned = install.find(step => step.isClone);
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
@@ -249,6 +254,7 @@ export default function ConnectorInstallation(props) {
       }
       if (connectionDoc && !isOauth(connectionDoc)) {
         setConnection(false);
+        history.goBack();
       }
     },
     [
@@ -258,6 +264,7 @@ export default function ConnectorInstallation(props) {
       integrationId,
       isFrameWork2,
       selectedConnectionType,
+      history,
     ]
   );
 
@@ -421,6 +428,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
+      history.push(`${match.url}/configure/connections/${_connectionId || newId}`);
     } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -480,7 +488,12 @@ export default function ConnectorInstallation(props) {
       }
       // handle Action step click
     } else if (type === 'stack') {
-      if (!stackId) setShowStackDialog(generateNewId());
+      if (!stackId) {
+        const newStackId = generateNewId();
+
+        setShowStackDialog(newStackId);
+        history.push(`${match.url}/configure/stacks/${newStackId}`);
+      }
     } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(
         integrationId,
@@ -512,10 +525,12 @@ export default function ConnectorInstallation(props) {
     );
 
     setShowStackDialog(false);
+    history.goBack();
   };
 
   const handleStackClose = () => {
     setShowStackDialog(false);
+    history.goBack();
   };
 
   const handleHelpUrlClick = e => {
@@ -562,7 +577,7 @@ export default function ConnectorInstallation(props) {
 
         </div>
       </CeligoPageBar>
-      {connection &&
+      {/* {connection &&
         (connection._connectionId ? (
           <ResourceSetupDrawer
             resourceId={connection._connectionId}
@@ -591,7 +606,7 @@ export default function ConnectorInstallation(props) {
           resourceType="stacks"
           onSubmitComplete={handleStackSetupDone}
         />
-      )}
+      )} */}
       {/* {currentStep && currentStep.formMeta && (
         <FormStepDrawer
           integrationId={integrationId}
@@ -628,6 +643,14 @@ export default function ConnectorInstallation(props) {
         </div>
       </div>
       <FormStepDrawer integrationId={integrationId} />
+      <ResourceSetupDrawer
+        integrationId={integrationId}
+        onClose={handleClose}
+        onSubmitComplete={handleSubmitComplete}
+        handleStackSetupDone={handleStackSetupDone}
+        handleStackClose={handleStackClose}
+        addOrSelect={!_connectorId}
+      />
     </LoadResources>
   );
 }
