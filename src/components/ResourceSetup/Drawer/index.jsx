@@ -61,42 +61,40 @@ function ResourceSetupDrawerContent({ integrationId, addOrSelect, onSubmitComple
   return (
     <>
       <DrawerHeader disableClose={disabled} title={title} handleClose={setCancelTriggered} />
-      <DrawerContent>
-        <ResourceDrawer />
-        <div>
-          {addOrSelect ? (
-            <AddOrSelect
+      {addOrSelect ? (
+        <AddOrSelect
+          resourceId={resourceId}
+          onSubmitComplete={handleSubmitComplete}
+              // eslint-disable-next-line no-nested-ternary
+          connectionType={connectionType}
+          resource={resourceObj}
+                // environment={} - ask sravan
+          resourceType={resourceType}
+          manageOnly={manageOnly}
+          onClose={handleClose}
+          formKey={formKey} />
+      ) : (
+        <>
+          <DrawerContent>
+            <ResourceFormWithStatusPanel
+              occupyFullWidth
+              formKey={formKey}
+              resourceType={resourceType}
               resourceId={resourceId}
               onSubmitComplete={handleSubmitComplete}
-              // eslint-disable-next-line no-nested-ternary
-              connectionType={connectionType}
-              resource={resourceObj}
-                // environment={} - ask sravan
-              resourceType={resourceType}
-              manageOnly={manageOnly}
-              onClose={handleClose}
-              formKey={formKey} />
-          ) : (
-            <>
-              <ResourceFormWithStatusPanel
-                occupyFullWidth
-                formKey={formKey}
-                resourceType={resourceType}
-                resourceId={resourceId}
-                onSubmitComplete={handleSubmitComplete}
             />
-              <ResourceFormActionsPanel
-                formKey={formKey}
-                resourceType={resourceType}
-                resourceId={resourceId}
-                cancelButtonLabel="Cancel"
-                submitButtonLabel="Save & close"
-                onCancel={handleClose}
+          </DrawerContent>
+          <ResourceFormActionsPanel
+            formKey={formKey}
+            resourceType={resourceType}
+            resourceId={resourceId}
+            cancelButtonLabel="Cancel"
+            submitButtonLabel="Save & close"
+            onCancel={handleClose}
               />
-            </>
-          )}
-        </div>
-      </DrawerContent>
+        </>
+      )}
+      <ResourceDrawer />
     </>
   );
 }
