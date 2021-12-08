@@ -55,6 +55,10 @@ export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
 
 export const getTextAfterCount = (displayText, valueCount) => `${valueCount} ${valueCount === 1 ? displayText : `${displayText}s`}`;
 
-export const getTrimmedTitle = (title, maxLength = 40) => title.length > maxLength
-  ? `${title.substring(0, 40 - 3)}...`
-  : title;
+export const getTrimmedTitle = (title = '', maxLength = 40) => {
+  if (maxLength < 4) return title;
+
+  return title.length > maxLength
+    ? `${title.substring(0, maxLength - 3)}...`
+    : title;
+};
