@@ -143,45 +143,9 @@ export default function ConnectorInstallation(props) {
     return integrationApp && integrationApp.helpURL;
   });
   const installSteps = useSelector(state =>
-    selectors.integrationInstallSteps(state, integrationId)
+    selectors.integrationInstallSteps(state, integrationId),
+  shallowEqual
   );
-  const templateInstallSteps = useMemo(() => {
-    if (!isTemplate) return installSteps;
-
-    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
-    const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
-
-    let netsuiteConnIndex = 0;
-    let salesforceConnIndex = 0;
-
-    return installSteps.map(step => {
-      if (step.installURL || step.url) {
-        if (
-          step.name.includes('Integrator Bundle')
-        ) {
-          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
-
-          netsuiteConnIndex += 1;
-
-          return {
-            ...step,
-            connectionId,
-          };
-        } if (step.name.includes('Integrator Adaptor Package')) {
-          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
-
-          salesforceConnIndex += 1;
-
-          return {
-            ...step,
-            connectionId,
-          };
-        }
-      }
-
-      return step;
-    });
-  }, [installSteps, isTemplate]);
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
@@ -649,7 +613,7 @@ export default function ConnectorInstallation(props) {
             <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
-            {(isTemplate ? templateInstallSteps : installSteps).map((step, index) => (
+            {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}
