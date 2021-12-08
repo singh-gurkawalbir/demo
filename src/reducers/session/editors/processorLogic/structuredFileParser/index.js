@@ -4,7 +4,7 @@ import util from '../../../../../utils/json';
 export default {
   init: ({options, fieldState, fileDefinitionData, resource}) => {
     const {sampleData, rule} = fileDefinitionData || {};
-    const data = sampleData || resource?.sampleData;
+    const data = resource?.sampleData || sampleData;
 
     return {
       ...options,

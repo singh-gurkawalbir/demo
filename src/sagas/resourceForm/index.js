@@ -143,6 +143,12 @@ function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
     isAS2Resource(resourceObj) ||
     (resourceType === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
   ) {
+    // IO-23787 The latest sample data which is edited, is available on the resourceObject
+    // Handled in DynaFileDefintionEditor_afe when user updates the sample data and saves it
+    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(resourceObj?.file?.type)) {
+      if (resourceObj?.sampleData) return { ...values, '/sampleData': resourceObj?.sampleData };
+    }
+
     const sampleData = yield call(_fetchRawDataForFileAdaptors, {
       resourceId,
       type: resourceType,
