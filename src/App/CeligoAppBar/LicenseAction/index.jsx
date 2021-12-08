@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
   },
   titleStatusPanel: {
     fontSize: 15,
-    paddingTop: 3,
   },
   licenseActionDetailsWrapper: {
     background: 'none',

@@ -1033,9 +1033,19 @@ describe('deleteIntegration saga', () => {
     .not.call.fn(deleteResource)
     .returns(undefined)
     .run());
+  test('should not delete integration if integration has references like flows', () => expectSaga(deleteIntegration, {integrationId: '123'})
+    .provide([
+      [select(selectors.resource, 'integrations', '123'), {_connectorId: 'someId'}],
+      [call(requestReferences, {resourceType: 'integrations', id: '123'}), {flows: [{id: '123'}]}],
+    ])
+    .not.call.fn(deleteResource)
+    .returns(undefined)
+    .run());
+
   test('should call deleteResource and dispatch request collection actions if integration does not have _connectorId', () => expectSaga(deleteIntegration, {integrationId: '123'})
     .provide([
       [select(selectors.resource, 'integrations', '123'), {_id: '123'}],
+      [call(requestReferences, {resourceType: 'integrations', id: '123'}), {}],
       [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})

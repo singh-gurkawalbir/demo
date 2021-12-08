@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import { selectors } from '../../../../../../reducers';
 import useHandleDelete from '../../../../../../views/Integration/hooks/useHandleDelete';
@@ -16,5 +17,15 @@ export default {
 
     return canDelete;
   },
-  useOnClick: ({_integrationId}) => useHandleDelete(_integrationId),
+  Component: ({rowData}) => {
+    const {_integrationId} = rowData;
+    const handleDelete = useHandleDelete(_integrationId);
+
+    useEffect(() => {
+      handleDelete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return null;
+  },
 };
