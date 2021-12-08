@@ -207,7 +207,6 @@ export default {
         is: ['blob'],
       },
     ],
-    helpKey: 'import.netsuite.name',
   },
   'netsuite.file.fileType': {
     loggable: true,
@@ -225,7 +224,6 @@ export default {
         is: ['blob'],
       },
     ],
-    helpKey: 'import.netsuite.filetype',
   },
   'netsuite.file.folder': {
     loggable: true,
@@ -243,7 +241,6 @@ export default {
         is: ['blob'],
       },
     ],
-    helpKey: 'import.netsuite.folder',
   },
   'netsuite.file.internalId': {
     loggable: true,
@@ -261,7 +258,6 @@ export default {
         is: ['blob'],
       },
     ],
-    helpKey: 'import.netsuite.fileInternalId',
   },
   'netsuite_da.hooks.postSubmit.fileInternalId': {
     loggable: true,
