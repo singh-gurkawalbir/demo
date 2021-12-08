@@ -27,6 +27,7 @@ import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
+import { constructResourceFromFormValues } from '../utils';
 
 export const SCOPES = {
   META: 'meta',
@@ -127,11 +128,7 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
 }
 
 function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
-  const { merged: resourceObj } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
+  const resourceObj = yield call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values });
   const connectionObj = yield select(
     selectors.resource,
     'connections',
@@ -145,7 +142,8 @@ function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
   ) {
     const sampleData = yield call(_fetchRawDataForFileAdaptors, {
       resourceId,
-      type: resourceType,
+      resourceType,
+      values,
     });
 
     if (sampleData !== undefined) {
@@ -163,7 +161,8 @@ function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
     resourceId
   );
 
-  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
+  // Incase of Data loader, no need to remove rawData as it is handled when the flow is run
+  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA || resourceObj?.type === 'simple') {
     return values;
   }
 
