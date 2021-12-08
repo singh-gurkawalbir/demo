@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import jsonPatch from 'fast-json-patch';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -13,7 +14,7 @@ import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
-import ResourceSetupDrawer from '../ResourceSetup';
+import ResourceSetupDrawer from '../ResourceSetup/Drawer';
 import InstallationStep from '../InstallStep';
 import resourceConstants from '../../forms/constants/connection';
 import {
@@ -77,8 +78,9 @@ export default function InstallationWizard(props) {
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
-  let environment;
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const history = useHistory();
   const isSetupComplete = useSelector(state =>
     selectors.isSetupComplete(state, { resourceId, resourceType, templateId })
   );
@@ -146,10 +148,6 @@ export default function InstallationWizard(props) {
     return <Typography>Invalid Configuration</Typography>;
   }
 
-  if (data) {
-    environment = data.sandbox ? 'sandbox' : 'production';
-  }
-
   const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
@@ -180,6 +178,7 @@ export default function InstallationWizard(props) {
         )
       );
       setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });
+      history.push(`${match.url}/configure/connections/${newId}`);
 
       // handle Installation step click
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
@@ -219,9 +218,13 @@ export default function InstallationWizard(props) {
           )
         );
       }
-      // handle Action step click
     } else if (type === INSTALL_STEP_TYPES.STACK) {
-      if (!stackId) setShowStackDialog(generateNewId());
+      if (!stackId) {
+        const newStackId = generateNewId();
+
+        setShowStackDialog(newStackId);
+        history.push(`${match.url}/configure/stacks/${newStackId}`);
+      }
     }
   };
 
@@ -258,6 +261,7 @@ export default function InstallationWizard(props) {
     );
 
     setSelectedConnectionId(false);
+    history.goBack();
   };
 
   const handleStackSetupDone = stackId => {
@@ -269,14 +273,17 @@ export default function InstallationWizard(props) {
     );
 
     setShowStackDialog(false);
+    history.goBack();
   };
 
   const handleConnectionClose = () => {
     setSelectedConnectionId(false);
+    history.goBack();
   };
 
   const handleStackClose = () => {
     setShowStackDialog(false);
+    history.goBack();
   };
 
   if (installInProgress) {
@@ -290,7 +297,7 @@ export default function InstallationWizard(props) {
 
   return (
     <LoadResources required resources="connections,integrations">
-      {connection && (
+      {/* {connection && (
         <ResourceSetupDrawer
           resourceId={connection.newId}
           resource={connection.doc}
@@ -313,7 +320,7 @@ export default function InstallationWizard(props) {
           resourceType="stacks"
           onSubmitComplete={handleStackSetupDone}
         />
-      )}
+      )} */}
       <div className={classes.root}>
         {variant !== 'new' && (
           <div className={classes.formHead}>
@@ -347,6 +354,17 @@ export default function InstallationWizard(props) {
           ))}
         </div>
       </div>
+      <ResourceSetupDrawer
+        mode={type} // clone or template
+        templateId={templateId}
+        onClose={handleConnectionClose}
+        onSubmitComplete={handleSubmitComplete}
+        handleStackSetupDone={handleStackSetupDone}
+        handleStackClose={handleStackClose}
+        addOrSelect
+        cloneResourceType={resourceType}
+        cloneResourceId={resourceId}
+       />
     </LoadResources>
   );
 }

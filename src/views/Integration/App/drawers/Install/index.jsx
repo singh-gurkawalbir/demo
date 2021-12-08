@@ -650,6 +650,7 @@ export default function ConnectorInstallation(props) {
         handleStackSetupDone={handleStackSetupDone}
         handleStackClose={handleStackClose}
         addOrSelect={!_connectorId}
+        mode="install"
       />
     </LoadResources>
   );

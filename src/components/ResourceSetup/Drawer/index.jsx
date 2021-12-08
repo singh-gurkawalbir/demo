@@ -14,20 +14,44 @@ import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { isNewId } from '../../../utils/resource';
 
-function ResourceSetupDrawerContent({ integrationId, addOrSelect, onSubmitComplete, onClose, manageOnly, handleStackSetupDone, handleStackClose, mode = 'install' }) {
+function ResourceSetupDrawerContent({
+  integrationId,
+  templateId,
+  addOrSelect,
+  onSubmitComplete,
+  onClose,
+  manageOnly,
+  handleStackSetupDone,
+  handleStackClose,
+  mode,
+  cloneResourceType,
+  cloneResourceId,
+}) {
   const { resourceId, resourceType } = useParams();
   let resourceObj;
   let connectionType;
+  let environment;
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, resourceId)
   );
+  const templateInstallSetup = useSelector(state => selectors.installSetup(state, {
+    templateId,
+    resourceType,
+    resourceId,
+  }));
   const currentStep = useSelector(state => {
     let steps = [];
 
     if (mode === 'child') {
       steps = selectors.addNewChildSteps(state, integrationId)?.steps;
-    } else {
+    } else if (mode === 'install') {
       steps = selectors.integrationInstallSteps(state, integrationId);
+    } else if (mode === 'clone') {
+      steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+    } else if (mode === 'template') {
+      // not used any where??
+      // Ref /components/drawer/Install/Integration/index.jsx for setup route that triggers InstallationWizard with template type
+      steps = selectors.templateInstallSteps(state, templateId);
     }
     // handle all use cases with mode
     const currentStep = steps.find(s => !!s.isCurrentStep);
@@ -35,16 +59,18 @@ function ResourceSetupDrawerContent({ integrationId, addOrSelect, onSubmitComple
     return currentStep;
   });
 
-  // resource object construction incase of template : !_connectorId
+  if (templateId && templateInstallSetup) {
+    environment = templateInstallSetup?.data?.sandbox ? 'sandbox' : 'production';
+    resourceObj = {...templateInstallSetup?.connectionMap[currentStep?._connectionId]};
+  } else if (addOrSelect && resourceType === 'connections' && isNewId(resourceId)) {
+    // resource object construction incase of template : !_connectorId
   // if resourceId is new - construct obj
-  if (addOrSelect && resourceType === 'connections' && isNewId(resourceId)) {
-    resourceObj = currentStep?.sourceConnection;
+    resourceObj = currentStep?.sourceConnection || {};
     // eslint-disable-next-line no-nested-ternary
-    connectionType = resourceObj?.type === 'http'
-      ? (resourceObj?.http?.formType === 'rest' ? 'rest' : 'http')
+    connectionType = resourceObj.type === 'http'
+      ? (resourceObj.http?.formType === 'rest' ? 'rest' : 'http')
       : resourceObj.type;
   }
-  // environment
 
   useEffect(() => {
     if (isAuthorized && !addOrSelect) onSubmitComplete(resourceId, isAuthorized);
@@ -65,10 +91,9 @@ function ResourceSetupDrawerContent({ integrationId, addOrSelect, onSubmitComple
         <AddOrSelect
           resourceId={resourceId}
           onSubmitComplete={handleSubmitComplete}
-              // eslint-disable-next-line no-nested-ternary
           connectionType={connectionType}
           resource={resourceObj}
-                // environment={} - ask sravan
+          environment={environment}
           resourceType={resourceType}
           manageOnly={manageOnly}
           onClose={handleClose}
@@ -98,21 +123,13 @@ function ResourceSetupDrawerContent({ integrationId, addOrSelect, onSubmitComple
     </>
   );
 }
-export default function ResourceSetupDrawer({ integrationId, addOrSelect, onSubmitComplete, onClose, manageOnly, handleStackSetupDone, handleStackClose, mode }) {
+export default function ResourceSetupDrawer(props) {
   return (
     <RightDrawer
       path="configure/:resourceType/:resourceId"
       height="tall"
       variant="temporary">
-      <ResourceSetupDrawerContent
-        integrationId={integrationId}
-        addOrSelect={addOrSelect}
-        onSubmitComplete={onSubmitComplete}
-        manageOnly={manageOnly}
-        handleStackSetupDone={handleStackSetupDone}
-        handleStackClose={handleStackClose}
-        mode={mode}
-        onClose={onClose} />
+      <ResourceSetupDrawerContent {...props} />
     </RightDrawer>
   );
 }
