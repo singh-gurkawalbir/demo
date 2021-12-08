@@ -1,5 +1,6 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
+import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
 import { stringCompare } from './sort';
@@ -929,4 +930,30 @@ export const isOldRestAdaptor = (resource, connection) => {
   const { adaptorType, _id } = resource || {};
 
   return (['RESTExport', 'RESTImport'].includes(adaptorType) && _id && !isNewId(_id)) || connection?.isHTTP === false;
+};
+
+// this util takes the link header string as argument
+// and extract and returns the 'next' relation relative url
+export const getNextLinkRelativeUrl = link => {
+  if (!link) return '';
+  if (!(typeof link === 'string' || link instanceof String)) return '';
+
+  const linkHeaderRelation = 'next';
+
+  let domainURL = getDomainUrl();
+
+  if (domainURL.includes('localhost')) {
+    domainURL = 'http://qa.staging.integrator.io';
+  }
+  try {
+    const linkObj = parseLinkHeader(link);
+
+    if (linkObj && linkObj[linkHeaderRelation]?.url) {
+      return linkObj[linkHeaderRelation].url.replace(`${domainURL}/api`, '');
+    }
+  } catch (error) {
+    return '';
+  }
+
+  return '';
 };

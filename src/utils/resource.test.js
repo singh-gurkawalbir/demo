@@ -32,6 +32,7 @@ import {
   getUserAccessLevelOnConnection,
   getAssistantFromResource,
   isOldRestAdaptor,
+  getNextLinkRelativeUrl,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -2124,6 +2125,30 @@ describe('resource util tests', () => {
     });
     test('should not throw error if resource does not contain assistant', () => {
       expect(getAssistantFromResource({id: 123})).toBeUndefined();
+    });
+  });
+
+  describe('getNextLinkRelativeUrl test cases', () => {
+    const prevLink = '<http://qa.staging.integrator.io/api/connections?after=wteyd>; rel=prev';
+    const nextLink = '<http://qa.staging.integrator.io/api/connections?after=xxxx>; rel=next';
+
+    test('should return empty string if link header is not present', () => {
+      expect(getNextLinkRelativeUrl(null)).toEqual('');
+      expect(getNextLinkRelativeUrl()).toEqual('');
+    });
+    test('should return empty string if link header is not of string type', () => {
+      expect(getNextLinkRelativeUrl({})).toEqual('');
+    });
+    test('should return empty string if link header does not contain "next" relation', () => {
+      expect(getNextLinkRelativeUrl(prevLink)).toEqual('');
+    });
+    test('should return relative url by extracting "next" url from link', () => {
+      expect(getNextLinkRelativeUrl(nextLink)).toEqual('/connections?after=xxxx');
+    });
+    test('should return empty string in case of any exception', () => {
+      const invalidLink = "['a', 'b', 'c']";
+
+      expect(getNextLinkRelativeUrl(invalidLink)).toEqual('');
     });
   });
 });
