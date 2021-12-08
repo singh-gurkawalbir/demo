@@ -943,7 +943,7 @@ export const getNextLinkRelativeUrl = link => {
   let domainURL = getDomainUrl();
 
   if (domainURL.includes('localhost')) {
-    domainURL = 'http://qa.staging.integrator.io';
+    domainURL = process.env.API_ENDPOINT;
   }
   try {
     const linkObj = parseLinkHeader(link);

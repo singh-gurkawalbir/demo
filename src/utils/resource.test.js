@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* global describe, test, expect, jest, beforeEach, afterEach, beforeAll, afterAll */
 import {
   getResourceSubType,
   getResourceSubTypeFromAdaptorType,
@@ -2131,6 +2131,14 @@ describe('resource util tests', () => {
   describe('getNextLinkRelativeUrl test cases', () => {
     const prevLink = '<http://qa.staging.integrator.io/api/connections?after=wteyd>; rel=prev';
     const nextLink = '<http://qa.staging.integrator.io/api/connections?after=xxxx>; rel=next';
+
+    beforeAll(() => {
+      process.env.API_ENDPOINT = 'http://qa.staging.integrator.io';
+    });
+
+    afterAll(() => {
+      process.env.API_ENDPOINT = '';
+    });
 
     test('should return empty string if link header is not present', () => {
       expect(getNextLinkRelativeUrl(null)).toEqual('');

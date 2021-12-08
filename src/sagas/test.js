@@ -1,4 +1,4 @@
-/* global describe, test, expect, fail,beforeEach,afterEach, jest */
+/* global describe, test, expect, fail,beforeEach,afterEach, jest, beforeAll, afterAll */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 import {
@@ -578,6 +578,14 @@ describe('apiCallWithPaging saga', () => {
   const _500Exception = new APIException({
     status: 500,
     message: 'unexpected error',
+  });
+
+  beforeAll(() => {
+    process.env.API_ENDPOINT = 'http://qa.staging.integrator.io';
+  });
+
+  afterAll(() => {
+    process.env.API_ENDPOINT = '';
   });
 
   test('should call apiCallWithRetry with args and requireHeaders true', () => expectSaga(apiCallWithPaging, {path, opts})
