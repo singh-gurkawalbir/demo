@@ -80,7 +80,6 @@ export default {
         ],
       },
     ],
-    helpKey: 'import.netsuite.operation',
   },
   'netsuite_da.useSS2Restlets': {
     loggable: true,
