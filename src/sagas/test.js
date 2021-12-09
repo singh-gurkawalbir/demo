@@ -710,6 +710,30 @@ describe('apiCallWithPaging saga', () => {
       ])
       .returns(totalCollectionWithoutLastPageData)
       .run());
+
+    test('should return total data collected so far (without garbage data) in case next page data returned is garbage', () => expectSaga(apiCallWithPaging, {path, opts})
+      .provide([
+        [call(apiCallWithRetry, {path, opts, requireHeaders: true}),
+          {
+            data: responseData,
+            headers: {
+              get: jest.fn(() => nextLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=xxxx', requireHeaders: true}),
+          {
+            data: secondPageData,
+            headers: {
+              get: jest.fn(() => lastLink),
+            }}],
+        [call(apiCallWithRetry, {opts, path: '/connections?after=yyyy', requireHeaders: true}),
+          {
+            data: '<some garbage values />',
+            headers: {
+              get: jest.fn(() => {}),
+            }}],
+      ])
+      .returns(totalCollectionWithoutLastPageData)
+      .run());
   });
 });
 
