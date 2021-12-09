@@ -11,33 +11,23 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
+const emptyObject = {};
+
 function FormStepContent({ integrationId, addChild, formSubmitHandler, formCloseHandler }) {
   const { formType } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
-  const currentStep = useSelector(state => {
-    let steps = [];
+  const { installerFunction, name, formMeta, form } = useSelector(
+    state => selectors.currentStepPerMode(state, { mode: formType, integrationId }) || emptyObject
+  );
 
+  const formMetaData = useMemo(() => {
     if (formType === 'install') {
-      steps = selectors.integrationInstallSteps(state, integrationId);
-    } else if (formType === 'child') {
-      steps = selectors.addNewChildSteps(state, integrationId)?.steps;
-    } else if (formType === 'uninstall') {
-      steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
-    }
-    const currentStep = steps.find(s => !!s.isCurrentStep);
-
-    return currentStep;
-  });
-
-  const { installerFunction, name } = currentStep;
-  const formMeta = useMemo(() => {
-    if (formType === 'install') {
-      return currentStep?.formMeta;
+      return formMeta;
     }
 
-    return currentStep?.form;
-  }, [formType, currentStep]);
+    return form;
+  }, [formType, formMeta, form]);
   const handleSubmit = useCallback(
     formVal => {
       if (installerFunction) {
@@ -90,7 +80,7 @@ function FormStepContent({ integrationId, addChild, formSubmitHandler, formClose
     history.goBack();
   }, [dispatch, integrationId, history]);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta: formMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta: formMetaData });
 
   return (
     <>

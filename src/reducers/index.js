@@ -429,6 +429,22 @@ selectors.addNewChildSteps = (state, integrationId) => {
   return { steps: modifiedSteps };
 };
 
+selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, cloneResourceType }) => {
+  let steps = [];
+
+  if (mode === 'install') {
+    steps = selectors.integrationInstallSteps(state, integrationId);
+  } else if (mode === 'child') {
+    steps = selectors.addNewChildSteps(state, integrationId)?.steps;
+  } else if (mode === 'uninstall') {
+    steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
+  } else if (mode === 'clone') {
+    steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+  }
+
+  return steps.find(s => !!s.isCurrentStep);
+};
+
 selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   const integration = selectors.integrationAppSettings(state, integrationId);
 

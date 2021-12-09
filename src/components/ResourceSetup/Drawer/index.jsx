@@ -49,19 +49,14 @@ function ResourceSetupDrawerContent({
     resourceType,
     resourceId,
   }));
-  const currentStep = useSelector(state => {
-    let steps = [];
-
-    if (mode === 'child') {
-      steps = selectors.addNewChildSteps(state, integrationId)?.steps;
-    } else if (mode === 'install') {
-      steps = selectors.integrationInstallSteps(state, integrationId);
-    } else if (mode === 'clone') {
-      steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
-    }
-
-    return steps.find(s => !!s.isCurrentStep);
-  });
+  const currentStep = useSelector(
+    state => selectors.currentStepPerMode(state, {
+      mode,
+      integrationId,
+      cloneResourceId,
+      cloneResourceType,
+    })
+  );
 
   if (mode === 'ss-install') {
     resourceObj = {
@@ -69,8 +64,10 @@ function ResourceSetupDrawerContent({
       netsuite: { type: 'netsuite'},
     };
   } else if (templateId && templateInstallSetup) {
+    // Update environment and resourceObject when a resource is cloned
+    // and these props are configured in the preview step
     environment = templateInstallSetup?.data?.sandbox ? 'sandbox' : 'production';
-    resourceObj = {...templateInstallSetup?.connectionMap[currentStep?._connectionId]};
+    resourceObj = {...(templateInstallSetup?.connectionMap[currentStep?._connectionId] || {})};
   } else if (canSelectExistingResources && resourceType === 'connections' && isNewId(resourceId)) {
     // resource object construction incase of template : !_connectorId
   // if resourceId is new - construct obj
@@ -82,7 +79,6 @@ function ResourceSetupDrawerContent({
   }
 
   useEffect(() => {
-    // TODO: verify this use case
     if (isAuthorized && !canSelectExistingResources) onSubmitComplete(resourceId, isAuthorized);
   }, [isAuthorized, resourceId, onSubmitComplete, canSelectExistingResources]);
 
