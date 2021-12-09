@@ -297,30 +297,6 @@ export default function InstallationWizard(props) {
 
   return (
     <LoadResources required resources="connections,integrations">
-      {/* {connection && (
-        <ResourceSetupDrawer
-          resourceId={connection.newId}
-          resource={connection.doc}
-          resourceType="connections"
-          environment={environment}
-          // eslint-disable-next-line no-nested-ternary
-          connectionType={connection.doc.type === 'http'
-            ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
-            : connection.doc.type}
-          onClose={handleConnectionClose}
-          onSubmitComplete={handleSubmitComplete}
-          addOrSelect
-        />
-      )}
-      {stackId && (
-        <ResourceSetupDrawer
-          onClose={handleStackClose}
-          addOrSelect
-          resourceId={stackId}
-          resourceType="stacks"
-          onSubmitComplete={handleStackSetupDone}
-        />
-      )} */}
       <div className={classes.root}>
         {variant !== 'new' && (
           <div className={classes.formHead}>

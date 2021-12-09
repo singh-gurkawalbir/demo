@@ -308,14 +308,6 @@ export default function IntegrationAppAddNewChild(props) {
           )}
         </div>
       </CeligoPageBar>
-      {/* {selectedConnectionId && (
-        <ResourceSetupDrawer
-          resourceId={selectedConnectionId}
-          resourceType="connections"
-          onClose={handleClose}
-          onSubmitComplete={handleSubmitComplete}
-        />
-      )} */}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
 

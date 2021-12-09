@@ -577,45 +577,6 @@ export default function ConnectorInstallation(props) {
 
         </div>
       </CeligoPageBar>
-      {/* {connection &&
-        (connection._connectionId ? (
-          <ResourceSetupDrawer
-            resourceId={connection._connectionId}
-            onClose={handleClose}
-            onSubmitComplete={handleSubmitComplete}
-          />
-        ) : (
-          <ResourceSetupDrawer
-            resourceId={connection.newId}
-            resource={connection.doc}
-            resourceType="connections"
-            // eslint-disable-next-line no-nested-ternary
-            connectionType={connection.doc.type === 'http'
-              ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
-              : connection.doc.type}
-            onClose={handleClose}
-            onSubmitComplete={handleSubmitComplete}
-            addOrSelect={!_connectorId}
-          />
-        ))}
-      {stackId && (
-        <ResourceSetupDrawer
-          onClose={handleStackClose}
-          addOrSelect
-          resourceId={stackId}
-          resourceType="stacks"
-          onSubmitComplete={handleStackSetupDone}
-        />
-      )} */}
-      {/* {currentStep && currentStep.formMeta && (
-        <FormStepDrawer
-          integrationId={integrationId}
-          formMeta={currentStep.formMeta}
-          installerFunction={currentStep.installerFunction}
-          title={currentStep.name}
-          index={currStepIndex + 1}
-        />
-      )} */}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           {helpUrl ? (
