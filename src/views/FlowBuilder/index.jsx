@@ -1,9 +1,6 @@
-
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
-import { selectors } from '../../reducers';
 import ResourceDrawer from '../../components/drawer/Resource';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
@@ -18,8 +15,6 @@ import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
 import loadable from '../../utils/loadable';
 import retry from '../../utils/retry';
-import Spinner from '../../components/Spinner';
-import actions from '../../actions';
 
 const FlowBuilderBody = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
@@ -47,18 +42,7 @@ function FBComponent({flowId, integrationId, childId}) {
 export default function FlowBuilder() {
   const match = useRouteMatch();
 
-  const dispatch = useDispatch();
   const { flowId, integrationId, childId } = match.params;
-  const dependenciesResolved = useSelector(state => selectors.resolvedIntegrationDependencies(state, integrationId));
-
-  useEffect(() => {
-    dispatch(actions.resource.integrations.fetchIfAnyUnloadedFlows(integrationId));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!dependenciesResolved) {
-    return <Spinner centerAll loading size="large" />;
-  }
 
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.

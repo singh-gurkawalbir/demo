@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race, all } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -11,7 +11,7 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -954,37 +954,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-function* fetchUnloadedResources({ integrationId, resourceType }) {
-  let resources = yield select(selectors.resources, resourceType);
-
-  if (!resources || resources.length === 0) {
-    yield call(getResourceCollection, { resourceType, refresh: true });
-    resources = yield select(selectors.resources, resourceType);
-  }
-  if (!integrationId || !resources || resources.length < GET_DOCS_MAX_LIMIT) {
-    return;
-  }
-  const url = `/integrations/${integrationId}/${resourceType}`;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path: url,
-      hidden: true,
-    });
-    yield put(actions.resource.integrations.updateResources(resourceType, response));
-  } catch (e) {
-  // do nothing
-  }
-}
-
-export function* fetchUnloadedIntegrationResources({ integrationId }) {
-  yield all(
-    ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
-  );
-  yield put(actions.resource.integrations.resolveUnloadedResources(integrationId));
-}
-
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -1165,7 +1134,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-  takeLatest(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, fetchUnloadedIntegrationResources),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
