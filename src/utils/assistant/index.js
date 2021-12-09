@@ -600,7 +600,9 @@ export function getImportOperationDetails({
   });
 }
 
-export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
+export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  const exportDoc = cloneDeep(exportDocOrig);
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1502,7 +1504,11 @@ export function updateFormValues({
   return updatedFormValues;
 }
 
-export function convertFromImport({ importDoc, assistantData, adaptorType }) {
+export function convertFromImport({ importDoc: importDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  // mutating of args so we are cloning of objects to allow this operation
+  const importDoc = cloneDeep(importDocOrig);
+
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
