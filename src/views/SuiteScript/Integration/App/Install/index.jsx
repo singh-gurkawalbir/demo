@@ -292,9 +292,9 @@ export default function SuiteScriptIntegrationAppInstallation() {
     );
     verifyNSBundle(connectionId);
     if (!skipDrawerClose) {
-      history.goBack();
+      history.replace(`${match.url}`);
     }
-  }, [connectorId, dispatch, history, verifyNSBundle]);
+  }, [connectorId, dispatch, history, verifyNSBundle, match.url]);
 
   const onSSConnSubmitComplete = useCallback(() => {
     if (currentStep.connectionType === 'salesforce') {

@@ -20,7 +20,6 @@ function ResourceSetupDrawerContent({
   addOrSelect,
   onSubmitComplete,
   onClose,
-  manageOnly,
   handleStackSetupDone,
   handleStackClose,
   mode,
@@ -59,7 +58,12 @@ function ResourceSetupDrawerContent({
     return currentStep;
   });
 
-  if (templateId && templateInstallSetup) {
+  if (mode === 'ss-install') {
+    resourceObj = {
+      type: 'netsuite',
+      netsuite: { type: 'netsuite'},
+    };
+  } else if (templateId && templateInstallSetup) {
     environment = templateInstallSetup?.data?.sandbox ? 'sandbox' : 'production';
     resourceObj = {...templateInstallSetup?.connectionMap[currentStep?._connectionId]};
   } else if (addOrSelect && resourceType === 'connections' && isNewId(resourceId)) {
@@ -95,7 +99,7 @@ function ResourceSetupDrawerContent({
           resource={resourceObj}
           environment={environment}
           resourceType={resourceType}
-          manageOnly={manageOnly}
+          manageOnly={mode === 'ss-install'}
           onClose={handleClose}
           formKey={formKey} />
       ) : (

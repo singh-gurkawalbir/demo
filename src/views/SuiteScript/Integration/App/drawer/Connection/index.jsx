@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-handler-names */
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
@@ -10,7 +10,7 @@ import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import { selectors } from '../../../../../../reducers';
-import ResourceSetupDrawer from '../../../../../../components/ResourceSetup';
+import ResourceSetupDrawer from '../../../../../../components/ResourceSetup/Drawer';
 import { generateNewId } from '../../../../../../utils/resource';
 import jsonUtil from '../../../../../../utils/json';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
@@ -25,10 +25,9 @@ export default function ConnectionDrawer({
 }) {
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const [connection, setConnection] = useState(null);
   const [account, setAccount] = useState(null);
   const history = useHistory();
-
+  const match = useRouteMatch();
   const linkedConnectionId = useSelector(state => selectors.suiteScriptIntegratorLinkedConnectionId(state, account));
   const linkedConnectionName = useSelector(state => {
     const r = selectors.resource(state, 'connections', linkedConnectionId);
@@ -60,7 +59,6 @@ export default function ConnectionDrawer({
   );
 
   const handleConnectionClose = useCallback(() => {
-    setConnection(null);
     setAccount(null);
     dispatch(
       actions.suiteScript.installer.updateStep(
@@ -68,8 +66,8 @@ export default function ConnectionDrawer({
         'reset'
       )
     );
-    history.goBack();
-  }, [connectorId, dispatch, history]);
+    history.replace(`${match.url}`);
+  }, [connectorId, dispatch, history, match.url]);
 
   const handleDrawerClose = useCallback(() => {
     dispatch(
@@ -78,8 +76,8 @@ export default function ConnectionDrawer({
         'reset'
       )
     );
-    history.goBack();
-  }, [connectorId, dispatch, history]);
+    history.replace(`${match.url}`);
+  }, [connectorId, dispatch, history, match.url]);
 
   const handleConnectionSubmit = useCallback(() => {
     handleSubmitComplete(linkedConnectionId);
@@ -100,13 +98,10 @@ export default function ConnectionDrawer({
           SCOPES.VALUE
         )
       );
-      setConnection({
-        newId,
-        doc: conn,
-      });
+      history.push(`${match.url}/configure/connections/${newId}`);
       setAccount(null);
     }
-  }, [account, dispatch, linkedConnectionId]);
+  }, [account, dispatch, linkedConnectionId, history, match.url]);
 
   useEffect(() => {
     if (account && linkedConnectionId) {
@@ -121,13 +116,13 @@ export default function ConnectionDrawer({
           {
             label: 'No, go back',
             variant: 'text',
+            onClick: () => history.goBack(), //  Verify this use case
           },
         ],
       });
-      setConnection(null);
       setAccount(null);
     }
-  }, [account, confirmDialog, handleConnectionSubmit, linkedConnectionId, linkedConnectionName]);
+  }, [account, confirmDialog, handleConnectionSubmit, linkedConnectionId, linkedConnectionName, history]);
   const formKey = useFormInitWithPermissions({
     fieldMeta,
   });
@@ -162,17 +157,12 @@ export default function ConnectionDrawer({
           </ActionGroup>
         </DrawerFooter>
       </RightDrawer>
-      {connection && (
-        <ResourceSetupDrawer
-          resourceId={connection.newId}
-          resource={connection.doc}
-          resourceType="connections"
-          onClose={handleConnectionClose}
-          onSubmitComplete={handleSubmitComplete}
-          manageOnly
-          addOrSelect
-          />
-      )}
+      <ResourceSetupDrawer
+        onClose={handleConnectionClose}
+        onSubmitComplete={handleSubmitComplete}
+        mode="ss-install"
+        addOrSelect
+        />
     </>
   );
 }
