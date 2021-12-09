@@ -690,6 +690,16 @@ export function* deleteIntegration({ integrationId }) {
 
   if (integration?._connectorId) return;
 
+  const resourceReferences = yield call(requestReferences, {
+    resourceType: 'integrations',
+    id: integrationId,
+  });
+
+  // Integration cannot be deleted if it has linked flows
+  if (resourceReferences && Object.keys(resourceReferences).length > 0) {
+    return;
+  }
+
   yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
   yield put(actions.resource.requestCollection('integrations', null, true));
