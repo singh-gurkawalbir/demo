@@ -58,6 +58,7 @@ import ssoSagas from './sso';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { getNextLinkRelativeUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
 import { appSagas } from './app';
 import { sendRequest } from './api';
@@ -95,7 +96,7 @@ export const CANCELLED_REQ = {
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
-  const { path, timeout = 2 * 60 * 1000, opts } = args;
+  const { path, timeout = 2 * 60 * 1000, opts, requireHeaders } = args;
   const apiRequestPayload = { url: path, args };
 
   try {
@@ -116,7 +117,11 @@ export function* apiCallWithRetry(args) {
       throw new APIException(CANCELLED_REQ);
     }
 
-    const { data } = apiResp?.response || {};
+    const { data, headers } = apiResp?.response || {};
+
+    if (requireHeaders) {
+      return { data, headers};
+    }
 
     return data;
   } finally {
@@ -124,6 +129,39 @@ export function* apiCallWithRetry(args) {
       yield call(requestCleanup, path, opts?.method);
     }
   }
+}
+
+export function* apiCallWithPaging(args) {
+  const response = yield call(apiCallWithRetry, {...args, requireHeaders: true});
+
+  if (!response) return response;
+
+  const { data, headers } = response;
+
+  // BE only supports 'link' pagination for now
+  const link = headers ? headers.get('link') : undefined;
+
+  const nextLinkPath = getNextLinkRelativeUrl(link);
+
+  if (nextLinkPath) {
+    try {
+      // if 'next' url exists, recursively call for next page data
+      const nextPageData = yield call(apiCallWithPaging, {
+        ...args,
+        path: nextLinkPath,
+      });
+
+      // push next page data to original data
+      return [...(data || []), ...(nextPageData || [])];
+    } catch (e) {
+      // once UI pagination is supported, we can handle this error case better
+      // right now we should return the data so far so user is not blocked
+      return data;
+    }
+  }
+
+  // return the total accumulated data to parent saga
+  return data;
 }
 
 export function* allSagas() {

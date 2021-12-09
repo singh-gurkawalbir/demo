@@ -3,7 +3,7 @@ import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { apiCallWithRetry } from '../index';
+import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
@@ -733,14 +733,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
   }
 
   try {
-    let collection = yield call(apiCallWithRetry, {
+    let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
       refresh,
     });
 
     if (resourceType === 'stacks') {
-      let sharedStacks = yield call(apiCallWithRetry, {
+      let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',
         refresh,
       });
@@ -752,7 +752,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
     }
 
     if (resourceType === 'transfers') {
-      const invitedTransfers = yield call(apiCallWithRetry, {
+      const invitedTransfers = yield call(apiCallWithPaging, {
         path: '/transfers/invited',
         refresh,
       });

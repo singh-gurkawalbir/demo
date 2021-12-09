@@ -37,7 +37,7 @@ import {
   startPollingForResourceCollection,
   downloadAuditlogs,
 } from '.';
-import { apiCallWithRetry } from '..';
+import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
 import { SCOPES, updateFlowDoc } from '../resourceForm';
 import { resourceConflictResolution } from '../utils';
@@ -638,11 +638,11 @@ availableResources.forEach(type => {
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       if (type === 'stacks') {
         expect(saga.next(mockCollection).value).toEqual(
-          call(apiCallWithRetry, { path: '/shared/stacks' })
+          call(apiCallWithPaging, { path: '/shared/stacks' })
         );
         mockSharedStacks = mockSharedStacks.map(stack => ({
           ...stack,
@@ -671,7 +671,7 @@ availableResources.forEach(type => {
       const path = `/${type}`;
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       const final = saga.throw();
 
@@ -1093,6 +1093,7 @@ describe('validateResource saga', () => {
   test('should call getResource to validate', () => expectSaga(validateResource, { resourceType, resourceId })
     .provide([
       [select(selectors.resource, resourceType, resourceId), {}],
+      [call(getResource, { resourceType, id: resourceId, hidden: true }), undefined],
     ])
     .call(getResource, {resourceType, id: resourceId, hidden: true})
     .run());
