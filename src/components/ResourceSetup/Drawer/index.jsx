@@ -34,7 +34,7 @@ function ResourceSetupDrawerContent({
   );
   const canSelectExistingResources = useSelector(state => {
     if (!integrationId) return true;
-    const _connectorId = selectors.integrationAppSettings(state, integrationId) || {};
+    const _connectorId = selectors.integrationAppSettings(state, integrationId)?._connectorId;
 
     if (_connectorId) {
       // Incase of IAs, user cannot select existing resources
