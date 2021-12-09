@@ -610,7 +610,6 @@ export default function ConnectorInstallation(props) {
         onSubmitComplete={handleSubmitComplete}
         handleStackSetupDone={handleStackSetupDone}
         handleStackClose={handleStackClose}
-        addOrSelect={!_connectorId}
         mode="install"
       />
     </LoadResources>

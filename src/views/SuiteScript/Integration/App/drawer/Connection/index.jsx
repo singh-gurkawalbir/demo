@@ -161,7 +161,6 @@ export default function ConnectionDrawer({
         onClose={handleConnectionClose}
         onSubmitComplete={handleSubmitComplete}
         mode="ss-install"
-        addOrSelect
         />
     </>
   );

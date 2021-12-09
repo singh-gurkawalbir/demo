@@ -17,7 +17,6 @@ import { isNewId } from '../../../utils/resource';
 function ResourceSetupDrawerContent({
   integrationId,
   templateId,
-  addOrSelect,
   onSubmitComplete,
   onClose,
   handleStackSetupDone,
@@ -33,6 +32,18 @@ function ResourceSetupDrawerContent({
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, resourceId)
   );
+  const canSelectExistingResources = useSelector(state => {
+    if (!integrationId) return true;
+    const _connectorId = selectors.integrationAppSettings(state, integrationId) || {};
+
+    if (_connectorId) {
+      // Incase of IAs, user cannot select existing resources
+      return false;
+    }
+
+    // In all other usecases, user can either add new or select existing resources
+    return true;
+  });
   const templateInstallSetup = useSelector(state => selectors.installSetup(state, {
     templateId,
     resourceType,
@@ -47,15 +58,9 @@ function ResourceSetupDrawerContent({
       steps = selectors.integrationInstallSteps(state, integrationId);
     } else if (mode === 'clone') {
       steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
-    } else if (mode === 'template') {
-      // not used any where??
-      // Ref /components/drawer/Install/Integration/index.jsx for setup route that triggers InstallationWizard with template type
-      steps = selectors.templateInstallSteps(state, templateId);
     }
-    // handle all use cases with mode
-    const currentStep = steps.find(s => !!s.isCurrentStep);
 
-    return currentStep;
+    return steps.find(s => !!s.isCurrentStep);
   });
 
   if (mode === 'ss-install') {
@@ -66,7 +71,7 @@ function ResourceSetupDrawerContent({
   } else if (templateId && templateInstallSetup) {
     environment = templateInstallSetup?.data?.sandbox ? 'sandbox' : 'production';
     resourceObj = {...templateInstallSetup?.connectionMap[currentStep?._connectionId]};
-  } else if (addOrSelect && resourceType === 'connections' && isNewId(resourceId)) {
+  } else if (canSelectExistingResources && resourceType === 'connections' && isNewId(resourceId)) {
     // resource object construction incase of template : !_connectorId
   // if resourceId is new - construct obj
     resourceObj = currentStep?.sourceConnection || {};
@@ -77,8 +82,9 @@ function ResourceSetupDrawerContent({
   }
 
   useEffect(() => {
-    if (isAuthorized && !addOrSelect) onSubmitComplete(resourceId, isAuthorized);
-  }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
+    // TODO: verify this use case
+    if (isAuthorized && !canSelectExistingResources) onSubmitComplete(resourceId, isAuthorized);
+  }, [isAuthorized, resourceId, onSubmitComplete, canSelectExistingResources]);
 
   const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
 
@@ -91,7 +97,7 @@ function ResourceSetupDrawerContent({
   return (
     <>
       <DrawerHeader disableClose={disabled} title={title} handleClose={setCancelTriggered} />
-      {addOrSelect ? (
+      {canSelectExistingResources ? (
         <AddOrSelect
           resourceId={resourceId}
           onSubmitComplete={handleSubmitComplete}

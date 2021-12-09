@@ -61,6 +61,10 @@ const oAuthApplications = [
   'amazonmws-oauth',
 ];
 
+/* This file is used only incase of Resource cloning other than Integrations
+* Refactor this code to either remove common code or make this explicit to be used only for clone
+* Remove 'type' property and template type related ghost code
+*/
 export default function InstallationWizard(props) {
   const classes = useStyles();
   const {
@@ -331,13 +335,12 @@ export default function InstallationWizard(props) {
         </div>
       </div>
       <ResourceSetupDrawer
-        mode={type} // clone or template
+        mode="clone"
         templateId={templateId}
         onClose={handleConnectionClose}
         onSubmitComplete={handleSubmitComplete}
         handleStackSetupDone={handleStackSetupDone}
         handleStackClose={handleStackClose}
-        addOrSelect
         cloneResourceType={resourceType}
         cloneResourceId={resourceId}
        />
