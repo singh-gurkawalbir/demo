@@ -40,6 +40,8 @@ const ERROR_DETAILS_TABS = {
   VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
   REQUEST: { type: 'request', label: 'View HTTP request' },
   RESPONSE: { type: 'response', label: 'View HTTP response' },
+  NETSUITE_REQUEST: { type: 'request', label: 'View request' },
+  NETSUITE_RESPONSE: { type: 'response', label: 'View response' },
 };
 
 function TabPanel({ children, value, type }) {
@@ -73,7 +75,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })
   );
 
-  const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
+  const { retryDataKey: retryId, reqAndResKey, source} = errorDoc || {};
 
   const onRetryDataChange = useCallback(
     data =>
@@ -92,12 +94,16 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
         tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
       }
     }
-    if (reqAndResKey) {
+    if (!reqAndResKey) return tabs;
+
+    if (source === 'NetSuite') {
+      tabs.push(ERROR_DETAILS_TABS.NETSUITE_REQUEST, ERROR_DETAILS_TABS.NETSUITE_RESPONSE);
+    } else {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
 
     return tabs;
-  }, [retryId, reqAndResKey, isFlowDisabled]);
+  }, [retryId, reqAndResKey, source, isFlowDisabled]);
 
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid url , redirects user to View Error fields tab
@@ -148,6 +154,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           </TabPanel>
           <TabPanel value={mode} type="request">
             <ViewHttpRequestResponse
+              source={source}
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}
@@ -156,6 +163,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           </TabPanel>
           <TabPanel value={mode} type="response">
             <ViewHttpRequestResponse
+              source={source}
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}

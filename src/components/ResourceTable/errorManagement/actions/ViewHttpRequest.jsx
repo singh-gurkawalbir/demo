@@ -4,7 +4,7 @@ import HttpIcon from '../../../icons/HttpIcon';
 
 export default {
   key: 'HTTP request errors',
-  useLabel: () => 'View HTTP request',
+  useLabel: ({source}) => source === 'NetSuite' ? 'View request' : 'View HTTP request',
   icon: HttpIcon,
   useOnClick: rowData => {
     const { errorId } = rowData;
