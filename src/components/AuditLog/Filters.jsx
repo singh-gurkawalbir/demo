@@ -76,14 +76,15 @@ export default function Filters(props) {
       source: OPTION_ALL.id,
     }
   );
-  const { totalCount } = useSelector(state =>
+  const canDownloadLogs = useSelector(state =>
     selectors.auditLogs(
       state,
       resourceType,
       resourceId,
       undefined,
       {childId}
-    ));
+    ).totalCount);
+
   const handleDownload = useCallback(() => {
     history.push(`${match.url}/download`);
   }, [history, match.url]);
@@ -182,8 +183,9 @@ export default function Filters(props) {
         </FormControl>
         <div className={classes.downloadWrapper}>
           <OutlinedButton
-            disabled={!totalCount}
+            disabled={!canDownloadLogs}
             color="secondary"
+            data-test="download-auditlogs"
             onClick={handleDownload}>
             Download
           </OutlinedButton>

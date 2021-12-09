@@ -334,6 +334,7 @@ export default function getRequestOptions(
       };
     }
     case actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS: {
+      // There won't be any resource type for account level audit logs, in that GET route should be used
       const method = resourceType ? 'POST' : 'GET';
       let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
 

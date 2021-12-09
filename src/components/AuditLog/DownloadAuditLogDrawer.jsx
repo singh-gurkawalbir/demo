@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -33,25 +33,11 @@ const fieldMeta = {
   },
 };
 
-const INVALID_DATE = 'Invalid date';
-
 function DownloadAuditLogs({ onClose, resourceType, resourceId, childId }) {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
-  const [isValidForm, setIsValidForm] = useState(true);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const values = formContext.value || {};
-    const { fromDate, toDate } = values;
-
-    if (fromDate === INVALID_DATE || toDate === INVALID_DATE) {
-      setIsValidForm(false);
-    } else {
-      setIsValidForm(true);
-    }
-  }, [formContext.value]);
 
   const handleDownload = useCallback(
     () => {
@@ -88,7 +74,6 @@ function DownloadAuditLogs({ onClose, resourceType, resourceId, childId }) {
         <ActionGroup>
           <OutlinedButton
             data-test="downloadErrors"
-            disabled={!isValidForm}
             onClick={handleDownload}>
             Download
           </OutlinedButton>
