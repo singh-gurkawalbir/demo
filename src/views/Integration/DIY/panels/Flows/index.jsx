@@ -189,7 +189,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
   const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
   const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
   const filteredFlowGroups = useMemo(() => {
-    if (searchFilter.keyword) {
+    if (flowGroupingsSections && searchFilter.keyword) {
       return flowGroupingsSections.filter(({ sectionId }) => flows.find(flow => (flow._flowGroupingId === sectionId)));
     }
 
