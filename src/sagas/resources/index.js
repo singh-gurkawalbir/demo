@@ -15,6 +15,7 @@ import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../..
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import { pollApiRequests } from '../app';
 
@@ -1107,6 +1108,36 @@ export function* startPollingForResourceCollection({ resourceType }) {
     }),
   });
 }
+export function* downloadAuditlogs({resourceType, resourceId, childId, filters}) {
+  let flowIds;
+
+  if (childId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      resourceId,
+      childId
+    );
+  }
+
+  const requestOptions = getRequestOptions(
+    actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+    { resourceType, resourceId, childId, flowIds, filters }
+  );
+  const { path, opts } = requestOptions;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    if (response.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  } catch (e) {
+    //  Handle errors
+  }
+}
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1145,6 +1176,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
   takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
+  takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
 ];

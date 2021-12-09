@@ -35,6 +35,7 @@ import {
   downloadReport,
   pollForResourceCollection,
   startPollingForResourceCollection,
+  downloadAuditlogs,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
@@ -52,6 +53,8 @@ import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
 import { pollApiRequests } from '../app';
 import { APIException } from '../api/requestInterceptors/utils';
+import getRequestOptions from '../../utils/requestOptions';
+import openExternalUrl from '../../utils/window';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -2046,5 +2049,87 @@ describe('tests for metadata sagas', () => {
         .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
         .returns(undefined)
         .run());
+  });
+});
+describe('downloadAuditlogs saga', () => {
+  const yesterdayDate = new Date();
+
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const resourceType = 'integrations';
+  const resourceId = 'id124';
+  const filters = {};
+
+  test('should invoke download audit logs api without any date filter', () => {
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date filters', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date filters and childId', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const flowIds = ['1', '2', '3'];
+    const childId = 'child123';
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters, childId, flowIds }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
+      .provide([
+        [select(
+          selectors.integrationAppFlowIds,
+          resourceId,
+          childId
+        ),
+        flowIds,
+        ],
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
   });
 });
