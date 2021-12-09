@@ -116,7 +116,6 @@ export default function ConnectionDrawer({
           {
             label: 'No, go back',
             variant: 'text',
-            onClick: () => history.goBack(), //  Verify this use case
           },
         ],
       });
