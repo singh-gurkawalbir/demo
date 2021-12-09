@@ -20,12 +20,12 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    enviornment: {
-      fieldId: 'enviornment',
+    environment: {
+      id: 'environment',
       type: 'select',
       label: 'Environment',
       required: true,
-      helpKey: 'skubana.enviornment',
+      helpKey: 'skubana.environment',
       options: [
         {
           items: [
@@ -96,7 +96,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['enviornment', 'http.unencrypted.subdomain', 'http.auth.oauth.scope'] },
+        fields: ['environment', 'http.unencrypted.subdomain', 'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

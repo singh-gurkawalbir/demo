@@ -6,7 +6,7 @@ import useFormContext from '../../../Form/FormContext';
 export default function DynaTextUpdateDomain(props) {
   const {onFieldChange, formKey, id } = props;
   const fieldStates = useFormContext(formKey)?.fields;
-  const {value, touched} = fieldStates.enviornment || {};
+  const {value, touched} = fieldStates.environment || {};
 
   useEffect(() => {
     if (!touched) return;
