@@ -195,7 +195,7 @@ export function* mappingInit({
     const { assistant } = getResourceSubType(
       importResource
     );
-    const { operation, resource, version } = importResource.assistantMetadata;
+    const { operation, resource, version } = importResource.assistantMetadata || {};
 
     const assistantData = yield select(
       selectors.assistantData, {
