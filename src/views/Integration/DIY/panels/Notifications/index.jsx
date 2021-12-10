@@ -87,6 +87,7 @@ export default function NotificationsSection({ integrationId, childId }) {
       flows: {
         id: 'flows',
         helpKey: 'notifications.jobErrors',
+        noApi: true,
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
@@ -99,6 +100,7 @@ export default function NotificationsSection({ integrationId, childId }) {
       connections: {
         id: 'connections',
         helpKey: 'notifications.connections',
+        noApi: true,
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',
