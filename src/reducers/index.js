@@ -442,7 +442,7 @@ selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, c
     steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
   }
 
-  return steps.find(s => !!s.isCurrentStep);
+  return (steps || []).find(s => !!s.isCurrentStep);
 };
 
 selectors.isIAV2UninstallComplete = (state, { integrationId }) => {

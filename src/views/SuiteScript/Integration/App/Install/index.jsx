@@ -272,11 +272,6 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [NETSUITE_CONNECTION, SALESFORCE_CONNECTION, connectorId, dispatch, history, match.url, ssLinkedConnectionId, verifyNSBundle, verifySFBundle]);
 
-  // const handleBackClick = useCallback(e => {
-  //   e.preventDefault();
-  //   history.push(getRoutePath('/marketplace'));
-  // }, [history]);
-
   const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(

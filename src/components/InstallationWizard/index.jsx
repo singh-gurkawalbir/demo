@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import jsonPatch from 'fast-json-patch';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,9 +15,7 @@ import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import ResourceSetupDrawer from '../ResourceSetup/Drawer';
 import InstallationStep from '../InstallStep';
-import resourceConstants from '../../forms/constants/connection';
 import {
-  getConnectionType,
   MODEL_PLURAL_TO_LABEL,
   generateNewId,
 } from '../../utils/resource';
@@ -28,7 +25,6 @@ import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
 import { getApplication } from '../../utils/template';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../forms/formFactory/utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,15 +47,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
   },
 }));
-
-const oAuthApplications = [
-  ...resourceConstants.OAUTH_APPLICATIONS,
-  'netsuite-oauth',
-  'shopify-oauth',
-  'acumatica-oauth',
-  'hubspot-oauth',
-  'amazonmws-oauth',
-];
 
 /* This file is used only incase of Resource cloning other than Integrations
 * Refactor this code to either remove common code or make this explicit to be used only for clone
@@ -236,18 +223,7 @@ export default function InstallationWizard(props) {
     props.history.goBack();
   };
 
-  const handleSubmitComplete = (connectionId, isAuthorized, createdConnectionDoc) => {
-    const patchSet = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter(createdConnectionDoc || {}),
-      resource: {},
-    });
-    const connectionJson = jsonPatch.applyPatch({}, patchSet)?.newDocument;
-
-    if (oAuthApplications.includes(getConnectionType(connectionJson)) && !isAuthorized) {
-      // Step should not be marked as completed until Oauth application authorization is completed on other window.
-      return;
-    }
-
+  const handleSubmitComplete = connectionId => {
     dispatch(
       actions.template.updateStep(
         {
@@ -265,7 +241,6 @@ export default function InstallationWizard(props) {
     );
 
     setSelectedConnectionId(false);
-    history.goBack();
   };
 
   const handleStackSetupDone = stackId => {
@@ -277,17 +252,14 @@ export default function InstallationWizard(props) {
     );
 
     setShowStackDialog(false);
-    history.goBack();
   };
 
   const handleConnectionClose = () => {
     setSelectedConnectionId(false);
-    history.goBack();
   };
 
   const handleStackClose = () => {
     setShowStackDialog(false);
-    history.goBack();
   };
 
   if (installInProgress) {

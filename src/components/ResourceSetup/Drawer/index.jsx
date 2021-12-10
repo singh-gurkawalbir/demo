@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -12,7 +12,17 @@ import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 import ResourceDrawer from '../../drawer/Resource';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { isNewId } from '../../../utils/resource';
+import { isNewId, getConnectionType } from '../../../utils/resource';
+import resourceConstants from '../../../forms/constants/connection';
+
+const oAuthApplications = [
+  ...resourceConstants.OAUTH_APPLICATIONS,
+  'netsuite-oauth',
+  'shopify-oauth',
+  'acumatica-oauth',
+  'hubspot-oauth',
+  'amazonmws-oauth',
+];
 
 function ResourceSetupDrawerContent({
   integrationId,
@@ -26,12 +36,24 @@ function ResourceSetupDrawerContent({
   cloneResourceId,
 }) {
   const { resourceId, resourceType } = useParams();
+  const history = useHistory();
   let resourceObj;
   let connectionType;
   let environment;
+  const createdConnectionId = useSelector(state => {
+    if (resourceType === 'connections') {
+      return selectors.createdResourceId(state, resourceId);
+    }
+  });
+
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, resourceId)
   );
+  const connectionDoc = useSelector(state => {
+    if (resourceType !== 'connections') return;
+
+    return selectors.resource(state, 'connections', createdConnectionId || resourceId);
+  });
   const canSelectExistingResources = useSelector(state => {
     if (!integrationId) return true;
     const _connectorId = selectors.integrationAppSettings(state, integrationId)?._connectorId;
@@ -41,7 +63,7 @@ function ResourceSetupDrawerContent({
       return false;
     }
 
-    // In all other usecases, user can either add new or select existing resources
+    // In all other use cases, user can either add new or select existing resources
     return true;
   });
   const templateInstallSetup = useSelector(state => selectors.installSetup(state, {
@@ -87,8 +109,39 @@ function ResourceSetupDrawerContent({
   const formKey = getAsyncKey(resourceType, resourceId);
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
-  const handleClose = resourceType === 'connections' ? onClose : handleStackClose;
-  const handleSubmitComplete = resourceType === 'connections' ? onSubmitComplete : handleStackSetupDone;
+  const goBackToParentUrl = useCallback(() => history.goBack(), [history]);
+
+  const handleSubmitComplete = useCallback((...args) => {
+    const onSubmitCb = resourceType === 'connections' ? onSubmitComplete : handleStackSetupDone;
+
+    // suitescript install callback handles redirecting to parent url
+    // so, no need to handle for ss-install
+    if (mode !== 'ss-install') {
+      if (resourceType === 'connections') {
+        if (connectionDoc && oAuthApplications.includes(getConnectionType(connectionDoc)) && !isAuthorized) {
+          // Step should not be marked as completed until Oauth application authorization is completed on other window.
+          // So does not proceed further to call onSubmit fb and do post submit action dispatches
+          return;
+        }
+      }
+      goBackToParentUrl();
+    }
+    if (onSubmitCb && typeof onSubmitCb === 'function') {
+      onSubmitCb(...args);
+    }
+  }, [resourceType, onSubmitComplete, handleStackSetupDone, goBackToParentUrl, mode, connectionDoc, isAuthorized]);
+
+  const handleClose = useCallback((...args) => {
+    const onCloseCb = resourceType === 'connections' ? onClose : handleStackClose;
+
+    if (onCloseCb && typeof onCloseCb === 'function') {
+      onCloseCb(...args);
+    }
+    // suitescript install on close callback handles redirecting to parent url
+    if (mode !== 'ss-install') {
+      goBackToParentUrl();
+    }
+  }, [resourceType, onClose, handleStackClose, goBackToParentUrl, mode]);
 
   return (
     <>

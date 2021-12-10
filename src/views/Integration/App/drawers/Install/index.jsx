@@ -15,14 +15,12 @@ import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
-  getConnectionType,
   generateNewId,
   isOauth,
 } from '../../../../../utils/resource';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
-import resourceConstants from '../../../../../forms/constants/connection';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
@@ -70,15 +68,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }));
-
-const oAuthApplications = [
-  ...resourceConstants.OAUTH_APPLICATIONS,
-  'netsuite-oauth',
-  'shopify-oauth',
-  'acumatica-oauth',
-  'hubspot-oauth',
-  'amazonmws-oauth',
-];
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -166,21 +155,11 @@ export default function ConnectorInstallation(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
 
-  const selectedConnectionType = useSelector(state => {
-    const selectedConnection = selectors.resource(
-      state,
-      'connections',
-      connection && connection._connectionId
-    );
-
-    return getConnectionType(selectedConnection);
-  });
   const integrationAppName = getIntegrationAppUrlName(integrationName);
   const integrationChildAppName = getIntegrationAppUrlName(childIntegrationName);
   const handleClose = useCallback(() => {
     setConnection(false);
-    history.goBack();
-  }, [history]);
+  }, []);
   const isCloned = install.find(step => step.isClone);
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
@@ -220,13 +199,6 @@ export default function ConnectorInstallation(props) {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
       const step = installSteps.find(s => s.isCurrentStep);
 
-      if (
-        oAuthApplications.includes(selectedConnectionType) &&
-        !isAuthorized
-      ) {
-        return;
-      }
-
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -254,7 +226,6 @@ export default function ConnectorInstallation(props) {
       }
       if (connectionDoc && !isOauth(connectionDoc)) {
         setConnection(false);
-        history.goBack();
       }
     },
     [
@@ -263,8 +234,6 @@ export default function ConnectorInstallation(props) {
       installSteps,
       integrationId,
       isFrameWork2,
-      selectedConnectionType,
-      history,
     ]
   );
 
@@ -525,12 +494,10 @@ export default function ConnectorInstallation(props) {
     );
 
     setShowStackDialog(false);
-    history.goBack();
   };
 
   const handleStackClose = () => {
     setShowStackDialog(false);
-    history.goBack();
   };
 
   const handleHelpUrlClick = e => {

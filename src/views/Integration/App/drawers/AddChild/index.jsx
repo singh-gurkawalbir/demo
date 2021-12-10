@@ -16,8 +16,6 @@ import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
-import { getResourceSubType } from '../../../../../utils/resource';
-import resourceConstants from '../../../../../forms/constants/connection';
 import Spinner from '../../../../../components/Spinner';
 import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
@@ -61,20 +59,12 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }));
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant) return assistant;
-
-  return type;
-};
 
 export default function IntegrationAppAddNewChild(props) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const { integrationId } = props.match.params;
-  const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
@@ -95,10 +85,6 @@ export default function IntegrationAppAddNewChild(props) {
   const currentStep = useMemo(() => (addNewChildSteps || []).find(s => s.isCurrentStep), [
     addNewChildSteps,
   ]);
-
-  const selectedConnection = useSelector(state =>
-    selectors.resource(state, 'connections', selectedConnectionId)
-  );
 
   useEffect(() => {
     if ((!addNewChildSteps || !addNewChildSteps.length) && !requestedSteps) {
@@ -188,7 +174,6 @@ export default function IntegrationAppAddNewChild(props) {
         return false;
       }
 
-      setSelectedConnectionId(_connectionId);
       history.push(`${match.url}/configure/connections/${_connectionId}`);
       // handle Installation step click
     } else if (installURL) {
@@ -246,17 +231,8 @@ export default function IntegrationAppAddNewChild(props) {
     }
   };
 
-  const handleSubmitComplete = (connId, isAuthorized) => {
+  const handleSubmitComplete = () => {
     const step = addNewChildSteps.find(s => s.isCurrentStep);
-
-    if (
-      resourceConstants.OAUTH_APPLICATIONS.includes(
-        getConnectionType(selectedConnection)
-      ) &&
-      !isAuthorized
-    ) {
-      return;
-    }
 
     dispatch(
       actions.integrationApp.child.updateStep(
@@ -271,8 +247,6 @@ export default function IntegrationAppAddNewChild(props) {
         (step || {}).installerFunction
       )
     );
-    setSelectedConnectionId(false);
-    history.goBack();
   };
 
   const handleUninstall = () => {
@@ -281,11 +255,6 @@ export default function IntegrationAppAddNewChild(props) {
         `integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${integration.settings.defaultSectionId}`
       )
     );
-  };
-
-  const handleClose = () => {
-    setSelectedConnectionId(false);
-    history.goBack();
   };
 
   return (
@@ -331,7 +300,7 @@ export default function IntegrationAppAddNewChild(props) {
           formCloseHandler={formCloseHandler}
         />
         <ResourceSetupDrawer
-          onClose={handleClose}
+          integrationId={integrationId}
           onSubmitComplete={handleSubmitComplete}
           mode="child"
         />
