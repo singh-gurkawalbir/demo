@@ -17,7 +17,6 @@ export default function AccessLevelHeader() {
       <Help
         title="Access level"
         helpKey="users.accesslevel"
-        caption="users.accesslevel"
         className={classes.helpIcon}
         />
     </span>
