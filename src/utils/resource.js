@@ -1,4 +1,4 @@
-import { values, keyBy } from 'lodash';
+import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
@@ -678,9 +678,11 @@ export const getNetSuiteSubrecordImports = importDoc =>
   );
 
 export const updateMappingsBasedOnNetSuiteSubrecords = (
-  mapping,
+  mappingOriginal,
   subrecords
 ) => {
+  const mapping = cloneDeep(mappingOriginal);
+
   const subrecordsMap = keyBy(subrecords, 'fieldId');
 
   if (mapping) {
