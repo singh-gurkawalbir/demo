@@ -16,16 +16,21 @@ const useStyles = makeStyles(() => ({
   page: {
     height: '100%',
     display: 'grid',
-    gridTemplateAreas: `
-       'panel_0 dragBar_v_0 panel_1 dragBar_v_1 panel_3' 
-       'panel_0 dragBar_v_0 dragBar_h_0 dragBar_v_1 panel_3'
-       'panel_0 dragBar_v_0 panel_2 dragBar_v_1 panel_3'
-       'dragBar_h_1 dragBar_h_1 dragBar_h_1 dragBar_h_1 dragBar_h_1'
-       'panel_4 panel_4 panel_4 panel_4 panel_4'`,
-    gridTemplateRows: `2fr auto 2fr auto ${minGridSize}px`,
-    gridTemplateColumns: '1fr auto 1fr auto 1fr',
   },
 }));
+
+function getDragHandles(gridAreas) {
+  const areas = gridAreas.replace(/[\W]+/g, ',').split(',');
+  const handleAreas = areas.filter(a => a.includes('dragBar'));
+
+  // https://medium.com/dailyjs/how-to-remove-array-duplicates-in-es6-5daa8789641c
+  const uniqueHandles = [...new Set(handleAreas)];
+
+  return uniqueHandles.map(h => ({
+    area: h,
+    orientation: h.includes('_h_') ? 'horizontal' : 'vertical',
+  }));
+}
 
 function getGridArea(node) {
   const cssHandleArea = window.getComputedStyle(node).getPropertyValue('grid-area');
@@ -80,12 +85,14 @@ function findGridRow(grid, gridArea) {
   return rowPos;
 }
 
-export default function ResizeProto() {
+export default function ResizeProto({panels, layout}) {
   const classes = useStyles();
   const [isDragging, setIsDragging] = useState(false);
   const [dragBarGridArea, setDragBarGridArea] = useState();
   const [dragOrientation, setDragOrientation] = useState();
   const gridRef = useRef();
+
+  const handles = getDragHandles(layout.gridTemplateAreas);
 
   function handleDragStart(event) {
     let { target } = event;
@@ -195,19 +202,56 @@ export default function ResizeProto() {
   };
 
   return (
-    <div className={classes.page} ref={gridRef} onMouseUp={handleDragEnd} onMouseMove={handleDrag}>
-      <SinglePanelGridItem area="panel_0" title="Panel 0">Panel0 content</SinglePanelGridItem>
-      <SinglePanelGridItem area="panel_1" title="Panel 1">Panel1 content</SinglePanelGridItem>
-      <SinglePanelGridItem area="panel_2" title="Panel 2">Panel2 content</SinglePanelGridItem>
-      <SinglePanelGridItem area="panel_3" title="Panel 3">Panel3 content</SinglePanelGridItem>
-      <SinglePanelGridItem area="panel_4" title="Panel 4">Panel4 content</SinglePanelGridItem>
+    <div
+      className={classes.page}
+      style={layout}
+      ref={gridRef}
+      onMouseUp={handleDragEnd}
+      onMouseMove={handleDrag}>
 
-      <DragHandleGridItem area="dragBar_v_0" orientation="vertical" onMouseDown={handleDragStart} />
-      <DragHandleGridItem area="dragBar_v_1" orientation="vertical" onMouseDown={handleDragStart} />
-      <DragHandleGridItem area="dragBar_h_0" orientation="horizontal" onMouseDown={handleDragStart} />
-      <DragHandleGridItem area="dragBar_h_1" orientation="horizontal" onMouseDown={handleDragStart} />
+      {panels.map(p =>
+        <SinglePanelGridItem key={p} area={p} title={`${p} panel`}>{p} content</SinglePanelGridItem>
+      )}
+
+      {handles.map(h => (
+        <DragHandleGridItem
+          key={h.area}
+          area={h.area}
+          orientation={h.orientation}
+          onMouseDown={handleDragStart}
+        />
+      )
+      )}
 
       <ReactResizeDetector handleWidth handleHeight skipOnMount onResize={handleResize} />
     </div>
   );
 }
+
+/**
+  compact2: {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule data" "result data" "error error"',
+  },
+  row: {
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr 1ft 1fr 0fr',
+    gridTemplateAreas: '"rule" "data" "result" "error"',
+  },
+  compactRow: {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule rule" "data result" "error error"',
+  },
+  column: {
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateRows: '4fr 0fr',
+    gridTemplateAreas: '"rule data result" "error error error"',
+  },
+  jsonFormBuilder: {
+    gridTemplateColumns: '2fr 2fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"meta form" "meta values" "error error"',
+  },
+ */
