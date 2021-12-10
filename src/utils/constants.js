@@ -369,6 +369,7 @@ export const REST_ASSISTANTS = [
   'insightly',
   'pdffiller',
   'ebay',
+  'ebayfinance',
   'expensify',
   'wish',
   'exacterp',
@@ -646,6 +647,7 @@ export const CONNECTORS_TO_IGNORE = [
   'concurv4',
   'constantcontactv2',
   'constantcontactv3',
+  'ebayfinance',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -724,9 +726,12 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'constantcontactv3',
   'zoom',
   'amazonmws',
+  'ebay',
+  'ebayfinance',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
+export const EBAY_TYPES = ['ebay', 'ebayfinance'];
 export const POLLING_STATUS = {
   SLOW: 'slow down polling',
   RESUME: 'resume polling',

@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
-import { CONSTANT_CONTACT_VERSIONS, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
+import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -45,6 +45,17 @@ export const getFilterExpressionForAssistant = (assistant, expression) => {
 
     CONSTANT_CONTACT_VERSIONS.forEach(version => {
       const finalExpression = [...expression, {assistant: `constantcontact${version}`}];
+
+      resultExpression.$or.push({$and: finalExpression});
+    });
+
+    return resultExpression;
+  }
+  if (assistant === 'ebay' || assistant === 'ebayfinance') {
+    const resultExpression = { $or: [] };
+
+    EBAY_TYPES.forEach(type => {
+      const finalExpression = [...expression, {assistant: type}];
 
       resultExpression.$or.push({$and: finalExpression});
     });
@@ -101,12 +112,17 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 };
 export const getConstantContactVersion = connection =>
   connection?.http?.baseURI?.includes('api.cc.email') ? 'constantcontactv3' : 'constantcontactv2';
+export const getEbayType = connection =>
+  connection?.http?.baseURI?.includes('apiz') ? 'ebayfinance' : 'ebay';
 
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
   if (assistant?.includes('constantcontact')) {
     return getConstantContactVersion(connection);
+  }
+  if (assistant === ('ebay' || 'ebayfinance')) {
+    return getEbayType(connection);
   }
 
   return assistant;
