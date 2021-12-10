@@ -38,7 +38,7 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('demo') !== -1 || baseUri.indexOf('sandbox') !== -1) {
+          if (baseUri.includes('demo') || baseUri.includes('sandbox')) {
             return 'sandbox';
           }
 
