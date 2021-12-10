@@ -28,15 +28,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaRefreshIntegrations(props) {
+export default function DynaRefreshCollection(props) {
+  const {resourceType} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const isResourceCollectionLoading = useSelector(state => selectors.isResourceCollectionLoading(state, 'integrations'));
+  const isResourceCollectionLoading = useSelector(state => selectors.isResourceCollectionLoading(state, resourceType));
 
   const onRefresh = useCallback(() => {
-    dispatch(actions.resource.requestCollection('integrations'));
-  }, [dispatch]);
+    dispatch(actions.resource.requestCollection(resourceType));
+  }, [dispatch, resourceType]);
 
   return (
     <FormControl

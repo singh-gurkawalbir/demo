@@ -83,8 +83,9 @@ export default function Invite(props) {
       _integrationIds: {
         id: '_integrationIds',
         name: '_integrationIds',
-        type: 'refreshintegrations',
+        type: 'refreshcollection',
         label: 'Integrations to transfer',
+        resourceType: 'integrations',
         required: true,
         options: [
           {
