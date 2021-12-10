@@ -38,17 +38,11 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('demo') !== -1) {
+          if (baseUri.indexOf('demo') !== -1 || baseUri.indexOf('sandbox') !== -1) {
             return 'sandbox';
-          }
-          if (baseUri.indexOf('sandbox') !== -1) {
-            return 'sandbox';
-          }
-          if (baseUri.indexOf('api.skubana') !== -1) {
-            return 'production';
           }
 
-          return '';
+          return 'production';
         }
       },
     },

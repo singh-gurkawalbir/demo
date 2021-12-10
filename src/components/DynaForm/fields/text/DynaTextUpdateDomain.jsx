@@ -1,4 +1,3 @@
-
 import React, {useEffect} from 'react';
 import DynaText from '../DynaText';
 import useFormContext from '../../../Form/FormContext';
@@ -10,15 +9,8 @@ export default function DynaTextUpdateDomain(props) {
 
   useEffect(() => {
     if (!touched) return;
-    let finalValue;
 
-    if (value === 'sandbox') {
-      finalValue = 'api.demo';
-    }
-    if (value === 'production') {
-      finalValue = 'api';
-    }
-    onFieldChange(id, finalValue);
+    onFieldChange(id, value === 'sandbox' ? 'api.demo' : 'api');
   }, [id, onFieldChange, touched, value]);
 
   return <DynaText {...props} />;
