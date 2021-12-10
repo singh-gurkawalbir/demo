@@ -146,10 +146,16 @@ export function* apiCallWithPaging(args) {
   if (nextLinkPath) {
     try {
       // if 'next' url exists, recursively call for next page data
-      const nextPageData = yield call(apiCallWithPaging, {
+      let nextPageData = yield call(apiCallWithPaging, {
         ...args,
         path: nextLinkPath,
       });
+
+      if (nextPageData !== undefined && !Array.isArray(nextPageData) && !nextLinkPath.includes('/ui/assistants')) {
+        // eslint-disable-next-line no-console
+        console.warn('Getting unexpected collection values: ', nextPageData);
+        nextPageData = undefined;
+      }
 
       // push next page data to original data
       return [...(data || []), ...(nextPageData || [])];
