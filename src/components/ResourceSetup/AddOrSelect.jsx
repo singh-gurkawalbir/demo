@@ -65,7 +65,8 @@ export default function AddOrSelect(props) {
 
   useEffect(() => {
     if (isAuthorized) onSubmitComplete(newId, isAuthorized);
-  }, [isAuthorized, newId, onSubmitComplete]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthorized, newId]);
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');

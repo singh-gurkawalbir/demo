@@ -47,7 +47,7 @@ function ResourceSetupDrawerContent({
   });
 
   const isAuthorized = useSelector(state =>
-    selectors.isAuthorized(state, resourceId)
+    selectors.isAuthorized(state, createdConnectionId || resourceId)
   );
   const connectionDoc = useSelector(state => {
     if (resourceType !== 'connections') return;
@@ -101,8 +101,11 @@ function ResourceSetupDrawerContent({
   }
 
   useEffect(() => {
-    if (isAuthorized && !canSelectExistingResources) onSubmitComplete(resourceId, isAuthorized);
-  }, [isAuthorized, resourceId, onSubmitComplete, canSelectExistingResources]);
+    if (isAuthorized && !canSelectExistingResources) {
+      onSubmitComplete(resourceId, isAuthorized);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthorized, resourceId, canSelectExistingResources]);
 
   const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
 

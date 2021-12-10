@@ -84,14 +84,18 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler })
   const onSubmit = useCallback((...args) => {
     const onSubmitCb = formSubmitHandler || handleSubmit;
 
-    onSubmitCb(...args);
+    if (onSubmitCb && typeof onSubmitCb === 'function') {
+      onSubmitCb(...args);
+    }
     goBackToParentUrl();
   }, [formSubmitHandler, goBackToParentUrl, handleSubmit]);
 
   const onClose = useCallback((...args) => {
     const onCloseCb = formCloseHandler || handleClose;
 
-    onCloseCb(...args);
+    if (onCloseCb && typeof onCloseCb === 'function') {
+      onCloseCb(...args);
+    }
     goBackToParentUrl();
   }, [formCloseHandler, handleClose, goBackToParentUrl]);
 
