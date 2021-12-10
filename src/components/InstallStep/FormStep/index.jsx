@@ -13,7 +13,7 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 
 const emptyObject = {};
 
-function FormStepContent({ integrationId, addChild, formSubmitHandler, formCloseHandler }) {
+function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler }) {
   const { formType } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -28,11 +28,14 @@ function FormStepContent({ integrationId, addChild, formSubmitHandler, formClose
 
     return form;
   }, [formType, formMeta, form]);
+
+  const goBackToParentUrl = useCallback(() => history.goBack(), [history]);
+
   const handleSubmit = useCallback(
     formVal => {
       if (installerFunction) {
         // For IA1.0
-        if (addChild) {
+        if (formType === 'child') {
           // Add new child case
           dispatch(actions.integrationApp.child.updateStep(
             integrationId,
@@ -69,29 +72,41 @@ function FormStepContent({ integrationId, addChild, formSubmitHandler, formClose
           )
         );
       }
-      history.goBack();
     },
-    [dispatch, history, installerFunction, integrationId, addChild]
+    [dispatch, installerFunction, integrationId, formType]
   );
-  const onClose = useCallback(() => {
+  const handleClose = useCallback(() => {
     dispatch(
       actions.integrationApp.installer.updateStep(integrationId, '', 'failed')
     );
-    history.goBack();
-  }, [dispatch, integrationId, history]);
+  }, [dispatch, integrationId]);
+
+  const onSubmit = useCallback((...args) => {
+    const onSubmitCb = formSubmitHandler || handleSubmit;
+
+    onSubmitCb(...args);
+    goBackToParentUrl();
+  }, [formSubmitHandler, goBackToParentUrl, handleSubmit]);
+
+  const onClose = useCallback((...args) => {
+    const onCloseCb = formCloseHandler || handleClose;
+
+    onCloseCb(...args);
+    goBackToParentUrl();
+  }, [formCloseHandler, handleClose, goBackToParentUrl]);
 
   const formKey = useFormInitWithPermissions({ fieldMeta: formMetaData });
 
   return (
     <>
-      <DrawerHeader title={name} handleClose={formCloseHandler || onClose} />
+      <DrawerHeader title={name} handleClose={onClose} />
 
       <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>
 
       <DrawerFooter>
-        <DynaSubmit formKey={formKey} onClick={formSubmitHandler || handleSubmit} >
+        <DynaSubmit formKey={formKey} onClick={onSubmit} >
           Submit
         </DynaSubmit>
       </DrawerFooter>

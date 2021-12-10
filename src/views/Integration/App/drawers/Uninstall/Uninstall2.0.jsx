@@ -143,11 +143,10 @@ export default function Uninstaller2({ integration, integrationId }) {
   }, [dispatch, integrationId, history, match]);
 
   const formCloseHandler = useCallback(() => {
-    history.goBack();
     dispatch(
       actions.integrationApp.uninstaller2.updateStep(integrationId, 'reset')
     );
-  }, [dispatch, integrationId, history]);
+  }, [dispatch, integrationId]);
   const formSubmitHandler = useCallback(
     formVal => {
       dispatch(
@@ -156,9 +155,8 @@ export default function Uninstaller2({ integration, integrationId }) {
           formVal
         )
       );
-      history.goBack();
     },
-    [dispatch, integrationId, history]
+    [dispatch, integrationId]
   );
 
   if (error) {
