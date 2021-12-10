@@ -346,9 +346,6 @@ const resource = {
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
-    fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
-    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
-    updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
     redirectTo: (integrationId, redirectTo) =>
@@ -497,6 +494,12 @@ const auditLogs = {
   request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     message,
+  }),
+  download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
+    resourceType,
+    resourceId,
+    childId,
+    filters,
   }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };

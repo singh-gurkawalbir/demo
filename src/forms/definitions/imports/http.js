@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -329,10 +330,9 @@ export default {
       ];
 
       // checking if requestMediaType value changed. Reset body value when requestMediaType changes. Also, store requestMediaType value to check for change
-      bodyFields.forEach(field => {
-        const f = field;
-
-        if (f && f.requestMediaType !== requestMediaTypeField.value) {
+      bodyFields.forEach(f => {
+        if (!f) return;
+        if (f.requestMediaType && requestMediaTypeField.value && f.requestMediaType !== requestMediaTypeField.value) {
           f.value = '';
           f.requestMediaType = requestMediaTypeField.value;
         }

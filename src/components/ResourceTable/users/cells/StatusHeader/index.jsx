@@ -23,7 +23,6 @@ export default function StatusHeader() {
       <Help
         title="Status"
         helpKey="users.status"
-        caption="users.status"
         className={classes.helpIcon}
         />
     </div>

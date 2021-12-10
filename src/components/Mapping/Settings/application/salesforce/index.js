@@ -35,6 +35,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.immutable || false,
           helpKey: 'mapping.immutable',
+          noApi: true,
           label: 'Immutable (Advanced)',
         },
         discardIfEmpty: {
@@ -43,6 +44,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
+          noApi: true,
           label: 'Discard if empty',
         },
         fieldMappingType: {
@@ -53,6 +55,7 @@ export default {
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
+          noApi: true,
           options: [
             {
               items: [
@@ -73,6 +76,7 @@ export default {
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
           helpKey: 'mapping.lookup.mode',
+          noApi: true,
           options: [
             {
               items: [
@@ -93,6 +97,7 @@ export default {
           required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -125,6 +130,7 @@ export default {
           required: true,
           refreshOptionsOnChangesTo: ['lookup.whereClause'],
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -144,6 +150,7 @@ export default {
           required: true,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           helpKey: 'mapping.salesforce.lookup.resultField',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -181,6 +188,7 @@ export default {
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
           helpKey: 'import.lookups.name',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
@@ -198,6 +206,7 @@ export default {
           type: 'fieldexpressionselect',
           label: 'Function',
           helpKey: 'mapping.functions',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -207,6 +216,7 @@ export default {
           label: 'Field',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           helpKey: 'mapping.extract',
+          noApi: true,
           options: [
             {
               items:
@@ -228,6 +238,7 @@ export default {
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
@@ -250,6 +261,7 @@ export default {
             },
           ],
           helpKey: 'mapping.standardAction',
+          noApi: true,
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
             { field: 'fieldMappingType', is: ['multifield'] },
@@ -267,6 +279,7 @@ export default {
             { field: 'fieldMappingType', isNot: ['lookup'] },
           ],
           helpKey: 'mapping.default',
+          noApi: true,
           defaultValue: value.default,
         },
         hardcodedAction: {
@@ -294,6 +307,7 @@ export default {
             },
           ],
           helpKey: 'mapping.options',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -327,6 +341,7 @@ export default {
             },
           ],
           helpKey: 'mapping.lookupAction',
+          noApi: true,
           visibleWhenAll: [
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -344,6 +359,7 @@ export default {
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
           helpKey: 'mapping.hardcodedDefault',
+          noApi: true,
           defaultValue: value.hardCodedValue,
         },
         lookupDefault: {
@@ -357,6 +373,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
           helpKey: 'mapping.lookupDefault',
+          noApi: true,
           defaultValue: lookup.default,
         },
         extractDateFormat: {
@@ -371,6 +388,7 @@ export default {
           label: 'Date format',
           defaultValue: value.extractDateFormat,
           helpKey: 'mapping.extractDateFormat',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
@@ -391,6 +409,7 @@ export default {
             },
           ],
           helpKey: 'mapping.extractDateTimezone',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         'conditional.when': {
@@ -400,6 +419,7 @@ export default {
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
           helpKey: 'mapping.conditional.when',
+          noApi: true,
           options: [
             {
               items: isProduction()

@@ -17,7 +17,6 @@ export default function EnableUserHeader() {
       <Help
         title="Enable user"
         helpKey="users.enable"
-        caption="users.enable"
         className={classes.helpIcon}
         />
     </span>
