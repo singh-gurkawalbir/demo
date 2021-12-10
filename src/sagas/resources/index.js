@@ -1,9 +1,9 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race, all } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { apiCallWithRetry } from '../index';
+import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
@@ -11,10 +11,11 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import { pollApiRequests } from '../app';
 
@@ -732,14 +733,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
   }
 
   try {
-    let collection = yield call(apiCallWithRetry, {
+    let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
       refresh,
     });
 
     if (resourceType === 'stacks') {
-      let sharedStacks = yield call(apiCallWithRetry, {
+      let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',
         refresh,
       });
@@ -751,7 +752,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
     }
 
     if (resourceType === 'transfers') {
-      const invitedTransfers = yield call(apiCallWithRetry, {
+      const invitedTransfers = yield call(apiCallWithPaging, {
         path: '/transfers/invited',
         refresh,
       });
@@ -954,37 +955,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-function* fetchUnloadedResources({ integrationId, resourceType }) {
-  let resources = yield select(selectors.resources, resourceType);
-
-  if (!resources || resources.length === 0) {
-    yield call(getResourceCollection, { resourceType, refresh: true });
-    resources = yield select(selectors.resources, resourceType);
-  }
-  if (!integrationId || !resources || resources.length < GET_DOCS_MAX_LIMIT) {
-    return;
-  }
-  const url = `/integrations/${integrationId}/${resourceType}`;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path: url,
-      hidden: true,
-    });
-    yield put(actions.resource.integrations.updateResources(resourceType, response));
-  } catch (e) {
-  // do nothing
-  }
-}
-
-export function* fetchUnloadedIntegrationResources({ integrationId }) {
-  yield all(
-    ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
-  );
-  yield put(actions.resource.integrations.resolveUnloadedResources(integrationId));
-}
-
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -1138,6 +1108,36 @@ export function* startPollingForResourceCollection({ resourceType }) {
     }),
   });
 }
+export function* downloadAuditlogs({resourceType, resourceId, childId, filters}) {
+  let flowIds;
+
+  if (childId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      resourceId,
+      childId
+    );
+  }
+
+  const requestOptions = getRequestOptions(
+    actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+    { resourceType, resourceId, childId, flowIds, filters }
+  );
+  const { path, opts } = requestOptions;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    if (response.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  } catch (e) {
+    //  Handle errors
+  }
+}
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1165,7 +1165,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-  takeLatest(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, fetchUnloadedIntegrationResources),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
@@ -1177,6 +1176,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
   takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
+  takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
 ];
