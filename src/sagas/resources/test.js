@@ -1,5 +1,5 @@
 /* global describe, test, expect, beforeEach, jest */
-import { call, put, select, take, race, delay } from 'redux-saga/effects';
+import { call, put, select, take, race } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -33,8 +33,6 @@ import {
   replaceConnection,
   eventReportCancel,
   downloadReport,
-  pollForResourceCollection,
-  startPollingForResourceCollection,
   downloadAuditlogs,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
@@ -51,7 +49,6 @@ import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
-import { pollApiRequests } from '../app';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
@@ -1584,62 +1581,6 @@ describe('downloadReport saga', () => {
 
     expect(window.open).not.toBeCalled();
   });
-});
-
-describe('pollForResourceCollection saga', () => {
-  test('should call getResourceCollection after 5 seconds delay continously', () => {
-    const saga = pollForResourceCollection({resourceType: 'connections'});
-
-    expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType: 'connections'}, duration: 5000 }));
-
-    expect(saga.next().done).toEqual(true);
-  });
-});
-
-describe('startPollingForResourceCollection saga', () => {
-  test('cancel poll effect should race ahead when stop connection poll action is called ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        // delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections'})
-    .returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('cancel poll effect should not race ahead when stop exports poll action is called since the resourceType does not match ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'exports'})
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('cancel poll effect should not race ahead when pollForResourceCollection saga completes  ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch('waitForData')
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('pollForResourceCollections should complete when no action is dispatched ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
 });
 
 describe('tests for metadata sagas', () => {
