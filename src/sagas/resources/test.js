@@ -35,8 +35,9 @@ import {
   downloadReport,
   pollForResourceCollection,
   startPollingForResourceCollection,
+  downloadAuditlogs,
 } from '.';
-import { apiCallWithRetry } from '..';
+import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
 import { SCOPES, updateFlowDoc } from '../resourceForm';
 import { resourceConflictResolution } from '../utils';
@@ -52,6 +53,8 @@ import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
 import { pollApiRequests } from '../app';
 import { APIException } from '../api/requestInterceptors/utils';
+import getRequestOptions from '../../utils/requestOptions';
+import openExternalUrl from '../../utils/window';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -635,11 +638,11 @@ availableResources.forEach(type => {
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       if (type === 'stacks') {
         expect(saga.next(mockCollection).value).toEqual(
-          call(apiCallWithRetry, { path: '/shared/stacks' })
+          call(apiCallWithPaging, { path: '/shared/stacks' })
         );
         mockSharedStacks = mockSharedStacks.map(stack => ({
           ...stack,
@@ -668,7 +671,7 @@ availableResources.forEach(type => {
       const path = `/${type}`;
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       const final = saga.throw();
 
@@ -1090,6 +1093,7 @@ describe('validateResource saga', () => {
   test('should call getResource to validate', () => expectSaga(validateResource, { resourceType, resourceId })
     .provide([
       [select(selectors.resource, resourceType, resourceId), {}],
+      [call(getResource, { resourceType, id: resourceId, hidden: true }), undefined],
     ])
     .call(getResource, {resourceType, id: resourceId, hidden: true})
     .run());
@@ -2045,5 +2049,87 @@ describe('tests for metadata sagas', () => {
         .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
         .returns(undefined)
         .run());
+  });
+});
+describe('downloadAuditlogs saga', () => {
+  const yesterdayDate = new Date();
+
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const resourceType = 'integrations';
+  const resourceId = 'id124';
+  const filters = {};
+
+  test('should invoke download audit logs api without any date filter', () => {
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date filters', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date filters and childId', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const flowIds = ['1', '2', '3'];
+    const childId = 'child123';
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters, childId, flowIds }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
+      .provide([
+        [select(
+          selectors.integrationAppFlowIds,
+          resourceId,
+          childId
+        ),
+        flowIds,
+        ],
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
   });
 });
