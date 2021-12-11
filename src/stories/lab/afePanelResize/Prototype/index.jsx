@@ -20,7 +20,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 function getDragHandles(gridAreas) {
+  // strip all non-word characters and convert to an array.
   const areas = gridAreas.replace(/[\W]+/g, ',').split(',');
+
+  // filter out all areas that are NOT handles
   const handleAreas = areas.filter(a => a.includes('dragBar'));
 
   // https://medium.com/dailyjs/how-to-remove-array-duplicates-in-es6-5daa8789641c
@@ -67,11 +70,18 @@ function getCssSizeString(cssGridSizes, dragBarPos, movement) {
 function findGridColumn(grid, gridArea) {
   const gridAreas = window.getComputedStyle(grid).getPropertyValue('grid-template-areas');
 
-  const colPos = gridAreas.split(' ').findIndex(a => a === gridArea);
+  const rows = gridAreas.split('" "').map(r => r.replace('"', ''));
 
-  // console.log(gridAreas, gridArea, colPos);
+  for (let i = 0; i < rows.length; i += 1) {
+    const colPos = rows[i].split(' ').findIndex(a => a === gridArea);
 
-  return colPos;
+    if (colPos >= 0) {
+      return colPos;
+    }
+  }
+
+  // This should never happen
+  return -1;
 }
 
 function findGridRow(grid, gridArea) {
