@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -11,15 +11,20 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
-const emptyObject = {};
-
-function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler }) {
+function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, parentUrl }) {
   const { formType } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { installerFunction, name, formMeta, form } = useSelector(
-    state => selectors.currentStepPerMode(state, { mode: formType, integrationId }) || emptyObject
+  const currentStep = useSelector(
+    state => selectors.currentStepPerMode(state, { mode: formType, integrationId })
   );
+
+  if (!currentStep || !currentStep.isTriggered) {
+    // When the url is invalid or When the step is either completed/failed
+    // isTriggered is false and goes back to parent url
+    history.replace(parentUrl);
+  }
+  const { installerFunction, name, formMeta, form } = currentStep || {};
 
   const formMetaData = useMemo(() => {
     if (formType === 'install') {
@@ -28,8 +33,6 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler })
 
     return form;
   }, [formType, formMeta, form]);
-
-  const goBackToParentUrl = useCallback(() => history.goBack(), [history]);
 
   const handleSubmit = useCallback(
     formVal => {
@@ -87,8 +90,7 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler })
     if (onSubmitCb && typeof onSubmitCb === 'function') {
       onSubmitCb(...args);
     }
-    goBackToParentUrl();
-  }, [formSubmitHandler, goBackToParentUrl, handleSubmit]);
+  }, [formSubmitHandler, handleSubmit]);
 
   const onClose = useCallback((...args) => {
     const onCloseCb = formCloseHandler || handleClose;
@@ -96,19 +98,16 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler })
     if (onCloseCb && typeof onCloseCb === 'function') {
       onCloseCb(...args);
     }
-    goBackToParentUrl();
-  }, [formCloseHandler, handleClose, goBackToParentUrl]);
+  }, [formCloseHandler, handleClose]);
 
   const formKey = useFormInitWithPermissions({ fieldMeta: formMetaData });
 
   return (
     <>
       <DrawerHeader title={name} handleClose={onClose} />
-
       <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>
-
       <DrawerFooter>
         <DynaSubmit formKey={formKey} onClick={onSubmit} >
           Submit
@@ -118,6 +117,8 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler })
   );
 }
 export default function FormStepDrawer({ integrationId, formSubmitHandler, formCloseHandler }) {
+  const match = useRouteMatch();
+
   return (
     <RightDrawer
       path="form/:formType"
@@ -127,6 +128,7 @@ export default function FormStepDrawer({ integrationId, formSubmitHandler, formC
         integrationId={integrationId}
         formSubmitHandler={formSubmitHandler}
         formCloseHandler={formCloseHandler}
+        parentUrl={match.url}
       />
     </RightDrawer>
   );
