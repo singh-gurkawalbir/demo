@@ -1217,37 +1217,28 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
     return flowObjects;
   }
 
-  const finalFlowObjects = [];
+  const shouldHaveUnassignedSection = flowObjects.some(flowObject => !flowObject.doc?._flowGroupingId);
+  const allFlowGroupings = shouldHaveUnassignedSection ? [...flowGroupings, {
+    name: UNASSIGNED_SECTION_NAME,
+    _id: UNASSIGNED_SECTION_ID,
+  }] : flowGroupings;
 
-  flowGroupings.forEach(({_id: groupId, name}, index) => {
-    finalFlowObjects.push({
+  const finalFlowObjects = allFlowGroupings.map(({_id: groupId, name}, index) => {
+    const flowGroupObject = {
       groupName: name,
       _id: index + objectsLength,
-    });
-    const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
-    const lastFlowObject = resultFlowObjects.pop();
+    };
+    const flowObjetsOfAFlowGroup = flowObjects.filter(flowObject =>
+      (name === UNASSIGNED_SECTION_NAME && !flowObject.doc?._flowGroupingId) || flowObject.doc?._flowGroupingId === groupId);
 
-    if (lastFlowObject) {
-      lastFlowObject.isLastFlowInFlowGroup = true;
-      finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
+    if (!flowObjetsOfAFlowGroup.length) {
+      return [flowGroupObject];
     }
-  });
 
-  const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
+    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1].isLastFlowInFlowGroup = true;
 
-  // if there are flows without _flowGroupingId should push Unassigned flow group model
-  if (flowsWithoutGroupId?.length) {
-    finalFlowObjects.push({
-      groupName: UNASSIGNED_SECTION_NAME,
-      _id: objectsLength + flowGroupings.length,
-    });
-    const lastFlowObject = flowsWithoutGroupId.pop();
-
-    if (lastFlowObject) {
-      lastFlowObject.isLastFlowInFlowGroup = true;
-      finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
-    }
-  }
+    return [flowGroupObject, ...flowObjetsOfAFlowGroup];
+  }).flat();
 
   return finalFlowObjects;
 };

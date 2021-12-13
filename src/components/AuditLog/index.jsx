@@ -10,6 +10,7 @@ import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
+import DownloadAuditLogDrawer from './DownloadAuditLogDrawer';
 
 const useStyles = makeStyles(({
   root: {
@@ -36,11 +37,11 @@ export default function AuditLog({
   const clearAuditLogs = () => {
     dispatch(actions.auditLogs.clear());
   };
+  const [filters, handleFiltersChange] = useState({});
+
   const requestAuditLogs = (resourceType, resourceId) => {
     dispatch(actions.auditLogs.request(resourceType, resourceId));
   };
-
-  const [filters, handleFiltersChange] = useState({});
 
   useEffect(() => {
     if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
@@ -66,6 +67,7 @@ export default function AuditLog({
                 affectedResources={affectedResources}
                 resourceDetails={resourceDetails}
                 users={users}
+                childId={childId}
                 onFiltersChange={handleFiltersChange}
                 resourceType={resourceType}
                 resourceId={resourceId}
@@ -82,6 +84,7 @@ export default function AuditLog({
             </div>
           )}
       </>
+      <DownloadAuditLogDrawer resourceType={resourceType} resourceId={resourceId} childId={childId} />
     </LoadResources>
   );
 }
