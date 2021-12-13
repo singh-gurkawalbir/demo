@@ -52,6 +52,8 @@ export default {
       type: 'text',
       label: 'API key',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'chargify.connection.http.encrypted.apiKey',
     },
     application: {

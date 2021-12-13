@@ -81,6 +81,8 @@ export default {
       label: 'API secret',
       helpKey: 'pitneybowes.connection.http.encrypted.apiSecret',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
