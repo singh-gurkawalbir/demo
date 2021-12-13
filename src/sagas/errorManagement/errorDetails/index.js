@@ -22,6 +22,7 @@ export function* _formatErrors({ errors = [], resourceId }) {
 export function* requestErrorDetails({
   flowId,
   resourceId,
+  flowJobId,
   loadMore = false,
   isResolved = false,
 }) {
@@ -44,7 +45,7 @@ export function* requestErrorDetails({
 
     const requestOptions = getRequestOptions(
       actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
-      { flowId, resourceId, isResolved, filters, nextPageURL }
+      { flowId, resourceId, isResolved, filters, nextPageURL, flowJobId }
     );
     const { path, opts } = requestOptions;
 

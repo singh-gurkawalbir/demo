@@ -16,6 +16,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId`,
   });
+  const matchIncompleteErrorDrawerPathWithFilter = matchPath(pathname, {
+    path: `${match.url}/errors/:resourceId/filter/:flowJobId`,
+  });
+  const flowJobId = matchIncompleteErrorDrawerPathWithFilter?.params?.flowJobId;
 
   if (matchIncompleteErrorDrawerPath?.isExact) {
     // when error type is not specified in the url, it adds open and opens Open errors by default
@@ -23,9 +27,16 @@ export default function ErrorDetailsDrawer({ flowId }) {
     // This helps not to modify any dependent places to update url
     history.replace(`${matchIncompleteErrorDrawerPath.url}/open`);
   }
+  if (matchIncompleteErrorDrawerPathWithFilter?.isExact) {
+    history.replace(`${matchIncompleteErrorDrawerPathWithFilter.url}/open`);
+  }
 
   const matchErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/:errorType`,
+  });
+
+  const matchErrorDrawerPathWithFilter = matchPath(pathname, {
+    path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
 
   const resourceName = useSelector(state => {
@@ -49,12 +60,16 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [history, match.url]);
 
   const handleErrorTypeChange = useCallback(errorType => {
-    history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
-  }, [history, match.url, matchErrorDrawerPath?.params?.resourceId]);
+    if (matchErrorDrawerPathWithFilter) {
+      history.replace(`${match.url}/errors/${matchErrorDrawerPathWithFilter.params.resourceId}/filter/${matchErrorDrawerPathWithFilter.params.flowJobId}/${errorType}`);
+    } else {
+      history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
+    }
+  }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   return (
     <RightDrawer
-      path="errors/:resourceId/:errorType"
+      path={['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType']}
       width="full"
       onClose={handleClose}
       variant="temporary">
@@ -64,7 +79,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       </DrawerHeader>
 
       <DrawerContent>
-        <ErrorList flowId={flowId} />
+        <ErrorList flowId={flowId} flowJobId={flowJobId} />
       </DrawerContent>
     </RightDrawer>
   );

@@ -12,6 +12,7 @@ export const useFetchErrors = ({
   flowId,
   resourceId,
   isResolved,
+  flowJobId,
 }) => {
   const dispatch = useDispatch();
 
@@ -26,13 +27,14 @@ export const useFetchErrors = ({
       dispatch(
         actions.errorManager.flowErrorDetails.request({
           flowId,
+          flowJobId,
           resourceId,
           loadMore,
           isResolved,
         })
       );
     },
-    [dispatch, filterKey, flowId, isResolved, resourceId]
+    [dispatch, filterKey, flowId, flowJobId, isResolved, resourceId]
   );
 };
 const emptySet = [];
@@ -42,6 +44,7 @@ export default function FetchErrorsHook({
   flowId,
   resourceId,
   isResolved,
+  flowJobId,
 }) {
   const dispatch = useDispatch();
 
@@ -66,6 +69,7 @@ export default function FetchErrorsHook({
     flowId,
     resourceId,
     isResolved,
+    flowJobId,
   });
 
   useEffect(() => {

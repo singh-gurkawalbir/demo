@@ -8,7 +8,7 @@ import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
 import { FILTER_KEYS } from '../../utils/errorManagement';
 import { selectors } from '../../reducers';
 
-export default function ErrorList({ flowId }) {
+export default function ErrorList({ flowId, flowJobId }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { resourceId, errorType } = match.params;
@@ -54,6 +54,7 @@ export default function ErrorList({ flowId }) {
     <>
       <ErrorTable
         flowId={flowId}
+        flowJobId={flowJobId}
         resourceId={resourceId}
         isResolved={errorType === 'resolved'}
       />

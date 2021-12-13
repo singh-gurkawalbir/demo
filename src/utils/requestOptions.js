@@ -26,6 +26,7 @@ export default function getRequestOptions(
     loadMore,
     childId,
     flowIds,
+    flowJobId,
   } = {}
 ) {
   switch (action) {
@@ -379,6 +380,9 @@ export default function getRequestOptions(
       if (resolvedAt?.startDate && resolvedAt?.endDate) {
         queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
         queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
+      if (flowJobId) {
+        queryParams.push(`flowJobId=${flowJobId}`);
       }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
