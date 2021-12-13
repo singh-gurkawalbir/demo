@@ -148,8 +148,6 @@ export default function ConnectorInstallation(props) {
       setConnection({
         _connectionId: connectionId,
       });
-      // previously we opened newId drawer - then saved and authenticated
-      // we get connectionId - replace the drawer
       history.replace(`${match.url}/configure/connections/${connectionId}`);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
