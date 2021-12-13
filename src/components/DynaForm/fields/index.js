@@ -141,6 +141,7 @@ import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentra
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
+import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -293,4 +294,5 @@ export default {
   selectlookup: DynaSelectLookup,
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
+  updatedomain: DynaTextUpdateDomain,
 };
