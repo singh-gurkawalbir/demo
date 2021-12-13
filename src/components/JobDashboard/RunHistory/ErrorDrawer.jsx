@@ -7,7 +7,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../utils/flows';
 import { emptyObject } from '../../../utils/constants';
 import StatusCircle from '../../StatusCircle';
-import { FILTER_KEYS } from '../../../utils/errorManagement';
 import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -45,11 +44,9 @@ export default function ErrorDrawer({
   });
 
   const handleErrorClick = useCallback(() => {
-    // add filter
-    dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {_flowJobId: _id }));
-    dispatch(actions.patchFilter(FILTER_KEYS.RESOLVED, {_flowJobId: _id}));
+    dispatch(actions.patchFilter(`${_flowId}-${_id}-${id}`, {...job}));
     history.push(`${flowBuilderTo}/errors/${id}/filter/${_id}`);
-  }, [_id, dispatch, flowBuilderTo, history, id]);
+  }, [_flowId, _id, dispatch, flowBuilderTo, history, id, job]);
 
   if (numOpenError === 0) {
     return '0';

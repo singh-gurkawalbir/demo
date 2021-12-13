@@ -13,6 +13,7 @@ export const useFetchErrors = ({
   resourceId,
   isResolved,
   flowJobId,
+  childJob,
 }) => {
   const dispatch = useDispatch();
 
@@ -20,7 +21,18 @@ export const useFetchErrors = ({
     loadMore => {
       if (!loadMore) {
         dispatch(actions.clearFilter(filterKey));
-        const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
+        let defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
+
+        if (flowJobId && childJob) {
+          const occuredAt = {startDate: childJob.startedAt, endDate: childJob.endedAt};
+          const resolvedAt = {startDate: childJob.startedAt};
+
+          if (isResolved) {
+            defaultFilter = {...defaultFilter, resolvedAt, flowJobId};
+          } else {
+            defaultFilter = {...defaultFilter, occuredAt, flowJobId};
+          }
+        }
 
         dispatch(actions.patchFilter(filterKey, defaultFilter));
       }
@@ -34,7 +46,7 @@ export const useFetchErrors = ({
         })
       );
     },
-    [dispatch, filterKey, flowId, flowJobId, isResolved, resourceId]
+    [childJob, dispatch, filterKey, flowId, flowJobId, isResolved, resourceId]
   );
 };
 const emptySet = [];
@@ -54,6 +66,9 @@ export default function FetchErrorsHook({
     isResolved,
   }), [isResolved, flowId, resourceId]);
   const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
+  const childJob = useSelector(
+    state => selectors.filter(state, `${flowId}-${flowJobId}-${resourceId}`), shallowEqual
+  );
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;
@@ -70,6 +85,7 @@ export default function FetchErrorsHook({
     resourceId,
     isResolved,
     flowJobId,
+    childJob,
   });
 
   useEffect(() => {

@@ -26,7 +26,6 @@ export default function getRequestOptions(
     loadMore,
     childId,
     flowIds,
-    flowJobId,
   } = {}
 ) {
   switch (action) {
@@ -364,8 +363,7 @@ export default function getRequestOptions(
         ? nextPageURL.replace('/api', '')
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
-
-      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
+      const { sources = [], classifications = [], occuredAt, resolvedAt, flowJobId } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
@@ -377,12 +375,14 @@ export default function getRequestOptions(
         queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
         queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
       }
-      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+      if (resolvedAt?.startDate) {
         queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+      }
+      if (resolvedAt?.endDate) {
         queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
       }
       if (flowJobId) {
-        queryParams.push(`flowJobId=${flowJobId}`);
+        queryParams.push(`_flowJobId=${flowJobId}`);
       }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
