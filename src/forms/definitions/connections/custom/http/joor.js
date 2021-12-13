@@ -51,6 +51,8 @@ export default {
       label: 'API token',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'joor.connection.http.encrypted.apiKey',
     },
     application: {

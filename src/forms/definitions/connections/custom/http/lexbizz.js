@@ -145,6 +145,8 @@ export default {
       inputType: 'password',
       label: 'Password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'lexbizz.connection.http.encrypted.password',

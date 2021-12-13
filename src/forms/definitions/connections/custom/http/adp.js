@@ -81,6 +81,8 @@ export default {
       defaultValue: '',
       label: 'Client secret',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'adp.connection.http.encrypted.clientSecret',
     },
     application: {
