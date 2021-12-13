@@ -88,6 +88,8 @@ export default {
       inputType: 'password',
       label: 'Password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       required: true,
       helpKey: 'anaplan.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],

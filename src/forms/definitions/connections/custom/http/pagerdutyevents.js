@@ -22,6 +22,8 @@ export default {
       label: 'Routing Key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'pagerdutyevents.connection.http.encrypted.routingKey',
     },
     application: {

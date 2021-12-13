@@ -26,6 +26,8 @@ export default {
       defaultValue: '',
       required: true,
       label: 'API key',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'fieldaware.connection.http.encrypted.apiKey',
     },
     application: {

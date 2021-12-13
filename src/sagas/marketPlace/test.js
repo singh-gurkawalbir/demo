@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
-import { apiCallWithRetry } from '../index';
+import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
 import {
   requestConnectors,
@@ -18,7 +18,7 @@ describe('requestConnectors saga', () => {
     const saga = requestConnectors();
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, {
+      call(apiCallWithPaging, {
         path,
         message: 'Requesting integration apps',
       })
@@ -34,7 +34,7 @@ describe('requestConnectors saga', () => {
     const saga = requestConnectors();
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, {
+      call(apiCallWithPaging, {
         path,
         message: 'Requesting integration apps',
       })
@@ -51,7 +51,7 @@ describe('requestTemplates saga', () => {
     const saga = requestTemplates();
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, {
+      call(apiCallWithPaging, {
         path,
         message: 'Requesting Templates',
       })
@@ -65,7 +65,7 @@ describe('requestTemplates saga', () => {
     const saga = requestTemplates();
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, {
+      call(apiCallWithPaging, {
         path,
         message: 'Requesting Templates',
       })

@@ -29,6 +29,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'API secret',
       required: true,
       helpKey: 'yotpo.connection.http.encrypted.clientSecret',
