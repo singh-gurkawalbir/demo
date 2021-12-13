@@ -5,7 +5,7 @@ import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import actions from '../../../../actions';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
-export default function SelectClassification({ flowId, resourceId, isResolved, flowJobId }) {
+export default function SelectClassification({ flowId, resourceId, isResolved }) {
   const dispatch = useDispatch();
   const classificationOptions = useSelector(state => selectors.classificationOptions(state));
 
@@ -14,13 +14,12 @@ export default function SelectClassification({ flowId, resourceId, isResolved, f
       dispatch(
         actions.errorManager.flowErrorDetails.request({
           flowId,
-          flowJobId,
           resourceId,
           isResolved,
         })
       );
     },
-    [dispatch, flowId, flowJobId, isResolved, resourceId],
+    [dispatch, flowId, isResolved, resourceId],
   );
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 

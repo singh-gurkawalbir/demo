@@ -1906,13 +1906,12 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL),
   },
   flowErrorDetails: {
-    request: ({ flowId, resourceId, loadMore, flowJobId, isResolved = false }) =>
+    request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST, {
         flowId,
         resourceId,
         loadMore,
         isResolved,
-        flowJobId,
       }),
     received: ({
       flowId,
