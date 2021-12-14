@@ -3,7 +3,7 @@ import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { apiCallWithRetry } from '../index';
-import { uploadFile, previewZip, processFile, configureFileReader } from '.';
+import { uploadFile, previewZip, processFile, configureFileReader, uploadRawData } from '.';
 import actions from '../../actions';
 import messageStore from '../../constants/messages';
 import {
@@ -31,6 +31,30 @@ describe('uploadFile saga', () => {
       ])
       .call.fn(apiCallWithRetry)
       .returns(true)
+      .run();
+  });
+});
+
+describe('uploadRawData saga', () => {
+  const fileType = 'application/zip';
+  const file = { _id: '456', name: 'someFile' };
+  const runKey = '1234';
+
+  test('should call uploadFile saga', () => expectSaga(uploadRawData, {file, fileType})
+    .provide([
+      [matchers.call.fn(uploadFile), runKey]])
+    .call.fn(uploadFile)
+    .returns(runKey)
+    .run());
+
+  test('should handle api error if exception is thrown on uploadFile call', () => {
+    const error = new Error('error');
+
+    return expectSaga(uploadRawData, { file, fileType})
+      .provide([
+        [matchers.call.fn(uploadFile), throwError(error)],
+      ])
+      .call.fn(uploadFile)
       .run();
   });
 });
