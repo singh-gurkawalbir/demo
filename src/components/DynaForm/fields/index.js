@@ -10,6 +10,7 @@ import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaUpdateOptions from './select/DynaUpdateOptions';
+import DynaRefreshCollection from './integrations/DynaRefreshCollection';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 import DynaRelativeUri_afe from './DynaRelativeUri_afe';
@@ -149,6 +150,7 @@ export default {
   flowstiedtointegrations: DynaFlowsTiedToIntegrations,
   allintegrations: DynaAllIntegrations,
   childintegrations: DynaChildIntegrations,
+  refreshcollection: DynaRefreshCollection,
   suitescriptsettings: DynaRefreshableSettings,
   refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,

@@ -55,14 +55,6 @@ export default function Invite(props) {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(actions.resource.startCollectionPoll('integrations'));
-
-    return (() => {
-      dispatch(actions.resource.stopCollectionPoll('integrations'));
-    });
-  }, [dispatch]);
-
-  useEffect(() => {
     clearPreview();
   }, [clearPreview]);
   const data = useSelector(
@@ -91,8 +83,9 @@ export default function Invite(props) {
       _integrationIds: {
         id: '_integrationIds',
         name: '_integrationIds',
-        type: 'multiselect',
+        type: 'refreshcollection',
         label: 'Integrations to transfer',
+        resourceType: 'integrations',
         required: true,
         options: [
           {

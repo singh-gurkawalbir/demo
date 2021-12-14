@@ -7,10 +7,6 @@ import AccessToken from '../MaskToken';
 import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   copyTokenIcon: {
     padding: 0,
   },
@@ -27,7 +23,7 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
     enquesnackbar({ message: 'Token copied to clipboard.' }), [enquesnackbar]);
 
   return (
-    <div className={classes.root}>
+    <div>
       {token ? (
         <>
           <Typography data-private variant="caption">
