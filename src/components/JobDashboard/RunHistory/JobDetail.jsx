@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
   error: {
     width: '10.15%',
-    textAlign: 'right',
+    textAlign: 'center',
   },
   errorCount: {
     color: theme.palette.error.dark,

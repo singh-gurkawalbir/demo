@@ -103,7 +103,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       <DrawerContent>
         {flowJobId ? (
           <Typography variant="body2" className={classes.errorsInRun}>
-            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} errors in this run: </span>
+            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run: </span>
             <span> {allErrors.length} open  |  </span>
             <span>{childJob?.numOpenError - allErrors.length} resolved</span>
           </Typography>
