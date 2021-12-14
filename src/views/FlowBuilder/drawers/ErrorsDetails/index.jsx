@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -8,8 +9,20 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
 
+const emptySet = [];
+
+const useStyles = makeStyles(theme => ({
+  errorsInRun: {
+    marginBottom: theme.spacing(3),
+  },
+  boldErrorsCount: {
+    fontWeight: 'bold',
+  },
+}));
+
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
+  const classes = useStyles();
   const match = useRouteMatch();
   const { pathname } = useLocation();
 
@@ -38,6 +51,15 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
+  const allErrors = useSelector(state => {
+    const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+
+    return allErrorDetails.errors || emptySet;
+  });
+
+  const childJob = useSelector(
+    state => selectors.filter(state, `${flowId}-${flowJobId}-${matchErrorDrawerPathWithFilter?.params?.resourceId}`), shallowEqual
+  );
 
   const resourceName = useSelector(state => {
     const { resourceId } = matchErrorDrawerPath?.params || {};
@@ -74,11 +96,18 @@ export default function ErrorDetailsDrawer({ flowId }) {
       onClose={handleClose}
       variant="temporary">
 
-      <DrawerHeader title={`Errors: ${resourceName}`} hideBackButton>
+      <DrawerHeader endedAt={flowJobId && childJob?.endedAt} title={`Errors: ${resourceName}`} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
 
       <DrawerContent>
+        {flowJobId ? (
+          <Typography variant="body2" className={classes.errorsInRun}>
+            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} errors in this run: </span>
+            <span> {allErrors.length} open  |  </span>
+            <span>{childJob?.numOpenError - allErrors.length} resolved</span>
+          </Typography>
+        ) : ''}
         <ErrorList flowId={flowId} flowJobId={flowJobId} />
       </DrawerContent>
     </RightDrawer>

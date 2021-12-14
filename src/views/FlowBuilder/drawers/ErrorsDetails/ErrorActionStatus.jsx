@@ -32,7 +32,7 @@ export default function ErrorActionStatus({ flowId, resourceId }) {
 
   return (
     <span className={classes.statusContainer}>
-      Retries: {retryCount} Resolves: {resolveCount}
+      Retries: {retryCount} | Resolves: {resolveCount}
     </span>
   );
 }

@@ -135,7 +135,7 @@ export default function JobDetail({
         <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-        <TableCell className={classes.error}>{job.numError}</TableCell>
+        <TableCell className={classes.error}>{job.numError} error{job.numError !== 1 ? 's' : ''}</TableCell>
         <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
         <TableCell className={classes.actions}>
           <JobActionsMenu

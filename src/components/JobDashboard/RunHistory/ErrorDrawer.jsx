@@ -49,13 +49,14 @@ export default function ErrorDrawer({
   }, [_flowId, _id, dispatch, flowBuilderTo, history, id, job]);
 
   if (numOpenError === 0) {
-    return '0';
+    return '0 errors';
   }
+  const errorText = numOpenError === 1 ? 'error' : 'errors';
 
   return (
     <div className={classes.button} onClick={handleErrorClick}>
       <StatusCircle variant="error" size="mini" />
-      {numOpenError > 9999 ? '9999+' : numOpenError} errors
+      {numOpenError > 9999 ? '9999+' : numOpenError} {errorText}
     </div >
   );
 }
