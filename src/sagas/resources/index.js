@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -17,9 +17,6 @@ import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
-import { pollApiRequests } from '../app';
-
-const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -1091,23 +1088,6 @@ export function* downloadReport({ reportId }) {
   }
 }
 
-export function* pollForResourceCollection({ resourceType }) {
-  yield call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType}, duration: STANDARD_DELAY_FOR_POLLING });
-}
-export function* startPollingForResourceCollection({ resourceType }) {
-  return yield race({
-    pollCollection: call(pollForResourceCollection, { resourceType }),
-    cancelPoll: take(action => {
-      if ([
-        actionTypes.RESOURCE.STOP_COLLECTION_POLL,
-        actionTypes.RESOURCE.START_COLLECTION_POLL,
-      ].includes(action.type) &&
-    action.resourceType === resourceType) {
-        return true;
-      }
-    }),
-  });
-}
 export function* downloadAuditlogs({resourceType, resourceId, childId, filters}) {
   let flowIds;
 
@@ -1174,7 +1154,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
-  takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
