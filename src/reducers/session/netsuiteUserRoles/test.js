@@ -18,7 +18,12 @@ describe('netsuiteUser roles reducer ', () => {
       actions.resource.connections.netsuite.testConnection({connectionId, hideNotificationMessage: true})
     );
 
-    expect(state).toEqual(existingState);
+    expect(state).toEqual({
+      [connectionId]: {
+        somePrevStateProp: 'something',
+        hideNotificationMessage: true,
+      },
+    });
     // new  connection id
     state = reducer(
       undefined,

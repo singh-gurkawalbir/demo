@@ -1,4 +1,4 @@
-import { values, keyBy } from 'lodash';
+import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
@@ -679,14 +679,15 @@ export const getNetSuiteSubrecordImports = importDoc =>
   );
 
 export const updateMappingsBasedOnNetSuiteSubrecords = (
-  mapping,
+  mappingOriginal,
   subrecords
 ) => {
+  let mapping = cloneDeep(mappingOriginal);
+
   const subrecordsMap = keyBy(subrecords, 'fieldId');
 
   if (mapping) {
     if (mapping.fields) {
-      // eslint-disable-next-line no-param-reassign
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
@@ -714,7 +715,6 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
     }
 
     if (mapping.lists) {
-      // eslint-disable-next-line no-param-reassign
       mapping.lists = mapping.lists
         .map(list => {
           if (list.fields) {
@@ -763,17 +763,14 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 
   if (newSubrecords.length > 0) {
     if (!mapping) {
-      // eslint-disable-next-line no-param-reassign
       mapping = {};
     }
 
     if (!mapping.fields) {
-      // eslint-disable-next-line no-param-reassign
       mapping.fields = [];
     }
 
     if (!mapping.lists) {
-      // eslint-disable-next-line no-param-reassign
       mapping.lists = [];
     }
 

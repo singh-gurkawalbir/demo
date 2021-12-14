@@ -27,6 +27,8 @@ export default {
       inputType: 'password',
       label: 'Project token',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'mixpanel.connection.http.encrypted.projectToken',
     },
     'http.auth.basic.username': {

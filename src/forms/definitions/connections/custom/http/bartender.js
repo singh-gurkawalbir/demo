@@ -41,7 +41,7 @@ export default {
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
-          message: 'Subdomain should not contain spaces.',
+          message: 'Base URL should not contain spaces.',
         },
       },
       helpKey: 'bartender.connection.http.unencrypted.printPortalBaseURL',
@@ -58,6 +58,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Password',
       required: true,
       helpKey: 'bartender.connection.http.encrypted.password',
