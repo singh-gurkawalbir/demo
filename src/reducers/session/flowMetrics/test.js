@@ -242,7 +242,7 @@ describe('selectors testcases', () => {
     {
       _time: '2021-03-25T07:38:00.000Z',
       attribute: 'r',
-      by: 'autopilot',
+      by: 'auto',
       flowId: 'flowId1',
       resourceId: 'id3',
       timeInMills: 1616657880000,
@@ -315,7 +315,7 @@ describe('selectors testcases', () => {
     {
       _time: '2021-03-25T07:38:00.000Z',
       attribute: 'r',
-      by: 'autopilot',
+      by: 'auto',
       flowId: 'flowId1',
       resourceId: 'id3',
       timeInMills: 1616657880000,
@@ -347,7 +347,7 @@ describe('selectors testcases', () => {
         }, {
           _time: '2021-03-25T07:38:00.000Z',
           attribute: 'r',
-          by: 'autopilot',
+          by: 'auto',
           flowId: 'flowId1',
           resourceId: 'id3',
           timeInMills: 1616657880000,
@@ -383,7 +383,7 @@ describe('selectors testcases', () => {
         }, {
           _time: '2021-03-25T07:38:00.000Z',
           attribute: 'r',
-          by: 'autopilot',
+          by: 'auto',
           flowId: 'flowId1',
           resourceId: 'id3',
           timeInMills: 1616657880000,
