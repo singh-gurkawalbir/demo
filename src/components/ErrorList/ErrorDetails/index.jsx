@@ -84,6 +84,16 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     []
   );
 
+  const isResourceNetsuite = useSelector(state => {
+    if (!resourceId) return;
+
+    const exportObj = selectors.resource(state, 'exports', resourceId);
+
+    if (exportObj?.name) return exportObj.name.includes('netsuite');
+
+    return selectors.resource(state, 'imports', resourceId)?.name.includes('netsuite');
+  });
+
   const availableTabs = useMemo(() => {
     const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
 
@@ -96,14 +106,14 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     }
     if (!reqAndResKey) return tabs;
 
-    if (source === 'NetSuite') {
+    if (isResourceNetsuite) {
       tabs.push(ERROR_DETAILS_TABS.NETSUITE_REQUEST, ERROR_DETAILS_TABS.NETSUITE_RESPONSE);
     } else {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
 
     return tabs;
-  }, [retryId, reqAndResKey, source, isFlowDisabled]);
+  }, [retryId, reqAndResKey, isResourceNetsuite, isFlowDisabled]);
 
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid url , redirects user to View Error fields tab
@@ -159,6 +169,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
               flowId={flowId}
               resourceId={resourceId}
               isRequest
+              isResourceNetsuite={isResourceNetsuite}
             />
           </TabPanel>
           <TabPanel value={mode} type="response">
@@ -167,6 +178,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}
+              isResourceNetsuite={isResourceNetsuite}
             />
           </TabPanel>
         </div>

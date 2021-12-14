@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 const defaultObj = {};
 
-export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResKey, isRequest, source }) {
+export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResKey, isRequest, isResourceNetsuite }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const httpDocStatus = useSelector(state =>
@@ -43,7 +43,7 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
     selectors.errorHttpDoc(state, reqAndResKey, isRequest) || defaultObj
   );
 
-  const formattedErrorHttpDoc = useMemo(() => getHttpReqResFields(errorHttpDoc), [errorHttpDoc]);
+  const formattedErrorHttpDoc = useMemo(() => getHttpReqResFields(errorHttpDoc, null, isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)
@@ -65,26 +65,27 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
 
   return (
     <div className={classes.container}>
-      {source !== 'NetSuite' ? (
-        <CeligoTabWrapper>
-          <CeligoPillTabs tabs={TABS} />
-          <CeligoTabPanel panelId="body">
-            <DefaultPanel value={formattedErrorHttpDoc.body} />
-          </CeligoTabPanel>
-          <CeligoTabPanel panelId="headers">
-            <DefaultPanel value={formattedErrorHttpDoc.headers} />
-          </CeligoTabPanel>
-          <CeligoTabPanel panelId="others">
-            <DefaultPanel value={formattedErrorHttpDoc.others} />
-          </CeligoTabPanel>
-        </CeligoTabWrapper>
+      {isResourceNetsuite ? (
+        <CodePanel
+          mode="text"
+          name="error"
+          readOnly
+          value={formattedErrorHttpDoc}
+          />
       )
         : (
-          <CodePanel
-            mode="text"
-            name="error"
-            value={formattedErrorHttpDoc}
-          />
+          <CeligoTabWrapper>
+            <CeligoPillTabs tabs={TABS} />
+            <CeligoTabPanel panelId="body">
+              <DefaultPanel value={formattedErrorHttpDoc.body} />
+            </CeligoTabPanel>
+            <CeligoTabPanel panelId="headers">
+              <DefaultPanel value={formattedErrorHttpDoc.headers} />
+            </CeligoTabPanel>
+            <CeligoTabPanel panelId="others">
+              <DefaultPanel value={formattedErrorHttpDoc.others} />
+            </CeligoTabPanel>
+          </CeligoTabWrapper>
         )}
     </div>
   );
