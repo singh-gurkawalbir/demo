@@ -652,6 +652,7 @@ export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorcepti
   'box', 'segment'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
+export const AUTO_PILOT_DATA_POINT = 'auto';
 export const LINE_GRAPH_TYPES = Object.freeze({
   SUCCESS: 'success',
   AVERAGE_TIME_TAKEN: 'averageTimeTaken',
