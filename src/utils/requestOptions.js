@@ -316,7 +316,7 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST: {
       let path = `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}/signedURL`;
-      const { fromDate, toDate } = filters || {};
+      const { fromDate, toDate, flowJobId } = filters || {};
       const fromKey = isResolved ? 'resolvedAt_gte' : 'occurredAt_gte';
       const toKey = isResolved ? 'resolvedAt_lte' : 'occurredAt_lte';
 
@@ -326,6 +326,9 @@ export default function getRequestOptions(
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
+      }
+      if (flowJobId) {
+        path += `&_flowJobId=${flowJobId}`;
       }
 
       return {
