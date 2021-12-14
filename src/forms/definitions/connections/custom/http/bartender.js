@@ -41,7 +41,7 @@ export default {
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
-          message: 'Subdomain should not contain spaces.',
+          message: 'Base URL should not contain spaces.',
         },
       },
       helpKey: 'bartender.connection.http.unencrypted.printPortalBaseURL',

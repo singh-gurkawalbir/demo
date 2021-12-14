@@ -333,7 +333,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
   
     resolvedBaseData = baseData
         |> filter(fn: (r) => r._measurement == "r")
-        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> map(fn: (r) => ({ r with by: if r.by == "auto" then "auto" else "users"}))
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         
@@ -432,7 +432,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
     resolvedData = flowData
         |> filter(fn: (r) => r._measurement == "r")
-        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> map(fn: (r) => ({ r with by: if r.by == "auto" then "auto" else "users"}))
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
         |> sum()
