@@ -14,6 +14,7 @@ import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import { getJobDuration } from '../../../utils/errorManagement';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   checkAction: {
@@ -135,7 +136,7 @@ export default function JobDetail({
         <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-        <TableCell className={classes.error}>{job.numError} error{job.numError !== 1 ? 's' : ''}</TableCell>
+        <TableCell className={classes.error}>{getTextAfterCount('error', job.numError)}</TableCell>
         <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
         <TableCell className={classes.actions}>
           <JobActionsMenu

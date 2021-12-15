@@ -8,10 +8,10 @@ import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
 import { FILTER_KEYS } from '../../utils/errorManagement';
 import { selectors } from '../../reducers';
 
-export default function ErrorList({ flowId, flowJobId }) {
+export default function ErrorList({ flowId }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { resourceId, errorType } = match.params;
+  const { resourceId, errorType, flowJobId } = match.params;
 
   const integrationId = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?._integrationId || 'none'

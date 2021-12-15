@@ -65,13 +65,10 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
       let fromDate = formValues.fromDate && moment(formValues.fromDate).startOf('day').toISOString();
       let toDate = formValues.toDate && moment(formValues.toDate).endOf('day').toISOString();
 
+      // Here flow job id will be presenet only if errors gets opened from child jobs in run history
       if (flowJobId) {
         if (!fromDate) {
-          if (errorType === 'resolved') {
-            fromDate = resolvedAt.startDate;
-          } else {
-            fromDate = occuredAt.startDate;
-          }
+          fromDate = errorType === 'resolved' ? resolvedAt.startDate : occuredAt.startDate;
         }
         if (!toDate && errorType !== 'resolved') {
           toDate = occuredAt.endDate;

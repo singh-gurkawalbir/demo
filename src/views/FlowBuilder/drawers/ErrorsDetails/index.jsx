@@ -108,7 +108,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
             <span>{childJob?.numOpenError - allErrors.length} resolved</span>
           </Typography>
         ) : ''}
-        <ErrorList flowId={flowId} flowJobId={flowJobId} />
+        <ErrorList flowId={flowId} />
       </DrawerContent>
     </RightDrawer>
   );

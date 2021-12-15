@@ -8,6 +8,7 @@ import { flowbuilderUrl } from '../../../utils/flows';
 import { emptyObject } from '../../../utils/constants';
 import StatusCircle from '../../StatusCircle';
 import actions from '../../../actions';
+import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -51,12 +52,11 @@ export default function ErrorDrawer({
   if (numOpenError === 0) {
     return '0 errors';
   }
-  const errorText = numOpenError === 1 ? 'error' : 'errors';
 
   return (
     <div className={classes.button} onClick={handleErrorClick}>
       <StatusCircle variant="error" size="mini" />
-      {numOpenError > 9999 ? '9999+' : numOpenError} {errorText}
+      {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
     </div >
   );
 }
