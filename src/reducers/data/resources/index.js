@@ -1,6 +1,7 @@
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import { createSelector } from 'reselect';
+import { adaptorTypeMap } from '../../../utils/resource';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
@@ -325,6 +326,15 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
 
   // give precedence to netsuite_da
   return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
+};
+
+selectors.isResourceNetsuite = (state, resourceId) => {
+  if (!resourceId) return;
+  let adaptorType = selectors.resource(state, 'exports', resourceId)?.adaptorType;
+
+  if (!adaptorType) adaptorType = selectors.resource(state, 'imports', resourceId)?.adaptorType;
+
+  return adaptorTypeMap[adaptorType] === 'netsuite';
 };
 
 selectors.isIntegrationApp = (state, integrationId) => {

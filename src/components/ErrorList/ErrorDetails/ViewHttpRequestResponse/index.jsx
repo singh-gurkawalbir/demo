@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 const defaultObj = {};
 
-export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResKey, isRequest, isResourceNetsuite }) {
+export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndResKey, isRequest, isResourceNetsuite }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const httpDocStatus = useSelector(state =>
@@ -43,7 +43,8 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
     selectors.errorHttpDoc(state, reqAndResKey, isRequest) || defaultObj
   );
 
-  const formattedErrorHttpDoc = useMemo(() => getHttpReqResFields(errorHttpDoc, null, isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
+  const formattedErrorHttpDoc = useMemo(() =>
+    getHttpReqResFields(errorHttpDoc, null, isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)

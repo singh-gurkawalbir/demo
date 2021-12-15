@@ -6,7 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
-import ViewHttpRequestResponse from './ViewHttpRequestResponse';
+import ViewErrorRequestResponse from './ViewHttpRequestResponse';
 import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -75,7 +75,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })
   );
 
-  const { retryDataKey: retryId, reqAndResKey, source} = errorDoc || {};
+  const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
 
   const onRetryDataChange = useCallback(
     data =>
@@ -84,15 +84,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     []
   );
 
-  const isResourceNetsuite = useSelector(state => {
-    if (!resourceId) return;
-
-    const exportObj = selectors.resource(state, 'exports', resourceId);
-
-    if (exportObj?.name) return exportObj.name.includes('netsuite');
-
-    return selectors.resource(state, 'imports', resourceId)?.name.includes('netsuite');
-  });
+  const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
 
   const availableTabs = useMemo(() => {
     const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
@@ -163,8 +155,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
             />
           </TabPanel>
           <TabPanel value={mode} type="request">
-            <ViewHttpRequestResponse
-              source={source}
+            <ViewErrorRequestResponse
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}
@@ -173,8 +164,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
             />
           </TabPanel>
           <TabPanel value={mode} type="response">
-            <ViewHttpRequestResponse
-              source={source}
+            <ViewErrorRequestResponse
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}

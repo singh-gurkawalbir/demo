@@ -38,5 +38,5 @@ export const getHttpReqResFields = (httpPayload, variant = 'basic', isResourceNe
 
   const others = variant === 'previewPanel' ? otherPayloadDetails : { url, ...otherPayloadDetails};
 
-  return isResourceNetsuite ? {body} : { headers, body, others: isEmpty(others) ? undefined : others};
+  return isResourceNetsuite ? httpPayload : { headers, body, others: isEmpty(others) ? undefined : others};
 };
