@@ -10,7 +10,7 @@ import CeligoTimeAgo from '../../CeligoTimeAgo';
 import {
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../../constants/resource';
-import ErrorDrawer from './ErrorDrawer';
+import ErrorCell from './ErrorCell';
 
 const useStyles = makeStyles(theme => ({
   checkAction: {
@@ -89,7 +89,7 @@ export default function ChildJobDetail({
       <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
       <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-      <TableCell className={classes.error}><ErrorDrawer job={job} parentJob={parentJob} /></TableCell>
+      <TableCell className={classes.error}><ErrorCell job={job} parentJob={parentJob} /></TableCell>
       <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
       <TableCell />
 

@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
@@ -29,19 +30,12 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId`,
   });
-  const matchIncompleteErrorDrawerPathWithFilter = matchPath(pathname, {
-    path: `${match.url}/errors/:resourceId/filter/:flowJobId`,
-  });
-  const flowJobId = matchIncompleteErrorDrawerPathWithFilter?.params?.flowJobId;
 
   if (matchIncompleteErrorDrawerPath?.isExact) {
     // when error type is not specified in the url, it adds open and opens Open errors by default
     // Note: The url specified in the emails regarding errors to the users does not specify the error type
     // This helps not to modify any dependent places to update url
     history.replace(`${matchIncompleteErrorDrawerPath.url}/open`);
-  }
-  if (matchIncompleteErrorDrawerPathWithFilter?.isExact) {
-    history.replace(`${matchIncompleteErrorDrawerPathWithFilter.url}/open`);
   }
 
   const matchErrorDrawerPath = matchPath(pathname, {
@@ -51,6 +45,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
+  const flowJobId = matchErrorDrawerPathWithFilter?.params?.flowJobId;
   const allErrors = useSelector(state => {
     const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
 
@@ -88,6 +83,13 @@ export default function ErrorDetailsDrawer({ flowId }) {
       history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
     }
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
+
+  // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
+  if (flowJobId && (!childJob || isEmpty(childJob))) {
+    handleClose();
+
+    return null;
+  }
 
   return (
     <RightDrawer

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
   },
 }));
-export default function ErrorDrawer({
+export default function ErrorCell({
   job,
   parentJob,
 }) {
@@ -46,7 +46,7 @@ export default function ErrorDrawer({
 
   const handleErrorClick = useCallback(() => {
     dispatch(actions.patchFilter(`${_flowId}-${_id}-${id}`, {...job}));
-    history.push(`${flowBuilderTo}/errors/${id}/filter/${_id}`);
+    history.push(`${flowBuilderTo}/errors/${id}/filter/${_id}/open`);
   }, [_flowId, _id, dispatch, flowBuilderTo, history, id, job]);
 
   if (numOpenError === 0) {
