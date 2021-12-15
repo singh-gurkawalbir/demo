@@ -132,6 +132,13 @@ describe('Connection debugger log sagas', () => {
         .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
         .run();
     });
+    test('should call apiCallWithRetry with delete connection log path', () => {
+      const connectionId = 'c1';
+
+      return expectSaga(deleteConnectionDebugLogs, { connectionId })
+        .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
+        .run();
+    });
   });
   describe('downloadConnectionDebugLogs saga', () => {
     test('should call openExternalUrl with url not containing integrator-ashareid query param', () => {
@@ -158,6 +165,12 @@ describe('Connection debugger log sagas', () => {
     });
   });
   describe('startDebug saga', () => {
+    test('should return if connection logs are not supported', () => expectSaga(startDebug, {connectionId: 1, value: '0'})
+      .provide([
+        [select(selectors.isConnectionLogsNotSupported, {connectionId: 1}), false],
+      ])
+      .run());
+
     test('should remove debugDate correctly', () => {
       const now = new Date();
       const mock = jest
