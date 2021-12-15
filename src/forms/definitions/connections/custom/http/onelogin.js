@@ -58,6 +58,8 @@ export default {
       type: 'text',
       label: 'API secret',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'onelogin.connection.http.encrypted.apiSecret',
     },
     'http.auth.token.token': {
@@ -74,6 +76,8 @@ export default {
       label: 'Generate token',
       inputboxLabel: 'Token',
       required: true,
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'onelogin.connection.http.auth.token.token',
     },
     'http.auth.token.refreshToken': {

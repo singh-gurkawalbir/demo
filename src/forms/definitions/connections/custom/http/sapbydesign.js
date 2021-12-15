@@ -61,6 +61,8 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'sapbydesign.connection.http.encrypted.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

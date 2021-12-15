@@ -116,6 +116,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       visibleWhen: [{ field: 'http.platformversion', is: ['platform2'] }],
     },
     application: {

@@ -34,6 +34,8 @@ export default {
       label: 'API key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'freshservice.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {

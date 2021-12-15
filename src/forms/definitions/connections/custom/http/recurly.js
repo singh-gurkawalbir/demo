@@ -41,6 +41,8 @@ export default {
       fieldId: 'http.auth.basic.username',
       label: 'API key',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'recurly.connection.http.auth.basic.username',
     },
     application: {
