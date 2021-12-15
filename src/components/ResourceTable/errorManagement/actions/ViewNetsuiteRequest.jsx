@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import HttpIcon from '../../../icons/HttpIcon';
 
 export default {
-  key: 'HTTP request errors',
+  key: 'netsuite-view-request',
   useLabel: () => 'View request',
   icon: HttpIcon,
   useOnClick: rowData => {
