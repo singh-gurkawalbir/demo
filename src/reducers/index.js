@@ -5061,6 +5061,15 @@ selectors.isPreviewPanelAvailableForResource = (
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
 
+selectors.showFullDrawerWidth = (state, drawerProps, urlProps) => {
+  const { width, flowId } = drawerProps;
+
+  if (width === 'full') return true;
+  const { resourceType, id } = urlProps;
+
+  return selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
+};
+
 selectors.applicationType = (state, resourceType, id) => {
   const resourceObj = selectors.resource(state, resourceType, id);
   const stagedResourceObj = selectors.stagedResource(state, id);

@@ -1,31 +1,12 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch, useParams } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../Right';
 import Panel, { redirectURlToParentListing } from './Panel';
 import { selectors } from '../../../reducers';
 
-const useStyles = makeStyles(theme => ({
-  resourceDrawerPaper: {
-    boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
-    zIndex: theme.zIndex.drawer + 1,
-    marginTop: theme.appBarHeight,
-  },
-  panelContainer: {
-    display: 'flex',
-  },
-  fullWidthDrawerClose: {
-    width: 'calc(100% - 60px)',
-  },
-  fullWidthDrawerOpen: {
-    width: `calc(100% - ${theme.drawerWidth}px)`,
-  },
-}));
-
 function ResourceDrawerContent(props) {
   const { flowId, integrationId } = props;
-  const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
   const { id, resourceType } = (match && match.params) || {};
@@ -55,14 +36,14 @@ function ResourceDrawerContent(props) {
 
   return (
     <>
-      <div className={classes.panelContainer}>
-        <Panel
-          {...props}
-          occupyFullWidth={isPreviewPanelAvailableForResource}
-          zIndex={1}
-          onClose={handleClose}
+      {/* <div className={classes.panelContainer}> */}
+      <Panel
+        {...props}
+        occupyFullWidth={isPreviewPanelAvailableForResource}
+        zIndex={1}
+        onClose={handleClose}
             />
-      </div>
+      {/* </div> */}
       {isAsyncHelper
         ? <ResourceDrawer />
         : (
@@ -76,23 +57,12 @@ export default function ResourceDrawer({
   flowId,
   integrationId,
 }) {
-  const { id, resourceType } = useParams();
-  const isPreviewPanelAvailableForResource = useSelector(state =>
-    // Returns a bool whether the resource has a preview panel or not
-    selectors.isPreviewPanelAvailableForResource(
-      state,
-      id,
-      resourceType,
-      flowId
-    )
-  );
-
   return (
     <RightDrawer
       path=":operation(add|edit)/:resourceType/:id"
       variant="temporary"
-      width={isPreviewPanelAvailableForResource ? 'full' : undefined}
-      height="tall">
+      height="tall"
+      flowId={flowId}>
       <ResourceDrawerContent flowId={flowId} integrationId={integrationId} />
     </RightDrawer>
   );
