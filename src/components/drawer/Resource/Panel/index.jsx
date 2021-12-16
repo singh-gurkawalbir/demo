@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useRouteMatch} from 'react-router-dom';
+import { useHistory, useRouteMatch, matchPath } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
@@ -19,6 +19,12 @@ import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
+
+const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
+export const isNestedDrawer = url => !!matchPath(url, {
+  path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
+  exact: true,
+  strict: false});
 
 const useStyles = makeStyles(theme => ({
   root: {

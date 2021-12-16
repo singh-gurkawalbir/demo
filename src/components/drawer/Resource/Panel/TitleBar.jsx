@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { IconButton, makeStyles, Typography } from '@material-ui/core';
-import { useLocation, matchPath } from 'react-router-dom';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import DrawerHeader from '../../Right/DrawerHeader';
 import CloseButton from './CloseButton';
@@ -9,12 +9,7 @@ import Back from '../../../icons/BackArrowIcon';
 import { isNewId } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
-
-const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-export const isNestedDrawer = url => !!matchPath(url, {
-  path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
-  exact: true,
-  strict: false});
+import { isNestedDrawer } from '.';
 
 const useStyles = makeStyles(theme => ({
   backButton: {
@@ -62,6 +57,7 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
 const ResourceTitle = ({ resourceType, id, flowId, onClose }) => {
   const classes = useStyles();
   const location = useLocation();
+  const match = useRouteMatch();
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -80,7 +76,7 @@ const ResourceTitle = ({ resourceType, id, flowId, onClose }) => {
     [id, location.search, resourceLabel, resourceType]
   );
 
-  const showBackButton = isNestedDrawer(location.pathname);
+  const showBackButton = isNestedDrawer(match.url);
 
   return (
     <>
