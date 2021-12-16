@@ -999,21 +999,32 @@ describe('patchResource saga', () => {
 
     return noPatch && newId;
   });
-  test('should make api call and dispatch resource received action if doNotRefetch is false', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: false} })
+  test('should make api call and dispatch resource received and asynctask success action if doNotRefetch is false', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: false} })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {}],
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
     .put(actions.resource.received('exports', {}))
+    .put(actions.asyncTask.success(undefined))
     .run());
-  test('should make api call and dispatch resource request action if doNotRefetch is true', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
+  test('should make api call and dispatch resource request and asynctask success action if doNotRefetch is true', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {}],
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
     .put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.success(undefined))
+    .run());
+  test('should make api call and dispatch resource request and asynctask success action if doNotRefetch is true and asyncKey is present', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true}, asyncKey: 'some-key' })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), {}],
+      [select(selectors.resource, 'exports', '123'), {}],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.success('some-key'))
     .run());
   test('should not dispatch any action and do nothing if api call fails', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
     .provide([
@@ -1022,6 +1033,24 @@ describe('patchResource saga', () => {
     .call.fn(apiCallWithRetry)
     .not.put(actions.resource.received('exports', {}))
     .not.put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.failed(undefined))
+    .returns({error: new APIException({
+      status: 401,
+      message: '{"message":"invalid", "code":"code"}',
+    })})
+    .run());
+  test('should dispatch asyncTask failed action and return error if api call fails and asyncKey is present', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true}, asyncKey: 'some-key' })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), apiError],
+    ])
+    .call.fn(apiCallWithRetry)
+    .not.put(actions.resource.received('exports', {}))
+    .not.put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.failed('some-key'))
+    .returns({error: new APIException({
+      status: 401,
+      message: '{"message":"invalid", "code":"code"}',
+    })})
     .run());
 });
 

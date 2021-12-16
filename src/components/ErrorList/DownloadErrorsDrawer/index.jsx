@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import actions from '../../../actions';
@@ -13,6 +13,8 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import {OutlinedButton, TextButton} from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
+import { selectors } from '../../../reducers';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
 
 const fieldMeta = {
   fieldMap: {
@@ -44,6 +46,7 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
   const [isValidForm, setIsValidForm] = useState(true);
+  const {flowJobId, occuredAt, resolvedAt} = useSelector(state => selectors.filter(state, errorType === 'resolved' ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN));
 
   useEffect(() => {
     const values = formContext.value || {};
@@ -59,8 +62,18 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   const handleDownload = useCallback(
     () => {
       const { value: formValues = {} } = formContext || {};
-      const fromDate = formValues.fromDate && moment(formValues.fromDate).startOf('day').toISOString();
-      const toDate = formValues.toDate && moment(formValues.toDate).endOf('day').toISOString();
+      let fromDate = formValues.fromDate && moment(formValues.fromDate).startOf('day').toISOString();
+      let toDate = formValues.toDate && moment(formValues.toDate).endOf('day').toISOString();
+
+      // Here flow job id will be presenet only if errors gets opened from child jobs in run history
+      if (flowJobId) {
+        if (!fromDate) {
+          fromDate = errorType === 'resolved' ? resolvedAt.startDate : occuredAt.startDate;
+        }
+        if (!toDate && errorType !== 'resolved') {
+          toDate = occuredAt.endDate;
+        }
+      }
 
       if (fromDate && toDate && fromDate > toDate) {
         return enqueueSnackbar({
@@ -73,12 +86,12 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
           flowId,
           resourceId,
           isResolved: errorType === 'resolved',
-          filters: { fromDate, toDate },
+          filters: { fromDate, toDate, flowJobId },
         }
       ));
       onClose();
     },
-    [dispatch, flowId, resourceId, errorType, onClose, formContext, enqueueSnackbar],
+    [formContext, flowJobId, dispatch, flowId, resourceId, errorType, onClose, resolvedAt?.startDate, occuredAt?.startDate, occuredAt?.endDate, enqueueSnackbar],
   );
 
   if (!VALID_ERROR_TYPES.includes(errorType)) {
