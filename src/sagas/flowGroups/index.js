@@ -1,9 +1,9 @@
-import { call, put, takeEvery, takeLatest, select, putResolve } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
-import { patchResource } from '../resources';
+import { getResourceCollection, patchResource } from '../resources';
 
 export function* patchIntegrationChanges({ integrationId, flowGroupings}) {
   const patchSet = [
@@ -38,7 +38,7 @@ export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId }) {
       message: 'Updating flow group',
     });
 
-    yield putResolve(actions.resource.requestCollection('flows'));
+    yield call(getResourceCollection, { resourceType: 'flows' });
   } catch (error) {
     return {error};
   }

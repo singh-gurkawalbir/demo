@@ -16,7 +16,7 @@ import {
   editFlowGroup,
 } from '.';
 import { APIException } from '../api/requestInterceptors/utils';
-import { patchResource } from '../resources';
+import { getResourceCollection, patchResource } from '../resources';
 
 const apiError = new APIException({
   status: 401,
@@ -97,9 +97,12 @@ describe('updateFlowsWithFlowGroupId saga', () => {
 
   test('On successful api call, should dispatch resourceCollection action for flows', () =>
     expectSaga(updateFlowsWithFlowGroupId, { flowIds, flowGroupId })
-      .provide([[call(apiCallWithRetry, args)]])
+      .provide([
+        [call(apiCallWithRetry, args)],
+        [call(getResourceCollection, { resourceType: 'flows' })],
+      ])
       .call(apiCallWithRetry, args)
-      .putResolve(actions.resource.requestCollection('flows'))
+      .call(getResourceCollection, { resourceType: 'flows' })
       .run()
   );
   test('if api call fails should return the error', () =>
