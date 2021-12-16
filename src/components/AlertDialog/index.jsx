@@ -1,4 +1,4 @@
-import { Typography, Dialog, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
+import { Typography, Dialog, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import SignInForm from '../../views/SignIn/SigninForm';
@@ -9,7 +9,8 @@ import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
-import { FilledButton, OutlinedButton } from '../Buttons';
+import { OutlinedButton} from '../Buttons';
+import { ConfirmDialog } from '../ConfirmDialog';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -75,26 +76,28 @@ const UserAcceptedAccountTransfer = () => (
 );
 const WarningSessionContent = () => {
   const dispatch = useDispatch();
+  const handleContinueSession = () => {
+    dispatch(actions.user.profile.request('Refreshing session'));
+  };
 
   return (
-    <>
-      <DialogTitle>
-        <Typography>Your session is about to expire</Typography>
-        <br />
-        <Typography>
-          Please click the following button to resume working
-        </Typography>
-      </DialogTitle>
-      <DialogContent>
-        <FilledButton
-          data-test="resumeWorking"
-          onClick={() => {
-            dispatch(actions.user.profile.request('Refreshing session'));
-          }}>
-          Resume working
-        </FilledButton>
-      </DialogContent>
-    </>
+    <ConfirmDialog
+      message="Your session is about to expire. Do you want to stay signed in?"
+      title="Session expiring"
+      onClose={() => {}}
+      onDialogClose={handleContinueSession}
+      buttons={[
+        { label: 'Yes, keep me signed in',
+          onClick: handleContinueSession,
+        },
+        { label: 'No, sign me out',
+          variant: 'text',
+          onClick: () => {
+            dispatch(actions.auth.logout());
+          },
+        },
+      ]}
+    />
   );
 };
 
@@ -121,7 +124,7 @@ export default function AlertDialog() {
   const classes = useStyles();
 
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
-  const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
+  const showSessionStatus = useSelector(state => selectors.showSessionStatus(state)) || 'warning';
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
   const isAuthenticated = useSelector(state => selectors.isAuthenticated(state));
   const isUiVersionDifferent = useSelector(selectors.isUiVersionDifferent);

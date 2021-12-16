@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     top: 0,
   },
 }));
-const ConfirmDialog = (
+export const ConfirmDialog = (
   {
     message,
     title = 'Confirm',
