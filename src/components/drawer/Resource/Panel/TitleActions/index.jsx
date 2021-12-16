@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
   },
-  nestedDrawerTitleText: {
-    maxWidth: '90%',
-  },
   debugLogButton: {
     padding: '0px 8px',
     borderRadius: 0,
@@ -44,9 +41,6 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: 24,
     width: 1,
-  },
-  resourcePanelFooter: {
-    background: theme.palette.common.white,
   },
 }));
 

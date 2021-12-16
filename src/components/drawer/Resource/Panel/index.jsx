@@ -2,8 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  matchPath, useHistory, useRouteMatch} from 'react-router-dom';
+import { useHistory, useRouteMatch} from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
@@ -21,11 +20,6 @@ import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
 
-const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-export const isNestedDrawer = url => !!matchPath(url, {
-  path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
-  exact: true,
-  strict: false});
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100vh',
@@ -49,64 +43,6 @@ const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
     width: '100%',
     overflowY: 'auto',
-  },
-  appLogo: {
-    padding: theme.spacing(0, 1),
-    margin: theme.spacing(-0.5, 0),
-  },
-  guideWrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  guideLink: {
-    marginRight: theme.spacing(2),
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(0.5),
-  },
-  guideLinkIcon: {
-    marginRight: theme.spacing(0.5),
-  },
-  title: {
-    display: 'flex',
-    padding: theme.spacing(2, 3),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    position: 'relative',
-  },
-  titleText: {
-    wordBreak: 'break-word',
-    paddingRight: theme.spacing(2),
-    color: theme.palette.secondary.main,
-  },
-  backButton: {
-    marginRight: theme.spacing(1),
-    padding: 0,
-    '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
-    },
-  },
-  titleImgBlock: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  debugLogButton: {
-    padding: '0px 8px',
-    borderRadius: 0,
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-  appLogoWrapper: {
-    position: 'relative',
-    display: 'flex',
-    marginRight: theme.spacing(3),
-  },
-  divider: {
-    height: 24,
-    width: 1,
-  },
-  resourcePanelFooter: {
-    background: theme.palette.common.white,
   },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
