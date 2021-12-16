@@ -19,9 +19,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(2),
     },
   },
-  runCompleteStatus: {
-    flex: '1 0 100%',
-  },
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
@@ -97,7 +94,7 @@ export default function DrawerHeader({
       />
         )}
         {infoText && <InfoIconButton info={infoText} />}
-        {endedAt ? <Typography variant="body2" component="div" className={classes.runCompleteStatus}>Run completed: <CeligoTimeAgo date={endedAt} /></Typography> : ''}
+        {endedAt && <Typography variant="body2" component="div">Run completed: <CeligoTimeAgo date={endedAt} /></Typography>}
       </Typography>
 
       {/* Typically children are the action icons/buttons */}
