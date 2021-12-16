@@ -316,7 +316,7 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST: {
       let path = `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}/signedURL`;
-      const { fromDate, toDate } = filters || {};
+      const { fromDate, toDate, flowJobId } = filters || {};
       const fromKey = isResolved ? 'resolvedAt_gte' : 'occurredAt_gte';
       const toKey = isResolved ? 'resolvedAt_lte' : 'occurredAt_lte';
 
@@ -326,6 +326,9 @@ export default function getRequestOptions(
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
+      }
+      if (flowJobId) {
+        path += `&_flowJobId=${flowJobId}`;
       }
 
       return {
@@ -363,8 +366,7 @@ export default function getRequestOptions(
         ? nextPageURL.replace('/api', '')
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
-
-      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
+      const { sources = [], classifications = [], occuredAt, resolvedAt, flowJobId } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
@@ -376,9 +378,14 @@ export default function getRequestOptions(
         queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
         queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
       }
-      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+      if (resolvedAt?.startDate) {
         queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+      }
+      if (resolvedAt?.endDate) {
         queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
+      if (flowJobId) {
+        queryParams.push(`_flowJobId=${flowJobId}`);
       }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
