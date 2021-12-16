@@ -2223,6 +2223,8 @@ export default {
   'accountdashboard.avgRuntime': 'The average time the flow takes to complete running. The run time includes the time the flow is “Waiting in queue” status.',
   'accountdashboard.numResolvedByAuto': 'The number of errors that were auto-resolved, based on a match to another error’s <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a> (unique field identifier).',
   'runConsole.resolved': 'This column displays the total number of duplicate errors in each flow step that were resolved as a result of automatic identification with a matching <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" title="https://docs.celigo.com/hc/en-us/articles/360060740672" data-renderer-mark="true">trace key</a>.',
+  'runHistory.flow': 'Expand a flow to see the historical breakdown of success, ignored, errors and pages encountered at each flow step (such as an export) from previous flow runs. The total number of errors, if any, reported at that flow step contains a link to complete details and actions for each error.',
+  'runHistory.errors': 'The error amounts (as well as the amounts in Success, Ignored and Pages) are historical dashboard data from previous flow runs. Resolving additional errors will not reduce the error amounts. The number of errors per step is the total of its open and resolved errors.',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':

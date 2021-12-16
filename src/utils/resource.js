@@ -684,7 +684,7 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 ) => {
   let mapping = cloneDeep(mappingOriginal);
 
-  const subrecordsMap = keyBy(subrecords, 'fieldId');
+  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {

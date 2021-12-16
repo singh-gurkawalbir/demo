@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { useSelector, shallowEqual } from 'react-redux';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -8,8 +10,20 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
 
+const emptySet = [];
+
+const useStyles = makeStyles(theme => ({
+  errorsInRun: {
+    marginBottom: theme.spacing(3),
+  },
+  boldErrorsCount: {
+    fontWeight: 'bold',
+  },
+}));
+
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
+  const classes = useStyles();
   const match = useRouteMatch();
   const { pathname } = useLocation();
 
@@ -27,6 +41,20 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/:errorType`,
   });
+
+  const matchErrorDrawerPathWithFilter = matchPath(pathname, {
+    path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
+  });
+  const flowJobId = matchErrorDrawerPathWithFilter?.params?.flowJobId;
+  const allErrors = useSelector(state => {
+    const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+
+    return allErrorDetails.errors || emptySet;
+  });
+
+  const childJob = useSelector(
+    state => selectors.filter(state, `${flowId}-${flowJobId}-${matchErrorDrawerPathWithFilter?.params?.resourceId}`), shallowEqual
+  );
 
   const resourceName = useSelector(state => {
     const { resourceId } = matchErrorDrawerPath?.params || {};
@@ -49,21 +77,39 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [history, match.url]);
 
   const handleErrorTypeChange = useCallback(errorType => {
-    history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
-  }, [history, match.url, matchErrorDrawerPath?.params?.resourceId]);
+    if (matchErrorDrawerPathWithFilter) {
+      history.replace(`${match.url}/errors/${matchErrorDrawerPathWithFilter.params.resourceId}/filter/${matchErrorDrawerPathWithFilter.params.flowJobId}/${errorType}`);
+    } else {
+      history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
+    }
+  }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
+
+  // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
+  if (flowJobId && (!childJob || isEmpty(childJob))) {
+    handleClose();
+
+    return null;
+  }
 
   return (
     <RightDrawer
-      path="errors/:resourceId/:errorType"
+      path={['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType']}
       width="full"
       onClose={handleClose}
       variant="temporary">
 
-      <DrawerHeader title={`Errors: ${resourceName}`} hideBackButton>
+      <DrawerHeader endedAt={flowJobId && childJob?.endedAt} title={`Errors: ${resourceName}`} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
 
       <DrawerContent>
+        {flowJobId ? (
+          <Typography variant="body2" className={classes.errorsInRun}>
+            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run: </span>
+            <span> {allErrors.length} open  |  </span>
+            <span>{childJob?.numOpenError - allErrors.length} resolved</span>
+          </Typography>
+        ) : ''}
         <ErrorList flowId={flowId} />
       </DrawerContent>
     </RightDrawer>
