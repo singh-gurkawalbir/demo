@@ -107,7 +107,9 @@ export const previewFileData = (previewData, recordSize) => {
   return previewData.slice(0, recordSize);
 };
 
-export const getLatestReqResData = reqResData => {
+export const getLatestReqResData = (previewData, type) => {
+  const reqResData = previewData?.[type]?.data;
+
   if (Array.isArray(reqResData) && reqResData.length) {
     // Incase of series of requests or responses, we need to show the latest(final) one to the user
     // That will be  the last item in the reqResData
@@ -115,4 +117,4 @@ export const getLatestReqResData = reqResData => {
   }
 };
 
-export const getRequestURL = requestData => getLatestReqResData(requestData?.data)?.url;
+export const getRequestURL = previewData => getLatestReqResData(previewData, 'request')?.url;

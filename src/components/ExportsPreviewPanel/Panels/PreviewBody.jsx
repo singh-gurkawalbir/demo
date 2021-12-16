@@ -91,10 +91,10 @@ export default function PreviewBody(props) {
                 : <DefaultPanel value={wrapExportFileSampleData(previewStageDataList.preview?.data)} /> }
             </CeligoTabPanel>
             <CeligoTabPanel panelId="request">
-              <RequestResponsePanel value={getLatestReqResData(previewStageDataList.request?.data)} variant="previewPanel" />
+              <RequestResponsePanel value={getLatestReqResData(previewStageDataList, 'request')} variant="previewPanel" />
             </CeligoTabPanel>
             <CeligoTabPanel panelId="raw">
-              <RequestResponsePanel value={getLatestReqResData(previewStageDataList.raw?.data)} variant="previewPanel" />
+              <RequestResponsePanel value={getLatestReqResData(previewStageDataList, 'raw')} variant="previewPanel" />
             </CeligoTabPanel>
           </CeligoTabWrapper>
         </>
