@@ -22,11 +22,12 @@ import {
   initSampleData,
   initEditor,
   toggleEditorVersion,
+  getFlowSampleData,
 } from '.';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
-import { APIException } from '../api';
+import { APIException } from '../api/requestInterceptors/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic';
 
 const editorId = 'httpbody';
@@ -148,12 +149,13 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
-    test('should set correct request body and make api call if processor is mapperProcessor', () => {
+    test('should set correct request body and make api call if processor is mapperProcessor for mappings editor type', () => {
       const editorState = {
         resourceId: 'res-123',
         flowId: 'flow-123',
         resourceType: 'imports',
         data: '[{"id": "123"}]',
+        editorType: 'mappings',
       };
       const importRes = {
         _id: 'res-123',
@@ -210,6 +212,46 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
+    test('should set correct request body and make api call if processor is mapperProcessor for responseMappings editor type', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'responseMappings',
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+      }];
+
+      const expectedBody = {
+        rules: {
+          rules: [{
+            fields: [{extract: 'id', generate: 'id'}],
+            lists: [],
+          }],
+        },
+        data: [[{id: '123'}]],
+      };
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.responseMapping), {mappings}],
+          [select(selectors.editor, editorId), editorState],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/mapperProcessor',
+          opts: {
+            method: 'POST',
+            body: expectedBody,
+          },
+          hidden: true })
+        .run();
+    });
+
     test('should make api call with passed arguments', () => {
       const body = 'somebody';
 
@@ -466,7 +508,7 @@ describe('editor sagas', () => {
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
       expect(effects.call).toHaveLength(3);
-      expect(effects.put).toHaveLength(6);
+      expect(effects.put).toHaveLength(5);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
       expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(editorId)));
     });
@@ -541,7 +583,7 @@ describe('editor sagas', () => {
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
       expect(effects.call).toHaveLength(3);
-      expect(effects.put).toHaveLength(6);
+      expect(effects.put).toHaveLength(5);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
       expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(editorId)));
     });
@@ -571,9 +613,9 @@ describe('editor sagas', () => {
       // contains that many less count of the effects
       // for eg, if we also add assertion in expectSaga like .put(actions.editor.saveComplete(id)), then effects.put
       // will have a length of 5, not 6 as we have already asserted one action
-      expect(effects.put).toHaveLength(6);
-      expect(effects.put[5]).toEqual(
-        put(actions.resource.commitStaged('connections', '111', 'value'))
+      expect(effects.put).toHaveLength(5);
+      expect(effects.put[4]).toEqual(
+        put(actions.resource.patchAndCommitStaged('connections', '111', [{op: 'replace', path: '/connection', value: 'some value'}]))
       );
     });
   });
@@ -843,11 +885,10 @@ describe('editor sagas', () => {
         .returns({})
         .run();
     });
-    test('should call requestResourceFormSampleData and get preview stage data for dataURITemplate field', () => {
+    test('should call requestResourceFormSampleData for standalone export and get preSavePageHook stage data for dataURITemplate/traceKeyTemplate field', () => {
       const editor = {
         id: 'dataURITemplate',
         editorType: 'handlebars',
-        flowId,
         resourceType: 'exports',
         resourceId,
         fieldId: 'dataURITemplate',
@@ -859,14 +900,15 @@ describe('editor sagas', () => {
           [select(selectors.editor, 'dataURITemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestResourceFormSampleData)],
-          [matchers.call.fn(requestSampleData), {}],
-          [matchers.call.fn(apiCallWithRetry), {}],
+          [matchers.select.selector(selectors.getResourceSampleDataWithStatus), { data: {name: 'Bob'} }],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
         ])
-        .call(requestResourceFormSampleData, { formKey: editor.formKey })
-        .returns({data: undefined, templateVersion: undefined})
+        .call(requestResourceFormSampleData, { formKey: editor.formKey, options: { executeProcessors: true } })
+        .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
         .run();
     });
-    test('should call requestResourceFormSampleData and get preview stage data for traceKeyTemplate field', () => {
+    test('should call getFlowSampleData and get responseMappingExtract ( output of preSavePage hook ) stage data for dataURI/traceKeyTemplate field', () => {
       const editor = {
         id: 'traceKeyTemplate',
         editorType: 'handlebars',
@@ -874,6 +916,7 @@ describe('editor sagas', () => {
         resourceType: 'exports',
         resourceId,
         fieldId: 'traceKeyTemplate',
+        stage: 'responseMappingExtract',
         formKey: 'new-123',
       };
 
@@ -881,12 +924,12 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'traceKeyTemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestResourceFormSampleData)],
-          [matchers.call.fn(requestSampleData), {}],
-          [matchers.call.fn(apiCallWithRetry), {}],
+          [matchers.call.fn(getFlowSampleData), {name: 'Bob'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
         ])
-        .call(requestResourceFormSampleData, { formKey: editor.formKey })
-        .returns({data: undefined, templateVersion: undefined})
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'responseMappingExtract', formKey: 'new-123'})
+        .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
         .run();
     });
     test('should call requestResourceFormSampleData incase of http/rest resource when paging is configured', () => {
@@ -919,7 +962,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestResourceFormSampleData, { formKey: editor.formKey })
+        .call(requestResourceFormSampleData, { formKey: editor.formKey, options: { executeProcessors: false } })
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
@@ -937,10 +980,10 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestSampleData), {}],
+          [matchers.call.fn(getFlowSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(requestSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
         .returns({data: undefined, templateVersion: undefined})
         .run();
     });
@@ -961,7 +1004,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false}],
         ])
-        .call(requestSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
         .not.call.fn(apiCallWithRetry)
         .run();
     });
@@ -979,14 +1022,14 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestSampleData), {}],
+          [matchers.call.fn(getFlowSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
             status: 401,
             message: '{"message":"invalid processor", "code":"code"}',
           }))],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
         ])
-        .call(requestSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
         .call.fn(apiCallWithRetry)
         .put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .run();
@@ -1005,11 +1048,11 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestSampleData), {}],
+          [matchers.call.fn(getFlowSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
           [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
         ])
-        .call(requestSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
         .call.fn(apiCallWithRetry)
         .not.put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
@@ -1029,7 +1072,7 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
           [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
           [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
@@ -1043,7 +1086,7 @@ describe('editor sagas', () => {
               templateVersion: undefined,
               flowId,
               integrationId: 'Integration-1234',
-              export: {},
+              export: { oneToMany: false },
               fieldPath: 'filter',
             },
           },
@@ -1054,14 +1097,13 @@ describe('editor sagas', () => {
         .returns({ data: { record: {id: 999}}, templateVersion: 2 })
         .run();
     });
-    test('should not call sampleDataWrapper selector for csv generator and filters stage and return data as is', () => {
+    test('should not call getFlowSampleData and also sampleDataWrapper selector for csv generator return data as is', () => {
       const editor = {
         id: 'filecsv',
         editorType: 'csvGenerator',
         flowId,
         resourceType: 'imports',
         resourceId,
-        stage: 'flowInput',
         formKey: 'new-123',
         fieldId: 'file.csv',
       };
@@ -1070,11 +1112,10 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'filecsv'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
           [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
         ])
-        .call(requestSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'flowInput'})
+        .not.call.fn(getFlowSampleData)
         .call.fn(apiCallWithRetry)
         .not.select.selector(selectors.sampleDataWrapper)
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
@@ -1096,10 +1137,10 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, 'salesforceid'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [matchers.call.fn(requestSampleData), {}],
+          [matchers.call.fn(getFlowSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false, sampleData: {name: 'Bob'}}],
         ])
-        .call(requestSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'importMappingExtract'})
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'importMappingExtract', formKey: 'new-123' })
         .not.call.fn(apiCallWithRetry)
         .not.select.selector(selectors.sampleDataWrapper)
         .returns({ data: { name: 'Bob' }, templateVersion: undefined })

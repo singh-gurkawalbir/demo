@@ -1,4 +1,5 @@
 import { uniqBy } from 'lodash';
+import Browser from 'bowser';
 import mappingUtil from '..';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
@@ -433,5 +434,17 @@ export default {
     });
 
     return generatedMapping;
+  },
+  isNSMappingAssistantSupported: () => {
+    const browser = Browser.getParser(window.navigator.userAgent);
+    const { name, version } = browser.getBrowser();
+
+    // Chrome browser with versions >= 91 are not supported for NS Assistant to launch Iframe
+    // Ref https://celigo.atlassian.net/browse/IO-21921
+    if (name === 'Chrome' && parseInt(version, 10) >= 91) {
+      return false;
+    }
+
+    return true;
   },
 };

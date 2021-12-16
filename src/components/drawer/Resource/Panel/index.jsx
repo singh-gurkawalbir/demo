@@ -17,6 +17,7 @@ import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
+import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
@@ -52,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
-    padding: theme.spacing(3),
+    padding: theme.spacing(3, 3, 1),
     '& > div:first-child': {
       padding: 0,
       paddingRight: theme.spacing(2),
@@ -206,6 +207,7 @@ export default function Panel(props) {
 
   const isNew = operation === 'add';
 
+  useHandleResourceFormFlowSampleData(formKey);
   useResourceFormRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,

@@ -7,7 +7,7 @@ import {
 
 const emptyObj = {};
 
-export const GLOBAL_PREFERENCES = [
+const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
   'defaultAShareId',
   'environment',
@@ -17,8 +17,46 @@ export const GLOBAL_PREFERENCES = [
   'lastLoginAt',
 ];
 
+const getAccountPreferences = draft => {
+  const { defaultAShareId } = draft;
+
+  if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+    return draft;
+  }
+
+  return draft.accounts?.[defaultAShareId] || {};
+};
+
+const updatePreferences = (draft, preferences) => {
+  const { defaultAShareId } = draft;
+
+  if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+    Object.keys(preferences).forEach(key => {
+      draft[key] = preferences[key];
+    });
+  } else {
+    Object.keys(preferences).forEach(key => {
+      const preference = preferences[key];
+
+      if (GLOBAL_PREFERENCES.includes(key)) {
+        draft[key] = preference;
+      } else {
+        if (!draft.accounts) {
+          draft.accounts = {};
+        }
+
+        if (!draft.accounts[defaultAShareId]) {
+          draft.accounts[defaultAShareId] = {};
+        }
+
+        draft.accounts[defaultAShareId][key] = preference;
+      }
+    });
+  }
+};
+
 export default (state = { environment: 'production' }, action) => {
-  const { type, resourceType, resource, preferences } = action;
+  const { type, resourceType, resource, preferences, integrationKey } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -33,35 +71,43 @@ export default (state = { environment: 'production' }, action) => {
 
         break;
       case actionTypes.UPDATE_PREFERENCES:
+        updatePreferences(draft, preferences);
+
+        break;
+
+      case actionTypes.PIN_INTEGRATION:
         {
-          const { defaultAShareId } = draft;
+          let {dashboard} = getAccountPreferences(draft);
 
-          if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-            Object.keys(preferences).forEach(key => {
-              draft[key] = preferences[key];
-            });
-          } else {
-            Object.keys(preferences).forEach(key => {
-              const preference = preferences[key];
-
-              if (GLOBAL_PREFERENCES.includes(key)) {
-                draft[key] = preference;
-              } else {
-                if (!draft.accounts) {
-                  draft.accounts = {};
-                }
-
-                if (!draft.accounts[defaultAShareId]) {
-                  draft.accounts[defaultAShareId] = {};
-                }
-
-                draft.accounts[defaultAShareId][key] = preference;
-              }
-            });
+          if (!dashboard) {
+            dashboard = {};
           }
+          // push unique integration key to pinnedIntegrations
+          if (!dashboard.pinnedIntegrations) {
+            dashboard.pinnedIntegrations = [];
+          }
+          dashboard.pinnedIntegrations.push(integrationKey);
+          updatePreferences(draft, { dashboard: {...dashboard, pinnedIntegrations: dashboard.pinnedIntegrations }});
         }
 
         break;
+
+      case actionTypes.UNPIN_INTEGRATION:
+        {
+          const {dashboard} = getAccountPreferences(draft);
+
+          if (!dashboard || !dashboard.pinnedIntegrations) {
+            break;
+          }
+          const index = dashboard.pinnedIntegrations.indexOf(integrationKey);
+
+          if (index !== -1) {
+            dashboard.pinnedIntegrations.splice(index, 1);
+            updatePreferences(draft, { dashboard: {...dashboard, pinnedIntegrations: dashboard.pinnedIntegrations }});
+          }
+        }
+        break;
+
       default:
     }
   });

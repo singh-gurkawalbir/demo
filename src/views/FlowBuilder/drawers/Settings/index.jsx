@@ -145,8 +145,7 @@ function Settings({
         });
       }
 
-      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value', null, null, formKey));
+      dispatch(actions.resource.patchAndCommitStaged('flows', flow._id, patchSet, { asyncKey: formKey }));
     },
     [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification, hasFlowSettingsAccess]
   );
@@ -162,9 +161,16 @@ function Settings({
     }
     handleSubmit(formValues);
   }, [formValues, handleSubmit]);
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
-    setRemountKey(remountKey => remountKey + 1);
+    // settings form was remounting twice every time we open the settings drawer..this piece of code
+    // prevents that redundant action
+    if (componentMounted) {
+      setRemountKey(remountKey => remountKey + 1);
+    }
+    setComponentMounted(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFlowSubscribed]);
 
   const remountFn = useCallback(() => {

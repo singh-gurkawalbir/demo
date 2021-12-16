@@ -151,7 +151,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
             onChange={handleFlowCategoryChange}
             displayEmpty
             value={flowCategory || ''}>
-            <MenuItem value="">Select flow category</MenuItem>
+            <MenuItem value="">Select flow group</MenuItem>
             {sections}
           </CeligoSelect>
           )}

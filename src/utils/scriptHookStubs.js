@@ -343,5 +343,4 @@ export const HOOKS_IN_IMPORT_EXPORT_RESOURCE = [
   'postSubmit',
   'postAggregate',
   'postResponseMap',
-
 ];

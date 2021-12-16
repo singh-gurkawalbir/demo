@@ -1,5 +1,6 @@
-import { values, keyBy } from 'lodash';
+import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
+import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
 import { stringCompare } from './sort';
@@ -130,7 +131,7 @@ export function getResourceSubType(resource) {
   return out;
 }
 
-export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false) {
   if (!Array.isArray(resources)) {
     return emptyList;
   }
@@ -148,7 +149,9 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
   const comparer = ({ order = 'asc', orderBy = 'name' }) =>
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
 
-  return resources.filter(stringTest).sort(comparer(sort));
+  const filteredResources = resources.filter(stringTest);
+
+  return skipSort ? filteredResources : filteredResources.sort(comparer(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -676,14 +679,15 @@ export const getNetSuiteSubrecordImports = importDoc =>
   );
 
 export const updateMappingsBasedOnNetSuiteSubrecords = (
-  mapping,
+  mappingOriginal,
   subrecords
 ) => {
-  const subrecordsMap = keyBy(subrecords, 'fieldId');
+  let mapping = cloneDeep(mappingOriginal);
+
+  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {
-      // eslint-disable-next-line no-param-reassign
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
@@ -711,7 +715,6 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
     }
 
     if (mapping.lists) {
-      // eslint-disable-next-line no-param-reassign
       mapping.lists = mapping.lists
         .map(list => {
           if (list.fields) {
@@ -760,17 +763,14 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 
   if (newSubrecords.length > 0) {
     if (!mapping) {
-      // eslint-disable-next-line no-param-reassign
       mapping = {};
     }
 
     if (!mapping.fields) {
-      // eslint-disable-next-line no-param-reassign
       mapping.fields = [];
     }
 
     if (!mapping.lists) {
-      // eslint-disable-next-line no-param-reassign
       mapping.lists = [];
     }
 
@@ -875,9 +875,6 @@ export const isQueryBuilderSupported = (importResource = {}) => {
   return false;
 };
 
-// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
-export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
-
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;
 
@@ -930,4 +927,30 @@ export const isOldRestAdaptor = (resource, connection) => {
   const { adaptorType, _id } = resource || {};
 
   return (['RESTExport', 'RESTImport'].includes(adaptorType) && _id && !isNewId(_id)) || connection?.isHTTP === false;
+};
+
+// this util takes the link header string as argument
+// and extract and returns the 'next' relation relative url
+export const getNextLinkRelativeUrl = link => {
+  if (!link) return '';
+  if (!(typeof link === 'string' || link instanceof String)) return '';
+
+  const linkHeaderRelation = 'next';
+
+  let domainURL = getDomainUrl();
+
+  if (domainURL.includes('localhost')) {
+    domainURL = process.env.API_ENDPOINT;
+  }
+  try {
+    const linkObj = parseLinkHeader(link);
+
+    if (linkObj && linkObj[linkHeaderRelation]?.url) {
+      return linkObj[linkHeaderRelation].url.replace(`${domainURL}/api`, '');
+    }
+  } catch (error) {
+    return '';
+  }
+
+  return '';
 };

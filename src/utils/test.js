@@ -9,7 +9,7 @@ import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
-import { MISCELLANEOUS_SECTION_ID } from './constants';
+import { UNASSIGNED_SECTION_ID } from './constants';
 import { getAsyncKey } from './saveAndCloseButtons';
 
 const uiRoutePathPrefix = '';
@@ -437,12 +437,12 @@ describe('redirectFirstFlowGrouping', () => {
       url: `${baseRoute}/sections/inValidId`,
     };
     const flowGroupings = null;
-    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
+    const hasUnassignedSection = null;
 
-    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}`);
   });
 
-  test('when attempting an invalid route with flows that are all categorized should return path to redirect to first flowgrouping', () => {
+  test('when attempting an invalid route with flowGroupings present should redirect to first flowgrouping', () => {
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
@@ -451,53 +451,54 @@ describe('redirectFirstFlowGrouping', () => {
       url: `${baseRoute}/sections/inValidId`,
     };
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
-    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}];
+    const hasUnassignedSection = false;
 
-    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}/sections/firstGroupId`);
   });
-
-  test('when attempting an invalid route with uncategorized flows then should return path to redirect to first flowgrouping', () => {
-    const match = {
-      path: `${baseRoute}/sections/:sectionId`,
-      params: {
-        sectionId: 'inValidId',
-      },
-      url: `${baseRoute}/sections/inValidId`,
-    };
-    const flowGroupings = [{ sectionId: 'firstGroupId'}];
-    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
-
-    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
-  });
-  test('when attempting a miscellaneous section route with all uncateogrized flows then should return null since it is a valid route', () => {
-    // in this case we will have a misc section
+  test('when attempting an unassigned section route with hasUnassignedSection as true then should return null since it is a valid route', () => {
+    // in this case we will have a unassigned section
     /// the util fn will return null since we are attempting a valid route
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
-        sectionId: MISCELLANEOUS_SECTION_ID,
+        sectionId: UNASSIGNED_SECTION_ID,
       },
-      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+      url: `${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`,
     };
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
-    const flows = [{id: 'someId'}, {id: 'someId2'}];
+    const hasUnassignedSection = true;
 
-    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(null);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(null);
+  });
+  test('when attempting a flow group route with hasUnassignedSection as true but without flow groupings then should return path to unassigned section', () => {
+    // this case is trigerred when we are searching for a flow in Unassigned section
+    /// the util fn will return null since we are attempting a valid route
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'firstGroupId',
+      },
+      url: `${baseRoute}/sections/firstGroupId`,
+    };
+    const flowGroupings = [];
+    const hasUnassignedSection = true;
+
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`);
   });
 
-  test('when attempting a miscellaneous section route with no flows then should return firstFlowGroupId', () => {
+  test('when attempting a unassigned section route with hasUnassignedSection as false then should return firstFlowGroupId', () => {
     // we will still have all flowGrouping sections
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
-        sectionId: MISCELLANEOUS_SECTION_ID,
+        sectionId: UNASSIGNED_SECTION_ID,
       },
-      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+      url: `${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`,
     };
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
-    const flows = null;
+    const hasUnassignedSection = false;
 
-    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}/sections/firstGroupId`);
   });
 });
 

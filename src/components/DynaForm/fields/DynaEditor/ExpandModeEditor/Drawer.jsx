@@ -69,8 +69,8 @@ export default function EditorDrawer(props) {
       },
     ];
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
+    dispatch(actions.resource.patchAndCommitStaged(resourceType, resourceId, patchSet));
+
     handleUpdateOnDrawerSave(content);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, handleUpdateOnDrawerSave]);

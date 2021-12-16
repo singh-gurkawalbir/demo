@@ -419,23 +419,16 @@ describe('requestLatestJobs saga', () => {
   ];
 
   test('should dispatch required actions and call getJobFamily for every latestJob if the api call is succesfull', () => {
-    const saga = expectSaga(requestLatestJobs, {flowId})
-      .provide([
-        [call(apiCallWithRetry, { path, opts: {method}, hidden: true}), latestFlowJobs],
-        [call(getJobFamily)],
-      ])
+    testSaga(requestLatestJobs, {flowId})
+      .next()
       .call(apiCallWithRetry, { path, opts: {method}, hidden: true})
-      .put(
-        actions.errorManager.latestFlowJobs.received({
-          flowId,
-          latestJobs: latestFlowJobs,
-        })
+      .next(latestFlowJobs)
+      .next()
+      .all(
+        latestFlowJobs.map(latestJob => call(getJobFamily, { flowId, jobId: latestJob._id }))
       );
-
-    latestFlowJobs.map(latestJob => saga.call(getJobFamily, { flowId, jobId: latestJob._id }));
-
-    return saga.put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId })).run();
-  });
+  }
+  );
   test('should not dispatch any actions or call getJobFamily if apiCallWithRetry api fails', () => {
     const error = { message: 'something' };
 
@@ -511,10 +504,14 @@ describe('cancelLatestJobs saga', () => {
   const jobIds = ['j1', 'j2', 'j3'];
 
   test('should make a cancel call for each latestjob and dispatch latestFlowJobs request action', () => {
-    const saga = expectSaga(cancelLatestJobs, {flowId, jobIds}).provide([[call(cancelJob)]]);
-
-    jobIds.map(jobId => saga.call(cancelJob, {jobId}));
-
-    return saga.put(actions.errorManager.latestFlowJobs.request({ flowId })).run();
+    testSaga(cancelLatestJobs, {flowId, jobIds})
+      .next()
+      .all(
+        jobIds.map(jobId => call(cancelJob, {jobId}))
+      )
+      .next()
+      .put(
+        actions.errorManager.latestFlowJobs.request({ flowId })
+      );
   });
 });

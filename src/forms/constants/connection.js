@@ -128,6 +128,13 @@ export default {
     'zenefits',
     'saphana',
     'mixpanel',
+    'copper',
+    '15five',
+    'breezyhr',
+    'confluencecloud',
+    'sapbusinessone',
+    'bartender',
+    'jazzhr',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -208,6 +215,9 @@ export default {
     'googleads',
     'pagerduty',
     'pandadoc',
+    'docebo',
+    'mercadolibre',
+    'zohoexpense',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -247,5 +257,6 @@ export default {
     'googledrive',
     'microsoftteams',
     'adobesign',
+    'zohoexpense',
   ],
 };

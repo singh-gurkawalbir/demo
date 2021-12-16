@@ -79,10 +79,8 @@ export default function TestButton(props) {
         {...props}
         disabled={disabled || pingLoading}
         onClick={handleTestConnection}
-        size="small"
         dataTest="test"
-        variant="outlined"
-        color="secondary">
+        variant="outlined">
         {isTesting ? 'Testing' : 'Test connection'}
       </DynaAction>
     </>

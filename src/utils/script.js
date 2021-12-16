@@ -1,19 +1,3 @@
-
-export const SCRIPTS_IN_FLOW_RESOURCE = [
-  'postResponseMap',
-];
-export const HOOKS_IN_IMPORT_EXPORT_RESOURCE = [
-  // TODO CHECK for 'postResponseMap' if its present in import/export res
-  // 'postResponseMap',
-  'preSavePage',
-  'preMap',
-  'postMap',
-  'postSubmit',
-  'postAggregate',
-  // 'transform',
-  // 'filter',
-];
-
 export const SCRIPT_FUNCTION_TYPES = {
   PRE_SAVE_PAGE: 'preSavePage',
   PRE_MAP: 'preMap',

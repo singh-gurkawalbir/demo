@@ -8,7 +8,7 @@ export const getIntegrationAppUrlName = integrationAppName => {
   return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
 };
 
-export const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
+export const isIntegrationAppVersion2 = (integration, skipCloneCheck) => {
   if (!integration) return false;
   let isCloned = false;
 
@@ -187,6 +187,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
       'Salesforce - Subscription Billing Connector': 'salesforceSubscription',
       'Vendor Payment Manager': 'vendorPaymentManager',
       'Salesforce - NetSuite Connector': 'sfnsio',
+      'Salesforce - NetSuite': 'sfnsio',
     },
   };
 
@@ -224,7 +225,7 @@ export default {
       } else {
         stepText = isUninstall ? 'Uninstall' : 'Configure';
       }
-    } else if (step.installURL || step.uninstallURL || step.url) {
+    } else if (step.installURL || step.uninstallURL || step.url || step.getUrlFunction) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {

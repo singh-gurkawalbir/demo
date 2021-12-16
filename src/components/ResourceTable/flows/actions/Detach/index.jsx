@@ -23,7 +23,7 @@ export default {
     return canDetach;
   },
   useOnClick: rowData => {
-    const { _id: resourceId } = rowData;
+    const { _id: resourceId, _flowGroupingId: flowGroupId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const detachFlow = useCallback(() => {
@@ -35,9 +35,16 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
-    }, [dispatch, resourceId]);
+      if (flowGroupId) {
+        patchSet.push({
+          op: 'replace',
+          path: '/_flowGroupingId',
+          value: undefined,
+        });
+      }
+
+      dispatch(actions.resource.patchAndCommitStaged('flows', resourceId, patchSet));
+    }, [dispatch, flowGroupId, resourceId]);
     const confirmDetachFlow = useCallback(() => {
       confirmDialog({
         title: 'Confirm detach',

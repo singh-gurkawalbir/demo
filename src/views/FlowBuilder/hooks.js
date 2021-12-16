@@ -5,7 +5,7 @@ import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { emptyObject } from '../../utils/constants';
+import { emptyObject, UNASSIGNED_SECTION_ID } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 
@@ -19,8 +19,7 @@ export const usePatchFlow = flowId => {
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
 
-      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 
       if (!isNewFlow) {
         dispatch(actions.flowData.updateFlow(flowId));
@@ -146,7 +145,7 @@ export const usePatchNewFlow = integrationId => {
   const dispatch = useDispatch();
 
   const patchNewFlow = useCallback(
-    (newFlowId, newName, newPG) => {
+    (newFlowId, flowGroupingId, newName, newPG) => {
       const startDisabled = !newPG || newPG.application !== 'dataLoader';
       const patchSet = [
         { op: 'add', path: '/name', value: newName || 'New flow' },
@@ -160,6 +159,13 @@ export const usePatchNewFlow = integrationId => {
           op: 'add',
           path: '/_integrationId',
           value: integrationId,
+        });
+      }
+      if (flowGroupingId && flowGroupingId !== UNASSIGNED_SECTION_ID) {
+        patchSet.push({
+          op: 'add',
+          path: '/_flowGroupingId',
+          value: flowGroupingId,
         });
       }
 

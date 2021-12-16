@@ -23,6 +23,8 @@ export default function getRequestOptions(
     isResolved,
     nextPageURL,
     loadMore,
+    childId,
+    flowIds,
   } = {}
 ) {
   switch (action) {
@@ -313,9 +315,36 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST: {
       let path = `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}/signedURL`;
-      const { fromDate, toDate } = filters || {};
+      const { fromDate, toDate, flowJobId } = filters || {};
       const fromKey = isResolved ? 'resolvedAt_gte' : 'occurredAt_gte';
       const toKey = isResolved ? 'resolvedAt_lte' : 'occurredAt_lte';
+
+      if (fromDate && toDate) {
+        path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
+      } else if (fromDate) {
+        path += `?${fromKey}=${fromDate}`;
+      } else if (toDate) {
+        path += `?${toKey}=${toDate}`;
+      }
+      if (flowJobId) {
+        path += `&_flowJobId=${flowJobId}`;
+      }
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+    case actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS: {
+      // There won't be any resource type for account level audit logs, in that GET route should be used
+      const method = resourceType ? 'POST' : 'GET';
+      let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
+
+      const body = resourceType && {_resourceIds: flowIds || [resourceId]};
+      const opts = { method, body };
+      const { fromDate, toDate } = filters || {};
+      const fromKey = 'from';
+      const toKey = 'to';
 
       if (fromDate && toDate) {
         path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
@@ -327,7 +356,7 @@ export default function getRequestOptions(
 
       return {
         path,
-        opts: { method: 'GET'},
+        opts,
       };
     }
 
@@ -336,8 +365,7 @@ export default function getRequestOptions(
         ? nextPageURL.replace('/api', '')
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
-
-      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
+      const { sources = [], classifications = [], occuredAt, resolvedAt, flowJobId } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
@@ -349,9 +377,14 @@ export default function getRequestOptions(
         queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
         queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
       }
-      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+      if (resolvedAt?.startDate) {
         queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+      }
+      if (resolvedAt?.endDate) {
         queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
+      if (flowJobId) {
+        queryParams.push(`_flowJobId=${flowJobId}`);
       }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
@@ -363,12 +396,22 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
       let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
-      const { range, status } = filters || {};
+      const { range, status, hideEmpty = false } = filters || {};
       const queryParams = [];
-      const statusFilter = status?.length ? status : [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const defaultStatusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
       const {startDate, endDate} = getSelectedRange(range) || {};
 
-      statusFilter.forEach(status => queryParams.push(`status=${status}`));
+      if (status === 'all' || !status) {
+        defaultStatusFilter.forEach(status => {
+          queryParams.push(`status=${status}`);
+        });
+      } else if (status === 'error') {
+        queryParams.push('numError_gte=1');
+      } else {
+        queryParams.push(`status=${status}`);
+      }
+
+      if (hideEmpty) { queryParams.push(`hideEmpty=${hideEmpty}`); }
 
       if (startDate && endDate) {
         queryParams.push(`createdAt_gte=${moment(startDate).toISOString()}`);

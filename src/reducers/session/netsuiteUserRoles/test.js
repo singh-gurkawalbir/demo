@@ -15,14 +15,19 @@ describe('netsuiteUser roles reducer ', () => {
     // existing connection id
     let state = reducer(
       existingState,
-      actions.resource.connections.netsuite.requestUserRoles(connectionId)
+      actions.resource.connections.netsuite.testConnection({connectionId, hideNotificationMessage: true})
     );
 
-    expect(state).toEqual(existingState);
+    expect(state).toEqual({
+      [connectionId]: {
+        somePrevStateProp: 'something',
+        hideNotificationMessage: true,
+      },
+    });
     // new  connection id
     state = reducer(
       undefined,
-      actions.resource.connections.netsuite.requestUserRoles(connectionId)
+      actions.resource.connections.netsuite.testConnection({connectionId, hideNotificationMessage: true})
     );
 
     expect(state).toEqual({ [connectionId]: {
@@ -33,7 +38,7 @@ describe('netsuiteUser roles reducer ', () => {
   test('should persist userRoles in state on received action', () => {
     let state = reducer(
       undefined,
-      actions.resource.connections.netsuite.requestUserRoles(connectionId)
+      actions.resource.connections.netsuite.testConnection({connectionId, hideNotificationMessage: true})
     );
 
     state = reducer(
@@ -50,7 +55,7 @@ describe('netsuiteUser roles reducer ', () => {
   test('should update the status to error when the request for netsuiteUserRoles has failed', () => {
     let state = reducer(
       undefined,
-      actions.resource.connections.netsuite.requestUserRoles(connectionId)
+      actions.resource.connections.netsuite.testConnection({connectionId, hideNotificationMessage: true})
     );
 
     state = reducer(
@@ -68,7 +73,7 @@ describe('netsuiteUser roles reducer ', () => {
   test('should clear the the message and the status on a failed request for netsuiteUserRoles', () => {
     let state = reducer(
       undefined,
-      actions.resource.connections.netsuite.requestUserRoles(connectionId)
+      actions.resource.connections.netsuite.testConnection({connectionId, hideNotificationMessage: true})
     );
 
     state = reducer(

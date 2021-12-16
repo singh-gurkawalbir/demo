@@ -11,7 +11,8 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
-import RunHistoryIcon from '../../../../components/icons/ViewResolvedHistoryIcon';
+import RunningFlowsIcon from '../../../../components/icons/RunningFlowsIcon';
+import RunHistoryIcon from '../../../../components/icons/CompletedFlowsIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
@@ -141,10 +142,15 @@ export default function BottomDrawer({
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const {tabs, activeTabIndex} = useSelector(state => selectors.bottomDrawerTabs(state), shallowEqual);
+  const isScriptTabShown = tabs?.find(a => a.tabType === 'scripts');
   const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
   const isFlowRunInProgress = useSelector(state =>
     !!selectors.getInProgressLatestJobs(state, flowId).length
   );
+  const flowScripts = useSelector(state =>
+    selectors.getScriptsTiedToFlow(state, flowId)
+  );
+
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -290,6 +296,12 @@ export default function BottomDrawer({
     dispatch(actions.bottomDrawer.init(flowId));
   }, [dispatch, flowId]);
 
+  useEffect(() => {
+    if ((flowScripts?.length && !isScriptTabShown) || (!flowScripts?.length && isScriptTabShown)) {
+      dispatch(actions.bottomDrawer.init(flowId));
+    }
+  }, [dispatch, flowId, flowScripts?.length, isScriptTabShown]);
+
   return (
     <div>
       <Drawer
@@ -319,7 +331,7 @@ export default function BottomDrawer({
                       {...tabProps(tabIndex++)}
                       id={tabType}
                       key={tabType}
-                      icon={<DashboardIcon />}
+                      icon={isUserInErrMgtTwoDotZero ? <RunningFlowsIcon /> : <DashboardIcon />}
                       label={dashboardLabel} />
                   );
                 case 'runHistory':

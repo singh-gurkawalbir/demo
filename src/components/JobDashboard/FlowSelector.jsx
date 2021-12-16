@@ -6,16 +6,41 @@ import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { stringCompare } from '../../utils/sort';
+import { getFlowGroup } from '../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   flow: {
     minWidth: 130,
-    maxWidth: 200,
+    maxWidth: 400,
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4.5),
   },
+  flowGroupName: {
+    color: theme.palette.text.secondary,
+  },
 }));
+const OptionIml = ({ item, integrationId, childId, isIntegrationApp}) => {
+  const classes = useStyles();
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
+  let sectionName;
+  let groupName;
 
+  if (isIntegrationApp) {
+    sectionName = flowSections.find(flowSection => flowSection.flows?.some(flow => flow._id === item._id))?.title;
+  } else {
+    groupName = getFlowGroup(flowGroupings, '', item._flowGroupingId)?.name;
+  }
+
+  return (
+    <div>
+      <span>{item.name || item._id}</span>
+      {isIntegrationApp
+        ? sectionName && (<span className={classes.flowGroupName}>{` | ${sectionName}`}</span>)
+        : groupName && (<span className={classes.flowGroupName}>{` | ${groupName}`}</span>)}
+    </div>
+  );
+};
 export default function FlowSelector({
   integrationId,
   childId,
@@ -23,6 +48,7 @@ export default function FlowSelector({
   onChange,
 }) {
   const classes = useStyles();
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const childFlows = useSelector(
     state => {
       if (!childId) {
@@ -70,7 +96,12 @@ export default function FlowSelector({
       <MenuItem value="">Select flow</MenuItem>
       {filteredFlows.sort(stringCompare('name')).map(opt => (
         <MenuItem key={opt._id} value={opt._id}>
-          {opt.name || opt._id}
+          <OptionIml
+            item={opt}
+            integrationId={integrationId}
+            childId={childId}
+            isIntegrationApp={isIntegrationApp}
+          />
         </MenuItem>
       ))}
     </CeligoSelect>

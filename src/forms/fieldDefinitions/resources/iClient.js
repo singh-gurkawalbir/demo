@@ -1,5 +1,6 @@
 export default {
   name: {
+    loggable: true,
     type: 'text',
     label: 'Name',
     required: true,

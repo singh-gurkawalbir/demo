@@ -711,6 +711,14 @@ describe('Mappings region selector testcases', () => {
             id: 'statusCode',
             name: 'statusCode',
           },
+          {
+            id: '_json',
+            name: '_json',
+          },
+          {
+            id: 'dataURI',
+            name: 'dataURI',
+          },
         ]);
       });
     });
@@ -721,8 +729,84 @@ describe('Mappings region selector testcases', () => {
           { id: 'errors', name: 'errors' },
           { id: 'ignored', name: 'ignored' },
           { id: 'statusCode', name: 'statusCode' },
+          {
+            id: 'dataURI',
+            name: 'dataURI',
+          },
         ]);
       });
+    });
+  });
+
+  describe('selectors.responseMappingInput test cases', () => {
+    const preProcessedData = {new_test: 123};
+
+    const state = {
+      session: {
+        flowData: {
+          'flow-123': {
+            pageProcessorsMap: {
+              'imp-123': {
+                responseTransform: {
+                  status: 'received',
+                  data: preProcessedData,
+                },
+              },
+              'exp-123': {
+                preSavePage: {
+                  status: 'received',
+                  data: preProcessedData,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.responseMappingInput()).toBeUndefined();
+    });
+    test('should return preProcessedData if present, in case of imports', () => {
+      expect(selectors.responseMappingInput(state, 'imports', 'imp-123', 'flow-123')).toEqual(preProcessedData);
+    });
+    test('should return preProcessedData if present, as part of data in case of exports', () => {
+      const output = {
+        data: [preProcessedData],
+        dataURI: '',
+        errors: [
+          {
+            code: 'error_code',
+            message: 'error message',
+            source: 'application',
+          },
+        ],
+        ignored: false,
+        statusCode: 200,
+      };
+
+      expect(selectors.responseMappingInput(state, 'exports', 'exp-123', 'flow-123')).toEqual(output);
+    });
+    test('should return default object if no preProcessedData is available', () => {
+      const output = {
+        id: '1234567890',
+        dataURI: '',
+        errors: [
+          {
+            code: 'error_code',
+            message: 'error message',
+            source: 'application',
+          },
+        ],
+        ignored: false,
+        statusCode: 200,
+        _json: {
+          responseField1: '',
+          responseField2: '',
+        },
+      };
+
+      expect(selectors.responseMappingInput(state, 'imports', 'imp-456', 'flow-123')).toEqual(output);
     });
   });
 });

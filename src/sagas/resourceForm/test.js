@@ -3,7 +3,6 @@ import { select, delay, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
-import { APIException } from '../api';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { commitStagedChanges } from '../resources';
@@ -27,11 +26,13 @@ import {
 } from '.';
 import { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { FORM_SAVE_STATUS, EMPTY_RAW_DATA } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../utils/constants';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '..';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
+import { APIException } from '../api/requestInterceptors/utils';
+import { constructResourceFromFormValues } from '../utils';
 
 jest.mock('../../forms/formFactory/getResourceFromAssets');
 jest.mock('../../forms/formFactory/getFieldsWithDefaults');
@@ -351,9 +352,13 @@ describe('resourceForm sagas', () => {
         }), null],
         [
           select(selectors.resourceData, 'exports', resourceId),
-          { merged: {rawData: 'someValue', somepath: '123'} },
+          { merged: {type: 'simple', rawData: 'someValue', somepath: '123'} },
         ],
-        [matchers.call.fn(deleteUISpecificValues), {'/rawData': 'someValue', '/somepath': '123' }],
+        [
+          call(constructResourceFromFormValues, { resourceId, resourceType: 'exports', formValues: {'/type': 'simple', '/rawData': 'someValue', '/somepath': '123' } }),
+          {type: 'simple', rawData: 'someValue', somepath: '123'},
+        ],
+        [matchers.call.fn(deleteUISpecificValues), {'/type': 'simple', '/rawData': 'someValue', '/somepath': '123' }],
       ])
       .call(deleteFormViewAssistantValue, {
         resourceType: 'exports',
@@ -366,7 +371,7 @@ describe('resourceForm sagas', () => {
       .call(saveDataLoaderRawData, {
         resourceType: 'exports',
         resourceId,
-        values: {'/rawData': EMPTY_RAW_DATA, '/somepath': '123'},
+        values: {'/type': 'simple', '/rawData': 'someValue', '/somepath': '123' },
       })
       .run());
     test('should dispatch submitFailed action and return if createFormValuesPatchSet failed with exception', () => expectSaga(submitFormValues, { resourceType, resourceId})
@@ -374,6 +379,7 @@ describe('resourceForm sagas', () => {
         [call(newIAFrameWorkPayload, {
           resourceId,
         }), null],
+        [call(constructResourceFromFormValues, { resourceId, resourceType, formValues: {} }), {}],
         [matchers.call.fn(createFormValuesPatchSet), apiError],
       ])
       .call(createFormValuesPatchSet, {
@@ -960,6 +966,7 @@ describe('resourceForm sagas', () => {
           resourceType,
           resourceId
         ), {formSaveStatus: FORM_SAVE_STATUS.FAILED}],
+        [matchers.call.fn(submitFormValues), {}],
       ])
       .not.call.fn(updateFlowDoc)
       .returns(undefined)
@@ -977,6 +984,7 @@ describe('resourceForm sagas', () => {
           'flows',
           flowId
         ), {merged: {_id: 'flow-123'}}],
+        [matchers.call.fn(submitFormValues), {}],
       ])
       .not.call.fn(updateFlowDoc)
       .returns(undefined)
@@ -993,6 +1001,7 @@ describe('resourceForm sagas', () => {
           'flows',
           flowId
         ), {merged: {_id: 'flow-123'}}],
+        [matchers.call.fn(submitFormValues), {}],
       ])
       .not.call.fn(updateFlowDoc)
       .returns(undefined)
@@ -1009,6 +1018,7 @@ describe('resourceForm sagas', () => {
           'flows',
           flowId
         ), {merged: {_id: 'flow-123'}}],
+        [matchers.call.fn(submitFormValues), {}],
       ])
       .call(updateFlowDoc, {
         resourceType,

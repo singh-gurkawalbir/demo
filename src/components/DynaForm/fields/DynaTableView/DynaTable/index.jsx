@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const generateEmptyRow = optionsMap => optionsMap.reduce((acc, curr) => {
+const generateEmptyRow = optionsMap => optionsMap.reduce((acc, curr) => {
   acc[curr.id] = '';
 
   return acc;
@@ -135,7 +135,7 @@ const BaseTable = ({
     );
   }));
 };
-export const DynaTable = props => {
+const DynaTable = props => {
   const classes = useStyles();
   const {
     label,

@@ -127,13 +127,15 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat };
+    const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
     dispatch(actions.user.preferences.update(preferencesPayload));
-    // deleting preferenecs from completePayloadCopy
+    // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
+    delete completePayloadCopy.showRelativeDateTime;
+
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch]);
 
@@ -162,6 +164,7 @@ export default function ProfilePanel() {
         label: 'Name',
         required: true,
         helpKey: 'myaccount.name',
+        noApi: true,
         defaultValue: preferences && preferences.name,
       },
       email: {
@@ -170,6 +173,7 @@ export default function ProfilePanel() {
         type: 'useremail',
         label: 'Email',
         helpKey: 'myaccount.email',
+        noApi: true,
         readOnly: isUserAllowedOnlySSOSignIn,
         value: preferences && preferences.email,
       },
@@ -178,6 +182,7 @@ export default function ProfilePanel() {
         name: 'password',
         label: 'Password',
         helpKey: 'myaccount.password',
+        noApi: true,
         type: 'userpassword',
         visible: !isUserAllowedOnlySSOSignIn,
       },
@@ -187,6 +192,7 @@ export default function ProfilePanel() {
         type: 'text',
         label: 'Company',
         helpKey: 'myaccount.company',
+        noApi: true,
         defaultValue: preferences && preferences.company,
       },
       phone: {
@@ -195,6 +201,7 @@ export default function ProfilePanel() {
         type: 'text',
         label: 'Phone',
         helpKey: 'myaccount.phone',
+        noApi: true,
         defaultValue: preferences && preferences.phone,
       },
       role: {
@@ -202,6 +209,7 @@ export default function ProfilePanel() {
         name: 'role',
         type: 'text',
         helpKey: 'myaccount.role',
+        noApi: true,
         label: 'Role',
         defaultValue: preferences && preferences.role,
       },
@@ -212,6 +220,7 @@ export default function ProfilePanel() {
         label: 'Time zone',
         required: true,
         helpKey: 'myaccount.timezone',
+        noApi: true,
         defaultValue: preferences && preferences.timezone,
         options: dateTimeZonesList,
       },
@@ -221,6 +230,7 @@ export default function ProfilePanel() {
         type: 'select',
         required: true,
         helpKey: 'myaccount.dateFormat',
+        noApi: true,
         label: 'Date format',
         defaultValue: preferences && preferences.dateFormat,
         options: dateFormatList,
@@ -230,16 +240,27 @@ export default function ProfilePanel() {
         name: 'timeFormat',
         type: 'select',
         helpKey: 'myaccount.timeFormat',
+        noApi: true,
         required: true,
         label: 'Time format',
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,
+      },
+      showRelativeDateTime: {
+        id: 'showRelativeDateTime',
+        name: 'showRelativeDateTime',
+        type: 'checkbox',
+        helpKey: 'myaccount.showRelativeDateTime',
+        noApi: true,
+        label: 'Show timestamps as relative',
+        defaultValue: preferences?.showRelativeDateTime,
       },
       developer: {
         id: 'developer',
         name: 'developer',
         type: 'checkbox',
         helpKey: 'myaccount.developer',
+        noApi: true,
         label: 'Developer Mode',
         defaultValue: preferences && preferences.developer,
       },
@@ -255,6 +276,7 @@ export default function ProfilePanel() {
         'timezone',
         'dateFormat',
         'timeFormat',
+        'showRelativeDateTime',
         'developer',
       ],
     },

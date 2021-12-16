@@ -1,17 +1,18 @@
 import React, { useCallback } from 'react';
+import clsx from 'clsx';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
-import RunningIcon from '../../../components/icons/DashboardIcon';
-import CompletedIcon from '../../../components/icons/ViewResolvedHistoryIcon';
+import RunningIcon from '../../../components/icons/RunningFlowsIcon';
+import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
 
 const useStyles = makeStyles(theme => ({
   tabContainer: {
     padding: theme.spacing(0, 3),
   },
   pageWrapper: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(3, 3, 4),
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     overflowY: 'auto',
     '& > [role = tabpanel]': {
@@ -19,6 +20,9 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       border: 'none',
     },
+  },
+  integrationPageWrapper: {
+    padding: theme.spacing(0, 3, 4),
   },
   tabPanel: {
     background: theme.palette.background.paper,
@@ -53,8 +57,9 @@ export default function DashboardTabs() {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const { tab } = match.params;
-  let currentTabIndex = tabs.findIndex(t => t.path === tab);
+  const { dashboardTab, integrationId } = match.params;
+
+  let currentTabIndex = tabs.findIndex(t => t.path === dashboardTab);
 
   currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
   const handleTabChange = useCallback(
@@ -64,7 +69,7 @@ export default function DashboardTabs() {
       history.push(
         generatePath(match.path, {
           ...match.params,
-          tab: newTab,
+          dashboardTab: newTab,
         })
       );
     },
@@ -72,7 +77,7 @@ export default function DashboardTabs() {
   );
 
   return (
-    <div className={(classes.tabContainer, classes.pageWrapper)}>
+    <div className={clsx(classes.tabContainer, classes.pageWrapper, { [classes.integrationPageWrapper]: integrationId })}>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}

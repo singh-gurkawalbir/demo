@@ -332,4 +332,24 @@ export default {
       },
     }),
   },
+  breezyhr: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: 'https://api.breezy.hr/v3/signin',
+      body: { email: form['/http/unencrypted/email'],
+        password: form['/http/encrypted/password'],
+      },
+    }),
+  },
+  bartender: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: `${form['/http/unencrypted/printPortalBaseURL']}/BarTender/api/v1/Authenticate`,
+      body: `{"userName": "${form['/http/unencrypted/userName']},"password": "${form['/http/encrypted/password']}"}`,
+    }),
+  },
 };

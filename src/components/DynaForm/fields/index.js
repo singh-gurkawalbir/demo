@@ -10,6 +10,7 @@ import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaUpdateOptions from './select/DynaUpdateOptions';
+import DynaRefreshCollection from './integrations/DynaRefreshCollection';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 import DynaRelativeUri_afe from './DynaRelativeUri_afe';
@@ -114,7 +115,7 @@ import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 import DynaReplaceConnection from './DynaReplaceConnection';
-import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
+import DynaSelectOverrideMediaType from './DynaSelectOverrideMediaType';
 import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
@@ -139,6 +140,9 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
+import DynaFlowGroupName from './integrations/DynaFlowGroupName';
+import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
+import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -146,6 +150,7 @@ export default {
   flowstiedtointegrations: DynaFlowsTiedToIntegrations,
   allintegrations: DynaAllIntegrations,
   childintegrations: DynaChildIntegrations,
+  refreshcollection: DynaRefreshCollection,
   suitescriptsettings: DynaRefreshableSettings,
   refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,
@@ -202,7 +207,7 @@ export default {
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
-  selectrequestmediatype: DynaSelectRequestMediaType,
+  selectoverridemediatype: DynaSelectOverrideMediaType,
   nssavedsearch: DynaNSSavedSearch,
   nswssavedsearch: DynaNSWSSavedSearch,
   webhooksampledata: DynaWebHookSampleData,
@@ -274,6 +279,8 @@ export default {
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor_afe,
   as2Mode: DynaAs2Mode,
   childlicenses: DynaChildLicenses,
+  flowgroupname: DynaFlowGroupName,
+  flowgroupstiedtointegrations: DynaFlowGroupsTiedToIntegrations,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
@@ -289,4 +296,5 @@ export default {
   selectlookup: DynaSelectLookup,
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
+  updatedomain: DynaTextUpdateDomain,
 };

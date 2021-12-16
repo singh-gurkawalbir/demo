@@ -2,14 +2,6 @@ import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
 import { isOldRestAdaptor } from '../resource';
 
-export const FLOW_STAGES = [
-  'outputFilter',
-  'exportFilter',
-  'inputFilter',
-  'transform',
-  'sampleResponse',
-  'importMappingExtract',
-];
 export const HOOK_STAGES = [
   'postResponseMapHook',
   'preSavePage',

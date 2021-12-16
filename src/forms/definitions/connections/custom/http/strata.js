@@ -66,6 +66,8 @@ export default {
       inputType: 'password',
       helpKey: 'strata.connection.http.encrypted.subscriptionKey',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Ocp-Apim-Subscription-Key',
     },
     'http.auth.token.token': {

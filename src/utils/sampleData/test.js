@@ -1040,9 +1040,7 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow: {}, stage, resource: {}})).toEqual(sampleData);
   });
-  test('should return correctly wrapped sample data for native REST adaptor if stage = flowInput', () => {
-    const stage = 'flowInput';
-
+  test('should return correctly wrapped sample data for native REST adaptor for handlebars editorType', () => {
     resource.adaptorType = 'RESTExport';
     connection.isHTTP = false;
 
@@ -1077,7 +1075,7 @@ describe('wrapSampleDataWithContext util', () => {
       templateVersion: 2,
     };
 
-    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, editorType: 'handlebars'})).toEqual(expectedData);
   });
   test('should return correctly wrapped sample data without connection details if stage is flowInput', () => {
     const stage = 'flowInput';
@@ -1133,11 +1131,12 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({fieldType: 'idLockTemplate', sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
-  test('should return correctly wrapped sample data if stage is transform or sampleResponse or inputFilter', () => {
-    const stages = ['transform', 'sampleResponse', 'inputFilter'];
+  test('should return correctly wrapped sample data if stage is transform or sampleResponse', () => {
+    const stages = ['transform', 'sampleResponse'];
     const expectedData = {
       status: 'received',
       data: {
+        pageIndex: 0,
         record: {
           id: 333,
           phone: '1234',

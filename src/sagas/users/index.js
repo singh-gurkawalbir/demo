@@ -11,6 +11,7 @@ import {
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { getResourceCollection } from '../resources';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -91,8 +92,8 @@ export function* requestTrialLicense() {
   } catch (e) {
     return true;
   }
-
   yield put(actions.user.org.accounts.trialLicenseIssued(response));
+  yield call(getResourceCollection, {resourceType: 'licenses', refresh: true });
 }
 
 export function* requestLicenseUpgrade() {
@@ -555,7 +556,9 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
 export const userSagas = [
   takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
   takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
-  takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
+  takeLatest([actionTypes.UPDATE_PREFERENCES,
+    actionTypes.PIN_INTEGRATION,
+    actionTypes.UNPIN_INTEGRATION], updatePreferences),
   takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
   takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),

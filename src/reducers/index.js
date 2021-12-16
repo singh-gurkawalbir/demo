@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
+import cloneDeep from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -39,6 +40,7 @@ import {
   flowSupportsSettings,
   // isRealtimeExport,
   addLastExecutedAtSortableProp,
+  shouldHaveUnassignedSection,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -51,9 +53,11 @@ import {
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
   FILE_PROVIDER_ASSISTANTS,
-  MISCELLANEOUS_SECTION_ID,
+  UNASSIGNED_SECTION_ID,
   NO_ENVIRONMENT_RESOURCE_TYPES,
-  NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH} from '../utils/constants';
+  NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
+  AFE_SAVE_STATUS,
+  UNASSIGNED_SECTION_NAME} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -67,7 +71,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  shouldHaveMiscellaneousSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -75,7 +78,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -92,13 +95,15 @@ import {
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
-import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
-import { capitalizeFirstLetter } from '../utils/string';
+import { HOOK_STAGES } from '../utils/editor';
+import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp, getTileId } from '../utils/home';
+import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -184,6 +189,7 @@ selectors.userProfilePreferencesProps = createSelector(
       email,
       company,
       role,
+      showRelativeDateTime,
       developer,
       phone,
       dateFormat,
@@ -207,6 +213,7 @@ selectors.userProfilePreferencesProps = createSelector(
       timeFormat,
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
+      showRelativeDateTime,
     };
   });
 
@@ -532,53 +539,69 @@ selectors.sessionValidTimestamp = state => state && state.auth && state.auth.aut
 
 // #region resource selectors
 
-selectors.mkTileApplications = () => createSelector(
-  (_, tile) => tile,
-  state => state?.data?.resources?.integrations,
-  state => state?.data?.resources?.connections,
-  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
-  (tile, integrations = emptyArray, connections = emptyArray, isIAV2) => {
-    let applications = [];
+selectors.mkTileApplications = () => {
+  const resourceSel = selectors.makeResourceSelector();
 
-    if (!tile || !tile._connectorId) {
-      return emptyArray;
-    }
-    if (!isIAV2) {
-      applications = tile?.connector?.applications || emptyArray;
-      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
-        applications[0] = 'magento1';
+  return createSelector(
+    (_, tile) => tile,
+    state => state?.data?.resources?.integrations,
+    state => state?.data?.resources?.connections,
+    (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
+    (state, tile) => resourceSel(state, 'integrations', tile?._integrationId),
+    state => selectors.isHomeListView(state),
+    (tile, integrations = emptyArray, connections = emptyArray, isIAV2, integration, isListView) => {
+      let applications = [];
+
+      if (!tile || (!isListView && !tile._connectorId)) {
+        return emptyArray;
       }
-    } else {
-      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
-      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+      if (!tile._connectorId) {
+        integration?._registeredConnectionIds?.forEach(r => {
+          const connection = connections.find(c => c._id === r);
 
-      childIntegrations.forEach(i => {
-        const integrationConnections = connections.filter(c => c._integrationId === i._id);
+          applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
+        });
 
-        integrationConnections.forEach(c => {
+        return uniq(applications);
+      }
+
+      if (!isIAV2) {
+        applications = [...(tile?.connector?.applications || [])] || emptyArray;
+        // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+        if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
+          applications[0] = 'magento1';
+        }
+      } else {
+        const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+        const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+
+        childIntegrations.forEach(i => {
+          const integrationConnections = connections.filter(c => c._integrationId === i._id);
+
+          integrationConnections.forEach(c => {
+            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+          });
+        });
+
+        const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+
+        parentIntegrationConnections.forEach(c => {
           applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
         });
-      });
+        applications = uniq(applications);
+      }
 
-      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+      // Make NetSuite always the last application only for tile view
+      if (applications.length && !isListView) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
+      // Only consider up to four applications only for tile view
+      if (applications.length > 4 && !isListView) {
+        applications.length = 4;
+      }
 
-      parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
-      });
-      applications = uniq(applications);
+      return applications;
     }
-
-    // Make NetSuite always the last application
-    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
-    // Only consider up to four applications
-    if (applications.length > 4) {
-      applications.length = 4;
-    }
-
-    return applications;
-  }
-);
+  );
+};
 
 const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
@@ -836,42 +859,12 @@ selectors.isParentChildIntegration = (state, integrationId) => {
 
   return !!integrationSettings?.settings?.supportsMultiStore;
 };
-selectors.mkAllFlowsTiedToIntegrations = () => {
-  const resourceListSel = selectors.makeResourceListSelector();
-
-  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+selectors.mkFlowGroupingsTiedToIntegrations = () => {
+  const resourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    state => resourceListSel(state, flowsFilter).resources,
-    (_1, parentIntegration) => parentIntegration,
-    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
-    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
-    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
-    (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegration, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
-      if (!flows || !parentIntegration) return null;
-
-      if (parentIntegration === STANDALONE_INTEGRATION.id) {
-        return flows.filter(({_integrationId}) => !_integrationId);
-      }
-
-      if (isV2 || isDiy) {
-        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
-
-        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
-      }
-      // v1
-
-      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
-        // no child filter in this case...just return all parent integrations
-
-        return flowsFromAllChildren;
-      }
-
-      // filter based on selected childIntegrations
-
-      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
-    }
+    (state, id) => resourceSel(state, 'integrations', id)?.flowGroupings,
+    flowGroupings => flowGroupings || [],
   );
 };
 
@@ -918,15 +911,22 @@ selectors.getEventReportIntegrationName = (state, r) => {
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
-selectors.getAllAccountDashboardFlows = (state, filterKey) => {
+selectors.getAllAccountDashboardFlows = (state, filterKey, integrationId) => {
   let allFlows = selectors.resourceList(state, {
     type: 'flows',
   }).resources || [];
   let allStoreFlows = [];
   const jobFilter = selectors.filter(state, filterKey);
+
   let storeId;
   let parentIntegrationId;
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations;
+
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
+  } else {
+    selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  }
 
   // In IA 1.0, if any one select stores, the store will be stored as "store{$storeID}pid{#integrationId}"
   // below logic is used to extact store id and integration id from this.
@@ -981,7 +981,7 @@ selectors.accountDashboardJobs = (state, filterKey) => {
 
   return {jobs: totalJobs, nextPageURL, status};
 };
-selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => {
+selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integrationId }) => {
   let path;
 
   if (nextPageURL) {
@@ -989,11 +989,12 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
   } else {
     path = filterKey === FILTER_KEYS_AD.RUNNING ? '/jobs/current' : '/flows/runs/stats';
   }
-  const jobFilter = selectors.filter(state, filterKey);
+  const jobFilter = selectors.filter(state, `${integrationId || ''}${filterKey}`);
+
   const userPreferences = selectors.userPreferences(state);
   const sandbox = userPreferences.environment === 'sandbox';
   // If 'all' selected, it can be filtered out, as by defaults it considered "all".
-  const selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
+  let selectedIntegrations = jobFilter?.integrationIds?.filter(i => i !== 'all') || [];
   const selectedFlows = jobFilter?.flowIds?.filter(i => i !== 'all') || [];
   const selectedStatus = jobFilter?.status?.filter(i => i !== 'all') || [];
   const body = {sandbox};
@@ -1006,7 +1007,22 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL }) => 
 
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
-    if (endDate) { body.time_lte = endDate.getTime(); }
+    if (endDate) {
+      // When current date is selected in custom date filter, the end date considers time to be the last minute 23:59
+      // which could be future date for the user as the time does not match
+      // Update end date is those cases to current date
+      // Ref: IO-24139
+      const currentDate = new Date();
+
+      if (endDate > currentDate) {
+        body.time_lte = currentDate.getTime();
+      } else {
+        body.time_lte = endDate.getTime();
+      }
+    }
+  }
+  if (integrationId) {
+    selectedIntegrations = [integrationId];
   }
 
   if (selectedStatus.length) {
@@ -1284,7 +1300,7 @@ selectors.mkFlowAttributes = () => createSelector(
     const exportIdToExport = {};
     const flowExports = {};
     // eslint-disable-next-line no-use-before-define
-    const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
+    const isIntegrationV2 = isIntegrationAppVersion2(integration, true);
 
     exps.forEach(exp => {
       exportIdToExport[exp._id] = exp;
@@ -1609,10 +1625,11 @@ selectors.makeMarketPlaceConnectorsSelector = () => {
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
   state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.flows,
   state => selectors.currentEnvironment(state),
   state => selectors.publishedConnectors(state),
   state => selectors.userPermissions(state),
-  (allTiles = emptyArray, integrations = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
+  (allTiles = emptyArray, integrations = emptyArray, flows = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
     const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
 
     const hasStandaloneTile = tiles.find(
@@ -1663,6 +1680,8 @@ selectors.mkTiles = () => createSelector(
 
     return tiles.map(t => {
       integration = integrations.find(i => i._id === t._integrationId) || {};
+      const integrationId = integration._id;
+      let flowsNameAndDescription = '';
 
       if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
         status = TILE_STATUS.UNINSTALL;
@@ -1677,13 +1696,22 @@ selectors.mkTiles = () => createSelector(
       }
 
       if (t._connectorId) {
+        // adding flow names and descriptions to be used for searching tiles
+        flowsNameAndDescription = flows
+          .filter(f => f._connectorId === t._connectorId)
+          .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
+
         connector = published.find(i => i._id === t._connectorId) || {
           user: {},
         };
 
         return {
           ...t,
+          key: getTileId(t), // for Celigo table unique key
           status,
+          flowsNameAndDescription,
+          sortablePropType: -1,
+          totalErrorCount: getStatusSortableProp({...t, status}),
           integration: {
             mode: integration.mode,
             permissions: integration.permissions,
@@ -1695,15 +1723,208 @@ selectors.mkTiles = () => createSelector(
         };
       }
 
+      // adding flow names and descriptions to be used for searching tiles
+      flowsNameAndDescription = flows
+        .filter(f => {
+          if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+            return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+          }
+
+          return f._integrationId === integrationId;
+        })
+        .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
+
       return {
         ...t,
+        key: getTileId(t),
         status,
+        flowsNameAndDescription,
+        sortablePropType: t.numFlows || 0,
+        totalErrorCount: getStatusSortableProp({...t, status}),
         integration: {
           permissions: integration.permissions,
         },
       };
     });
   });
+
+selectors.mkFilteredHomeTiles = () => {
+  const tilesSelector = selectors.mkTiles();
+  const appSel = selectors.mkTileApplications();
+
+  return createSelector(
+    state => {
+      const tiles = tilesSelector(state);
+
+      return tiles.map(t => {
+        const applications = appSel(state, t);
+        const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
+
+        return {...t, applications, pinned: pinnedIntegrations.includes(t._integrationId)};
+      });
+    },
+    state => selectors.suiteScriptLinkedTiles(state),
+    state => selectors.userPreferences(state).dashboard,
+    state => selectors.isHomeListView(state),
+    state => selectors.filter(state, HOME_FILTER_KEY),
+    (tiles = emptyArray, ssTiles = emptyArray, homePreferences, isListView, filterConfig) => {
+      const {tilesOrder, pinnedIntegrations} = homePreferences || emptyObject;
+      const {take, applications} = filterConfig || emptyObject;
+
+      const suiteScriptLinkedTiles = ssTiles.filter(t => {
+        // only fully configured svb tile should be shown on dashboard
+        const isPendingSVB = t._connectorId === 'suitescript-svb-netsuite' && (t.status === TILE_STATUS.IS_PENDING_SETUP || t.status === TILE_STATUS.UNINSTALL);
+
+        return !isPendingSVB;
+      });
+      const homeTiles = tiles.concat(suiteScriptLinkedTiles);
+
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
+
+      if (isListView && applications && !applications.includes('all')) {
+        // filter on applications
+        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
+      }
+
+      if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
+        // move pinned integrations to the top, not affected by sorting
+        pinnedIntegrations.forEach(p => {
+          const index = filteredTiles.findIndex(t => t.key === p);
+
+          // only push to beginning if the tile exists in filteredTiles
+          if (index !== -1) {
+            const pinnedInt = filteredTiles.splice(index, 1);
+
+            filteredTiles.unshift(pinnedInt[0]);
+          }
+        });
+      }
+
+      if (typeof take !== 'number' || take < 1 || !isListView) {
+        return {
+          filteredTiles: isListView ? filteredTiles : sortTiles(
+            filteredTiles,
+            tilesOrder
+          ),
+          filteredCount: filteredTiles.length,
+          perPageCount: filteredTiles.length,
+          totalCount: tiles.length,
+        };
+      }
+      const slicedTiles = filteredTiles.slice(0, take);
+
+      return {
+        filteredTiles: isListView ? slicedTiles : sortTiles(
+          filteredTiles,
+          tilesOrder
+        ),
+        filteredCount: filteredTiles.length,
+        perPageCount: slicedTiles.length,
+        totalCount: tiles.length,
+      };
+    });
+};
+
+selectors.mkHomeTileRedirectUrl = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+  const marketplaceResourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (_, tile) => tile,
+    state => selectors.isOwnerUserInErrMgtTwoDotZero(state),
+    (state, tile) => resourceSelector(state, 'integrations', tile?._integrationId),
+    (state, tile) => {
+      const integration = resourceSelector(state, 'integrations', tile?._integrationId);
+
+      if (integration?._templateId) {
+        const template = marketplaceResourceSel(state, 'marketplacetemplates', integration._templateId);
+
+        return getTemplateUrlName(template?.applications);
+      }
+
+      return null;
+    },
+    (tile, isUserInErrMgtTwoDotZero, integration, templateName) => {
+      // separate logic for suitescript tiles
+      if (tile.ssLinkedConnectionId) {
+        let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
+        let urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`;
+
+        if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`;
+          urlToIntegrationStatus = urlToIntegrationSettings;
+        } else if (tile.status === TILE_STATUS.UNINSTALL) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
+        } else if (tile._connectorId) {
+          urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
+        }
+
+        if (tile._connectorId) {
+          urlToIntegrationStatus = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`;
+        }
+
+        return {
+          urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
+          urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
+        };
+      }
+
+      const isCloned = integration?.install?.find(step => step?.isClone);
+      const integrationAppTileName =
+        tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
+
+      let urlToIntegrationSettings = templateName
+        ? `/templates/${templateName}/${tile._integrationId}`
+        : `/integrations/${tile._integrationId}`;
+
+      let urlToIntegrationUsers = templateName
+        ? `/templates/${templateName}/${tile._integrationId}/users`
+        : `/integrations/${tile._integrationId}/users`;
+
+      let urlToIntegrationStatus = `/integrations/${tile._integrationId}/dashboard`;
+      let urlToIntegrationConnections = `/integrations/${tile._integrationId}/connections`;
+
+      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+        if (tile._connectorId) {
+          urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+        } else {
+          urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
+        }
+        urlToIntegrationUsers = urlToIntegrationSettings;
+        urlToIntegrationStatus = urlToIntegrationSettings;
+      } else if (tile.status === TILE_STATUS.UNINSTALL) {
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
+        urlToIntegrationUsers = urlToIntegrationSettings;
+      } else if (tile._connectorId) {
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+        urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+      }
+
+      if (tile._connectorId) {
+        urlToIntegrationConnections = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`;
+      }
+
+      if (isUserInErrMgtTwoDotZero) {
+        urlToIntegrationStatus = urlToIntegrationSettings;
+      } else if (tile._connectorId) {
+        urlToIntegrationStatus = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`;
+      }
+
+      return {
+        urlToIntegrationSettings: getRoutePath(urlToIntegrationSettings),
+        urlToIntegrationUsers: getRoutePath(urlToIntegrationUsers),
+        urlToIntegrationConnections: getRoutePath(urlToIntegrationConnections),
+        urlToIntegrationStatus: getRoutePath(urlToIntegrationStatus),
+      };
+    }
+  );
+};
+
+selectors.isHomeListView = state => {
+  const homePreferences = selectors.userPreferences(state).dashboard || emptyObject;
+
+  return homePreferences.view === LIST_VIEW;
+};
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
@@ -2182,8 +2403,8 @@ selectors.mkIntegrationFlowGroups = () => {
       if (flowGroupings) {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
 
-        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
-          return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+        if (shouldHaveUnassignedSection(flowGroupings, integrationFlows)) {
+          return [...flowGroupings, {title: UNASSIGNED_SECTION_NAME, sectionId: UNASSIGNED_SECTION_ID}];
         }
       }
 
@@ -2226,7 +2447,7 @@ selectors.mkIntegrationFlowsByGroup = () => {
         }
 
         if (groupId) {
-          if (groupId === MISCELLANEOUS_SECTION_ID) {
+          if (groupId === UNASSIGNED_SECTION_ID) {
             isValid = isValid && !flow._flowGroupingId;
           } else {
             isValid = isValid && flow._flowGroupingId === groupId;
@@ -2259,6 +2480,60 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   }
 
   return updatedResourceType;
+};
+
+// this selector updates the field options based on the
+// parent field media type
+selectors.mkGetMediaTypeOptions = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, {formKey}) => selectors.formState(state, formKey)?.value || {},
+
+    (state, {formKey}) => {
+      const formValues = selectors.formState(state, formKey)?.value || {};
+      const connectionId = formValues['/_connectionId'];
+      const connection = resourceSelector(state, 'connections', connectionId) || {};
+
+      return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
+    },
+    (_, {resourceType}) => resourceType,
+    (_, {dependentFieldForMediaType}) => dependentFieldForMediaType,
+    (_, {options}) => options,
+    (_, {fieldId}) => fieldId,
+    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, options, fieldId) => {
+      if (resourceType === 'imports' && fieldId === 'http.requestMediaType') {
+        const inputMode = formValues['/inputMode'];
+
+        options = inputMode === 'blob' ? [
+          { label: 'Multipart / form-data', value: 'form-data' },
+          { label: 'JSON', value: 'json' },
+        ] : [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'URL encoded', value: 'urlencoded' },
+          { label: 'Multipart / form-data', value: 'form-data' },
+        ];
+      }
+
+      let mediaTypeIndex = -1;
+      const parentFieldMediaType = formValues[dependentFieldForMediaType] || connectionMediaType;
+
+      // find the media type in the options
+      if (parentFieldMediaType && options) {
+        mediaTypeIndex = options.findIndex(o => o.value === parentFieldMediaType);
+      }
+
+      // remove the media type which is set on connection/dependent field , from options
+      // cloning options so as to not affect original options
+      const modifiedOptions = cloneDeep(options);
+
+      if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);
+
+      return {modifiedOptions: [{ items: modifiedOptions}], parentFieldMediaType};
+    }
+  );
 };
 
 // #endregion resource selectors
@@ -2558,54 +2833,6 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
   }
 );
 
-selectors.mkIntegrationAppFlowSections = () => {
-  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
-
-  return createSelector(
-    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
-    (_1, _2, childId) => childId,
-    (integrationResource, childId) => {
-      let flowSections = [];
-      const { sections = [], supportsMultiStore } =
-      integrationResource.settings || {};
-
-      if (supportsMultiStore) {
-        if (Array.isArray(sections) && sections.length) {
-          if (childId) {
-            flowSections =
-            (sections.find(sec => sec.id === childId) || {}).sections || [];
-          } else {
-            const allFlowsections = sections
-              .filter(sec => sec.mode !== 'install')
-              .map(sec => sec.sections || [])
-              .flat();
-
-            allFlowsections.forEach(section => {
-              const index = flowSections.findIndex(sec => sec.title === section.title);
-
-              if (index === -1) {
-                flowSections.push({...section});
-              } else {
-                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
-              }
-            });
-          }
-        }
-      } else {
-        flowSections = sections;
-      }
-
-      return flowSections
-        .filter(sec => !!sec.title)
-        .map(sec => ({
-          ...sec,
-          titleId: getTitleIdFromSection(sec),
-        }));
-    });
-};
-
-selectors.integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
-
 selectors.mkIntegrationAppGeneralSettings = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
@@ -2771,6 +2998,106 @@ selectors.makeIntegrationAppSectionFlows = () =>
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
 
+selectors.mkIntegrationAppFlowSections = () => {
+  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
+    (_1, _2, childId) => childId,
+    (state, id, childId, flowsFilterConfig, isUserInErrMgtTwoDotZero) => allFlowsFromSections(state, id, '', childId, flowsFilterConfig, isUserInErrMgtTwoDotZero),
+    (_1, _2, _3, flowsFilterConfig) => flowsFilterConfig,
+    (integrationResource, childId, filteredFlows, flowsFilterConfig) => {
+      let flowSections = [];
+      const { sections = [], supportsMultiStore } =
+      integrationResource.settings || {};
+
+      if (supportsMultiStore) {
+        if (Array.isArray(sections) && sections.length) {
+          if (childId) {
+            flowSections =
+            (sections.find(sec => sec.id === childId) || {}).sections || [];
+          } else {
+            const allFlowsections = sections
+              .filter(sec => sec.mode !== 'install')
+              .map(sec => sec.sections || [])
+              .flat();
+
+            allFlowsections.forEach(section => {
+              const index = flowSections.findIndex(sec => sec.title === section.title);
+
+              if (index === -1) {
+                flowSections.push({...section});
+              } else {
+                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
+              }
+            });
+          }
+        }
+      } else {
+        flowSections = sections;
+      }
+
+      return flowSections
+        .filter(sec => {
+          if (!flowsFilterConfig?.keyword) {
+            return !!sec.title;
+          }
+
+          // filteredFlows contains flows which have name or description starting with keyword in flowsFilterConfig
+          // a section is selected if atleast one of the flows in the section is present in filteredFlows
+
+          return !!sec.title && sec.flows.some(flow => filteredFlows.some(selectedFlow => selectedFlow._id === flow._id));
+        })
+        .map(sec => ({
+          ...sec,
+          titleId: getTitleIdFromSection(sec),
+        }));
+    });
+};
+
+selectors.integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
+
+selectors.mkAllFlowsTiedToIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, parentIntegrationId) => parentIntegrationId,
+    (state, parentIntegrationId) => selectors.isIntegrationAppVersion2(state, parentIntegrationId, true),
+    (state, parentIntegrationId) => !selectors.isIntegrationApp(state, parentIntegrationId),
+    (state, parentIntegrationId) => allFlowsFromSections(state, parentIntegrationId),
+    (_1, _2, childIntegrationIds) => childIntegrationIds,
+    (flows, parentIntegrationId, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
+      if (!flows || !parentIntegrationId) return null;
+
+      if (parentIntegrationId === STANDALONE_INTEGRATION.id) {
+        return flows.filter(({_integrationId}) => !_integrationId);
+      }
+
+      if (isV2 || isDiy) {
+        const consolidatedIntegrationIds = [parentIntegrationId, ...(childIntegrationIds || [])];
+
+        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
+      }
+      // v1
+
+      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
+        // no child filter in this case...just return all parent integrations
+
+        return flowsFromAllChildren;
+      }
+
+      // filter based on selected childIntegrations
+
+      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
+selectors.allFlowsTiedToIntegrations = selectors.mkAllFlowsTiedToIntegrations();
+
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
 selectors.integrationAppFlowIds = (state, integrationId, childId) => {
@@ -2822,7 +3149,7 @@ selectors.integrationAppFlowIds = (state, integrationId, childId) => {
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
   const integration = selectors.resource(state, 'integrations', integrationId);
 
-  return isIntegrationAppVerion2(integration, skipCloneCheck);
+  return isIntegrationAppVersion2(integration, skipCloneCheck);
 };
 
 selectors.isIntegrationAppV1 = (state, integrationId) => {
@@ -3788,6 +4115,7 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
+    (_, { editorType }) => editorType,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
       const integration = selectors.resource(state, 'integrations', flow._integrationId) || emptyObject;
@@ -3811,6 +4139,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    editorType,
     parentIntegration,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
@@ -3821,6 +4150,7 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
+    editorType,
     parentIntegration})
 );
 
@@ -3944,14 +4274,20 @@ selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnection
 selectors.suiteScriptLinkedTiles = createSelector(
   selectors.suiteScriptLinkedConnections,
   state => state?.data?.suiteScript,
-  (linkedConnections, suiteScriptTiles = {}) => {
+  state => selectors.userPreferences(state).dashboard?.pinnedIntegrations,
+  (linkedConnections, suiteScriptTiles = {}, pinnedIntegrations = emptyArray) => {
     let tiles = [];
 
     linkedConnections.forEach(connection => {
       tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles || []);
     });
 
-    return tiles;
+    return tiles.map(t => ({ ...t,
+      key: getTileId(t), // for Celigo Table unique key
+      name: t.displayName,
+      totalErrorCount: getStatusSortableProp(t),
+      sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
+      pinned: pinnedIntegrations.includes(getTileId(t)) }));
   });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
@@ -4867,6 +5203,8 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
   if (!resource) { return emptyArray; }
 
   if (isImport) {
+    // imports can have response transformation wherein the sample data can be saved.
+    // if present, that sample data acts as the input to the response mappings
     const extractFields = selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
@@ -4885,6 +5223,18 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     isImport ? 'imports' : 'exports',
     resource.adaptorType
   );
+};
+
+selectors.responseMappingInput = (state, resourceType, resourceId, flowId) => {
+  const preProcessedData = selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId,
+    stage: 'responseMappingExtract',
+    resourceType,
+  }).data;
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  return responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, resource?.adaptorType);
 };
 
 // #endregion MAPPING END
@@ -5262,7 +5612,7 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   state => state?.data?.resources?.flows,
   (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
-    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
     if (!groupErrorMap[groupId]) {
@@ -5461,13 +5811,12 @@ selectors.transferListWithMetadata = state => {
       type: 'transfers',
     }).resources || [];
 
-  const updatedTransfers = [...transfers];
-
-  updatedTransfers.forEach((transfer, i) => {
+  const updatedTransfers = transfers.map(transfer => {
     let integrations = [];
+    const updatedTransfer = {...transfer};
 
     if (transfer.ownerUser && transfer.ownerUser._id) {
-      updatedTransfers[i].isInvited = true;
+      updatedTransfer.isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -5489,7 +5838,9 @@ selectors.transferListWithMetadata = state => {
     }
 
     integrations = integrations.join('\n');
-    updatedTransfers[i].integrations = integrations;
+    updatedTransfer.integrations = integrations;
+
+    return updatedTransfer;
   });
 
   return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
@@ -5590,8 +5941,8 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
  * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
  */
 selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
-  // If not an export , then it is not a lookup
-  if (resourceType !== 'exports' || !resourceId) return false;
+  // If not an export or not inside a flow context , then it is not a lookup
+  if (resourceType !== 'exports' || !resourceId || !flowId) return false;
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
@@ -5707,26 +6058,31 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors.editorHelperFunctions = state => {
-  const functions = state?.session?.editors?.helperFunctions || {};
-  const userTimezone = selectors.userTimezone(state);
-  const timestampFunc = functions.timestamp;
+selectors.mkEditorHelperFunctions = () => createSelector(
+  state => state?.session?.editors?.helperFunctions || emptyObject,
+  selectors.userTimezone,
+  (helperFunctions, userTimezone) => {
+    const functions = {...helperFunctions};
+    const timestampFunc = functions.timestamp;
 
-  if (timestampFunc && userTimezone) {
-    functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+    if (timestampFunc && userTimezone) {
+      functions.timestamp = timestampFunc.replace('timezone', `"${userTimezone}"`);
+    }
+
+    return functions;
   }
 
-  return functions;
-};
+);
+selectors.editorHelperFunctions = selectors.mkEditorHelperFunctions();
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession.editor(state?.session, editorId);
+  const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (stage === 'outputFilter' ||
-    stage === 'exportFilter' ||
-    stage === 'inputFilter') return true;
+  if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
+    return true;
+  }
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
@@ -5763,14 +6119,22 @@ selectors.isEditorDisabled = (state, editorId) => {
     }
   }
 
+  const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
+
   // if we are on FB actions, below logic applies
   // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
   if (editorType === 'mappings' ||
   (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter'))) {
-    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
+    return isMonitorLevelAccess;
+  }
+  if (editorType === 'responseMappings') {
+    if (isIntegrationApp(flow)) {
+      return false;
+    }
 
     return isMonitorLevelAccess;
   }
+
   const isViewMode = selectors.isFlowViewMode(state, integrationId, flowId);
   const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
 
@@ -5815,52 +6179,61 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession.editor(state?.session, editorId);
-  const {stage, resourceId, resourceType, flowId, fieldId} = editor;
+  const {stage, resourceId, resourceType, flowId, fieldId, editorType} = editor;
   const resource = selectors.resourceData(
     state,
     resourceType,
     resourceId
   )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
-  let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage)) {
-    _sampleData = sampleData;
-  } else if (isPageGenerator) {
-    // for PGs, no sample data is shown
-    _sampleData = undefined;
-  } else {
-    // for all PPs, default sample data is shown in case its empty
-    _sampleData = { data: sampleData || { myField: 'sample' }};
-  }
 
   // for lookup fields, BE doesn't support v1/v2 yet
   if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+    return {shouldGetContextFromBE: false, sampleData: { data: sampleData || { myField: 'sample' }}};
   }
 
   // TODO: BE would be deprecating native REST adaptor as part of IO-19864
   // we can remove this logic from UI as well once that is complete
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType) && !connection.isHTTP) {
+    let _sampleData;
+
+    if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
       // native REST adaptor filters
-      return {
-        shouldGetContextFromBE: false,
-        sampleData: Array.isArray(_sampleData) ? {
-          rows: _sampleData,
-        } : {
-          record: _sampleData,
-        },
+      _sampleData = Array.isArray(sampleData) ? {
+        rows: sampleData,
+      } : {
+        record: sampleData,
       };
+    } else if (!isPageGenerator) {
+      _sampleData = { data: sampleData || { myField: 'sample' }};
     }
+
+    return {
+      shouldGetContextFromBE: false,
+      sampleData: _sampleData,
+    };
   }
-  if (stage === 'transform' ||
-  stage === 'sampleResponse' || stage === 'importMappingExtract' || HOOK_STAGES.includes(stage)) {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+
+  if (
+    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+  HOOK_STAGES.includes(stage)
+  ) {
+    return {shouldGetContextFromBE: false, sampleData};
   }
 
   return {shouldGetContextFromBE: true};
+};
+
+selectors.isEditorSaveInProgress = (state, editorId) => {
+  // at a time only one of below editors would be active,
+  // so checking save status for all
+  const {saveStatus} = selectors.editor(state, editorId);
+  const editorSaveInProgress = saveStatus === AFE_SAVE_STATUS.REQUESTED;
+  const mappingSaveInProgress = selectors.mappingSaveStatus(state)?.saveInProgress;
+  const responseMappingSaveInProgress = selectors.responseMappingSaveStatus(state)?.saveInProgress;
+
+  return !!(editorSaveInProgress || mappingSaveInProgress || responseMappingSaveInProgress);
 };
 
 // #endregion AFE selectors
@@ -5912,6 +6285,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
 
   let licenseMessageContent = '';
+  let listViewLicenseMesssage = '';
   let expired = false;
   let trialExpired = false;
   let showTrialLicenseMessage = false;
@@ -5921,19 +6295,23 @@ selectors.tileLicenseDetails = (state, tile) => {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    listViewLicenseMesssage = `Expired ${Math.abs(trialExpiresInDays)} days ago`;
     showTrialLicenseMessage = true;
     trialExpired = true;
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays > 0) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
+    listViewLicenseMesssage = `Expiring in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {
     expired = true;
-    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
+    licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
+    listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+    licenseMessageContent = `Your subscription will expire in ${getTextAfterCount('day', expiresInDays)}. Contact sales to renew your subscription.`;
+    listViewLicenseMesssage = `Expiring in ${getTextAfterCount('day', expiresInDays)}`;
   }
 
-  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id};
+  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id, listViewLicenseMesssage};
 };
 
 // #region listener request logs selectors

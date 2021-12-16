@@ -24,7 +24,6 @@ import ErrorsListDrawer from '../../../common/ErrorsList';
 import SectionTitle from '../../../common/FlowSectionTitle';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
@@ -121,7 +120,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-
+  noSearchResults: {
+    marginTop: theme.spacing(1),
+  },
 }));
 export const ActionsPanel = ({actions, actionProps, ...rest}) => {
   const classes = useStyles();
@@ -165,7 +166,8 @@ const IAFormActionsPanel = ({isDrawer, onCancel, ...rest}) => {
   />
   );
 };
-export const integrationSettingsKey = 'integrationSettings';
+
+const integrationSettingsKey = 'integrationSettings';
 
 const RegularIAForm = props => {
   const {
@@ -422,9 +424,6 @@ function FlowList({ integrationId, childId }) {
       <MappingDrawer
         integrationId={integrationId}
       />
-      <ResponseMappingDrawer
-        integrationId={integrationId}
-      />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}
@@ -470,10 +469,16 @@ export default function FlowsPanel({ childId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
 
+  const filterKey = `${integrationId}-flows`;
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
   const integrationErrorsPerSection = useSelector(state =>
     selectors.integrationErrorsPerSection(state, integrationId, childId),
   shallowEqual);
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId, flowsFilterConfig, isUserInErrMgtTwoDotZero);
 
   const history = useHistory();
   // If someone arrives at this view without requesting a section, then we
@@ -489,28 +494,37 @@ export default function FlowsPanel({ childId, integrationId }) {
   }, [flowSections, history, match]);
 
   return (
-    <div className={classes.root}>
-      <Grid container wrap="nowrap">
-        <Grid item className={classes.subNav}>
-          <List>
-            {flowSections.map(({ title, titleId }) => (
-              <ListItem key={titleId} className={classes.flowTitle}>
-                <NavLink
-                  data-public
-                  className={classes.listItem}
-                  activeClassName={classes.activeListItem}
-                  to={titleId}
-                  data-test={titleId}>
-                  <SectionTitle title={title} errorCount={integrationErrorsPerSection[titleId]} />
-                </NavLink>
-              </ListItem>
-            ))}
-          </List>
+    <>
+      <div className={classes.root}>
+        <Grid container wrap="nowrap">
+          <Grid item className={classes.subNav}>
+            <List>
+              {flowSections.map(({ title, titleId }) => (
+                <ListItem key={titleId} className={classes.flowTitle}>
+                  <NavLink
+                    data-public
+                    className={classes.listItem}
+                    activeClassName={classes.activeListItem}
+                    to={titleId}
+                    data-test={titleId}>
+                    <SectionTitle title={title} errorCount={integrationErrorsPerSection[titleId]} />
+                  </NavLink>
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+          <Grid item className={classes.content}>
+            <FlowList integrationId={integrationId} childId={childId} />
+          </Grid>
         </Grid>
-        <Grid item className={classes.content}>
-          <FlowList integrationId={integrationId} childId={childId} />
-        </Grid>
-      </Grid>
-    </div>
+      </div>
+      <div className={classes.noSearchResults}>
+        {(flowFilter.keyword && flowSections.length) ? (
+          <Typography variant="body1">
+            Your search didn’t return any matching results. Try expanding your search criteria.
+          </Typography>
+        ) : ''}
+      </div>
+    </>
   );
 }

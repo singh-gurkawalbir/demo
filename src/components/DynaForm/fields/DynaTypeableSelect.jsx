@@ -70,6 +70,9 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
+  dynaTypeableSelect: {
+    zIndex: theme.zIndex.appBar,
+  },
 }));
 const SelectStyle = theme => ({
   option: (provided, state) => ({
@@ -338,6 +341,7 @@ export default function DynaTypeableSelect(props) {
         options={suggestions}
         filterOption={filterOption}
         menuIsOpen
+        className={classes.dynaTypeableSelect}
         />
       )}
       {!isFocused &&

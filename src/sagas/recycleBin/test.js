@@ -2,8 +2,7 @@
 import { call, put, all, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { restore, purge } from '.';
-import { recycleBinDependencies } from '../../constants/resource';
+import { restore, purge, getRestoredResourceDependencies } from '.';
 import { getResourceCollection } from '../resources';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
@@ -26,8 +25,13 @@ describe('restore saga', () => {
       })
     );
     expect(saga.next().value).toEqual(
+      call(getRestoredResourceDependencies, { restoredResourceType: resourceType })
+    );
+    const exportDependencies = ['exports', 'connections', 'agents'];
+
+    expect(saga.next(exportDependencies).value).toEqual(
       all(
-        [...recycleBinDependencies[resourceType], 'recycleBinTTL'].map(
+        [...exportDependencies, 'recycleBinTTL'].map(
           resourceType => call(getResourceCollection, { resourceType })
         )
       )

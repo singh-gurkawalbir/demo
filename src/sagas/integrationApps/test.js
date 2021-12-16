@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
-import { getResource } from '../resources';
+import { getResource, getResourceCollection } from '../resources';
 import {
   initInstall,
   installStep,
@@ -30,6 +30,7 @@ import {
 import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen } from './uninstaller';
 import { initUninstall, uninstallStep, requestSteps } from './uninstaller2.0';
 import { resumeIntegration } from './resume';
+import openExternalUrl from '../../utils/window';
 
 describe('installer saga', () => {
   describe('initInstall generator', () => {
@@ -569,7 +570,7 @@ describe('installer saga', () => {
         .run();
     });
   });
-  describe('verifyBundleOrPackageInstall genretaor', () => {
+  describe('verifyBundleOrPackageInstall generator', () => {
     const id = '1234';
     const connectionId = '5678';
     const path = `/connections/${connectionId}/distributed`;
@@ -715,6 +716,16 @@ describe('installer saga', () => {
         )
         .run();
     });
+    test('should dispatch failed step action for url type step and not make API call, if no getUrlFunction', () => {
+      const step = { type: 'url' };
+
+      return expectSaga(getCurrentStep, { id, step })
+        .not.call.fn(apiCallWithRetry)
+        .put(
+          actions.integrationApp.installer.updateStep(id, '', 'failed')
+        )
+        .run();
+    });
 
     test('should make API call when init function present and dispatch action with same form meta if response is null or result is false', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
@@ -743,7 +754,32 @@ describe('installer saga', () => {
         )
         .run();
     });
+    test('should make API call when getUrlFunction present and dispatch failed action if response is null', () => {
+      const step = { type: 'url', getUrlFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
+      const expectedOut = {
+        result: null,
+      };
 
+      return expectSaga(getCurrentStep, { id, step })
+        .provide([[call(apiCallWithRetry, args), expectedOut]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'failed',
+          )
+        )
+        .run();
+    });
     test('should make API call when init function present and dispatch action with updated form meta', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
       const args = {
@@ -778,7 +814,35 @@ describe('installer saga', () => {
         )
         .run();
     });
+    test('should make API call when getUrlFunction present and call openExternalUrl and dispatch action', () => {
+      const step = { type: 'url', getUrlFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
+      const expectedOut = {
+        result: 'https://newurl.com',
+      };
 
+      return expectSaga(getCurrentStep, { id, step })
+        .provide([[call(apiCallWithRetry, args), expectedOut]])
+        .call(apiCallWithRetry, args)
+        .call(openExternalUrl, { url: expectedOut.result })
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'inProgress',
+            undefined,
+            expectedOut.result
+          )
+        )
+        .run();
+    });
     test('should dispatch failed step action if API call fails', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
       const args = {
@@ -1351,6 +1415,8 @@ describe('settings saga', () => {
           ],
           [call(apiCallWithRetry, args1)],
           [call(apiCallWithRetry, args2), { response }],
+          [matchers.call.fn(getResourceCollection)],
+          [matchers.call.fn(getResource)],
         ])
         .call(apiCallWithRetry, args1)
         .call(apiCallWithRetry, args2)

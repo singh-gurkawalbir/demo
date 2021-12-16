@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { Checkbox, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import map from 'lodash/map';
+import clsx from 'clsx';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -11,6 +12,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -24,8 +26,40 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  flowName: {
+    flex: 1,
+  },
+  optionFlowGroupName: {
+    width: 200,
+  },
+  optionFlowGroupUnassigned: {
+    fontStyle: 'italic',
+  },
 }));
 const options = { ignoreUnusedConnections: true };
+const SelectedOptionIml = ({ item, processedValue}) => {
+  const classes = useStyles();
+
+  return (
+    <>
+      {!item.disabled && (
+        <Checkbox
+          checked={processedValue.some(value => value === item.value)}
+          color="primary"
+        />
+      )}
+      <ListItemText primary={item.label || item.value} className={classes.flowName} />
+      {item.groupName && (
+        <Typography
+          variant="body1"
+          className={clsx(classes.optionFlowGroupName, item.groupName === UNASSIGNED_SECTION_NAME ? classes.optionFlowGroupUnassigned : '')}
+        >
+          {item.groupName}
+        </Typography>
+      )}
+    </>
+  );
+};
 export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -53,17 +87,20 @@ export default function NotificationsSection({ integrationId, childId }) {
       flows: {
         id: 'flows',
         helpKey: 'notifications.jobErrors',
+        noApi: true,
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
         label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
+        SelectedOptionIml,
         selectAllIdentifier: _integrationId,
       },
       connections: {
         id: 'connections',
         helpKey: 'notifications.connections',
+        noApi: true,
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',

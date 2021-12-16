@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
+import { OutlinedButton } from '../Buttons';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -31,8 +33,9 @@ const useStyles = makeStyles(theme => ({
     maxWidth: theme.spacing(30),
     height: 36,
   },
-  filterWrapper: {
-    padding: 0,
+  downloadWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   filterContainer: {
     padding: theme.spacing(2, 0),
@@ -41,7 +44,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-
     '& > *': {
       marginRight: 10,
       '&:first-child': {
@@ -52,7 +54,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Filters(props) {
-  const {resourceType, resourceId, resourceDetails, onFiltersChange} = props;
+  const {resourceType, resourceId, resourceDetails, onFiltersChange, childId} = props;
+  const match = useRouteMatch();
+  const history = useHistory();
   const classes = useStyles();
   const {
     users,
@@ -72,6 +76,18 @@ export default function Filters(props) {
       source: OPTION_ALL.id,
     }
   );
+  const canDownloadLogs = useSelector(state =>
+    selectors.auditLogs(
+      state,
+      resourceType,
+      resourceId,
+      undefined,
+      {childId}
+    ).totalCount);
+
+  const handleDownload = useCallback(() => {
+    history.push(`${match.url}/download`);
+  }, [history, match.url]);
 
   const getResource = () => {
     const resource =
@@ -165,6 +181,15 @@ export default function Filters(props) {
             ))}
           </CeligoSelect>
         </FormControl>
+        <div className={classes.downloadWrapper}>
+          <OutlinedButton
+            disabled={!canDownloadLogs}
+            color="secondary"
+            data-test="download-auditlogs"
+            onClick={handleDownload}>
+            Download
+          </OutlinedButton>
+        </div>
       </form>
     </div>
   );
