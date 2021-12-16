@@ -124,7 +124,7 @@ export default function AlertDialog() {
   const classes = useStyles();
 
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
-  const showSessionStatus = useSelector(state => selectors.showSessionStatus(state)) || 'warning';
+  const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
   const isAuthenticated = useSelector(state => selectors.isAuthenticated(state));
   const isUiVersionDifferent = useSelector(selectors.isUiVersionDifferent);
