@@ -28,21 +28,8 @@ const useStyles = makeStyles(theme => ({
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
   },
-  backButton: {
-    marginRight: theme.spacing(1),
-    padding: 0,
-    '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
-    },
-  },
   nestedDrawerTitleText: {
     maxWidth: '90%',
-  },
-  titleImgBlock: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
   },
   debugLogButton: {
     padding: '0px 8px',

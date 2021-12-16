@@ -86,10 +86,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-
-  nestedDrawerTitleText: {
-    maxWidth: '90%',
-  },
   titleImgBlock: {
     width: '100%',
     display: 'flex',
