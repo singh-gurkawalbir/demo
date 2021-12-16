@@ -127,6 +127,21 @@ export function* requestPreview({ id }) {
     return yield put(actions.editor.validateFailure(id, violations));
   }
 
+  // since mappings are stored in separate state
+  // we validate the same here
+  if (processor === 'mapperProcessor') {
+    const {mappings, lookups} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
+
+    if (errMessage) {
+      const violations = {
+        ruleError: errMessage,
+      };
+
+      return yield put(actions.editor.validateFailure(id, violations));
+    }
+  }
+
   let result;
 
   if (!skipPreview) {
