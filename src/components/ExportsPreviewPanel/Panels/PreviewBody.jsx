@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Templates from '../Templates';
-import { HTTP_STAGES } from '../../../utils/exportPanel';
+import { HTTP_STAGES, getLatestReqResData } from '../../../utils/exportPanel';
 import { wrapExportFileSampleData } from '../../../utils/sampleData';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
@@ -91,10 +91,10 @@ export default function PreviewBody(props) {
                 : <DefaultPanel value={wrapExportFileSampleData(previewStageDataList.preview?.data)} /> }
             </CeligoTabPanel>
             <CeligoTabPanel panelId="request">
-              <RequestResponsePanel value={previewStageDataList.request?.data?.[0]} variant="previewPanel" />
+              <RequestResponsePanel value={getLatestReqResData(previewStageDataList.request?.data)} variant="previewPanel" />
             </CeligoTabPanel>
             <CeligoTabPanel panelId="raw">
-              <RequestResponsePanel value={previewStageDataList.raw?.data?.[0]} variant="previewPanel" />
+              <RequestResponsePanel value={getLatestReqResData(previewStageDataList.raw?.data)} variant="previewPanel" />
             </CeligoTabPanel>
           </CeligoTabWrapper>
         </>

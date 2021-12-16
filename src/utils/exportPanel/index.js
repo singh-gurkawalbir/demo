@@ -98,8 +98,6 @@ export const getPreviewDataPageSizeInfo = previewData => {
   return `1 Page, ${pageSize} Records`;
 };
 
-export const getRequestURL = requestData => requestData?.data?.[0]?.url;
-
 export const previewFileData = (previewData, recordSize) => {
   if (!previewData || !Array.isArray(previewData) || !recordSize || Number.isNaN(recordSize)) {
     return previewData;
@@ -108,3 +106,13 @@ export const previewFileData = (previewData, recordSize) => {
   // if preview data is an array
   return previewData.slice(0, recordSize);
 };
+
+export const getLatestReqResData = reqResData => {
+  if (Array.isArray(reqResData) && reqResData.length) {
+    // Incase of series of requests or responses, we need to show the latest(final) one to the user
+    // That will be  the last item in the reqResData
+    return reqResData[reqResData.length - 1];
+  }
+};
+
+export const getRequestURL = requestData => getLatestReqResData(requestData?.data)?.url;

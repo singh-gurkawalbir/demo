@@ -8,6 +8,7 @@ import {
   PREVIEW_STAGE,
   getRequestURL,
   isPreviewPanelAvailable,
+  getLatestReqResData,
 } from '.';
 
 describe('getAvailablePreviewStages util', () => {
@@ -171,5 +172,135 @@ describe('getRequestURL util', () => {
     };
 
     expect(getRequestURL(requestData)).toBe('https://celigohelp.zendesk.com/api/v2/tickets');
+  });
+  test('should return request url of the latest request if the request data has multiple requests', () => {
+    const sampleWithMultipleRequests = {
+      name: 'request',
+      errors: null,
+      data: [
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'url1',
+          method: 'GET',
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'url2',
+          method: 'GET',
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'url3',
+          method: 'GET',
+        },
+      ],
+    };
+
+    expect(getRequestURL(sampleWithMultipleRequests)).toEqual('url3');
+  });
+});
+
+describe('getLatestReqResData util', () => {
+  test('should return undefined if there is no reqResData or reqResData is not an array', () => {
+    expect(getLatestReqResData()).toBeUndefined();
+    expect(getLatestReqResData(null)).toBeUndefined();
+    expect(getLatestReqResData({})).toBeUndefined();
+  });
+  test('should return the object if the reqResData array has a single object', () => {
+    const sampleResponseData = {
+      name: 'raw',
+      errors: null,
+      data: [
+        {
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: '{}',
+          url: 'https://sellingpartnerapi-na.amazon.com/orders/v0/orders?MarketplaceIds=ATVPDKIKX0DER&CreatedAfter=2020-01-01',
+          statusCode: 200,
+        },
+      ],
+    };
+    const sampleRequestData = {
+      name: 'request',
+      errors: null,
+      data: [
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'https://sellingpartnerapi-na.amazon.com/orders/v0/orders?MarketplaceIds=ATVPDKIKX0DER&CreatedAfter=2020-01-01',
+          method: 'GET',
+        },
+      ],
+    };
+
+    expect(getLatestReqResData(sampleRequestData.data)).toBe(sampleRequestData.data[0]);
+    expect(getLatestReqResData(sampleResponseData.data)).toBe(sampleResponseData.data[0]);
+  });
+  test('should return the last item in the reqResData array if it has more than one item', () => {
+    const sampleWithMultipleRequests = {
+      name: 'request',
+      errors: null,
+      data: [
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'url1',
+          method: 'GET',
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'url2',
+          method: 'GET',
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'x-amz-access-token': '********',
+            Host: 'sellingpartnerapi-na.amazon.com',
+            'X-Amz-Date': '20211216T121633Z',
+            Authorization: 'AWS4-HMAC-SHA256 Credential=AKIASXM4V7ZF66ZMNGMI/20211216/us-east-1/execute-api/aws4_request, SignedHeaders=accept;host;x-amz-access-token;x-amz-date, Signature=b965e5a2035f7c621d96cc9541138d9759cf6ffb9287ad62e9d1420fcb14e4e5',
+          },
+          url: 'url3',
+          method: 'GET',
+        },
+      ],
+    };
+
+    expect(getLatestReqResData(sampleWithMultipleRequests.data)).toBe(sampleWithMultipleRequests.data[2]);
   });
 });
