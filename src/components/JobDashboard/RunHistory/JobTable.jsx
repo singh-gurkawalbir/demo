@@ -1,6 +1,7 @@
 import React, { } from 'react';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import JobDetail from './JobDetail';
+import HeaderWithHelpText from '../../ResourceTable/commonCells/HeaderWithHelpText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   error: {
     width: '10.15%',
-    textAlign: 'right',
+    textAlign: 'center',
   },
   resolved: {
     width: '9%',
@@ -83,14 +84,14 @@ export default function JobTable({
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.name}>Flow</TableCell>
+              <TableCell className={classes.name}> <HeaderWithHelpText title="Flow" helpKey="runHistory.flow" /></TableCell>
               <TableCell className={classes.status}>Status</TableCell>
               <TableCell className={classes.duration}>Duration</TableCell>
               <TableCell className={classes.started}>Started</TableCell>
               <TableCell className={classes.completed}>Completed</TableCell>
               <TableCell className={classes.success}>Success</TableCell>
               <TableCell className={classes.ignore}>Ignored</TableCell>
-              <TableCell className={classes.error}>Errors</TableCell>
+              <TableCell className={classes.error}><HeaderWithHelpText title="Errors" helpKey="runHistory.errors" /></TableCell>
               <TableCell className={classes.pages}>Pages</TableCell>
               <TableCell className={classes.actions}>Actions</TableCell>
             </TableRow>

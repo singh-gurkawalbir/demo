@@ -3,9 +3,27 @@ import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
-import { getResourceCollection } from '../resources';
+import { getResourceCollection, patchResource } from '../resources';
 
-export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, formKey }) {
+export function* patchIntegrationChanges({ integrationId, flowGroupings}) {
+  const patchSet = [
+    {
+      op: 'replace',
+      path: '/flowGroupings',
+      value: flowGroupings,
+    },
+  ];
+
+  const response = yield call(patchResource, {
+    resourceType: 'integrations',
+    id: integrationId,
+    patchSet,
+  });
+
+  return response;
+}
+
+export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId }) {
   try {
     yield call(apiCallWithRetry, {
       path: '/flows/updateFlowGrouping',
@@ -22,19 +40,13 @@ export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId, formKey }) {
 
     yield call(getResourceCollection, { resourceType: 'flows' });
   } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
-
-    if (formKey) {
-      yield put(actions.asyncTask.failed(formKey));
-    }
+    return {error};
   }
 }
 
-export function* updateIntegrationFlowGroups({ integrationId, payload, formKey }) {
-  let response;
-
+export function* updateIntegrationFlowGroups({ integrationId, payload }) {
   try {
-    response = yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path: `/integrations/${integrationId}`,
       opts: {
         method: 'PUT',
@@ -43,18 +55,14 @@ export function* updateIntegrationFlowGroups({ integrationId, payload, formKey }
       hidden: false,
       message: 'Updating flow groups',
     });
+
+    yield put(actions.resource.received('integrations', response));
+
+    return response;
   } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
-    yield put(actions.asyncTask.failed(formKey));
-
-    return;
+    return {error};
   }
-
-  yield put(actions.resource.received('integrations', response));
-
-  return response;
 }
-
 export function* addFlowGroup({ integrationId, groupName, flowIds, formKey }) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
   const updatedFlowGroupings = [...integration.flowGroupings];
@@ -63,19 +71,28 @@ export function* addFlowGroup({ integrationId, groupName, flowIds, formKey }) {
     name: groupName,
   });
   const payload = { ...integration, flowGroupings: updatedFlowGroupings };
-  const response = yield call(updateIntegrationFlowGroups, { integrationId, payload, formKey});
+  let response = yield call(updateIntegrationFlowGroups, { integrationId, payload });
 
-  if (response && flowIds.length) {
+  if (response && !response.error && flowIds.length) {
     const { _id: flowGroupId } = response.flowGroupings?.find(flowGroup => flowGroup.name === groupName);
 
-    yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, formKey });
+    response = yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId });
   }
+
+  if (response?.error) {
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(response.error));
+    yield put(actions.asyncTask.failed(formKey));
+
+    return;
+  }
+
   yield put(actions.asyncTask.success(formKey));
 }
 
 export function* editFlowGroup({ integrationId, flowGroupId, groupName, flowIds, deSelectedFlowIds, formKey }) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
   const isGroupNameChanged = integration.flowGroupings.find(flowGroup => flowGroup._id === flowGroupId)?.name !== groupName;
+  let response;
 
   if (isGroupNameChanged) {
     // replace the name of the selected flow group with new value 'groupName'
@@ -89,18 +106,25 @@ export function* editFlowGroup({ integrationId, flowGroupId, groupName, flowIds,
 
       return flowGroup;
     });
-    const payload = { ...integration, flowGroupings: updatedFlowGroupings };
 
-    yield call(updateIntegrationFlowGroups, { integrationId, payload, formKey});
+    response = yield call(patchIntegrationChanges, { integrationId, flowGroupings: updatedFlowGroupings });
   }
 
-  if (flowIds.length) {
-    yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId, formKey});
+  if (!response?.error && flowIds.length) {
+    response = yield call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId });
   }
 
-  if (deSelectedFlowIds.length) {
-    yield call(updateFlowsWithFlowGroupId, { flowIds: deSelectedFlowIds, flowGroupId: undefined, formKey});
+  if (!response?.error && deSelectedFlowIds.length) {
+    response = yield call(updateFlowsWithFlowGroupId, { flowIds: deSelectedFlowIds, flowGroupId: undefined });
   }
+
+  if (response?.error) {
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(response.error));
+    yield put(actions.asyncTask.failed(formKey));
+
+    return;
+  }
+
   yield put(actions.asyncTask.success(formKey));
 }
 
@@ -128,38 +152,28 @@ export function* createOrUpdateFlowGroup({ integrationId, flowGroupId, formKey }
 }
 
 export function* deleteFlowGroup({ integrationId, flowGroupId, flowIds }) {
+  let response;
+
   // remove _flowGroupingId from every flow belonging to the flowGroup with id as flowGroupId
   if (flowIds.length) {
-    yield call(updateFlowsWithFlowGroupId, { flowIds });
+    response = yield call(updateFlowsWithFlowGroupId, { flowIds });
   }
 
-  const integration = yield select(selectors.resource, 'integrations', integrationId);
-  const path = `/integrations/${integrationId}`;
-  // remove the flow group with id as flowGroupId from flowGroupings of integration
-  const updatedFlowGroupings = integration?.flowGroupings.filter(flowGroup => flowGroup._id !== flowGroupId);
+  if (!response?.error) {
+    const integration = yield select(selectors.resource, 'integrations', integrationId);
+    // remove the flow group with id as flowGroupId from flowGroupings of integration
+    const updatedFlowGroupings = integration?.flowGroupings.filter(flowGroup => flowGroup._id !== flowGroupId);
 
-  const payload = { ...integration, flowGroupings: updatedFlowGroupings };
+    response = yield call(patchIntegrationChanges, { integrationId, flowGroupings: updatedFlowGroupings });
+  }
 
-  try {
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'put',
-        body: payload,
-      },
-      hidden: false,
-      message: 'Delete flow group',
-    });
-
-    yield put(actions.resource.received('integrations', response));
-  } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.deleteFailed(error));
+  if (response?.error) {
+    yield put(actions.resource.integrations.flowGroups.deleteFailed(response.error));
   }
 }
 
 export function* flowGroupsShiftOrder({ integrationId, flowGroupId, newIndex}) {
   const integration = yield select(selectors.resource, 'integrations', integrationId);
-  const path = `/integrations/${integrationId}`;
 
   const updatedFlowGroupings = [...integration.flowGroupings];
 
@@ -169,22 +183,11 @@ export function* flowGroupsShiftOrder({ integrationId, flowGroupId, newIndex}) {
 
   // adding the removed group to the flowGroupings at new index
   updatedFlowGroupings.splice(newIndex, 0, removed);
-  const payload = { ...integration, flowGroupings: updatedFlowGroupings };
 
-  try {
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'put',
-        body: payload,
-      },
-      hidden: false,
-      message: 'Shift flow groups order',
-    });
+  const response = yield call(patchIntegrationChanges, { integrationId, flowGroupings: updatedFlowGroupings });
 
-    yield put(actions.resource.received('integrations', response));
-  } catch (error) {
-    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(error));
+  if (response?.error) {
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(response.error));
   }
 }
 

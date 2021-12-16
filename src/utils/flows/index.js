@@ -1235,7 +1235,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
       return [flowGroupObject];
     }
 
-    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1].isLastFlowInFlowGroup = true;
+    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1] = { ...flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1], isLastFlowInFlowGroup: true};
 
     return [flowGroupObject, ...flowObjetsOfAFlowGroup];
   }).flat();

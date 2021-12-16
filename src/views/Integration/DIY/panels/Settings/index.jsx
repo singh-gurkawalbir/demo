@@ -165,11 +165,15 @@ function CustomSettings({ integrationId, sectionId }) {
       ];
       const refetchResources = isFrameWork2 || hasPreSaveHook;
 
-      dispatch(actions.resource.patchAndCommitStaged('integrations', integrationId, patchSet, {
-        options: {
-          refetchResources,
-        },
-      }));
+      if (isFrameWork2) {
+        dispatch(actions.resource.patchAndCommitStaged('integrations', integrationId, patchSet, {
+          options: {
+            refetchResources,
+          },
+        }));
+      } else {
+        dispatch(actions.resource.patch('integrations', integrationId, patchSet));
+      }
     },
     [dispatch, integrationId, isFrameWork2, patchPath, hasPreSaveHook]
   );
@@ -177,7 +181,7 @@ function CustomSettings({ integrationId, sectionId }) {
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
       path: `/integrations/${integrationId}`,
-      method: 'put',
+      method: isFrameWork2 ? 'put' : 'PATCH',
       onSave: handleSubmit,
     }
   );
