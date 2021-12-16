@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-handler-names */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
@@ -46,13 +46,17 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   });
 
   const [data, setData] = useState(retryData?.data);
-  let isDirty;
+  const isDirty = useMemo(() => {
+    let valueChanged;
 
-  try {
-    isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
-  } catch (e) {
-    isDirty = false;
-  }
+    try {
+      valueChanged = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
+    } catch (e) {
+      valueChanged = false;
+    }
+
+    return valueChanged;
+  }, [data, retryData?.data]);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
