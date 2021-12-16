@@ -46,7 +46,13 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   });
 
   const [data, setData] = useState(retryData?.data);
-  const isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
+  let isDirty;
+
+  try {
+    isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
+  } catch (e) {
+    isDirty = false;
+  }
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
