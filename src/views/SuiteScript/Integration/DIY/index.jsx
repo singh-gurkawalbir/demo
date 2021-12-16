@@ -21,9 +21,10 @@ import IntegrationTabs from '../common/Tabs';
 import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
+  // Todo (Azhar) Styles are repeating in suitescript
   pageWrapper: {
     padding: theme.spacing(3),
-    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px + 96px))`,
+    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
     overflowY: 'auto',
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
     '& > [role = tabpanel]': {

@@ -27,6 +27,7 @@ import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
+import { constructResourceFromFormValues } from '../utils';
 
 export const SCOPES = {
   META: 'meta',
@@ -126,12 +127,8 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
-export function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
-  const { merged: resourceObj } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
+function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
+  const resourceObj = yield call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values });
   const connectionObj = yield select(
     selectors.resource,
     'connections',
@@ -143,9 +140,16 @@ export function* updateFileAdaptorSampleData({ resourceId, resourceType, values 
     isAS2Resource(resourceObj) ||
     (resourceType === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
   ) {
+    // IO-23787 The latest sample data which is edited, is available on the resourceObject
+    // Handled in DynaFileDefintionEditor_afe when user updates the sample data and saves it
+    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(resourceObj?.file?.type)) {
+      if (resourceObj?.sampleData) return { ...values, '/sampleData': resourceObj?.sampleData };
+    }
+
     const sampleData = yield call(_fetchRawDataForFileAdaptors, {
       resourceId,
-      type: resourceType,
+      resourceType,
+      values,
     });
 
     if (sampleData !== undefined) {
@@ -163,8 +167,8 @@ function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
     resourceId
   );
 
-  // TODO: make a generic fix on raw data and not specific to netsuite. Ref: IO-18967 for netsuite specific fix
-  if (resourceObj?.adaptorType === 'NetSuiteExport' || !resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA) {
+  // Incase of Data loader, no need to remove rawData as it is handled when the flow is run
+  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA || resourceObj?.type === 'simple') {
     return values;
   }
 

@@ -27,6 +27,8 @@ export default {
       type: 'text',
       label: 'Account ID',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'harvest.connection.http.encrypted.accountId',
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },

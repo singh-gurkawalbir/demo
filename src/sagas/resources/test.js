@@ -1,5 +1,5 @@
 /* global describe, test, expect, beforeEach, jest */
-import { call, put, select, take, race, delay } from 'redux-saga/effects';
+import { call, put, select, take, race } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -33,10 +33,9 @@ import {
   replaceConnection,
   eventReportCancel,
   downloadReport,
-  pollForResourceCollection,
-  startPollingForResourceCollection,
+  downloadAuditlogs,
 } from '.';
-import { apiCallWithRetry } from '..';
+import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
 import { SCOPES, updateFlowDoc } from '../resourceForm';
 import { resourceConflictResolution } from '../utils';
@@ -50,8 +49,9 @@ import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
-import { pollApiRequests } from '../app';
 import { APIException } from '../api/requestInterceptors/utils';
+import getRequestOptions from '../../utils/requestOptions';
+import openExternalUrl from '../../utils/window';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -635,11 +635,11 @@ availableResources.forEach(type => {
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       if (type === 'stacks') {
         expect(saga.next(mockCollection).value).toEqual(
-          call(apiCallWithRetry, { path: '/shared/stacks' })
+          call(apiCallWithPaging, { path: '/shared/stacks' })
         );
         mockSharedStacks = mockSharedStacks.map(stack => ({
           ...stack,
@@ -668,7 +668,7 @@ availableResources.forEach(type => {
       const path = `/${type}`;
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       const final = saga.throw();
 
@@ -957,9 +957,7 @@ describe('updateIntegrationSettings saga', () => {
       ])
       .call.fn(apiCallWithRetry)
       .call(getResource, { resourceType: 'flows', id: flowId })
-      .put(actions.resource.patchStaged(flowId, patchSet, 'value'))
-
-      .put(actions.resource.commitStaged('flows', flowId, 'value'))
+      .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
       .run();
   });
   test('should dispatch requestCollection actions if response exists and options action is not flowEnableDisable', () => expectSaga(updateIntegrationSettings, {
@@ -1035,9 +1033,19 @@ describe('deleteIntegration saga', () => {
     .not.call.fn(deleteResource)
     .returns(undefined)
     .run());
+  test('should not delete integration if integration has references like flows', () => expectSaga(deleteIntegration, {integrationId: '123'})
+    .provide([
+      [select(selectors.resource, 'integrations', '123'), {_connectorId: 'someId'}],
+      [call(requestReferences, {resourceType: 'integrations', id: '123'}), {flows: [{id: '123'}]}],
+    ])
+    .not.call.fn(deleteResource)
+    .returns(undefined)
+    .run());
+
   test('should call deleteResource and dispatch request collection actions if integration does not have _connectorId', () => expectSaga(deleteIntegration, {integrationId: '123'})
     .provide([
       [select(selectors.resource, 'integrations', '123'), {_id: '123'}],
+      [call(requestReferences, {resourceType: 'integrations', id: '123'}), {}],
       [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
@@ -1082,6 +1090,7 @@ describe('validateResource saga', () => {
   test('should call getResource to validate', () => expectSaga(validateResource, { resourceType, resourceId })
     .provide([
       [select(selectors.resource, resourceType, resourceId), {}],
+      [call(getResource, { resourceType, id: resourceId, hidden: true }), undefined],
     ])
     .call(getResource, {resourceType, id: resourceId, hidden: true})
     .run());
@@ -1574,62 +1583,6 @@ describe('downloadReport saga', () => {
   });
 });
 
-describe('pollForResourceCollection saga', () => {
-  test('should call getResourceCollection after 5 seconds delay continously', () => {
-    const saga = pollForResourceCollection({resourceType: 'connections'});
-
-    expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType: 'connections'}, duration: 5000 }));
-
-    expect(saga.next().done).toEqual(true);
-  });
-});
-
-describe('startPollingForResourceCollection saga', () => {
-  test('cancel poll effect should race ahead when stop connection poll action is called ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        // delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections'})
-    .returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('cancel poll effect should not race ahead when stop exports poll action is called since the resourceType does not match ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'exports'})
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('cancel poll effect should not race ahead when pollForResourceCollection saga completes  ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch('waitForData')
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('pollForResourceCollections should complete when no action is dispatched ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-});
-
 describe('tests for metadata sagas', () => {
   describe('getNetsuiteOrSalesforceMeta saga tests', () => {
     const connId = '123';
@@ -2037,5 +1990,87 @@ describe('tests for metadata sagas', () => {
         .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
         .returns(undefined)
         .run());
+  });
+});
+describe('downloadAuditlogs saga', () => {
+  const yesterdayDate = new Date();
+
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const resourceType = 'integrations';
+  const resourceId = 'id124';
+  const filters = {};
+
+  test('should invoke download audit logs api without any date filter', () => {
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date filters', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date filters and childId', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const flowIds = ['1', '2', '3'];
+    const childId = 'child123';
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters, childId, flowIds }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
+      .provide([
+        [select(
+          selectors.integrationAppFlowIds,
+          resourceId,
+          childId
+        ),
+        flowIds,
+        ],
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
   });
 });

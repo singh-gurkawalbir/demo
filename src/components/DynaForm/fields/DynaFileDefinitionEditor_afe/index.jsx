@@ -60,17 +60,15 @@ export default function DynaFileDefinitionEditor_afe(props) {
 
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
 
-    dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
-
     // It calls processor on final rules to parse file
     // @raghu this would also need to be removed once auto sample data update changes are done
 
-    dispatch(actions.resourceFormSampleData.request(formKey, {lastValidData: editorValues?.lastValidData}));
+    dispatch(actions.resourceFormSampleData.request(formKey, { lastValidData: editorValues?.lastValidData }));
     // update rules against this field each time it gets saved
     if (rule) {
       onFieldChange(id, rule);
     }
-  }, [dispatch, resourceId, resourceType, formKey, onFieldChange, id]);
+  }, [dispatch, resourceId, formKey, onFieldChange, id]);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, editorType, {

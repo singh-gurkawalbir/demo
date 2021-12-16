@@ -14,7 +14,7 @@ export default {
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },
-          { label: 'EDIX12', value: 'filedefinition' },
+          { label: 'EDI X12', value: 'filedefinition' },
           { label: 'Fixed Width', value: 'fixed' },
           { label: 'EDIFACT', value: 'delimited/edifact' },
         ],
@@ -248,6 +248,18 @@ export default {
       { field: 'pgpencrypt', is: [true] },
     ],
     options: [{ items: [{ label: 'sha256', value: 'sha256' }, { label: 'sha384', value: 'sha384' }, { label: 'sha512', value: 'sha512' }, { label: 'sha224', value: 'sha224' }] }],
+  },
+  'file.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    defaultValue: r => r?.file?.batchSize || '',
+    helpKey: 'import.file.batchSize',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[\\d]+$',
+        message: 'Only numbers allowed',
+      },
+    },
   },
   'file.backupPath': {
     loggable: true,

@@ -735,6 +735,55 @@ describe('sampleData selectors', () => {
       expect(sel(initialState, resourceId, previewStages)).toEqual(expectedOutput);
     });
   });
+
+  describe('getResourceSampleDataWithStatus', () => {
+    test('should return all parsable errors when there are no stages in the response, this scenario occurs when IO errors out', () => {
+      const error = {
+        errors: [{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}],
+      };
+      const initialState = {
+        123: { status: 'requested' },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
+      );
+
+      expect(selectors.getAllParsableErrors(newState, '123'))
+        .toEqual([{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}]);
+    });
+    test('should return no errors when there are stages in the response, this scenario occurs when the endpoint errors out', () => {
+      const error = {
+        errors: [{
+          code: '401',
+          source: 'application',
+          message: "{\"error\":\"Couldn't authenticate you\"}",
+        }],
+        stages: [{
+          name: 'request',
+          data: [{
+            body: 'test',
+          }],
+        }, {
+          name: 'raw',
+          data: [{
+            error: "{\"error\":\"Couldn't authenticate you\"}",
+          }],
+        }],
+      };
+      const initialState = {
+        123: { status: 'requested' },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
+      );
+
+      expect(selectors.getAllParsableErrors(newState, '123')).toEqual(undefined);
+    });
+  });
 });
 
 describe('getResourceSampleDataStages', () => {

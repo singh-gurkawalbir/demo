@@ -52,6 +52,7 @@ Object {
       },
       "http.encrypted.clientSecret": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "adp.connection.http.encrypted.clientSecret",
         "id": "http.encrypted.clientSecret",
         "inputType": "password",
@@ -236,6 +237,7 @@ Object {
       },
       "http.encrypted.apiKey": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "certify.connection.http.encrypted.apiKey",
         "id": "http.encrypted.apiKey",
         "inputType": "password",
@@ -245,6 +247,7 @@ Object {
       },
       "http.encrypted.apiSecret": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "certify.connection.http.encrypted.apiSecret",
         "id": "http.encrypted.apiSecret",
         "inputType": "password",
@@ -8319,6 +8322,9 @@ Object {
       "file.backupPath": Object {
         "fieldId": "file.backupPath",
       },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
       },
@@ -8528,6 +8534,7 @@ Object {
                 "ftp.inProgressFileName",
                 "ftp.blobUseTempFile",
                 "ftp.blobInProgressFileName",
+                "file.batchSize",
                 "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
@@ -9342,7 +9349,7 @@ Object {
                         "http.relativeURICreate",
                         "http.bodyCreate",
                       ],
-                      "label": "Create new data",
+                      "label": "Create new records",
                     },
                     Object {
                       "collapsed": true,
@@ -9351,7 +9358,7 @@ Object {
                         "http.ignoreExistingExtract",
                         "http.ignoreExistingLookupName",
                       ],
-                      "label": "Ignore existing records",
+                      "label": "Identify existing records",
                     },
                     Object {
                       "collapsed": true,
@@ -9360,7 +9367,7 @@ Object {
                         "http.ignoreNewExtract",
                         "http.ignoreNewLookupName",
                       ],
-                      "label": "Ignore new data",
+                      "label": "Identify existing records",
                     },
                     Object {
                       "collapsed": true,
@@ -9369,7 +9376,7 @@ Object {
                         "http.relativeURIUpdate",
                         "http.bodyUpdate",
                       ],
-                      "label": "Update existing data",
+                      "label": "Update existing records",
                     },
                   ],
                   "type": "collapse",
@@ -9405,7 +9412,7 @@ Object {
                         "http.successPathCreate",
                         "http.successValuesCreate",
                       ],
-                      "label": "Create new data",
+                      "label": "Create new records",
                     },
                     Object {
                       "collapsed": true,
@@ -9417,7 +9424,7 @@ Object {
                         "http.successPathUpdate",
                         "http.successValuesUpdate",
                       ],
-                      "label": "Update existing data",
+                      "label": "Update existing records",
                     },
                   ],
                   "type": "collapse",
@@ -9590,32 +9597,6 @@ Object {
       },
       "common": Object {
         "formId": "common",
-      },
-      "createNewData": Object {
-        "id": "createNewData",
-        "label": "Create new data",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "dataMappings": Object {
         "formId": "dataMappings",
@@ -10074,56 +10055,6 @@ Object {
           },
         ],
       },
-      "ignoreExistingData": Object {
-        "id": "ignoreExistingData",
-        "label": "Ignore existing records",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "ignoreNewData": Object {
-        "id": "ignoreNewData",
-        "label": "Ignore new data",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "inputMode": Object {
         "defaultValue": [Function],
         "id": "inputMode",
@@ -10162,59 +10093,8 @@ Object {
           },
         ],
       },
-      "sampleDataTitle": Object {
-        "id": "sampleDataTitle",
-        "label": "Do you have sample data?",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "isNot": Array [
-              "DELETE",
-            ],
-          },
-        ],
-      },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "upateExistingData": Object {
-        "id": "upateExistingData",
-        "label": "Upate existing data",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
     },
     "layout": Object {
@@ -10241,7 +10121,7 @@ Object {
                     "http.relativeURICreate",
                     "http.bodyCreate",
                   ],
-                  "label": "Create new data",
+                  "label": "Create new records",
                 },
                 Object {
                   "collapsed": true,
@@ -10250,7 +10130,7 @@ Object {
                     "http.ignoreExistingExtract",
                     "http.ignoreExistingLookupName",
                   ],
-                  "label": "Ignore existing records",
+                  "label": "Identify existing records",
                 },
                 Object {
                   "collapsed": true,
@@ -10259,7 +10139,7 @@ Object {
                     "http.ignoreNewExtract",
                     "http.ignoreNewLookupName",
                   ],
-                  "label": "Ignore new data",
+                  "label": "Identify existing records",
                 },
                 Object {
                   "collapsed": true,
@@ -10268,7 +10148,7 @@ Object {
                     "http.relativeURIUpdate",
                     "http.bodyUpdate",
                   ],
-                  "label": "Update existing data",
+                  "label": "Update existing records",
                 },
               ],
               "fields": Array [
@@ -10300,7 +10180,7 @@ Object {
                     "http.successPathCreate",
                     "http.successValuesCreate",
                   ],
-                  "label": "Create new data",
+                  "label": "Create new records",
                 },
                 Object {
                   "collapsed": true,
@@ -10309,7 +10189,7 @@ Object {
                     "http.successPathUpdate",
                     "http.successValuesUpdate",
                   ],
-                  "label": "Update existing data",
+                  "label": "Update existing records",
                 },
               ],
               "fields": Array [
@@ -10401,6 +10281,9 @@ Object {
       },
       "file.backupPath": Object {
         "fieldId": "file.backupPath",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
       },
       "file.csv": Object {
         "fieldId": "file.csv",
@@ -12409,6 +12292,9 @@ Object {
       "http.status.doneWithoutDataValues": Object {
         "fieldId": "http.status.doneWithoutDataValues",
       },
+      "http.status.errorValues": Object {
+        "fieldId": "http.status.errorValues",
+      },
       "http.status.inProgressValues": Object {
         "fieldId": "http.status.inProgressValues",
       },
@@ -12453,6 +12339,7 @@ Object {
             "http.status.inProgressValues",
             "http.status.doneValues",
             "http.status.doneWithoutDataValues",
+            "http.status.errorValues",
           ],
           "label": "Configure how to check status",
         },

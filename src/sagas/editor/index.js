@@ -314,10 +314,7 @@ export function* save({ id, context }) {
       if (action) {
         yield put(backgroundPatches[index].action);
       } else if (!!patch && !!resourceType && !!resourceId) {
-        yield put(actions.resource.patchStaged(resourceId, patch, 'value'));
-        yield put(
-          actions.resource.commitStaged(resourceType, resourceId, 'value')
-        );
+        yield put(actions.resource.patchAndCommitStaged(resourceType, resourceId, patch));
       }
     }
   }

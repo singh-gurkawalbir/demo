@@ -98,10 +98,13 @@ export const GenericTypeableSelect = props => {
     onFieldChange,
     id,
     options,
+    dropdownIndicator = DropdownIndicator,
+    menuListImpl = MenuListImpl,
     // these prop give you the ability to provide the selected values jsx implementations
     SelectedValueImpl,
     // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
+    unSearchable,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -274,13 +277,14 @@ export const GenericTypeableSelect = props => {
           isDisabled={disabled}
           isMulti
           placeholder={placeholder}
-          components={{DropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: MenuListImpl}}
+          components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
           options={options}
           value={value}
           onChange={handleChange}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
           styles={customStylesMultiselect}
+          isSearchable={!unSearchable}
      />
 
         <FieldMessage {...props} />

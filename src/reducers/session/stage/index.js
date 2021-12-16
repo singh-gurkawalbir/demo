@@ -79,6 +79,7 @@ export default (state = {}, action) => {
 
         return;
 
+      case actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT:
       case actionTypes.RESOURCE.STAGE_PATCH: {
         if (!newPatch || !newPatch.length) return;
 

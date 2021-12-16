@@ -1,4 +1,4 @@
-import {TableCell } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
 import React from 'react';
 
 const ContentCell = ({
@@ -6,9 +6,9 @@ const ContentCell = ({
   rowData,
   index,
 }) => {
-  const { Value, align} = meta;
+  const { Value, align, useGetCellStyling = () => {}} = meta;
   const val = Value({rowData});
-
+  const className = useGetCellStyling({rowData});
   const cellValue = val === undefined ? null : val;
 
   if (index === 0) {
@@ -16,14 +16,17 @@ const ContentCell = ({
       <TableCell
         component="th"
         scope="row"
-        align={align || 'left'}>
+        align={align || 'left'}
+        className={className}>
         {cellValue}
       </TableCell>
     );
   }
 
   return (
-    <TableCell align={align || 'left'}>
+    <TableCell
+      align={align || 'left'}
+      className={className}>
       {cellValue}
     </TableCell>
   );

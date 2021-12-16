@@ -1,10 +1,10 @@
 import { addDays, startOfDay } from 'date-fns';
 import { JOB_STATUS } from '../constants';
-import { JOB_UI_STATUS } from '../jobdashboard';
 
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
   COMPLETED: 'completedFlows',
+  DASHBOARD: 'dashboard',
 };
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
@@ -46,10 +46,6 @@ export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
   {_id: JOB_STATUS.CANCELING, name: 'Canceling'},
   {_id: JOB_STATUS.QUEUED, name: 'Waiting in queue'}];
 
-export const COMPLETED_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
-  {_id: JOB_STATUS.CANCELED, name: JOB_UI_STATUS[JOB_STATUS.CANCELED]},
-  {_id: JOB_STATUS.COMPLETED, name: JOB_UI_STATUS[JOB_STATUS.COMPLETED]},
-  {_id: JOB_STATUS.FAILED, name: JOB_UI_STATUS[JOB_STATUS.FAILED]}];
 export function getTimeString(timeInMs = 0, delim = ':') {
   const showWith0 = value => (value < 10 ? `0${value}` : value);
   const hours = showWith0(Math.floor((timeInMs / (1000 * 60 * 60)) % 60));
@@ -65,4 +61,6 @@ export const RUN_HISTORY_STATUS_OPTIONS = [
   ['canceled', 'Canceled'],
   ['completed', 'Completed'],
   ['failed', 'Failed']];
+
+export const getDashboardIntegrationId = (integrationId, childId) => childId ? `store${childId}pid${integrationId}` : integrationId;
 

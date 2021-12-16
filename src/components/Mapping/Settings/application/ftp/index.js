@@ -11,7 +11,7 @@ export default {
     isGroupedSampleData,
     importResource,
   }) => {
-    const {generate, lookupName } = value;
+    const { generate, lookupName, extract } = value;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const extractfieldsOpts = [];
 
@@ -32,6 +32,7 @@ export default {
           label: 'Data type',
           defaultValue: mappingUtil.getDefaultDataType(value),
           helpKey: 'mapping.dataType',
+          noApi: true,
           options: [
             {
               items: [
@@ -50,6 +51,7 @@ export default {
           name: 'useFirstRow',
           type: 'checkbox',
           helpKey: 'mapping.useFirstRow',
+          noApi: true,
           defaultValue: value.useFirstRow || false,
           // helpText not present
           label: 'Use first row',
@@ -63,6 +65,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
+          noApi: true,
           label: 'Discard if empty',
         },
 
@@ -74,6 +77,7 @@ export default {
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
+          noApi: true,
           options: [
             {
               items: [
@@ -113,6 +117,7 @@ export default {
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
           helpKey: 'import.lookups.name',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
@@ -129,6 +134,7 @@ export default {
           type: 'fieldexpressionselect',
           label: 'Function',
           helpKey: 'mapping.functions',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -147,6 +153,7 @@ export default {
             },
           ],
           helpKey: 'mapping.extract',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         expression: {
@@ -158,6 +165,7 @@ export default {
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
@@ -180,6 +188,7 @@ export default {
             },
           ],
           helpKey: 'mapping.standardAction',
+          noApi: true,
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
             { field: 'fieldMappingType', is: ['multifield'] },
@@ -210,6 +219,7 @@ export default {
             },
           ],
           helpKey: 'mapping.options',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -237,6 +247,7 @@ export default {
             },
           ],
           helpKey: 'mapping.lookupAction',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         default: {
@@ -252,6 +263,7 @@ export default {
             { field: 'fieldMappingType', isNot: ['lookup'] },
           ],
           helpKey: 'mapping.default',
+          noApi: true,
           defaultValue: value.default,
         },
         hardcodedDefault: {
@@ -266,6 +278,7 @@ export default {
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
           helpKey: 'mapping.hardcodedDefault',
+          noApi: true,
           defaultValue: value.hardCodedValue,
         },
         lookupDefault: {
@@ -280,6 +293,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
           helpKey: 'mapping.lookupDefault',
+          noApi: true,
           defaultValue: lookup.default,
         },
         extractDateFormat: {
@@ -295,6 +309,7 @@ export default {
           defaultValue: value.extractDateFormat,
           placeholder: '',
           helpKey: 'mapping.extractDateFormat',
+          noApi: true,
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -318,6 +333,7 @@ export default {
             },
           ],
           helpKey: 'mapping.extractDateTimezone',
+          noApi: true,
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -336,6 +352,7 @@ export default {
           defaultValue: value.generateDateFormat,
           placeholder: '',
           helpKey: 'mapping.generateDateFormat',
+          noApi: true,
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -359,6 +376,7 @@ export default {
             },
           ],
           helpKey: 'mapping.generateDateTimezone',
+          noApi: true,
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -443,7 +461,7 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!isGroupedSampleData) {
+    if (!isGroupedSampleData || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

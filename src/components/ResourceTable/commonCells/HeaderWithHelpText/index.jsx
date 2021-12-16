@@ -17,7 +17,6 @@ export default function HeaderWithHelpText({ title, helpKey }) {
       <Help
         title={title}
         helpKey={helpKey}
-        caption={helpKey}
         className={classes.helpIcon}
         />
     </span>

@@ -53,3 +53,4 @@ export const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() +
 export default { hashCode, isJsonString, safeParse, capitalizeFirstLetter };
 export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
 
+export const getTextAfterCount = (displayText, valueCount) => `${valueCount} ${valueCount === 1 ? displayText : `${displayText}s`}`;

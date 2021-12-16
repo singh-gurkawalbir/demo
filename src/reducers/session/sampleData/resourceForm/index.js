@@ -154,3 +154,14 @@ selectors.getResourceSampleDataStages = (state, resourceId) => {
     data: sampleData[stage],
   }));
 };
+
+selectors.getAllParsableErrors = (state, resourceId) => {
+  const data = selectors.getResourceSampleDataStages(state, resourceId);
+
+  const {errors, stages} = data.find(val => val.name === 'parse')?.data || {};
+
+  if (stages) { return null; }
+
+  // if there are no stages return all errors and the complete error list would be visible in the preview editor
+  return errors;
+};

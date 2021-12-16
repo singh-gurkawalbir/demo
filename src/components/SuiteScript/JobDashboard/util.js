@@ -1,6 +1,6 @@
 import { JOB_STATUS } from '../../../utils/constants';
 
-export const JOB_UI_STATUS = Object.freeze({
+const JOB_UI_STATUS = Object.freeze({
   [JOB_STATUS.QUEUED]: 'Waiting in Queue...',
   [JOB_STATUS.RUNNING]: 'In Progress...',
   [JOB_STATUS.COMPLETED]: 'Completed',
@@ -13,15 +13,11 @@ export const UNDO_TIME = Object.freeze({
   RESOLVE: 4000,
 });
 
-export function getStatus(job) {
-  return JOB_UI_STATUS[job.status];
-}
-
 export function getSuccess(job) {
   return job.numSuccess;
 }
 
-export function getFlowJobStatusDetails(job) {
+function getFlowJobStatusDetails(job) {
   if (job.status !== JOB_STATUS.RUNNING) {
     let errorPercentage = 0;
     let resolvedPercentage = 0;

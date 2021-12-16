@@ -11,7 +11,7 @@ import { getResource } from '../../../resources';
 
 export const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
 export const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
-export const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
+const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
 export const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
 export const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 
@@ -62,7 +62,7 @@ export function* _fetchResourceInfoFromFormKey({ formKey }) {
  * Checks if the constructed body from formValues has same file type as saved resource
  * and if body has sampleData
  */
-export function* _hasSampleDataOnResource({ formKey }) {
+function* _hasSampleDataOnResource({ formKey }) {
   const { resourceObj, resourceId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const resource = yield select(selectors.resource, resourceType, resourceId);
 

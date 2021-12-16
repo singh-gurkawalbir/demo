@@ -27,6 +27,7 @@ export default {
     const pingBody = {
       Store_Code: '{{{connection.http.unencrypted.Store_Code}}}',
       Function: 'CustomerList_Load_Query',
+      Miva_Request_Timestamp: '{{{dateFormat \'X\'}}}',
     };
 
     return {

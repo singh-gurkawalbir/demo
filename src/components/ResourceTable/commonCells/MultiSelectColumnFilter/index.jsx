@@ -26,6 +26,7 @@ export default function MultiSelectColumnFilter({
   options = emptyArr,
   handleSave,
   helpKey,
+  SelectedLabelImp,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -50,7 +51,11 @@ export default function MultiSelectColumnFilter({
         return selectedIds.filter(i => i !== id && !childIds.includes(i));
       }
 
-      return selectedIds.filter(i => i !== id);
+      const optionsIncludeAll = options.some(o => o._id === 'all');
+
+      const filteredIds = selectedIds.filter(i => i !== id);
+
+      return (filteredIds.length || !optionsIncludeAll) ? filteredIds : ['all'];
     }
 
     if (selectedIds.includes('all')) {
@@ -92,6 +97,7 @@ export default function MultiSelectColumnFilter({
         selected={selected}
         onSave={onSaveHandler}
         onSelect={handleSelect}
+        SelectedLabelImp={SelectedLabelImp}
         />
       {helpKey && (
         <Help

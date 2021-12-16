@@ -211,7 +211,7 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
-export function populateDefaults({
+function populateDefaults({
   child = {},
   parent = {},
   isChildAnOperation = false,
@@ -331,7 +331,7 @@ export function getExportVersionAndResource({
   return versionAndResource;
 }
 
-export function getImportVersionAndResource({
+function getImportVersionAndResource({
   assistantVersion,
   assistantOperation,
   assistantData,
@@ -600,7 +600,9 @@ export function getImportOperationDetails({
   });
 }
 
-export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
+export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  const exportDoc = cloneDeep(exportDocOrig);
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1178,7 +1180,9 @@ export function convertToReactFormFields({
   const paramValues = { ...value };
   let anyParamValuesSet = false;
 
-  paramMeta.fields && paramMeta.fields.forEach(field => {
+  const paramMetaFields = paramMeta?.fields?.map(fld => {
+    const field = {...fld};
+
     if (field.type === 'repeat' && field.indexed) {
       const fieldValue = [];
 
@@ -1195,10 +1199,12 @@ export function convertToReactFormFields({
         field.defaultValue = [];
       }
     }
+
+    return field;
   });
 
-  paramMeta.fields &&
-    paramMeta.fields.forEach(field => {
+  paramMetaFields &&
+    paramMetaFields.forEach(field => {
       if (!field.readOnly && Object.prototype.hasOwnProperty.call(paramValues, field.id) && paramValues[field.id] !== field.defaultValue) {
         anyParamValuesSet = true;
       }
@@ -1245,8 +1251,8 @@ export function convertToReactFormFields({
       fieldDetailsMap[fieldId].inputType = fieldType;
     });
 
-  paramMeta.fields &&
-    paramMeta.fields.forEach(field => {
+  paramMetaFields &&
+    paramMetaFields.forEach(field => {
       const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
       const { inputType, type } = fieldDetailsMap[fieldId];
       const paramValue = getParamValue({
@@ -1498,7 +1504,11 @@ export function updateFormValues({
   return updatedFormValues;
 }
 
-export function convertFromImport({ importDoc, assistantData, adaptorType }) {
+export function convertFromImport({ importDoc: importDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  // mutating of args so we are cloning of objects to allow this operation
+  const importDoc = cloneDeep(importDocOrig);
+
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};

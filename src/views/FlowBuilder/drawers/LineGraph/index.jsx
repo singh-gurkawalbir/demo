@@ -48,6 +48,8 @@ export default function LineGraphDrawer({ flowId }) {
       return latestJobDetails.data.find(job => job._flowId === flowId);
     }
   }, [flowId, latestJobDetails]);
+
+  const infoTextDashboard = 'The Analytics tab shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. You can visualize, for example, how many successes vs. errors did my integration experience over the last 30 days? Integration flow stats are available for up to one year.';
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
   const { rangePreference, resourcePreference } = useMemo(() => {
@@ -150,7 +152,7 @@ export default function LineGraphDrawer({ flowId }) {
       width="full"
       onClose={handleClose}
       path="charts">
-      <DrawerHeader title="Dashboard">
+      <DrawerHeader title="Analytics" infoText={infoTextDashboard}>
         <TextButton startIcon={<RefreshIcon />} onClick={handleRefresh}>
           Refresh
         </TextButton>

@@ -24,7 +24,7 @@ const useStyles = makeStyles(({
   },
 }));
 
-export const getSelectedJobsAndRetriableJobs = selectedJobs => {
+const getSelectedJobsAndRetriableJobs = selectedJobs => {
   let numJobsSelected = 0;
   let numRetriableJobsSelected = 0;
 
