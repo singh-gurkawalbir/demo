@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     flex: 1,
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(4),
   },
   headerChildRight: {
     marginLeft: theme.spacing(2),
