@@ -129,7 +129,7 @@ export function* requestPreview({ id }) {
 
   // since mappings are stored in separate state
   // we validate the same here
-  if (processor === 'mapperProcessor') {
+  if (editor.editorType === 'mappings') {
     const {mappings, lookups} = yield select(selectors.mapping);
     const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
 
