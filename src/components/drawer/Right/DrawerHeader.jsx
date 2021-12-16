@@ -12,9 +12,7 @@ import CeligoTimeAgo from '../../CeligoTimeAgo';
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
-    // alignItems: 'center',
     alignItems: 'flex-start',
-    flexWrap: 'wrap',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
@@ -28,7 +26,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
-    // whiteSpace: 'nowrap',
   },
   helpTextButton: {
     padding: 0,
@@ -100,12 +97,12 @@ export default function DrawerHeader({
       />
         )}
         {infoText && <InfoIconButton info={infoText} />}
+        {endedAt ? <Typography variant="body2" component="div" className={classes.runCompleteStatus}>Run completed: <CeligoTimeAgo date={endedAt} /></Typography> : ''}
       </Typography>
 
       {/* Typically children are the action icons/buttons */}
       {children}
       <CloseIconButton closeDataTest={closeDataTest} CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />
-      {endedAt ? <Typography variant="body2" component="div" className={classes.runCompleteStatus}>Run completed: <CeligoTimeAgo date={endedAt} /></Typography> : ''}
     </div>
   );
 }
