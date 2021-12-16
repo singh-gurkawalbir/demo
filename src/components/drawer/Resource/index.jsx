@@ -36,14 +36,12 @@ function ResourceDrawerContent(props) {
 
   return (
     <>
-      {/* <div className={classes.panelContainer}> */}
       <Panel
         {...props}
         occupyFullWidth={isPreviewPanelAvailableForResource}
         zIndex={1}
         onClose={handleClose}
             />
-      {/* </div> */}
       {isAsyncHelper
         ? <ResourceDrawer />
         : (
