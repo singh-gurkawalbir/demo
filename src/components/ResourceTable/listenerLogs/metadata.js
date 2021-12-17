@@ -15,13 +15,13 @@ export default {
     {
       key: 'time',
       HeaderValue: () => {
-        const {flowId, exportId} = useGetTableContext();
+        const {flowId, resourceId} = useGetTableContext();
 
         const dispatch = useDispatch();
         const handleChange = useCallback(() => {
-          dispatch(actions.logs.flowStep.request({flowId, exportId}));
+          dispatch(actions.logs.flowStep.request({flowId, resourceId}));
         },
-        [dispatch, exportId, flowId],
+        [dispatch, resourceId, flowId],
         );
 
         return (
@@ -50,13 +50,13 @@ export default {
     {
       key: 'codes',
       HeaderValue: () => {
-        const {flowId, exportId} = useGetTableContext();
+        const {flowId, resourceId} = useGetTableContext();
 
         const dispatch = useDispatch();
         const handleSave = useCallback(() => {
-          dispatch(actions.logs.flowStep.request({flowId, exportId}));
+          dispatch(actions.logs.flowStep.request({flowId, resourceId}));
         },
-        [dispatch, exportId, flowId],
+        [dispatch, resourceId, flowId],
         );
 
         return (

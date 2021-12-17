@@ -14,6 +14,7 @@ import Help from '../../Help';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
+import {getFlowStepLabel} from '../../../utils/flowStepLogs';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -33,15 +34,19 @@ const useStyles = makeStyles(theme => ({
 function RouterWrappedContent({ flowId, resourceType, resourceId, handleClose }) {
   const classes = useStyles();
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
+  );
+  const label = `View ${getFlowStepLabel(resourceType, resource)} debug logs`;
 
   return (
     <>
-      <DrawerHeader title="View listener debug logs" hideBackButton className={classes.titleHeader} >
+      <DrawerHeader title={label} hideBackButton className={classes.titleHeader} >
         <ActionGroup>
           <Help
             title="Debug logs"
             className={classes.helpTextButton}
-            helpKey="listener.debugLogs" />
+            helpKey="resource.debugLogs" />
         </ActionGroup>
         <ActionGroup position="right">
           <ApplicationImg
