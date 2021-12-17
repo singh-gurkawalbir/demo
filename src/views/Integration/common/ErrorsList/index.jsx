@@ -115,7 +115,7 @@ const metadata = {
         return (
           <div className={classes.button} onClick={handleErrorClick}>
             <StatusCircle variant="error" size="mini" />
-            {count > 9999 ? '9999+' : count} errors
+            {count > 9999 ? '9999+' : count} {count === 1 ? 'error' : 'errors'}
           </div >
         );
       },

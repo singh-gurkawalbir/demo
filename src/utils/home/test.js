@@ -180,7 +180,7 @@ describe('tileStatus util', () => {
   });
   test('should return correct label and variant if tile has errors', () => {
     expect(tileStatus(tiles[1])).toEqual({
-      label: '4 Errors',
+      label: '4 errors',
       variant: 'error' });
   });
   test('should return correct label and variant if tile status is success', () => {

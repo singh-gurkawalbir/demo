@@ -1,6 +1,7 @@
 import sortBy from 'lodash/sortBy';
 import { TILE_STATUS } from '../constants';
 import {applicationsList} from '../../constants/applications';
+import { getTextAfterCount } from '../string';
 
 export const FILTER_KEY = 'homeTiles';
 export const LIST_VIEW = 'list';
@@ -64,7 +65,7 @@ export function tileStatus(tile) {
       variant = 'warning';
       break;
     case TILE_STATUS.HAS_ERRORS:
-      label = `${numError} Error${numError > 1 ? 's' : ''}`;
+      label = getTextAfterCount('error', numError);
       variant = 'error';
       break;
     default:
