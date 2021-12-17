@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import isObject from 'lodash/isObject';
+import { TILE_STATUS } from './constants';
 
 const isNumber = el => {
   if (typeof el === 'number') { return true; }
@@ -33,6 +34,49 @@ export const stringCompare = (sortProperty, isDescending) => (a, b) => {
   return isDescending
     ? -firstEl.trim().localeCompare(secondEl.trim())
     : firstEl.trim().localeCompare(secondEl.trim());
+};
+
+export const tileCompare = (sortProperty, isDescending) => (tileA, tileB) => {
+  if (sortProperty !== 'status') {
+    return stringCompare(sortProperty, isDescending)(tileA, tileB);
+  }
+  // console.log('tilecompare called');
+  const { status: statusA, numError: numErrorA = 0, offlineConnections: offlineConnectionsA } = tileA || {};
+  const { status: statusB, numError: numErrorB = 0, offlineConnections: offlineConnectionsB } = tileB || {};
+
+  const numOfflineConnectionsA = offlineConnectionsA?.length || 0;
+  const numOfflineConnectionsB = offlineConnectionsB?.length || 0;
+
+  // connection errors should be given higher priority
+  if (numErrorA === 0 && numOfflineConnectionsB === 0 &&
+    numErrorB !== 0 && numOfflineConnectionsA === numErrorB) {
+    return isDescending ? -1 : 1;
+  }
+  if (numErrorB === 0 && numOfflineConnectionsA === 0 &&
+    numErrorA !== 0 && numOfflineConnectionsB === numErrorA) {
+    return isDescending ? 1 : -1;
+  }
+
+  const totalErrorCountA = numOfflineConnectionsA + numErrorA;
+  const totalErrorCountB = numOfflineConnectionsB + numErrorB;
+  const compareValue = totalErrorCountA - totalErrorCountB;
+
+  if (compareValue !== 0 || statusA === statusB) return isDescending ? -compareValue : compareValue;
+
+  if (statusA === TILE_STATUS.SUCCESS) {
+    return isDescending ? -1 : 1;
+  }
+  if (statusB === TILE_STATUS.SUCCESS) {
+    return isDescending ? 1 : -1;
+  }
+  if (statusA === TILE_STATUS.IS_PENDING_SETUP) {
+    return isDescending ? -1 : 1;
+  }
+  if (statusB === TILE_STATUS.IS_PENDING_SETUP) {
+    return isDescending ? 1 : -1;
+  }
+
+  return isDescending ? -compareValue : compareValue;
 };
 
 export const celigoListCompare = (a, b) => {

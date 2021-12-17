@@ -83,26 +83,3 @@ export const getTileId = tile => {
     : tile._integrationId;
 };
 
-export const getStatusSortableProp = tile => {
-  const { status, numError = 0, offlineConnections } = tile || {};
-  let statusSortableProp = 0;
-
-  if (offlineConnections?.length) {
-    statusSortableProp = offlineConnections.length;
-  }
-
-  switch (status) {
-    case TILE_STATUS.IS_PENDING_SETUP:
-      statusSortableProp = -1;
-      break;
-    case TILE_STATUS.UNINSTALL:
-      statusSortableProp = -2;
-      break;
-    case TILE_STATUS.HAS_ERRORS:
-      statusSortableProp += numError;
-      break;
-    default:
-  }
-
-  return statusSortableProp;
-};

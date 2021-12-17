@@ -1,6 +1,6 @@
 /* global expect, describe, test */
 import sortBy from 'lodash/sortBy';
-import { getAllApplications, getStatusSortableProp, getTileId, sortTiles, tileStatus } from '.';
+import { getAllApplications, getTileId, sortTiles, tileStatus } from '.';
 import { applicationsList } from '../../constants/applications';
 import {TILE_STATUS} from '../constants';
 
@@ -204,20 +204,5 @@ describe('getTileId util', () => {
     };
 
     expect(getTileId(ssTile)).toEqual('suitescript1_ssIntegration1');
-  });
-});
-
-describe('getStatusSortableProp util', () => {
-  test('should not throw error for invalid arguments', () => {
-    expect(getStatusSortableProp()).toEqual(0);
-  });
-  test('should return -2 if tile status is uninstall', () => {
-    expect(getStatusSortableProp(tiles[3])).toEqual(-2);
-  });
-  test('should return -1 if tile status is pending setup', () => {
-    expect(getStatusSortableProp(tiles[0])).toEqual(-1);
-  });
-  test('should return correct value if tile has errors', () => {
-    expect(getStatusSortableProp(tiles[6])).toEqual(50);
   });
 });
