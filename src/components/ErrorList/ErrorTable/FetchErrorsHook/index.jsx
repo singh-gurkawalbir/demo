@@ -12,6 +12,8 @@ export const useFetchErrors = ({
   flowId,
   resourceId,
   isResolved,
+  flowJobId,
+  childJob,
 }) => {
   const dispatch = useDispatch();
 
@@ -19,20 +21,32 @@ export const useFetchErrors = ({
     loadMore => {
       if (!loadMore) {
         dispatch(actions.clearFilter(filterKey));
-        const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
+        let defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
+
+        if (flowJobId && childJob) {
+          const occuredAt = {startDate: childJob.startedAt, endDate: childJob.endedAt, preset: 'custom'};
+          const resolvedAt = {startDate: childJob.startedAt, endDate: new Date().toISOString(), preset: 'custom'};
+
+          if (isResolved) {
+            defaultFilter = {...defaultFilter, resolvedAt, flowJobId};
+          } else {
+            defaultFilter = {...defaultFilter, occuredAt, flowJobId};
+          }
+        }
 
         dispatch(actions.patchFilter(filterKey, defaultFilter));
       }
       dispatch(
         actions.errorManager.flowErrorDetails.request({
           flowId,
+          flowJobId,
           resourceId,
           loadMore,
           isResolved,
         })
       );
     },
-    [dispatch, filterKey, flowId, isResolved, resourceId]
+    [childJob, dispatch, filterKey, flowId, flowJobId, isResolved, resourceId]
   );
 };
 const emptySet = [];
@@ -42,6 +56,7 @@ export default function FetchErrorsHook({
   flowId,
   resourceId,
   isResolved,
+  flowJobId,
 }) {
   const dispatch = useDispatch();
 
@@ -51,6 +66,9 @@ export default function FetchErrorsHook({
     isResolved,
   }), [isResolved, flowId, resourceId]);
   const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
+  const childJob = useSelector(
+    state => selectors.filter(state, `${flowId}-${flowJobId}-${resourceId}`), shallowEqual
+  );
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;
@@ -66,6 +84,8 @@ export default function FetchErrorsHook({
     flowId,
     resourceId,
     isResolved,
+    flowJobId,
+    childJob,
   });
 
   useEffect(() => {

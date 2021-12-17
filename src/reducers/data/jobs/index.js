@@ -1,6 +1,7 @@
 import shortid from 'shortid';
 import { groupBy } from 'lodash';
 import { createSelector } from 'reselect';
+import cloneDeep from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -660,7 +661,8 @@ selectors.flowJobs = createSelector(
 
       if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-        jobChildren = job.children.filter(cJob => !!cJob).map(cJob => {
+        jobChildren = job.children.filter(cJob => !!cJob).map(childJob => {
+          const cJob = cloneDeep(childJob);
           const additionalChildProps = {
             uiStatus: cJob.status,
             duration: getJobDuration(cJob),
