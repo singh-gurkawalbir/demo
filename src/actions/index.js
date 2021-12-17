@@ -2299,8 +2299,8 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
   },
   flowStep: {
-    startDebug: (flowId, resourceId, minutes) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.START, { flowId, resourceId, minutes }),
-    stopDebug: (flowId, resourceId) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.STOP, { flowId, resourceId }),
+    startDebug: (flowId, resourceId, resourceType, minutes) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.START, { flowId, resourceId, resourceType, minutes }),
+    stopDebug: (flowId, resourceId, resourceType) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.STOP, { flowId, resourceId, resourceType }),
     requestLogDetails: (flowId, resourceId, logKey) => action(actionTypes.LOGS.FLOWSTEP.LOG.REQUEST, { flowId, resourceId, logKey }),
     receivedLogDetails: (resourceId, logKey, logDetails) => action(actionTypes.LOGS.FLOWSTEP.LOG.RECEIVED, { resourceId, logKey, logDetails }),
     removeLog: (flowId, resourceId, logsToRemove) => action(actionTypes.LOGS.FLOWSTEP.LOG.REMOVE, { flowId, resourceId, logsToRemove }),

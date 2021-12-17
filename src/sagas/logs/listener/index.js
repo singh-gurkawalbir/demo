@@ -198,7 +198,7 @@ export function* requestLogDetails({ flowId, resourceId, logKey }) {
   );
 }
 
-export function* toggleDebug({ flowId, resourceId, minutes }) {
+export function* toggleDebug({ flowId, resourceId, minutes, resourceType }) {
   const isDebugEnabled = yield select(selectors.isDebugEnabled, resourceId);
   const hasNewLogs = yield select(selectors.hasNewLogs, resourceId);
 
@@ -210,7 +210,7 @@ export function* toggleDebug({ flowId, resourceId, minutes }) {
     },
   ];
 
-  yield put(actions.resource.patch('exports', resourceId, patchSet));
+  yield put(actions.resource.patch(resourceType === 'imports' ? 'imports' : 'exports', resourceId, patchSet));
   // only when the debugger is on and there are no new logs, we do the polling
   if (isDebugEnabled && !hasNewLogs) {
     yield call(startPollingForRequestLogs, {flowId, resourceId});

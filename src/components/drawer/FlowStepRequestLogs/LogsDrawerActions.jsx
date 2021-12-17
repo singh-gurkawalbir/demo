@@ -90,12 +90,12 @@ export default function LogsDrawerActions({ flowId, resourceId, resourceType }) 
   );
 
   const startDebugHandler = useCallback(value => {
-    dispatch(actions.logs.flowStep.startDebug(flowId, resourceId, value));
-  }, [dispatch, flowId, resourceId]);
+    dispatch(actions.logs.flowStep.startDebug(flowId, resourceId, resourceType, value));
+  }, [dispatch, flowId, resourceId, resourceType]);
 
   const stopDebugHandler = useCallback(() => {
-    dispatch(actions.logs.flowStep.stopDebug(flowId, resourceId));
-  }, [dispatch, flowId, resourceId]);
+    dispatch(actions.logs.flowStep.stopDebug(flowId, resourceId, resourceType));
+  }, [dispatch, flowId, resourceId, resourceType]);
 
   const pauseHandler = useCallback(() => {
     dispatch(actions.logs.flowStep.setFetchStatus(resourceId, 'paused'));
