@@ -38,7 +38,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
-  // isRealtimeExport,
+  isRealtimeExport,
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
 } from '../utils/flows';
@@ -6317,10 +6317,9 @@ selectors.tileLicenseDetails = (state, tile) => {
 // #region listener request logs selectors
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId) return false;
-  // const resource = selectors.resource(state, resourceType, resourceId);
+  const resource = selectors.resource(state, resourceType, resourceId);
 
-  // return !isNew && (isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType));
-  return !isNew;
+  return !isNew && (isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType));
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
