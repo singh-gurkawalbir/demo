@@ -8,12 +8,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Template() {
+export default function Template(props) {
   const classes = useStyles();
 
   return (
     <div className={classes.content}>
-      <ResizeProto />
+      <ResizeProto {...props} />
     </div>
   );
 }

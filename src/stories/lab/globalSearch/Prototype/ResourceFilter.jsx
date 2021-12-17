@@ -13,7 +13,7 @@ import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../../../components/icons/CloseIcon';
-import { useGlobalSearchContext } from '../GlobalSearchContext';
+import { useGlobalSearchContext } from './GlobalSearchContext';
 import FilterIcon from '../../../../components/icons/FilterIcon';
 import { filterMap } from './filterMeta';
 
