@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { cloneDeep } from 'lodash';
 import DynaTableView from './DynaTable';
 
 export default function DynaCSVColumnMapper(props) {
@@ -11,13 +12,11 @@ export default function DynaCSVColumnMapper(props) {
 
   const optionsMap = useMemo(() => {
     let columnOptions = [];
+    const newValue = value.map(val => {
+      const v = cloneDeep(val);
 
-    const newValue = value.map(v => {
-    // eslint-disable-next-line no-param-reassign
-      v.column = v.column &&
-    // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
-    // eslint-disable-next-line no-restricted-globals
-    !isNaN(v.column) ? parseInt(v.column, 10) : v.column;
+      // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
+      v.column = v.column && !Number.isNaN(v.column) ? parseInt(v.column, 10) : v.column;
 
       return v;
     });

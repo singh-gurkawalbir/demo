@@ -1,5 +1,5 @@
 /* global describe, test, expect, beforeEach, jest */
-import { call, put, select, take, race, delay } from 'redux-saga/effects';
+import { call, put, select, take, race } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -33,8 +33,6 @@ import {
   replaceConnection,
   eventReportCancel,
   downloadReport,
-  pollForResourceCollection,
-  startPollingForResourceCollection,
   downloadAuditlogs,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
@@ -51,7 +49,6 @@ import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../utils/constants';
-import { pollApiRequests } from '../app';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
@@ -1002,21 +999,32 @@ describe('patchResource saga', () => {
 
     return noPatch && newId;
   });
-  test('should make api call and dispatch resource received action if doNotRefetch is false', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: false} })
+  test('should make api call and dispatch resource received and asynctask success action if doNotRefetch is false', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: false} })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {}],
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
     .put(actions.resource.received('exports', {}))
+    .put(actions.asyncTask.success(undefined))
     .run());
-  test('should make api call and dispatch resource request action if doNotRefetch is true', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
+  test('should make api call and dispatch resource request and asynctask success action if doNotRefetch is true', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {}],
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
     .put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.success(undefined))
+    .run());
+  test('should make api call and dispatch resource request and asynctask success action if doNotRefetch is true and asyncKey is present', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true}, asyncKey: 'some-key' })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), {}],
+      [select(selectors.resource, 'exports', '123'), {}],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.success('some-key'))
     .run());
   test('should not dispatch any action and do nothing if api call fails', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
     .provide([
@@ -1025,6 +1033,24 @@ describe('patchResource saga', () => {
     .call.fn(apiCallWithRetry)
     .not.put(actions.resource.received('exports', {}))
     .not.put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.failed(undefined))
+    .returns({error: new APIException({
+      status: 401,
+      message: '{"message":"invalid", "code":"code"}',
+    })})
+    .run());
+  test('should dispatch asyncTask failed action and return error if api call fails and asyncKey is present', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true}, asyncKey: 'some-key' })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), apiError],
+    ])
+    .call.fn(apiCallWithRetry)
+    .not.put(actions.resource.received('exports', {}))
+    .not.put(actions.resource.request('integrations', '123'))
+    .put(actions.asyncTask.failed('some-key'))
+    .returns({error: new APIException({
+      status: 401,
+      message: '{"message":"invalid", "code":"code"}',
+    })})
     .run());
 });
 
@@ -1584,62 +1610,6 @@ describe('downloadReport saga', () => {
 
     expect(window.open).not.toBeCalled();
   });
-});
-
-describe('pollForResourceCollection saga', () => {
-  test('should call getResourceCollection after 5 seconds delay continously', () => {
-    const saga = pollForResourceCollection({resourceType: 'connections'});
-
-    expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType: 'connections'}, duration: 5000 }));
-
-    expect(saga.next().done).toEqual(true);
-  });
-});
-
-describe('startPollingForResourceCollection saga', () => {
-  test('cancel poll effect should race ahead when stop connection poll action is called ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        // delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections'})
-    .returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('cancel poll effect should not race ahead when stop exports poll action is called since the resourceType does not match ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'exports'})
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('cancel poll effect should not race ahead when pollForResourceCollection saga completes  ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .dispatch('waitForData')
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
-  test('pollForResourceCollections should complete when no action is dispatched ', () => expectSaga(
-    startPollingForResourceCollection, { resourceType: 'connections' })
-    .provide(
-      [
-        //  delay(5) stimulates an api delay that pollForResourceCollection makes
-        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
-      ]
-    )
-    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
-    .run());
 });
 
 describe('tests for metadata sagas', () => {
