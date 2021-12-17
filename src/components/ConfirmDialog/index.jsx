@@ -36,11 +36,14 @@ export const ConfirmDialog = (
       { label: 'Yes' },
     ],
     onDialogClose,
+    hideClose = false,
   }) => {
   const classes = useStyles();
   const handleButtonClick = useCallback(
     button => () => {
-      onClose();
+      if (typeof onClose === 'function') {
+        onClose();
+      }
       button.onClick?.();
     },
     [onClose]
@@ -51,11 +54,15 @@ export const ConfirmDialog = (
       onDialogClose();
     }
     // Default close fn which closes the dialog
-    onClose();
+    if (typeof onClose === 'function') {
+      onClose();
+    }
   }, [onClose, onDialogClose]);
 
+  const finalHandleClose = hideClose ? undefined : handleClose;
+
   return (
-    <ModalDialog show onClose={handleClose} maxWidth={maxWidth}>
+    <ModalDialog show onClose={finalHandleClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
         <RawHtml className={classes.message} html={message} options={{allowedTags}} />

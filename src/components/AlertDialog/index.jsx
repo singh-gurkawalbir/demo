@@ -76,19 +76,17 @@ const UserAcceptedAccountTransfer = () => (
 );
 const WarningSessionContent = () => {
   const dispatch = useDispatch();
-  const handleContinueSession = () => {
-    dispatch(actions.user.profile.request('Refreshing session'));
-  };
 
   return (
     <ConfirmDialog
       message="Your session is about to expire. Do you want to stay signed in?"
       title="Session expiring"
-      onClose={() => {}}
-      onDialogClose={handleContinueSession}
+      hideClose
       buttons={[
         { label: 'Yes, keep me signed in',
-          onClick: handleContinueSession,
+          onClick: () => {
+            dispatch(actions.user.profile.request('Refreshing session'));
+          },
         },
         { label: 'No, sign me out',
           variant: 'text',
