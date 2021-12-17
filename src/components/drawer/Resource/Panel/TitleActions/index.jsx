@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   appLogoWrapper: {
     position: 'relative',
     display: 'flex',
-    marginRight: theme.spacing(3),
+    marginRight: theme.spacing(1),
   },
   divider: {
     height: 24,
