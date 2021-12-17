@@ -7,7 +7,7 @@ import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
 import SearchBox from './SearchBox';
 import TooltipTitle from './TooltipTitle';
-import { GlobalSearchProvider, useGlobalSearchContext } from '../GlobalSearchContext';
+import { GlobalSearchProvider, useGlobalSearchContext } from './GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
