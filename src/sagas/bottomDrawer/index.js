@@ -37,14 +37,14 @@ export function* addTab({tabType, resourceId}) {
 }
 export function* switchTab({index, tabType}) {
   const {tabs, activeTabIndex} = yield select(selectors.bottomDrawerTabs);
-  const lastActiveTab = tabs?.[activeTabIndex];
+  const lastActiveTab = tabs?.[activeTabIndex] || {};
   const requestedTab = tabs?.find((tab, ind) => {
     if (tabType) {
       return tab.tabType === tabType;
     }
 
     return ind === index;
-  });
+  }) || {};
 
   if (lastActiveTab.tabType === requestedTab.tabType) {
     if (!requestedTab.resourceId || (lastActiveTab.resourceId === requestedTab.resourceId)) {
