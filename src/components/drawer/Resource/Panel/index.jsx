@@ -175,13 +175,7 @@ export default function Panel(props) {
 
   return (
     <>
-      <TitleBar
-        resourceType={resourceType}
-        formKey={formKey}
-        id={id}
-        flowId={flowId}
-        onClose={onClose}
-        isNew={isNew} />
+      <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
       <DrawerContent className={classes.root}>
         <LoadResources required resources={requiredResources}>
           <div

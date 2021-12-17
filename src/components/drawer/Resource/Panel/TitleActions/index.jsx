@@ -44,11 +44,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TitleActions({ id, resourceType, flowId, isNew }) {
+export default function TitleActions({ flowId }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const { id, resourceType, operation } = match.params || {};
   const history = useHistory();
   const applications = applicationsList();
+  const isNew = operation === 'add';
   const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   const showApplicationLogo =

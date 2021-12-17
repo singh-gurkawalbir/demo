@@ -54,10 +54,11 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
-const ResourceTitle = ({ resourceType, id, flowId, onClose }) => {
+const ResourceTitle = ({ flowId, onClose }) => {
   const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
+  const { id, resourceType } = match.params || {};
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -100,16 +101,16 @@ const ResourceTitle = ({ resourceType, id, flowId, onClose }) => {
   );
 };
 
-export default function TitleBar({ resourceType, id, flowId, isNew, formKey, onClose }) {
+export default function TitleBar({ flowId, formKey, onClose }) {
   const ResourceCloseButton = <CloseButton formKey={formKey} />;
 
   return (
     <DrawerHeader
-      title={<ResourceTitle resourceType={resourceType} id={id} flowId={flowId} onClose={onClose} />}
+      title={<ResourceTitle flowId={flowId} onClose={onClose} />}
       CloseButton={ResourceCloseButton}
       hideBackButton
     >
-      <TitleActions id={id} resourceType={resourceType} flowId={flowId} isNew={isNew} />
+      <TitleActions flowId={flowId} />
     </DrawerHeader>
   );
 }
