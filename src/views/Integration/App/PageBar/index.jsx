@@ -151,6 +151,8 @@ export default function PageBar() {
   // integration exists. not a stubbed out complex object.
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
 
+  const licenseExpired = useSelector(state => !!selectors.integrationAppLicense(state, integrationId)?.expiresText);
+
   const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const accessLevel = useSelector(
     state =>
@@ -240,6 +242,7 @@ export default function PageBar() {
         {([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)) && (
         <TextButton
           data-test={`add${storeLabel}`}
+          disabled={licenseExpired}
           onClick={handleAddNewChildClick}
           startIcon={<AddIcon />}>
           Add {storeLabel}

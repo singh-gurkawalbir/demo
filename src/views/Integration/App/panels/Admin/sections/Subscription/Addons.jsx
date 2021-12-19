@@ -123,6 +123,8 @@ export default function AddOns({integrationId, childId}) {
     selectors.subscribedAddOns(state, integrationId, supportsMultiStore, childId)
   );
 
+  const licenseExpired = useSelector(state => !!selectors.integrationAppLicense(state, integrationId)?.expiresText);
+
   const hasSubscribedAddOns = subscribedAddOns?.length > 0;
   const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;
 
@@ -143,6 +145,7 @@ export default function AddOns({integrationId, childId}) {
           <FilledButton
             className={classes.button}
             component={Link}
+            disabled={licenseExpired}
             to={match.url.replace('admin/subscription', 'addons')}>
             GET ADD-ONS
           </FilledButton>
