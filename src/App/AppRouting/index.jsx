@@ -189,13 +189,13 @@ export default function AppRouting() {
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flows/sections/:sectionId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flows/sections/:sectionId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flows/sections/:sectionId/flowBuilder/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dataLoader/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flows/sections/:sectionId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flows/sections/:sectionId/dataLoader/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId/flows/sections/:sectionId/dataLoader/:flowId'),

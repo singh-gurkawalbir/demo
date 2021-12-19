@@ -378,7 +378,8 @@ export default function FlowsPanel({ integrationId, childId }) {
       showChild: (isIntegrationApp && childId === integrationId),
       integrationChildren,
       templateName,
-    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, integrationChildren, appName, flowAttributes, integration, templateName]);
+      sectionId,
+    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, integrationChildren, appName, flowAttributes, integration, templateName, sectionId]);
 
   const rowData = useMemo(() => ({
     ...integration,
