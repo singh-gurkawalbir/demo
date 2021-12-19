@@ -266,7 +266,7 @@ describe('Listener logs sagas', () => {
   describe('requestLogs saga', () => {
     test('should call retryToFetchRequests saga', () => expectSaga(requestLogs, { flowId, exportId })
       .provide([
-        [select(selectors.listenerLogs, exportId), {nextPageURL: '/nexturl1'}],
+        [select(selectors.flowStepLogs, exportId), {nextPageURL: '/nexturl1'}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
       ])
@@ -275,7 +275,7 @@ describe('Listener logs sagas', () => {
       .run());
     test('should call startPollingForRequestLogs if debugOn is set and hasNewLogs is false', () => expectSaga(requestLogs, { flowId, exportId })
       .provide([
-        [select(selectors.listenerLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1'}],
+        [select(selectors.flowStepLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1'}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
         [matchers.call.fn(startPollingForRequestLogs), undefined],
@@ -285,7 +285,7 @@ describe('Listener logs sagas', () => {
       .run());
     test('should not call startPollingForRequestLogs if hasNewLogs is true and loadMore is true', () => expectSaga(requestLogs, { flowId, exportId, loadMore: true })
       .provide([
-        [select(selectors.listenerLogs, exportId), {debugOn: true, hasNewLogs: true, nextPageURL: '/nexturl1'}],
+        [select(selectors.flowStepLogs, exportId), {debugOn: true, hasNewLogs: true, nextPageURL: '/nexturl1'}],
         [select(selectors.hasNewLogs, exportId), true],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
@@ -299,7 +299,7 @@ describe('Listener logs sagas', () => {
       .run());
     test('should continue poll and call startPollingForRequestLogs if hasNewLogs was true but logs received action is dispatched with loadMore as false', () => expectSaga(requestLogs, { flowId, exportId })
       .provide([
-        [select(selectors.listenerLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1', hasNewLogs: true}],
+        [select(selectors.flowStepLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1', hasNewLogs: true}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
         [matchers.call.fn(startPollingForRequestLogs), undefined],

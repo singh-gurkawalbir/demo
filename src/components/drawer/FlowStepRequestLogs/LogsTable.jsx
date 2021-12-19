@@ -64,7 +64,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
     return debugUntil;
   });
   const { hasNextPage, logsStatus, fetchStatus } = useSelector(state => {
-    const l = selectors.listenerLogs(state, resourceId);
+    const l = selectors.flowStepLogs(state, resourceId);
 
     return {
       hasNextPage: !!l.nextPageURL,

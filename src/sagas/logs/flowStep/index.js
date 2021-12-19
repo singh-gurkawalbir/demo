@@ -142,7 +142,7 @@ export function* retryToFetchRequests({freshCall, count = 0, fetchRequestsPath, 
 }
 
 export function* requestLogs({ flowId, resourceId, loadMore }) {
-  const { nextPageURL, debugOn } = yield select(selectors.listenerLogs, resourceId);
+  const { nextPageURL, debugOn } = yield select(selectors.flowStepLogs, resourceId);
 
   const filters = yield select(selectors.filter, FILTER_KEY);
 

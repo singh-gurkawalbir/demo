@@ -24,7 +24,7 @@ export default function LogsDrawerActions({ flowId, resourceId, resourceType }) 
   const dispatch = useDispatch();
   const canEnableDebug = useSelector(state => selectors.canEnableDebug(state, resourceId, flowId));
   const { hasMore, logsCount, logsStatus, loadMoreStatus, fetchStatus, currQueryTime } = useSelector(state => {
-    const l = selectors.listenerLogs(state, resourceId);
+    const l = selectors.flowStepLogs(state, resourceId);
 
     return {
       hasMore: !!l.nextPageURL,

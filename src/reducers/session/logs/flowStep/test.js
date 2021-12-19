@@ -1084,9 +1084,9 @@ describe('Listener logs selectors', () => {
 
   describe('listenerLogs', () => {
     test('should return empty object when no match found', () => {
-      expect(selectors.listenerLogs(undefined, exportId)).toEqual({});
-      expect(selectors.listenerLogs({}, exportId)).toEqual({});
-      expect(selectors.listenerLogs({123: {}}, exportId)).toEqual({});
+      expect(selectors.flowStepLogs(undefined, exportId)).toEqual({});
+      expect(selectors.flowStepLogs({}, exportId)).toEqual({});
+      expect(selectors.flowStepLogs({123: {}}, exportId)).toEqual({});
     });
     test('should return correct listener state when a match is found', () => {
       const expectedOutput = {
@@ -1099,7 +1099,7 @@ describe('Listener logs selectors', () => {
         error: {key: logKey},
       };
 
-      expect(selectors.listenerLogs(newState, exportId)).toEqual(expectedOutput);
+      expect(selectors.flowStepLogs(newState, exportId)).toEqual(expectedOutput);
     });
   });
   describe('logsSummary', () => {

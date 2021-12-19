@@ -142,7 +142,7 @@ export const selectors = {};
 const emptyObj = {};
 const emptyArr = [];
 
-selectors.listenerLogs = (state, id) => {
+selectors.flowStepLogs = (state, id) => {
   if (!state) return emptyObj;
 
   return state[id] || emptyObj;
