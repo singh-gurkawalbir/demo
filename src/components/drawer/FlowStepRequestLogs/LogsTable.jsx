@@ -97,7 +97,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
     }
   }, [currPageFirstKey, dispatch, resourceId]);
 
-  const actionProps = useMemo(() => ({ flowId, resourceId }), [resourceId, flowId]);
+  const actionProps = useMemo(() => ({ flowId, resourceId, isImport: resourceType === 'imports' }), [resourceId, flowId, resourceType]);
 
   if (!logsStatus || logsStatus === 'requested') {
     return (
@@ -114,7 +114,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
         <div className={classes.tableWrapper}>
           <ResourceTable
             resources={logsInCurrPage}
-            resourceType="listenerLogs"
+            resourceType="flowStepLogs"
             actionProps={actionProps} />
           {!hasDebugLogs && !hasNextPage && (
           <Typography className={classes.textWrapper}>

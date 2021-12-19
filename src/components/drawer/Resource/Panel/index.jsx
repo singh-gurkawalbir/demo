@@ -329,7 +329,7 @@ export default function Panel(props) {
                   onClick={flowStepDrawerHandler}
                   startIcon={<DebugIcon />}
                   className={classes.debugLogButton}
-                  data-test="listenerLogs">
+                  data-test="flowStepLogs">
                   View debug logs
                 </TextButton>
               )}

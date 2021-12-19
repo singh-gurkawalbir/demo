@@ -13,6 +13,10 @@ export const FLOWSTEP_LOGS_RANGE_FILTERS = [
   {id: 'last4hours', label: 'Last 4 hours'},
   {id: 'custom', label: 'Custom'},
 ];
+export const FLOWSTEP_LOGS_STAGE_OPTIONS = [
+  {_id: 'lookup', name: 'lookup'},
+  {_id: 'import', name: 'import'},
+];
 
 export const FLOWSTEP_LOGS_STATUS_CODES = [
   { _id: 'all', name: 'All codes'},
