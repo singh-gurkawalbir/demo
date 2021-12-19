@@ -259,7 +259,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
               </div>
               <div className={classes.actions}>
                 <ActionGroup>
-                  <FilledButton onClick={handleSave} disabled={isEqual(checked, selected)}>
+                  <FilledButton onClick={handleSave} disabled={isEqual(checked, initialValue)}>
                     Apply
                   </FilledButton>
                   <TextButton onClick={handleClose}>

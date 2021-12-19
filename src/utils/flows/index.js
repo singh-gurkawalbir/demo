@@ -316,19 +316,19 @@ export function isSimpleImportFlow(flow, exports, flowExports) {
   return !!(exp && exp.type === 'simple');
 }
 
-export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName, flowGroupId}) {
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName, sectionId}) {
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
 
   let flowBuilderTo;
 
   if (isIntegrationApp) {
     if (childId) {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
     } else {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
     }
-  } else if (flowGroupId && integrationId !== 'none') {
-    flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${flowGroupId}/${flowBuilderPathName}/${flowId}`);
+  } else if (sectionId && integrationId !== 'none') {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
   } else {
     flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
   }
@@ -1235,7 +1235,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
       return [flowGroupObject];
     }
 
-    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1].isLastFlowInFlowGroup = true;
+    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1] = { ...flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1], isLastFlowInFlowGroup: true};
 
     return [flowGroupObject, ...flowObjetsOfAFlowGroup];
   }).flat();

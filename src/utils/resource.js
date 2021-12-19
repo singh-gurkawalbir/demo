@@ -684,7 +684,7 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 ) => {
   let mapping = cloneDeep(mappingOriginal);
 
-  const subrecordsMap = keyBy(subrecords, 'fieldId');
+  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {
@@ -918,6 +918,10 @@ export const getAssistantFromResource = resource => {
 
   if (assistant?.includes('constantcontact')) {
     return 'constantcontact';
+  }
+
+  if (assistant === 'ebay' || assistant === 'ebayfinance') {
+    return 'ebay';
   }
 
   return assistant;
