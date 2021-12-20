@@ -2242,7 +2242,7 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   'myaccount.developer': 'Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an \'Export\' or an \'Import\' there are \'Hooks\' fields available in the UI where custom code can be configured.',
   'myaccount.showRelativeDateTime': 'Check this box to view the amount of time elapsed since an event occurred, such as <b>1 hour ago</b> or <b>1 day ago</b>. Otherwise, the display format is absolute, such as <b>2021-10-25 7:47:33 PM</b>.',
   'hooks.insertFunction':
-'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
+'Select a function stub to add a model entry point for a built-in <a href="https://docs.celigo.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io">hook</a>. Each stub includes example parameters, a return value, and self-documenting comments.',
   'hooks.scriptContent':
 'Edit your script in the pane below, or expand the view by using the control. Your script should be valid JavaScript and may contain multiple functions that can be used across a range of flows within your account.',
   'file.csvGenerate':
