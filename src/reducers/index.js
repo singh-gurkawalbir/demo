@@ -82,7 +82,7 @@ import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersio
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
-import { stringCompare, comparer} from '../utils/sort';
+import { stringCompare, comparer } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -102,7 +102,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
-import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp, getTileId } from '../utils/home';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
@@ -1711,7 +1711,6 @@ selectors.mkTiles = () => createSelector(
           status,
           flowsNameAndDescription,
           sortablePropType: -1,
-          totalErrorCount: getStatusSortableProp({...t, status}),
           integration: {
             mode: integration.mode,
             permissions: integration.permissions,
@@ -1740,7 +1739,6 @@ selectors.mkTiles = () => createSelector(
         status,
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
-        totalErrorCount: getStatusSortableProp({...t, status}),
         integration: {
           permissions: integration.permissions,
         },
@@ -1778,8 +1776,10 @@ selectors.mkFilteredHomeTiles = () => {
         return !isPendingSVB;
       });
       const homeTiles = tiles.concat(suiteScriptLinkedTiles);
+      const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+        order === 'desc' ? tileCompare(orderBy, true) : tileCompare(orderBy);
 
-      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView, comparer);
 
       if (isListView && applications && !applications.includes('all')) {
         // filter on applications
@@ -4285,7 +4285,6 @@ selectors.suiteScriptLinkedTiles = createSelector(
     return tiles.map(t => ({ ...t,
       key: getTileId(t), // for Celigo Table unique key
       name: t.displayName,
-      totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
       pinned: pinnedIntegrations.includes(getTileId(t)) }));
   });
