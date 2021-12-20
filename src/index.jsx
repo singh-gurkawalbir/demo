@@ -1,6 +1,6 @@
 import 'url-search-params-polyfill';
 import * as smoothscroll from 'smoothscroll-polyfill';
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
@@ -91,6 +91,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
           }
         });
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('GA initialization failed');
     }
 
@@ -105,7 +106,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
   // We don't need to register Google Analytics here.
   render(
     <Provider store={store}>
-      <App />
+      <StrictMode> <App /> </StrictMode>
     </Provider>,
     document.getElementById('root')
   );
