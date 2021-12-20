@@ -371,7 +371,8 @@ const FlowsTable = ({integrationId, childId}) => {
     childHeader: integration?.settings?.storeLabel,
     flowAttributes,
     integration,
-  }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
+    sectionId,
+  }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
     <LoadResources required resources="flows,exports">
