@@ -2856,7 +2856,6 @@ describe('resource region selector testcases', () => {
       };
       const defaultProps = {
         sortablePropType: -1,
-        totalErrorCount: -1,
       };
       const expectedStandalone = [{
         _integrationId: 'none',
@@ -2869,7 +2868,6 @@ describe('resource region selector testcases', () => {
         offlineConnections: ['conn1', 'conn2'],
         sortablePropType: 5,
         status: 'success',
-        totalErrorCount: 2,
       }];
       const expected = [
         {
@@ -2878,7 +2876,6 @@ describe('resource region selector testcases', () => {
           key: 'integration1',
           sortablePropType: 2,
           status: TILE_STATUS.SUCCESS,
-          totalErrorCount: 0,
         },
         {
           flowsNameAndDescription: '|integration app|',
@@ -2886,7 +2883,6 @@ describe('resource region selector testcases', () => {
           key: 'integration2',
           sortablePropType: 3,
           status: TILE_STATUS.HAS_ERRORS,
-          totalErrorCount: 4,
         },
         {
           flowsNameAndDescription: '',
@@ -2894,7 +2890,6 @@ describe('resource region selector testcases', () => {
           key: 'integration3',
           sortablePropType: 4,
           status: TILE_STATUS.HAS_ERRORS,
-          totalErrorCount: 11,
         },
         {
           flowsNameAndDescription: '',
@@ -2902,7 +2897,6 @@ describe('resource region selector testcases', () => {
           key: 'integration4',
           sortablePropType: 5,
           status: TILE_STATUS.SUCCESS,
-          totalErrorCount: 2,
         },
         {
           connector: {applications: ['app1', 'app2'], owner: 'Company 1' },
@@ -2911,7 +2905,6 @@ describe('resource region selector testcases', () => {
           key: 'integration5',
           sortablePropType: -1,
           status: TILE_STATUS.SUCCESS,
-          totalErrorCount: 0,
         },
         {
           connector: {applications: ['app1', 'app2'], owner: 'Company 1'},
@@ -2920,7 +2913,6 @@ describe('resource region selector testcases', () => {
           key: 'integration6',
           sortablePropType: -1,
           status: TILE_STATUS.HAS_ERRORS,
-          totalErrorCount: 36,
         },
         {
           connector: { applications: ['app1', 'app2'], owner: 'Company 1'},
@@ -2929,7 +2921,6 @@ describe('resource region selector testcases', () => {
           key: 'integration7',
           sortablePropType: -1,
           status: TILE_STATUS.HAS_ERRORS,
-          totalErrorCount: 50,
         },
         {
           connector: { applications: [], owner: 'User 2'},
@@ -3038,7 +3029,6 @@ describe('resource region selector testcases', () => {
         key: 'none',
         flowsNameAndDescription: '',
         sortablePropType: 5,
-        totalErrorCount: 2,
         integration: {permissions: {}},
         status: TILE_STATUS.SUCCESS,
       }];
@@ -3047,7 +3037,6 @@ describe('resource region selector testcases', () => {
           key: 'integration1',
           flowsNameAndDescription: '|search2|searchflow',
           sortablePropType: 2,
-          totalErrorCount: 0,
           integration: {permissions: {} },
           status: TILE_STATUS.SUCCESS,
         },
@@ -3055,7 +3044,6 @@ describe('resource region selector testcases', () => {
           flowsNameAndDescription: '|integration app|',
           key: 'integration2',
           sortablePropType: 3,
-          totalErrorCount: 4,
           integration: {permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
@@ -3063,7 +3051,6 @@ describe('resource region selector testcases', () => {
           key: 'integration3',
           flowsNameAndDescription: '',
           sortablePropType: 4,
-          totalErrorCount: 11,
           integration: {permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
@@ -3071,7 +3058,6 @@ describe('resource region selector testcases', () => {
           key: 'integration4',
           flowsNameAndDescription: '',
           sortablePropType: 5,
-          totalErrorCount: 2,
           integration: {permissions: {} },
           status: TILE_STATUS.SUCCESS,
         },
@@ -3080,7 +3066,6 @@ describe('resource region selector testcases', () => {
           key: 'integration5',
           flowsNameAndDescription: '',
           sortablePropType: -1,
-          totalErrorCount: 0,
           integration: {mode: 'settings', permissions: {} },
           status: TILE_STATUS.SUCCESS,
         },
@@ -3089,7 +3074,6 @@ describe('resource region selector testcases', () => {
           key: 'integration6',
           flowsNameAndDescription: '',
           sortablePropType: -1,
-          totalErrorCount: 36,
           integration: {mode: 'settings', permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
@@ -3098,7 +3082,6 @@ describe('resource region selector testcases', () => {
           key: 'integration7',
           flowsNameAndDescription: '',
           sortablePropType: -1,
-          totalErrorCount: 50,
           integration: {mode: 'settings', permissions: {} },
           status: TILE_STATUS.HAS_ERRORS,
         },
@@ -3107,7 +3090,6 @@ describe('resource region selector testcases', () => {
           connector: {owner: 'User 2', applications: [] },
           key: 'integration8',
           sortablePropType: -1,
-          totalErrorCount: -1,
           integration: {mode: 'install', permissions: {} },
           status: TILE_STATUS.IS_PENDING_SETUP,
         },
@@ -3116,7 +3098,6 @@ describe('resource region selector testcases', () => {
           connector: {owner: 'User 2', applications: [] },
           key: 'integration9',
           sortablePropType: -1,
-          totalErrorCount: -1,
           integration: {mode: 'install', permissions: {} },
           status: TILE_STATUS.IS_PENDING_SETUP,
         },
@@ -3383,7 +3364,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript2',
@@ -3392,7 +3372,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
         ],
         perPageCount: 2,
@@ -3431,7 +3410,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
           {
             _integrationId: 'integration1',
@@ -3453,7 +3431,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -3482,7 +3459,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'integration3',
@@ -3508,7 +3484,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _integrationId: 'suitescript1',
@@ -3518,7 +3493,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -3529,7 +3503,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -3541,7 +3514,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'suitescript2',
@@ -3550,7 +3522,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
         ],
         perPageCount: 8,
@@ -3573,7 +3544,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript2',
@@ -3582,7 +3552,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'integration3',
@@ -3608,7 +3577,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _integrationId: 'integration1',
@@ -3630,7 +3598,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -3659,7 +3626,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'suitescript1',
@@ -3669,7 +3635,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -3681,7 +3646,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'none',
@@ -3706,7 +3670,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
         ],
         perPageCount: 8,
@@ -3720,12 +3683,27 @@ describe('resource region selector testcases', () => {
         {
           sort: {
             order: 'desc',
-            orderBy: 'totalErrorCount',
+            orderBy: 'status',
           },
         }));
       const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+      const newTiles = [
+        ...tiles,
+        {
+          _integrationId: 'integration10',
+          name: 'Integration ten',
+          numError: 2,
+        },
+      ];
+      const finalState = reducer(
+        newState,
+        actions.resource.receivedCollection('tiles', [
+          ...standaloneTiles,
+          ...newTiles,
+        ])
+      );
       const expected = {
-        filteredCount: 8,
+        filteredCount: 9,
         filteredTiles: [
           {
             _integrationId: 'integration3',
@@ -3751,7 +3729,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _integrationId: 'suitescript1',
@@ -3763,7 +3740,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _connectorId: 'connector1',
@@ -3780,10 +3756,7 @@ describe('resource region selector testcases', () => {
               owner: 'Company 1',
             },
             flowsNameAndDescription: '',
-            integration: {
-              mode: undefined,
-              permissions: undefined,
-            },
+            integration: {},
             key: 'connector1',
             lastErrorAt: 1,
             name: 'Integration Two',
@@ -3792,7 +3765,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'none',
@@ -3817,7 +3789,18 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
+          },
+          {
+            _integrationId: 'integration10',
+            applications: [],
+            flowsNameAndDescription: '',
+            integration: {},
+            key: 'integration10',
+            name: 'Integration ten',
+            numError: 2,
+            pinned: false,
+            sortablePropType: 0,
+            status: 'has_errors',
           },
           {
             _integrationId: 'integration1',
@@ -3839,7 +3822,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -3849,34 +3831,29 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
             _integrationId: 'suitescript2',
             key: 'connection1_suitescript2',
-            name: undefined,
             numFlows: 10,
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript2',
             key: 'connection3_suitescript2',
-            name: undefined,
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
         ],
-        perPageCount: 8,
-        totalCount: 4,
+        perPageCount: 9,
+        totalCount: 5,
       };
 
-      expect(filteredHomeTiles(newState)).toEqual(expected);
+      expect(filteredHomeTiles(finalState)).toEqual(expected);
     });
     test('should return tiles sorted by last open error for list view', () => {
       const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
@@ -3913,7 +3890,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
           {
             _integrationId: 'suitescript1',
@@ -3923,7 +3899,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -3934,7 +3909,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -3946,7 +3920,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'suitescript2',
@@ -3955,7 +3928,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -3984,7 +3956,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'integration1',
@@ -4006,7 +3977,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'integration3',
@@ -4032,7 +4002,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
         ],
         perPageCount: 8,
@@ -4076,7 +4045,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
           {
             _integrationId: 'integration3',
@@ -4102,7 +4070,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _integrationId: 'integration1',
@@ -4124,7 +4091,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -4134,7 +4100,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -4146,7 +4111,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'suitescript2',
@@ -4155,7 +4119,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -4184,7 +4147,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _connectorId: 'connector1',
@@ -4195,7 +4157,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
         ],
         perPageCount: 8,
@@ -4242,7 +4203,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
         ],
         perPageCount: 1,
@@ -4285,7 +4245,6 @@ describe('resource region selector testcases', () => {
               pinned: false,
               sortablePropType: 4,
               status: 'has_errors',
-              totalErrorCount: 11,
             },
           ],
           perPageCount: 1,
@@ -4318,7 +4277,6 @@ describe('resource region selector testcases', () => {
               pinned: false,
               sortablePropType: 2,
               status: 'success',
-              totalErrorCount: 0,
             },
           ],
           perPageCount: 1,
@@ -4375,7 +4333,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'integration3',
@@ -4401,7 +4358,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _integrationId: 'none',
@@ -4426,7 +4382,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
           {
             _connectorId: 'connector1',
@@ -4455,7 +4410,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'suitescript1',
@@ -4465,7 +4419,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -4476,7 +4429,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -4488,7 +4440,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'suitescript2',
@@ -4497,7 +4448,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
         ],
         perPageCount: 8,
@@ -4538,7 +4488,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
           {
             _integrationId: 'integration1',
@@ -4560,7 +4509,6 @@ describe('resource region selector testcases', () => {
             pinned: true,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -4589,7 +4537,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'integration3',
@@ -4615,7 +4562,6 @@ describe('resource region selector testcases', () => {
             pinned: true,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _integrationId: 'suitescript1',
@@ -4625,7 +4571,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -4636,7 +4581,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -4648,7 +4592,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'suitescript2',
@@ -4657,7 +4600,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
         ],
         perPageCount: 8,
@@ -4699,7 +4641,6 @@ describe('resource region selector testcases', () => {
             pinned: true,
             sortablePropType: 4,
             status: 'has_errors',
-            totalErrorCount: 11,
           },
           {
             _connectorId: 'connector1',
@@ -4710,7 +4651,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript2',
@@ -4719,7 +4659,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'integration1',
@@ -4741,7 +4680,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 2,
             status: 'success',
-            totalErrorCount: 0,
           },
           {
             _connectorId: 'connector1',
@@ -4770,7 +4708,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: -1,
             status: 'has_errors',
-            totalErrorCount: 4,
           },
           {
             _integrationId: 'suitescript1',
@@ -4780,7 +4717,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection1',
-            totalErrorCount: 0,
           },
           {
             _integrationId: 'suitescript1',
@@ -4792,7 +4728,6 @@ describe('resource region selector testcases', () => {
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection2',
             status: 'has_errors',
-            totalErrorCount: 10,
           },
           {
             _integrationId: 'none',
@@ -4817,7 +4752,6 @@ describe('resource region selector testcases', () => {
             pinned: false,
             sortablePropType: 5,
             status: 'success',
-            totalErrorCount: 2,
           },
         ],
         perPageCount: 8,
