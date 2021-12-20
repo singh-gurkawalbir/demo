@@ -1,9 +1,9 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, race, all } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { apiCallWithRetry } from '../index';
+import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
@@ -11,14 +11,12 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { GET_DOCS_MAX_LIMIT, NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
-import { pollApiRequests } from '../app';
-
-const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -398,6 +396,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     );
   }
 }
+
 export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
   // if asyncKey is defined we should try tagging with async updates
   if (asyncKey) {
@@ -417,6 +416,7 @@ export function* commitStagedChangesWrapper({ asyncKey, ...props }) {
 
   return yield call(commitStagedChanges, props);
 }
+
 export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
     resourceId: id,
@@ -570,9 +570,7 @@ export function* updateIntegrationSettings({
         ];
 
         if (flow.disabled !== values['/disabled']) {
-          yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
-
-          yield put(actions.resource.commitStaged('flows', flowId, 'value'));
+          yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
         }
       }
     } else {
@@ -631,6 +629,8 @@ export function* patchResource({ resourceType, id, patchSet, options = {}, async
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
     yield put(actions.asyncTask.failed(asyncKey));
+
+    return {error};
   }
   yield put(actions.asyncTask.success(asyncKey));
 }
@@ -689,6 +689,16 @@ export function* deleteIntegration({ integrationId }) {
 
   if (integration?._connectorId) return;
 
+  const resourceReferences = yield call(requestReferences, {
+    resourceType: 'integrations',
+    id: integrationId,
+  });
+
+  // Integration cannot be deleted if it has linked flows
+  if (resourceReferences && Object.keys(resourceReferences).length > 0) {
+    return;
+  }
+
   yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
   yield put(actions.resource.requestCollection('integrations', null, true));
@@ -722,14 +732,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
   }
 
   try {
-    let collection = yield call(apiCallWithRetry, {
+    let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
       refresh,
     });
 
     if (resourceType === 'stacks') {
-      let sharedStacks = yield call(apiCallWithRetry, {
+      let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',
         refresh,
       });
@@ -741,7 +751,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
     }
 
     if (resourceType === 'transfers') {
-      const invitedTransfers = yield call(apiCallWithRetry, {
+      const invitedTransfers = yield call(apiCallWithPaging, {
         path: '/transfers/invited',
         refresh,
       });
@@ -944,37 +954,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-export function* fetchUnloadedResources({ integrationId, resourceType }) {
-  let resources = yield select(selectors.resources, resourceType);
-
-  if (!resources || resources.length === 0) {
-    yield call(getResourceCollection, { resourceType, refresh: true });
-    resources = yield select(selectors.resources, resourceType);
-  }
-  if (!integrationId || !resources || resources.length < GET_DOCS_MAX_LIMIT) {
-    return;
-  }
-  const url = `/integrations/${integrationId}/${resourceType}`;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path: url,
-      hidden: true,
-    });
-    yield put(actions.resource.integrations.updateResources(resourceType, response));
-  } catch (e) {
-  // do nothing
-  }
-}
-
-export function* fetchUnloadedIntegrationResources({ integrationId }) {
-  yield all(
-    ['flows', 'exports', 'imports', 'connections'].map(resourceType => call(fetchUnloadedResources, { integrationId, resourceType }))
-  );
-  yield put(actions.resource.integrations.resolveUnloadedResources(integrationId));
-}
-
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -1111,22 +1090,35 @@ export function* downloadReport({ reportId }) {
   }
 }
 
-export function* pollForResourceCollection({ resourceType }) {
-  yield call(pollApiRequests, {pollSaga: getResourceCollection, pollSagaArgs: {resourceType}, duration: STANDARD_DELAY_FOR_POLLING });
-}
-export function* startPollingForResourceCollection({ resourceType }) {
-  return yield race({
-    pollCollection: call(pollForResourceCollection, { resourceType }),
-    cancelPoll: take(action => {
-      if ([
-        actionTypes.RESOURCE.STOP_COLLECTION_POLL,
-        actionTypes.RESOURCE.START_COLLECTION_POLL,
-      ].includes(action.type) &&
-    action.resourceType === resourceType) {
-        return true;
-      }
-    }),
-  });
+export function* downloadAuditlogs({resourceType, resourceId, childId, filters}) {
+  let flowIds;
+
+  if (childId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      resourceId,
+      childId
+    );
+  }
+
+  const requestOptions = getRequestOptions(
+    actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+    { resourceType, resourceId, childId, flowIds, filters }
+  );
+  const { path, opts } = requestOptions;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    if (response.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  } catch (e) {
+    //  Handle errors
+  }
 }
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
@@ -1139,7 +1131,13 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChangesWrapper),
+  takeEvery(
+    [
+      actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT,
+      actionTypes.RESOURCE.STAGE_COMMIT,
+    ],
+    commitStagedChangesWrapper
+  ),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
@@ -1149,7 +1147,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-  takeLatest(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, fetchUnloadedIntegrationResources),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
@@ -1159,8 +1156,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
-  takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
+  takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
 ];

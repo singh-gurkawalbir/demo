@@ -316,19 +316,19 @@ export function isSimpleImportFlow(flow, exports, flowExports) {
   return !!(exp && exp.type === 'simple');
 }
 
-export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName, flowGroupId}) {
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName, sectionId}) {
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
 
   let flowBuilderTo;
 
   if (isIntegrationApp) {
     if (childId) {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
     } else {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
     }
-  } else if (flowGroupId && integrationId !== 'none') {
-    flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${flowGroupId}/${flowBuilderPathName}/${flowId}`);
+  } else if (sectionId && integrationId !== 'none') {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
   } else {
     flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
   }
@@ -1197,9 +1197,9 @@ export function flowLastModifiedPatch(flow, resource) {
 }
 
 // when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
-export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => !!(flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId));
 export const getFlowGroup = (flowGroupings, name, id) => {
-  if (!flowGroupings.length) return emptyObject;
+  if (!flowGroupings?.length) return null;
 
   const unassignedFlowGroup = {
     _id: UNASSIGNED_SECTION_ID,
@@ -1217,36 +1217,28 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsL
     return flowObjects;
   }
 
-  const finalFlowObjects = [];
+  const shouldHaveUnassignedSection = flowObjects.some(flowObject => !flowObject.doc?._flowGroupingId);
+  const allFlowGroupings = shouldHaveUnassignedSection ? [...flowGroupings, {
+    name: UNASSIGNED_SECTION_NAME,
+    _id: UNASSIGNED_SECTION_ID,
+  }] : flowGroupings;
 
-  flowGroupings.forEach(({_id: groupId, name}, index) => {
-    finalFlowObjects.push({
+  const finalFlowObjects = allFlowGroupings.map(({_id: groupId, name}, index) => {
+    const flowGroupObject = {
       groupName: name,
       _id: index + objectsLength,
-    });
-    const resultFlowObjects = flowObjects.filter(flowObject => flowObject.doc?._flowGroupingId === groupId);
-    const lastFlowObject = resultFlowObjects.pop();
+    };
+    const flowObjetsOfAFlowGroup = flowObjects.filter(flowObject =>
+      (name === UNASSIGNED_SECTION_NAME && !flowObject.doc?._flowGroupingId) || flowObject.doc?._flowGroupingId === groupId);
 
-    if (lastFlowObject) {
-      lastFlowObject.isLastFlowInFlowGroup = true;
-      finalFlowObjects.push(...resultFlowObjects, lastFlowObject);
+    if (!flowObjetsOfAFlowGroup.length) {
+      return [flowGroupObject];
     }
-  });
 
-  const flowsWithoutGroupId = flowObjects.filter(flowObject => !flowObject.doc?._flowGroupingId);
+    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1] = { ...flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1], isLastFlowInFlowGroup: true};
 
-  if (flowsWithoutGroupId?.length) {
-    finalFlowObjects.push({
-      groupName: UNASSIGNED_SECTION_NAME,
-      _id: objectsLength + flowsWithoutGroupId.length + 1,
-    });
-    const lastFlowObject = flowsWithoutGroupId.pop();
-
-    if (lastFlowObject) {
-      lastFlowObject.isLastFlowInFlowGroup = true;
-      finalFlowObjects.push(...flowsWithoutGroupId, lastFlowObject);
-    }
-  }
+    return [flowGroupObject, ...flowObjetsOfAFlowGroup];
+  }).flat();
 
   return finalFlowObjects;
 };

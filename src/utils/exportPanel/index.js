@@ -8,7 +8,7 @@ export const DEFAULT_RECORD_SIZE = 10;
 
 // Applications list which include Preview panel as part of the resource drawer
 
-export const applicationsWithPreviewPanel = [
+const applicationsWithPreviewPanel = [
   'http',
   'rest',
   'mongodb',

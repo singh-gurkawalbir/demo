@@ -64,6 +64,8 @@ export default {
       id: 'http.encrypted.assertion',
       type: 'text',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       defaultValue: '',
       label: 'SAML Assertion',
       required: true,

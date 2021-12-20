@@ -43,6 +43,8 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'dunandbradstreet.connection.http.encrypted.password',
     },
     'http.auth.token.token': {

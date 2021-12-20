@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-export const externalScripts = ['transform', 'filter', 'handleRequest'];
+const externalScripts = ['transform', 'filter', 'handleRequest'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -48,7 +48,7 @@ export const hooksToFunctionNamesMap = {
 };
 
 export const hooksToHelpKeyMap = {
-  preSavePage: 'import.hooks.preSavePage',
+  preSavePage: 'export.hooks.preSavePage',
   preMap: 'import.hooks.preMap',
   postMap: 'import.hooks.postMap',
   postSubmit: 'import.hooks.postSubmit',

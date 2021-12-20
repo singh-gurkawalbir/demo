@@ -1,6 +1,4 @@
-import invert from 'lodash/invert';
-
-export const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
+const PRODUCTION_CDN_BASE_URL = 'https://d2c59yixfx38rj.cloudfront.net/';
 // eslint-disable-next-line no-undef
 export const CDN_BASE_URL = CDN_BASE_URI || PRODUCTION_CDN_BASE_URL;
 export const emptyList = Object.freeze([]);
@@ -64,7 +62,7 @@ export const ACCOUNT_SSO_STATUS = Object.freeze({
   LINKED_TO_OTHER_ACCOUNT: 'other_account',
 });
 
-export const UI_FIELD_VALUES = Object.freeze(['/formView']);
+export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';
 export const NETSUITE_BUNDLE_URL =
@@ -164,7 +162,6 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
-export const GET_DOCS_MAX_LIMIT = process.env.GET_DOCS_MAX_LIMIT || 1500;
 export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
 export const PASSWORD_MASK = '******';
 export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite' };
@@ -372,6 +369,7 @@ export const REST_ASSISTANTS = [
   'insightly',
   'pdffiller',
   'ebay',
+  'ebayfinance',
   'expensify',
   'wish',
   'exacterp',
@@ -438,26 +436,7 @@ export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articl
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
-export const AS2_URLS_STAGING = [
-  {
-    label: 'http://api.staging.integrator.io/v1/as2',
-    value: 'http://api.staging.integrator.io/v1/as2',
-  },
-  {
-    label: 'https://api.staging.integrator.io/v1/as2',
-    value: 'https://api.staging.integrator.io/v1/as2',
-  },
-];
-export const AS2_URLS_PRODUCTION = [
-  {
-    label: 'http://api.integrator.io/v1/as2',
-    value: 'http://api.integrator.io/v1/as2',
-  },
-  {
-    label: 'https://api.integrator.io/v1/as2',
-    value: 'https://api.integrator.io/v1/as2',
-  },
-];
+
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
@@ -668,12 +647,14 @@ export const CONNECTORS_TO_IGNORE = [
   'concurv4',
   'constantcontactv2',
   'constantcontactv3',
+  'ebayfinance',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
+export const AUTO_PILOT_DATA_POINT = 'auto';
 export const LINE_GRAPH_TYPES = Object.freeze({
   SUCCESS: 'success',
   AVERAGE_TIME_TAKEN: 'averageTimeTaken',
@@ -695,9 +676,7 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-export const LINE_GRAPH_TYPE_LONG = Object.freeze(
-  invert(LINE_GRAPH_TYPE_SHORTID)
-);
+
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
@@ -748,9 +727,12 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'constantcontactv3',
   'zoom',
   'amazonmws',
+  'ebay',
+  'ebayfinance',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
+export const EBAY_TYPES = ['ebay', 'ebayfinance'];
 export const POLLING_STATUS = {
   SLOW: 'slow down polling',
   RESUME: 'resume polling',

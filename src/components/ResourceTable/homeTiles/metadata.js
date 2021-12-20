@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
@@ -29,61 +30,70 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default {
-  useColumns: () => [
-    {
-      key: 'name',
-      heading: 'Name',
-      orderBy: 'name',
-      isLoggable: true,
-      Value: ({rowData: r}) => (
-        <NameCell tile={r} />
-      ),
-    },
-    {
-      key: 'applications',
-      HeaderValue: () => (
-        <MultiSelectColumnFilter
-          title="Applications"
-          filterBy="applications"
-          filterKey={FILTER_KEY}
-          options={getAllApplications()}
-            />
-      ),
-      isLoggable: true,
-      Value: ({rowData: r}) => {
-        const classes = useStyles();
-        const applications = useSelectorMemo(selectors.mkTileApplications, r);
-
-        if (r._integrationId === STANDALONE_INTEGRATION.id || r.ssLinkedConnectionId) {
-          return (
-            <Typography component="span" className={classes.appsNotAvailable}>
-              N/A
-            </Typography>
-          );
-        }
-
-        return (
-          <LogoStrip applications={applications} />
-        );
+  useColumns: () => {
+    const isUserInErrMgtTwoDotZero = useSelector(state =>
+      selectors.isOwnerUserInErrMgtTwoDotZero(state)
+    );
+    const columns = [
+      {
+        key: 'name',
+        heading: 'Name',
+        orderBy: 'name',
+        isLoggable: true,
+        Value: ({rowData: r}) => (
+          <NameCell tile={r} />
+        ),
       },
-    },
-    {
-      key: 'status',
-      orderBy: 'totalErrorCount',
-      heading: 'Status',
-      isLoggable: true,
-      Value: ({rowData: r}) => (
-        <StatusCell tile={r} />
-      ),
-    },
-    {
-      key: 'lastErrorAt',
-      orderBy: 'lastErrorAt',
-      heading: 'Last open error',
-      isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
-    },
-    {
+      {
+        key: 'applications',
+        HeaderValue: () => (
+          <MultiSelectColumnFilter
+            title="Applications"
+            filterBy="applications"
+            filterKey={FILTER_KEY}
+            options={getAllApplications()}
+            />
+        ),
+        isLoggable: true,
+        Value: ({rowData: r}) => {
+          const classes = useStyles();
+          const applications = useSelectorMemo(selectors.mkTileApplications, r);
+
+          if (r._integrationId === STANDALONE_INTEGRATION.id || r.ssLinkedConnectionId) {
+            return (
+              <Typography component="span" className={classes.appsNotAvailable}>
+                N/A
+              </Typography>
+            );
+          }
+
+          return (
+            <LogoStrip applications={applications} />
+          );
+        },
+      },
+      {
+        key: 'status',
+        orderBy: 'totalErrorCount',
+        heading: 'Status',
+        isLoggable: true,
+        Value: ({rowData: r}) => (
+          <StatusCell tile={r} />
+        ),
+      },
+    ];
+
+    if (isUserInErrMgtTwoDotZero) {
+      columns.push({
+        key: 'lastErrorAt',
+        orderBy: 'lastErrorAt',
+        heading: 'Last open error',
+        isLoggable: true,
+        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
+      });
+    }
+
+    columns.push({
       key: 'type',
       heading: 'Type',
       orderBy: 'sortablePropType',
@@ -91,8 +101,10 @@ export default {
       Value: ({rowData: r}) => (
         <TypeCell tile={r} />
       ),
-    },
-  ],
+    });
+
+    return columns;
+  },
   useRowActions: ({_connectorId, ssLinkedConnectionId, _integrationId, pinned, status }) => {
     if (_integrationId === STANDALONE_INTEGRATION.id) return [];
     const pinUnpin = pinned ? UnpinAction : PinAction;

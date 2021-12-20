@@ -26,6 +26,8 @@ export default {
       type: 'text',
       label: 'API key',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'certify.connection.http.encrypted.apiKey',
     },
     'http.encrypted.apiSecret': {
@@ -35,6 +37,8 @@ export default {
       type: 'text',
       label: 'API secret',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'certify.connection.http.encrypted.apiSecret',
     },
     application: {

@@ -262,10 +262,6 @@ const resource = {
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
-  startCollectionPoll: resourceType =>
-    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
-  stopCollectionPoll: resourceType =>
-    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -315,6 +311,17 @@ const resource = {
   undoStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
+  patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
+    resourceType,
+    id: resourceId,
+    patch,
+    scope: scope || 'value',
+    options,
+    context,
+    parentContext,
+    asyncKey,
+  }),
+
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
@@ -335,9 +342,6 @@ const resource = {
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
-    fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
-    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
-    updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
     redirectTo: (integrationId, redirectTo) =>
@@ -486,6 +490,12 @@ const auditLogs = {
   request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     message,
+  }),
+  download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
+    resourceType,
+    resourceId,
+    childId,
+    filters,
   }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };

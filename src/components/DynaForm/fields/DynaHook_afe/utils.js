@@ -89,6 +89,5 @@ export const saveScript = (values, options = {}, context = {}, formKey) => {
     value: content,
   });
 
-  dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-  dispatch(actions.resource.commitStaged('scripts', scriptId, 'value', options, context, formKey));
+  dispatch(actions.resource.patchAndCommitStaged('scripts', scriptId, patchSet, { options, context, asyncKey: formKey }));
 };

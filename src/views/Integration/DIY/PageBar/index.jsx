@@ -109,10 +109,7 @@ export default function PageBar() {
       // Potential change to switch to PATCH call (instead of PUT)
       const patchSet = [{ op: 'replace', path, value }];
 
-      dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
-      dispatch(
-        actions.resource.commitStaged('integrations', integrationId, 'value')
-      );
+      dispatch(actions.resource.patchAndCommitStaged('integrations', integrationId, patchSet));
     },
     [dispatch, integrationId]
   );

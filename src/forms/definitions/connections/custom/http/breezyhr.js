@@ -31,6 +31,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Password',
       required: true,
       helpKey: 'breezyhr.connection.http.encrypted.password',

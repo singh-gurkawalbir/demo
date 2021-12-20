@@ -41,7 +41,11 @@ import {
   addLastExecutedAtSortableProp,
   shouldUpdateLastModified,
   flowLastModifiedPatch,
+  shouldHaveUnassignedSection,
+  getFlowGroup,
+  mappingFlowsToFlowGroupings,
 } from '.';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
 import getRoutePath from '../routePaths';
 
 const integration = {
@@ -1409,8 +1413,9 @@ describe('flowbuilderUrl', () => {
   const dataLoaderURL = getRoutePath('/integrations/i1/dataLoader/f1');
   const flowURL = getRoutePath('/integrations/i1/flowBuilder/f1');
   const standAloneIntegrationFlowURL = getRoutePath('/integrations/none/flowBuilder/f1');
-  const integrationAppParentFlowURL = getRoutePath('/integrationapps/a1/i1/flowBuilder/f1');
-  const integrationAppChildFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flowBuilder/f1');
+  const integrationFlowGroupURL = getRoutePath('/integrations/i1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppParentFlowURL = getRoutePath('/integrationapps/a1/i1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppChildFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flows/sections/s1/flowBuilder/f1');
   const args = {
     childId: false,
     isIntegrationApp: false,
@@ -1428,6 +1433,10 @@ describe('flowbuilderUrl', () => {
   test('should return valid flowBuilder URL for stand alone integration flow', () => {
     args.isDataLoader = false;
     expect(flowbuilderUrl(flowId, null, args)).toEqual(standAloneIntegrationFlowURL);
+  });
+  test('should return valid flowBuilder URL for integration with flowGroupings', () => {
+    args.sectionId = 's1';
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationFlowGroupURL);
   });
   test('should return valid flowBuilder URL for integration app parent flow', () => {
     args.isIntegrationApp = true;
@@ -3074,5 +3083,277 @@ describe('addLastExecutedAtSortableProp', () => {
         value: resource.lastModified,
       }]);
     });
+  });
+});
+
+describe('shouldHaveUnassignedSection', () => {
+  const flowGroupings = [
+    {
+      name: 'Flow Group 1',
+      _id: 'fg1',
+    },
+    {
+      name: 'Flow Group 2',
+      _id: 'fg2',
+    },
+  ];
+  const flowsWithNoFlowGroupingId = [
+    {
+      _id: 'f1',
+      name: 'flow1',
+      _flowGroupingId: 'fg1',
+    },
+    {
+      _id: 'f2',
+      name: 'flow2',
+      _flowGroupingId: 'fg1',
+    },
+    {
+      _id: 'f3',
+      name: 'flow3',
+    },
+  ];
+  const allFlowsWithFlowGroupingId = [
+    {
+      _id: 'f1',
+      name: 'flow1',
+      _flowGroupingId: 'fg1',
+    },
+    {
+      _id: 'f2',
+      name: 'flow2',
+      _flowGroupingId: 'fg1',
+    },
+    {
+      _id: 'f3',
+      name: 'flow3',
+      _flowGroupingId: 'fg2',
+    },
+  ];
+
+  test('should return false if there are no flowGroupings or flows', () => {
+    expect(shouldHaveUnassignedSection(null, null)).toEqual(false);
+  });
+  test('should return false if there are flowGroupings but no flows', () => {
+    expect(shouldHaveUnassignedSection(flowGroupings, null)).toEqual(false);
+  });
+  test('should return true if there is atleast one flow without a _flowGroupingId assigned to it', () => {
+    expect(shouldHaveUnassignedSection(flowGroupings, flowsWithNoFlowGroupingId)).toEqual(true);
+  });
+  test('should return false if there are flowGroupings and all the flows have a _flowGrupingId', () => {
+    expect(shouldHaveUnassignedSection(flowGroupings, allFlowsWithFlowGroupingId)).toEqual(false);
+  });
+});
+
+describe('getFlowGroup', () => {
+  const flowGroupings = [
+    {
+      name: 'Flow Group 1',
+      _id: 'fg1',
+    },
+    {
+      name: 'Flow Group 2',
+      _id: 'fg2',
+    },
+  ];
+
+  test('should return emptyObject if there are no flowGroupings', () => {
+    expect(getFlowGroup(null, null, null)).toEqual(null);
+  });
+  test('should return correct object on passing either the groupName or groupId', () => {
+    expect(getFlowGroup(flowGroupings, 'Flow Group 1', null)).toEqual({
+      name: 'Flow Group 1',
+      _id: 'fg1',
+    });
+    expect(getFlowGroup(flowGroupings, null, 'fg1')).toEqual({
+      name: 'Flow Group 1',
+      _id: 'fg1',
+    });
+  });
+  test('should return unassigned group if there are no flowGroupings with the given name or id', () => {
+    expect(getFlowGroup(flowGroupings, 'Flow Group 3', null)).toEqual({
+      name: UNASSIGNED_SECTION_NAME,
+      _id: UNASSIGNED_SECTION_ID,
+    });
+    expect(getFlowGroup(flowGroupings, null, 'fg3')).toEqual({
+      name: UNASSIGNED_SECTION_NAME,
+      _id: UNASSIGNED_SECTION_ID,
+    });
+  });
+});
+
+describe('mappingFlowsToFlowGroupings', () => {
+  const totalObjectsLength = 10;
+  const flowGroupings = [
+    {
+      name: 'Flow Group 1',
+      _id: 'fg1',
+    },
+    {
+      name: 'Flow Group 2',
+      _id: 'fg2',
+    },
+  ];
+  const flowObjects1 = [
+    {
+      _id: 3,
+      model: 'Flow',
+      doc: {
+        _id: 'f1',
+        name: 'flow1',
+        _flowGroupingId: 'fg1',
+      },
+    },
+    {
+      _id: 4,
+      model: 'Flow',
+      doc: {
+        _id: 'f2',
+        name: 'flow2',
+        _flowGroupingId: 'fg2',
+      },
+    },
+    {
+      _id: 5,
+      model: 'Flow',
+      doc: {
+        _id: 'f3',
+        name: 'flow3',
+        _flowGroupingId: 'fg1',
+      },
+    },
+  ];
+  const flowObjects2 = [
+    {
+      _id: 3,
+      model: 'Flow',
+      doc: {
+        _id: 'f1',
+        name: 'flow1',
+        _flowGroupingId: 'fg2',
+      },
+    },
+    {
+      _id: 4,
+      model: 'Flow',
+      doc: {
+        _id: 'f2',
+        name: 'flow2',
+      },
+    },
+    {
+      _id: 5,
+      model: 'Flow',
+      doc: {
+        _id: 'f3',
+        name: 'flow3',
+        _flowGroupingId: 'fg1',
+      },
+    },
+    {
+      _id: 6,
+      model: 'Flow',
+      doc: {
+        _id: 'f4',
+        name: 'flow4',
+      },
+    },
+  ];
+
+  test('should return flowObjects passed if there are no flowGroupings', () => {
+    expect(mappingFlowsToFlowGroupings(null, null, null)).toEqual(null);
+    expect(mappingFlowsToFlowGroupings(null, [], null)).toEqual([]);
+  });
+  test('should categorise the flowObjects based on the flowGroupings', () => {
+    expect(mappingFlowsToFlowGroupings(flowGroupings, flowObjects1, totalObjectsLength)).toEqual([
+      {
+        _id: 10,
+        groupName: 'Flow Group 1',
+      },
+      {
+        _id: 3,
+        model: 'Flow',
+        doc: {
+          _id: 'f1',
+          name: 'flow1',
+          _flowGroupingId: 'fg1',
+        },
+      },
+      {
+        _id: 5,
+        model: 'Flow',
+        doc: {
+          _id: 'f3',
+          name: 'flow3',
+          _flowGroupingId: 'fg1',
+        },
+        isLastFlowInFlowGroup: true,
+      },
+      {
+        _id: 11,
+        groupName: 'Flow Group 2',
+      },
+      {
+        _id: 4,
+        model: 'Flow',
+        doc: {
+          _id: 'f2',
+          name: 'flow2',
+          _flowGroupingId: 'fg2',
+        },
+        isLastFlowInFlowGroup: true,
+      },
+    ]);
+    expect(mappingFlowsToFlowGroupings(flowGroupings, flowObjects2, totalObjectsLength)).toEqual([
+      {
+        _id: 10,
+        groupName: 'Flow Group 1',
+      },
+      {
+        _id: 5,
+        model: 'Flow',
+        doc: {
+          _id: 'f3',
+          name: 'flow3',
+          _flowGroupingId: 'fg1',
+        },
+        isLastFlowInFlowGroup: true,
+      },
+      {
+        _id: 11,
+        groupName: 'Flow Group 2',
+      },
+      {
+        _id: 3,
+        model: 'Flow',
+        doc: {
+          _id: 'f1',
+          name: 'flow1',
+          _flowGroupingId: 'fg2',
+        },
+        isLastFlowInFlowGroup: true,
+      },
+      {
+        _id: 12,
+        groupName: UNASSIGNED_SECTION_NAME,
+      },
+      {
+        _id: 4,
+        model: 'Flow',
+        doc: {
+          _id: 'f2',
+          name: 'flow2',
+        },
+      },
+      {
+        _id: 6,
+        model: 'Flow',
+        doc: {
+          _id: 'f4',
+          name: 'flow4',
+        },
+        isLastFlowInFlowGroup: true,
+      },
+    ]);
   });
 });
