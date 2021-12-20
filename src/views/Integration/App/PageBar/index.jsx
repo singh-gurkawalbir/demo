@@ -151,7 +151,7 @@ export default function PageBar() {
   // integration exists. not a stubbed out complex object.
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
 
-  const licenseExpired = useSelector(state => !!selectors.integrationAppLicense(state, integrationId)?.expiresText);
+  const licenseExpired = useSelector(state => selectors.integrationAppLicenseExpired(state, integrationId));
 
   const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const accessLevel = useSelector(

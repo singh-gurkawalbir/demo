@@ -2778,6 +2778,19 @@ selectors.integrationAppLicense = (state, id) => {
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
 };
+
+selectors.integrationAppLicenseExpired = (state, id) => {
+  if (!state) return true;
+  const userLicenses = fromUser.licenses(state && state.user) || [];
+  const license = userLicenses.find(l => l._integrationId === id) || {};
+
+  if (!license) {
+    return true;
+  }
+
+  return moment(license.expires) - moment() < 0;
+};
+
 selectors.makeIntegrationSectionFlows = () => createSelector(
   (state, integrationId) => selectors.integrationAppSettings(state, integrationId) || emptyObject,
   (_1, _2, childId) => childId,

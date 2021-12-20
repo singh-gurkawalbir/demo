@@ -123,7 +123,7 @@ export default function AddOns({integrationId, childId}) {
     selectors.subscribedAddOns(state, integrationId, supportsMultiStore, childId)
   );
 
-  const licenseExpired = useSelector(state => !!selectors.integrationAppLicense(state, integrationId)?.expiresText);
+  const licenseExpired = useSelector(state => selectors.integrationAppLicenseExpired(state, integrationId));
 
   const hasSubscribedAddOns = subscribedAddOns?.length > 0;
   const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;

@@ -3246,6 +3246,153 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
+  describe('selectors.integrationAppLicense test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.integrationAppLicenseExpired()).toEqual(true);
+    });
+
+    const integration = {
+      _id: 'i1',
+      settings: {
+        connectorEdition: 'standard',
+      },
+    };
+
+    test('should retun license details for the integration app for owner user if expired and upgrade requested', () => {
+      let state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      state = reducer(
+        state,
+        actions.integrationApp.settings.requestedUpgrade('l1')
+      );
+
+      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(true);
+    });
+
+    test('should retun license details for the integration app for owner user for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+
+    test('should return license details for the integration app for owner user for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+
+    test('should retun license details for the integration app for non owner user for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'as1',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'as1',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+  });
+
   describe('selectors.integrationAppEdition test cases', () => {
     test('should return default plan for invalid arguments', () => {
       expect(selectors.integrationAppEdition()).toEqual('Standard plan');
