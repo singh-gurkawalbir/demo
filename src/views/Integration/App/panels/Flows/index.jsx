@@ -265,7 +265,7 @@ const IAForms = props => {
               setSelectedTab(value);
             }}
    >
-            {formMetas.map(({ key }) => (
+            {formMetas?.map(({ key }) => (
               <Tab
                 label={(
                   <TabLabel
@@ -371,7 +371,8 @@ const FlowsTable = ({integrationId, childId}) => {
     childHeader: integration?.settings?.storeLabel,
     flowAttributes,
     integration,
-  }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
+    sectionId,
+  }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
     <LoadResources required resources="flows,exports">

@@ -142,6 +142,7 @@ export default {
     'squareup',
     'shipbob',
     'ebay',
+    'ebayfinance',
     'vend',
     'google',
     'salesforce',
