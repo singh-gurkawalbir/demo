@@ -265,7 +265,7 @@ const IAForms = props => {
               setSelectedTab(value);
             }}
    >
-            {formMetas.map(({ key }) => (
+            {formMetas?.map(({ key }) => (
               <Tab
                 label={(
                   <TabLabel
