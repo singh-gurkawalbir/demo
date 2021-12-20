@@ -15,6 +15,7 @@ import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import {getFlowStepLabel} from '../../../utils/flowStepLogs';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -34,9 +35,8 @@ const useStyles = makeStyles(theme => ({
 function RouterWrappedContent({ flowId, resourceType, resourceId, handleClose }) {
   const classes = useStyles();
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
+  const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
+
   const label = `View ${getFlowStepLabel(resourceType, resource)} debug logs`;
 
   return (
