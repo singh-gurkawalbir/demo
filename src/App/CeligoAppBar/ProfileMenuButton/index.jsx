@@ -126,23 +126,26 @@ function ProfileMenuButton() {
         open={open}
         onClose={handleClose}>
         {/* private to logrocket because user email and avatar can be disclosed */}
-        <div data-public className={classes.profileArea} data-private>
-          <div>
-            <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
-          </div>
-          <div>
-            <Typography variant="body1">{name}</Typography>
-            <Typography className={classes.email} variant="body2">
-              {email}
-            </Typography>
-            <Typography className={classes.email}>
-              {accountOwnerEmail && (
+        <div className={classes.profileArea}>
+          <div data-private>
+            <div>
+              <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
+            </div>
+            <div>
+              <Typography variant="body1">{name}</Typography>
+              <Typography className={classes.email} variant="body2">
+                {email}
+              </Typography>
+              <Typography className={classes.email}>
+                {accountOwnerEmail && (
                 <>
                   Account owner
                   {!isAccountOwner && `: ${accountOwnerEmail}`}
                 </>
-              )}
-            </Typography>
+                )}
+              </Typography>
+
+            </div>
             <div>
               <div className={classes.actions}>
                 <OutlinedButton
@@ -164,8 +167,7 @@ function ProfileMenuButton() {
           </div>
 
         </div>
-        {/* private to logrocket because it could be construed as a user's personalized information to celigo ? */}
-        <div className={classes.bottomActions} data-private>
+        <div className={classes.bottomActions}>
           <TextButton
             data-test="uxFeedback"
             component="a"

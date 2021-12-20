@@ -64,7 +64,6 @@ export default {
 
         return <SelectClassification {...tableContext} />;
       },
-      // classification is benign?
       isLoggable: true,
       Value: ({rowData: r}) => <Classification error={r} />,
       width: '10%',
