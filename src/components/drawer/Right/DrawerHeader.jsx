@@ -8,6 +8,7 @@ import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
 import { useDrawerContext } from './DrawerContext';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import DrawerSubHeader from '../../DrawerSubHeader';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -94,7 +95,7 @@ export default function DrawerHeader({
       />
         )}
         {infoText && <InfoIconButton info={infoText} />}
-        {endedAt && <Typography variant="body2" component="div">Run completed: <CeligoTimeAgo date={endedAt} /></Typography>}
+        {endedAt && <DrawerSubHeader title="Run completed: "><CeligoTimeAgo date={endedAt} /></DrawerSubHeader>}
       </Typography>
 
       {/* Typically children are the action icons/buttons */}
