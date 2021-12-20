@@ -36,7 +36,7 @@ function get1000Logs() {
   return logs;
 }
 
-describe('Listener logs sagas', () => {
+describe('Flow step logs sagas', () => {
   describe('fetchNewLogs saga', () => {
     test('should make api call with time_gt equal to passed arg', () => {
       const timeGt = 123456;

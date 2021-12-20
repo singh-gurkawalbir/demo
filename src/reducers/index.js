@@ -6314,7 +6314,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id, listViewLicenseMesssage};
 };
 
-// #region listener request logs selectors
+// #region flow step debug logs selectors
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
@@ -6353,7 +6353,7 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
   }
 );
 
-// #endregion listener request logs selectors
+// #endregion flow step debug logs selectors
 
 selectors.assistantName = (state, resourceType, resourceId) => {
   const _resource = selectors.resource(state, resourceType, resourceId);

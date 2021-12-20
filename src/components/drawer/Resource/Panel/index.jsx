@@ -22,7 +22,7 @@ import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
-import FlowStepRequestLogsDrawer from '../../FlowStepRequestLogs';
+import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import CloseButton from './CloseButton';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';

@@ -29,7 +29,7 @@ export default function PreviewLogDetails({ flowId, resourceId }) {
   const dispatch = useDispatch();
   const activeLogKey = useSelector(state => selectors.activeLogKey(state, resourceId));
   const logDetails = useSelector(state => selectors.logDetails(state, resourceId, activeLogKey), shallowEqual);
-  const {changeIdentifier, key: errorKey, error: errorMsg} = useSelector(state => selectors.listenerErrorMsg(state, resourceId), shallowEqual);
+  const {changeIdentifier, key: errorKey, error: errorMsg} = useSelector(state => selectors.flowStepErrorMsg(state, resourceId), shallowEqual);
 
   useEffect(() => {
     if (activeLogKey) {

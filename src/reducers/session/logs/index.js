@@ -1,20 +1,20 @@
 import { combineReducers } from 'redux';
 import connections, { selectors as fromConnections } from './connections';
 import scripts, { selectors as fromScripts } from './scripts';
-import listener, { selectors as fromListener } from './flowStep';
+import flowStep, { selectors as fromFlowStep } from './flowStep';
 import { genSelectors } from '../../util';
 
 export default combineReducers({
   connections,
   scripts,
-  listener,
+  flowStep,
 });
 
 export const selectors = {};
 const subSelectors = {
   connections: fromConnections,
   scripts: fromScripts,
-  listener: fromListener,
+  flowStep: fromFlowStep,
 };
 
 genSelectors(selectors, subSelectors);

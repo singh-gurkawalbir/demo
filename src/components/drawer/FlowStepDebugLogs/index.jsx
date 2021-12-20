@@ -77,7 +77,7 @@ function RouterWrappedContent({ flowId, resourceType, resourceId, handleClose })
   );
 }
 
-export default function ListenerRequestLogs({ flowId, resourceType, resourceId }) {
+export default function FlowStepDebugLogs({ flowId, resourceType, resourceId }) {
   const history = useHistory();
   const match = useRouteMatch();
 

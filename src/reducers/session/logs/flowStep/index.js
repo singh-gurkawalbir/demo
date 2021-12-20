@@ -151,55 +151,55 @@ selectors.flowStepLogs = (state, id) => {
 selectors.logsSummary = (state, id) => {
   if (!state) return emptyArr;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return exportLogs?.logsSummary || emptyArr;
+  return flowStepLogs?.logsSummary || emptyArr;
 };
 
 selectors.logsStatus = (state, id) => {
   if (!state) return;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return exportLogs?.logsStatus;
+  return flowStepLogs?.logsStatus;
 };
 
 selectors.hasNewLogs = (state, id) => {
   if (!state) return false;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return !!exportLogs?.hasNewLogs;
+  return !!flowStepLogs?.hasNewLogs;
 };
 
 selectors.logDetails = (state, id, key) => {
   if (!state) return emptyObj;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return exportLogs?.logsDetails?.[key] || emptyObj;
+  return flowStepLogs?.logsDetails?.[key] || emptyObj;
 };
 
 selectors.isDebugEnabled = (state, id) => {
   if (!state) return false;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return !!exportLogs?.debugOn;
+  return !!flowStepLogs?.debugOn;
 };
 
 selectors.activeLogKey = (state, id) => {
   if (!state) return;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return exportLogs?.activeLogKey;
+  return flowStepLogs?.activeLogKey;
 };
 
-selectors.listenerErrorMsg = (state, id) => {
+selectors.flowStepErrorMsg = (state, id) => {
   if (!state) return emptyObj;
 
-  const exportLogs = state[id];
+  const flowStepLogs = state[id];
 
-  return exportLogs?.error || emptyObj;
+  return flowStepLogs?.error || emptyObj;
 };

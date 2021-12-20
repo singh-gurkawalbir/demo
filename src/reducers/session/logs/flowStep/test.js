@@ -64,7 +64,7 @@ const logsSummary = [{
 },
 ];
 
-describe('Listener logs reducer', () => {
+describe('Flow step logs reducer', () => {
   test('should return previous state if action is not handled.', () => {
     const unknownAction = { type: 'unknown' };
     const oldState = { key: { keyword: 'findme' } };
@@ -73,8 +73,8 @@ describe('Listener logs reducer', () => {
     expect(newState).toBe(oldState);
   });
 
-  describe('LISTENER.REQUEST action', () => {
-    test('should not throw error if the listener state does not exist and set status as requested', () => {
+  describe('FLOWSTEP.REQUEST action', () => {
+    test('should not throw error if the flow step state does not exist and set status as requested', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.request({flowId, resourceId})
@@ -146,8 +146,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.RECEIVED action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.RECEIVED action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.received({resourceId})
@@ -235,8 +235,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.LOG.REQUEST action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.LOG.REQUEST action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.requestLogDetails(flowId, resourceId)
@@ -313,8 +313,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.LOG.RECEIVED action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.LOG.RECEIVED action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.receivedLogDetails(resourceId, logKey, logDetails)
@@ -378,10 +378,10 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.ACTIVE_LOG action', () => {
+  describe('FLOWSTEP.ACTIVE_LOG action', () => {
     const activeLogKey = '98765';
 
-    test('should exit and not throw error if the listener state does not exist', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.setActiveLog(resourceId, activeLogKey)
@@ -436,10 +436,10 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.LOG.DELETED action', () => {
+  describe('FLOWSTEP.LOG.DELETED action', () => {
     const deletedLogKey = '200-POST';
 
-    test('should exit and not throw error if the listener state does not exist', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.logDeleted(resourceId, deletedLogKey)
@@ -578,8 +578,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.DEBUG.START action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.DEBUG.START action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.startDebug(flowId, resourceId, '15')
@@ -646,8 +646,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.DEBUG.STOP action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.DEBUG.STOP action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.stopDebug(flowId, resourceId)
@@ -714,8 +714,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.START.POLL action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.START.POLL action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.startLogsPoll(flowId, resourceId)
@@ -782,8 +782,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.STOP_POLL action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.STOP_POLL action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.stopLogsPoll(resourceId, true)
@@ -848,10 +848,10 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.FAILED action', () => {
+  describe('FLOWSTEP.FAILED action', () => {
     const error = {key: '200-POST', error: 'NoSuchKey'};
 
-    test('should exit and not throw error if the listener state does not exist', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.failed(resourceId, error)
@@ -919,8 +919,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.FETCH_STATUS action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.FETCH_STATUS action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
         actions.logs.flowStep.setFetchStatus(resourceId, 'paused')
@@ -1015,8 +1015,8 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.CLEAR action', () => {
-    test('should clear the listener reference from the state', () => {
+  describe('FLOWSTEP.CLEAR action', () => {
+    test('should clear the flow step reference from the state', () => {
       const initialState = {
         [resourceId]: {
           activeLogKey: '5642310475121',
@@ -1038,7 +1038,7 @@ describe('Listener logs reducer', () => {
 
       expect(newState).not.toHaveProperty(resourceId);
     });
-    test('should not alter any other listener state', () => {
+    test('should not alter any other flow step state', () => {
       const initialState = {
         'sibling-export': {
           logsStatus: 'received',
@@ -1061,7 +1061,7 @@ describe('Listener logs reducer', () => {
   });
 });
 
-describe('Listener logs selectors', () => {
+describe('Flow step logs selectors', () => {
   const initialState = {
     [resourceId]: {
       activeLogKey: '5642310475121',
@@ -1088,7 +1088,7 @@ describe('Listener logs selectors', () => {
       expect(selectors.flowStepLogs({}, resourceId)).toEqual({});
       expect(selectors.flowStepLogs({123: {}}, resourceId)).toEqual({});
     });
-    test('should return correct listener state when a match is found', () => {
+    test('should return correct flow step state when a match is found', () => {
       const expectedOutput = {
         activeLogKey: '5642310475121',
         hasNewLogs: false,
@@ -1108,7 +1108,7 @@ describe('Listener logs selectors', () => {
       expect(selectors.logsSummary({}, resourceId)).toEqual([]);
       expect(selectors.logsSummary({[resourceId]: {logsStatus: 'received'}}, resourceId)).toEqual([]);
     });
-    test('should return correct listener state logs when a match is found', () => {
+    test('should return correct flow step state logs when a match is found', () => {
       const expectedOutput = [{key: logKey, time: 1234}];
 
       expect(selectors.logsSummary(newState, resourceId)).toEqual(expectedOutput);
@@ -1177,11 +1177,11 @@ describe('Listener logs selectors', () => {
       expect(selectors.activeLogKey(newState, resourceId)).toEqual('5642310475121');
     });
   });
-  describe('listenerErrorMsg', () => {
+  describe('flowStepErrorMsg', () => {
     test('should return empty object when no match found', () => {
-      expect(selectors.listenerErrorMsg(undefined, resourceId)).toEqual({});
-      expect(selectors.listenerErrorMsg({}, resourceId)).toEqual({});
-      expect(selectors.listenerErrorMsg({[resourceId]: {}}, resourceId)).toEqual({});
+      expect(selectors.flowStepErrorMsg(undefined, resourceId)).toEqual({});
+      expect(selectors.flowStepErrorMsg({}, resourceId)).toEqual({});
+      expect(selectors.flowStepErrorMsg({[resourceId]: {}}, resourceId)).toEqual({});
     });
     test('should return correct state error when a match is found', () => {
       const finalState = reducer(
@@ -1189,7 +1189,7 @@ describe('Listener logs selectors', () => {
         actions.logs.flowStep.failed(resourceId, {key: '200-POST', error: 'NoSuchKey'})
       );
 
-      expect(selectors.listenerErrorMsg(finalState, resourceId)).toEqual({changeIdentifier: 1, key: '200-POST', error: 'NoSuchKey'});
+      expect(selectors.flowStepErrorMsg(finalState, resourceId)).toEqual({changeIdentifier: 1, key: '200-POST', error: 'NoSuchKey'});
     });
   });
 });

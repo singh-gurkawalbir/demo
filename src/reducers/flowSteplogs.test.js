@@ -35,7 +35,7 @@ const getMockRequests = () => [{
 },
 ];
 
-describe('Listener request logs region selectors test cases', () => {
+describe('Flow step request logs region selectors test cases', () => {
   const exportId = 'exp-123';
   const flowId = 'flow-123';
   let state;
@@ -169,7 +169,7 @@ describe('Listener request logs region selectors test cases', () => {
       const state = {
         session: {
           logs: {
-            listener: {
+            flowStep: {
               [exportId]: {
                 logsStatus: 'received',
                 logsSummary: [],
@@ -193,7 +193,7 @@ describe('Listener request logs region selectors test cases', () => {
             },
           },
           logs: {
-            listener: {
+            flowStep: {
               [exportId]: {
                 logsStatus: 'received',
                 logsSummary: getMockRequests(),
@@ -218,7 +218,7 @@ describe('Listener request logs region selectors test cases', () => {
             },
           },
           logs: {
-            listener: {
+            flowStep: {
               [exportId]: {
                 logsStatus: 'received',
                 logsSummary: getMockRequests(),
