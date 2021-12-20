@@ -15,8 +15,9 @@ export const FLOWSTEP_LOGS_RANGE_FILTERS = [
 ];
 export const FLOWSTEP_LOGS_STAGE_OPTIONS = [
   {_id: 'all', name: 'All stages'},
-  {_id: 'lookup', name: 'Lookup'},
   {_id: 'import', name: 'Import'},
+  {_id: 'lookup', name: 'Lookup'},
+  {_id: 'mappingLookup', name: 'Mapping lookup'},
 ];
 
 export const FLOWSTEP_LOGS_STATUS_CODES = [

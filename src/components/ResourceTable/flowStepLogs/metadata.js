@@ -60,7 +60,7 @@ export default {
 
             return (
               <MultiSelectColumnFilter
-                title="Type"
+                title="Stage"
                 filterBy="stage"
                 filterKey={FILTER_KEY}
                 handleSave={handleSave}
