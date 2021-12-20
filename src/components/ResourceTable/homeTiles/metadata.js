@@ -72,7 +72,7 @@ export default {
       },
       {
         key: 'status',
-        orderBy: 'totalErrorCount',
+        orderBy: 'status',
         heading: 'Status',
         Value: ({rowData: r}) => (
           <StatusCell tile={r} />
