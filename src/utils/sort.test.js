@@ -1,6 +1,5 @@
 /* global describe, test, expect */
-const { TILE_STATUS } = require('./constants');
-const { stringCompare, celigoListCompare, tileCompare } = require('./sort');
+const { stringCompare, celigoListCompare } = require('./sort');
 
 describe('Sort util function test', () => {
   describe('stringCompare function test', () => {
@@ -869,85 +868,6 @@ describe('Sort util function test', () => {
         { id: 'test[*].sublist' },
       ]
       );
-    });
-  });
-  describe('tileCompare function test', () => {
-    test('should return string compare if sortProperty is not status', () => {
-      const tileA = {
-        name: 'a',
-      };
-      const tileB = {
-        name: 'b',
-      };
-
-      expect(tileCompare('name', false)(tileA, tileB)).toEqual(-1);
-    });
-    test('should give higher priority to tile with connection errors', () => {
-      const tileA = {
-        offlineConnections: ['a', 'b'],
-      };
-      const tileB = {
-        numError: 2,
-      };
-
-      expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-      expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-      expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
-      expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
-    });
-    test('should give higher priority to tile with more errors', () => {
-      const tileA = {
-        offlineConnections: ['a', 'b', 'c'],
-        status: TILE_STATUS.SUCCESS,
-      };
-      const tileB = {
-        numError: 2,
-        status: TILE_STATUS.HAS_ERRORS,
-      };
-
-      expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-      expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-    });
-    test('should give higher priority to tile with more errors if the status of tiles is same', () => {
-      const tileA = {
-        offlineConnections: ['a', 'b'],
-        numError: 1,
-        status: TILE_STATUS.HAS_ERRORS,
-      };
-      const tileB = {
-        numError: 2,
-        status: TILE_STATUS.HAS_ERRORS,
-      };
-
-      expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-      expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-    });
-
-    test('should give higher priority to successful tiles than continue setup/uninstall', () => {
-      const tileA = {
-        status: TILE_STATUS.SUCCESS,
-      };
-      const tileB = {
-        status: TILE_STATUS.IS_PENDING_SETUP,
-      };
-
-      expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-      expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-      expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
-      expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
-    });
-    test('should give higher priority to continue setup tiles than continue uninstall', () => {
-      const tileA = {
-        status: TILE_STATUS.IS_PENDING_SETUP,
-      };
-      const tileB = {
-        status: TILE_STATUS.UNINSTALL,
-      };
-
-      expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-      expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-      expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
-      expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
     });
   });
 });

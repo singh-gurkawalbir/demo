@@ -82,7 +82,7 @@ import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersio
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
-import { stringCompare, comparer, tileCompare} from '../utils/sort';
+import { stringCompare, comparer } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -102,7 +102,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
-import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId } from '../utils/home';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
