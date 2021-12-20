@@ -922,6 +922,10 @@ export const getAssistantFromResource = resource => {
     return 'constantcontact';
   }
 
+  if (assistant === 'ebay' || assistant === 'ebayfinance') {
+    return 'ebay';
+  }
+
   return assistant;
 };
 

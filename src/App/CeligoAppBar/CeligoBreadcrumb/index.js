@@ -78,6 +78,13 @@ const flowBuilderRoutes = [
 const integrationAppRoutes = [
   ...flowBuilderRoutes,
   {
+    path: '/flows/sections/:sectionId',
+    breadcrumb: FlowGroupCrumb,
+    childRoutes: [
+      ...flowBuilderRoutes,
+    ],
+  },
+  {
     path: '/admin',
     breadcrumb: 'Admin',
     childRoutes: [
