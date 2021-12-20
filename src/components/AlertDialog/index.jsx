@@ -10,7 +10,7 @@ import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
 import { OutlinedButton} from '../Buttons';
-import { ConfirmDialog } from '../ConfirmDialog';
+import useConfirmDialog from '../ConfirmDialog';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -74,30 +74,6 @@ const UserAcceptedAccountTransfer = () => (
     </OutlinedButton>
   </ModalDialog>
 );
-const WarningSessionContent = () => {
-  const dispatch = useDispatch();
-
-  return (
-    <ConfirmDialog
-      message="Your session is about to expire. Do you want to stay signed in?"
-      title="Session expiring"
-      hideClose
-      buttons={[
-        { label: 'Yes, keep me signed in',
-          onClick: () => {
-            dispatch(actions.user.profile.request('Refreshing session'));
-          },
-        },
-        { label: 'No, sign me out',
-          variant: 'text',
-          onClick: () => {
-            dispatch(actions.auth.logout());
-          },
-        },
-      ]}
-    />
-  );
-};
 
 const ExpiredSessionContent = () => {
   const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
@@ -120,7 +96,7 @@ const ExpiredSessionContent = () => {
 export default function AlertDialog() {
   const dispatch = useDispatch();
   const classes = useStyles();
-
+  const { confirmDialog } = useConfirmDialog();
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
   const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
@@ -149,6 +125,30 @@ export default function AlertDialog() {
     };
   }, [dispatch, isAuthenticated, isUiVersionDifferent, isUserAcceptedAccountTransfer]);
 
+  // useEffect for showing session expire warning
+  useEffect(() => {
+    if (showSessionStatus === 'warning') {
+      confirmDialog({
+        message: 'Your session is about to expire. Do you want to stay signed in?',
+        title: 'Session expiring',
+        hideClose: true,
+        buttons: [
+          { label: 'Yes, keep me signed in',
+            onClick: () => {
+              dispatch(actions.user.profile.request('Refreshing session'));
+            },
+          },
+          { label: 'No, sign me out',
+            variant: 'text',
+            onClick: () => {
+              dispatch(actions.auth.logout());
+            },
+          },
+        ],
+      });
+    }
+  }, [confirmDialog, dispatch, showSessionStatus]);
+
   useEffect(() => {
     let warningSessionTimer;
     let expiredSessionTimer;
@@ -176,11 +176,7 @@ export default function AlertDialog() {
     <LoadResources required resources={isAccountOwner ? 'ssoclients' : emptyList}>
       {showSessionStatus && (
         <Dialog disableEnforceFocus open className={classes.contentWrapper}>
-          {showSessionStatus === 'warning' ? (
-            <WarningSessionContent />
-          ) : (
-            showSessionStatus === 'expired' && <ExpiredSessionContent />
-          )}
+          {showSessionStatus === 'expired' && <ExpiredSessionContent />}
         </Dialog>
       )}
       {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}

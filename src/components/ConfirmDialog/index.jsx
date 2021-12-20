@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     top: 0,
   },
 }));
-export const ConfirmDialog = (
+const ConfirmDialog = (
   {
     message,
     title = 'Confirm',
@@ -41,9 +41,7 @@ export const ConfirmDialog = (
   const classes = useStyles();
   const handleButtonClick = useCallback(
     button => () => {
-      if (typeof onClose === 'function') {
-        onClose();
-      }
+      onClose();
       button.onClick?.();
     },
     [onClose]
@@ -54,9 +52,7 @@ export const ConfirmDialog = (
       onDialogClose();
     }
     // Default close fn which closes the dialog
-    if (typeof onClose === 'function') {
-      onClose();
-    }
+    onClose();
   }, [onClose, onDialogClose]);
 
   const finalHandleClose = hideClose ? undefined : handleClose;
