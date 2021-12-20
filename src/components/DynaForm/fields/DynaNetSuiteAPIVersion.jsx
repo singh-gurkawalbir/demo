@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import FieldMessage from './FieldMessage';
 import Spinner from '../../Spinner';
-import actions from '../../../actions';
 import DynaRadio from './radiogroup/DynaRadioGroup';
 import { selectors } from '../../../reducers';
+import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import FieldMessage from './FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   refreshLoader: {
@@ -14,43 +14,34 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaNetSuiteAPIVersion(props) {
-  const dispatch = useDispatch();
-  const classes = useStyles();
-  const [refreshBundleInstalledInfo, setRefreshBundleInstalledInfo] = useState(true);
-  const [isInitValueChanged, setIsInitValueChanged] = useState(false);
+export default function DynaNetsuiteAPIVersion(props) {
+  const { onFieldChange, connectionId, isNew, resourceType, resourceId, value, id, touched } = props;
 
-  const {
-    connectionId,
-    isNew,
-    value,
-    resourceType,
-    resourceId,
-    onFieldChange,
-  } = props;
-  const commMetaPath = `connections/${connectionId}/distributedApps`;
-  const filterKey = 'suitescript-bundle-status';
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  const {data, status, errorMessage} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
-    commMetaPath, filterKey);
+  const [refreshBundleInstalledInfo, setRefreshBundleInstalledInfo] = useState(true);
+
+  const nsMetadata = useSelectorMemo(
+    selectors.makeOptionsFromMetadata,
+    connectionId,
+    `connections/${connectionId}/distributedApps`,
+    'suitescript-bundle-status'
+  );
+
+  const {data, status, errorMessage } = nsMetadata;
 
   const isSuiteBundleInstalled = data?.bundle?.success;
   const isSuiteAppInstalled = data?.suiteapp?.success;
+  const isLoadingMetadata = !status || status === 'requested';
 
-  const isLoading =
-    (!status ||
-      status === 'requested');
-
-  // Based on installation info of bundle/suiteapp ,initial value will be selected
-  // if both installed, then select api version as 1.0
-  let initValueForField = 'false';
-
-  if (!isSuiteBundleInstalled && isSuiteAppInstalled) {
-    initValueForField = 'true';
+  if (isNew && !touched && !isSuiteBundleInstalled && isSuiteAppInstalled && value !== 'true') {
+    // update field to 2.0 version if the field is not touched yet and has only suiteApp installed
+    onFieldChange(id, 'true');
   }
 
   useEffect(() => {
@@ -59,9 +50,8 @@ export default function DynaNetSuiteAPIVersion(props) {
       setRefreshBundleInstalledInfo(false);
     }
 
-    if (!isLoading && !refreshBundleInstalledInfo && !isOffline) {
-      const currentFieldValue = isNew && !isInitValueChanged ? initValueForField : value;
-      const showBundleInstallNotification = currentFieldValue === 'true' ? !isSuiteAppInstalled : !isSuiteBundleInstalled;
+    if (!isLoadingMetadata && !refreshBundleInstalledInfo && !isOffline) {
+      const showBundleInstallNotification = value === 'true' ? !isSuiteAppInstalled : !isSuiteBundleInstalled;
 
       if (!showBundleInstallNotification) {
         dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
@@ -76,46 +66,20 @@ export default function DynaNetSuiteAPIVersion(props) {
     return () => {
       dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
     };
-  },
-  [
-    isSuiteBundleInstalled,
-    isSuiteAppInstalled,
-    value,
-    isLoading,
-    data,
-    dispatch,
-    resourceType,
-    resourceId,
-    refreshBundleInstalledInfo,
-    isNew,
-    isInitValueChanged,
-    initValueForField,
-    connectionId,
-    isOffline,
-  ]);
+  }, [connectionId, data, dispatch, isOffline, refreshBundleInstalledInfo, resourceId, resourceType, isLoadingMetadata, isSuiteAppInstalled, isSuiteBundleInstalled, value]);
 
-  const handleFieldChange = (id, value) => {
-    if (!isInitValueChanged) {
-      setIsInitValueChanged(true);
-    }
-    onFieldChange(id, value);
-  };
+  if (isNew && isLoadingMetadata && !errorMessage) {
+    return (
+      <span
+        className={classes.refreshLoader}>
+        <Spinner />
+      </span>
+    );
+  }
 
   return (
     <>
-      {(isLoading && isNew && !errorMessage) ? (
-        <span
-          className={classes.refreshLoader}>
-          <Spinner />
-        </span>
-      )
-        : (
-          <DynaRadio
-            {...{...props,
-              onFieldChange: handleFieldChange,
-              ...(isNew && !isInitValueChanged) && {value: initValueForField}}
-            } />
-        )}
+      <DynaRadio {...props} />
       <FieldMessage errorMessages={errorMessage} />
     </>
   );
