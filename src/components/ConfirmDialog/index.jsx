@@ -55,10 +55,8 @@ const ConfirmDialog = (
     onClose();
   }, [onClose, onDialogClose]);
 
-  const finalHandleClose = hideClose ? undefined : handleClose;
-
   return (
-    <ModalDialog show onClose={finalHandleClose} maxWidth={maxWidth}>
+    <ModalDialog show onClose={hideClose ? undefined : handleClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
         <RawHtml className={classes.message} html={message} options={{allowedTags}} />
