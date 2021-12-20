@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardActions, Typography } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
-import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
+import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import ModalDialog from '../../../../../components/ModalDialog';
 import {isHTML} from '../../../../../utils/string';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import AddonInstallerButton from '../Admin/sections/Subscription/AddonInstallerButton';
 import FilledButton from '../../../../../components/Buttons/FilledButton';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -82,7 +83,8 @@ export default function AddOnsPanel({ integrationId, childId }) {
   // along with the code in the ../App/index file. The addon state should
   // contain a status indicating the progress of API request to retrieve addon
   // details.
-  const [showMessage, setShowMessage] = useState(false);
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const {confirmDialog} = useConfirmDialog();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
   const addOnState = useSelector(state =>
@@ -99,12 +101,9 @@ export default function AddOnsPanel({ integrationId, childId }) {
 
     return license ? license._id : null;
   });
-  const onClose = () => {
-    setShowMessage(false);
-  };
 
   const handleContactSales = useCallback(
-    addOnName => {
+    addOnName => () => {
       // TODO: what kind of crazy logic is going on here?
       // the integrationApp requestUpgrade action requires its own
       // licensing information sent to it? plus the full integration resource?
@@ -117,10 +116,27 @@ export default function AddOnsPanel({ integrationId, childId }) {
           licenseId,
         })
       );
-      setShowMessage(true);
+      const message = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
+      In the meantime, <a target="_blank" rel="noopener noreferrer"
+        href="mailto:product_feedback@celigo.com"><u>checkout our Marketplace</u></a> for integration apps and quickstart templates.`;
+
+      enquesnackbar({message: <RawHtml html={message} />, variant: 'success'});
     },
-    [dispatch, integrationId, licenseId]
+
+    [dispatch, enquesnackbar, integrationId, licenseId]
   );
+  const onRequestAddonClicked = data => () => {
+    const addonName = data?.name;
+
+    confirmDialog({
+      title: 'Request add-on',
+      message: LICENSE_UPGRADE_REQUEST,
+      buttons: [
+        {label: 'Submit Request', onClick: handleContactSales(addonName)},
+        {label: 'Cancel', variant: 'text'},
+      ],
+    });
+  };
 
   return (
     <div className={classes.root}>
@@ -140,20 +156,15 @@ export default function AddOnsPanel({ integrationId, childId }) {
                   : (
                     <FilledButton
                       data-test="contactSales"
-                      onClick={() => handleContactSales(data.name)}>
-                      Contact sales
+                      onClick={onRequestAddonClicked(data)}>
+                      Request Add-on
                     </FilledButton>
                   )}
               </CardActions>
             </Card>
           ))}
       </div>
-      {showMessage && (
-        <ModalDialog show onClose={onClose}>
-          <div>License upgrade request</div>
-          <div>{LICENSE_UPGRADE_REQUEST_RECEIVED}</div>
-        </ModalDialog>
-      )}
+
     </div>
   );
 }
