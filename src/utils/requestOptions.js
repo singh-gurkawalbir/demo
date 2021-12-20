@@ -433,12 +433,15 @@ export default function getRequestOptions(
       } else {
         path = `/flows/${flowId}/${resourceId}/requests`;
         const queryParams = [];
-        const { codes = [], time } = filters;
+        const { codes = [], time, stage = [] } = filters;
 
         const codesList = getStaticCodesList(codes);
 
         if (!codesList.includes('all')) {
           codesList.forEach(c => queryParams.push(`statusCode=${c}`));
+        }
+        if (!stage.includes('all')) {
+          stage.forEach(c => queryParams.push(`stage=${c}`));
         }
         if (time?.startDate) {
           queryParams.push(`time_gt=${time.startDate.getTime()}`);

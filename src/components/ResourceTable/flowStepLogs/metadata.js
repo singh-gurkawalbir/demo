@@ -42,7 +42,7 @@ export default {
 
           return <LogDetailsLink logKey={log.key} resourceId={resourceId} time={log.utcDateTime} />;
         },
-      }, // hww
+      },
       {
         key: 'method',
         heading: 'Method',
