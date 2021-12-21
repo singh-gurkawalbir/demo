@@ -8,7 +8,8 @@ export default {
     '/http/baseURI': 'https://api.mercadolibre.com/',
     '/http/ping/relativeURI': '/users/me',
     '/http/ping/method': 'GET',
-    '/http/auth/oauth/authURI': `https://auth.mercadolibre${
+    '/http/auth/oauth/authURI': `https://auth.${
+      formValues['/http/unencrypted/region'] === 'br' ? 'mercadolivre' : 'mercadolibre'}${
       formValues['/http/unencrypted/region'] === 'cr' ? '.co' : `${formValues['/http/unencrypted/region'] === 'cl' ? '' : '.com'}`}.${formValues['/http/unencrypted/region']}/authorization`,
     '/http/auth/oauth/tokenURI': 'https://api.mercadolibre.com/oauth/token',
     '/http/auth/token/location': 'header',
