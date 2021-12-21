@@ -105,6 +105,7 @@ export const GenericTypeableSelect = props => {
     // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
     unSearchable,
+    defaultMenuIsOpen,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -285,6 +286,7 @@ export const GenericTypeableSelect = props => {
           hideSelectedOptions={false}
           styles={customStylesMultiselect}
           isSearchable={!unSearchable}
+          defaultMenuIsOpen={defaultMenuIsOpen}
      />
 
         <FieldMessage {...props} />

@@ -19,12 +19,12 @@ import {
   toggleDebug,
   removeLogs,
 } from './index';
-import { FILTER_KEY } from '../../../utils/listenerLogs';
+import { FILTER_KEY } from '../../../utils/flowStepLogs';
 import { pollApiRequests } from '../../app';
 import { APIException } from '../../api/requestInterceptors/utils';
 
 const flowId = 'flow-123';
-const exportId = 'exp-123';
+const resourceId = 'exp-123';
 
 function get1000Logs() {
   const logs = [{key: 'key1', others: {}}];
@@ -36,12 +36,12 @@ function get1000Logs() {
   return logs;
 }
 
-describe('Listener logs sagas', () => {
+describe('Flow step logs sagas', () => {
   describe('fetchNewLogs saga', () => {
     test('should make api call with time_gt equal to passed arg', () => {
       const timeGt = 123456;
 
-      return expectSaga(fetchNewLogs, { flowId, exportId, timeGt})
+      return expectSaga(fetchNewLogs, { flowId, resourceId, timeGt})
         .run()
         .then(result => {
           const { effects } = result;
@@ -66,19 +66,19 @@ describe('Listener logs sagas', () => {
         ],
       };
 
-      return expectSaga(fetchNewLogs, { flowId, exportId})
+      return expectSaga(fetchNewLogs, { flowId, resourceId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
         .put(
-          actions.logs.listener.stopLogsPoll(
-            exportId,
+          actions.logs.flowStep.stopLogsPoll(
+            resourceId,
             true,
           )
         )
         .run();
     });
-    test('should do nothing in case of error', () => expectSaga(fetchNewLogs, { flowId, exportId})
+    test('should do nothing in case of error', () => expectSaga(fetchNewLogs, { flowId, resourceId})
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
           status: 422,
@@ -86,8 +86,8 @@ describe('Listener logs sagas', () => {
         }))],
       ])
       .not.put(
-        actions.logs.listener.stopLogsPoll(
-          exportId,
+        actions.logs.flowStep.stopLogsPoll(
+          resourceId,
           true,
         )
       )
@@ -96,22 +96,22 @@ describe('Listener logs sagas', () => {
   });
 
   describe('pollForLatestLogs saga', () => {
-    test('should call fetchNewLogs with timeGt as passed in the args', () => expectSaga(pollForLatestLogs, { flowId, exportId, timeGt: 1234 })
+    test('should call fetchNewLogs with timeGt as passed in the args', () => expectSaga(pollForLatestLogs, { flowId, resourceId, timeGt: 1234 })
       .silentRun()
       .then(result => {
         const { effects } = result;
 
-        expect(effects.call[0]).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: 1234 }));
+        expect(effects.call[0]).toEqual(call(fetchNewLogs, { flowId, resourceId, timeGt: 1234 }));
       }));
     test('should make pollApiRequests call without abort if stop action is not triggered', () => {
-      const saga = pollForLatestLogs({ flowId, exportId });
+      const saga = pollForLatestLogs({ flowId, resourceId });
       const raceBetweenApiCallAndStop = race({
-        pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: 15000}),
+        pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, resourceId }, disableSlowPolling: true, duration: 15000}),
         abortPoll: take(actionTypes.POLLING.STOP),
       });
 
       expect(saga.next().value).toEqual(
-        call(fetchNewLogs, { flowId, exportId })
+        call(fetchNewLogs, { flowId, resourceId })
       );
       expect(saga.next().value).toEqual(
         delay(15000)
@@ -121,15 +121,15 @@ describe('Listener logs sagas', () => {
       );
     });
     test('should be able to race between pollApiRequests and stop action and abort api call', () => {
-      const saga = pollForLatestLogs({ flowId, exportId });
+      const saga = pollForLatestLogs({ flowId, resourceId });
       const response = {abortPoll: true};
       const raceBetweenApiCallAndStop = race({
-        pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, exportId }, disableSlowPolling: true, duration: 15000}),
+        pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, resourceId }, disableSlowPolling: true, duration: 15000}),
         abortPoll: take(actionTypes.POLLING.STOP),
       });
 
       expect(saga.next().value).toEqual(
-        call(fetchNewLogs, { flowId, exportId })
+        call(fetchNewLogs, { flowId, resourceId })
       );
       expect(saga.next().value).toEqual(
         delay(15000)
@@ -143,7 +143,7 @@ describe('Listener logs sagas', () => {
         take(actionTypes.POLLING.RESUME)
       );
       expect(saga.next(response).value).toEqual(
-        call(pollForLatestLogs, { flowId, exportId, timeGt: pollingLastStoppedAt })
+        call(pollForLatestLogs, { flowId, resourceId, timeGt: pollingLastStoppedAt })
       );
     });
     test('should call pollForLatestLogs if poll resume action is dispatch with last stop time', () => {});
@@ -153,40 +153,40 @@ describe('Listener logs sagas', () => {
     test('should fork pollForLatestLogs, waits for applicable action and then cancels pollForLatestLogs', () => {
       const mockTask = createMockTask();
 
-      const saga = startPollingForRequestLogs({flowId, exportId});
+      const saga = startPollingForRequestLogs({flowId, resourceId});
 
       saga.next();
 
-      expect(saga.next([{time: 1234}]).value).toEqual(fork(pollForLatestLogs, {flowId, exportId, timeGt: 1234}));
+      expect(saga.next([{time: 1234}]).value).toEqual(fork(pollForLatestLogs, {flowId, resourceId, timeGt: 1234}));
 
       expect(saga.next(mockTask).value).toEqual(
         take([
-          actionTypes.LOGS.LISTENER.DEBUG.STOP,
-          actionTypes.LOGS.LISTENER.STOP_POLL,
-          actionTypes.LOGS.LISTENER.CLEAR,
+          actionTypes.LOGS.FLOWSTEP.DEBUG.STOP,
+          actionTypes.LOGS.FLOWSTEP.STOP_POLL,
+          actionTypes.LOGS.FLOWSTEP.CLEAR,
         ])
       );
-      expect(saga.next({type: actionTypes.LOGS.LISTENER.CLEAR}).value).toEqual(cancel(mockTask));
+      expect(saga.next({type: actionTypes.LOGS.FLOWSTEP.CLEAR}).value).toEqual(cancel(mockTask));
       expect(saga.next().done).toEqual(true);
     });
     test('should call fetchNewLogs if the cancelled action type is of stop debug', () => {
       const mockTask = createMockTask();
 
-      const saga = startPollingForRequestLogs({flowId, exportId});
+      const saga = startPollingForRequestLogs({flowId, resourceId});
 
       saga.next();
 
-      expect(saga.next([{time: 1234}]).value).toEqual(fork(pollForLatestLogs, {flowId, exportId, timeGt: 1234}));
+      expect(saga.next([{time: 1234}]).value).toEqual(fork(pollForLatestLogs, {flowId, resourceId, timeGt: 1234}));
 
       expect(saga.next(mockTask).value).toEqual(
         take([
-          actionTypes.LOGS.LISTENER.DEBUG.STOP,
-          actionTypes.LOGS.LISTENER.STOP_POLL,
-          actionTypes.LOGS.LISTENER.CLEAR,
+          actionTypes.LOGS.FLOWSTEP.DEBUG.STOP,
+          actionTypes.LOGS.FLOWSTEP.STOP_POLL,
+          actionTypes.LOGS.FLOWSTEP.CLEAR,
         ])
       );
-      expect(saga.next({type: actionTypes.LOGS.LISTENER.DEBUG.STOP}).value).toEqual(cancel(mockTask));
-      expect(saga.next().value).toEqual(call(fetchNewLogs, {flowId, exportId}));
+      expect(saga.next({type: actionTypes.LOGS.FLOWSTEP.DEBUG.STOP}).value).toEqual(cancel(mockTask));
+      expect(saga.next().value).toEqual(call(fetchNewLogs, {flowId, resourceId}));
       expect(saga.next().done).toEqual(true);
     });
   });
@@ -203,7 +203,7 @@ describe('Listener logs sagas', () => {
       ])
       .returns({})
       .run());
-    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if there is no nextPageURL', () => expectSaga(retryToFetchRequests, {fetchRequestsPath: '/somepath', exportId})
+    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if there is no nextPageURL', () => expectSaga(retryToFetchRequests, {fetchRequestsPath: '/somepath', resourceId})
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -212,15 +212,15 @@ describe('Listener logs sagas', () => {
         }],
       ])
       .put(
-        actions.logs.listener.setFetchStatus(
-          exportId,
+        actions.logs.flowStep.setFetchStatus(
+          resourceId,
           'completed'
         )
       )
-      .call(putReceivedAction, {exportId, requests: [{key: 'key1', others: {}}], loadMore: true})
+      .call(putReceivedAction, {resourceId, requests: [{key: 'key1', others: {}}], loadMore: true})
       .not.call.fn(retryToFetchRequests)
       .run());
-    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if total logs count is more than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', exportId})
+    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if total logs count is more than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', resourceId})
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -230,15 +230,15 @@ describe('Listener logs sagas', () => {
         }],
       ])
       .put(
-        actions.logs.listener.setFetchStatus(
-          exportId,
+        actions.logs.flowStep.setFetchStatus(
+          resourceId,
           'paused'
         )
       )
-      .call(putReceivedAction, {exportId, requests: get1000Logs(), nextPageURL: '/nexturl1', loadMore: false})
+      .call(putReceivedAction, {resourceId, requests: get1000Logs(), nextPageURL: '/nexturl1', loadMore: false})
       .not.call.fn(retryToFetchRequests)
       .run());
-    test('should dispatch setFetchStatus action and call putReceivedAction and continue to retryToFetchRequests if total logs count is less than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', exportId})
+    test('should dispatch setFetchStatus action and call putReceivedAction and continue to retryToFetchRequests if total logs count is less than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', resourceId})
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -253,40 +253,40 @@ describe('Listener logs sagas', () => {
         }],
       ])
       .put(
-        actions.logs.listener.setFetchStatus(
-          exportId,
+        actions.logs.flowStep.setFetchStatus(
+          resourceId,
           'inProgress'
         )
       )
-      .call(putReceivedAction, {exportId, nextPageURL: '/nexturl1', loadMore: false, requests: []})
-      .call(retryToFetchRequests, {count: 0, fetchRequestsPath: '/nexturl1', loadMore: undefined, exportId })
+      .call(putReceivedAction, {resourceId, nextPageURL: '/nexturl1', loadMore: false, requests: []})
+      .call(retryToFetchRequests, {count: 0, fetchRequestsPath: '/nexturl1', loadMore: undefined, resourceId })
       .run());
   });
 
   describe('requestLogs saga', () => {
-    test('should call retryToFetchRequests saga', () => expectSaga(requestLogs, { flowId, exportId })
+    test('should call retryToFetchRequests saga', () => expectSaga(requestLogs, { flowId, resourceId })
       .provide([
-        [select(selectors.listenerLogs, exportId), {nextPageURL: '/nexturl1'}],
+        [select(selectors.flowStepLogs, resourceId), {nextPageURL: '/nexturl1'}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
       ])
-      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, exportId})
+      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, resourceId})
       .not.call.fn(startPollingForRequestLogs)
       .run());
-    test('should call startPollingForRequestLogs if debugOn is set and hasNewLogs is false', () => expectSaga(requestLogs, { flowId, exportId })
+    test('should call startPollingForRequestLogs if debugOn is set and hasNewLogs is false', () => expectSaga(requestLogs, { flowId, resourceId })
       .provide([
-        [select(selectors.listenerLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1'}],
+        [select(selectors.flowStepLogs, resourceId), {debugOn: true, nextPageURL: '/nexturl1'}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
-      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, exportId})
-      .call(startPollingForRequestLogs, {flowId, exportId})
+      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, resourceId})
+      .call(startPollingForRequestLogs, {flowId, resourceId})
       .run());
-    test('should not call startPollingForRequestLogs if hasNewLogs is true and loadMore is true', () => expectSaga(requestLogs, { flowId, exportId, loadMore: true })
+    test('should not call startPollingForRequestLogs if hasNewLogs is true and loadMore is true', () => expectSaga(requestLogs, { flowId, resourceId, loadMore: true })
       .provide([
-        [select(selectors.listenerLogs, exportId), {debugOn: true, hasNewLogs: true, nextPageURL: '/nexturl1'}],
-        [select(selectors.hasNewLogs, exportId), true],
+        [select(selectors.flowStepLogs, resourceId), {debugOn: true, hasNewLogs: true, nextPageURL: '/nexturl1'}],
+        [select(selectors.hasNewLogs, resourceId), true],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
           status: 422,
@@ -294,27 +294,27 @@ describe('Listener logs sagas', () => {
         }))],
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
-      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/nexturl1', loadMore: true, exportId})
+      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/nexturl1', loadMore: true, resourceId})
       .not.call.fn(startPollingForRequestLogs)
       .run());
-    test('should continue poll and call startPollingForRequestLogs if hasNewLogs was true but logs received action is dispatched with loadMore as false', () => expectSaga(requestLogs, { flowId, exportId })
+    test('should continue poll and call startPollingForRequestLogs if hasNewLogs was true but logs received action is dispatched with loadMore as false', () => expectSaga(requestLogs, { flowId, resourceId })
       .provide([
-        [select(selectors.listenerLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1', hasNewLogs: true}],
+        [select(selectors.flowStepLogs, resourceId), {debugOn: true, nextPageURL: '/nexturl1', hasNewLogs: true}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
-      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, exportId})
-      .call(startPollingForRequestLogs, {flowId, exportId})
+      .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, resourceId})
+      .call(startPollingForRequestLogs, {flowId, resourceId})
       .run());
   });
 
   describe('requestLogDetails saga', () => {
     const logKey = '123';
 
-    test('should do nothing and return if log details already exist', () => expectSaga(requestLogDetails, { flowId, exportId, logKey })
+    test('should do nothing and return if log details already exist', () => expectSaga(requestLogDetails, { flowId, resourceId, logKey })
       .provide([
-        [select(selectors.logDetails, exportId, logKey), {key: logKey}],
+        [select(selectors.logDetails, resourceId, logKey), {key: logKey}],
       ])
       .not.call.fn(apiCallWithRetry)
       .returns(undefined)
@@ -323,22 +323,22 @@ describe('Listener logs sagas', () => {
       const logDetails = { key: '123',
         id: 'a27751bdc2e143cb94988b39ea8aede9' };
 
-      return expectSaga(requestLogDetails, { flowId, exportId, logKey })
+      return expectSaga(requestLogDetails, { flowId, resourceId, logKey })
         .provide([
-          [select(selectors.logDetails, exportId, logKey), {}],
+          [select(selectors.logDetails, resourceId, logKey), {}],
           [matchers.call.fn(apiCallWithRetry), logDetails],
         ])
-        .call(apiCallWithRetry, { path: `/flows/${flowId}/${exportId}/requests/${logKey}` })
+        .call(apiCallWithRetry, { path: `/flows/${flowId}/${resourceId}/requests/${logKey}` })
         .put(
-          actions.logs.listener.receivedLogDetails(
-            exportId,
+          actions.logs.flowStep.receivedLogDetails(
+            resourceId,
             logKey,
             logDetails
           )
         )
         .run();
     });
-    test('should not dispatch received action in case of error', () => expectSaga(requestLogDetails, { flowId, exportId, logKey })
+    test('should not dispatch received action in case of error', () => expectSaga(requestLogDetails, { flowId, resourceId, logKey })
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
           status: 422,
@@ -346,8 +346,8 @@ describe('Listener logs sagas', () => {
         }))],
       ])
       .not.put(
-        actions.logs.listener.receivedLogDetails(
-          exportId,
+        actions.logs.flowStep.receivedLogDetails(
+          resourceId,
           logKey,
           {}
         )
@@ -360,9 +360,9 @@ describe('Listener logs sagas', () => {
     test('should dispatch resource patch action with the debugUntil patch set', () => {
       const minutes = '30';
 
-      return expectSaga(toggleDebug, { flowId, exportId, minutes })
+      return expectSaga(toggleDebug, { flowId, resourceId, minutes })
         .provide([
-          [select(selectors.isDebugEnabled, exportId), false],
+          [select(selectors.isDebugEnabled, resourceId), false],
         ])
         .run()
         .then(result => {
@@ -383,9 +383,9 @@ describe('Listener logs sagas', () => {
     test('should call startPollingForRequestLogs if debugOn is true and hasNewLogs is false', () => {
       const minutes = '30';
 
-      return expectSaga(toggleDebug, { flowId, exportId, minutes })
+      return expectSaga(toggleDebug, { flowId, resourceId, minutes })
         .provide([
-          [select(selectors.isDebugEnabled, exportId), true],
+          [select(selectors.isDebugEnabled, resourceId), true],
           [matchers.call.fn(startPollingForRequestLogs), undefined],
         ])
         .run()
@@ -401,16 +401,16 @@ describe('Listener logs sagas', () => {
           ];
 
           expect(effects.put[0]).toHaveProperty('payload.action.patchSet', patchSet);
-          expect(effects.call[0]).toEqual(call(startPollingForRequestLogs, {flowId, exportId}));
+          expect(effects.call[0]).toEqual(call(startPollingForRequestLogs, {flowId, resourceId}));
         });
     });
     test('should not call startPollingForRequestLogs if hasNewLogs is true', () => {
       const minutes = '30';
 
-      return expectSaga(toggleDebug, { flowId, exportId, minutes })
+      return expectSaga(toggleDebug, { flowId, resourceId, minutes })
         .provide([
-          [select(selectors.isDebugEnabled, exportId), true],
-          [select(selectors.hasNewLogs, exportId), true],
+          [select(selectors.isDebugEnabled, resourceId), true],
+          [select(selectors.hasNewLogs, resourceId), true],
           [matchers.call.fn(startPollingForRequestLogs), undefined],
         ])
         .run()
@@ -435,7 +435,7 @@ describe('Listener logs sagas', () => {
     test('should do nothing and return if there are no logs to remove', () => {
       const logsToRemove = [];
 
-      return expectSaga(removeLogs, { flowId, exportId, logsToRemove })
+      return expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
         .not.call.fn(apiCallWithRetry)
         .returns(undefined)
         .run();
@@ -443,36 +443,36 @@ describe('Listener logs sagas', () => {
     test('should call apiCallWithRetry and dispatch log deleted action with the first log from response', () => {
       const logsToRemove = ['key1'];
 
-      return expectSaga(removeLogs, { flowId, exportId, logsToRemove })
+      return expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
         .provide([
           [matchers.call.fn(apiCallWithRetry), {deleted: ['key1']}],
         ])
-        .call(apiCallWithRetry, { path: `/flows/${flowId}/${exportId}/requests`,
+        .call(apiCallWithRetry, { path: `/flows/${flowId}/${resourceId}/requests`,
           opts: {
             method: 'DELETE',
             body: {
               keys: logsToRemove,
             },
           } })
-        .put(actions.logs.listener.logDeleted(exportId, 'key1'))
+        .put(actions.logs.flowStep.logDeleted(resourceId, 'key1'))
         .run();
     });
     test('should dispatch failed action if there are errors in the response', () => {
       const logsToRemove = ['key1'];
 
-      return expectSaga(removeLogs, { flowId, exportId, logsToRemove })
+      return expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
         .provide([
           [matchers.call.fn(apiCallWithRetry), {deleted: [], errors: [{key: 'key1', error: 'NoSuchKey'}]}],
         ])
-        .call(apiCallWithRetry, { path: `/flows/${flowId}/${exportId}/requests`,
+        .call(apiCallWithRetry, { path: `/flows/${flowId}/${resourceId}/requests`,
           opts: {
             method: 'DELETE',
             body: {
               keys: logsToRemove,
             },
           } })
-        .put(actions.logs.listener.logDeleted(exportId, undefined))
-        .put(actions.logs.listener.failed(exportId, {key: 'key1', error: 'NoSuchKey'}))
+        .put(actions.logs.flowStep.logDeleted(resourceId, undefined))
+        .put(actions.logs.flowStep.failed(resourceId, {key: 'key1', error: 'NoSuchKey'}))
         .run();
     });
   });
