@@ -3263,6 +3263,8 @@ describe('mappingFlowsToFlowGroupings', () => {
   test('should return flowObjects passed if there are no flowGroupings', () => {
     expect(mappingFlowsToFlowGroupings(null, null, null)).toEqual(null);
     expect(mappingFlowsToFlowGroupings(null, [], null)).toEqual([]);
+    expect(mappingFlowsToFlowGroupings(null, undefined, totalObjectsLength)).toEqual([]);
+    expect(mappingFlowsToFlowGroupings(null, flowObjects1, totalObjectsLength)).toEqual(flowObjects1);
   });
   test('should categorise the flowObjects based on the flowGroupings', () => {
     expect(mappingFlowsToFlowGroupings(flowGroupings, flowObjects1, totalObjectsLength)).toEqual([
