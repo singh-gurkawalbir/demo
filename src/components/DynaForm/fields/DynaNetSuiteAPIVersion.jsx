@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldMessage from './FieldMessage';
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaNetsuiteAPIVersion(props) {
-  const { onFieldChange, connectionId, isNew, resourceType, resourceId, value, id, touched } = props;
+  const { onFieldChange, connectionId, isNew, resourceType, resourceId, value, id } = props;
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ export default function DynaNetsuiteAPIVersion(props) {
   );
 
   const [refreshBundleInstalledInfo, setRefreshBundleInstalledInfo] = useState(true);
-
+  const [isFieldChanged, setIsFieldChanged] = useState(false);
   const nsMetadata = useSelectorMemo(
     selectors.makeOptionsFromMetadata,
     connectionId,
@@ -39,10 +39,23 @@ export default function DynaNetsuiteAPIVersion(props) {
   const isSuiteAppInstalled = data?.suiteapp?.success;
   const isLoadingMetadata = !status || status === 'requested';
 
-  if (isNew && !touched && !isSuiteBundleInstalled && isSuiteAppInstalled && value !== 'true') {
+  const handleFieldChange = useCallback(
+    (id, value) => {
+      setIsFieldChanged(true);
+      onFieldChange(id, value);
+    },
+    [onFieldChange],
+  );
+
+  useEffect(() => {
+    if (isNew && !isFieldChanged) {
     // update field to 2.0 version if the field is not touched yet and has only suiteApp installed
-    onFieldChange(id, 'true');
-  }
+    // else 1.0 version
+      const fieldValue = !isSuiteBundleInstalled && isSuiteAppInstalled ? 'true' : 'false';
+
+      onFieldChange(id, fieldValue);
+    }
+  }, [connectionId, isNew, id, isFieldChanged, isSuiteAppInstalled, isSuiteBundleInstalled, onFieldChange]);
 
   useEffect(() => {
     if ((!data || refreshBundleInstalledInfo) && !isOffline) {
@@ -79,8 +92,9 @@ export default function DynaNetsuiteAPIVersion(props) {
 
   return (
     <>
-      <DynaRadio {...props} />
+      <DynaRadio {...props} onFieldChange={handleFieldChange} />
       <FieldMessage errorMessages={errorMessage} />
     </>
   );
 }
+
