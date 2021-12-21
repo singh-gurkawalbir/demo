@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
@@ -33,6 +33,7 @@ export default function DynaFlowGroupName(props) {
   const [currentSavedValue, setValue] = useState(value);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
   // A flow group name is valid if it equals to currently saved value
   // or it is different from other flow group names
@@ -63,6 +64,12 @@ export default function DynaFlowGroupName(props) {
     },
     [confirmDialog, dispatch, flowIds, history, integrationId, flowGroupId, value]
   );
+
+  useEffect(() => {
+    if (status === 'loading') {
+      setValue(value);
+    }
+  }, [setValue, status, value]);
 
   useEffect(() => {
     if (!required) return;
