@@ -2354,36 +2354,59 @@ selectors.mkChildIntegration = () => {
   );
 };
 
-selectors.mkDIYIntegrationFlowList = () => createSelector(
-  state => state?.data?.resources?.integrations,
-  state => state?.data?.resources?.flows,
-  (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
-  (state, integrationId) => integrationId,
-  (_1, _2, childId) => childId,
-  (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
-  (_1, _2, _3, _4, options) => options,
-  selectors.openErrorsMap,
-  selectors.currentEnvironment,
-  (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
-    integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
-    const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
-    let integrationFlows = flows.filter(f => {
-      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
-        return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
-      }
-      if (childId && childId !== integrationId) return f._integrationId === childId;
+selectors.mkFlowGroupMap = () => {
+  const flowGroupsSelector = selectors.mkIntegrationFlowGroups();
 
-      return childIntegrationIds.includes(f._integrationId);
-    });
+  return createSelector(
+    (state, integrationId) => flowGroupsSelector(state, integrationId),
+    flowGroups => flowGroups.reduce((infoMap, { title, sectionId}) => ({
+      ...infoMap,
+      [sectionId]: title,
+    }), {})
+  );
+};
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0}));
+selectors.mkDIYIntegrationFlowList = () => {
+  const flowGroupsMapSelector = selectors.mkFlowGroupMap();
 
-    return filterAndSortResources(addLastExecutedAtSortableProp({
-      flows: integrationFlows,
-      isUserInErrMgtTwoDotZero,
-      latestFlowJobs}), options);
-  }
-);
+  return createSelector(
+    state => state?.data?.resources?.integrations,
+    state => state?.data?.resources?.flows,
+    (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
+    (state, integrationId) => integrationId,
+    (_1, _2, childId) => childId,
+    (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
+    (_1, _2, _3, _4, options) => options,
+    selectors.openErrorsMap,
+    selectors.currentEnvironment,
+    flowGroupsMapSelector,
+    (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+      integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment, flowGroupsMap) => {
+      const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
+      let integrationFlows = flows.filter(f => {
+        if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+          return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+        }
+        if (childId && childId !== integrationId) return f._integrationId === childId;
+
+        return childIntegrationIds.includes(f._integrationId);
+      });
+      const customSearchableText = r => {
+        if (!options?.keyword) return;
+
+        return `${r._id}|${r.name}|${r.description}|${flowGroupsMap[r._flowGroupingId || UNASSIGNED_SECTION_ID]}`;
+      };
+
+      integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0, searchKey: customSearchableText(f)}));
+
+      return filterAndSortResources(addLastExecutedAtSortableProp({
+        flows: integrationFlows,
+        isUserInErrMgtTwoDotZero,
+        latestFlowJobs}), options
+      );
+    }
+  );
+};
 
 selectors.mkIntegrationFlowGroups = () => {
   const integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
@@ -2967,15 +2990,21 @@ selectors.makeIntegrationAppSectionFlows = () =>
         sectionFlows = options.excludeHiddenFlows ? (sec.flows || []).filter(f => !f.hidden) : sec.flows;
         (sectionFlows || []).forEach(f => {
           const flow = requiredFlows.find(fi => fi.id === f._id);
+          const selectedFlow = flows.find(fi => fi._id === f._id);
+          const customSearchableText = (flow, sec) => {
+            if (!options?.keyword) return;
+
+            return `${flow._id}|${flow.name}|${flow.description}|${getTitleIdFromSection(sec)}`;
+          };
 
           if (flow) {
             // If flow is present in two children, then it is a common flow and does not belong to any single child, so remove child information from flow
             delete flow.childId;
             delete flow.childName;
-          } else if (flows.find(fi => fi._id === f._id)) {
+          } else if (selectedFlow) {
             // Add only valid flows, the flow must be present in flows collection. This is possible when child is in uninstall mode.
             // Flow may be deleted but child structure is intact on integration json.
-            requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
+            requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName, searchKey: customSearchableText(selectedFlow, sec)});
           }
         });
       });
