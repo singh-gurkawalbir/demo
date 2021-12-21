@@ -25,15 +25,15 @@ export default function DynaNetsuiteAPIVersion(props) {
   );
 
   const [refreshBundleInstalledInfo, setRefreshBundleInstalledInfo] = useState(true);
+  // isFieldChanged is used to know when user manually updates API version
   const [isFieldChanged, setIsFieldChanged] = useState(false);
-  const nsMetadata = useSelectorMemo(
+
+  const { data, status, errorMessage } = useSelectorMemo(
     selectors.makeOptionsFromMetadata,
     connectionId,
     `connections/${connectionId}/distributedApps`,
     'suitescript-bundle-status'
   );
-
-  const {data, status, errorMessage } = nsMetadata;
 
   const isSuiteBundleInstalled = data?.bundle?.success;
   const isSuiteAppInstalled = data?.suiteapp?.success;
@@ -51,6 +51,7 @@ export default function DynaNetsuiteAPIVersion(props) {
     if (isNew && !isFieldChanged) {
     // update field to 2.0 version if the field is not touched yet and has only suiteApp installed
     // else 1.0 version
+    // this also gets triggered, when the connection is changed on the resource form
       const fieldValue = !isSuiteBundleInstalled && isSuiteAppInstalled ? 'true' : 'false';
 
       onFieldChange(id, fieldValue);
