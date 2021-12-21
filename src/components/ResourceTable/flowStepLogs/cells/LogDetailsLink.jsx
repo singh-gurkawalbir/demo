@@ -24,14 +24,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LogDetailsLink({ logKey, exportId, time }) {
+export default function LogDetailsLink({ logKey, resourceId, time }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const activeLogKey = useSelector(state => selectors.activeLogKey(state, exportId));
+  const activeLogKey = useSelector(state => selectors.activeLogKey(state, resourceId));
 
   const handleActionClick = useCallback(() => {
-    dispatch(actions.logs.listener.setActiveLog(exportId, logKey));
-  }, [dispatch, exportId, logKey]);
+    dispatch(actions.logs.flowStep.setActiveLog(resourceId, logKey));
+  }, [dispatch, resourceId, logKey]);
 
   return (
     <TextButton

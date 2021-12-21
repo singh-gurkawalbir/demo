@@ -3,7 +3,7 @@ import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
 const flowId = 'flow-123';
-const exportId = 'exp-123';
+const resourceId = 'exp-123';
 const logKey = 'mock-key';
 const logDetails = {
   time: 1615807924879,
@@ -64,7 +64,7 @@ const logsSummary = [{
 },
 ];
 
-describe('Listener logs reducer', () => {
+describe('Flow step logs reducer', () => {
   test('should return previous state if action is not handled.', () => {
     const unknownAction = { type: 'unknown' };
     const oldState = { key: { keyword: 'findme' } };
@@ -73,14 +73,14 @@ describe('Listener logs reducer', () => {
     expect(newState).toBe(oldState);
   });
 
-  describe('LISTENER.REQUEST action', () => {
-    test('should not throw error if the listener state does not exist and set status as requested', () => {
+  describe('FLOWSTEP.REQUEST action', () => {
+    test('should not throw error if the flow step state does not exist and set status as requested', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, resourceId})
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'requested',
         },
       };
@@ -89,16 +89,16 @@ describe('Listener logs reducer', () => {
     });
     test('should update existing state with logsStatus as requested status if loadMore is false', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, resourceId})
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'requested',
         },
       };
@@ -107,16 +107,16 @@ describe('Listener logs reducer', () => {
     });
     test('should update existing state with loadMoreStatus as requested status if loadMore is true', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId, loadMore: true})
+        actions.logs.flowStep.request({flowId, resourceId, loadMore: true})
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
           loadMoreStatus: 'requested',
         },
@@ -130,14 +130,14 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
           error: {key: 123},
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, resourceId})
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -146,32 +146,32 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.RECEIVED action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.RECEIVED action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.received({exportId})
+        actions.logs.flowStep.received({resourceId})
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly replace the state with logs if loadMore is false', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'requested',
           logsSummary: [{key: 1}, {key: 2}],
         },
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, resourceId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received({exportId, logs: logsSummary, nextPageURL: '/api/url'})
+        actions.logs.flowStep.received({resourceId, logs: logsSummary, nextPageURL: '/api/url'})
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
           loadMoreStatus: 'received',
           hasNewLogs: false,
@@ -184,24 +184,24 @@ describe('Listener logs reducer', () => {
     });
     test('should correctly add the logs to existing logs if loadMore is true', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'requested',
           logsSummary: [{key: 1}, {key: 2}],
         },
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request({flowId, exportId})
+        actions.logs.flowStep.request({flowId, resourceId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received({exportId,
+        actions.logs.flowStep.received({resourceId,
           logs: logsSummary,
           nextPageURL: '/api/url',
           loadMore: true})
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
           loadMoreStatus: 'received',
           nextPageURL: '/api/url',
@@ -217,14 +217,14 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.received({
-          exportId,
+        actions.logs.flowStep.received({
+          resourceId,
           logs: [],
           nextPageURL: '/api/url'})
       );
@@ -235,18 +235,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.LOG.REQUEST action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.LOG.REQUEST action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.requestLogDetails(flowId, exportId)
+        actions.logs.flowStep.requestLogDetails(flowId, resourceId)
       );
 
       expect(newState).toEqual({});
     });
     test('should do nothing if log details already exist', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {}},
@@ -257,31 +257,31 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, '5642310475121')
+        actions.logs.flowStep.requestLogDetails(flowId, resourceId, '5642310475121')
       );
 
       expect(newState).toBe(initialState);
     });
     test('should set log key status as requested', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'requested',
         },
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.received({
-          exportId,
+        actions.logs.flowStep.received({
+          resourceId,
           logs: logsSummary,
           nextPageURL: '/v1(api)/flows/:_flowId',
           loadMore: true})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, '5642310475121')
+        actions.logs.flowStep.requestLogDetails(flowId, resourceId, '5642310475121')
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           logsDetails: {5642310475121: {status: 'requested'}},
           logsStatus: 'received',
           loadMoreStatus: 'received',
@@ -298,13 +298,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, '5642310475121')
+        actions.logs.flowStep.requestLogDetails(flowId, resourceId, '5642310475121')
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -313,18 +313,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.LOG.RECEIVED action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.LOG.RECEIVED action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+        actions.logs.flowStep.receivedLogDetails(resourceId, logKey, logDetails)
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the state with log details', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsStatus: 'received',
@@ -334,15 +334,15 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.requestLogDetails(flowId, exportId, logKey)
+        actions.logs.flowStep.requestLogDetails(flowId, resourceId, logKey)
       );
 
       const newState = reducer(
         tempState,
-        actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+        actions.logs.flowStep.receivedLogDetails(resourceId, logKey, logDetails)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {[logKey]: {
@@ -363,13 +363,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+        actions.logs.flowStep.receivedLogDetails(resourceId, logKey, logDetails)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -378,20 +378,20 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.ACTIVE_LOG action', () => {
+  describe('FLOWSTEP.ACTIVE_LOG action', () => {
     const activeLogKey = '98765';
 
-    test('should exit and not throw error if the listener state does not exist', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.setActiveLog(exportId, activeLogKey)
+        actions.logs.flowStep.setActiveLog(resourceId, activeLogKey)
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the state with active log key', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           hasNewLogs: false,
           logsStatus: 'received',
           logsSummary: [{key: 123, time: 1234}],
@@ -401,10 +401,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.setActiveLog(exportId, activeLogKey)
+        actions.logs.flowStep.setActiveLog(resourceId, activeLogKey)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey,
           hasNewLogs: false,
           logsStatus: 'received',
@@ -421,13 +421,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.setActiveLog(exportId, activeLogKey)
+        actions.logs.flowStep.setActiveLog(resourceId, activeLogKey)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -436,20 +436,20 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.LOG.DELETED action', () => {
+  describe('FLOWSTEP.LOG.DELETED action', () => {
     const deletedLogKey = '200-POST';
 
-    test('should exit and not throw error if the listener state does not exist', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(resourceId, deletedLogKey)
       );
 
       expect(newState).toEqual({});
     });
     test('should not modify the state if deleted log key is not present', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -465,14 +465,14 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(resourceId, deletedLogKey)
       );
 
       expect(newState).toBe(initialState);
     });
     test('should modify the state and remove deleted log key from summary and details', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -494,10 +494,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(resourceId, deletedLogKey)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -516,7 +516,7 @@ describe('Listener logs reducer', () => {
     });
     test('should modify the state and remove deleted log key from active key also if it matches deleted key', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '200-POST',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -538,10 +538,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(resourceId, deletedLogKey)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           hasNewLogs: false,
           logsDetails: {5642310475121: {
             status: 'received',
@@ -563,13 +563,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+        actions.logs.flowStep.logDeleted(resourceId, deletedLogKey)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -578,18 +578,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.DEBUG.START action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.DEBUG.START action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, resourceId, '15')
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the exiting state with debugOn as true', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -605,10 +605,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, resourceId, '15')
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -631,13 +631,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, resourceId, '15')
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -646,18 +646,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.DEBUG.STOP action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.DEBUG.STOP action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.stopDebug(flowId, exportId)
+        actions.logs.flowStep.stopDebug(flowId, resourceId)
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the exiting state with debugOn as false', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -673,10 +673,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopDebug(flowId, exportId)
+        actions.logs.flowStep.stopDebug(flowId, resourceId)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -699,13 +699,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopDebug(flowId, exportId)
+        actions.logs.flowStep.stopDebug(flowId, resourceId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -714,18 +714,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.START.POLL action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.START.POLL action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.startLogsPoll(flowId, exportId)
+        actions.logs.flowStep.startLogsPoll(flowId, resourceId)
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the exiting state with debugOn as true', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -741,10 +741,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.startLogsPoll(flowId, exportId)
+        actions.logs.flowStep.startLogsPoll(flowId, resourceId)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsDetails: {5642310475121: {
@@ -767,13 +767,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.startLogsPoll(flowId, exportId)
+        actions.logs.flowStep.startLogsPoll(flowId, resourceId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -782,18 +782,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.STOP_POLL action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.STOP_POLL action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(resourceId, true)
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the exiting state with passed hasNewLogs prop', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -808,10 +808,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(resourceId, true)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -833,13 +833,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(resourceId, true)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -848,20 +848,20 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.FAILED action', () => {
+  describe('FLOWSTEP.FAILED action', () => {
     const error = {key: '200-POST', error: 'NoSuchKey'};
 
-    test('should exit and not throw error if the listener state does not exist', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.failed(exportId, error)
+        actions.logs.flowStep.failed(resourceId, error)
       );
 
       expect(newState).toEqual({});
     });
     test('should correctly update the state with the error and change identifier', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -876,10 +876,10 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.failed(exportId, error)
+        actions.logs.flowStep.failed(resourceId, error)
       );
       const expectedState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -904,13 +904,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.failed(exportId, error)
+        actions.logs.flowStep.failed(resourceId, error)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -919,18 +919,18 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.FETCH_STATUS action', () => {
-    test('should exit and not throw error if the listener state does not exist', () => {
+  describe('FLOWSTEP.FETCH_STATUS action', () => {
+    test('should exit and not throw error if the flow step state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.setFetchStatus(exportId, 'paused')
+        actions.logs.flowStep.setFetchStatus(resourceId, 'paused')
       );
 
       expect(newState).toEqual({});
     });
     test('should update the state with fetch status', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -945,14 +945,14 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(resourceId, 'inProgress')
       );
 
       expect(newState).toHaveProperty('exp-123.fetchStatus', 'inProgress');
     });
     test('should correctly set the currQueryTime equal to nextPageURL time_lte', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -967,14 +967,14 @@ describe('Listener logs reducer', () => {
 
       const newState1 = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(resourceId, 'inProgress')
       );
 
       expect(newState1).toHaveProperty('exp-123.currQueryTime', 9898);
     });
     test('should correctly set the currQueryTime as last log time if nextPageURL does not have time_lte', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           logsDetails: {5642310475121: {
             status: 'received',
@@ -989,7 +989,7 @@ describe('Listener logs reducer', () => {
 
       const newState2 = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(resourceId, 'inProgress')
       );
 
       expect(newState2).toHaveProperty('exp-123.currQueryTime', 1089);
@@ -1000,13 +1000,13 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+        actions.logs.flowStep.setFetchStatus(resourceId, 'inProgress')
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -1015,10 +1015,10 @@ describe('Listener logs reducer', () => {
       });
     });
   });
-  describe('LISTENER.CLEAR action', () => {
-    test('should clear the listener reference from the state', () => {
+  describe('FLOWSTEP.CLEAR action', () => {
+    test('should clear the flow step reference from the state', () => {
       const initialState = {
-        [exportId]: {
+        [resourceId]: {
           activeLogKey: '5642310475121',
           hasNewLogs: false,
           logsStatus: 'received',
@@ -1029,28 +1029,28 @@ describe('Listener logs reducer', () => {
 
       const tempState = reducer(
         initialState,
-        actions.logs.listener.receivedLogDetails(exportId, '123', {})
+        actions.logs.flowStep.receivedLogDetails(resourceId, '123', {})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.clear(exportId)
+        actions.logs.flowStep.clear(resourceId)
       );
 
-      expect(newState).not.toHaveProperty(exportId);
+      expect(newState).not.toHaveProperty(resourceId);
     });
-    test('should not alter any other listener state', () => {
+    test('should not alter any other flow step state', () => {
       const initialState = {
         'sibling-export': {
           logsStatus: 'received',
           error: {key: 123},
         },
-        [exportId]: {
+        [resourceId]: {
           logsStatus: 'received',
         },
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.clear(exportId)
+        actions.logs.flowStep.clear(resourceId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -1061,9 +1061,9 @@ describe('Listener logs reducer', () => {
   });
 });
 
-describe('Listener logs selectors', () => {
+describe('Flow step logs selectors', () => {
   const initialState = {
-    [exportId]: {
+    [resourceId]: {
       activeLogKey: '5642310475121',
       hasNewLogs: false,
       logsStatus: 'received',
@@ -1074,21 +1074,21 @@ describe('Listener logs selectors', () => {
   };
   const tempState = reducer(
     initialState,
-    actions.logs.listener.requestLogDetails(flowId, exportId, logKey)
+    actions.logs.flowStep.requestLogDetails(flowId, resourceId, logKey)
   );
 
   const newState = reducer(
     tempState,
-    actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
+    actions.logs.flowStep.receivedLogDetails(resourceId, logKey, logDetails)
   );
 
-  describe('listenerLogs', () => {
+  describe('flowStepLogs', () => {
     test('should return empty object when no match found', () => {
-      expect(selectors.listenerLogs(undefined, exportId)).toEqual({});
-      expect(selectors.listenerLogs({}, exportId)).toEqual({});
-      expect(selectors.listenerLogs({123: {}}, exportId)).toEqual({});
+      expect(selectors.flowStepLogs(undefined, resourceId)).toEqual({});
+      expect(selectors.flowStepLogs({}, resourceId)).toEqual({});
+      expect(selectors.flowStepLogs({123: {}}, resourceId)).toEqual({});
     });
-    test('should return correct listener state when a match is found', () => {
+    test('should return correct flow step state when a match is found', () => {
       const expectedOutput = {
         activeLogKey: '5642310475121',
         hasNewLogs: false,
@@ -1099,97 +1099,97 @@ describe('Listener logs selectors', () => {
         error: {key: logKey},
       };
 
-      expect(selectors.listenerLogs(newState, exportId)).toEqual(expectedOutput);
+      expect(selectors.flowStepLogs(newState, resourceId)).toEqual(expectedOutput);
     });
   });
   describe('logsSummary', () => {
     test('should return empty array when no match found or logs are undefined', () => {
-      expect(selectors.logsSummary(undefined, exportId)).toEqual([]);
-      expect(selectors.logsSummary({}, exportId)).toEqual([]);
-      expect(selectors.logsSummary({[exportId]: {logsStatus: 'received'}}, exportId)).toEqual([]);
+      expect(selectors.logsSummary(undefined, resourceId)).toEqual([]);
+      expect(selectors.logsSummary({}, resourceId)).toEqual([]);
+      expect(selectors.logsSummary({[resourceId]: {logsStatus: 'received'}}, resourceId)).toEqual([]);
     });
-    test('should return correct listener state logs when a match is found', () => {
+    test('should return correct flow step state logs when a match is found', () => {
       const expectedOutput = [{key: logKey, time: 1234}];
 
-      expect(selectors.logsSummary(newState, exportId)).toEqual(expectedOutput);
+      expect(selectors.logsSummary(newState, resourceId)).toEqual(expectedOutput);
     });
   });
   describe('logsStatus', () => {
     test('should return undefined when no match found', () => {
-      expect(selectors.logsStatus(undefined, exportId)).toBeUndefined();
-      expect(selectors.logsStatus({}, exportId)).toBeUndefined();
-      expect(selectors.logsStatus({[exportId]: {}}, exportId)).toBeUndefined();
+      expect(selectors.logsStatus(undefined, resourceId)).toBeUndefined();
+      expect(selectors.logsStatus({}, resourceId)).toBeUndefined();
+      expect(selectors.logsStatus({[resourceId]: {}}, resourceId)).toBeUndefined();
     });
     test('should return correct status when a match is found', () => {
-      expect(selectors.logsStatus(newState, exportId)).toEqual('received');
+      expect(selectors.logsStatus(newState, resourceId)).toEqual('received');
     });
   });
   describe('hasNewLogs', () => {
     test('should return false when no match found', () => {
-      expect(selectors.hasNewLogs(undefined, exportId)).toEqual(false);
-      expect(selectors.hasNewLogs({}, exportId)).toEqual(false);
-      expect(selectors.hasNewLogs({[exportId]: {}}, exportId)).toEqual(false);
+      expect(selectors.hasNewLogs(undefined, resourceId)).toEqual(false);
+      expect(selectors.hasNewLogs({}, resourceId)).toEqual(false);
+      expect(selectors.hasNewLogs({[resourceId]: {}}, resourceId)).toEqual(false);
     });
     test('should return correct state prop when a match is found', () => {
-      expect(selectors.hasNewLogs(newState, exportId)).toEqual(false);
+      expect(selectors.hasNewLogs(newState, resourceId)).toEqual(false);
       const finalState = reducer(
         newState,
-        actions.logs.listener.stopLogsPoll(exportId, true)
+        actions.logs.flowStep.stopLogsPoll(resourceId, true)
       );
 
-      expect(selectors.hasNewLogs(finalState, exportId)).toEqual(true);
+      expect(selectors.hasNewLogs(finalState, resourceId)).toEqual(true);
     });
   });
   describe('logDetails', () => {
     test('should return empty object when no match found', () => {
-      expect(selectors.logDetails(undefined, exportId, logKey)).toEqual({});
-      expect(selectors.logDetails({}, exportId, logKey)).toEqual({});
-      expect(selectors.logDetails({[exportId]: {logDetails: {}}}, exportId, logKey)).toEqual({});
+      expect(selectors.logDetails(undefined, resourceId, logKey)).toEqual({});
+      expect(selectors.logDetails({}, resourceId, logKey)).toEqual({});
+      expect(selectors.logDetails({[resourceId]: {logDetails: {}}}, resourceId, logKey)).toEqual({});
     });
     test('should return correct log details when a match is found', () => {
       const expectedOutput = {status: 'received', ...logDetails};
 
-      expect(selectors.logDetails(newState, exportId, logKey)).toEqual(expectedOutput);
+      expect(selectors.logDetails(newState, resourceId, logKey)).toEqual(expectedOutput);
     });
   });
   describe('isDebugEnabled', () => {
     test('should return false when no match found', () => {
-      expect(selectors.isDebugEnabled(undefined, exportId)).toEqual(false);
-      expect(selectors.isDebugEnabled({}, exportId)).toEqual(false);
-      expect(selectors.isDebugEnabled({[exportId]: {}}, exportId)).toEqual(false);
+      expect(selectors.isDebugEnabled(undefined, resourceId)).toEqual(false);
+      expect(selectors.isDebugEnabled({}, resourceId)).toEqual(false);
+      expect(selectors.isDebugEnabled({[resourceId]: {}}, resourceId)).toEqual(false);
     });
     test('should return correct state prop when a match is found', () => {
       const finalState = reducer(
         newState,
-        actions.logs.listener.startDebug(flowId, exportId, '15')
+        actions.logs.flowStep.startDebug(flowId, resourceId, '15')
       );
 
-      expect(selectors.isDebugEnabled(finalState, exportId)).toEqual(true);
+      expect(selectors.isDebugEnabled(finalState, resourceId)).toEqual(true);
     });
   });
   describe('activeLogKey', () => {
     test('should return undefined when no match found', () => {
-      expect(selectors.activeLogKey(undefined, exportId)).toBeUndefined();
-      expect(selectors.activeLogKey({}, exportId)).toBeUndefined();
-      expect(selectors.activeLogKey({[exportId]: {}}, exportId)).toBeUndefined();
+      expect(selectors.activeLogKey(undefined, resourceId)).toBeUndefined();
+      expect(selectors.activeLogKey({}, resourceId)).toBeUndefined();
+      expect(selectors.activeLogKey({[resourceId]: {}}, resourceId)).toBeUndefined();
     });
     test('should return correct active key when a match is found', () => {
-      expect(selectors.activeLogKey(newState, exportId)).toEqual('5642310475121');
+      expect(selectors.activeLogKey(newState, resourceId)).toEqual('5642310475121');
     });
   });
-  describe('listenerErrorMsg', () => {
+  describe('flowStepErrorMsg', () => {
     test('should return empty object when no match found', () => {
-      expect(selectors.listenerErrorMsg(undefined, exportId)).toEqual({});
-      expect(selectors.listenerErrorMsg({}, exportId)).toEqual({});
-      expect(selectors.listenerErrorMsg({[exportId]: {}}, exportId)).toEqual({});
+      expect(selectors.flowStepErrorMsg(undefined, resourceId)).toEqual({});
+      expect(selectors.flowStepErrorMsg({}, resourceId)).toEqual({});
+      expect(selectors.flowStepErrorMsg({[resourceId]: {}}, resourceId)).toEqual({});
     });
     test('should return correct state error when a match is found', () => {
       const finalState = reducer(
         newState,
-        actions.logs.listener.failed(exportId, {key: '200-POST', error: 'NoSuchKey'})
+        actions.logs.flowStep.failed(resourceId, {key: '200-POST', error: 'NoSuchKey'})
       );
 
-      expect(selectors.listenerErrorMsg(finalState, exportId)).toEqual({changeIdentifier: 1, key: '200-POST', error: 'NoSuchKey'});
+      expect(selectors.flowStepErrorMsg(finalState, resourceId)).toEqual({changeIdentifier: 1, key: '200-POST', error: 'NoSuchKey'});
     });
   });
 });
