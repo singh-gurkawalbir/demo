@@ -1212,7 +1212,7 @@ export const getFlowGroup = (flowGroupings, name, id) => {
 
 // for every flowGroup pushing the linked flows into finalObject
 // adding isLastFlowInFlowGroup flag for every last flow in the flow group
-export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects, objectsLength) => {
+export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], objectsLength) => {
   if (!flowGroupings?.length) {
     return flowObjects;
   }
