@@ -559,7 +559,9 @@ selectors.mkTileApplications = () => {
         integration?._registeredConnectionIds?.forEach(r => {
           const connection = connections.find(c => c._id === r);
 
-          applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
+          if (connection) {
+            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+          }
         });
 
         return uniq(applications);
