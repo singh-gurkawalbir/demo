@@ -20,7 +20,7 @@ export default function ConditionalLookup({onSave, disabled, importId, flowId, .
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
-  const isEdit = history.location.pathname.includes('/edit');
+  const isEdit = history.location.pathname.includes('/edit/');
   const {lookupName} = match.params;
   const value = useSelector(state => {
     if (!lookupName) {

@@ -7,7 +7,7 @@ import DrawerContent from '../../../../drawer/Right/DrawerContent';
 
 export default function ConditionalLookupDrawer(props) {
   const history = useHistory();
-  const isEdit = history.location.pathname.includes('/edit');
+  const isEdit = history.location.pathname.includes('/edit/');
 
   return (
     <RightDrawer
