@@ -3246,7 +3246,7 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.integrationAppLicense test cases', () => {
+  describe('selectors.integrationAppLicenseExpired test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationAppLicenseExpired()).toEqual(true);
     });
@@ -3258,7 +3258,7 @@ describe('integrationApps selector testcases', () => {
       },
     };
 
-    test('should retun license details for the integration app for owner user if expired and upgrade requested', () => {
+    test('should return if license expired for the integration app for owner user if expired and upgrade requested', () => {
       let state = reducer(
         {
           user: {
@@ -3295,7 +3295,7 @@ describe('integrationApps selector testcases', () => {
       expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(true);
     });
 
-    test('should retun license details for the integration app for owner user for non-expired', () => {
+    test('should return if license expired for the integration app for owner user for non-expired', () => {
       const state = reducer(
         {
           user: {
@@ -3327,7 +3327,7 @@ describe('integrationApps selector testcases', () => {
       expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
 
-    test('should return license details for the integration app for owner user for expiring soon', () => {
+    test('should return if license expired for the integration app for owner user for expiring soon', () => {
       const expiryDate = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
@@ -3360,7 +3360,7 @@ describe('integrationApps selector testcases', () => {
       expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
 
-    test('should retun license details for the integration app for non owner user for non-expired', () => {
+    test('should return if license expired for the integration app for non owner user for non-expired', () => {
       const state = reducer(
         {
           user: {
