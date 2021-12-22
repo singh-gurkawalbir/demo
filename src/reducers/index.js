@@ -1092,12 +1092,17 @@ selectors.getAllAccountDashboardIntegrations = state => {
 
   allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
   allIntegrations = [...defaultFilter, ...allIntegrations];
-  allIntegrations.forEach(i => {
+
+  allIntegrations = allIntegrations.map(i => {
     const { supportsMultiStore, sections: children = [] } = i.settings || {};
+    let integration = i;
 
     if (supportsMultiStore) {
-      i.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
+      integration = cloneDeep(i);
+      integration.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
     }
+
+    return integration;
   });
 
   return allIntegrations;
