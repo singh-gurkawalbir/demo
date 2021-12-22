@@ -2781,10 +2781,10 @@ selectors.integrationAppLicense = (state, id) => {
   };
 };
 
-selectors.integrationAppLicenseExpired = (state, id) => {
+selectors.isIntegrationAppLicenseExpired = (state, id) => {
   if (!state) return true;
   const userLicenses = fromUser.licenses(state && state.user) || [];
-  const license = userLicenses.find(l => l._integrationId === id) || {};
+  const license = userLicenses.find(l => l._integrationId === id);
 
   if (!license) {
     return true;

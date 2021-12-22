@@ -163,7 +163,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   }
 
   const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
-  const licenseExpired = useSelector(state => selectors.integrationAppLicenseExpired(state, integrationId));
+  const licenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
 
   const hasAddOns =
     addOnState &&

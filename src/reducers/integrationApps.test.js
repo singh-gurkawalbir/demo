@@ -3246,9 +3246,9 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.integrationAppLicenseExpired test cases', () => {
+  describe('selectors.isIntegrationAppLicenseExpired test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationAppLicenseExpired()).toEqual(true);
+      expect(selectors.isIntegrationAppLicenseExpired()).toEqual(true);
     });
 
     const integration = {
@@ -3292,7 +3292,34 @@ describe('integrationApps selector testcases', () => {
         actions.integrationApp.settings.requestedUpgrade('l1')
       );
 
-      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(true);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+    });
+
+    test('should return if license expired as true for the integration app for owner user if license not found', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
     });
 
     test('should return if license expired for the integration app for owner user for non-expired', () => {
@@ -3324,7 +3351,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
 
     test('should return if license expired for the integration app for owner user for expiring soon', () => {
@@ -3357,7 +3384,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
 
     test('should return if license expired for the integration app for non owner user for non-expired', () => {
@@ -3389,7 +3416,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.integrationAppLicenseExpired(state, 'i1')).toEqual(false);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
   });
 
