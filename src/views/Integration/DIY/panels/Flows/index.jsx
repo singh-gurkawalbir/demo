@@ -187,7 +187,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
 
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
-  const asyncTaskStatus = useSelector(state => selectors.asyncTaskStatus(state, FLOW_GROUP_FORM_KEY));
+  const flowGroupFormSaveStatus = useSelector(state => selectors.asyncTaskStatus(state, FLOW_GROUP_FORM_KEY));
   const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
   const filteredFlowGroups = useMemo(() => {
     if (flowGroupingsSections && searchFilter.keyword) {
@@ -201,12 +201,12 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
 
   useEffect(() => {
     // redirect should only happen if integration is still present and not deleted
-    const shouldRedirect = !!redirectTo && !!integrationIsAvailable && !asyncTaskStatus;
+    const shouldRedirect = !!redirectTo && !!integrationIsAvailable && !flowGroupFormSaveStatus;
 
     if (shouldRedirect) {
       history.replace(redirectTo);
     }
-  }, [history, redirectTo, integrationIsAvailable, asyncTaskStatus]);
+  }, [history, redirectTo, integrationIsAvailable, flowGroupFormSaveStatus]);
 
   if (!flowGroupingsSections) {
     return (

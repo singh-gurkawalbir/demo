@@ -20,7 +20,7 @@ import getRoutePath from '../../../utils/routePaths';
 
 const paths = ['flowgroups/add', 'flowgroups/edit'];
 
-const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
+const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId) => ({
   fieldMap: {
     name: {
       id: 'name',
@@ -31,6 +31,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
       flowIds: flowsWithGroupId.map(flow => flow._id),
       isEdit,
       required: true,
+      flowGroupId,
     },
     _flowIds: {
       id: '_flowIds',
@@ -72,7 +73,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     };
   }, [isEdit, flowGroupings, groupId, flowsTiedToIntegrations]);
 
-  const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit);
+  const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId);
   const { status: flowGroupSaveStatus, message } = useSelector(state => selectors.flowGroupStatus(state, integrationId), shallowEqual) || emptyObject;
 
   useFormInitWithPermissions({formKey: FLOW_GROUP_FORM_KEY, fieldMeta, remount: remountCount});
