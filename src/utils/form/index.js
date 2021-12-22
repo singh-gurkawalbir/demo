@@ -440,3 +440,10 @@ export function getFirstErroredFieldId(formState) {
 
   return orderedFieldIds.find(fieldId => fields[fieldId] && fields[fieldId].visible && !fields[fieldId].isValid);
 }
+
+export function FieldDefinitionException(message, fieldId) {
+  return {
+    message,
+    fieldId,
+  };
+}

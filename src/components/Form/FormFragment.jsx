@@ -4,7 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import fields from '../DynaForm/fields';
-import FieldMessage from '../DynaForm/fields/FieldMessage';
+import { FieldDefinitionException } from '../../utils/form';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -27,7 +27,6 @@ const dummyFn = () => null;
 const Renderer = props => {
   const { formKey, id, fieldId, type} = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
   const fid = id || fieldId;
 
   const fieldState = useSelector(
@@ -52,8 +51,7 @@ const Renderer = props => {
   try {
     ele = DynaField(allFieldProps);
   } catch {
-    ele = <FieldMessage errorMessages={`Invalid field definition for field: ${fid}`} isValid={false} />;
-    dispatch(actions.form.forceFieldState(formKey)(fid, {required: true}));
+    throw new FieldDefinitionException(`Invalid field definition for field ${fid}`, fid);
   }
 
   return (
