@@ -1,20 +1,22 @@
 /* global describe, test */
 
-import { select } from 'redux-saga/effects';
+import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError, dynamic } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { getResource } from '../resources';
+import { getResource, commitStagedChanges } from '../resources';
 import { apiCallWithRetry } from '../index';
 import {
   generateZip,
   requestPreview,
   createComponents,
   verifyBundleOrPackageInstall,
+  publishStatus,
 } from '.';
 import templateUtil from '../../utils/template';
+import { SCOPES } from '../resourceForm';
 
 describe('generateZip sagas', () => {
   const integrationId = '123';
@@ -255,6 +257,58 @@ describe('verifyBundleOrPackageInstall sagas', () => {
           templateId
         )
       )
+      .run();
+  });
+});
+describe('publishStatus saga', () => {
+  test('should publish template correctly', () => {
+    const patchSet = [
+      {
+        op: 'replace',
+        path: '/published',
+        value: true,
+      },
+    ];
+    const templateId = '1';
+    const isPublished = false;
+
+    return expectSaga(publishStatus, {templateId, isPublished})
+      .provide([
+        [
+          call(commitStagedChanges, {
+            resourceType: 'templates',
+            id: templateId,
+            scope: SCOPES.value,
+          }), {},
+        ],
+      ])
+      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.value))
+      .put(actions.template.publish.success(templateId))
+      .run();
+  });
+  test('should trigger publish error action in case of error', () => {
+    const patchSet = [
+      {
+        op: 'replace',
+        path: '/published',
+        value: true,
+      },
+    ];
+    const templateId = '2';
+    const isPublished = false;
+
+    return expectSaga(publishStatus, {templateId, isPublished})
+      .provide([
+        [
+          call(commitStagedChanges, {
+            resourceType: 'templates',
+            id: templateId,
+            scope: SCOPES.value,
+          }), {error: {msg: '123'}},
+        ],
+      ])
+      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.value))
+      .put(actions.template.publish.error(templateId))
       .run();
   });
 });
