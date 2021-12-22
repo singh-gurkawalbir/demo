@@ -265,7 +265,7 @@ const IAForms = props => {
               setSelectedTab(value);
             }}
    >
-            {formMetas.map(({ key }) => (
+            {formMetas?.map(({ key }) => (
               <Tab
                 label={(
                   <TabLabel
@@ -520,7 +520,7 @@ export default function FlowsPanel({ childId, integrationId }) {
         </Grid>
       </div>
       <div className={classes.noSearchResults}>
-        {(flowFilter.keyword && flowSections.length) ? (
+        {(flowFilter.keyword && !flowSections.length) ? (
           <Typography variant="body1">
             Your search didn’t return any matching results. Try expanding your search criteria.
           </Typography>

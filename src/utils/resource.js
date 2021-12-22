@@ -131,13 +131,17 @@ export function getResourceSubType(resource) {
   return out;
 }
 
-export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false) {
+export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false, comparer) {
   if (!Array.isArray(resources)) {
     return emptyList;
   }
   const { sort = emptyObject, searchBy, keyword } = config || {};
   const stringTest = r => {
     if (!keyword) return true;
+
+    if (r.searchKey) {
+      return r.searchKey.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+    }
     const searchableText =
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => r[key]).join('|')}`
@@ -146,12 +150,14 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+  const defaultComparer = ({ order = 'asc', orderBy = 'name' }) =>
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  const comparerFn = comparer || defaultComparer;
 
   const filteredResources = resources.filter(stringTest);
 
-  return skipSort ? filteredResources : filteredResources.sort(comparer(sort));
+  return skipSort ? filteredResources : filteredResources.sort(comparerFn(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {

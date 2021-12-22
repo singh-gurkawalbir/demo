@@ -8,7 +8,7 @@ import ActionGroup from '../../ActionGroup';
 import StartDebugEnhanced from '../../StartDebugEnhanced';
 import CeligoPagination from '../../CeligoPagination';
 import RefreshIcon from '../../icons/RefreshIcon';
-import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/listenerLogs';
+import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/flowStepLogs';
 import FetchProgressIndicator from '../../FetchProgressIndicator';
 import { TextButton } from '../../Buttons';
 
@@ -19,12 +19,12 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObj = {};
 
-export default function LogsDrawerActions({ flowId, exportId }) {
+export default function LogsDrawerActions({ flowId, resourceId, resourceType }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const canEnableDebug = useSelector(state => selectors.canEnableDebug(state, exportId, flowId));
+  const canEnableDebug = useSelector(state => selectors.canEnableDebug(state, resourceId, flowId));
   const { hasMore, logsCount, logsStatus, loadMoreStatus, fetchStatus, currQueryTime } = useSelector(state => {
-    const l = selectors.listenerLogs(state, exportId);
+    const l = selectors.flowStepLogs(state, resourceId);
 
     return {
       hasMore: !!l.nextPageURL,
@@ -51,7 +51,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
     };
   }, [filterOptions.codes, filterOptions.time]);
 
-  const enableRefresh = useSelector(state => selectors.hasNewLogs(state, exportId));
+  const enableRefresh = useSelector(state => selectors.hasNewLogs(state, resourceId));
 
   const handleChangePage = useCallback(
     (e, newPage) => {
@@ -72,9 +72,9 @@ export default function LogsDrawerActions({ flowId, exportId }) {
       if (!loadMore) {
         dispatch(actions.clearFilter(FILTER_KEY));
       }
-      dispatch(actions.logs.listener.request({flowId, exportId, loadMore}));
+      dispatch(actions.logs.flowStep.request({flowId, resourceId, loadMore}));
     },
-    [dispatch, exportId, flowId]
+    [dispatch, resourceId, flowId]
   );
 
   const fetchMoreLogs = useCallback(() => fetchLogs(true), [fetchLogs]);
@@ -90,21 +90,21 @@ export default function LogsDrawerActions({ flowId, exportId }) {
   );
 
   const startDebugHandler = useCallback(value => {
-    dispatch(actions.logs.listener.startDebug(flowId, exportId, value));
-  }, [dispatch, flowId, exportId]);
+    dispatch(actions.logs.flowStep.startDebug(flowId, resourceId, resourceType, value));
+  }, [dispatch, flowId, resourceId, resourceType]);
 
   const stopDebugHandler = useCallback(() => {
-    dispatch(actions.logs.listener.stopDebug(flowId, exportId));
-  }, [dispatch, flowId, exportId]);
+    dispatch(actions.logs.flowStep.stopDebug(flowId, resourceId, resourceType));
+  }, [dispatch, flowId, resourceId, resourceType]);
 
   const pauseHandler = useCallback(() => {
-    dispatch(actions.logs.listener.setFetchStatus(exportId, 'paused'));
-    dispatch(actions.logs.listener.pauseFetch(flowId, exportId));
-  }, [dispatch, exportId, flowId]);
+    dispatch(actions.logs.flowStep.setFetchStatus(resourceId, 'paused'));
+    dispatch(actions.logs.flowStep.pauseFetch(flowId, resourceId));
+  }, [dispatch, resourceId, flowId]);
 
   const resumeHandler = useCallback(() => {
-    dispatch(actions.logs.listener.request({flowId, exportId, loadMore: true}));
-  }, [dispatch, exportId, flowId]);
+    dispatch(actions.logs.flowStep.request({flowId, resourceId, loadMore: true}));
+  }, [dispatch, resourceId, flowId]);
 
   return (
     <>
@@ -130,8 +130,8 @@ export default function LogsDrawerActions({ flowId, exportId }) {
       <ActionGroup position="right">
         <StartDebugEnhanced
           disabled={!canEnableDebug}
-          resourceId={exportId}
-          resourceType="exports"
+          resourceId={resourceId}
+          resourceType={resourceType}
           startDebugHandler={startDebugHandler}
           stopDebugHandler={stopDebugHandler} />
         <TextButton
