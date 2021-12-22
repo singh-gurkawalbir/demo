@@ -1095,14 +1095,12 @@ selectors.getAllAccountDashboardIntegrations = state => {
 
   allIntegrations = allIntegrations.map(i => {
     const { supportsMultiStore, sections: children = [] } = i.settings || {};
-    let integration = i;
 
     if (supportsMultiStore) {
-      integration = cloneDeep(i);
-      integration.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
+      return {...i, children: children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}))};
     }
 
-    return integration;
+    return i;
   });
 
   return allIntegrations;
