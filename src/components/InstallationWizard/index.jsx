@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import jsonPatch from 'fast-json-patch';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -13,11 +13,9 @@ import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
-import ResourceSetupDrawer from '../ResourceSetup';
+import ResourceSetupDrawer from '../ResourceSetup/Drawer';
 import InstallationStep from '../InstallStep';
-import resourceConstants from '../../forms/constants/connection';
 import {
-  getConnectionType,
   MODEL_PLURAL_TO_LABEL,
   generateNewId,
 } from '../../utils/resource';
@@ -27,7 +25,6 @@ import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
 import { getApplication } from '../../utils/template';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../forms/formFactory/utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,15 +48,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const oAuthApplications = [
-  ...resourceConstants.OAUTH_APPLICATIONS,
-  'netsuite-oauth',
-  'shopify-oauth',
-  'acumatica-oauth',
-  'hubspot-oauth',
-  'amazonmws-oauth',
-];
-
+/* This file is used only incase of Resource cloning other than Integrations
+* Refactor this code to either remove common code or make this explicit to be used only for clone
+* Remove 'type' property and template type related ghost code
+*/
 export default function InstallationWizard(props) {
   const classes = useStyles();
   const {
@@ -77,8 +69,9 @@ export default function InstallationWizard(props) {
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
-  let environment;
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const history = useHistory();
   const isSetupComplete = useSelector(state =>
     selectors.isSetupComplete(state, { resourceId, resourceType, templateId })
   );
@@ -146,10 +139,6 @@ export default function InstallationWizard(props) {
     return <Typography>Invalid Configuration</Typography>;
   }
 
-  if (data) {
-    environment = data.sandbox ? 'sandbox' : 'production';
-  }
-
   const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
@@ -180,6 +169,7 @@ export default function InstallationWizard(props) {
         )
       );
       setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });
+      history.push(`${match.url}/configure/connections/${newId}`);
 
       // handle Installation step click
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
@@ -219,9 +209,13 @@ export default function InstallationWizard(props) {
           )
         );
       }
-      // handle Action step click
     } else if (type === INSTALL_STEP_TYPES.STACK) {
-      if (!stackId) setShowStackDialog(generateNewId());
+      if (!stackId) {
+        const newStackId = generateNewId();
+
+        setShowStackDialog(newStackId);
+        history.push(`${match.url}/configure/stacks/${newStackId}`);
+      }
     }
   };
 
@@ -229,18 +223,7 @@ export default function InstallationWizard(props) {
     props.history.goBack();
   };
 
-  const handleSubmitComplete = (connectionId, isAuthorized, createdConnectionDoc) => {
-    const patchSet = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter(createdConnectionDoc || {}),
-      resource: {},
-    });
-    const connectionJson = jsonPatch.applyPatch({}, patchSet)?.newDocument;
-
-    if (oAuthApplications.includes(getConnectionType(connectionJson)) && !isAuthorized) {
-      // Step should not be marked as completed until Oauth application authorization is completed on other window.
-      return;
-    }
-
+  const handleSubmitComplete = connectionId => {
     dispatch(
       actions.template.updateStep(
         {
@@ -290,30 +273,6 @@ export default function InstallationWizard(props) {
 
   return (
     <LoadResources required resources="connections,integrations">
-      {connection && (
-        <ResourceSetupDrawer
-          resourceId={connection.newId}
-          resource={connection.doc}
-          resourceType="connections"
-          environment={environment}
-          // eslint-disable-next-line no-nested-ternary
-          connectionType={connection.doc.type === 'http'
-            ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
-            : connection.doc.type}
-          onClose={handleConnectionClose}
-          onSubmitComplete={handleSubmitComplete}
-          addOrSelect
-        />
-      )}
-      {stackId && (
-        <ResourceSetupDrawer
-          onClose={handleStackClose}
-          addOrSelect
-          resourceId={stackId}
-          resourceType="stacks"
-          onSubmitComplete={handleStackSetupDone}
-        />
-      )}
       <div className={classes.root}>
         {variant !== 'new' && (
           <div className={classes.formHead}>
@@ -347,6 +306,16 @@ export default function InstallationWizard(props) {
           ))}
         </div>
       </div>
+      <ResourceSetupDrawer
+        mode="clone"
+        templateId={templateId}
+        onClose={handleConnectionClose}
+        onSubmitComplete={handleSubmitComplete}
+        handleStackSetupDone={handleStackSetupDone}
+        handleStackClose={handleStackClose}
+        cloneResourceType={resourceType}
+        cloneResourceId={resourceId}
+       />
     </LoadResources>
   );
 }

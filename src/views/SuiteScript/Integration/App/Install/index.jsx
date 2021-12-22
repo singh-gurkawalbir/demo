@@ -272,11 +272,6 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [NETSUITE_CONNECTION, SALESFORCE_CONNECTION, connectorId, dispatch, history, match.url, ssLinkedConnectionId, verifyNSBundle, verifySFBundle]);
 
-  // const handleBackClick = useCallback(e => {
-  //   e.preventDefault();
-  //   history.push(getRoutePath('/marketplace'));
-  // }, [history]);
-
   const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
@@ -292,9 +287,9 @@ export default function SuiteScriptIntegrationAppInstallation() {
     );
     verifyNSBundle(connectionId);
     if (!skipDrawerClose) {
-      history.goBack();
+      history.replace(`${match.url}`);
     }
-  }, [connectorId, dispatch, history, verifyNSBundle]);
+  }, [connectorId, dispatch, history, verifyNSBundle, match.url]);
 
   const onSSConnSubmitComplete = useCallback(() => {
     if (currentStep.connectionType === 'salesforce') {

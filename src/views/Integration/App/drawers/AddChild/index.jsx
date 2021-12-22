@@ -5,7 +5,7 @@
 */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Link } from '@material-ui/core';
 import differenceBy from 'lodash/differenceBy';
@@ -14,10 +14,8 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
-import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
-import { getResourceSubType } from '../../../../../utils/resource';
-import resourceConstants from '../../../../../forms/constants/connection';
 import Spinner from '../../../../../components/Spinner';
 import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
@@ -61,19 +59,12 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }));
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant) return assistant;
-
-  return type;
-};
 
 export default function IntegrationAppAddNewChild(props) {
   const classes = useStyles();
   const history = useHistory();
+  const match = useRouteMatch();
   const { integrationId } = props.match.params;
-  const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
@@ -94,11 +85,6 @@ export default function IntegrationAppAddNewChild(props) {
   const currentStep = useMemo(() => (addNewChildSteps || []).find(s => s.isCurrentStep), [
     addNewChildSteps,
   ]);
-
-  const currStepIndex = addNewChildSteps?.indexOf(currentStep);
-  const selectedConnection = useSelector(state =>
-    selectors.resource(state, 'connections', selectedConnectionId)
-  );
 
   useEffect(() => {
     if ((!addNewChildSteps || !addNewChildSteps.length) && !requestedSteps) {
@@ -188,7 +174,7 @@ export default function IntegrationAppAddNewChild(props) {
         return false;
       }
 
-      setSelectedConnectionId(_connectionId);
+      history.push(`${match.url}/configure/connections/${_connectionId}`);
       // handle Installation step click
     } else if (installURL) {
       if (!step.isTriggered) {
@@ -227,6 +213,7 @@ export default function IntegrationAppAddNewChild(props) {
         undefined,
         true
       ));
+      history.push(`${match.url}/form/child`);
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.child.updateStep(
@@ -244,17 +231,8 @@ export default function IntegrationAppAddNewChild(props) {
     }
   };
 
-  const handleSubmitComplete = (connId, isAuthorized) => {
+  const handleSubmitComplete = () => {
     const step = addNewChildSteps.find(s => s.isCurrentStep);
-
-    if (
-      resourceConstants.OAUTH_APPLICATIONS.includes(
-        getConnectionType(selectedConnection)
-      ) &&
-      !isAuthorized
-    ) {
-      return;
-    }
 
     dispatch(
       actions.integrationApp.child.updateStep(
@@ -269,19 +247,14 @@ export default function IntegrationAppAddNewChild(props) {
         (step || {}).installerFunction
       )
     );
-    setSelectedConnectionId(false);
   };
 
   const handleUninstall = () => {
     history.push(
       getRoutePath(
-        `integrationapps/${integrationAppName}/${integrationId}/uninstall/${integration.settings.defaultSectionId}`
+        `integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${integration.settings.defaultSectionId}`
       )
     );
-  };
-
-  const handleClose = () => {
-    setSelectedConnectionId(false);
   };
 
   return (
@@ -304,25 +277,6 @@ export default function IntegrationAppAddNewChild(props) {
           )}
         </div>
       </CeligoPageBar>
-      {selectedConnectionId && (
-        <ResourceSetupDrawer
-          resourceId={selectedConnectionId}
-          resourceType="connections"
-          onClose={handleClose}
-          onSubmitComplete={handleSubmitComplete}
-        />
-      )}
-      {currentStep && currentStep.showForm && (
-        <FormStepDrawer
-          integrationId={integrationId}
-          formMeta={currentStep.form}
-          addChild
-          installerFunction={currentStep.installerFunction}
-          title={currentStep.name}
-          formCloseHandler={formCloseHandler}
-          index={currStepIndex + 1}
-        />
-      )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
 
@@ -341,6 +295,15 @@ export default function IntegrationAppAddNewChild(props) {
             ))}
           </div>
         </div>
+        <FormStepDrawer
+          integrationId={integrationId}
+          formCloseHandler={formCloseHandler}
+        />
+        <ResourceSetupDrawer
+          integrationId={integrationId}
+          onSubmitComplete={handleSubmitComplete}
+          mode="child"
+        />
       </div>
     </LoadResources>
   );
