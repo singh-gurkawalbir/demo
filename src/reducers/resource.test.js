@@ -6452,6 +6452,139 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.mkFlowGroupMap test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flow1',
+            name: 'Flow Name1',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+            _flowGroupingId: 'groupId1',
+          }, {
+            _id: 'flow2',
+            name: 'Flow Name2',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+            _flowGroupingId: 'groupId1',
+          }, {
+            _id: 'flow3',
+            name: 'Flow Name3',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow4',
+            name: 'Flow Name5',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow6',
+            name: 'Flow Name6',
+          }, {
+            _id: 'flow7',
+            name: 'Flow Name7',
+            _integrationId: 'integration6',
+            _connectorId: 'connectorId2',
+          }, {
+            _id: 'flow8',
+            name: 'Flow Name8',
+            _integrationId: 'integration5',
+          }, {
+            _id: 'flow9',
+            name: 'Flow Name9',
+            _integrationId: 'integration4',
+          }, {
+            _id: 'flow10',
+            name: 'Flow Name10',
+            _integrationId: 'integration3',
+          }, {
+            _id: 'flow11',
+            name: 'Flow Name11',
+          }, {
+            _id: 'flow12',
+            name: 'Flow Name12',
+            _integrationId: 'integration2',
+          }, {
+            _id: 'flow13',
+            name: 'Flow Name13',
+            _integrationId: 'integration1',
+          }, {
+            _id: 'flow14',
+            name: 'flow 14',
+            sandbox: true,
+          }, {
+            _id: 'flow15',
+            name: 'Flow Name15',
+            _integrationId: 'integration7',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow16',
+            name: 'Flow Name16',
+            _integrationId: 'integration7',
+            _connectorId: 'connectorId3',
+          }],
+          integrations: [{
+            _id: 'integration1',
+            name: 'Diy Integration1',
+          }, {
+            _id: 'integration2',
+            name: 'Diy Integration2',
+          }, {
+            _id: 'integration3',
+            name: 'IA2.0 Integration Parent',
+            _connectorId: 'connectorId',
+            flowGroupings: [
+              {name: 'Grouping1 name', _id: 'grouping1Id'},
+              {name: 'Grouping2 name', _id: 'grouping2Id'},
+            ],
+            installSteps: [{}],
+          }, {
+            _id: 'integration4',
+            name: 'IA2.0 Integration Child',
+            _parentId: 'integration3',
+            _connectorId: 'connectorId',
+            installSteps: [{}],
+          }, {
+            _id: 'integration4',
+            name: 'IA2.0 Integration Child',
+            _parentId: 'integration3',
+            _connectorId: 'connectorId',
+            installSteps: [{}],
+          }, {
+            _id: 'integration5',
+            name: 'IA2.0 Integration Child2',
+            _connectorId: 'connectorId',
+            _parentId: 'integration3',
+            installSteps: [{}],
+          }, {
+            _id: 'integration6',
+            name: 'IA1.0 integration',
+            _connectorId: 'connectorId2',
+          }],
+        },
+      },
+    };
+
+    const selector = selectors.mkFlowGroupMap();
+
+    test('should not throw any exception for bad params', () => {
+      expect(selector()).toEqual({});
+      expect(selector({})).toEqual({});
+      expect(selector(null, null)).toEqual({});
+      expect(selector(1, 1)).toEqual({});
+      expect(selector('string', 'string')).toEqual({});
+    });
+
+    test('should return correct flowMap for integrations containing flow groupings', () => {
+      expect(selector(state, 'integration3')).toEqual({
+        grouping1Id: 'Grouping1 name',
+        grouping2Id: 'Grouping2 name',
+        unassigned: 'Unassigned',
+      });
+    });
+  });
+
   describe('selectors.mkDIYIntegrationFlowList test cases', () => {
     const sortProperties = {
       lastExecutedAtSort: undefined,
