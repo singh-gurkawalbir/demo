@@ -310,6 +310,7 @@ export function fieldMeta({ resource, assistantData }) {
           parameters: operationDetails.bodyParameters,
           value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.bodyParams,
           isDeltaExport: assistantConfig.exportType === 'delta',
+          operationChanged: resource.assistantMetadata?.operationChanged,
           deltaDefaults:
             operationDetails.delta &&
             operationDetails.delta.defaults

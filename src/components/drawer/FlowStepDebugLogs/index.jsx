@@ -14,6 +14,8 @@ import Help from '../../Help';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
+import {getFlowStepLabel} from '../../../utils/flowStepLogs';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -30,18 +32,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function RouterWrappedContent({ flowId, exportId, handleClose }) {
+function RouterWrappedContent({ flowId, resourceType, resourceId, handleClose }) {
   const classes = useStyles();
-  const applicationType = useSelector(state => selectors.applicationType(state, 'exports', exportId));
+  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
+  const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
+
+  const label = `View ${getFlowStepLabel(resourceType, resource)} debug logs`;
 
   return (
     <>
-      <DrawerHeader title="View listener debug logs" hideBackButton className={classes.titleHeader} >
+      <DrawerHeader title={label} hideBackButton className={classes.titleHeader} >
         <ActionGroup>
           <Help
             title="Debug logs"
             className={classes.helpTextButton}
-            helpKey="listener.debugLogs" />
+            helpKey="resource.debugLogs" />
         </ActionGroup>
         <ActionGroup position="right">
           <ApplicationImg
@@ -54,11 +59,11 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
       </DrawerHeader>
 
       <DrawerSubHeader>
-        <LogsDrawerActions flowId={flowId} exportId={exportId} />
+        <LogsDrawerActions flowId={flowId} resourceId={resourceId} resourceType={resourceType} />
       </DrawerSubHeader>
 
       <DrawerContent noPadding >
-        <LogsTable flowId={flowId} exportId={exportId} />
+        <LogsTable flowId={flowId} resourceId={resourceId} resourceType={resourceType} />
       </DrawerContent>
 
       <DrawerFooter>
@@ -72,7 +77,7 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
   );
 }
 
-export default function ListenerRequestLogs({ flowId, exportId }) {
+export default function FlowStepDebugLogs({ flowId, resourceType, resourceId }) {
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -91,7 +96,7 @@ export default function ListenerRequestLogs({ flowId, exportId }) {
       height="tall"
       width="full"
       onClose={handleClose} >
-      <RouterWrappedContent flowId={flowId} exportId={exportId} handleClose={handleClose} />
+      <RouterWrappedContent flowId={flowId} resourceType={resourceType} resourceId={resourceId} handleClose={handleClose} />
     </RightDrawer>
   );
 }
