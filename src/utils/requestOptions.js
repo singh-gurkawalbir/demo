@@ -341,18 +341,25 @@ export default function getRequestOptions(
       let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
 
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
-      const opts = { method, body };
       const { fromDate, toDate } = filters || {};
       const fromKey = 'from';
       const toKey = 'to';
 
-      if (fromDate && toDate) {
+      if (resourceType) {
+        if (fromDate) {
+          body[fromKey] = fromDate;
+        }
+        if (toDate) {
+          body[toKey] = toDate;
+        }
+      } else if (fromDate && toDate) {
         path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
       } else if (fromDate) {
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
       }
+      const opts = { method, body };
 
       return {
         path,

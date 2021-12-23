@@ -960,3 +960,12 @@ export const getNextLinkRelativeUrl = link => {
 
   return '';
 };
+export const AUDIT_LOGS_RANGE_FILTERS = [
+  {id: 'last1hour', label: 'Last hour'},
+  {id: 'today', label: 'Today'},
+  {id: 'last36hours', label: 'Last 36 hours'},
+  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'last15days', label: 'Last 15 Days'},
+  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'custom', label: 'Custom'},
+];
