@@ -610,7 +610,7 @@ export default {
 <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.`,
   'clover.connection.http.unencrypted.environment': 'Please select the environment of your Clover account.',
   'clover.connection.http.unencrypted.region': 'Please select your region.',
-  'clover.connection.http.unencrypted.merchantId': 'Please enter the Merchant ID of your Clover account.<br> <b>Follow the below steps to get Merchant ID:</b><br> 1.  Log in to your clover account.<br>2. On the dashboard, navigate to SetUp, select Merchants.<br>3. You can find your Merchant ID(MID) in that section if you have a merchant created.',
+  'clover.connection.http.unencrypted.merchantId': 'Enter the Merchant ID for your Clover account. Use the following steps to find your Merchant ID:<br> 1. Sign in to your Clover account (or return to the <b>Businesses</b> dashboard if already signed in).<br> 2. From the <b>Setup</b> menu, select <b>Merchants</b>.<br> 3. Copy the ID shown under the merchant.',
   'inspectorio.connection.http.encrypted.apiKey':
 'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'inspectorio.connection.enviornment':
