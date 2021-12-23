@@ -43,7 +43,7 @@ export default {
       '/http/baseURI': `https://api${
         formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
       }.ebay.com/`,
-      '/http/ping/relativeURI': '/api/public/hello/',
+      '/http/ping/relativeURI': 'sell/fulfillment/v1/order',
       '/http/auth/oauth/authURI': `https://signin${
         formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
       }.ebay.com/authorize`,
