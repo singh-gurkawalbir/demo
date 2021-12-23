@@ -36,6 +36,7 @@ const ConfirmDialog = (
       { label: 'Yes' },
     ],
     onDialogClose,
+    hideClose = false,
   }) => {
   const classes = useStyles();
   const handleButtonClick = useCallback(
@@ -55,7 +56,7 @@ const ConfirmDialog = (
   }, [onClose, onDialogClose]);
 
   return (
-    <ModalDialog show onClose={handleClose} maxWidth={maxWidth}>
+    <ModalDialog show onClose={hideClose ? undefined : handleClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
         <RawHtml className={classes.message} html={message} options={{allowedTags}} />

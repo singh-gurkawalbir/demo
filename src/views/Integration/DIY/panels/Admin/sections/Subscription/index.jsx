@@ -167,6 +167,8 @@ export default function SubscriptionSection({ childId, integrationId }) {
   }
 
   const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
+
   const hasAddOns =
     addOnState &&
     addOnState.addOns &&
@@ -219,7 +221,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 {upgradeText && (
                   <FilledButton
                     className={classes.button}
-                    disabled={upgradeRequested}
+                    disabled={upgradeRequested || isLicenseExpired}
                     onClick={handleUpgrade}>
                     {upgradeText}
                   </FilledButton>
@@ -249,6 +251,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               <FilledButton
                 className={classes.button}
                 component={Link}
+                disabled={isLicenseExpired}
                 to={match.url.replace('admin/subscription', 'addons')}>
                 GET ADD-ONS
               </FilledButton>

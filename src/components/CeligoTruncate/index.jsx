@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children }) {
+export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children, className }) {
   const classes = useStyles();
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -24,7 +24,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
         TransitionComponent={Zoom}
         placement={placement}
         enterDelay={delay}>
-        <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated}>
+        <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
           {children}
         </Truncate>
       </Tooltip>
@@ -32,7 +32,9 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
   }
 
   return (
-    <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} {...isLoggableAttr(isLoggable)}>
+    <Truncate
+      lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
+      {...isLoggableAttr(isLoggable)}>
       {children}
     </Truncate>
   );

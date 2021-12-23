@@ -1,11 +1,16 @@
+/* eslint-disable react/state-in-constructor */
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import LogRocket from 'logrocket';
 import DynaFormGenerator from './DynaFormGenerator';
 import { selectors } from '../../reducers';
 import useAutoScrollErrors from './useAutoScrollErrors';
+import CodePanel from '../AFE/Editor/panels/Code';
+import FieldMessage from './fields/FieldMessage';
+import { FieldDefinitionException } from '../../utils/form';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -31,6 +36,45 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const key = 'key';
+
+class DynaFormErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  componentDidCatch(error) {
+    if (error instanceof FieldDefinitionException) {
+      this.setState({error});
+    } else {
+      this.setState({error: {message: 'Some unknown error'}});
+    }
+    LogRocket.captureException(error);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <>
+          <div>
+            <FieldMessage isValid={false} errorMessages={this.state.error?.message} />
+          </div>
+          {this.state.error?.fieldId &&
+          (
+            <CodePanel
+              value={this.props.fieldMap?.[this.state.error?.fieldId]}
+              mode="json"
+              readOnly
+              overrides={{ showGutter: false}}
+            />
+          )}
+        </>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function DynaForm(props) {
   const {
@@ -61,13 +105,15 @@ export default function DynaForm(props) {
 
   return (
     <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
-      <DynaFormGenerator
-        {...rest}
-        layout={layout}
-        fieldMap={fieldMap}
-        formKey={formKey}
-        key={remountKey}
+      <DynaFormErrorBoundary fieldMap={fieldMap} key={remountKey}>
+        <DynaFormGenerator
+          {...rest}
+          layout={layout}
+          fieldMap={fieldMap}
+          formKey={formKey}
+          key={remountKey}
         />
+      </DynaFormErrorBoundary>
     </div>
   );
 }

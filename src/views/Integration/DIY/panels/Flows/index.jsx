@@ -17,7 +17,7 @@ import flowTableMeta from '../../../../../components/ResourceTable/flows/metadat
 import Spinner from '../../../../../components/Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME, FLOW_GROUP_FORM_KEY } from '../../../../../utils/constants';
 import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
@@ -186,6 +186,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
 
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
+  const flowGroupFormSaveStatus = useSelector(state => selectors.asyncTaskStatus(state, FLOW_GROUP_FORM_KEY));
   const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
   const filteredFlowGroups = useMemo(() => {
     if (flowGroupingsSections && searchFilter.keyword) {
@@ -199,12 +200,12 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
 
   useEffect(() => {
     // redirect should only happen if integration is still present and not deleted
-    const shouldRedirect = !!redirectTo && !!integrationIsAvailable;
+    const shouldRedirect = !!redirectTo && !!integrationIsAvailable && !flowGroupFormSaveStatus;
 
     if (shouldRedirect) {
       history.replace(redirectTo);
     }
-  }, [history, redirectTo, integrationIsAvailable]);
+  }, [history, redirectTo, integrationIsAvailable, flowGroupFormSaveStatus]);
 
   if (!flowGroupingsSections) {
     return (

@@ -61,7 +61,7 @@ export default function Applications({apps, children, className}) {
           <li>
             <ApplicationImg
               markOnly
-              type="export"
+              type="other"
               assistant={application} />
           </li>
         </Tooltip>

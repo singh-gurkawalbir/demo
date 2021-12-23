@@ -107,6 +107,7 @@ export const GenericTypeableSelect = props => {
     SelectedOptionImpl,
     unSearchable,
     isLoggable,
+    defaultMenuIsOpen,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -288,6 +289,7 @@ export const GenericTypeableSelect = props => {
             hideSelectedOptions={false}
             styles={customStylesMultiselect}
             isSearchable={!unSearchable}
+            defaultMenuIsOpen={defaultMenuIsOpen}
      />
         </span>
 

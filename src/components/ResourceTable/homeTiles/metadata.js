@@ -74,7 +74,7 @@ export default {
       },
       {
         key: 'status',
-        orderBy: 'totalErrorCount',
+        orderBy: 'status',
         heading: 'Status',
         isLoggable: true,
         Value: ({rowData: r}) => (

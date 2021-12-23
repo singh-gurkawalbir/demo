@@ -19,6 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import StatusCircle from '../../../../components/StatusCircle';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
+import { getTextAfterCount } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -119,7 +120,7 @@ const metadata = {
         return (
           <div className={classes.button} onClick={handleErrorClick}>
             <StatusCircle variant="error" size="mini" />
-            {count > 9999 ? '9999+' : count} errors
+            {count > 9999 ? '9999+ errors' : getTextAfterCount('error', count)}
           </div >
         );
       },
