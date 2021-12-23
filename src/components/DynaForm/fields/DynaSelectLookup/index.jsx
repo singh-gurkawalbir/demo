@@ -114,7 +114,7 @@ export default function DynaSelectLookup(props) {
           <EllipsisActionMenu actionsMenu={actionsMenu} onAction={handleManageLookupsClick} />
         </ActionGroup>
       </div>
-
+      {/* is this loggable? */}
       <ManageLookupDrawer
         disabled={disabled}
         id={id}
@@ -124,6 +124,7 @@ export default function DynaSelectLookup(props) {
         flowId={flowId}
         hideBackButton={false}
         onSave={handleManageLookupsSave} />
+      {/* is this loggable? */}
 
       <LookupDrawer
         disabled={disabled}

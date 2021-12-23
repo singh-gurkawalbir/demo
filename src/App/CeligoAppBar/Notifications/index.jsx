@@ -74,7 +74,7 @@ function Notifications() {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-        <Tooltip data-public title="No notifications" placement="bottom" aria-label="no notifications">
+        <Tooltip title="No notifications" placement="bottom" aria-label="no notifications">
           <IconButton aria-label="notifications" size="small" color="inherit">
             <NotificationsIcon />
           </IconButton>

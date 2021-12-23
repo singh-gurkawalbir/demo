@@ -107,7 +107,6 @@ export default function FlowGroupRow({
       className={clsx(classes.rowContainer, match.params?.sectionId === sectionId ? classes.active : '', className)}>
       <SortableHandle isVisible={showGripper} />
       <NavLink
-        data-public
         className={classes.listItem}
         activeClassName={classes.activeListItem}
         to={generatePath(match.path, { ...match.params, sectionId })}

@@ -8,6 +8,7 @@ import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
 import { selectors } from '../../reducers';
+import IsLoggableContextProvider from '../IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -31,18 +32,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const notRedactAttr = {'data-public': 'true'};
-
-const emptyObj = {};
 export default function ResourceFormWithStatusPanel({ isFlowBuilderView, className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
   const { resourceType, resourceId } = props;
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
 
-  const isWebhookExport = useSelector(state =>
-     selectors.resourceData(state, resourceType, resourceId)?.merged?.adaptorType === 'WebhookExport');
+  // const isWebhookExport = useSelector(state =>
+  //    selectors.resourceData(state, resourceType, resourceId)?.merged?.adaptorType === 'WebhookExport');
 
-  // only webhooks should not be redacted
-  const shouldRedactLogRocket = isWebhookExport || resourceType === 'connections';
+  // only webhooks and connection should  be redacted
+  // TODO:enable it when we have isLoggable attribute defined for individaul field Meta
+  // const isLoggable = !(isWebhookExport || resourceType === 'connections');
+  const isLoggable = false;
 
   const classes = useStyles({
     ...props,
@@ -51,8 +51,6 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
   const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height + 16);
   }, []);
-
-  const shouldRedact = shouldRedactLogRocket ? emptyObj : notRedactAttr;
 
   return (
     <div className={className}>
@@ -83,9 +81,10 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
         }
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
-      <span {...shouldRedact}>
+
+      <IsLoggableContextProvider isLoggable={isLoggable}>
         <ResourceForm className={classes.form} {...props} />
-      </span>
+      </IsLoggableContextProvider>
     </div>
   );
 }

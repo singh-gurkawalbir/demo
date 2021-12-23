@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
 import CeligoTruncate from '../../CeligoTruncate';
@@ -133,12 +134,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Row = ({ index, style, data }) => {
-  const {classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id} = data;
+  const {classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, isLoggable, id} = data;
   const { label, value, subHeader, disabled = false } = items[index];
 
   if (subHeader) {
     return (
-      <ListSubheader disableSticky key={subHeader} style={style}>
+      <ListSubheader {...isLoggableAttr(isLoggable)} disableSticky key={subHeader} style={style}>
         {subHeader}
       </ListSubheader>
     );
@@ -146,6 +147,7 @@ const Row = ({ index, style, data }) => {
 
   return (
     <MenuItem
+      {...isLoggableAttr(isLoggable)}
       key={value}
       value={value}
       data-value={value}
@@ -188,7 +190,7 @@ export default function DynaSelect(props) {
     onFieldChange,
     skipSort,
     dataTest,
-    dataPublic,
+    isLoggable,
   } = props;
 
   const listRef = React.createRef();
@@ -265,7 +267,7 @@ export default function DynaSelect(props) {
       setOpen(false);
     }, []
   );
-  const rowProps = useMemo(() => ({ classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id }),
+  const rowProps = useMemo(() => ({ classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id, isLoggable}),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
 
@@ -290,7 +292,7 @@ export default function DynaSelect(props) {
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
           data-test={dataTest || id}
-          data-public={!!dataPublic}
+          isLoggable={isLoggable}
           value={finalTextValue}
           disableUnderline
           displayEmpty

@@ -168,7 +168,6 @@ const FlowListingTable = ({
       <Grid item className={classes.content}>
         <LoadResources required resources="flows">
           <CeligoTable
-            data-public
             data={groupedFlows}
             filterKey={filterKey}
             {...flowTableMeta}
@@ -210,7 +209,6 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
   if (!flowGroupingsSections) {
     return (
       <CeligoTable
-        data-public
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}

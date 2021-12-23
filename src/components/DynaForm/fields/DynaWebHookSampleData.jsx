@@ -81,7 +81,8 @@ export default function DynaWebHookSampleData(props) {
     <div className={classes.dynaWebhookWrapper}>
       <div className={classes.sampleDataContent}>
         <FormLabel error={!isValid} >{label}</FormLabel>
-        <div className={classes.container}>
+        {/* sample data can contain sensitive information */}
+        <div className={classes.container} data-private>
           <CodeEditor
             name="sampleData"
             value={sampleData}

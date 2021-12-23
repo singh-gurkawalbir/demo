@@ -5,6 +5,7 @@ import { FormControl, FormLabel } from '@material-ui/core';
 import clsx from 'clsx';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -65,6 +66,7 @@ export default function FileUploader(props) {
     hideFileName = false,
     variant = 'outlined',
     color = 'secondary',
+    isLoggable,
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -95,6 +97,7 @@ export default function FileUploader(props) {
             Choose file
           </Button>
           <input
+            {...isLoggableAttr(isLoggable)}
             data-test="uploadFile"
             id="fileUpload"
             type="file"

@@ -377,7 +377,6 @@ const FlowsTable = ({integrationId, childId}) => {
   return (
     <LoadResources required resources="flows,exports">
       <CeligoTable
-        data-public
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
@@ -503,7 +502,6 @@ export default function FlowsPanel({ childId, integrationId }) {
               {flowSections.map(({ title, titleId }) => (
                 <ListItem key={titleId} className={classes.flowTitle}>
                   <NavLink
-                    data-public
                     className={classes.listItem}
                     activeClassName={classes.activeListItem}
                     to={titleId}

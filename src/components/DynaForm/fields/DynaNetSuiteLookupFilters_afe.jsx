@@ -92,6 +92,7 @@ export default function DynaNetSuiteLookupFilters_afe(props) {
           startIcon={<RefreshIcon />} />
       </div>
       {isEditorInitialized && (
+      // should we redact this component...it looks rule expressions editor
       <FilterPanel
         id={id}
         editorId={editorId}

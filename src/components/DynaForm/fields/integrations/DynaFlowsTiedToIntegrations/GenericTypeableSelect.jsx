@@ -1,6 +1,7 @@
 import { FormControl, FormLabel, fade, makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { DoneButton } from '../../../../CeligoSelect';
 import SearchIcon from '../../../../icons/SearchIcon';
 import FieldHelp from '../../../FieldHelp';
@@ -105,6 +106,7 @@ export const GenericTypeableSelect = props => {
     // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
     unSearchable,
+    isLoggable,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -273,19 +275,21 @@ export const GenericTypeableSelect = props => {
         error={!isValid}
         disabled={disabled}
         required={required}>
-        <Select
-          isDisabled={disabled}
-          isMulti
-          placeholder={placeholder}
-          components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
-          options={options}
-          value={value}
-          onChange={handleChange}
-          closeMenuOnSelect={false}
-          hideSelectedOptions={false}
-          styles={customStylesMultiselect}
-          isSearchable={!unSearchable}
+        <span {...isLoggableAttr(isLoggable)}>
+          <Select
+            isDisabled={disabled}
+            isMulti
+            placeholder={placeholder}
+            components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
+            options={options}
+            value={value}
+            onChange={handleChange}
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            styles={customStylesMultiselect}
+            isSearchable={!unSearchable}
      />
+        </span>
 
         <FieldMessage {...props} />
       </FormControl>

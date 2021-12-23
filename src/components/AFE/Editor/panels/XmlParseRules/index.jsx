@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function XmlParseRules({ editorId, isLoggable }) {
+export default function XmlParseRules({ editorId }) {
   const formKey = `xmlParse-${editorId}`;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ export default function XmlParseRules({ editorId, isLoggable }) {
 
   return (
     <div className={classes.container}>
-      <DynaForm formKey={formKey} isLoggable={isLoggable} />
+      <DynaForm formKey={formKey} />
     </div>
   );
 }

@@ -106,13 +106,14 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
-      columns = columns.map(col => pick(col, ['heading', 'key', 'align', 'Value', 'orderBy']));
+      columns = columns.map(col => pick(col, ['heading', 'key', 'align', 'Value', 'orderBy', 'isLoggable']));
 
       columns.push(
         {
           key: 'settings',
           heading: 'Settings',
           align: 'center',
+          isLoggable: true,
           Value: ({rowData: r}) => <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />,
         }
       );
@@ -123,6 +124,7 @@ export default {
       {
         key: 'run',
         heading: 'Run',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <RunCell
             flowId={r._id}
@@ -136,6 +138,7 @@ export default {
       {
         key: 'off/On',
         heading: 'Off/On',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <OnOffCell
             flowId={r._id}

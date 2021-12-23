@@ -221,6 +221,7 @@ export default function DynaNetSuiteSubRecords(props) {
           subrecords.map(sr => (
             <div key={sr.fieldId} className={classes.actionItems}>
               <Typography component="span">
+                {/* this can be loggable */}
                 {getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}
               </Typography>
               <ActionGroup>

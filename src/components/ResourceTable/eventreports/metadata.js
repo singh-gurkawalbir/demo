@@ -79,7 +79,7 @@ const metadata = {
         const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name || `Flow id: ${id}(Flow deleted)`).join(',');
 
         return (
-          <CeligoTruncate dataPublic placement="top" lines={3} >
+          <CeligoTruncate isLoggable placement="top" lines={3} >
             {concatenedFlowNames}
           </CeligoTruncate>
         );

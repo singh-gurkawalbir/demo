@@ -5,6 +5,7 @@ import Suggestions from './Suggestions';
 import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -39,6 +40,7 @@ export default function DynaTextWithFlowSuggestion(props) {
     skipExtractWrapOnSpecialChar = false,
     formKey,
     stage,
+    isLoggable,
   } = props;
   const formContext = useFormContext(formKey);
   const ref = useRef(null);
@@ -108,6 +110,7 @@ export default function DynaTextWithFlowSuggestion(props) {
       </div>
       <div ref={ref}>
         <TextField
+          {...isLoggableAttr(isLoggable)}
           autoComplete="off"
           id={`text-${id}`}
           key={id}
@@ -124,24 +127,26 @@ export default function DynaTextWithFlowSuggestion(props) {
           variant="filled"
         />
         {(showExtract || showLookup) && (
-          <Suggestions
-            stage={flowDataStage}
-            hide={hideSuggestion}
-            id={`suggestions-${id}`}
-            onFieldChange={onFieldChange}
-            resourceId={resourceId}
-            flowId={flowId}
-            formContext={formContext}
-            resourceType={resourceType}
-            value={value}
-            showLookup={showLookup}
-            showExtract={showExtract}
-            textInsertPosition={textInsertPosition}
-            onValueUpdate={handleUpdateAfterSuggestionInsert}
-            showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
-            skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
-            showLookupModal={handleLookupModalShown}
+          <span {...isLoggableAttr(isLoggable)}>
+            <Suggestions
+              stage={flowDataStage}
+              hide={hideSuggestion}
+              id={`suggestions-${id}`}
+              onFieldChange={onFieldChange}
+              resourceId={resourceId}
+              flowId={flowId}
+              formContext={formContext}
+              resourceType={resourceType}
+              value={value}
+              showLookup={showLookup}
+              showExtract={showExtract}
+              textInsertPosition={textInsertPosition}
+              onValueUpdate={handleUpdateAfterSuggestionInsert}
+              showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
+              skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
+              showLookupModal={handleLookupModalShown}
           />
+          </span>
         )}
         <FieldMessage
           isValid={isValid}

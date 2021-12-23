@@ -399,7 +399,7 @@ export default function JobErrorTable({
     if (!isEditable && !isDownloadable) return null;
 
     return isDownloadable ? (
-      <Tooltip data-public title="Download retry data">
+      <Tooltip title="Download retry data">
         <IconButton
           component={Link}
           size="small"
@@ -409,7 +409,7 @@ export default function JobErrorTable({
         </IconButton>
       </Tooltip>
     ) : (
-      <Tooltip data-public title="Edit retry data">
+      <Tooltip title="Edit retry data">
         <IconButton
           component={Link}
           size="small"
@@ -428,7 +428,7 @@ export default function JobErrorTable({
         Uploading...
       </Spinner>
       )}
-      <ul data-public className={classes.statusWrapper}>
+      <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
         </li>

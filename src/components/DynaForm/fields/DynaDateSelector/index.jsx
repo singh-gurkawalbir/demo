@@ -51,7 +51,7 @@ const defaultRange = {
 export default function DynaDateSelector(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { id, label, name, value, onFieldChange, required, isValid: isValidState, formKey} = props;
+  const { id, label, name, value, onFieldChange, required, isValid: isValidState, formKey, isLoggable} = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
   const isValueParsableByMoment = useCallback(value =>
@@ -100,6 +100,7 @@ export default function DynaDateSelector(props) {
         name={name}
         type="date"
         placeholder={dateFormat}
+        isLoggable={isLoggable}
         value={isValueParsableByMoment(value) ? moment(value).format(dateFormat) : value}
         className={classes.dynaTextWithCalendarIcon}
         onFieldChange={(id, value) => handleFieldChange(id, value)}

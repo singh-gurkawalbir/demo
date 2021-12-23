@@ -4,6 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import fields from '../DynaForm/fields';
+import { withIsLoggable } from '../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -74,11 +75,11 @@ const FieldComponent = props => {
   }
 
   return (
-    <Renderer {...props} />
+    withIsLoggable(Renderer)(props)
   );
 };
 
-export default function FormFragment({ defaultFields, formKey, dataPublic}) {
+export default function FormFragment({ defaultFields, formKey}) {
   const dispatch = useDispatch();
 
   const onFieldChange = useCallback(
@@ -101,25 +102,10 @@ export default function FormFragment({ defaultFields, formKey, dataPublic}) {
     [dispatch, formKey]
   );
 
-  // both useForm hook and the FormFragment were getting executed simultaneously
-  /*
-
-  useEffect(() => {
-    defaultFields.forEach(field => {
-      // if new field register
-      if (!formState || !formState.fields || !formState.fields[field.id]) {
-        registerField(field);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, registerField]);
-*/
-
   return (
     <>
       {defaultFields.map(field => (
         <FieldComponent
-          dataPublic={dataPublic}
           {...field}
           key={field.id}
           id={field.id}

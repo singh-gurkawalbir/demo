@@ -61,7 +61,6 @@ export default {
     {
       key: 'field',
       heading: 'Field',
-      // what is this? is it loggable
       isLoggable: true,
       Value: ({rowData: al}) => al.fieldChange && al.fieldChange.fieldPath,
       width: '13%',
@@ -69,8 +68,7 @@ export default {
     {
       key: 'oldValue',
       heading: 'Old value',
-      // what is this? is it loggable
-      isLoggable: true,
+      // not loggable because password or an email can show up
       Value: ({rowData: al}) => (
         <OldValue
           auditLog={al}
@@ -83,8 +81,7 @@ export default {
     {
       key: 'newValue',
       heading: 'New value',
-      // what is this? is it loggable
-      isLoggable: true,
+      // not loggable because password or an email can show up
       Value: ({rowData: al}) => (
         <NewValue
           oldValue={al.fieldChange.oldValue}

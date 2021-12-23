@@ -128,10 +128,10 @@ function ProfileMenuButton() {
         {/* private to logrocket because user email and avatar can be disclosed */}
         <div className={classes.profileArea}>
           <div data-private>
-            <div>
-              <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
-            </div>
-            <div>
+            <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
+          </div>
+          <div>
+            <span data-private>
               <Typography variant="body1">{name}</Typography>
               <Typography className={classes.email} variant="body2">
                 {email}
@@ -144,8 +144,8 @@ function ProfileMenuButton() {
                 </>
                 )}
               </Typography>
+            </span>
 
-            </div>
             <div>
               <div className={classes.actions}>
                 <OutlinedButton

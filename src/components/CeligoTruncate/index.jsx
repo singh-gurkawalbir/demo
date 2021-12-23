@@ -2,6 +2,7 @@ import React, { useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Tooltip, Zoom } from '@material-ui/core';
 import Truncate from 'react-truncate';
+import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   tooltipText: {
@@ -9,7 +10,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CeligoTruncate({ ellipsis, placement, lines, delay, dataPublic, children }) {
+export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children }) {
   const classes = useStyles();
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -19,7 +20,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, data
         title={<span className={classes.tooltipText}>{children}</span>}
         // explicitly setting a prop to null will force React to
         // remove it from the DOM.
-        data-public={dataPublic ? true : null}
+        {...isLoggableAttr(isLoggable)}
         TransitionComponent={Zoom}
         placement={placement}
         enterDelay={delay}>
@@ -31,7 +32,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, data
   }
 
   return (
-    <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated}>
+    <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} {...isLoggableAttr(isLoggable)}>
       {children}
     </Truncate>
   );
@@ -43,7 +44,7 @@ CeligoTruncate.propTypes = {
   placement: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
   lines: PropTypes.number,
   delay: PropTypes.number,
-  dataPublic: PropTypes.bool,
+  isLoggable: PropTypes.bool,
 };
 
 CeligoTruncate.defaultProps = {
@@ -51,5 +52,5 @@ CeligoTruncate.defaultProps = {
   placement: 'right',
   lines: 1,
   delay: 500,
-  dataPublic: false,
+  isLoggable: false,
 };
