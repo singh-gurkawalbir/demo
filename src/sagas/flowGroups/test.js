@@ -99,10 +99,10 @@ describe('updateFlowsWithFlowGroupId saga', () => {
     expectSaga(updateFlowsWithFlowGroupId, { flowIds, flowGroupId })
       .provide([
         [call(apiCallWithRetry, args)],
-        [call(getResourceCollection, { resourceType: 'flows' })],
+        [call(getResourceCollection, { resourceType: 'flows', refresh: true })],
       ])
       .call(apiCallWithRetry, args)
-      .call(getResourceCollection, { resourceType: 'flows' })
+      .call(getResourceCollection, { resourceType: 'flows', refresh: true })
       .run()
   );
   test('if api call fails should return the error', () =>
