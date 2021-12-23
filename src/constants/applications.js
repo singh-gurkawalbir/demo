@@ -239,7 +239,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true, icon: 'segment' },
+  { id: 'segment', name: 'segment', type: 'http', webhook: true, assistant: 'segment', icon: 'segment' },
   {
     id: 'shipwire',
     name: 'Shipwire',
