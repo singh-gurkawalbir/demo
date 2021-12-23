@@ -4,6 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import Status from '../../../../components/Buttons/Status';
 import StatusCircle from '../../../../components/StatusCircle';
+import CeligoTruncate from '../../../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   errorStatus: {
@@ -20,6 +21,11 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',
+    },
+  },
+  flowSectionGroupTitle: {
+    '& span': {
+      width: theme.spacing(12),
     },
   },
 }));
@@ -52,7 +58,9 @@ export default function FlowSectionTitle({ title, errorCount = 0, groupHasNoFlow
 
   return (
     <span className={classes.gridContainer}>
-      <span> { title }</span>
+      <CeligoTruncate placement="right" lines={3} className={classes.flowSectionGroupTitle}>
+        {title}
+      </CeligoTruncate>
       <span> { groupHasNoFlows ? <NoFlowsSection /> : errorStatus} </span>
     </span>
   );
