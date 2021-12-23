@@ -4,11 +4,13 @@ import clsx from 'clsx';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import LogRocket from 'logrocket';
 import DynaFormGenerator from './DynaFormGenerator';
 import { selectors } from '../../reducers';
 import useAutoScrollErrors from './useAutoScrollErrors';
 import CodePanel from '../AFE/Editor/panels/Code';
 import FieldMessage from './fields/FieldMessage';
+import { FieldDefinitionException } from '../../utils/form';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -38,20 +40,16 @@ const key = 'key';
 class DynaFormErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { error: null};
+    this.state = { error: null };
   }
 
   componentDidCatch(error) {
-    this.setState({
-      error,
-    });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.remountKey !== this.props.remountKey) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({error: null});
+    if (error instanceof FieldDefinitionException) {
+      this.setState({error});
+    } else {
+      this.setState({error: {message: 'Some unknown error'}});
     }
+    LogRocket.captureException(error);
   }
 
   render() {
@@ -61,12 +59,15 @@ class DynaFormErrorBoundary extends React.Component {
           <div>
             <FieldMessage isValid={false} errorMessages={this.state.error?.message} />
           </div>
-          <CodePanel
-            value={this.props.fieldMap?.[this.state.error?.fieldId]}
-            mode="json"
-            readOnly
-            overrides={{ showGutter: false}}
-          />
+          {this.state.error?.fieldId &&
+          (
+            <CodePanel
+              value={this.props.fieldMap?.[this.state.error?.fieldId]}
+              mode="json"
+              readOnly
+              overrides={{ showGutter: false}}
+            />
+          )}
         </>
       );
     }
@@ -105,7 +106,7 @@ export default function DynaForm(props) {
 
   return (
     <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
-      <DynaFormErrorBoundary fieldMap={fieldMap} remountKey={remountKey}>
+      <DynaFormErrorBoundary fieldMap={fieldMap} key={remountKey}>
         <DynaFormGenerator
           {...rest}
           layout={layout}

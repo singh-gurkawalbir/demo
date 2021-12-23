@@ -51,7 +51,7 @@ const Renderer = props => {
   try {
     ele = DynaField(allFieldProps);
   } catch {
-    throw new FieldDefinitionException(`Invalid field definition for field ${fid}`, fid);
+    throw new FieldDefinitionException(`Invalid field definition for field: ${fid}`, fid);
   }
 
   return (

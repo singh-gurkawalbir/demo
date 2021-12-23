@@ -442,8 +442,6 @@ export function getFirstErroredFieldId(formState) {
 }
 
 export function FieldDefinitionException(message, fieldId) {
-  return {
-    message,
-    fieldId,
-  };
+  this.message = message;
+  this.fieldId = fieldId;
 }
