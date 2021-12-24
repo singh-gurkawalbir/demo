@@ -64,11 +64,11 @@ export default {
 'Please enter the API Namespace of your account.',
   'openair.connection.http.unencrypted.apiKey':
 'Please enter the API Key of your account. <br> Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.http.oneloginRegion': 'Please enter Region for URI.',
+  'connection.http.oneloginRegion': 'OneLogin is hosted in two independent operating regions: the United States (US) and the European Union (EU). Enter your location as the region.',
   'onelogin.connection.http.unencrypted.apiKey':
-'Please enter API key of your OneLogin Account.',
+'Enter the Client ID for your OneLogin account. If you do not know your Client ID, use the following steps to retrieve it from OneLogin:<br> 1. Access OneLogin as an account owner or administrator.<br> 2. Click <b>Developers</b> > <b>API Credentials</b>.<br> 3. Click <b>New Credential</b> on the <b>API Access</b> page.<br> 4. Copy the Client ID and paste the value into this field.',
   'onelogin.connection.http.encrypted.apiSecret':
-'Please enter API secret of your OneLogin Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Enter the Client secret for your OneLogin Account. If you do not know your Client secret, use the following steps to retrieve it from OneLogin:<br> 1. Access OneLogin as an account owner or administrator.<br> 2. Click <b>Developers</b> > <b>API Credentials</b>.<br> 3. Click <b>New Credential</b> on the <b>API Access</b> page.<br> 4.Copy the Client secret and paste the value into this field.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. You must re-enter this value each time you edit the connection, because integrator.io stores the Client secret only when the connection is saved. integrator.io never displays the Client secret as unencrypted text.',
   'onelogin.connection.http.auth.token.token':
 'The access token of your OneLogin account.',
   'paycor.connection.http.unencrypted.publicKey':
