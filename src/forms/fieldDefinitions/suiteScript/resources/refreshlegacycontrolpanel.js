@@ -1,18 +1,18 @@
 export default {
   clearCache: {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Refresh integration caches',
     defaultValue: false,
   },
   refreshMappings: {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Refresh integration mappings',
     defaultValue: false,
   },
   object: {
-    loggable: true,
+    isLoggable: true,
     label: 'Refresh object',
     required: true,
     type: 'refreshableselect',

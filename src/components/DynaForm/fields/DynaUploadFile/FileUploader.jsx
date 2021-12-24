@@ -105,7 +105,7 @@ export default function FileUploader(props) {
             className={classes.fileInput}
             onChange={handleFileChosen}
         />
-          {!hideFileName && (fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>)}
+          {!hideFileName && (fileName ? <p className={classes.fileValue} {...isLoggableAttr(isLoggable)}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>)}
 
         </div>
       </div>

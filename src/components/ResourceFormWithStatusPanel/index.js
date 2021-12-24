@@ -40,7 +40,6 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
   // only webhooks and connection should  be redacted
   // TODO:enable it when we have isLoggable attribute defined for individaul field Meta
   // const isLoggable = !(isWebhookExport || resourceType === 'connections');
-  const isLoggable = false;
 
   const classes = useStyles({
     ...props,
@@ -79,8 +78,8 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
         }
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
-
-      <IsLoggableContextProvider isLoggable={isLoggable}>
+      {/* if field is not loggable this context ensures that isLoggable is false */}
+      <IsLoggableContextProvider isLoggable={false}>
         <ResourceForm className={classes.form} {...props} />
       </IsLoggableContextProvider>
     </div>

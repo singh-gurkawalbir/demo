@@ -164,7 +164,7 @@ const Row = ({ index, style, data }) => {
 
         setOpen(false);
       }}>
-      <CeligoTruncate placement="left" lines={2}>
+      <CeligoTruncate isLoggable={isLoggable} placement="left" lines={2}>
         {label}
       </CeligoTruncate>
     </MenuItem>
