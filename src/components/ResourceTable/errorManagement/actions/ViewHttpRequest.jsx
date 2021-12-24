@@ -4,7 +4,7 @@ import HttpIcon from '../../../icons/HttpIcon';
 
 export default {
   key: 'HTTP request errors',
-  useLabel: () => 'View request',
+  useLabel: () => 'View HTTP request',
   icon: HttpIcon,
   useOnClick: rowData => {
     const { errorId } = rowData;

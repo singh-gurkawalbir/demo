@@ -33,9 +33,10 @@ const useStyles = makeStyles(theme => ({
 
 const defaultObj = {};
 
-export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndResKey, isRequest, isResourceNetsuite }) {
+export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndResKey, isRequest }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
   const httpDocStatus = useSelector(state =>
     selectors.errorHttpDocStatus(state, reqAndResKey)
   );

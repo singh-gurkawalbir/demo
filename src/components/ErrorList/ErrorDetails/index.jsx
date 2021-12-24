@@ -160,7 +160,6 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
               flowId={flowId}
               resourceId={resourceId}
               isRequest
-              isResourceNetsuite={isResourceNetsuite}
             />
           </TabPanel>
           <TabPanel value={mode} type="response">
@@ -168,7 +167,6 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}
-              isResourceNetsuite={isResourceNetsuite}
             />
           </TabPanel>
         </div>
