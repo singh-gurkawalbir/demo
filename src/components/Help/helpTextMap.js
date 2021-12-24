@@ -610,7 +610,7 @@ export default {
 <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.`,
   'clover.connection.http.unencrypted.environment': 'Please select the environment of your Clover account.',
   'clover.connection.http.unencrypted.region': 'Please select your region.',
-  'clover.connection.http.unencrypted.merchantId': 'Please enter the Merchant ID of your Clover account.<br> <b>Follow the below steps to get Merchant ID:</b><br> 1.  Log in to your clover account.<br>2. On the dashboard, navigate to SetUp, select Merchants.<br>3. You can find your Merchant ID(MID) in that section if you have a merchant created.',
+  'clover.connection.http.unencrypted.merchantId': 'Enter the Merchant ID for your Clover account. Use the following steps to find your Merchant ID:<br> 1. Sign in to your Clover account (or return to the <b>Businesses</b> dashboard if already signed in).<br> 2. From the <b>Setup</b> menu, select <b>Merchants</b>.<br> 3. Copy the ID shown under the merchant.',
   'inspectorio.connection.http.encrypted.apiKey':
 'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'inspectorio.connection.enviornment':
@@ -2242,7 +2242,7 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   'myaccount.developer': 'Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an \'Export\' or an \'Import\' there are \'Hooks\' fields available in the UI where custom code can be configured.',
   'myaccount.showRelativeDateTime': 'Check this box to view the amount of time elapsed since an event occurred, such as <b>1 hour ago</b> or <b>1 day ago</b>. Otherwise, the display format is absolute, such as <b>2021-10-25 7:47:33 PM</b>.',
   'hooks.insertFunction':
-'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
+'Select a function stub to add a model entry point for a built-in <a href="https://docs.celigo.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io">hook</a>. Each stub includes example parameters, a return value, and self-documenting comments.',
   'hooks.scriptContent':
 'Edit your script in the pane below, or expand the view by using the control. Your script should be valid JavaScript and may contain multiple functions that can be used across a range of flows within your account.',
   'file.csvGenerate':
@@ -2295,7 +2295,7 @@ use the custom option.`,
   'fb.pp.inputFilter':
 'Define an \'input filter\' here to specify which source records should get processed. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   'afe.lookups': 'Lookups can be used to dynamically retrieve information from the destination application for the purpose of setting fields that cannot be set directly from the fields provided by the source application. For example, if the destination application requires \'customer_id\' values, but the source application only gives you email addresses, then you can define a lookup to search for \'customer_id\' values using the email addresses, and then inject the \'customer_id\' values into your final API requests.',
-  'listener.debugLogs': 'Enable debug logs to store all requests for the selected period of time. Debug log entries are kept for 30 days by default, and can be deleted manually as needed.',
+  'resource.debugLogs': 'Click <b>Start debug</b> to debug your resource. Select a duration, then run your flow to capture the logs. Click <b>Refresh logs</b> to see the latest logs. <br /> To view logs, click on a timestamp in the <b>Time</b> column. On the right, you can see the request made by integrator.io to the flow step application at that time, and the response returned by the application.',
   autoMapFields: 'Auto-map populates known field mappings for destination fields that have not yet been configured. Auto-map doesn’t overwrite mapping values that you have already set up manually. For example, if you have already mapped firstName in the destination field, then auto-map will preserve your configuration for firstName and only add field mappings for the remaining destination fields.',
   enableSSO: 'Use this toggle to enable single sign-on (SSO) for the account.',
   'sso.issuerURL': 'Enter the domain-specific URL issued by your SSO provider',

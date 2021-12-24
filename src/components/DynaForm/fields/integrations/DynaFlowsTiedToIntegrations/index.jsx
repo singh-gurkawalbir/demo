@@ -88,6 +88,7 @@ const TypeableSelect = props => {
       SelectedOptionImpl={OptionCheckbox}
       SelectedValueImpl={SelectedValueChips}
       {...(isFlowGroupForm ? { dropdownIndicator: DropdownIndicator, menuListImpl: MenuListImpl} : {})}
+      defaultMenuIsOpen={isFlowGroupForm}
     />
   );
 };

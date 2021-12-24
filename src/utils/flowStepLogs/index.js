@@ -1,8 +1,9 @@
-export const FILTER_KEY = 'listenerLogs';
+import {isRealtimeExport} from '../flows';
 
+export const FILTER_KEY = 'flowStepLogs';
 export const DEFAULT_ROWS_PER_PAGE = 50;
 
-export const LISTENER_LOGS_RANGE_FILTERS = [
+export const FLOWSTEP_LOGS_RANGE_FILTERS = [
   {id: 'last15minutes', label: 'Last 15 minutes'},
   {id: 'last24hours', label: 'Last 24 hours'},
   {id: 'last30minutes', label: 'Last 30 minutes'},
@@ -12,8 +13,14 @@ export const LISTENER_LOGS_RANGE_FILTERS = [
   {id: 'last4hours', label: 'Last 4 hours'},
   {id: 'custom', label: 'Custom'},
 ];
+export const FLOWSTEP_LOGS_STAGE_OPTIONS = [
+  {_id: 'all', name: 'All stages'},
+  {_id: 'import', name: 'Import'},
+  {_id: 'lookup', name: 'Lookup'},
+  {_id: 'mappingLookup', name: 'Mapping lookup'},
+];
 
-export const LISTENER_LOGS_STATUS_CODES = [
+export const FLOWSTEP_LOGS_STATUS_CODES = [
   { _id: 'all', name: 'All codes'},
   { _id: '200', name: '200 OK'},
   { _id: '201', name: '201 Created'},
@@ -52,4 +59,21 @@ export const getStaticCodesList = codes => {
         return c;
     }
   });
+};
+export const getFlowStepLabel = (resourceType, resource) => {
+  let label;
+
+  if (resourceType === 'imports') {
+    label = 'import';
+  } else if (resourceType === 'exports') {
+    if (isRealtimeExport(resource)) {
+      label = 'listener';
+    } else if (resource?.isLookup) {
+      label = 'lookup';
+    } else {
+      label = 'export';
+    }
+  }
+
+  return label;
 };
