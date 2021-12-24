@@ -54,6 +54,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const dispatch = useDispatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
@@ -110,7 +111,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 {upgradeText && (
                 <FilledButton
                   className={classes.button}
-                  disabled={upgradeRequested || upgradeSettingsRequested}
+                  disabled={upgradeRequested || upgradeSettingsRequested || isLicenseExpired}
                   onClick={handleUpgrade}>
                   {upgradeText}
                 </FilledButton>

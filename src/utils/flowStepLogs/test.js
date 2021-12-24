@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import { getStaticCodesList } from './index';
 
-describe('listenerLogs utils test cases', () => {
+describe('flowStepLogs utils test cases', () => {
   describe('getStaticCodesList util', () => {
     test('should return undefined if invalid or empty args are supplied', () => {
       expect(getStaticCodesList()).toBeUndefined();

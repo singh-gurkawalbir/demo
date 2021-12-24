@@ -1,9 +1,9 @@
 import {connectionsLogSagas} from './connections';
 import {scriptsLogSagas} from './scripts';
-import listenerLogSagas from './listener';
+import flowStepLogSagas from './flowStep';
 
 export const logsSagas = [
   ...connectionsLogSagas,
   ...scriptsLogSagas,
-  ...listenerLogSagas,
+  ...flowStepLogSagas,
 ];

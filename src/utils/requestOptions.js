@@ -1,7 +1,7 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
 import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
-import { getStaticCodesList } from './listenerLogs';
+import { getStaticCodesList } from './flowStepLogs';
 import { getSelectedRange } from './flowMetrics';
 import { isNewId } from './resource';
 
@@ -20,7 +20,6 @@ export default function getRequestOptions(
     connectorId,
     licenseId,
     flowId,
-    exportId,
     isResolved,
     nextPageURL,
     loadMore,
@@ -316,7 +315,7 @@ export default function getRequestOptions(
 
     case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST: {
       let path = `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}/signedURL`;
-      const { fromDate, toDate } = filters || {};
+      const { fromDate, toDate, flowJobId } = filters || {};
       const fromKey = isResolved ? 'resolvedAt_gte' : 'occurredAt_gte';
       const toKey = isResolved ? 'resolvedAt_lte' : 'occurredAt_lte';
 
@@ -326,6 +325,9 @@ export default function getRequestOptions(
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
+      }
+      if (flowJobId) {
+        path += `&_flowJobId=${flowJobId}`;
       }
 
       return {
@@ -363,8 +365,7 @@ export default function getRequestOptions(
         ? nextPageURL.replace('/api', '')
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
-
-      const { sources = [], classifications = [], occuredAt, resolvedAt } = filters;
+      const { sources = [], classifications = [], occuredAt, resolvedAt, flowJobId } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
@@ -376,9 +377,14 @@ export default function getRequestOptions(
         queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
         queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
       }
-      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+      if (resolvedAt?.startDate) {
         queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+      }
+      if (resolvedAt?.endDate) {
         queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
+      if (flowJobId) {
+        queryParams.push(`_flowJobId=${flowJobId}`);
       }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
@@ -419,20 +425,23 @@ export default function getRequestOptions(
       };
     }
 
-    case actionTypes.LOGS.LISTENER.REQUEST: {
+    case actionTypes.LOGS.FLOWSTEP.REQUEST: {
       let path;
 
       if (loadMore && nextPageURL) {
         path = nextPageURL.replace('/api', '');
       } else {
-        path = `/flows/${flowId}/${exportId}/requests`;
+        path = `/flows/${flowId}/${resourceId}/requests`;
         const queryParams = [];
-        const { codes = [], time } = filters;
+        const { codes = [], time, stage = [] } = filters;
 
         const codesList = getStaticCodesList(codes);
 
         if (!codesList.includes('all')) {
           codesList.forEach(c => queryParams.push(`statusCode=${c}`));
+        }
+        if (!stage.includes('all')) {
+          stage.forEach(c => queryParams.push(`stage=${c}`));
         }
         if (time?.startDate) {
           queryParams.push(`time_gt=${time.startDate.getTime()}`);

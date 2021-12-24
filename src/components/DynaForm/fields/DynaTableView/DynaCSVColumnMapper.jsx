@@ -16,7 +16,7 @@ export default function DynaCSVColumnMapper(props) {
       const v = cloneDeep(val);
 
       // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
-      v.column = v.column && !Math.isNaN(v.column) ? parseInt(v.column, 10) : v.column;
+      v.column = v.column && !Number.isNaN(v.column) ? parseInt(v.column, 10) : v.column;
 
       return v;
     });

@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CeligoTruncate({ ellipsis, placement, lines, delay, dataPublic, children }) {
+export default function CeligoTruncate({ ellipsis, placement, lines, delay, dataPublic, children, className }) {
   const classes = useStyles();
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -23,7 +23,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, data
         TransitionComponent={Zoom}
         placement={placement}
         enterDelay={delay}>
-        <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated}>
+        <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
           {children}
         </Truncate>
       </Tooltip>
@@ -31,7 +31,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, data
   }
 
   return (
-    <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated}>
+    <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
       {children}
     </Truncate>
   );

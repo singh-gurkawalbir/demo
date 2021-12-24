@@ -13,6 +13,7 @@ export default function AddonInstallerButton({ resource, ...rest }) {
   const installInprogress = useSelector(
     state => selectors.isAddOnInstallInProgress(state, resource.id)
   );
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, resource?.integrationId));
 
   useEffect(() => {
     if (!installInprogress) {
@@ -124,6 +125,7 @@ export default function AddonInstallerButton({ resource, ...rest }) {
       data-test="addOnInstall"
       size="small"
       error={resource.status === 'installed'}
+      disabled={resource.status === 'available' && isLicenseExpired}
       {...rest}
       onClick={() => onClick(resource)}>
       {getLabel()}

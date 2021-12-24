@@ -200,6 +200,14 @@ export default function reducer(state = {}, action) {
         break;
       }
 
+      case actionTypes.EDITOR.PREVIEW.REQUEST:
+        if (!draft[id]) break;
+        draft[id].previewStatus = 'requested';
+        delete draft[id].error;
+        delete draft[id].errorLine;
+        delete draft[id].violations;
+        break;
+
       case actionTypes.EDITOR.PREVIEW.RESPONSE: {
         if (!draft[id]) break;
         draft[id].result = result;
