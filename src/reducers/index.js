@@ -608,7 +608,9 @@ selectors.mkTileApplications = () => {
         integration?._registeredConnectionIds?.forEach(r => {
           const connection = connections.find(c => c._id === r);
 
-          applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
+          if (connection) {
+            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+          }
         });
 
         return uniq(applications);
@@ -1141,12 +1143,15 @@ selectors.getAllAccountDashboardIntegrations = state => {
 
   allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
   allIntegrations = [...defaultFilter, ...allIntegrations];
-  allIntegrations.forEach(i => {
+
+  allIntegrations = allIntegrations.map(i => {
     const { supportsMultiStore, sections: children = [] } = i.settings || {};
 
     if (supportsMultiStore) {
-      i.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
+      return {...i, children: children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}))};
     }
+
+    return i;
   });
 
   return allIntegrations;
@@ -2850,6 +2855,19 @@ selectors.integrationAppLicense = (state, id) => {
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
 };
+
+selectors.isIntegrationAppLicenseExpired = (state, id) => {
+  if (!state) return true;
+  const userLicenses = fromUser.licenses(state && state.user) || [];
+  const license = userLicenses.find(l => l._integrationId === id);
+
+  if (!license) {
+    return true;
+  }
+
+  return moment(license.expires) - moment() < 0;
+};
+
 selectors.makeIntegrationSectionFlows = () => createSelector(
   (state, integrationId) => selectors.integrationAppSettings(state, integrationId) || emptyObject,
   (_1, _2, childId) => childId,

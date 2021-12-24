@@ -14,14 +14,13 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { emptyList, emptyObject, UNASSIGNED_SECTION_ID } from '../../../utils/constants';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../utils/constants';
 import { getFlowGroup } from '../../../utils/flows';
 import getRoutePath from '../../../utils/routePaths';
 
-const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 const paths = ['flowgroups/add', 'flowgroups/edit'];
 
-const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
+const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId) => ({
   fieldMap: {
     name: {
       id: 'name',
@@ -32,6 +31,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit) => ({
       flowIds: flowsWithGroupId.map(flow => flow._id),
       isEdit,
       required: true,
+      flowGroupId,
     },
     _flowIds: {
       id: '_flowIds',
@@ -59,7 +59,9 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, integrationId, []) || emptyList;
 
   const formFlowGroupName = useSelector(state => selectors.formState(state, FLOW_GROUP_FORM_KEY)?.fields?.name.value);
-  const [isFormSaved, setFormSaved] = useState(false);
+  const newGroupId = getFlowGroup(flowGroupings, formFlowGroupName, '')?._id;
+  const asyncTaskStatus = useSelector(state => selectors.asyncTaskStatus(state, FLOW_GROUP_FORM_KEY));
+  const [isFormSaveTriggered, setIsFormSaveTriggered] = useState(false);
 
   const { groupName, flowGroupId, flowsWithGroupId = [] } = useMemo(() => {
     if (!isEdit) return {};
@@ -71,7 +73,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     };
   }, [isEdit, flowGroupings, groupId, flowsTiedToIntegrations]);
 
-  const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit);
+  const fieldMeta = getFieldMeta(integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId);
   const { status: flowGroupSaveStatus, message } = useSelector(state => selectors.flowGroupStatus(state, integrationId), shallowEqual) || emptyObject;
 
   useFormInitWithPermissions({formKey: FLOW_GROUP_FORM_KEY, fieldMeta, remount: remountCount});
@@ -82,24 +84,26 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     }
   }, [enqueuesnackbar, flowGroupSaveStatus, message]);
 
-  // if the create flow group form is saved
-  // we will open the edit flow group form of the newly created flow group
   useEffect(() => {
-    const groupId = getFlowGroup(flowGroupings, formFlowGroupName, '')?._id;
+    if (!isFormSaveTriggered || !(asyncTaskStatus === FORM_SAVE_STATUS.COMPLETE)) {
+      return;
+    }
 
-    if (isFormSaved && !isEdit && groupId !== UNASSIGNED_SECTION_ID) {
+    // if the create flow group form is saved
+    // we will open the edit flow group form of the newly created flow group
+    if (!isEdit) {
       history.replace(
-        getRoutePath(`/integrations/${integrationId}/flows/sections/${groupId}/flowgroups/edit`)
+        getRoutePath(`/integrations/${integrationId}/flows/sections/${newGroupId}/flowgroups/edit`)
       );
     }
-  }, [history, formFlowGroupName, flowGroupings, isFormSaved, integrationId, isEdit]);
+  }, [history, isFormSaveTriggered, asyncTaskStatus, integrationId, newGroupId, isEdit]);
 
   const handleSave = useCallback(closeAfterSave => {
     dispatch(actions.resource.integrations.flowGroups.createOrUpdate(integrationId, flowGroupId, FLOW_GROUP_FORM_KEY));
     if (closeAfterSave) {
-      handleClose();
+      return handleClose();
     }
-    setFormSaved(true);
+    setIsFormSaveTriggered(true);
   }, [dispatch, integrationId, flowGroupId, handleClose]);
 
   const remountForm = useCallback(() => {
