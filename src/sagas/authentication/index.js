@@ -189,9 +189,9 @@ export function* retrieveAppInitializationResources() {
   yield put(actions.auth.defaultAccountSet());
 }
 const getLogrocketId = () =>
-  // LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
-  // eslint-disable-next-line no-undef
-  'ril8s5/celigo-staging-djggo';
+// LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
+// eslint-disable-next-line no-undef
+  (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
 
 export function* identifyLogRocketSession() {
   const p = yield select(selectors.userProfile);

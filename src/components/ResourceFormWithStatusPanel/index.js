@@ -1,13 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ReactResizeDetector from 'react-resize-detector';
-import { useSelector } from 'react-redux';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import KeyColumnsDeprecationNotification from '../KeyColumnsDeprecationNotification';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
-import { selectors } from '../../reducers';
 import IsLoggableContextProvider from '../IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
