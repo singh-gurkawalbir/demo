@@ -329,7 +329,7 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
 };
 
 selectors.isResourceNetsuite = (state, resourceId) => {
-  if (!resourceId) return;
+  if (!state || !resourceId) return false;
   let adaptorType = selectors.resource(state, 'exports', resourceId)?.adaptorType;
 
   if (!adaptorType) adaptorType = selectors.resource(state, 'imports', resourceId)?.adaptorType;

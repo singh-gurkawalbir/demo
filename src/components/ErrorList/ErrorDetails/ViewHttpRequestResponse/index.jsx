@@ -8,7 +8,7 @@ import CeligoPillTabs from '../../../CeligoTabLayout/CeligoPillTabs';
 import CeligoTabPanel from '../../../CeligoTabLayout/CeligoTabPanel';
 import DefaultPanel from '../../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import Spinner from '../../../Spinner';
-import { getHttpReqResFields } from '../../../../utils/http';
+import { getErrorReqResFields } from '../../../../utils/http';
 import CodePanel from '../../../AFE/Editor/panels/Code';
 
 const TABS = [
@@ -44,7 +44,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   );
 
   const formattedErrorHttpDoc = useMemo(() =>
-    getHttpReqResFields(errorHttpDoc, null, isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
+    getErrorReqResFields(errorHttpDoc, null, isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)
