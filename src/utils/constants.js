@@ -651,7 +651,7 @@ export const CONNECTORS_TO_IGNORE = [
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
-  'box', 'segment'];
+  'box'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
 export const AUTO_PILOT_DATA_POINT = 'auto';
