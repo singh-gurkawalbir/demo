@@ -18,7 +18,7 @@ import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 const emptyObject = {};
 const metadata = {
   useColumns: () => {
-    const { supportsChild, childId, children } = useGetTableContext();
+    const { supportsChild, childId, dateFormat, children } = useGetTableContext();
 
     let columns = [
       {
@@ -39,7 +39,7 @@ const metadata = {
       {
         key: 'installedOn',
         heading: 'Installed on',
-        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format(dateFormat || 'MMM D, YYYY') : '',
       },
       {
         key: 'action',
@@ -164,6 +164,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
 
   const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
   const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
+  const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
 
   const hasAddOns =
     addOnState &&
@@ -267,7 +268,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
 
-            <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children }} />
+            <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children, dateFormat }} />
           </>
         )}
       </div>
