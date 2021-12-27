@@ -135,6 +135,7 @@ export default {
     'sapbusinessone',
     'bartender',
     'jazzhr',
+    'segment',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
