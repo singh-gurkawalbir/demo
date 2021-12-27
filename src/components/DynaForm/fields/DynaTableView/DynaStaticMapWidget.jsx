@@ -113,16 +113,14 @@ export default function DynaStaticMapWidget(props) {
   }, [data, generates]);
 
   const metadata = useMemo(() => {
-    let formattedData = data;
+    if (!data) { return data; }
 
-    if (data) {
-      formattedData = {...data};
-      formattedData.optionsMap = [...optionsMap];
-      formattedData.optionsMap[0].options = formattedData.extracts;
-      formattedData.optionsMap[1].options = formattedData.generates;
-    }
+    const updatedData = {...data, optionsMap: [...optionsMap] };
 
-    return formattedData;
+    updatedData.optionsMap[0] = {...updatedData.optionsMap[0], options: data.extracts};
+    updatedData.optionsMap[1] = {...updatedData.optionsMap[1], options: data.generates};
+
+    return updatedData;
   }, [data, optionsMap]);
 
   const handleRefreshClick = useCallback(
