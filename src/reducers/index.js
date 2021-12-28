@@ -6362,10 +6362,15 @@ selectors.tileLicenseDetails = (state, tile) => {
 
 // #region flow step debug logs selectors
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
-  if (!['exports', 'imports'].includes(resourceType) || !flowId) return false;
+  if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
 
-  return !isNew && (isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType));
+  // It should return false for all http file providers
+  if (resource?.http?.type === 'file') {
+    return false;
+  }
+
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
