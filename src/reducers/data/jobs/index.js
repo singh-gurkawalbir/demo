@@ -69,7 +69,13 @@ export default (state = DEFAULT_STATE, action) => {
         if (isNaN(rowsPerPage) || parseInt(rowsPerPage, 10) <= 0) {
           ({ rowsPerPage } = DEFAULT_STATE.paging);
         }
-        draft.paging = { ...draft.paging, rowsPerPage: parseInt(rowsPerPage, 10) };
+
+        if (!draft.paging) {
+          draft.paging = {rowsPerPage: parseInt(rowsPerPage, 10)};
+        } else {
+          draft.paging.rowsPerPage = parseInt(rowsPerPage, 10);
+        }
+
         break;
       }
 
@@ -82,7 +88,12 @@ export default (state = DEFAULT_STATE, action) => {
           ({ currentPage } = DEFAULT_STATE.paging);
         }
 
-        draft.paging = { ...draft.paging, currentPage: parseInt(currentPage, 10) };
+        if (!draft.paging) {
+          draft.paging = {currentPage: parseInt(currentPage, 10)};
+        } else {
+          draft.paging.currentPage = parseInt(currentPage, 10);
+        }
+
         break;
       }
       case actionTypes.JOB.CLEAR:
