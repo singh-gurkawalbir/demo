@@ -3886,9 +3886,11 @@ describe('getPathParams util function cases', () => {
         prefix: "(guid'",
         suffix: "')",
       },
+      required: true,
     },
     {
       id: 'action',
+      required: true,
     },
     {
       id: 'action2',
