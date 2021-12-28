@@ -30,7 +30,7 @@ export const getContentType = httpPayload => {
   return 'json';
 };
 
-export const getHttpReqResFields = (httpPayload, variant = 'basic') => {
+export const getErrorReqResFields = (httpPayload, variant = 'basic', isResourceNetsuite) => {
   if (!httpPayload) {
     return {};
   }
@@ -38,5 +38,7 @@ export const getHttpReqResFields = (httpPayload, variant = 'basic') => {
 
   const others = variant === 'previewPanel' ? otherPayloadDetails : { url, ...otherPayloadDetails};
 
-  return { headers, body, others: isEmpty(others) ? undefined : others};
+  if (!isResourceNetsuite) return { headers, body, others: isEmpty(others) ? undefined : others};
+
+  return typeof httpPayload === 'object' ? httpPayload.body : httpPayload;
 };

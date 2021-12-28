@@ -1176,6 +1176,40 @@ describe('resources selectors', () => {
       expect(selectors.hasData(state, 'exports')).toEqual(true);
     });
   });
+
+  describe('isResourceNetsuite', () => {
+    const iniState = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', [{_id: '1', adaptorType: 'NetSuiteExport'}])
+    );
+    const imports = [
+      {_id: '2', adaptorType: 'NetSuiteImport'},
+      {_id: '3', adaptorType: 'NetSuiteDistributedImport'},
+      {_id: '4', adaptorType: 'HTTPImport'},
+    ];
+    const state = reducer(
+      iniState,
+      actions.resource.receivedCollection('imports', imports)
+    );
+
+    test('should return false for invalid props', () => {
+      expect(selectors.isResourceNetsuite(state)).toBeFalsy();
+      expect(selectors.isResourceNetsuite()).toBeFalsy();
+    });
+    test('should return true if adaptor type is NetSuiteExport', () => {
+      expect(selectors.isResourceNetsuite(state, '1')).toBeTruthy();
+    });
+    test('should return true if adaptor type is NetSuiteImport', () => {
+      expect(selectors.isResourceNetsuite(state, '2')).toBeTruthy();
+    });
+    test('should return true if adaptor type is NetSuiteDistributedImport', () => {
+      expect(selectors.isResourceNetsuite(state, '3')).toBeTruthy();
+    });
+    test('should return false if resource is not netsuite', () => {
+      expect(selectors.isResourceNetsuite(state, '4')).toBeFalsy();
+    });
+  });
+
   describe('integrationInstallSteps', () => {
     test('should return empty array when no data in store for any resource', () => {
       expect(selectors.integrationInstallSteps(undefined, 'dummy')).toEqual([]);
