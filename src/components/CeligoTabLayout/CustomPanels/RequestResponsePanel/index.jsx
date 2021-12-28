@@ -3,7 +3,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import DefaultPanel from '../DefaultPanel';
-import { getHttpReqResFields, getContentType } from '../../../../utils/http';
+import { getErrorReqResFields, getContentType } from '../../../../utils/http';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
@@ -28,7 +28,7 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
     setTabValue(newValue);
   }, []);
 
-  const bodyHeaderFields = useMemo(() => getHttpReqResFields(value, variant), [value, variant]);
+  const bodyHeaderFields = useMemo(() => getErrorReqResFields(value, variant), [value, variant]);
 
   const contentType = getContentType(value);
 
