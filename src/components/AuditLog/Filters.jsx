@@ -14,6 +14,7 @@ import DateRangeSelector from '../DateRangeSelector';
 import { AUDIT_LOGS_RANGE_FILTERS } from '../../utils/resource';
 import actions from '../../actions';
 import Help from '../Help';
+import { getSelectedRange } from '../../utils/flowMetrics';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -86,8 +87,10 @@ export default function Filters(props) {
   const handleDateFilter = useCallback(
     dateFilter => {
       setDate(dateFilter);
-      const fromDate = dateFilter.startDate && moment(dateFilter.startDate).startOf('day').toISOString();
-      const toDate = dateFilter.endDate && moment(dateFilter.endDate).endOf('day').toISOString();
+      const selectedRange = getSelectedRange(dateFilter);
+
+      const fromDate = selectedRange.startDate && moment(selectedRange.startDate).startOf('day').toISOString();
+      const toDate = selectedRange.endDate && moment(selectedRange.endDate).endOf('day').toISOString();
 
       dispatch(actions.auditLogs.download(
         {
