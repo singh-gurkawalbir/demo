@@ -117,8 +117,9 @@ export default function AddOnsPanel({ integrationId, childId }) {
         })
       );
       const message = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
-      In the meantime, <a target="_blank" rel="noopener noreferrer"
-        href="mailto:product_feedback@celigo.com"><u>checkout our Marketplace</u></a> for integration apps and quickstart templates.`;
+      
+      <a target="_blank" rel="noopener noreferrer"
+        href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
 
       enquesnackbar({message: <RawHtml html={message} />, variant: 'success'});
     },

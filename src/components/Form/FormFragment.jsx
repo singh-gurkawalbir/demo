@@ -4,6 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import fields from '../DynaForm/fields';
+import { FieldDefinitionException } from '../../utils/form';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -26,7 +27,6 @@ const dummyFn = () => null;
 const Renderer = props => {
   const { formKey, id, fieldId, type} = props;
   const classes = useStyles();
-
   const fid = id || fieldId;
 
   const fieldState = useSelector(
@@ -46,7 +46,13 @@ const Renderer = props => {
 
   // get the element early on and check if its returning null
   // we had to host this earlier or else fieldState visibility is impacting it by changing the order of hooks
-  const ele = DynaField(allFieldProps);
+  let ele;
+
+  try {
+    ele = DynaField(allFieldProps);
+  } catch {
+    throw new FieldDefinitionException(`Invalid field definition for field: ${fid}`, fid);
+  }
 
   return (
     // if its returning null wrap it within divs else return null

@@ -138,6 +138,10 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
   const { sort = emptyObject, searchBy, keyword } = config || {};
   const stringTest = r => {
     if (!keyword) return true;
+
+    if (r.searchKey) {
+      return r.searchKey.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+    }
     const searchableText =
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => r[key]).join('|')}`
