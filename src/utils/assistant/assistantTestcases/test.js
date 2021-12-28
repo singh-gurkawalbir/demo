@@ -26,6 +26,7 @@ import {
   isMetaRequiredValuesMet,
   isAppConstantContact,
 } from '..';
+import { getPathParams } from '../pathParamUtils';
 
 describe('getMatchingRoute', () => {
   const testCases = [
@@ -3875,5 +3876,87 @@ describe('isMetaRequiredValuesMet', () => {
     test('should return false if application is not constant contact', () => {
       expect(isAppConstantContact('square')).toBeFalsy();
     });
+  });
+});
+describe('getPathParams util function cases', () => {
+  const pathParams = [
+    {
+      id: 'id',
+      config: {
+        prefix: "(guid'",
+        suffix: "')",
+      },
+    },
+    {
+      id: 'action',
+    },
+    {
+      id: 'action2',
+      config: {
+        prefix: '/action2/',
+      },
+    },
+    {
+      id: 'action3',
+      config: {
+        prefix: '/action3/',
+      },
+    },
+  ];
+
+  test('should return empty when invalid arguments are sent', () => {
+    const actualPath = 'some/lists(guid\'ABC\')/thing/XYZ/some/other/XYZ';
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action';
+    const expected = {};
+
+    expect(getPathParams({relativePath: undefined, actualPath: undefined, pathParametersInfo: undefined})).toMatchObject(expected);
+    expect(getPathParams({relativePath: undefined, actualPath, pathParametersInfo: pathParams})).toMatchObject(expected);
+    expect(getPathParams({relativePath, actualPath: undefined, pathParametersInfo: pathParams})).toMatchObject(expected);
+    expect(getPathParams({relativePath, actualPath, pathParametersInfo: undefined})).toMatchObject(expected);
+  });
+
+  test('should return required params when only required params are present', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action';
+    const actualPath = 'some/lists(guid\'ABC\')/thing/some/other/XYZ';
+    const expected = {
+      id: 'ABC',
+      action: 'XYZ',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return optional when only optional params are present', () => {
+    const relativePath = 'some/thing:_action2:_action3/some/other';
+    const actualPath = 'some/thing/action2/sdf/action3/sdfa/some/other';
+    const expected = {
+      action2: 'sdf',
+      action3: 'sdfa',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
   });
 });
