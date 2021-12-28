@@ -19,7 +19,14 @@ export const FLOWSTEP_LOGS_STAGE_OPTIONS = [
   {_id: 'lookup', name: 'Lookup'},
   {_id: 'mappingLookup', name: 'Mapping lookup'},
 ];
-
+export const FLOWSTEP_LOGS_METHOD_OPTIONS = [
+  {_id: 'all', name: 'All methods'},
+  {_id: 'GET', name: 'GET'},
+  {_id: 'POST', name: 'POST'},
+  {_id: 'PUT', name: 'PUT'},
+  {_id: 'PATCH', name: 'PATCH'},
+  {_id: 'DELETE', name: 'DELETE'},
+];
 export const FLOWSTEP_LOGS_STATUS_CODES = [
   { _id: 'all', name: 'All codes'},
   { _id: '200', name: '200 OK'},
