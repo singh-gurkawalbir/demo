@@ -1,11 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
-import { UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
+import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
 import { FLOW_GROUP_DELETE_MESSAGE } from '../../../../utils/messageStore';
 import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
@@ -29,16 +29,17 @@ const useStyles = makeStyles(theme => ({
 export default function DynaFlowGroupName(props) {
   const classes = useStyles();
   const history = useHistory();
-  const { integrationId, flowIds, isEdit, formKey, id, value, required } = props;
-  const [currentSavedValue, setValue] = useState(value);
+  const { integrationId, flowIds, isEdit, flowGroupId, formKey, id, value, required } = props;
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
+  const currentSavedValue = flowGroupings.find(flowGroup => flowGroup._id === flowGroupId)?.name || '';
+
   // A flow group name is valid if it equals to currently saved value
   // or it is different from other flow group names
   // or is is not equal to "Unassigned"
-  const isValidName = value ? (value === currentSavedValue) || (!flowGroupings.find(flowGroup => flowGroup.name === value) && value !== UNASSIGNED_SECTION_NAME) : false;
-  const flowGroupId = flowGroupings.find(flowGroup => flowGroup.name === currentSavedValue)?._id;
+  const isValidName = value ? (value === currentSavedValue) || (!flowGroupings.some(flowGroup => flowGroup.name === value) && value !== UNASSIGNED_SECTION_NAME) : false;
 
   const handleDeleteFlowGroupClick = useCallback(
     () => {
@@ -50,7 +51,6 @@ export default function DynaFlowGroupName(props) {
             label: 'Delete',
             onClick: () => {
               dispatch(actions.resource.integrations.flowGroups.delete(integrationId, flowGroupId, flowIds));
-              setValue(value);
               history.goBack();
             },
           },
@@ -65,7 +65,7 @@ export default function DynaFlowGroupName(props) {
   );
 
   useEffect(() => {
-    if (!required) return;
+    if (!required || status === FORM_SAVE_STATUS.LOADING) return;
 
     if (isValidName) {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));

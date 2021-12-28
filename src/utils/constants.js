@@ -651,7 +651,7 @@ export const CONNECTORS_TO_IGNORE = [
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
-  'box', 'segment'];
+  'box'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
 export const AUTO_PILOT_DATA_POINT = 'auto';
@@ -676,6 +676,8 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
+
+export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';

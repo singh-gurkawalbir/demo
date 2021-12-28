@@ -138,6 +138,10 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
   const { sort = emptyObject, searchBy, keyword } = config || {};
   const stringTest = r => {
     if (!keyword) return true;
+
+    if (r.searchKey) {
+      return r.searchKey.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+    }
     const searchableText =
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => r[key]).join('|')}`
@@ -960,3 +964,12 @@ export const getNextLinkRelativeUrl = link => {
 
   return '';
 };
+export const AUDIT_LOGS_RANGE_FILTERS = [
+  {id: 'last1hour', label: 'Last hour'},
+  {id: 'today', label: 'Today'},
+  {id: 'last36hours', label: 'Last 36 hours'},
+  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'last15days', label: 'Last 15 Days'},
+  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'custom', label: 'Custom'},
+];
