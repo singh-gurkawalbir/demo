@@ -6,7 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
-import ViewErrorRequestResponse from './ViewHttpRequestResponse';
+import ViewErrorRequestResponse from './ViewErrorRequestResponse';
 import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
 import DrawerContent from '../../drawer/Right/DrawerContent';

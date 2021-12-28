@@ -45,7 +45,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   );
 
   const formattedErrorHttpDoc = useMemo(() =>
-    getErrorReqResFields(errorHttpDoc, null, isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
+    getErrorReqResFields(errorHttpDoc, 'basic', isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)
@@ -65,30 +65,33 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
     return <div className={classes.error}> {errorHttpDocError} </div>;
   }
 
-  return (
-    <div className={classes.container}>
-      {isResourceNetsuite ? (
+  if (isResourceNetsuite) {
+    return (
+      <div className={classes.container}>
         <CodePanel
           mode="text"
           name="error"
           readOnly
           value={formattedErrorHttpDoc}
-          />
-      )
-        : (
-          <CeligoTabWrapper>
-            <CeligoPillTabs tabs={TABS} />
-            <CeligoTabPanel panelId="body">
-              <DefaultPanel value={formattedErrorHttpDoc.body} />
-            </CeligoTabPanel>
-            <CeligoTabPanel panelId="headers">
-              <DefaultPanel value={formattedErrorHttpDoc.headers} />
-            </CeligoTabPanel>
-            <CeligoTabPanel panelId="others">
-              <DefaultPanel value={formattedErrorHttpDoc.others} />
-            </CeligoTabPanel>
-          </CeligoTabWrapper>
-        )}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.container}>
+      <CeligoTabWrapper>
+        <CeligoPillTabs tabs={TABS} />
+        <CeligoTabPanel panelId="body">
+          <DefaultPanel value={formattedErrorHttpDoc.body} />
+        </CeligoTabPanel>
+        <CeligoTabPanel panelId="headers">
+          <DefaultPanel value={formattedErrorHttpDoc.headers} />
+        </CeligoTabPanel>
+        <CeligoTabPanel panelId="others">
+          <DefaultPanel value={formattedErrorHttpDoc.others} />
+        </CeligoTabPanel>
+      </CeligoTabWrapper>
     </div>
   );
 }
