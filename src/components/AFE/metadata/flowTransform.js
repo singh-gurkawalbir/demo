@@ -1,6 +1,7 @@
 import ToggleTransformMode from '../Drawer/actions/ToggleTransformMode';
 import transformMetadata from './transform';
 import javascriptMetadata from './javascript';
+import FlowTransformTitleHelp from '../Editor/panels/Transform/FlowTransformTitleHelp';
 
 export default {
   type: 'flowTransform',
@@ -17,6 +18,7 @@ export default {
     showLayoutToggle: true,
     actions: [
       { component: ToggleTransformMode, position: 'right' },
+      { component: FlowTransformTitleHelp, position: 'left'},
     ],
   },
 };
