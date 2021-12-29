@@ -23,11 +23,6 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'break-word',
     },
   },
-  flowSectionGroupTitle: {
-    '& span': {
-      width: theme.spacing(12),
-    },
-  },
 }));
 
 const NoFlowsSection = () => (
@@ -58,7 +53,7 @@ export default function FlowSectionTitle({ title, errorCount = 0, groupHasNoFlow
 
   return (
     <span className={classes.gridContainer}>
-      <CeligoTruncate placement="right" lines={3} className={classes.flowSectionGroupTitle}>
+      <CeligoTruncate placement="right" lines={3}>
         {title}
       </CeligoTruncate>
       <span> { groupHasNoFlows ? <NoFlowsSection /> : errorStatus} </span>
