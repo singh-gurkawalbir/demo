@@ -13,7 +13,8 @@ import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 const metadata = {
   useColumns: () => {
-    const { supportsMultiStore, childId, storeLabel, dateFormat, children } = useGetTableContext();
+    const { supportsMultiStore, childId, storeLabel, children } = useGetTableContext();
+    const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
 
     let columns = [
       {
@@ -100,7 +101,6 @@ export default function AddOns({integrationId, childId}) {
   const classes = useStyles();
   const match = useRouteMatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
   const {
     supportsMultiStore,
     children,
@@ -166,7 +166,7 @@ export default function AddOns({integrationId, childId}) {
           </Typography>
         </div>
 
-        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children, dateFormat }} />
+        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
       </>
       )}
     </>
