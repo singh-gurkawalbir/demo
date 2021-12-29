@@ -21,7 +21,7 @@ export default function ConditionalLookup({onSave, disabled, importId, flowId, .
   const classes = useStyles();
   const history = useHistory();
   const {lookupName} = match.params;
-  const isEdit = lookupName;
+  const isEdit = !!lookupName;
   const value = useSelector(state => {
     if (!lookupName) {
       return emptySet;
