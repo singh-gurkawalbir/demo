@@ -55,10 +55,10 @@ export const getFilteredErrors = (errors = [], options = {}) => {
 export const formatErrorDetails = (error = {}) => {
   const { occurredAt, code, message, errorId, traceKey, source, classification } = error;
 
-  const splitMessage = message.split('\n');
+  const splitMessage = message && message.split('\n');
   let formattedMessage = '';
 
-  splitMessage.forEach(str => {
+  splitMessage?.forEach(str => {
     formattedMessage = formattedMessage.concat(`  ${str}\n`);
   });
 
