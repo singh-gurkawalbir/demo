@@ -49,9 +49,6 @@ export default function assistantDefinition(
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
-      console.log('import doc', importDoc);
-      console.log('other form values', otherFormValues);
-
       return { ...otherFormValues, ...importDoc };
     },
   };
