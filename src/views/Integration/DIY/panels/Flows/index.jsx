@@ -95,7 +95,11 @@ const useStyles = makeStyles(theme => ({
   },
   flowGroupRowUnassigned: {
     '&>a': {
+      padding: 0,
+    },
+    '&>a>span>span': {
       borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+      padding: theme.spacing(1, 0),
     },
   },
   noSearchResults: {
