@@ -77,6 +77,20 @@ describe('Flow step request logs region selectors test cases', () => {
             _connectionId: 'conn-123',
           },
           {
+            _id: 'exp-125',
+            name: 'GDrive',
+            http: {
+              type: 'file',
+            },
+            _connectionId: 'conn-123',
+          },
+          {
+            _id: 'exp-126',
+            name: 'HTTP Export',
+            _connectionId: 'conn-123',
+            adaptorType: 'HTTPExport',
+          },
+          {
             _id: 'exp-999',
             name: 'NS realtime export',
             type: 'distributed',
@@ -92,6 +106,13 @@ describe('Flow step request logs region selectors test cases', () => {
             name: 'NS export',
             adaptorType: 'NetSuiteExport',
           }],
+          imports: [
+            {
+              _id: 'imp-126',
+              name: 'HTTP Import',
+              _connectionId: 'conn-123',
+              adaptorType: 'HTTPImport',
+            }],
           flows: [{
             _id: flowId,
             name: 'DIY flow',
@@ -120,10 +141,16 @@ describe('Flow step request logs region selectors test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.hasLogsAccess()).toEqual(false);
     });
-    test('should return false if resource type is not exports', () => {
-      expect(selectors.hasLogsAccess(state, exportId, 'imports')).toEqual(false);
+    test('should return false if resource type is HTTP export file provider', () => {
+      expect(selectors.hasLogsAccess(state, 'exp-125', 'exports', false, flowId)).toEqual(false);
     });
-    test('should return false if resource is not a realtime export', () => {
+    test('should return true if resource type is HTTP export', () => {
+      expect(selectors.hasLogsAccess(state, 'exp-126', 'exports', false, flowId)).toEqual(true);
+    });
+    test('should return true if resource type is HTTP import', () => {
+      expect(selectors.hasLogsAccess(state, 'imp-126', 'imports', false, flowId)).toEqual(true);
+    });
+    test('should return false if resource is not a realtime export and not generic export', () => {
       expect(selectors.hasLogsAccess(state, '789', 'exports')).toEqual(false);
       expect(selectors.hasLogsAccess(state, '1234', 'exports')).toEqual(false);
     });

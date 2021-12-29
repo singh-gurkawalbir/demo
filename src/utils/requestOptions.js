@@ -341,18 +341,25 @@ export default function getRequestOptions(
       let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
 
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
-      const opts = { method, body };
       const { fromDate, toDate } = filters || {};
       const fromKey = 'from';
       const toKey = 'to';
 
-      if (fromDate && toDate) {
+      if (resourceType) {
+        if (fromDate) {
+          body[fromKey] = fromDate;
+        }
+        if (toDate) {
+          body[toKey] = toDate;
+        }
+      } else if (fromDate && toDate) {
         path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
       } else if (fromDate) {
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
       }
+      const opts = { method, body };
 
       return {
         path,
@@ -433,7 +440,7 @@ export default function getRequestOptions(
       } else {
         path = `/flows/${flowId}/${resourceId}/requests`;
         const queryParams = [];
-        const { codes = [], time, stage = [] } = filters;
+        const { codes = [], time, stage = [], method = [] } = filters;
 
         const codesList = getStaticCodesList(codes);
 
@@ -442,6 +449,9 @@ export default function getRequestOptions(
         }
         if (!stage.includes('all')) {
           stage.forEach(c => queryParams.push(`stage=${c}`));
+        }
+        if (!method.includes('all')) {
+          method.forEach(c => queryParams.push(`method=${c}`));
         }
         if (time?.startDate) {
           queryParams.push(`time_gt=${time.startDate.getTime()}`);
