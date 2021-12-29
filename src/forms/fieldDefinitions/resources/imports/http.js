@@ -427,6 +427,7 @@ export default {
     label: 'How would you like to identify existing records?',
     required: true,
     helpKey: 'import.lookupType',
+    noApi: true,
     defaultValue: r => {
       if (r.http?.ignoreLookupName) {
         return 'lookup';
@@ -528,6 +529,7 @@ export default {
     label: 'How would you like to identify existing records?',
     required: true,
     helpKey: 'import.lookupType',
+    noApi: true,
     defaultValue: r => {
       if (r.http?.ignoreLookupName) {
         return 'lookup';
@@ -618,6 +620,106 @@ export default {
         is: ['records'],
       }, {
         field: 'http.newLookupType',
+        is: ['lookup'],
+      },
+    ],
+  },
+  'http.lookupType': {
+    loggable: true,
+    id: 'http.lookupType',
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    noApi: true,
+    defaultValue: r => {
+      if (r.http?.existingLookupName) {
+        return 'lookup';
+      }
+
+      return 'source';
+    },
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.existingExtract': {
+    loggable: true,
+    id: 'http.existingExtract',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.existingExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.lookupType',
+        is: ['source'],
+      },
+    ],
+  },
+  'http.existingLookupName': {
+    loggable: true,
+    id: 'http.existingLookupName',
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.existingLookupName',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.lookupType',
         is: ['lookup'],
       },
     ],
