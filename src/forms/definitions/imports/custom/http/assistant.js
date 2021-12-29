@@ -29,6 +29,9 @@ export default function assistantDefinition(
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
+      if (assistantMetadata.assistant === 'amazonsellingpartner') {
+        assistantMetadata.assistant = 'amazonmws';
+      }
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
@@ -45,6 +48,9 @@ export default function assistantDefinition(
         headers: formValues['/assistantMetadata/headers'],
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
+
+      console.log('import doc', importDoc);
+      console.log('other form values', otherFormValues);
 
       return { ...otherFormValues, ...importDoc };
     },
