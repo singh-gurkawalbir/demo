@@ -83,7 +83,7 @@ export default {
                 options={FLOWSTEP_LOGS_STAGE_OPTIONS} />
             );
           },
-          Value: ({rowData: log}) => log.statusCode }]
+          Value: ({rowData: log}) => log.stage }]
         : []),
       {
         key: 'codes',
