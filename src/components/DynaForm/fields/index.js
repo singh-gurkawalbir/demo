@@ -139,6 +139,7 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
+import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -289,4 +290,5 @@ export default {
   selectlookup: DynaSelectLookup,
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
+  amazonRestrictedReportType: DynaAmazonRestrictedReportType,
 };
