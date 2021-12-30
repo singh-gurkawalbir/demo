@@ -123,7 +123,6 @@ export default function SearchCriteriaDialog(props) {
   const handleFullScreenClick = () => setFullScreen(!fullScreen);
 
   return (
-    // is this sensitive data.... do we have to expose isLoggable in the interface
     <Dialog
       fullScreen={fullScreen}
       open

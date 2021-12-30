@@ -1,7 +1,7 @@
 export default {
 
   'rest.postBody': {
-    isLoggable: true,
+    isLoggable: false,
     type: 'httprequestbody',
     label: 'HTTP request body',
     connectionId: r => r && r._connectionId,
