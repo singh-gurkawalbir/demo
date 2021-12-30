@@ -148,7 +148,7 @@ function ResourceSetupDrawerContent({
 
   return (
     <>
-      <DrawerHeader disableClose={disabled} title={title} handleClose={setCancelTriggered} />
+      <DrawerHeader disableClose={disabled} title={title} handleClose={canSelectExistingResources ? setCancelTriggered : handleClose} />
       {canSelectExistingResources ? (
         <AddOrSelect
           resourceId={resourceId}
