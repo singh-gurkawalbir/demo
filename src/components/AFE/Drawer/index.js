@@ -16,6 +16,7 @@ import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 import useKeepUserSessionAlive from '../../../hooks/useKeepUserSessionAlive';
+import TitleHelp from './TitleHelp/TitleHelp';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -93,6 +94,7 @@ function RouterWrappedContent({ hideSave }) {
   return (
     <>
       <DrawerHeader title={drawerTitle} CloseButton={CloseButton} className={clsx(classes.drawerHeader, {[classes.headerLongTitle]: drawerTitle?.length > 45 })}>
+        <TitleHelp editorId={editorId} />
         <ActionsRibbon editorId={editorId} className={classes.drawerHeaderRibbon} />
       </DrawerHeader>
 

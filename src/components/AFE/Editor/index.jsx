@@ -12,14 +12,7 @@ import SinglePanelGridItem from './gridItems/SinglePanelGridItem';
 import TabbedPanelGridItem from './gridItems/TabbedPanelGridItem';
 import layouts from './layouts';
 import editorMetadata from '../metadata';
-
-function resolveValue(value, editorContext) {
-  if (typeof value === 'function') {
-    return value(editorContext);
-  }
-
-  return value;
-}
+import { resolveValue } from '../../../utils/editor';
 
 const useStyles = makeStyles(layouts);
 

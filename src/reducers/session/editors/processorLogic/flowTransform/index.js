@@ -7,6 +7,7 @@ export default {
   processor: ({activeProcessor}) => activeProcessor,
   init: ({resource, options}) => {
     let activeProcessor = 'transform';
+    const editorTitle = 'Define transformation';
 
     const transformObj = resource?.transform || {};
     const { script = {}, expression = {} } = transformObj;
@@ -30,6 +31,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      editorTitle,
     };
   },
   buildData: (_, sampleData) => ({
