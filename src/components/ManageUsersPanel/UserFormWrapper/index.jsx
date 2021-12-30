@@ -12,7 +12,7 @@ import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import useCommStatus from '../../../hooks/useCommStatus';
 
-export default function UserFormWrapper({ userId, dataPublic }) {
+export default function UserFormWrapper({ userId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [actionsToClear, setActionsToClear] = useState();
@@ -93,7 +93,6 @@ export default function UserFormWrapper({ userId, dataPublic }) {
   return (
     <UserForm
       id={userId}
-      dataPublic={dataPublic}
       onSaveClick={handleSaveClick}
       onCancelClick={handleClose}
     />

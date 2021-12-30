@@ -58,7 +58,8 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
     <DynaSelectWithInput
       isValid={isValidRecordSize}
       id="record-size"
-      dataPublic
+      isLoggable
+      // Record size options does not contain sensitive information
       label="Number of records"
       helpKey="previewPanelRecords"
       value={recordSize}

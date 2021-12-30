@@ -1,6 +1,6 @@
 export default {
   'wrapper.function': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Function',
     required: true,

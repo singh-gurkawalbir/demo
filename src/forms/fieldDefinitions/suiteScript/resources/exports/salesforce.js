@@ -1,6 +1,6 @@
 export default {
   'export.salesforce.sObjectType': {
-    loggable: true,
+    isLoggable: true,
     label: 'sObject type',
     required: true,
     connectionId: r => r.export._connectionId,
@@ -12,7 +12,7 @@ export default {
       `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.export._connectionId}/sObjectTypes`,
   },
   'export.salesforce.errorMessageField.id': {
-    loggable: true,
+    isLoggable: true,
     label: 'Log error messages back in Salesforce',
     fieldId: 'export.salesforce.errorMessageField.id',
     type: 'refreshableselect',
@@ -21,7 +21,7 @@ export default {
     visibleWhenAll: [{ field: 'export.salesforce.sObjectType', isNot: [''] }],
   },
   'export.salesforce.netsuiteIdField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Store NetSuite ID back in Salesforce',
     fieldId: 'export.salesforce.netsuiteIdField',
     type: 'refreshableselect',
@@ -30,7 +30,7 @@ export default {
     visibleWhenAll: [{ field: 'export.salesforce.sObjectType', isNot: [''] }],
   },
   'export.salesforce.soql': {
-    loggable: true,
+    isLoggable: true,
     label: 'SOQL query',
     fieldId: 'export.salesforce.soql',
     type: 'suitescriptsoqlquery',
@@ -42,7 +42,7 @@ export default {
     multiline: true,
   },
   'export.salesforce.exportType': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Export type',
     required: true,
@@ -64,7 +64,7 @@ export default {
       'all',
   },
   'export.salesforce.booleanField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Boolean field',
     fieldId: 'export.salesforce.booleanField',
     type: 'suitescriptsalesforcerefreshableselect',
@@ -79,7 +79,7 @@ export default {
     ],
   },
   'export.salesforce.soqlErrorMessageField.id': {
-    loggable: true,
+    isLoggable: true,
     label: 'Log error messages back in Salesforce',
     fieldId: 'export.salesforce.soqlErrorMessageField.id',
     type: 'suitescriptsalesforcerefreshableselect',

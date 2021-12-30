@@ -1,7 +1,7 @@
 import { SENSITIVE_DATA } from './constants';
 
-export default function (id, dataPublic) {
-  if (!id || !dataPublic) return false;
+export default function (id, isLoggable) {
+  if (!id || !isLoggable) return false;
 
   const isSensitive = SENSITIVE_DATA.some(value => id.toLowerCase().includes(value));
 

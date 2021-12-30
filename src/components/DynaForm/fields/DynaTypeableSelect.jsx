@@ -4,6 +4,7 @@ import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
 import DynaText from './DynaText';
 import FieldMessage from './FieldMessage';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 // TODO: Aditya Replace the component with DynaSelectApplication
 const useStyles = makeStyles(theme => ({
@@ -184,6 +185,7 @@ export default function DynaTypeableSelect(props) {
   const {
     id,
     disabled,
+    isLoggable,
     value: propValue = '',
     placeholder,
     endAdornment,
@@ -319,6 +321,7 @@ export default function DynaTypeableSelect(props) {
       className={classes.root}>
       {isFocused && (
       <Select
+        {...isLoggableAttr(isLoggable)}
         id={id}
         data-test={id}
         inputValue={inputVal}
@@ -348,6 +351,7 @@ export default function DynaTypeableSelect(props) {
         (TextComponent ? (
           <TextComponent
             {...props}
+            {...isLoggableAttr(isLoggable)}
             value={inputVal}
             disabled={disabled}
             multiline
@@ -359,6 +363,7 @@ export default function DynaTypeableSelect(props) {
         ) : (
           <DynaText
             id={`text-${id}`}
+            isLoggable={isLoggable}
             value={inputVal}
             disabled={disabled}
             multiline

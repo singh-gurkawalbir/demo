@@ -94,7 +94,6 @@ export default function DynaForm(props) {
   const formRef = useRef();
 
   useAutoScrollErrors({ formKey, formRef});
-
   const fieldMeta = useSelector(state => selectors.formState(state, formKey)?.fieldMeta, shallowEqual);
 
   const remountKey = useSelector(state => selectors.formRemountKey(state, formKey)) || key;

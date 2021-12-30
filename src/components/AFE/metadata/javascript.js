@@ -10,6 +10,7 @@ export default {
     {
       title: 'Script',
       area: 'rule',
+      isLoggable: true,
       Panel: JavaScriptPanel,
     },
     {

@@ -67,10 +67,8 @@ export default function RunningFlows() {
       <div className={classes.root}>
         {isRunningJobsCollectionLoading ? (<Spinner centerAll />) : (
           <>
-            <span data-public>
-              <Filters
-                filterKey={filterKey} />
-            </span>
+            <Filters
+              filterKey={filterKey} />
             <ResourceTable
               resources={jobs}
               resourceType={filterKey}

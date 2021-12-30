@@ -14,6 +14,7 @@ import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { isNewId } from '../../../../utils/resource';
 import FieldHelp from '../../FieldHelp';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   fieldWrapper: {
@@ -89,6 +90,7 @@ export default function SelectApplication(props) {
     value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
+    isLoggable,
     formKey,
   } = props;
   const match = useRouteMatch();
@@ -232,8 +234,6 @@ export default function SelectApplication(props) {
   const Option = props => {
     const { type, icon, value } = props.data;
 
-    const {dataPublic} = props.selectProps || {};
-
     return (
       <div data-test={props.label} className={classes.optionRoot}>
         <components.Option {...props}>
@@ -245,7 +245,9 @@ export default function SelectApplication(props) {
               className={classes.img}
             />
           </span>
-          <span data-public={!!dataPublic} className={classes.optionLabel}>{props.label}</span>
+          <span {...isLoggableAttr(isLoggable)} className={classes.optionLabel}>
+            {props.label}
+          </span>
         </components.Option>
       </div>
     );
@@ -351,7 +353,7 @@ export default function SelectApplication(props) {
         <FieldHelp {...props} />
       </div>
       <Select
-        dataPublic
+        {...isLoggableAttr(isLoggable)}
         ref={ref}
         name={name}
         inputValue={inputValue}
