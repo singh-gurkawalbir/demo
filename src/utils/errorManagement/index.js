@@ -55,10 +55,16 @@ export const getFilteredErrors = (errors = [], options = {}) => {
 export const formatErrorDetails = (error = {}) => {
   const { occurredAt, code, message, errorId, traceKey, source, classification } = error;
 
-  const content = `
+  const splitMessage = message && message.split('\n');
+  let formattedMessage = '';
+
+  splitMessage?.forEach(str => {
+    formattedMessage = formattedMessage.concat(`  ${str}\n`);
+  });
+
+  return `
   Message: 
-  ${message}
-  
+  ${formattedMessage}
   Code: ${code}
 
   Source: ${source}
@@ -69,8 +75,6 @@ export const formatErrorDetails = (error = {}) => {
   ${classification ? `\n  Classification : ${classification}\n` : ''}
   ${traceKey ? `Trace key : ${traceKey} ` : ''}
   `;
-
-  return content;
 };
 
 export const getErrorMapWithTotal = (errorList = [], resourceId) => {

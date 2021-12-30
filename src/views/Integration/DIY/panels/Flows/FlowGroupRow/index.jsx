@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1, 0),
       '&>span': {
         gridTemplateColumns: theme.spacing(12, 7),
+        gridColumnGap: 0,
       },
       '&:hover': {
         color: theme.palette.primary.main,
@@ -56,6 +57,13 @@ const useStyles = makeStyles(theme => ({
     '&>a': {
       fontWeight: 'bold',
       color: theme.palette.primary.main,
+    },
+  },
+  listItem: {
+    width: theme.spacing(12),
+    '&>span>span:last-child': {
+      paddingLeft: theme.spacing(1),
+      width: theme.spacing(8),
     },
   },
 }));

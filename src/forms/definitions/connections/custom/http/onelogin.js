@@ -48,7 +48,7 @@ export default {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API key',
+      label: 'Client ID',
       helpKey: 'onelogin.connection.http.unencrypted.apiKey',
     },
     'http.encrypted.apiSecret': {
@@ -56,7 +56,7 @@ export default {
       required: true,
       defaultValue: '',
       type: 'text',
-      label: 'API secret',
+      label: 'Client secret',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',

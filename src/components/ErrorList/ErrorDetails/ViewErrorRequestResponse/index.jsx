@@ -8,7 +8,8 @@ import CeligoPillTabs from '../../../CeligoTabLayout/CeligoPillTabs';
 import CeligoTabPanel from '../../../CeligoTabLayout/CeligoTabPanel';
 import DefaultPanel from '../../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import Spinner from '../../../Spinner';
-import { getHttpReqResFields } from '../../../../utils/http';
+import { getErrorReqResFields } from '../../../../utils/http';
+import CodePanel from '../../../AFE/Editor/panels/Code';
 
 const TABS = [
   { label: 'Body', value: 'body' },
@@ -32,9 +33,10 @@ const useStyles = makeStyles(theme => ({
 
 const defaultObj = {};
 
-export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResKey, isRequest }) {
+export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndResKey, isRequest }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
   const httpDocStatus = useSelector(state =>
     selectors.errorHttpDocStatus(state, reqAndResKey)
   );
@@ -42,7 +44,8 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
     selectors.errorHttpDoc(state, reqAndResKey, isRequest) || defaultObj
   );
 
-  const formattedErrorHttpDoc = useMemo(() => getHttpReqResFields(errorHttpDoc), [errorHttpDoc]);
+  const formattedErrorHttpDoc = useMemo(() =>
+    getErrorReqResFields(errorHttpDoc, 'basic', isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)
@@ -60,6 +63,19 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
 
   if (httpDocStatus === 'error' && errorHttpDocError) {
     return <div className={classes.error}> {errorHttpDocError} </div>;
+  }
+
+  if (isResourceNetsuite) {
+    return (
+      <div className={classes.container}>
+        <CodePanel
+          mode="text"
+          name="error"
+          readOnly
+          value={formattedErrorHttpDoc}
+        />
+      </div>
+    );
   }
 
   return (
