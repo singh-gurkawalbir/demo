@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     '& svg': {
       fontSize: 20,
     },
+    marginBlock: 'auto',
   },
 }));
 export default function TitleHelp({ editorId, label }) {
