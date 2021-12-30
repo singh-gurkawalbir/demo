@@ -35,7 +35,6 @@ export default function DynaNSSearchCriteria(props) {
     disabled,
     filterKey,
     options = {},
-    isLoggable,
   } = props;
   const { recordType, commMetaPath } = options;
   const dispatch = useDispatch();
