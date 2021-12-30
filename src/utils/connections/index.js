@@ -114,7 +114,17 @@ export const getConstantContactVersion = connection =>
   connection?.http?.baseURI?.includes('api.cc.email') ? 'constantcontactv3' : 'constantcontactv2';
 export const getEbayType = connection =>
   connection?.http?.baseURI?.includes('apiz') ? 'ebayfinance' : 'ebay';
+const getAmazonMWSType = connection => {
+  const httpType = connection?.http?.type;
 
+  switch (httpType) {
+    case 'Amazon-SP-API':
+      return 'amazonsellingpartner';
+    default:
+  }
+
+  return 'amazonmws';
+};
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
@@ -123,6 +133,9 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === ('ebay' || 'ebayfinance')) {
     return getEbayType(connection);
+  }
+  if (assistant === 'amazonmws') {
+    return getAmazonMWSType(connection);
   }
 
   return assistant;

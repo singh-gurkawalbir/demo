@@ -647,6 +647,7 @@ export const CONNECTORS_TO_IGNORE = [
   'concurv4',
   'constantcontactv2',
   'constantcontactv3',
+  'amazonsellingpartner',
   'ebayfinance',
 ];
 
@@ -731,6 +732,7 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'amazonmws',
   'ebay',
   'ebayfinance',
+  'amazonsellingpartner',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
