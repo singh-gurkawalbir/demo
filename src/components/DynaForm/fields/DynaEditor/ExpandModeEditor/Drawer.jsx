@@ -12,6 +12,7 @@ import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/Sav
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
 import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   editorContainer: {
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
  * Used for scriptContent now. Once we get proper use cases, this need to be refactored
  */
 export default function EditorDrawer(props) {
-  const { handleClose, label, editorProps, saveProps } = props;
+  const { handleClose, label, editorProps, saveProps, isLoggable } = props;
   const { id, value, mode, disabled, handleUpdateOnDrawerSave, handleUpdate } = editorProps;
   const { resourceId, resourceType, patchKey} = saveProps;
   const isNewResource = isNewId(resourceId);
@@ -110,7 +111,7 @@ export default function EditorDrawer(props) {
         }),
       }}>
       <DrawerTitleBar disableClose={disableClose} backToParent onClose={onClose} title={label} />
-      <div className={classes.editorContainer}>
+      <div className={classes.editorContainer} {...isLoggableAttr(isLoggable)}>
         <CodeEditor
           name={id}
           value={value}

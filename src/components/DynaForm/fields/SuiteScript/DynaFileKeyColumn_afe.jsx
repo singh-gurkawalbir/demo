@@ -41,6 +41,7 @@ export default function DynaFileKeyColumn_afe(props) {
     helpKey,
     integrationId,
     ssLinkedConnectionId,
+    isLoggable,
     options = emptyObj,
   } = props;
   const dispatch = useDispatch();
@@ -105,6 +106,7 @@ export default function DynaFileKeyColumn_afe(props) {
       disabled={disabled}
       className={classes.keyColumnFormWrapper}>
       <DynaMultiSelect
+        isLoggable={isLoggable}
         disabled={disabled}
         id={id}
         label={label}

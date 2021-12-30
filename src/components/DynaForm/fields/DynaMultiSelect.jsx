@@ -98,7 +98,7 @@ export default function DynaMultiSelect(props) {
     required,
     removeInvalidValues = false,
     selectAllIdentifier,
-    dataPublic,
+    isLoggable,
     SelectedOptionIml,
   } = props;
   const classes = useStyles();
@@ -224,7 +224,7 @@ export default function DynaMultiSelect(props) {
         className={classes.multiselectWrapper}>
         <CeligoSelect
           multiple
-          data-public={shouldUnmaskInLogRocket(id, dataPublic)}
+          isLoggable={shouldUnmaskInLogRocket(id, isLoggable)}
           data-test={id}
           disabled={disabled}
           value={processedValue}

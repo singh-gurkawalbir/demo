@@ -12,6 +12,7 @@ import SinglePanelGridItem from './gridItems/SinglePanelGridItem';
 import TabbedPanelGridItem from './gridItems/TabbedPanelGridItem';
 import layouts from './layouts';
 import editorMetadata from '../metadata';
+import IsLoggableContextProvider from '../../IsLoggableContextProvider';
 
 function resolveValue(value, editorContext) {
   if (typeof value === 'function') {
@@ -70,9 +71,15 @@ export default function Editor({ editorId }) {
           <SinglePanelGridItem
             key={p.area}
             area={p.area}
+            isLoggable={!!p.isLoggable}
             title={resolveValue(p.title, editorContext)}
             helpKey={resolveValue(p.helpKey, editorContext)}>
-            <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
+            <IsLoggableContextProvider isLoggable={!!p.isLoggable}>
+              <p.Panel
+                editorId={editorId}
+                {...resolveValue(p.props, editorContext)} />
+            </IsLoggableContextProvider>
+
           </SinglePanelGridItem>
         )
         : (

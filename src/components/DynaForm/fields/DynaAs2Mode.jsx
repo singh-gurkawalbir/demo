@@ -37,6 +37,8 @@ export default function AS2url() {
       <div className={classes.inlineElements}>
         <DynaLabelValueElement
           label="AS2 URL"
+          // not loggable because of the url
+          isLoggable={false}
           value={`${as2Url === 'http' ? 'http' : 'https'}${getAS2Url()}`}
         />
         <FieldHelp helpText="Specify the URL to which your trading partners will send AS2 documents. Since these URLs are shared by all integrator.io accounts, the <b>AS2 identifier</b> below must be unique. Choose the <b>HTTPS</b> protocol if your software has an HTTPS/SSL CA certificate, provided by Amazon Trust Services Repository." />

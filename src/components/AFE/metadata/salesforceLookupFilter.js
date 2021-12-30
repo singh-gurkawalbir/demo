@@ -9,6 +9,7 @@ export default {
     {
       title: ({editorId}) => <RefreshSearchFilters editorId={editorId} />,
       area: 'rule',
+      isLoggable: true,
       Panel: SalesforceLookupFilterPanel,
     },
   ],

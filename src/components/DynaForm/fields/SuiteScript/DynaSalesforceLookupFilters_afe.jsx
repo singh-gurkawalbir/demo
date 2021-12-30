@@ -101,6 +101,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
         </Button>
 
       </div>
+      {/* query expressions can be loggable */}
       <FilterPanel
         id={id}
         editorId={newEditorId}

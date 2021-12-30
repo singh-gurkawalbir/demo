@@ -249,7 +249,7 @@ const Chart = ({ attribute, flowId, range, selectedResources: selected }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip data-public content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
           {lineData.map((r, i) => (
             <Line

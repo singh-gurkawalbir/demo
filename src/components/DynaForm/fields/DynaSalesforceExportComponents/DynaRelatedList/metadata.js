@@ -33,25 +33,30 @@ export default {
     {
       key: 'relationship',
       heading: 'Relationship',
+      isLoggable: true,
       Value: ({rowData: r}) => r && r.relationshipName,
     },
     {
       key: 'childSObject',
       heading: 'Child sObject',
+      isLoggable: true,
       Value: ({rowData: r}) => r && r.sObjectType,
     },
     {
       key: 'referencedFields',
       heading: 'Referenced Fields',
+      isLoggable: true,
       Value: ({rowData: r}) => r && r.referencedFields,
     },
     {
       key: 'filter',
+      isLoggable: true,
       Value: ({rowData: r}) => r && r.filter,
     },
     {
       key: 'orderBy',
       heading: 'Order By',
+      isLoggable: true,
       Value: ({rowData: r}) => r && r.orderBy,
     },
   ],

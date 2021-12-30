@@ -8,6 +8,7 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: r}) => {
         const {onClose} = useGetTableContext();
 
@@ -17,6 +18,7 @@ export default {
     {
       key: 'type',
       heading: 'Type',
+      isLoggable: true,
       Value: ({rowData: r}) => r.resourceType,
     },
   ],

@@ -21,21 +21,25 @@ export default {
       heading: 'Name',
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="agents" resource={r} />,
       orderBy: 'name',
+      isLoggable: true,
     },
     {
       key: 'status',
       heading: 'Status',
+      isLoggable: true,
       Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
     },
     {
       key: 'lastHeartBeat',
       heading: 'Last heartbeat',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
       orderBy: 'lastHeartbeatAt',
     },
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
@@ -43,6 +47,7 @@ export default {
     {
       key: 'install',
       heading: 'Install',
+      isLoggable: true,
       Value: ({rowData: r}) => getAgentDownloadInstaller(r),
     },
     {

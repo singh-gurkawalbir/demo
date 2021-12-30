@@ -7,6 +7,7 @@ import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import ActionButton from '../../../ActionButton';
 import AfeIcon from '../../../icons/AfeIcon';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +50,7 @@ export default function DynaHandlebarPreview({
   isValid,
   disabled,
   dataTest,
+  isLoggable,
 }) {
   const classes = useStyles();
 
@@ -64,7 +66,7 @@ export default function DynaHandlebarPreview({
           <FieldHelp {...{ id, label, helpText, helpKey, resourceContext}} />
         </div>
         <div className={classes.editorContainer}>
-          <div className={classes.editorBorder}>
+          <div className={classes.editorBorder} {...isLoggableAttr(isLoggable)}>
             <CodeEditor
               name={id}
               value={value}

@@ -88,7 +88,6 @@ export default function CeligoAppBar() {
 
   return (
     <AppBar
-      data-public
       color="inherit"
       position="fixed"
       elevation={0}

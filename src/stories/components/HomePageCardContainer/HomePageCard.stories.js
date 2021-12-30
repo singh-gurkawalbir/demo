@@ -135,7 +135,7 @@ export const SuiteScript = args => {
             <Status variant="error" {...args}>
               12 error
             </Status>
-            <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
+            <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
               <IconButton size="small" color="inherit" className={classes.status}>
                 <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
               </IconButton>

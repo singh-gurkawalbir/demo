@@ -6,7 +6,7 @@ export default function ButtonWithTooltip({
   children,
 }) {
   return (
-    <Tooltip data-public key={tooltipProps.title} {...tooltipProps}>
+    <Tooltip key={tooltipProps.title} {...tooltipProps}>
       <span>
         {children}
       </span>

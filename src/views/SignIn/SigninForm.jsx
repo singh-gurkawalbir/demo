@@ -196,10 +196,12 @@ export default function SignIn({dialogOpen}) {
       location && location.state && location.state.attemptedRoute;
 
   return (
+  // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <div className={classes.editableFields}>
       <form onSubmit={handleOnSubmit}>
 
         <TextField
+          data-private
           data-test="email"
           id="email"
           type="email"
@@ -211,6 +213,7 @@ export default function SignIn({dialogOpen}) {
           disabled={dialogOpen}
             />
         <TextField
+          data-private
           data-test="password"
           id="password"
           variant="filled"
@@ -226,6 +229,7 @@ export default function SignIn({dialogOpen}) {
         </div>
         { showError && error && (
           <Typography
+            data-private
             color="error"
             component="div"
             variant="h5"
@@ -249,6 +253,7 @@ export default function SignIn({dialogOpen}) {
         {!dialogOpen && (
         <form onSubmit={handleSignInWithGoogle}>
           <TextField
+            data-private
             type="hidden"
             id="attemptedRoute"
             name="attemptedRoute"

@@ -228,7 +228,6 @@ export default function Reports() {
         <div>
           <CeligoSelect
             className={classes.reportTypes}
-            data-public
             displayEmpty
             IconComponent={ArrowDownIcon}
             renderValue={selectedReportTypeLabel}
