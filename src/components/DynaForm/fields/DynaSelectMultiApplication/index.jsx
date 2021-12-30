@@ -11,6 +11,7 @@ import ApplicationImg from '../../../icons/ApplicationImg';
 import IntegrationTag from '../../../tags/IntegrationTag';
 import SearchIcon from '../../../icons/SearchIcon';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -222,6 +223,7 @@ export default function MultiSelectApplication(props) {
     onFieldChange,
     creatableMultiSelect,
     hideApplicationImg,
+    isLoggable,
   } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -375,6 +377,7 @@ export default function MultiSelectApplication(props) {
         required={required}
         className={classes.multiSelectWrapper}>
         <CustomSelect
+          {...isLoggableAttr(isLoggable)}
           isMulti
           hideApplicationImg={hideApplicationImg}
           placeholder={placeholder}

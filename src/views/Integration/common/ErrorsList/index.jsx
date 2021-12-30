@@ -36,6 +36,7 @@ const metadata = {
     {
       key: 'application',
       heading: 'Application',
+      isLoggable: true,
       Value: ({rowData}) => {
         const { type, id } = rowData;
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
@@ -62,6 +63,7 @@ const metadata = {
     {
       key: 'type',
       heading: 'Type',
+      isLoggable: true,
       Value: ({rowData}) => {
         const { type, id, isLookup } = rowData;
         const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
@@ -80,11 +82,13 @@ const metadata = {
       key: 'flowStepName',
       heading: 'Flow step name',
       width: '25%',
+      isLoggable: true,
       Value: ({rowData: r}) => <TextOverflowCell message={r.name} />,
     },
     {
       key: 'errors',
       heading: 'Errors',
+      isLoggable: true,
       Value: ({rowData}) => {
         const { flowId, integrationId, childId, id, count } = rowData;
         const classes = useStyles();
@@ -124,6 +128,7 @@ const metadata = {
     {
       key: 'lastErrorAt',
       heading: 'Last open error',
+      isLoggable: true,
       Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
       orderBy: 'lastErrorAt',
     },

@@ -399,7 +399,7 @@ export default function JobErrorTable({
     if (!isEditable && !isDownloadable) return null;
 
     return isDownloadable ? (
-      <Tooltip data-public title="Download retry data">
+      <Tooltip title="Download retry data">
         <IconButton
           component={Link}
           size="small"
@@ -409,7 +409,7 @@ export default function JobErrorTable({
         </IconButton>
       </Tooltip>
     ) : (
-      <Tooltip data-public title="Edit retry data">
+      <Tooltip title="Edit retry data">
         <IconButton
           component={Link}
           size="small"
@@ -428,7 +428,7 @@ export default function JobErrorTable({
         Uploading...
       </Spinner>
       )}
-      <ul data-public className={classes.statusWrapper}>
+      <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
         </li>
@@ -545,6 +545,7 @@ export default function JobErrorTable({
                   {
                     key: 'expandClick',
                     heading: '',
+                    isLoggable: true,
                     Value: ({rowData: r}) =>
                       r.similarErrors?.length > 0 && (
                         <IconButton
@@ -564,6 +565,7 @@ export default function JobErrorTable({
                     key: 'resolved',
                     heading: 'Resolved?',
                     align: 'center',
+                    isLoggable: true,
                     Value: ({rowData: r}) => r.resolved
                       ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
@@ -597,12 +599,14 @@ export default function JobErrorTable({
                     key: 'time',
                     heading: 'Time',
                     width: '15%',
+                    isLoggable: true,
                     Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                   {
                     key: 'retryData',
                     heading: 'Retry data',
                     align: 'center',
+                    isLoggable: true,
                     Value: ({rowData: r}) => (
                       <EditRetryCell
                         retryId={r._retryId}

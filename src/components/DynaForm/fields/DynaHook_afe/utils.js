@@ -22,6 +22,7 @@ export const getCreateScriptMetadata = scriptId => ({
       type: 'text',
       label: 'Name',
       required: true,
+      isLoggable: true,
     },
     description: {
       id: 'description',
@@ -30,12 +31,15 @@ export const getCreateScriptMetadata = scriptId => ({
       multiline: true,
       maxRows: 5,
       label: 'Description',
+      // scripts desc can be loggable?
+      isLoggable: true,
     },
     insertFunction: {
       id: 'insertFunction',
       name: 'insertFunction',
       type: 'select',
       label: 'Insert function stub',
+      isLoggable: true,
       helpKey: 'hooks.insertFunction',
       options: [
         {

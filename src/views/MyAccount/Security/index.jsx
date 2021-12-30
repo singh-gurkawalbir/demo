@@ -122,6 +122,7 @@ export default function Security() {
           defaultValue: oidcClient?.oidc?.issuerURL,
           helpKey: 'sso.issuerURL',
           noApi: true,
+          isLoggable: false,
         },
         clientId: {
           id: 'clientId',
@@ -131,6 +132,7 @@ export default function Security() {
           required: true,
           defaultValue: oidcClient?.oidc?.clientId,
           helpKey: 'sso.clientId',
+          isLoggable: false,
           noApi: true,
         },
         clientSecret: {
@@ -141,6 +143,7 @@ export default function Security() {
           label: 'Client secret',
           required: true,
           helpKey: 'sso.clientSecret',
+          isLoggable: false,
           noApi: true,
         },
         orgId: {
@@ -151,6 +154,7 @@ export default function Security() {
           required: true,
           defaultValue: oidcClient?.orgId,
           helpKey: 'sso.orgId',
+          isLoggable: false,
           noApi: true,
         },
       },

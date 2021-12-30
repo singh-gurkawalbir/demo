@@ -149,7 +149,7 @@ function NavListItem(
           {drawerOpened ? <Icon />
             : (
               <Tooltip
-                data-public placement="right" enterDelay={0} title={label}
+                placement="right" enterDelay={0} title={label}
                 classes={{popper: classes.tooltipLeft}}>
                 <div>
                   <Icon />

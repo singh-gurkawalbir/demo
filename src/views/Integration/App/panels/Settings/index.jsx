@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import EditorDrawer from '../../../../../components/AFE/Drawer';
+import IsLoggableContextProvider from '../../../../../components/IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -81,14 +82,13 @@ function FlowSettingsPanel({availableSections, integrationId, childId, sectionPr
   }
 
   return (
-
-    <Section
-      dataPublic
-      integrationId={integrationId}
-      childId={childId}
-      {...sectionProps}
+    <IsLoggableContextProvider isLoggable>
+      <Section
+        integrationId={integrationId}
+        childId={childId}
+        {...sectionProps}
           />
-
+    </IsLoggableContextProvider>
   );
 }
 
@@ -186,7 +186,7 @@ export default function SettingsPanel({
                   activeClassName={classes.activeListItem}
                   to={path}
                   data-test={id}
-                  data-public>
+                  >
                   {label}
                 </NavLink>
               </ListItem>

@@ -88,6 +88,8 @@ export function ResourceTypeFilter(props) {
       <CeligoSelect
         value={filters.resourceType}
         onChange={onChange}
+        // all options are harmless ...mostly resourceTypes
+        isLoggable
         inputProps={resourceTypeInput}>
         <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           Select resource type
@@ -156,6 +158,7 @@ export function ResourceIdFilter(props) {
   return (
     <FormControl className={classes.formControl}>
       <CeligoSelect
+        isLoggable
         inputProps={resourceIdInput}
         className={classes.select}
         value={filters._resourceId}

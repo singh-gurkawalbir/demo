@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   dynaFieldWrapper: {
@@ -28,6 +29,7 @@ export default function DynaSoqlQuery(props) {
     multiline,
     filterKey,
     ssLinkedConnectionId,
+    isLoggable,
   } = props;
   const query = value && value.query;
   const classes = useStyles();
@@ -92,6 +94,7 @@ export default function DynaSoqlQuery(props) {
   return (
     <div className={classes.dynaFieldWrapper}>
       <TextField
+        {...isLoggableAttr(isLoggable)}
         autoComplete="off"
         key={id}
         data-test={id}

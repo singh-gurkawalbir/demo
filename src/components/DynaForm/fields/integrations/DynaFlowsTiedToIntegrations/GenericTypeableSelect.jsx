@@ -1,6 +1,7 @@
 import { FormControl, FormLabel, fade, makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { DoneButton } from '../../../../CeligoSelect';
 import SearchIcon from '../../../../icons/SearchIcon';
 import FieldHelp from '../../../FieldHelp';
@@ -105,6 +106,7 @@ export const GenericTypeableSelect = props => {
     // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
     unSearchable,
+    isLoggable,
     defaultMenuIsOpen,
   } = props;
   const theme = useTheme();
@@ -274,20 +276,22 @@ export const GenericTypeableSelect = props => {
         error={!isValid}
         disabled={disabled}
         required={required}>
-        <Select
-          isDisabled={disabled}
-          isMulti
-          placeholder={placeholder}
-          components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
-          options={options}
-          value={value}
-          onChange={handleChange}
-          closeMenuOnSelect={false}
-          hideSelectedOptions={false}
-          styles={customStylesMultiselect}
-          isSearchable={!unSearchable}
-          defaultMenuIsOpen={defaultMenuIsOpen}
+        <span {...isLoggableAttr(isLoggable)}>
+          <Select
+            isDisabled={disabled}
+            isMulti
+            placeholder={placeholder}
+            components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
+            options={options}
+            value={value}
+            onChange={handleChange}
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            styles={customStylesMultiselect}
+            isSearchable={!unSearchable}
+            defaultMenuIsOpen={defaultMenuIsOpen}
      />
+        </span>
 
         <FieldMessage {...props} />
       </FormControl>

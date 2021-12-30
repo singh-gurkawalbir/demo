@@ -222,7 +222,7 @@ export default function NetSuiteMappingAssistant({
             <FilledButton onClick={handleLaunchAssistantClick}>
               Launch NetSuite assistant
             </FilledButton>
-            <ol data-public>
+            <ol>
               <li>
                 Please make sure that you have &quot;Celigo integrator.io&quot;
                 bundle (ID: 20038) version 1.7.4.5 or higher.

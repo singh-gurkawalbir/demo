@@ -14,6 +14,7 @@ export default {
       title: 'XML parse options',
       area: 'rule',
       Panel: XmlParseRules,
+      isLoggable: true,
     },
     {
       title: ({editorId}) => <FileDataPanelTitle editorId={editorId} fileType="xml" />,

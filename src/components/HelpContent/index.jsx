@@ -120,7 +120,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   }, []);
 
   return (
-    <div data-public className={classes.wrapper}>
+    <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
@@ -133,6 +133,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         <>
           {/* TODO:Azhar some styling required */}
           <TextField
+            data-private
             name="feedbackText"
             placeholder="Please let us know how we can improve the text area."
             multiline

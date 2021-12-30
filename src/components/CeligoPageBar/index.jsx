@@ -68,7 +68,6 @@ export default function CeligoPageBar(props) {
   return (
     <>
       <Paper
-        data-public
         className={clsx(classes.pageHeader, className, {
           [classes.pageHeaderShift]: drawerOpened,
         })}

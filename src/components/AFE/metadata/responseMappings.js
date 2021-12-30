@@ -10,6 +10,7 @@ export default {
     {
       title: 'Rules',
       area: 'rule',
+      isLoggable: true,
       Panel: ResponseMappingsPanel,
     },
     {

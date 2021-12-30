@@ -60,6 +60,7 @@ const FirstLevelModal = props => {
         helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
+        isLoggable: true,
         removeRefresh: true,
       },
       referencedFields: {
@@ -72,6 +73,7 @@ const FirstLevelModal = props => {
         type: 'salesforcetreemodal',
         errorMsg: 'Please select a parent sObject Type',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
+        isLoggable: true,
         defaultValue: props.value,
       },
     },
