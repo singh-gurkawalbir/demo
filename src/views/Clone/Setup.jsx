@@ -40,25 +40,23 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   stepTable: { maxWidth: 750 },
-  paper: {
-    padding: theme.spacing(1, 2),
-    background: theme.palette.background.default,
-  },
   arrowBackButton: {
     padding: theme.spacing(1),
   },
 }));
 
-export default function Clone(props) {
-  const { resourceType, resourceId } = props.match.params;
+export default function Clone() {
   const classes = useStyles();
   const match = useRouteMatch();
+  const { resourceType, resourceId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
   const templateId = `${resourceType}-${resourceId}`;
-  const resource =
-    useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
-    {};
+  const resourceName = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId);
+
+    return resource?.name || MODEL_PLURAL_TO_LABEL[resourceType];
+  });
   const installSteps = useSelector(state =>
     selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
@@ -81,7 +79,6 @@ export default function Clone(props) {
   );
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
-  const [stackId, setShowStackDialog] = useState(null);
   const isSetupComplete = useSelector(state =>
     selectors.isSetupComplete(state, { resourceId, resourceType, templateId })
   );
@@ -201,17 +198,14 @@ export default function Clone(props) {
         );
       }
     } else if (type === INSTALL_STEP_TYPES.STACK) {
-      if (!stackId) {
-        const newStackId = generateNewId();
+      const newStackId = generateNewId();
 
-        setShowStackDialog(newStackId);
-        history.push(`${match.url}/configure/stacks/${newStackId}`);
-      }
+      history.push(`${match.url}/configure/stacks/${newStackId}`);
     }
   };
 
   const handleBackClick = () => {
-    props.history.goBack();
+    history.goBack();
   };
 
   const handleSubmitComplete = connectionId => {
@@ -241,16 +235,10 @@ export default function Clone(props) {
         templateId
       )
     );
-
-    setShowStackDialog(false);
   };
 
   const handleConnectionClose = () => {
     setSelectedConnectionId(false);
-  };
-
-  const handleStackClose = () => {
-    setShowStackDialog(false);
   };
 
   if (installInProgress) {
@@ -267,9 +255,7 @@ export default function Clone(props) {
           <div>
             <Breadcrumbs separator={<ArrowRightIcon />}>
               <Typography color="textPrimary">Setup</Typography>
-              <Typography color="textPrimary">
-                {resource.name || MODEL_PLURAL_TO_LABEL[resourceType]}
-              </Typography>
+              <Typography color="textPrimary"> {resourceName} </Typography>
             </Breadcrumbs>
           </div>
         </div>
@@ -292,7 +278,6 @@ export default function Clone(props) {
         onClose={handleConnectionClose}
         onSubmitComplete={handleSubmitComplete}
         handleStackSetupDone={handleStackSetupDone}
-        handleStackClose={handleStackClose}
         cloneResourceType={resourceType}
         cloneResourceId={resourceId}
        />
