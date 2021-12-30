@@ -18,8 +18,9 @@ import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 const emptyObject = {};
 const metadata = {
   useColumns: () => {
-    const { supportsChild, childId, dateFormat, children } = useGetTableContext();
+    const { supportsChild, childId, children } = useGetTableContext();
 
+    const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
     let columns = [
       {
         key: 'name',
@@ -164,7 +165,6 @@ export default function SubscriptionSection({ childId, integrationId }) {
 
   const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
   const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
-  const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
 
   const hasAddOns =
     addOnState &&
@@ -268,7 +268,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
 
-            <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children, dateFormat }} />
+            <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children }} />
           </>
         )}
       </div>
