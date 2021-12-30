@@ -56,8 +56,6 @@ export default function Clone(props) {
   const history = useHistory();
   const dispatch = useDispatch();
   const templateId = `${resourceType}-${resourceId}`;
-  const variant = 'add';
-  const type = 'clone';
   const resource =
     useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
     {};
@@ -87,20 +85,11 @@ export default function Clone(props) {
   const isSetupComplete = useSelector(state =>
     selectors.isSetupComplete(state, { resourceId, resourceType, templateId })
   );
-  const { connectionMap, data } =
-    useSelector(state =>
-      selectors.installSetup(state, {
-        templateId,
-        resourceType,
-        resourceId,
-      })
-    ) || emptyObject;
+  const { connectionMap, data } = useSelector(state =>
+    selectors.installSetup(state, { resourceType, resourceId, templateId }), shallowEqual
+  ) || emptyObject;
   const { redirectTo, isInstallFailed, destinationEnvironment } = useSelector(state => {
-    const redirectOptions = selectors.redirectToOnInstallationComplete(state, {
-      resourceType,
-      resourceId,
-      templateId,
-    });
+    const redirectOptions = selectors.redirectToOnInstallationComplete(state, { resourceType, resourceId, templateId });
 
     return {
       redirectTo: redirectOptions.redirectTo,
@@ -133,7 +122,6 @@ export default function Clone(props) {
     redirectTo,
     resourceId,
     resourceType,
-    templateId,
     isInstallFailed,
     destinationEnvironment,
   ]);
@@ -266,36 +254,25 @@ export default function Clone(props) {
   };
 
   if (installInProgress) {
-    return (
-      <Loader open>
-        {type === 'clone' ? 'Cloning' : 'Installing'}
-        <Spinner />
-      </Loader>
-    );
+    return <Loader open> Cloning <Spinner /> </Loader>;
   }
 
   return (
     <LoadResources required resources="connections,integrations">
       <div className={classes.root}>
-        {variant !== 'new' && (
-          <div className={classes.formHead}>
-
-            <IconButton onClick={handleBackClick} size="medium" className={classes.arrowBackButton}>
-              <ArrowBackIcon />
-            </IconButton>
-
-            <div>
-              <Breadcrumbs separator={<ArrowRightIcon />}>
-                <Typography color="textPrimary">Setup</Typography>
-                <Typography color="textPrimary">
-                  {resource.name ||
-                      MODEL_PLURAL_TO_LABEL[resourceType] ||
-                      'Template'}
-                </Typography>
-              </Breadcrumbs>
-            </div>
+        <div className={classes.formHead}>
+          <IconButton onClick={handleBackClick} size="medium" className={classes.arrowBackButton}>
+            <ArrowBackIcon />
+          </IconButton>
+          <div>
+            <Breadcrumbs separator={<ArrowRightIcon />}>
+              <Typography color="textPrimary">Setup</Typography>
+              <Typography color="textPrimary">
+                {resource.name || MODEL_PLURAL_TO_LABEL[resourceType]}
+              </Typography>
+            </Breadcrumbs>
           </div>
-        )}
+        </div>
         <div className={classes.stepTable}>
           {installSteps.map((step, index) => (
             <InstallationStep
