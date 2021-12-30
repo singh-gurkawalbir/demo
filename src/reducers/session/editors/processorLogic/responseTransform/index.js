@@ -5,7 +5,6 @@ export default {
   processor: ({activeProcessor}) => activeProcessor,
   init: ({resource, options}) => {
     let activeProcessor = 'transform';
-    const editorTitle = 'Define transformation';
     const transformObj = resource?.responseTransform;
     const { script = {}, expression = {} } = transformObj || {};
     const rule = {
@@ -28,7 +27,6 @@ export default {
       ...options,
       rule,
       activeProcessor,
-      editorTitle,
     };
   },
   buildData: flowTransform.buildData,

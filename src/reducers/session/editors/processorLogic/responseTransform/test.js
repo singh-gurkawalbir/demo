@@ -89,7 +89,6 @@ describe('responseTransform processor logic', () => {
         stage: 'responseTransform',
         resourceId: '99999',
         resourceType: 'exports',
-        editorTitle: 'Define transformation',
         rule: {
           javascript: {
             fetchScriptContent: true,
@@ -110,7 +109,6 @@ describe('responseTransform processor logic', () => {
       };
       const expectedOutput = {
         stage: 'responseTransform',
-        editorTitle: 'Define transformation',
         resourceId: '99999',
         resourceType: 'exports',
         rule: {

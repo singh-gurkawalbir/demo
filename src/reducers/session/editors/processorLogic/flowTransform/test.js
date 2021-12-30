@@ -93,7 +93,6 @@ describe('flowTransform processor logic', () => {
       };
       const expectedOutput = {
         stage: 'flowTransform',
-        editorTitle: 'Define transformation',
         resourceId: '99999',
         resourceType: 'exports',
         rule: {
@@ -117,7 +116,6 @@ describe('flowTransform processor logic', () => {
       const expectedOutput = {
         stage: 'flowTransform',
         resourceId: '99999',
-        editorTitle: 'Define transformation',
         resourceType: 'exports',
         rule: {
           transform: [{

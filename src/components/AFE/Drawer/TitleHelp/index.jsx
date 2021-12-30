@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-export default function TitleHelp({ editorId }) {
+export default function TitleHelp({ editorId, label }) {
   const classes = useStyles();
   const editorContext = useSelector(state => {
     const e = selectors.editor(state, editorId);
@@ -22,18 +22,17 @@ export default function TitleHelp({ editorId }) {
     // add more properties here if required
     return {
       editorType: e.editorType,
-      editorTitle: e.editorTitle,
       resourceType: e.resourceType,
     };
   }, shallowEqual);
 
-  const {editorType, editorTitle} = editorContext;
+  const {editorType} = editorContext;
 
   return (
     <div className={classes.helpTextButton}>
       <FieldHelp
         noApi
-        label={editorTitle}
+        label={label}
         helpKey={resolveValue(editorMetadata[editorType].helpKey, editorContext)}
       />
     </div>
