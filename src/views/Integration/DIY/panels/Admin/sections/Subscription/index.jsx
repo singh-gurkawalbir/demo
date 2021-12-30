@@ -20,6 +20,7 @@ const metadata = {
   useColumns: () => {
     const { supportsChild, childId, children } = useGetTableContext();
 
+    const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
     let columns = [
       {
         key: 'name',
@@ -41,8 +42,8 @@ const metadata = {
       {
         key: 'installedOn',
         heading: 'Installed on',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format(dateFormat || 'MMM D, YYYY') : '',
         isLoggable: true,
-        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
       },
       {
         key: 'action',
