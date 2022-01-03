@@ -7,10 +7,11 @@ import { Card, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
-import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../../utils/constants';
+import {CONNECTORS_TO_IGNORE, NO_RESULT_SEARCH_MESSAGE, WEBHOOK_ONLY_APPLICATIONS} from '../../utils/constants';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -126,10 +127,7 @@ export default function ApplicationsList({ filter }) {
           ))}
         </div>
       ) : (
-        <Typography component="div" className={classes.resultContainer}>
-          Your search didn’t return any matching results. Try expanding your
-          search criteria.
-        </Typography>
+        <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
       )}
     </>
   );

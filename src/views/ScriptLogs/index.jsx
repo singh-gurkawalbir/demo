@@ -18,7 +18,7 @@ import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } fro
 import Spinner from '../../components/Spinner';
 import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
-import MessageWrapper from '../../components/MessageWrapper';
+import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 import { TextButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -304,9 +304,9 @@ export default function ScriptLogs({ flowId, scriptId }) {
         />
         ) : null}
         {!logs.length && !nextPageURL && status !== 'requested' && (
-          <MessageWrapper>
+          <NoResultMessageWrapper>
             You don’t have any execution logs in the selected time frame.
-          </MessageWrapper>
+          </NoResultMessageWrapper>
         )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
         <Spinner loading size="large" className={classes.spinnerScriptLogs} />
