@@ -153,7 +153,7 @@ export default function SelectResource(props) {
                   )}
                   <FormGroup className={classes.formGroup}>
                     {flowResources.map(m => (
-                      <Tooltip data-public key={m._id} title={getTooltip(m._id)} placement="left-start">
+                      <Tooltip key={m._id} title={getTooltip(m._id)} placement="left-start">
                         <FormControlLabel
                           className={classes.selectResourceItem}
                           control={(

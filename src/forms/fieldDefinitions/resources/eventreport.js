@@ -1,6 +1,6 @@
 export default {
   integration: {
-    loggable: true,
+    isLoggable: true,
     type: 'allintegrations',
     label: 'Integration',
     helpText: 'Select an integration to show its flows, below',
@@ -8,14 +8,14 @@ export default {
     required: true,
   },
   childIntegrations: {
-    loggable: true,
+    isLoggable: true,
     type: 'childintegrations',
     label: 'Child Integrations',
     helpText: 'Select a “child” integration, such as stores or banks, to narrow the flows available for this report.',
     // placeholder is decided within the child integrations component
   },
   _flowIds: {
-    loggable: true,
+    isLoggable: true,
     type: 'flowstiedtointegrations',
     label: 'Flows',
     helpText: 'Select a “child” integration, such as stores or banks, to narrow the flows available for this report.',
@@ -23,7 +23,7 @@ export default {
     required: true,
   },
   range: {
-    loggable: true,
+    isLoggable: true,
     type: 'reportdaterange',
     label: 'Date range',
     helpText: 'Pick a convenient predefined window ending now, or click Custom to specify up to a three-day range within the last 30 days. Be sure to click Apply after entering a range.',

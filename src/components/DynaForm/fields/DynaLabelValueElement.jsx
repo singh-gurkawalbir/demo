@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 import RawHtml from '../../RawHtml';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -15,14 +16,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaLabelValueElement(props) {
-  const { label, value, id } = props;
+  const { label, value, id, isLoggable} = props;
   const classes = useStyles(props);
 
   return (
     <Typography data-test={id} variant="body1" className={classes.text}>
       {/* sanitize html value */}
       <span className={classes.label}>{label}</span>
-      {/<\/?[a-z][\s\S]*>/i.test(value) ? <RawHtml html={value} /> : value}
+      <span {...isLoggableAttr(isLoggable)}>
+        {/<\/?[a-z][\s\S]*>/i.test(value) ? <RawHtml html={value} /> : value}
+      </span>
     </Typography>
   );
 }

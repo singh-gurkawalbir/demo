@@ -2,7 +2,7 @@ import { AWS_REGIONS_LIST } from '../../../../utils/constants';
 
 export default {
   'dynamodb.region': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Region',
     required: true,
@@ -14,7 +14,7 @@ export default {
     ],
   },
   'dynamodb.method': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Method',
     options: [
@@ -26,30 +26,30 @@ export default {
     visible: false,
   },
   'dynamodb.tableName': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Table name',
     required: true,
   },
   'dynamodb.keyConditionExpression': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Key condition expression',
     required: true,
   },
   'dynamodb.filterExpression': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Filter expression',
   },
   'dynamodb.projectionExpression': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Projections',
     delimiter: ',',
   },
   'dynamodb.expressionAttributeNames': {
-    loggable: true,
+    isLoggable: true,
     type: 'editor',
     label: 'Expression attribute names',
     mode: 'json',
@@ -59,20 +59,20 @@ export default {
       '{ "#n1":"Name","#n2":"Id"}',
   },
   'dynamodb.expressionAttributeValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'sqlquerybuilder',
     label: 'Expression attribute values',
     required: true,
     defaultValue: r => r?.dynamodb?.expressionAttributeValues,
   },
   'dynamodb.onceExportPartitionKey': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Once export partition key',
     required: true,
   },
   'dynamodb.onceExportSortKey': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Once export sort key',
   },

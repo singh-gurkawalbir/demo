@@ -52,7 +52,6 @@ function GlobalSearch() {
       {!open && (
       <Tooltip
         classes={{tooltip: classes.muiTooltip}}
-        data-public
         title={<TooltipTitle />}
         placement="bottom"
         aria-label="Global search">

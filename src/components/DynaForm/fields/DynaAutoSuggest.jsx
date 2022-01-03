@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -149,6 +150,7 @@ export default function DynaAutoSuggest(props) {
     errorMessages,
     required,
     options = {},
+    isLoggable,
   } = props;
   const classes = useStyles();
   const suggestions = (options.suggestions || []).map(option => ({
@@ -191,7 +193,7 @@ export default function DynaAutoSuggest(props) {
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <div className={classes.root}>
+      <div className={classes.root} {...isLoggableAttr(isLoggable)}>
         <Autosuggest
           {...autosuggestProps}
           inputProps={{

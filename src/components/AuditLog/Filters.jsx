@@ -171,6 +171,7 @@ export default function Filters(props) {
         />
           <FormControl className={classes.formControl}>
             <CeligoSelect
+              isLoggable={false}
               inputProps={userInput}
               onChange={handleChange}
               value={byUser}>
@@ -178,7 +179,7 @@ export default function Filters(props) {
                 Select user
               </MenuItem>
               {users.map(opt => (
-                <MenuItem key={opt._id} value={opt._id}>
+                <MenuItem key={opt._id} value={opt._id} data-private>
                   {opt.name || opt.email}
                 </MenuItem>
               ))}
@@ -186,6 +187,7 @@ export default function Filters(props) {
           </FormControl>
           <FormControl className={classes.formControl}>
             <CeligoSelect
+              isLoggable
               inputProps={sourceInput}
               onChange={handleChange}
               value={source}>

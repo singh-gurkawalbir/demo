@@ -7,7 +7,7 @@ export default {
     required: true,
   },
   'export.file.csv': {
-    loggable: true,
+    isLoggable: true,
     type: 'suitescriptcsvparse',
     label: 'CSV parser helper',
     helpKey: 'file.csvParse',

@@ -79,7 +79,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   }
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} data-private>
       <CeligoTabWrapper>
         <CeligoPillTabs tabs={TABS} />
         <CeligoTabPanel panelId="body">
