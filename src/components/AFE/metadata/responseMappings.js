@@ -1,11 +1,11 @@
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import ResponseMappingsPanel from '../Editor/panels/Mappings/ResponseMappings';
-import DrawerTitleHelp from '../Editor/panels/Mappings/ResponseMappings/TitleHelp';
 
 export default {
   type: 'responseMappings',
   description: 'Maps source fields to next step',
+  helpKey: ({resourceType}) => resourceType === 'exports' ? 'lookup.response.mapping' : 'import.response.mapping',
   panels: [
     {
       title: 'Rules',
@@ -34,10 +34,5 @@ export default {
   ],
   drawer: {
     showLayoutToggle: true,
-    actions: [
-      { component: DrawerTitleHelp,
-        position: 'left',
-      },
-    ],
   },
 };

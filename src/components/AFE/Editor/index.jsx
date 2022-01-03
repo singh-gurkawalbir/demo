@@ -12,15 +12,8 @@ import SinglePanelGridItem from './gridItems/SinglePanelGridItem';
 import TabbedPanelGridItem from './gridItems/TabbedPanelGridItem';
 import layouts from './layouts';
 import editorMetadata from '../metadata';
+import { resolveValue } from '../../../utils/editor';
 import IsLoggableContextProvider from '../../IsLoggableContextProvider';
-
-function resolveValue(value, editorContext) {
-  if (typeof value === 'function') {
-    return value(editorContext);
-  }
-
-  return value;
-}
 
 const useStyles = makeStyles(layouts);
 
