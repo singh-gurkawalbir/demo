@@ -219,7 +219,7 @@ function Tile({
               className={classes.tileName}
               onClick={handleTileClick}>
               <CeligoTruncate
-                dataPublic
+                isLoggable
                 delay={100}
                 lines={2}
                 placement="bottom">
@@ -238,14 +238,12 @@ function Tile({
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
                 <ActionButton
                   tooltip="You have monitor permissions"
-                  data-public
                   onClick={handleUsersClick}>
                   <PermissionsMonitorIcon />
                 </ActionButton>
               ) : (
                 <ActionButton
                   placement="bottom"
-                  data-public
                   tooltip="You have manage permissions"
                   className={classes.action}
                   onClick={handleUsersClick}>

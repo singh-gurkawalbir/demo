@@ -33,6 +33,8 @@ export default function getFormFieldMetadata(
         defaultDisabled: !!fieldId,
         defaultValue: subrecord && subrecord.fieldId,
         required: true,
+        // can this be loggable
+        isLoggable: true,
       },
     },
     layout: {
@@ -46,6 +48,7 @@ export default function getFormFieldMetadata(
     fieldMeta.fieldMap[jsonPathFieldId] = {
       id: jsonPathFieldId,
       name: jsonPathFieldId,
+      isLoggable: true,
       type: 'netsuitesubrecordjsonpath',
       label: fld.subRecordJsonPathLabel,
       defaultValue: subrecord && subrecord.jsonPath,

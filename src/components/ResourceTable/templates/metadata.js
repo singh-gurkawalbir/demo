@@ -16,6 +16,7 @@ export default {
     {
       key: 'applications',
       heading: 'Applications',
+      isLoggable: true,
       Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
 
     },
@@ -23,6 +24,7 @@ export default {
       key: 'name',
       heading: 'Name',
       width: '25%',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <TextOverflowCell
           message={<ResourceDrawerLink resourceType="templates" resource={r} />} />
@@ -32,12 +34,15 @@ export default {
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
       key: 'websiteUrl',
       heading: 'Website URL',
+      // is it always link text...should be loggable...new tab will be outside the ambit of logrocket
+      isLoggable: true,
       Value: ({rowData: r}) => {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
         const websiteURL = r.websiteURL?.startsWith('http') ? r.websiteURL : `https://${r.websiteURL}`;
@@ -54,6 +59,7 @@ export default {
     {
       key: 'published',
       heading: 'Published',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <OnOffCell
           templateId={r._id}

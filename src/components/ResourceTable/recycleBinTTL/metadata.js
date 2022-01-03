@@ -8,24 +8,28 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: r}) => r.doc && r.doc.name,
       orderBy: 'doc.name',
     },
     {
       key: 'type',
       heading: 'Type',
+      isLoggable: true,
       Value: ({rowData: r}) => r.model,
       orderBy: 'model',
     },
     {
       key: 'deletedDate',
       heading: 'Deleted date',
+      isLoggable: true,
       Value: ({rowData: r}) => r.doc && <DateTimeDisplay dateTime={r.doc.lastModified} />,
       orderBy: 'doc.lastModified',
     },
     {
       key: 'autoPurge',
       heading: 'Auto purge',
+      isLoggable: true,
       Value: ({rowData: r}) => {
         const restoreWithin = Math.ceil(
           (30 * 24 * 60 * 60 * 1000 -

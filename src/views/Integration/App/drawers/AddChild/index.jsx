@@ -160,7 +160,7 @@ export default function IntegrationAppAddNewChild(props) {
     return (
       <Loader open>
         <Spinner />
-        <Typography data-public variant="h5">Loading</Typography>
+        <Typography variant="h5">Loading</Typography>
       </Loader>
     );
   }

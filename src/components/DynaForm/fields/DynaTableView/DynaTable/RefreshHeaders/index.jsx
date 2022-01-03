@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Spinner from '../../../../../Spinner';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
+import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -48,7 +49,7 @@ export default function RefreshHeaders({
   isLoading = false,
   optionsMap,
   handleRefreshClickHandler,
-  dataPublic,
+  isLoggable,
 }) {
   const classes = useStyles();
 
@@ -59,7 +60,7 @@ export default function RefreshHeaders({
     <div className={classes.columnsWrapper}>
       {optionsMap.map(header => (
         <div className={classes.header} key={header.id}>
-          <span data-public={!!dataPublic} className={classes.label}>{header.label || header.name}</span>
+          <span {...isLoggableAttr(isLoggable)} className={classes.label}>{header.label || header.name}</span>
           <RefreshComponent
             isLoading={isLoading}
             header={header}

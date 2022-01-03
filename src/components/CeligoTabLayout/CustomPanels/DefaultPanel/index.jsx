@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import ClipboardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor2';
 import { isJsonString } from '../../../../utils/string';
+import { withIsLoggable } from '../../../IsLoggableContextProvider';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
@@ -16,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DefaultPanel({ value, hideClipboard = false, contentType = 'json' }) {
+function DefaultPanel({ value, isLoggable, hideClipboard = false, contentType = 'json' }) {
   const classes = useStyles();
 
   if (!value) {
@@ -31,7 +33,7 @@ export default function DefaultPanel({ value, hideClipboard = false, contentType
 
   return (
     <>
-      <div className={classes.defaultPanelContainer}>
+      <div className={classes.defaultPanelContainer} {...isLoggableAttr(isLoggable)} >
         <CodeEditor
           value={content}
           mode={contentType}
@@ -43,3 +45,4 @@ export default function DefaultPanel({ value, hideClipboard = false, contentType
     </>
   );
 }
+export default withIsLoggable(DefaultPanel);

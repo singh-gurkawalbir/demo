@@ -23,6 +23,7 @@ export default {
               ],
             },
           ],
+          isLoggable: true,
         },
         _recordType: {
           id: '_recordType',
@@ -36,6 +37,7 @@ export default {
           connectionId,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
+          isLoggable: true,
         },
         _expression: {
           id: '_expression',
@@ -51,6 +53,7 @@ export default {
           ],
           value: lookup.expression,
           data: extractFields,
+          isLoggable: true,
         },
         _expressionText: {
           id: '_expressionText',
@@ -67,6 +70,7 @@ export default {
           ],
           helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
+          isLoggable: true,
         },
         _resultField: {
           id: '_resultField',
@@ -80,6 +84,8 @@ export default {
           refreshOptionsOnChangesTo: ['_recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
+          // can this be loggable?
+          isLoggable: true,
         },
         _mapList: {
           id: '_mapList',
@@ -100,6 +106,7 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
+          isLoggable: true,
           visibleWhenAll: [{ field: '_mode', is: ['static'] }],
         },
         _name: {
@@ -111,6 +118,7 @@ export default {
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
           helpKey: 'import.lookups.name',
+          isLoggable: false,
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',

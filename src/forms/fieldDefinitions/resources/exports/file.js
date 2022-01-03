@@ -20,7 +20,7 @@ export default {
     ],
   },
   'file.batchSize': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Batch size',
     validWhen: {
@@ -31,7 +31,7 @@ export default {
     },
   },
   'file.fileNameStartsWith': {
-    loggable: true,
+    isLoggable: true,
     type: 'uri',
     label: 'File name starts with',
     showExtract: false,
@@ -54,7 +54,7 @@ export default {
     },
   },
   'file.fileNameEndsWith': {
-    loggable: true,
+    isLoggable: true,
     type: 'uri',
     label: 'File name ends with',
     showExtract: false,
@@ -77,7 +77,7 @@ export default {
     },
   },
   'file.backupPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'uri',
     label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
     helpKey: r => {
@@ -101,7 +101,7 @@ export default {
     ],
   },
   'file.encoding': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'File encoding',
     visibleWhenAll: [
@@ -121,7 +121,7 @@ export default {
     ],
   },
   'file.type': {
-    loggable: true,
+    isLoggable: true,
     type: 'filetypeselect',
     label: 'File type',
     required: true,
@@ -152,14 +152,14 @@ export default {
       r.file.fileDefinition._fileDefinitionId,
   },
   'file.skipDelete': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Leave file on server',
     defaultValue: r => (r && r.file && r.file.skipDelete) || false,
     helpKey: r => r?.assistant === 'azurestorageaccount' ? 'export.azure.skipDelete' : 'export.file.skipDelete',
   },
   'file.compressionFormat': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Compression format',
     visibleWhen: [
@@ -171,7 +171,7 @@ export default {
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
   'file.sortByFields': {
-    loggable: true,
+    isLoggable: true,
     type: 'sortandgroup',
     enableSorting: true,
     keyName: 'field',
@@ -183,7 +183,7 @@ export default {
     label: 'Sort records by fields',
   },
   'file.groupByFields': {
-    loggable: true,
+    isLoggable: true,
     type: 'sortandgroup',
     label: 'Group records by fields',
     defaultValue: r => r.file?.groupByFields || r.file?.csv?.keyColumns || r.file?.xlsx?.keyColumns,
@@ -206,12 +206,12 @@ export default {
     requiredWhen: [{ field: 'pgpdecrypt', is: [true] }],
   },
   'file.purgeInternalBackup': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'File purge internal backup',
   },
   'file.json.resourcePath': {
-    loggable: true,
+    isLoggable: true,
     label: 'Resource path',
     type: 'jsonresourcepath',
     visibleWhenAll: [
@@ -226,7 +226,7 @@ export default {
     ],
   },
   'file.xml.resourcePath': {
-    loggable: true,
+    isLoggable: true,
     label: 'Resource path',
     type: 'text',
     visibleWhenAll: [
@@ -242,7 +242,7 @@ export default {
     required: true,
   },
   'file.fileDefinition.resourcePath': {
-    loggable: true,
+    isLoggable: true,
     label: 'Resource path',
     type: 'text',
     visibleWhenAll: [
@@ -257,7 +257,7 @@ export default {
     ],
   },
   'edix12.format': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitionselect',
     label: 'EDI x12 format',
     required: true,
@@ -274,7 +274,7 @@ export default {
     ],
   },
   'fixed.format': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitionselect',
     label: 'Format',
     required: true,
@@ -291,7 +291,7 @@ export default {
     ],
   },
   'edifact.format': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitionselect',
     label: 'EDIFACT format',
     required: true,
@@ -308,7 +308,7 @@ export default {
     ],
   },
   'file.filedefinition.rules': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitioneditor',
     label: 'File parser helper',
     helpKey: 'export.file.filedefinition.rules',
@@ -337,7 +337,7 @@ export default {
     sampleData: r => r && r.sampleData,
   },
   'file.csv': {
-    loggable: true,
+    isLoggable: true,
     type: 'csvparse',
     label: 'CSV parser helper',
     helpKey: 'file.csvParse',
@@ -362,7 +362,7 @@ export default {
     ],
   },
   'file.xlsx.hasHeaderRow': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'File has header',
     defaultValue: r =>
@@ -379,7 +379,7 @@ export default {
     ],
   },
   'file.xlsx.rowsPerRecord': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
     showDeprecatedMessage: true,
@@ -399,7 +399,7 @@ export default {
     defaultValue: r => !!(r && r.file && r.file.xlsx && r.file.xlsx.keyColumns),
   },
   'file.xlsx.keyColumns': {
-    loggable: true,
+    isLoggable: true,
     type: 'filekeycolumn',
     defaultDisabled: true,
     label: 'Key columns',

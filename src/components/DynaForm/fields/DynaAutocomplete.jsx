@@ -5,6 +5,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import clsx from 'clsx';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
+import { useIsLoggable } from '../../IsLoggableContextProvider';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 
@@ -59,6 +61,7 @@ const ListboxComponent = React.forwardRef(props => {
   const itemCount = itemData.length;
 
   const {selectedItemIndex, modalOpen} = React.useContext(SelectedIndexContext);
+  const isLoggable = useIsLoggable();
 
   useEffect(() => {
     if (modalOpen) { listRef?.current?.scrollToItem(selectedItemIndex, 'start'); }
@@ -72,6 +75,7 @@ const ListboxComponent = React.forwardRef(props => {
   return (
     <OuterElementContext.Provider value={rest}>
       <FixedSizeList
+        {...isLoggableAttr(isLoggable)}
         ref={listRef}
         itemData={itemData}
         itemCount={itemCount}
@@ -100,6 +104,7 @@ export default function DynaAutocomplete(props) {
     multiline = true,
     onFieldChange,
     dataTest,
+    isLoggable,
     options: actualOptions,
   } = props;
 
@@ -163,6 +168,7 @@ export default function DynaAutocomplete(props) {
             renderInput={params => (
               <TextField
                 {...params}
+                {...isLoggableAttr(isLoggable)}
                 multiline={multiline}
                 name={name}
                 id={id}

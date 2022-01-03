@@ -54,11 +54,9 @@ export default function CompletedFlows() {
       <div className={classes.root}>
         {isCompletedJobsCollectionLoading ? (<Spinner centerAll />) : (
           <>
-            <span data-public>
-              <Filters
-                filterKey={filterKey}
+            <Filters
+              filterKey={filterKey}
               />
-            </span>
             <ResourceTable
               resources={jobs}
               className={clsx(classes.jobTable, !showEmptyMessage && classes.scrollTable)}

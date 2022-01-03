@@ -31,7 +31,7 @@ export default function HandlebarGuide() {
           Handlebars guide
         </TextButton>
       ) : (
-        <Tooltip data-public title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
+        <Tooltip title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
           <IconButton
             {...anchorProps}
             className={classes.button}

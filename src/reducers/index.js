@@ -2832,14 +2832,13 @@ selectors.integrationAppLicense = (state, id) => {
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
+  const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
   const hasExpired = moment(expires) - moment() < 0;
-  const createdFormatted = `Started on ${moment(created).format(
-    'MMM Do, YYYY'
-  )}`;
+  const createdFormatted = `Started on ${moment(created).format(dateFormat || 'MMM Do, YYYY')}`;
   const isExpiringSoon =
     moment.duration(moment(expires) - moment()).as('days') <= 15;
-  const expiresText = expiresInfo(license);
+  const expiresText = expiresInfo(license, dateFormat);
   const upgradeText = upgradeButtonText(
     license,
     integrationResource,
@@ -3402,7 +3401,8 @@ function getTierToFlowsMap(license) {
 }
 selectors.platformLicenseWithMetadata = createSelector(
   selectors.platformLicense,
-  license => {
+  state => selectors.userProfilePreferencesProps(state)?.dateFormat,
+  (license, dateFormat) => {
     const licenseActionDetails = { ...license };
     const nameMap = {
       none: 'None',
@@ -3489,7 +3489,7 @@ selectors.platformLicenseWithMetadata = createSelector(
     if (licenseActionDetails.expirationDate) {
       licenseActionDetails.expirationDate = moment(
         licenseActionDetails.expirationDate
-      ).format('MMM Do, YYYY');
+      ).format(dateFormat || 'MMM Do, YYYY');
     }
 
     const names = {
@@ -6378,6 +6378,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
+  const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
 
   let licenseMessageContent = '';
   let listViewLicenseMesssage = '';
@@ -6389,7 +6390,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
-    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format(dateFormat || 'MMM Do, YYYY')}`;
     listViewLicenseMesssage = `Expired ${Math.abs(trialExpiresInDays)} days ago`;
     showTrialLicenseMessage = true;
     trialExpired = true;
@@ -6399,7 +6400,7 @@ selectors.tileLicenseDetails = (state, tile) => {
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {
     expired = true;
-    licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
+    licenseMessageContent = `Your subscription expired on ${moment(license.expires).format(dateFormat || 'MMM Do, YYYY')}. Contact sales to renew your subscription.`;
     listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
     licenseMessageContent = `Your subscription will expire in ${getTextAfterCount('day', expiresInDays)}. Contact sales to renew your subscription.`;

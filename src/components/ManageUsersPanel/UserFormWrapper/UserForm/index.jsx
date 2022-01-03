@@ -26,7 +26,6 @@ export default function UserForm({
   onSaveClick,
   onCancelClick,
   disableSave,
-  dataPublic,
 }) {
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -65,6 +64,7 @@ export default function UserForm({
         name: 'email',
         type: 'text',
         label: 'Email',
+        isLoggable: false,
         defaultValue: isEditMode ? data.sharedWithUser.email : '',
         required: true,
         defaultDisabled: isEditMode,
@@ -78,6 +78,7 @@ export default function UserForm({
         },
       },
       accessLevel: {
+        isLoggable: true,
         id: 'accessLevel',
         name: 'accessLevel',
         type: 'select',
@@ -110,6 +111,7 @@ export default function UserForm({
         helpKey: 'users.accesslevel',
       },
       integrationsToManage: {
+        isLoggable: true,
         id: 'integrationsToManage',
         name: 'integrationsToManage',
         type: 'multiselect',
@@ -148,6 +150,7 @@ export default function UserForm({
           'The invited user will have permissions to manage the integrations selected here.',
       },
       integrationsToMonitor: {
+        isLoggable: true,
         id: 'integrationsToMonitor',
         name: 'integrationsToMonitor',
         type: 'multiselect',
@@ -178,6 +181,7 @@ export default function UserForm({
           'The invited user will have permissions to monitor the integrations selected here.',
       },
       accountSSORequired: {
+        isLoggable: true,
         type: 'checkbox',
         id: 'accountSSORequired',
         name: 'accountSSORequired',
@@ -205,7 +209,6 @@ export default function UserForm({
     <LoadResources required resources="integrations,ssoclients">
       <DrawerContent>
         <DynaForm
-          dataPublic={dataPublic}
           formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>

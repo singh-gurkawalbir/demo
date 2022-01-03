@@ -12,6 +12,7 @@ export default {
       title: 'CSV generator options',
       area: 'rule',
       Panel: CsvGenerateRules,
+      isLoggable: true,
     },
     {
       title: 'Sample flow data',

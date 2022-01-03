@@ -120,6 +120,7 @@ function EditListItemModal(props) {
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
         defaultValue: relationshipName,
+        isLoggable: true,
       },
       referencedFields: {
         connectionId,
@@ -133,6 +134,8 @@ function EditListItemModal(props) {
         errorMsg: 'Please select a parent sObject Type',
         defaultValue: referencedFields,
         disabledWhen: [{ field: 'childRelationship', is: [''] }],
+        // verify if isLoggable
+        isLoggable: true,
       },
       filterExpression: {
         label: 'Filter expression',
@@ -142,6 +145,7 @@ function EditListItemModal(props) {
         type: 'text',
         multiline: true,
         defaultValue: filter,
+        isLoggable: true,
       },
       orderBy: {
         label: 'Order by',
@@ -153,6 +157,7 @@ function EditListItemModal(props) {
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
         defaultValue: orderBy,
+        isLoggable: true,
       },
     },
     layout: {
@@ -349,7 +354,6 @@ export function useCallMetadataAndReturnStatus(props) {
 
   return { status, options };
 }
-
 export default function DynaRelatedList(props) {
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
   const toggleFirstLevelModalOpen = useCallback(
