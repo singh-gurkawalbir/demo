@@ -42,6 +42,12 @@ const useStyles = makeStyles(theme => ({
   },
   child: {
     flexBasis: '100%',
+    '& input::selection': {
+      background: 'transparent',
+    },
+    '& input::-moz-selection': {
+      background: 'transparent',
+    },
   },
   leftItems: {
     float: 'left',
