@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   noShowMoreContainer: {
     paddingBottom: theme.spacing(3),
   },
+  noResultWrapper: {
+    padding: theme.spacing(1),
+  },
 }));
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
@@ -166,14 +169,14 @@ export default function ResourceList(props) {
           </TextButton>
         </div>
       </CeligoPageBar>
-      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count })}>
+      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}>
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
-            <div>
+            <>
               {list.total === 0
                 ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
-            </div>
+            </>
           ) : (
             <ResourceTable
               resourceType={resourceType}
