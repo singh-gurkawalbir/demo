@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isIntegrationApp } from '../../../utils/flows';
 
 export default {
   'http.status._exportId': {
@@ -13,6 +14,7 @@ export default {
     allowNew: true,
     allowEdit: true,
     required: true,
+    defaultDisabled: r => isIntegrationApp(r),
   },
   name: {
     loggable: true,
@@ -30,39 +32,46 @@ export default {
     loggable: true,
     type: 'text',
     label: 'Initial wait time',
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.status.pollWaitTime': {
     loggable: true,
     type: 'text',
     label: 'Poll wait time',
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.status.statusPath': {
     loggable: true,
     type: 'text',
     label: 'Status path',
     required: true,
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.status.inProgressValues': {
     loggable: true,
     type: 'textlist',
     label: 'In progress values',
     required: true,
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.status.doneValues': {
     loggable: true,
     type: 'textlist',
     label: 'Done values',
     required: true,
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.status.doneWithoutDataValues': {
     loggable: true,
     type: 'textlist',
     label: 'Done without data values',
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.status.errorValues': {
     loggable: true,
     type: 'textlist',
     label: 'Error values',
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.submit.resourcePath': {
     loggable: true,
@@ -87,6 +96,7 @@ export default {
     filter: r => ({ _connectionId: r._connectionId }),
     required: true,
     label: 'Result export',
+    defaultDisabled: r => isIntegrationApp(r),
   },
   'http.submit.sameAsStatus': {
     loggable: true,
