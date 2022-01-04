@@ -57,12 +57,6 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    padding: 0,
-    alignItems: 'center',
-  },
   multiSelectWrapper: {
     width: '100%',
   },
@@ -71,12 +65,6 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
     alignItems: 'center',
     paddingRight: theme.spacing(1),
     height: '100%',
-  },
-  doneButton: {
-    border: 'none',
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    minHeight: 42,
-    borderRadius: 0,
   },
 }));
 
