@@ -40,7 +40,7 @@ export default function AuditLogTable({ resourceType, isFixed, resourceId, filte
             actionProps={actionProps}
           />
         ) : (
-          <NoResultMessageWrapper>
+          <NoResultMessageWrapper isBackground>
             You don&apos;t have any audit logs.
           </NoResultMessageWrapper>
         )}
