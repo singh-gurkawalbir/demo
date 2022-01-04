@@ -59,7 +59,7 @@ export default function Applications({apps, children, className, logoSize = 'sma
         // you may want to check with the dev who manages the /constants/applications.js file. There is a lot
         // or new code since i wrote the original. Possibly `getApp` is not working or not the correct fn to use
         // to get the application display name.
-        <Tooltip title={getApp(null, application).name || application} key={application}>
+        <Tooltip title={getApp(null, application).name || 'other'} key={application}>
           <li>
             <ApplicationImg
               markOnly
