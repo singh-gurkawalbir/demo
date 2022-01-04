@@ -11,7 +11,6 @@ import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
 import IntegrationTag from '../../tags/IntegrationTag';
-import shouldUnmaskInLogRocket from '../../../utils/shouldUnmaskInLogRocket';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -224,7 +223,7 @@ export default function DynaMultiSelect(props) {
         className={classes.multiselectWrapper}>
         <CeligoSelect
           multiple
-          isLoggable={shouldUnmaskInLogRocket(id, isLoggable)}
+          isLoggable={isLoggable}
           data-test={id}
           disabled={disabled}
           value={processedValue}
