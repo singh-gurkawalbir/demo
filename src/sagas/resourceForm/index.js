@@ -1,5 +1,6 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
+
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -184,14 +185,26 @@ export function* deleteUISpecificValues({ values, resourceId }) {
   });
 
   // TO DO: This logic should be revisited
-  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+  const csvKeyColumns = valuesCopy['/file/csv']?.keyColumns;
+  const xlsxKeyColumns = valuesCopy['/file/xlsx/keyColumns'];
+  const groupByFields = valuesCopy['/file/groupByFields'];
+  let canDeprecateOldFields = !!valuesCopy['/file/sortByFields'];
+
+  if ((csvKeyColumns && !isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && !isEqual(xlsxKeyColumns, groupByFields))) {
+    canDeprecateOldFields = true;
+  }
+
+  if (canDeprecateOldFields) {
     if (valuesCopy['/file/csv']?.keyColumns) {
       valuesCopy['/file/csv'].keyColumns = undefined;
     }
+    if (valuesCopy['/file/xlsx/keyColumns']) {
+      valuesCopy['/file/xlsx/keyColumns'] = undefined;
+    }
+  } else if ((csvKeyColumns && isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && isEqual(xlsxKeyColumns, groupByFields))) {
+    valuesCopy['/file/groupByFields'] = undefined;
   }
-  if (valuesCopy['/file/xlsx/keyColumns']) {
-    valuesCopy['/file/xlsx/keyColumns'] = undefined;
-  }
+
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);
