@@ -89,23 +89,6 @@ export function CustomReactSelectStyles() {
         color: theme.palette.secondary.light,
       },
     }),
-    optionMulitselect: (provided, state) => ({
-      ...provided,
-      padding: '0px',
-      color: state.isSelected
-        ? theme.palette.secondary.main
-        : theme.palette.secondary.light,
-      backgroundColor:
-        state.isSelected || state.isFocused
-          ? theme.palette.background.paper2
-          : theme.palette.background.paper,
-      border: 'none',
-      minHeight: '38px',
-      '&:active': {
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.secondary.light,
-      },
-    }),
     control: provided => ({
       ...provided,
       borderColor: theme.palette.secondary.lightest,
