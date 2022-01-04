@@ -685,7 +685,7 @@ export const UNASSIGNED_SECTION_NAME = 'Unassigned';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
 export const SENSITIVE_DATA = ['token', 'password'];
-
+export const IGNORE_SENSITIVE_FIELDS_CHECK = ['http.paging.tokenPath'];
 export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
