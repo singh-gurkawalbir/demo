@@ -101,11 +101,11 @@ function ResourceSetupDrawerContent({
   }
 
   useEffect(() => {
-    if (isAuthorized && !canSelectExistingResources) {
+    if (isAuthorized) {
       onSubmitComplete(resourceId, isAuthorized);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthorized, resourceId, canSelectExistingResources]);
+  }, [isAuthorized, resourceId]);
 
   const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
 
