@@ -1,9 +1,8 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import {ToggleButtonGroup} from '@material-ui/lab';
 import { connectorsList } from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
-import RemoveMargin from '../../../flows/cells/RemoveMargin';
+import LogoStrip from '../../../../LogoStrip';
 
 const useStyles = makeStyles(theme => ({
   img: {
@@ -55,12 +54,7 @@ export default function ApplicationImgCell({ applications }) {
       </div>
     );
   });
+  const applicationsShow = apps.map(app => app?.key || '');
 
-  return (
-    <RemoveMargin>
-      <ToggleButtonGroup size="small" className={classes.toggleImgs}>
-        {apps}
-      </ToggleButtonGroup>
-    </RemoveMargin>
-  );
+  return <LogoStrip applications={applicationsShow} logoSize="medium" />;
 }
