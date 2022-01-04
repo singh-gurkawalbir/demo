@@ -161,6 +161,7 @@ export default {
       {
         field: 'fileMetadata',
         is: [true],
+        // test build issue
       },
     ],
   },
