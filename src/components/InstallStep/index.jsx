@@ -145,9 +145,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isTemplate, isFrameWork2 } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
+  const isTemplate = useSelector(state => {
+    const integrationSettings = selectors.integrationAppSettings(state, integrationId);
+
+    return !integrationSettings?._connectorId;
+  });
+
   const connection = useSelector(state => {
     if (step && step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       return selectors.resource(
