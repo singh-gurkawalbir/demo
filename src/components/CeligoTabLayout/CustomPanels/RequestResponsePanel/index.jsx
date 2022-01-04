@@ -62,6 +62,7 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
         )
       </Tabs>
       <DefaultPanel
+        isLoggable={false}
         value={bodyHeaderFields[tabValue]}
         hideClipboard={hideClipboard}
         contentType={tabValue === 'body' ? contentType : 'json'}

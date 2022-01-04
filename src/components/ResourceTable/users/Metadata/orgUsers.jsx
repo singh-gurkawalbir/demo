@@ -21,6 +21,7 @@ export default {
       {
         key: 'accessLevelHeader',
         HeaderValue: AccessLevelHeader,
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -30,6 +31,7 @@ export default {
       {
         key: 'statusHeader',
         HeaderValue: StatusHeader,
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -40,6 +42,8 @@ export default {
         key: 'notifications',
         heading: 'Notifications',
         align: 'center',
+        // it is loggable but what about the links after clicking...they contain an email..need to use requestSanitizer
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 

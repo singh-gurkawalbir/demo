@@ -5,6 +5,8 @@ import GenericRow from './types/Generic';
 import ConnectedRow from './types/Connected';
 import RecycleBinRow from './types/RecycleBin';
 import MarketplaceRow from './types/Marketplace';
+import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
 
 // TODO: We need to create custom row types for several of
 // the resource types. Only common resource types can use the
@@ -49,9 +51,7 @@ export default function Results({ results }) {
   if (!results?.length) {
     return (
       <div className={classes.root}>
-        <Typography className={classes.noResults} variant="body2" color="textSecondary">
-          Your search didn’t return any matching results. Try a different term or adjust your filters.
-        </Typography>
+        <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
       </div>
     );
   }

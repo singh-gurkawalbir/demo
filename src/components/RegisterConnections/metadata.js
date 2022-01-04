@@ -10,6 +10,7 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: r}) => {
         const {onClose} = useGetTableContext();
 
@@ -26,6 +27,7 @@ export default {
     {
       key: 'status',
       heading: 'Status',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <Status variant={r.offline ? 'error' : 'success'}>
           {r.offline ? 'Offline' : 'online'}
@@ -36,12 +38,14 @@ export default {
     {
       key: 'connector',
       heading: 'Connector',
+      isLoggable: true,
       Value: ({rowData: r}) => <ConnectorName resource={r} />,
       width: '200px',
     },
     {
       key: 'api',
       heading: 'API',
+      isLoggable: true,
       Value: ({rowData: r}) => {
         if (r.type === 'rest') return r?.rest?.baseURI;
 
@@ -53,6 +57,7 @@ export default {
     {
       key: 'lastModified',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
       width: '170px',
@@ -60,6 +65,7 @@ export default {
     {
       key: 'queueSize',
       heading: 'Queue size',
+      isLoggable: true,
       Value: ({rowData: r}) => r.queueSize || 0,
       width: '120px',
     },

@@ -1,17 +1,17 @@
 export default {
   'mongodb.collection': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Collection',
     required: true,
   },
   'mongodb.filter': {
-    loggable: true,
+    isLoggable: true,
     type: 'sqlquerybuilder',
     label: 'MongoDB filter',
   },
   'mongodb.projection': {
-    loggable: true,
+    isLoggable: true,
     type: 'editor',
     mode: 'json',
     label: 'Projection',

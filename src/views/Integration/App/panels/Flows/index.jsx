@@ -28,9 +28,10 @@ import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
 import useFormOnCancelContext from '../../../../../components/FormOnCancelContext';
-import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 import ActionGroup from '../../../../../components/ActionGroup';
+import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,9 +79,6 @@ const useStyles = makeStyles(theme => ({
   },
   configureSectionBtn: {
     padding: 0,
-  },
-  emptyMessageWrapper: {
-    padding: theme.spacing(1, 2),
   },
   displayNone: {
     display: 'none',
@@ -377,7 +375,6 @@ const FlowsTable = ({integrationId, childId}) => {
   return (
     <LoadResources required resources="flows,exports">
       <CeligoTable
-        data-public
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
@@ -503,7 +500,6 @@ export default function FlowsPanel({ childId, integrationId }) {
               {flowSections.map(({ title, titleId }) => (
                 <ListItem key={titleId} className={classes.flowTitle}>
                   <NavLink
-                    data-public
                     className={classes.listItem}
                     activeClassName={classes.activeListItem}
                     to={titleId}
@@ -521,9 +517,7 @@ export default function FlowsPanel({ childId, integrationId }) {
       </div>
       <div className={classes.noSearchResults}>
         {(flowFilter.keyword && !flowSections.length) ? (
-          <Typography variant="body1">
-            Your search didn’t return any matching results. Try expanding your search criteria.
-          </Typography>
+          <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
         ) : ''}
       </div>
     </>

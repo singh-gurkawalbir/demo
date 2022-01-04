@@ -16,7 +16,7 @@ import { extractSampleDataAtResourcePath } from '../../../utils/sampleData';
  * resourcePathToSave - that is used while saving - preSave extracts this values and passes through
  */
 export default function DynaJsonResourcePath(props) {
-  const { id, onFieldChange, value, label, resourceId, resourceType} = props;
+  const { id, onFieldChange, value, label, resourceId, resourceType, isLoggable} = props;
   const jsonContent = useSelector(
     state =>
       selectors.fileSampleData(state, {
@@ -77,6 +77,7 @@ export default function DynaJsonResourcePath(props) {
       id={id}
       onFieldChange={handleOnResourcePathChange}
       value={value && value.resourcePathToShow}
+      isLoggable={isLoggable}
       label={label}
 />
   );

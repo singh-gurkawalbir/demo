@@ -9,6 +9,7 @@ import { IAFormStateManager } from '../../../Flows';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
+import IsLoggableContextProvider from '../../../../../../../components/IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -63,20 +64,21 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
       required
       resources={['flows', 'exports', 'imports', 'connections']}>
       {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
-      <IAFormStateManager
-        key={childId}
-        dataPublic
-        formState={formState}
-        className={clsx(classes.configureform, {
-          [classes.configureCamForm]: section.sections,
-        })}
-        isIAForm
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-        fieldMeta={translatedMeta}
-        orientation="horizontal"
+      <IsLoggableContextProvider isLoggable>
+        <IAFormStateManager
+          key={childId}
+          formState={formState}
+          className={clsx(classes.configureform, {
+            [classes.configureCamForm]: section.sections,
+          })}
+          isIAForm
+          integrationId={integrationId}
+          childId={childId}
+          sectionId={sectionId}
+          fieldMeta={translatedMeta}
+          orientation="horizontal"
         />
+      </IsLoggableContextProvider>
     </LoadResources>
   );
 }

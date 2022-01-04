@@ -28,6 +28,14 @@ export const getFormSaveStatusFromCommStatus = resourceCommStatus => {
   }
 };
 
+export function resolveValue(value, editorContext) {
+  if (typeof value === 'function') {
+    return value(editorContext);
+  }
+
+  return value;
+}
+
 export function dataAsString(data) {
   return typeof data === 'string'
     ? data

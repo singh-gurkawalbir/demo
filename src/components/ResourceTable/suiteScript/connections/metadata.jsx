@@ -7,6 +7,7 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: resource}) => {
         const tableContext = useGetTableContext();
 
@@ -23,6 +24,7 @@ export default {
     {
       key: 'type',
       heading: 'Type',
+      isLoggable: true,
       Value: ({rowData: resource}) => ({
         ebay: 'eBay',
         ftp: 'FTP',
@@ -40,6 +42,7 @@ export default {
     {
       key: 'api',
       heading: 'API',
+      isLoggable: true,
       Value: ({rowData: resource}) =>
         (resource[resource.type === 'sftp' ? 'ftp' : resource.type].hostURI),
     },

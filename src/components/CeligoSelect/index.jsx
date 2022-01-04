@@ -5,6 +5,7 @@ import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import OutlinedButton from '../Buttons/OutlinedButton';
+import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   doneButton: {
@@ -87,7 +88,7 @@ const MenuComponent = React.forwardRef((props, ref) => {
   );
 });
 
-export default function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
+export default function CeligoSelect({ className, maxHeightOfSelect, children, isLoggable, ...props }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const openSelect = useCallback(() => {
@@ -133,6 +134,7 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
 
   return (
     <Select
+      {...isLoggableAttr(isLoggable)}
       IconComponent={ArrowDownIcon}
       className={clsx(classes.select, className)}
       open={open}

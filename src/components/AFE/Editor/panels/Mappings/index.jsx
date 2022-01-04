@@ -64,7 +64,7 @@ const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
       <SettingsDrawer disabled={disabled} />
       <div className={classes.mappingDrawerContent}>
         <div className={classes.mappingColumn}>
-          <TopPanel dataPublic flowId={flowId} importId={importId} disabled={disabled} />
+          <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
 
           <div className={classes.mappingTable}>
             <DragContainer

@@ -11,6 +11,7 @@ export default {
       title: 'Type your file definition rules here',
       area: 'rule',
       Panel: RulePanel,
+      isLoggable: true,
       props: {
         mode: 'json',
       },

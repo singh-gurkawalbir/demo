@@ -47,7 +47,7 @@ export default function VerifyTag({ error }) {
   if (error) {
     return (
       <FormHelperText error className={classes.message}>
-        <ErrorIcon className={classes.errorIcon} /> {error}
+        <ErrorIcon className={classes.errorIcon} data-private /> {error}
       </FormHelperText>
     );
   }

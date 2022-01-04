@@ -8797,6 +8797,12 @@ Object {
       "http.errorMediaType": Object {
         "fieldId": "http.errorMediaType",
       },
+      "http.existingExtract": Object {
+        "fieldId": "http.existingExtract",
+      },
+      "http.existingLookupName": Object {
+        "fieldId": "http.existingLookupName",
+      },
       "http.existingLookupType": Object {
         "fieldId": "http.existingLookupType",
       },
@@ -8931,6 +8937,9 @@ Object {
       },
       "http.ignoreNewLookupName": Object {
         "fieldId": "http.ignoreNewLookupName",
+      },
+      "http.lookupType": Object {
+        "fieldId": "http.lookupType",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -9372,6 +9381,15 @@ Object {
                     Object {
                       "collapsed": true,
                       "fields": Array [
+                        "http.lookupType",
+                        "http.existingExtract",
+                        "http.existingLookupName",
+                      ],
+                      "label": "Identify existing records",
+                    },
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
                         "http.compositeMethodUpdate",
                         "http.relativeURIUpdate",
                         "http.bodyUpdate",
@@ -9784,6 +9802,12 @@ Object {
       "http.compositeType": Object {
         "fieldId": "http.compositeType",
       },
+      "http.existingExtract": Object {
+        "fieldId": "http.existingExtract",
+      },
+      "http.existingLookupName": Object {
+        "fieldId": "http.existingLookupName",
+      },
       "http.existingLookupType": Object {
         "fieldId": "http.existingLookupType",
       },
@@ -9801,6 +9825,9 @@ Object {
       },
       "http.ignoreNewLookupName": Object {
         "fieldId": "http.ignoreNewLookupName",
+      },
+      "http.lookupType": Object {
+        "fieldId": "http.lookupType",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -10138,6 +10165,15 @@ Object {
                     "http.newLookupType",
                     "http.ignoreNewExtract",
                     "http.ignoreNewLookupName",
+                  ],
+                  "label": "Identify existing records",
+                },
+                Object {
+                  "collapsed": true,
+                  "fields": Array [
+                    "http.lookupType",
+                    "http.existingExtract",
+                    "http.existingLookupName",
                   ],
                   "label": "Identify existing records",
                 },

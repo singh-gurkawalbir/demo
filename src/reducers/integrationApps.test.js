@@ -3203,6 +3203,50 @@ describe('integrationApps selector testcases', () => {
       });
     });
 
+    test('should return license details for the integration app for owner user for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+              dateFormat: 'MM/DD/YY',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on 07/10/18',
+        expires: expiryDate,
+        expiresText: `Expires on ${moment(expiryDate).format('MM/DD/YY')} (10 Days)`,
+        showLicenseExpiringWarning: true,
+        upgradeRequested: false,
+        upgradeText: '',
+      });
+    });
+
     test('should retun license details for the integration app for non owner user for non-expired', () => {
       const state = reducer(
         {

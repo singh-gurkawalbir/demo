@@ -10,6 +10,7 @@ import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   dynaNetsuiteLookupFormControl: {
@@ -47,6 +48,7 @@ export default function DynaNetSuiteLookup_afe(props) {
     options,
     formKey,
     resourceType,
+    isLoggable,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -93,6 +95,7 @@ export default function DynaNetSuiteLookup_afe(props) {
         <div className={classes.dynaNetsuiteFieldLookupWrapper}>
           <div className={classes.dynaNetsuiteLookupField}>
             <TextField
+              {...isLoggableAttr(isLoggable)}
               key={id}
               name={name}
               className={classes.dynaNetsuiteLookupField}

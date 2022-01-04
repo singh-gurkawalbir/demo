@@ -1,6 +1,6 @@
 export default {
   'export.newegg.method': {
-    loggable: true,
+    isLoggable: true,
     type: 'suitescriptapimethod',
     label: 'API',
     _connectionId: r => r && r.export && r.export._connectionId,
@@ -9,7 +9,7 @@ export default {
     required: true,
   },
   'export.newegg.methodConfig': {
-    loggable: true,
+    isLoggable: true,
     type: 'suitescriptapiparameters',
     _connectionId: r => r && r.export && r.export._connectionId,
     ssLinkedConnectionId: r => r && r.ssLinkedConnectionId,
