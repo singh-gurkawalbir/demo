@@ -1,4 +1,4 @@
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -17,7 +17,7 @@ import flowTableMeta from '../../../../../components/ResourceTable/flows/metadat
 import Spinner from '../../../../../components/Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME, FLOW_GROUP_FORM_KEY } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME, FLOW_GROUP_FORM_KEY, NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
 import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
@@ -30,6 +30,7 @@ import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
 import DragContainer from '../../../../../components/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
 import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
+import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -457,9 +458,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       </div>
       <div className={classes.noSearchResults}>
         {(finalFilter.keyword && flows.length === 0) ? (
-          <Typography variant="body1">
-            Your search didn’t return any matching results. Try expanding your search criteria.
-          </Typography>
+          <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
         ) : ''}
       </div>
     </>

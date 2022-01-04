@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
@@ -13,6 +12,8 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../components/Buttons';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -136,11 +137,11 @@ export default function InstallBase(props) {
       </CeligoPageBar>
       <div className={classes.resultContainer}>
         {list.count === 0 ? (
-          <Typography>
+          <div>
             {list.total === 0
-              ? 'You don\'t have any installbase.'
-              : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-          </Typography>
+              ? <NoResultMessageWrapper>You don&apos;t have any installbase</NoResultMessageWrapper>
+              : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+          </div>
         ) : (
           <CeligoTable
             data={resources}

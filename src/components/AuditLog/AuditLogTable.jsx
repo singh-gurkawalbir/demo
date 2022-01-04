@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import ResourceTable from '../ResourceTable';
 import ShowMoreDrawer from '../drawer/ShowMore';
-import MessageWrapper from '../MessageWrapper';
+import NoResultMessageWrapper from '../NoResultMessageWrapper';
 
 const useStyles = makeStyles({
   root: {
@@ -40,9 +40,9 @@ export default function AuditLogTable({ resourceType, isFixed, resourceId, filte
             actionProps={actionProps}
           />
         ) : (
-          <MessageWrapper>
+          <NoResultMessageWrapper>
             You don&apos;t have any audit logs.
-          </MessageWrapper>
+          </NoResultMessageWrapper>
         )}
 
       <ShowMoreDrawer
