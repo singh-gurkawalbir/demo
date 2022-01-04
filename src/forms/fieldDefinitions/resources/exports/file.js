@@ -157,10 +157,10 @@ export default {
     label: 'Leave file on server',
     defaultValue: r => (r && r.file && r.file.skipDelete) || false,
     helpKey: r => r?.assistant === 'azurestorageaccount' ? 'export.azure.skipDelete' : 'export.file.skipDelete',
-    visibleWhen: [
+    disabledWhen: [
       {
         field: 'fileMetadata',
-        isNot: [true],
+        is: [true],
       },
     ],
   },
