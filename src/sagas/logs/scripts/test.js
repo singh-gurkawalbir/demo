@@ -1,18 +1,20 @@
 /* global describe, test, jest */
 import { expectSaga } from 'redux-saga-test-plan';
-import { call, select } from 'redux-saga/effects';
+import { call, select, take } from 'redux-saga/effects';
 import moment from 'moment';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { requestReferences } from '../../resources';
+import actionTypes from '../../../actions/types';
 import {
   putReceivedAction,
   getScriptDependencies,
   retryToFetchLogs,
   requestScriptLogs,
   startDebug,
+  requestLogsWithCancel,
 } from '.';
 import { apiCallWithRetry } from '../..';
 import { APIException } from '../../api/requestInterceptors/utils';
@@ -274,7 +276,20 @@ describe('Scripts logs sagas', () => {
         .run();
     });
   });
+  describe('requestLogsWithCancel saga', () => {
+    const params = {name: 123};
 
+    test('should call requestScriptLogs with params', () => {
+      expectSaga(requestLogsWithCancel, params)
+        .race({
+          callAPI: call(requestScriptLogs, params),
+          cancelCallAPI: take(action =>
+            action.type === actionTypes.LOGS.SCRIPTS.CLEAR ||
+          action.type === actionTypes.LOGS.SCRIPTS.PAUSE_FETCH
+          ),
+        });
+    });
+  });
   describe('startDebug saga', () => {
     test('should remove debugUntil if debug value = 0', () => {
       const now = new Date();
