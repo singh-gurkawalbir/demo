@@ -7,7 +7,7 @@ import InstallBase from './actions/InstallBase';
 import Licenses from './actions/Licenses';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
-import ApplicationImgCell from './cells/ApplicationImgCell';
+import ApplicationImgCell from '../../ApplicationImgCell';
 import TextOverflowCell from '../../TextOverflowCell';
 
 export default {

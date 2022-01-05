@@ -4,7 +4,7 @@ import Delete from '../commonActions/Delete';
 import UploadZipFile from './actions/UploadZipFile';
 import Download from '../commonActions/Download';
 import Edit from '../commonActions/Edit';
-import ApplicationImgCell from './cells/ApplicationImgCell';
+import ApplicationImgCell from '../../ApplicationImgCell';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
