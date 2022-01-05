@@ -47,7 +47,7 @@ export default function ErrorGridItem({ editorId }) {
         <PanelTitle>
           <Typography color="error">Error</Typography>
         </PanelTitle>
-        <div className={classes.panel}>
+        <div className={classes.panel} data-private>
           <CodePanel
             readOnly
             overrides={overrides}

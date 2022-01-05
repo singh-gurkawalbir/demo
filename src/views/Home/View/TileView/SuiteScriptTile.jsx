@@ -120,7 +120,7 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         <Content>
           <CardTitle>
             <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
-              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+              <CeligoTruncate isLoggable delay={100} lines={2} placement="bottom">
                 {tile.displayName}
               </CeligoTruncate>
             </Typography>
@@ -145,7 +145,6 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
             <Manage>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
                 <Tooltip
-                  data-public
                   title="You have monitor permissions"
                   placement="bottom">
                   <Link
@@ -157,7 +156,6 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
                 </Tooltip>
               ) : (
                 <Tooltip
-                  data-public
                   title="You have manage permissions"
                   placement="bottom">
                   <Link

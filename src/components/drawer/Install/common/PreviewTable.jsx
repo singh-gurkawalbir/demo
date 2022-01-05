@@ -34,6 +34,7 @@ const useColumns = () => [
     key: 'name',
     heading: 'Name',
     width: '40%',
+    isLoggable: true,
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
@@ -56,6 +57,7 @@ const useColumns = () => [
     key: 'description',
     heading: 'Description',
     width: '60%',
+    isLoggable: true,
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;

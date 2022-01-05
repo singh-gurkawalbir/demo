@@ -16,6 +16,7 @@ export default {
       {
         heading: 'Name',
         key: 'name',
+        isLoggable: true,
         Value: ({rowData: resource}) => (
           <NameCell
             ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
@@ -26,11 +27,13 @@ export default {
       {
         key: 'type',
         heading: 'Type',
+        isLoggable: true,
         Value: ({rowData: resource}) => flowType(resource),
       },
       {
         key: 'mapping',
         heading: 'Mapping',
+        isLoggable: true,
         Value: ({rowData: resource}) => (
           <MappingCell
             ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
@@ -41,6 +44,7 @@ export default {
       {
         key: 'schedule',
         heading: 'Schedule',
+        isLoggable: true,
         Value: ({rowData: resource}) => (
           <ScheduleCell
             ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
@@ -51,6 +55,7 @@ export default {
       {
         key: 'run',
         heading: 'Run',
+        isLoggable: true,
         Value: ({rowData: resource}) => (
           <RunCell
             ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
@@ -61,6 +66,7 @@ export default {
       {
         key: 'onOff',
         heading: 'Off/On',
+        isLoggable: true,
         Value: ({rowData: resource}) => (
           <OnOffCell
             ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
@@ -71,6 +77,7 @@ export default {
       {
         key: 'delete',
         heading: !tableContext.isConnector ? 'Delete' : '',
+        isLoggable: true,
         Value: ({rowData: resource}) => {
           if (tableContext.isConnector) {
             return null;

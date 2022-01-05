@@ -40,7 +40,7 @@ export default function ErrorContent({error}) {
   const classes = useStyles();
 
   return (
-    <span className={classes.errorText}>
+    <span className={classes.errorText} data-private>
       <FormatError error={error} />
     </span>
   );

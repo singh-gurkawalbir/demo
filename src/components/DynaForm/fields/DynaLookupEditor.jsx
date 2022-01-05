@@ -34,6 +34,7 @@ export default function DynaLookupEditor(props) {
   return (
     <>
       {showEditor && (
+        // should this be redacted?
         <LookupDialog
           id={id}
           lookups={value}

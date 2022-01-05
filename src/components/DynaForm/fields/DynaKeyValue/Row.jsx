@@ -5,6 +5,7 @@ import TrashIcon from '../../../icons/TrashIcon';
 import AutoSuggest from '../DynaAutoSuggest';
 import ActionButton from '../../../ActionButton';
 import SortableHandle from '../../../Sortable/SortableHandle';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const emptySet = {};
 
@@ -37,6 +38,7 @@ export default function KeyValueRow(props) {
     classes,
     enableSorting,
     showSortOrder,
+    isLoggable,
   } = props;
 
   const {
@@ -65,6 +67,7 @@ export default function KeyValueRow(props) {
 
   return (
     <div
+      {...isLoggableAttr(isLoggable)}
       className={compClasses.rowWrapper}
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}

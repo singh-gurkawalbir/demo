@@ -647,11 +647,12 @@ export const CONNECTORS_TO_IGNORE = [
   'concurv4',
   'constantcontactv2',
   'constantcontactv3',
+  'amazonsellingpartner',
   'ebayfinance',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
-  'box', 'segment'];
+  'box'];
 
 export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
 export const AUTO_PILOT_DATA_POINT = 'auto';
@@ -709,6 +710,7 @@ export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
 export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
 export const HOME_PAGE_PATH = '/home';
 export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
+export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const MAPPING_SAVE_STATUS = {
   REQUESTED: 'requested',
@@ -731,6 +733,7 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'amazonmws',
   'ebay',
   'ebayfinance',
+  'amazonsellingpartner',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

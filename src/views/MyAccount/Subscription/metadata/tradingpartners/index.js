@@ -7,6 +7,7 @@ export default {
     {
       key: 'tradingPartner',
       heading: 'Trading partner',
+      isLoggable: true,
       Value: ({rowData: resource}) => (
         <ConnectionResourceDrawerLink
           resource={resource}
@@ -17,6 +18,7 @@ export default {
     {
       key: 'whereUsed',
       heading: 'Where used',
+      isLoggable: true,
       Value: ({rowData: r}) => <References resourceType="connections" rowData={r} isSubscriptionPage />,
     },
   ],

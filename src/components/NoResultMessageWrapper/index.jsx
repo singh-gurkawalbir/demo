@@ -19,21 +19,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MessageWrapper(props) {
+export default function NoResultMessageWrapper(props) {
   const classes = useStyles();
-  const {children, size = 'medium', className} = props;
+  const {children, size = 'medium', isBackground = false, className} = props;
 
   return (
-    <div className={clsx(classes.root, classes[size], className)}>
+    <div className={clsx({[classes.root]: isBackground}, classes[size], className)}>
       <Typography>{children}</Typography>
     </div>
   );
 }
 
-MessageWrapper.propTypes = {
+NoResultMessageWrapper.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
+  isBackground: PropTypes.bool,
 };
-MessageWrapper.defaultProps = {
+NoResultMessageWrapper.defaultProps = {
   size: 'medium',
 };

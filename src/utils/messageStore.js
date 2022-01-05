@@ -7,7 +7,7 @@ export const INTEGRATION_DELETE_VALIDATE =
 export const FLOW_GROUP_DELETE_MESSAGE =
   'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.';
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
-'Thanks for your interest! We’ll be in touch shortly to get your license upgraded.';
+'Thanks for your interest! We will be in touch soon.';
 export const LICENSE_UPGRADE_REQUEST = 'We will contact you to discuss your add-on request.';
 export default {
   CONTACT_SALES_MESSAGE,

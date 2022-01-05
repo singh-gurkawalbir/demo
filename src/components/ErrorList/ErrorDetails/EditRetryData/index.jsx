@@ -32,12 +32,14 @@ export default function EditRetryData({
   }, [dispatch, flowId, resourceId, retryId, retryStatus]);
 
   return (
-    <CodeEditor
-      name={`${retryId}-edit`}
-      value={retryData}
-      mode="json"
-      onChange={onChange}
-      readOnly={isFlowDisabled}
+    <div data-private>
+      <CodeEditor
+        name={`${retryId}-edit`}
+        value={retryData}
+        mode="json"
+        onChange={onChange}
+        readOnly={isFlowDisabled}
     />
+    </div>
   );
 }
