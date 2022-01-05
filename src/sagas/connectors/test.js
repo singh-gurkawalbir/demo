@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { fetchMetadata, publishStatus, updateInstallBase } from '.';
 import { SCOPES } from '../resourceForm';
-import { commitStagedChanges } from '../suiteScript/resources';
+import { commitStagedChanges } from '../resources';
 
 describe('evaluate fetchMetadata saga', () => {
   const fieldType = 'dummy';
@@ -109,23 +109,23 @@ describe('publishStatus saga', () => {
   const errorResponse = {error: '200'};
 
   test('should call success action on success', () => {
-    expectSaga(publishStatus, {_integrationId: 1})
+    expectSaga(publishStatus, {_integrationId: '1'})
       .provide([
         [matchers.call.fn(commitStagedChanges), successResponse],
       ])
-      .put(actions.resource.patchStaged(1, patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
       .call.fn(commitStagedChanges)
-      .put(actions.connectors.publish.success(1))
+      .put(actions.connectors.publish.success('1'))
       .run();
   });
   test('should call error action on error', () => {
-    expectSaga(publishStatus, {_integrationId: 1})
+    expectSaga(publishStatus, {_integrationId: '1'})
       .provide([
         [matchers.call.fn(commitStagedChanges), errorResponse],
       ])
-      .put(actions.resource.patchStaged(1, patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
       .call.fn(commitStagedChanges)
-      .put(actions.connectors.publish.error(1))
+      .put(actions.connectors.publish.error('1'))
       .run();
   });
 });
