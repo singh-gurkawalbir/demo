@@ -88,8 +88,9 @@ describe('Connection debugger log sagas', () => {
   });
 
   describe('startPollingForConnectionDebugLogs', () => {
+    const connectionId = 'c1';
+
     test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
-      const connectionId = 'c1';
       const saga = startPollingForConnectionDebugLogs({connectionId});
 
       saga.next();
@@ -99,6 +100,48 @@ describe('Connection debugger log sagas', () => {
 
       saga.next(watcherTask);
       expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.CLEAR, clearAllLogs: true}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.CLEAR, connectionId}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should put requestFailed action if connection logs are not supported', () =>
+      expectSaga(startPollingForConnectionDebugLogs, {connectionId})
+        .provide([[select(selectors.isConnectionLogsNotSupported, connectionId), true]])
+        .put(actions.logs.connections.requestFailed(connectionId))
+        .run());
+
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then requests startPollingForConnectionDebugLogs', () => {
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.REQUEST, connectionId}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then pauses startPollingForConnectionDebugLogs', () => {
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.PAUSE, connectionId}).value).toEqual(cancel(watcherTask));
       expect(saga.next().done).toEqual(true);
     });
   });
