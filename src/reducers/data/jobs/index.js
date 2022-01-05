@@ -903,6 +903,7 @@ selectors.jobErrors = (state, jobId) => {
             RETRY_OBJECT_TYPES.FILE,
             RETRY_OBJECT_TYPES.OBJECT,
             RETRY_OBJECT_TYPES.PAGE,
+            RETRY_OBJECT_TYPES.FILE_BATCH_IMPORT,
           ].includes(retryObject.type),
           isDownloadable: retryObject.type === RETRY_OBJECT_TYPES.FILE,
         },
