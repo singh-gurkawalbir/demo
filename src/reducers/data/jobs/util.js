@@ -26,6 +26,7 @@ export const RETRY_OBJECT_TYPES = Object.freeze({
   OBJECT: 'object',
   PAGE: 'page',
   PATH: 'path',
+  FILE_BATCH_IMPORT: 'file_batch_import',
 });
 
 export function getFlowJobIdsThatArePartOfABulkRetryJob(
