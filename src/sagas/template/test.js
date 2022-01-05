@@ -278,11 +278,11 @@ describe('publishStatus saga', () => {
           call(commitStagedChanges, {
             resourceType: 'templates',
             id: templateId,
-            scope: SCOPES.value,
+            scope: SCOPES.VALUE,
           }), {},
         ],
       ])
-      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.value))
+      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE))
       .put(actions.template.publish.success(templateId))
       .run();
   });
@@ -303,11 +303,11 @@ describe('publishStatus saga', () => {
           call(commitStagedChanges, {
             resourceType: 'templates',
             id: templateId,
-            scope: SCOPES.value,
+            scope: SCOPES.VALUE,
           }), {error: {msg: '123'}},
         ],
       ])
-      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.value))
+      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE))
       .put(actions.template.publish.error(templateId))
       .run();
   });
