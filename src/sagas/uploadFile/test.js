@@ -15,9 +15,15 @@ describe('uploadFile saga', () => {
   const resourceType = 'templates';
   const fileType = 'application/zip';
   const file = { _id: '456', name: 'someFile' };
+  const fileName = 'testfile';
   const response = { signedURL: 'someURL', runKey: 'runKey' };
 
   test('should succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
+    .provide([[matchers.call.fn(apiCallWithRetry), response]])
+    .call.fn(apiCallWithRetry)
+    .returns(true)
+    .run());
+  test('should update the headers correctly if fileName exists and succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file, fileName })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
     .returns(true)
@@ -130,6 +136,7 @@ describe('processFile saga', () => {
   const fileProps = {};
   const fileId = 'field1';
   const fileContent = { test: 5 };
+  const validJson = '{"name": "test"}';
 
   test('should be able to dispatch processedFile if valid file is uploaded', () => expectSaga(processFile, { fileId, file, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
@@ -151,6 +158,16 @@ describe('processFile saga', () => {
         error: 'Please select valid JSON file',
       })
     )
+    .run());
+  test('should be able to dispatch processedFile if valid json file uploaded', () => expectSaga(processFile, { fileId, file: jsonFile, fileType: 'json', fileProps})
+    .provide([[matchers.call.fn(configureFileReader), validJson]])
+    .call.fn(configureFileReader)
+    .put(
+      actions.file.processedFile({
+        fileId,
+        file: {name: 'test'},
+        fileProps: { name: undefined, size: undefined, fileType: 'json', rawFile: '' },
+      }))
     .run());
   test('should be able to dispatch processError if invalid xlsx file uploaded', () => expectSaga(processFile, { fileId, file: xlsxFile, fileType: 'xlsx', fileProps})
     .provide([[matchers.call.fn(configureFileReader), {}],
