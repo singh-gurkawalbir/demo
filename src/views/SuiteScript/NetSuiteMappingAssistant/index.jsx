@@ -166,21 +166,14 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <Typography>
-        Loading
-        <Spinner />
-      </Typography>
+      <Spinner centerAll overlay>Loading</Spinner>
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-        <Typography>
-          Loading
-          {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
-          <Spinner />
-        </Typography>
+      <Spinner overlay centerAll> Loading</Spinner>
       )}
       {suiteletUrl && (
         <Iframe
