@@ -30,7 +30,7 @@ export const getContentType = httpPayload => {
   return 'json';
 };
 
-export const getErrorReqResFields = (httpPayload, variant = 'basic', isResourceNetsuite) => {
+export const getErrorReqResFields = (httpPayload, variant = 'basic', isResourceNetsuite, isRequest) => {
   if (!httpPayload) {
     return {};
   }
@@ -40,5 +40,5 @@ export const getErrorReqResFields = (httpPayload, variant = 'basic', isResourceN
 
   if (!isResourceNetsuite) return { headers, body, others: isEmpty(others) ? undefined : others};
 
-  return typeof httpPayload === 'object' ? httpPayload.body : httpPayload;
+  return isRequest ? httpPayload : httpPayload.body;
 };
