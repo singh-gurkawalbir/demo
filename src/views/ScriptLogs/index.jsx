@@ -304,7 +304,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
         />
         ) : null}
         {!logs.length && !nextPageURL && status !== 'requested' && (
-          <NoResultMessageWrapper>
+          <NoResultMessageWrapper isBackground>
             You don’t have any execution logs in the selected time frame.
           </NoResultMessageWrapper>
         )}

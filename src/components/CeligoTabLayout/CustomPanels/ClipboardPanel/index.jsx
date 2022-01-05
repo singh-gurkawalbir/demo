@@ -37,7 +37,6 @@ export default function ClipboardPanel({ content }) {
         className={classes.clipBoard}>
         <TextButton
           data-test="copyToClipboard"
-          title="Copy to clipboard"
           startIcon={<CopyIcon />}>
           Copy
         </TextButton>
