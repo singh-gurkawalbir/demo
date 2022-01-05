@@ -130,6 +130,12 @@ describe('Scripts logs sagas', () => {
         }))
         .run();
     });
+    test('should return if request references returns error', () => expectSaga(getScriptDependencies, {scriptId: 1})
+      .provide([
+        [call(requestReferences, {resourceType: 'scripts', id: 1 }), throwError({error: 123})],
+      ])
+      .run()
+    );
   });
 
   describe('retryToFetchLogs saga', () => {

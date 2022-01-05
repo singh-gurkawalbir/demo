@@ -458,6 +458,14 @@ describe('Create payload saga', () => {
     .call.fn(createFormValuesPatchSet)
     .returns({name: 'AmazonMWS', assistant: 'amazonmws', http: {ping: {relativeURI: '/api/v3/users.json'}}})
     .run());
+  test('should be able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), conn],
+      [matchers.call.fn(createFormValuesPatchSet), {patchSet: patchSetAmazonMws}],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .returns({name: 'AmazonMWS', assistant: 'amazonmws', http: {ping: {relativeURI: '/api/v3/users.json'}}})
+    .run());
 });
 
 describe('Netsuite user roles saga', () => {
