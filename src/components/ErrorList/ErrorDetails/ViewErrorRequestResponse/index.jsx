@@ -45,7 +45,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   );
 
   const formattedErrorHttpDoc = useMemo(() =>
-    getErrorReqResFields(errorHttpDoc, 'basic', isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
+    getErrorReqResFields(errorHttpDoc, 'basic', isResourceNetsuite, isRequest), [errorHttpDoc, isRequest, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)

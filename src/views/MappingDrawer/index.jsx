@@ -82,6 +82,8 @@ export default function MappingDrawerRoute(props) {
             // for new mappings afe, pass old drawer dataTest as dummy for automation
               closeDataTest={!isMappingPreviewAvailable && 'oldRightDrawer'}
               title={title}
+              helpTitle={title}
+              helpKey="afe.import.mapping"
               handleClose={setCancelTriggered}
               disableClose={closeDisabled} />
             <MappingWrapper
