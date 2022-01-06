@@ -195,7 +195,9 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
   const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
   const filteredFlowGroups = useMemo(() => {
     if (flowGroupingsSections && searchFilter.keyword) {
-      return flowGroupingsSections.filter(({ sectionId }) => flows.find(flow => (flow._flowGroupingId === sectionId)));
+      return flowGroupingsSections.filter(({ title, sectionId }) =>
+        title.toUpperCase().includes(searchFilter.keyword.toUpperCase()) || flows.some(flow => (flow._flowGroupingId === sectionId))
+      );
     }
 
     return flowGroupingsSections;
@@ -335,6 +337,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   );
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, finalFilter);
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
@@ -457,7 +460,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         </LoadResources>
       </div>
       <div className={classes.noSearchResults}>
-        {(finalFilter.keyword && flows.length === 0) ? (
+        {(finalFilter.keyword && flows.length === 0 && !flowGroupingsSections.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
           <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
         ) : ''}
       </div>
