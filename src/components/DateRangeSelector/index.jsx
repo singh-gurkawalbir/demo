@@ -42,12 +42,6 @@ const useStyles = makeStyles(theme => ({
   },
   child: {
     flexBasis: '100%',
-    '& input::selection': {
-      background: 'transparent',
-    },
-    '& input::-moz-selection': {
-      background: 'transparent',
-    },
   },
   leftItems: {
     float: 'left',
@@ -177,8 +171,6 @@ export default function DateRangeSelector({
   disabled,
   fullWidthBtn,
   placeholder = 'Select range',
-  fixedPlaceholder,
-  primaryButtonLabel,
   defaultPreset = {preset: 'last30days'},
   selectedRangeConstraint,
   CustomTextFields,
@@ -262,7 +254,7 @@ export default function DateRangeSelector({
             disabled={!!disabled}
             onClick={toggleClick}
             className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
-            {fixedPlaceholder || presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
           </OutlinedButton>
         )
       }
@@ -329,7 +321,7 @@ export default function DateRangeSelector({
             </div>
             <ActionGroup className={classes.actions}>
               <FilledButton onClick={handleSave}>
-                {primaryButtonLabel || 'Apply'}
+                Apply
               </FilledButton>
               {clearable && (
                 <TextButton onClick={handleClear}>
