@@ -68,16 +68,8 @@ const useStyles = makeStyles(theme => ({
 /**
  * Render an indeterminate spinning indicator.
  */
-export default function Spinner(props) {
-  const classes = useStyles(props);
-  const {
-    loading,
-    overlay = false,
-    color = 'primary',
-    children,
-    centerAll,
-    size = 'medium',
-    className } = props;
+export default function Spinner({loading, overlay = false, color = 'primary', children, centerAll, size = 'medium', className}) {
+  const classes = useStyles();
 
   const progress = (
     <CircularProgress
@@ -91,7 +83,7 @@ export default function Spinner(props) {
     <div
       className={clsx(
         {[classes.spinnerWrapper]: centerAll},
-        {[classes.spinnerCenterSmall]: centerAll && props.size === 'small'},
+        {[classes.spinnerCenterSmall]: centerAll && size === 'small'},
         {[classes.spinnerWithChildren]: children},
         {[classes.loadingWithChildren]: loading},
         {[classes.overlayPanel]: overlay},

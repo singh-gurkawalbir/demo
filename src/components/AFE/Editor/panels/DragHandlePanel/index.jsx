@@ -6,8 +6,8 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   dragBar: {
     padding: 8,
-    gridArea: p => p.area,
-    cursor: p => p.orientation === 'vertical' ? 'ew-resize' : 'ns-resize',
+    gridArea: props => props.area,
+    cursor: props => props.orientation === 'vertical' ? 'ew-resize' : 'ns-resize',
     '&:hover > div': {
       borderColor: theme.palette.primary.light,
     },
@@ -28,8 +28,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DragHandleGridItem(props) {
-  const classes = useStyles(props);
   const {orientation, onMouseDown} = props;
+  const classes = useStyles(props);
 
   return (
     <div className={classes.dragBar} onMouseDown={onMouseDown}>
