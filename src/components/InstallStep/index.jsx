@@ -183,7 +183,8 @@ export default function InstallationStep(props) {
       } else if (
         step.isCurrentStep &&
         (step.installURL || step.url) &&
-        isTemplate
+        isTemplate &&
+        step.connectionId
       ) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -193,7 +194,7 @@ export default function InstallationStep(props) {
           )
         );
         dispatch(
-          actions.integrationApp.templates.intsaller.verifyBundleOrPackageInstall(
+          actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
             integrationId,
             step.connectionId,
             step.installerFunction,

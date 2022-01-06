@@ -1,17 +1,17 @@
 export default {
   'import.ftp.directoryPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Folder path',
     required: true,
   },
   'import.ftp.fileName': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'File name',
   },
   'import.ftp.fileExtension': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'File extension',
   },

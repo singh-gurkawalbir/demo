@@ -1,34 +1,22 @@
 // import moment from 'moment';
 import { isNewId } from '../../../utils/resource';
 
-// const getAutoPurgeDescription = (id, autoPurgeAt) => {
-//   if (isNewId(id)) {
-//     return '';
-//   }
-//   if (moment(autoPurgeAt, moment.ISO_8601).isValid()) {
-//     const x = moment(autoPurgeAt);
-//     const y = moment();
-//     return `Auto purges in ${moment.duration(x.diff(y)).humanize()}`;
-//   }
-//   return undefined;
-// };
-
 export default {
   name: {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Name',
     defaultValue: r => r.name || '',
     required: true,
   },
   description: {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Description',
     defaultValue: r => r.description || '',
   },
   autoPurgeAt: {
-    loggable: true,
+    isLoggable: true,
     type: 'expirytime',
     label: 'Auto purge token',
     required: r => isNewId(r?._id) || !!r?._connectorId,
@@ -76,7 +64,7 @@ export default {
     },
   },
   fullAccess: {
-    loggable: true,
+    isLoggable: true,
     type: 'radiogroup',
     label: 'Scope',
     defaultValue: r =>
@@ -105,7 +93,7 @@ export default {
     required: true,
   },
   _connectionIds: {
-    loggable: true,
+    isLoggable: true,
     type: 'selectresource',
     resourceType: 'connections',
     label: 'Connections',
@@ -126,7 +114,7 @@ export default {
     ignoreEnvironmentFilter: true,
   },
   _exportIds: {
-    loggable: true,
+    isLoggable: true,
     type: 'selectresource',
     resourceType: 'exports',
     label: 'Exports',
@@ -146,7 +134,7 @@ export default {
     ignoreEnvironmentFilter: true,
   },
   _importIds: {
-    loggable: true,
+    isLoggable: true,
     type: 'selectresource',
     resourceType: 'imports',
     label: 'Imports',
@@ -166,7 +154,7 @@ export default {
     ignoreEnvironmentFilter: true,
   },
   _apiIds: {
-    loggable: true,
+    isLoggable: true,
     type: 'selectresource',
     resourceType: 'apis',
     label: 'My APIs',

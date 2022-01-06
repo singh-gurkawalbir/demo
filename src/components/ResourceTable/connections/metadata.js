@@ -26,6 +26,8 @@ export default {
       {
         key: 'name',
         heading: 'Name',
+        // it is loggable because it is not connectorLicenses resource type
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <ConnectionResourceDrawerLink
             resource={r}
@@ -37,16 +39,20 @@ export default {
       {
         key: 'status',
         heading: 'Status',
+        isLoggable: true,
         Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
       },
       {
         key: 'type',
         heading: 'Type',
+        isLoggable: true,
         Value: ({rowData: r}) => <ConnectorName resource={r} />,
       },
       {
         key: 'api',
         heading: 'API',
+        // check
+        isLoggable: true,
         Value: ({rowData: r}) => {
           if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
 
@@ -58,14 +64,15 @@ export default {
       {
         key: 'lastUpdated',
         heading: 'Last updated',
+        isLoggable: true,
         Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
         width: 160,
       },
       {
         key: 'queueSize',
+        isLoggable: true,
         heading: 'Queue size',
-        // align: 'right',
         Value: ({rowData: r}) => r.queueSize || 0,
         width: 120,
       },

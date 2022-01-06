@@ -5,10 +5,12 @@ import MappingsPanel from '../Editor/panels/Mappings';
 export default {
   type: 'mappings',
   description: 'Maps source fields to destination',
+  helpKey: 'afe.import.mapping',
   panels: [
     {
       title: 'Rules',
       area: 'rule',
+      isLoggable: true,
       Panel: MappingsPanel,
     },
     {

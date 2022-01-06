@@ -7,6 +7,7 @@ import actions from '../../../../../actions';
 import DynaForm from '../../..';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
+import IsLoggableContextProvider from '../../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -19,6 +20,7 @@ export default function FormView({
   resourceType,
   sectionId,
   disabled,
+  isLoggable,
 }) {
   const settingsFormKey = `settingsForm-${resourceId}`;
   const classes = useStyles();
@@ -80,7 +82,9 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm formKey={settingsFormKey} />
+      <IsLoggableContextProvider isLoggable={isLoggable}>
+        <DynaForm formKey={settingsFormKey} />
+      </IsLoggableContextProvider>
     </div>
   );
 }

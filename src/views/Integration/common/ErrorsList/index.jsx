@@ -19,6 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import StatusCircle from '../../../../components/StatusCircle';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
+import { getTextAfterCount } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -35,6 +36,7 @@ const metadata = {
     {
       key: 'application',
       heading: 'Application',
+      isLoggable: true,
       Value: ({rowData}) => {
         const { type, id } = rowData;
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
@@ -61,6 +63,7 @@ const metadata = {
     {
       key: 'type',
       heading: 'Type',
+      isLoggable: true,
       Value: ({rowData}) => {
         const { type, id, isLookup } = rowData;
         const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
@@ -79,11 +82,13 @@ const metadata = {
       key: 'flowStepName',
       heading: 'Flow step name',
       width: '25%',
+      isLoggable: true,
       Value: ({rowData: r}) => <TextOverflowCell message={r.name} />,
     },
     {
       key: 'errors',
       heading: 'Errors',
+      isLoggable: true,
       Value: ({rowData}) => {
         const { flowId, integrationId, childId, id, count } = rowData;
         const classes = useStyles();
@@ -115,7 +120,7 @@ const metadata = {
         return (
           <div className={classes.button} onClick={handleErrorClick}>
             <StatusCircle variant="error" size="mini" />
-            {count > 9999 ? '9999+' : count} errors
+            {count > 9999 ? '9999+ errors' : getTextAfterCount('error', count)}
           </div >
         );
       },
@@ -123,6 +128,7 @@ const metadata = {
     {
       key: 'lastErrorAt',
       heading: 'Last open error',
+      isLoggable: true,
       Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
       orderBy: 'lastErrorAt',
     },

@@ -15,6 +15,7 @@ export default function DynaFieldExpressionSelect(props) {
     placeholder,
     defaultValue,
     isValid,
+    isLoggable,
   } = props;
   const dispatch = useDispatch();
   const options = useSelector(state => {
@@ -38,6 +39,7 @@ export default function DynaFieldExpressionSelect(props) {
 
   return (
     <Select
+      isLoggable={isLoggable}
       data-test={id}
       id={id}
       label={label}

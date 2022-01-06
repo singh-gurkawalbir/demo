@@ -1,6 +1,5 @@
 import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,51 +13,8 @@ import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { isNewId } from '../../../../utils/resource';
 import FieldHelp from '../../FieldHelp';
-
-const useStyles = makeStyles(theme => ({
-  fieldWrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  optionRoot: {
-    display: 'flex',
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    wordBreak: 'break-word',
-    padding: '0px',
-  },
-  optionImg: {
-    width: '120px',
-    display: 'flex',
-    float: 'left',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRight: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    color: theme.palette.secondary.lightest,
-    height: '100%',
-  },
-  optionLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: '10px',
-    height: '100%',
-  },
-  inputLabel: {
-    transform: 'unset',
-    position: 'static',
-  },
-  img: {
-    maxWidth: '80px',
-  },
-  selectedContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginBottom: theme.spacing(2),
-  },
-  formControl: {
-    width: '100%',
-  },
-}));
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import { ReactSelectUseStyles, CustomReactSelectStyles } from '../reactSelectStyles/styles';
 
 const isLoadingANewConnectionForm = ({fieldMeta, operation, resourceType, resourceId }) => {
   // if its new resourceId and its of connections resourceType having a single field
@@ -89,11 +45,11 @@ export default function SelectApplication(props) {
     value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
+    isLoggable,
     formKey,
   } = props;
   const match = useRouteMatch();
-  const classes = useStyles();
-  const theme = useTheme();
+  const classes = ReactSelectUseStyles();
   const ref = useRef(null);
   const [menuIsOpen, setMenuIsOpen] = useState(!value);
   const [inputValue, setInputValue] = useState();
@@ -124,94 +80,6 @@ export default function SelectApplication(props) {
     });
   }
 
-  // Custom styles for Select Control
-  const customStyles = {
-    option: (provided, state) => ({
-      ...provided,
-      padding: '0px',
-      color: state.isSelected
-        ? theme.palette.secondary.main
-        : theme.palette.secondary.light,
-      backgroundColor:
-        state.isSelected || state.isFocused
-          ? theme.palette.background.paper2
-          : theme.palette.background.paper,
-      border: 'none',
-      minHeight: '38px',
-      '&:active': {
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.secondary.light,
-      },
-    }),
-    control: provided => ({
-      ...provided,
-      borderColor: theme.palette.secondary.lightest,
-      boxShadow: 'none',
-      borderRadius: 2,
-      '&:hover': {
-        borderColor: theme.palette.primary.main,
-      },
-    }),
-    menu: provided => ({
-      ...provided,
-      border: '1px solid',
-      boxShadow: 'none',
-      borderColor: theme.palette.secondary.lightest,
-      marginTop: 0,
-      borderRadius: '0px 0px 2px 2px',
-    }),
-    input: () => ({
-      color: theme.palette.secondary.light,
-      '& input': {
-        fontFamily: 'inherit',
-      },
-      // marginLeft: 3,
-    }),
-    placeholder: () => ({
-      color: theme.palette.secondary.light,
-      position: 'absolute',
-      height: '100%',
-    }),
-    indicatorSeparator: () => ({
-      display: 'none',
-    }),
-    menuList: () => ({
-      padding: '0px',
-      maxHeight: 'calc(100vh - 320px)',
-      overflowY: 'auto',
-    }),
-    group: () => ({
-      padding: '0px',
-    }),
-    groupHeading: () => ({
-      textAlign: 'center',
-      fontSize: '12px',
-      padding: '5px',
-      borderBottom: '1px solid',
-      borderColor: theme.palette.divider,
-      background: theme.palette.secondary.lightest,
-      color: theme.palette.text.secondary,
-    }),
-    dropdownIndicator: () => ({
-      color: theme.palette.secondary.light,
-      padding: theme.spacing(0.5, 1, 0, 1),
-      cursor: 'pointer',
-      '&:hover': {
-        color: fade(theme.palette.secondary.light, 0.8),
-      },
-    }),
-    singleValue: (provided, state) => {
-      const opacity = state.isDisabled ? 0.5 : 1;
-      const transition = 'opacity 300ms';
-      const color = theme.palette.secondary.light;
-
-      return { ...provided,
-        opacity,
-        transition,
-        color,
-        margin: 0 };
-    },
-  };
   const options = groupedApps.map(group => ({
     label: group.label,
     options: group.connectors.map(app => ({
@@ -232,8 +100,6 @@ export default function SelectApplication(props) {
   const Option = props => {
     const { type, icon, value } = props.data;
 
-    const {dataPublic} = props.selectProps || {};
-
     return (
       <div data-test={props.label} className={classes.optionRoot}>
         <components.Option {...props}>
@@ -245,7 +111,9 @@ export default function SelectApplication(props) {
               className={classes.img}
             />
           </span>
-          <span data-public={!!dataPublic} className={classes.optionLabel}>{props.label}</span>
+          <span {...isLoggableAttr(isLoggable)} className={classes.optionLabel}>
+            {props.label}
+          </span>
         </components.Option>
       </div>
     );
@@ -337,6 +205,7 @@ export default function SelectApplication(props) {
     }
     setMenuIsOpen(!value);
   };
+  const customStyles = CustomReactSelectStyles();
 
   return (
     <FormControl
@@ -351,7 +220,7 @@ export default function SelectApplication(props) {
         <FieldHelp {...props} />
       </div>
       <Select
-        dataPublic
+        {...isLoggableAttr(isLoggable)}
         ref={ref}
         name={name}
         inputValue={inputValue}

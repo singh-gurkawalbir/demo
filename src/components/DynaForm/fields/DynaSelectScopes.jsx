@@ -6,6 +6,8 @@ import TransferList from '../../TransferList';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 import { FilledButton, OutlinedButton} from '../../Buttons';
+import { useIsLoggable } from '../../IsLoggableContextProvider';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {
@@ -46,12 +48,14 @@ const TransferListModal = props => {
     right: selectedScopes,
     setRight: setSelectedScopes,
   };
+  const isLoggable = useIsLoggable();
 
   return (
     <ModalDialog show onClose={handleClose} maxWidth="lg">
       <div>Scopes Editor</div>
-
-      <TransferList {...transferListProps} />
+      <span {...isLoggableAttr(isLoggable)}>
+        <TransferList {...transferListProps} />
+      </span>
       <>
         <FilledButton
           data-test="saveSelectedScopes"

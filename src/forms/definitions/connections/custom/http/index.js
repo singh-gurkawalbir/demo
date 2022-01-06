@@ -226,6 +226,7 @@ import sapbusinessone from './sapbusinessone';
 import bartender from './bartender';
 import zohoexpense from './zohoexpense';
 import jazzhr from './jazzhr';
+import segment from './segment';
 
 export default {
   channelape,
@@ -456,4 +457,5 @@ export default {
   bartender,
   zohoexpense,
   jazzhr,
+  segment,
 };

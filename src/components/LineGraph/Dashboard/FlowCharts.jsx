@@ -104,6 +104,8 @@ const Chart = ({ attribute, integrationId, range, selectedResources }) => {
     selectors.makeResourceListSelector,
     flowsConfig
   );
+  const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
+
   const flowResources = useMemo(
     () => {
       const flows = resourceList.resources &&
@@ -231,7 +233,7 @@ const Chart = ({ attribute, integrationId, range, selectedResources }) => {
             type="number"
             allowDuplicatedCategory={false}
             ticks={ticks}
-            tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
+            tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range, dateFormat)) : ''}
           />
           <YAxis
             yAxisId={attribute}
@@ -246,7 +248,7 @@ const Chart = ({ attribute, integrationId, range, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip data-public content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend align="center" content={<CustomLegend />} />
           {lineData.map((r, i) => (
             <Line

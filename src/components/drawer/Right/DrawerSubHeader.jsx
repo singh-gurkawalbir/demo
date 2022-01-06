@@ -16,7 +16,7 @@ export default function DrawerSubHeader({ children, className }) {
   const classes = useStyles();
 
   return (
-    <div data-public className={clsx(classes.drawerSubHeader, className)}>
+    <div className={clsx(classes.drawerSubHeader, className)}>
       {/* Typically children are the action icons/buttons */}
       {children}
     </div>

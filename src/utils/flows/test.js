@@ -1413,8 +1413,9 @@ describe('flowbuilderUrl', () => {
   const dataLoaderURL = getRoutePath('/integrations/i1/dataLoader/f1');
   const flowURL = getRoutePath('/integrations/i1/flowBuilder/f1');
   const standAloneIntegrationFlowURL = getRoutePath('/integrations/none/flowBuilder/f1');
-  const integrationAppParentFlowURL = getRoutePath('/integrationapps/a1/i1/flowBuilder/f1');
-  const integrationAppChildFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flowBuilder/f1');
+  const integrationFlowGroupURL = getRoutePath('/integrations/i1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppParentFlowURL = getRoutePath('/integrationapps/a1/i1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppChildFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flows/sections/s1/flowBuilder/f1');
   const args = {
     childId: false,
     isIntegrationApp: false,
@@ -1432,6 +1433,10 @@ describe('flowbuilderUrl', () => {
   test('should return valid flowBuilder URL for stand alone integration flow', () => {
     args.isDataLoader = false;
     expect(flowbuilderUrl(flowId, null, args)).toEqual(standAloneIntegrationFlowURL);
+  });
+  test('should return valid flowBuilder URL for integration with flowGroupings', () => {
+    args.sectionId = 's1';
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationFlowGroupURL);
   });
   test('should return valid flowBuilder URL for integration app parent flow', () => {
     args.isIntegrationApp = true;
@@ -3258,6 +3263,8 @@ describe('mappingFlowsToFlowGroupings', () => {
   test('should return flowObjects passed if there are no flowGroupings', () => {
     expect(mappingFlowsToFlowGroupings(null, null, null)).toEqual(null);
     expect(mappingFlowsToFlowGroupings(null, [], null)).toEqual([]);
+    expect(mappingFlowsToFlowGroupings(null, undefined, totalObjectsLength)).toEqual([]);
+    expect(mappingFlowsToFlowGroupings(null, flowObjects1, totalObjectsLength)).toEqual(flowObjects1);
   });
   test('should categorise the flowObjects based on the flowGroupings', () => {
     expect(mappingFlowsToFlowGroupings(flowGroupings, flowObjects1, totalObjectsLength)).toEqual([

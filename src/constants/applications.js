@@ -239,7 +239,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true, icon: 'segment' },
+  { id: 'segment', name: 'segment', type: 'http', webhook: true, assistant: 'segment', icon: 'segment' },
   {
     id: 'shipwire',
     name: 'Shipwire',
@@ -297,6 +297,7 @@ const newConnections = [
     import: 'true',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038589232-Set-up-a-connection-to-Constant-Contact',
   },
+  {id: 'amazonsellingpartner', name: 'Amazon Seller Central', type: 'http', assistant: 'amazonsellingpartner'},
 ];
 
 connectors.sort(stringCompare('name'));

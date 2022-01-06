@@ -26,6 +26,7 @@ export default {
       {
         key: 'name',
         heading: 'Name',
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {parentId, childId} = useGetTableContext();
 
@@ -34,7 +35,6 @@ export default {
               flowId={r._id}
               integrationId={parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
-              flowGroupId={r._flowGroupingId}
               name={r.name}
               description={r.description}
               isFree={r.free}
@@ -48,6 +48,7 @@ export default {
       ...(actionProps.showChild ? [{
         heading: actionProps.childHeader || 'App',
         key: 'app',
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const {integrationChildren = []} = actionProps;
 
@@ -58,6 +59,7 @@ export default {
       {
         key: 'errors',
         heading: 'Errors',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <ErrorsCell
             flowId={r._id}
@@ -71,12 +73,14 @@ export default {
       {
         key: 'lastUpdated',
         heading: 'Last updated',
+        isLoggable: true,
         Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
         key: 'lastRun',
         heading: 'Last run',
+        isLoggable: true,
         Value: ({rowData: r}) => <StatusCell {...r} />,
         orderBy: 'lastExecutedAtSort',
       },
@@ -84,12 +88,14 @@ export default {
         key: 'mapping',
         heading: 'Mapping',
         align: 'center',
+        isLoggable: true,
         Value: ({rowData: r}) => <MappingCell flowId={r._id} childId={actionProps?.childId} />,
       },
       {
         key: 'schedule',
         heading: 'Schedule',
         align: 'center',
+        isLoggable: true,
         Value: ({rowData: r}) => <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />,
       },
     ];
@@ -100,13 +106,14 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
-      columns = columns.map(col => pick(col, ['heading', 'key', 'align', 'Value', 'orderBy']));
+      columns = columns.map(col => pick(col, ['heading', 'key', 'align', 'Value', 'orderBy', 'isLoggable']));
 
       columns.push(
         {
           key: 'settings',
           heading: 'Settings',
           align: 'center',
+          isLoggable: true,
           Value: ({rowData: r}) => <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />,
         }
       );
@@ -117,6 +124,7 @@ export default {
       {
         key: 'run',
         heading: 'Run',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <RunCell
             flowId={r._id}
@@ -130,6 +138,7 @@ export default {
       {
         key: 'off/On',
         heading: 'Off/On',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <OnOffCell
             flowId={r._id}

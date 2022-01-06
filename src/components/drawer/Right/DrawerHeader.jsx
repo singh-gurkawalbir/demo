@@ -8,27 +8,22 @@ import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
 import { useDrawerContext } from './DrawerContext';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import DrawerHeaderSubTitle from '../../DrawerHeaderSubTitle';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
-    // alignItems: 'center',
     alignItems: 'flex-start',
-    flexWrap: 'wrap',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
   },
-  runCompleteStatus: {
-    flex: '1 0 100%',
-  },
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
-    // whiteSpace: 'nowrap',
   },
   helpTextButton: {
     padding: 0,
@@ -78,7 +73,7 @@ export default function DrawerHeader({
   const showBackButton = !isExact && !hideBackButton;
 
   return (
-    <div data-public className={clsx(classes.drawerHeader, className)}>
+    <div className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
         <IconButton
           size="small"
@@ -100,12 +95,12 @@ export default function DrawerHeader({
       />
         )}
         {infoText && <InfoIconButton info={infoText} />}
+        {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
       </Typography>
 
       {/* Typically children are the action icons/buttons */}
       {children}
       <CloseIconButton closeDataTest={closeDataTest} CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />
-      {endedAt ? <Typography variant="body2" component="div" className={classes.runCompleteStatus}>Run completed: <CeligoTimeAgo date={endedAt} /></Typography> : ''}
     </div>
   );
 }

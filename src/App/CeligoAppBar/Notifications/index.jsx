@@ -74,7 +74,7 @@ function Notifications() {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-        <Tooltip data-public title="No notifications" placement="bottom" aria-label="no notifications">
+        <Tooltip title="No notifications" placement="bottom" aria-label="no notifications">
           <IconButton aria-label="notifications" size="small" color="inherit">
             <NotificationsIcon />
           </IconButton>
@@ -102,7 +102,8 @@ function Notifications() {
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleClose}>
-        <div className={classes.notificationContainer}>
+        {/* a user's email can be shown */}
+        <div className={classes.notificationContainer} data-private>
           {notifications.map((n, i) => (
             <Fragment key={n.id}>
               <InvitationItem
