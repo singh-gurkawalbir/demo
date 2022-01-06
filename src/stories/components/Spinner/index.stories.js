@@ -38,22 +38,22 @@ export const Loading = Template.bind({});
 
 export const centerAll = Template.bind({});
 
-export const overlay = Template.bind({});
+export const isOverlay = Template.bind({});
 
-export const overlayLoading = Template.bind({});
+export const isOverlayLoading = Template.bind({});
 
 centerAll.args = {
   centerAll: true,
   color: 'secondary',
 };
-overlay.args = {
+isOverlay.args = {
   size: 'small',
   color: 'primary',
-  overlay: true,
+  isOverlay: true,
 };
-overlayLoading.args = {
+isOverlayLoading.args = {
   loading: true,
   size: 'large',
   color: 'primary',
-  overlay: true,
+  isOverlay: true,
 };

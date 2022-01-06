@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Render an indeterminate spinning indicator.
  */
-export default function Spinner({loading, overlay = false, color = 'primary', children, centerAll, size = 'medium', className}) {
+export default function Spinner({loading, isOverlay = false, color = 'primary', children, centerAll, size = 'medium', className}) {
   const classes = useStyles();
 
   const progress = (
@@ -86,7 +86,7 @@ export default function Spinner({loading, overlay = false, color = 'primary', ch
         {[classes.spinnerCenterSmall]: centerAll && size === 'small'},
         {[classes.spinnerWithChildren]: children},
         {[classes.loadingWithChildren]: loading},
-        {[classes.overlayPanel]: overlay},
+        {[classes.overlayPanel]: isOverlay},
         className)}>
       {progress} {children && <div className={classes.spinnerChildren}>{children}</div> }
     </div>
