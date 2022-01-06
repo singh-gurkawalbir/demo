@@ -7,7 +7,7 @@ import InstallBase from './actions/InstallBase';
 import Licenses from './actions/Licenses';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
-import ApplicationImgCell from './cells/ApplicationImgCell';
+import ApplicationLogostrip from '../../ApplicationLogostrip';
 import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
@@ -16,7 +16,7 @@ export default {
       key: 'applications',
       heading: 'Applications',
       isLoggable: true,
-      Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
+      Value: ({rowData: r}) => <ApplicationLogostrip applications={r.applications} />,
     },
     {
       key: 'name',

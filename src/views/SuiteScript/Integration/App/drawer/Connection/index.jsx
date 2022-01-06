@@ -85,6 +85,12 @@ export default function ConnectionDrawer({
     handleSubmitComplete(linkedConnectionId);
   }, [handleSubmitComplete, linkedConnectionId]);
 
+  const onSubmitComplete = useCallback((...args) => {
+    handleSubmitComplete(...args);
+    setConnection(null);
+    setAccount(null);
+  }, [handleSubmitComplete]);
+
   useEffect(() => {
     if (account && !linkedConnectionId) {
       const newId = generateNewId();
@@ -168,7 +174,7 @@ export default function ConnectionDrawer({
           resource={connection.doc}
           resourceType="connections"
           onClose={handleConnectionClose}
-          onSubmitComplete={handleSubmitComplete}
+          onSubmitComplete={onSubmitComplete}
           manageOnly
           addOrSelect
           />
