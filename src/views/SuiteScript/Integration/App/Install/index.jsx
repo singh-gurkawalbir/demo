@@ -317,7 +317,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
   useEffect(() => {
     if (installSteps && installSteps.length > 0 && !ssLinkedConnectionId && paramSSLinkedConnId) {
-      handleSubmitComplete(paramSSLinkedConnId, true, true, true);
+      handleSubmitComplete(paramSSLinkedConnId, true, null, true);
     }
   }, [handleSubmitComplete, installSteps, paramSSLinkedConnId, ssLinkedConnectionId]);
 
