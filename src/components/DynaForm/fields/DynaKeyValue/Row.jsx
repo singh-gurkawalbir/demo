@@ -75,9 +75,7 @@ export default function KeyValueRow(props) {
       {enableSorting && (
         <SortableHandle isVisible={showGripper} />
       )}
-      <div
-        className={clsx(classes.rowContainer, compClasses.rowContainer)}
-        >
+      <div className={clsx(classes.rowContainer, compClasses.rowContainer, {[classes.rowContainerFlex]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
           disabled={disabled}
