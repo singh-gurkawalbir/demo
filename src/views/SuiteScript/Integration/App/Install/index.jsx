@@ -277,7 +277,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   //   history.push(getRoutePath('/marketplace'));
   // }, [history]);
 
-  const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
+  const handleSubmitComplete = useCallback((connectionId, isAuthorized, connectionDoc, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
         connectorId,
@@ -317,7 +317,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
   useEffect(() => {
     if (installSteps && installSteps.length > 0 && !ssLinkedConnectionId && paramSSLinkedConnId) {
-      handleSubmitComplete(paramSSLinkedConnId, true, true);
+      handleSubmitComplete(paramSSLinkedConnId, true, true, true);
     }
   }, [handleSubmitComplete, installSteps, paramSSLinkedConnId, ssLinkedConnectionId]);
 
