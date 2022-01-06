@@ -194,7 +194,7 @@ function DynaAssistantOptions(props) {
           }
 
           // only include the assistantoptions fields in the init data they are the ones which trigger form initialization
-          // these are the fields that need to be indicated as touched and the remaining metadata field values are set by the patch stage operation
+          // these  are the fields that need to be indicated as touched and the remaining metadata field values are set by the patch stage operation
           return field.type === 'assistantoptions';
         })
         .map(field => ({ id: field.id, value: field.value }));
