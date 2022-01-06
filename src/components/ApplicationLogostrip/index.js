@@ -2,7 +2,7 @@ import React from 'react';
 import { connectorsList } from '../../constants/applications';
 import LogoStrip from '../LogoStrip';
 
-export default function ApplicationImgCell({ applications }) {
+export default function ApplicationLogostrip({ applications }) {
   const connectors = connectorsList();
 
   // we are rendering max of 4 logos as of now
