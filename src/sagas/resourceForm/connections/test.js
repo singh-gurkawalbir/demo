@@ -442,6 +442,12 @@ describe('Create payload saga', () => {
     ])
     .call.fn(createFormValuesPatchSet)
     .run());
+  test('should be able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), undefined],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .run());
   test('should be able to verify payload for rest assistants successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
