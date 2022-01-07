@@ -10,6 +10,7 @@ import FieldHelp from '../../FieldHelp';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
 import { OutlinedButton } from '../../../Buttons';
+import { safeParse } from '../../../../utils/string';
 
 /*
  * This editor is shown in case of :
@@ -54,7 +55,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
       {
         op: 'replace',
         path: '/sampleData',
-        value: editorValues?.lastValidData,
+        value: resourceType === 'imports' ? safeParse(editorValues?.lastValidData) : editorValues?.lastVaidData,
       },
     ];
 
@@ -68,7 +69,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
     if (rule) {
       onFieldChange(id, rule);
     }
-  }, [dispatch, resourceId, formKey, onFieldChange, id]);
+  }, [resourceType, dispatch, resourceId, formKey, onFieldChange, id]);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, editorType, {
