@@ -193,7 +193,7 @@ export function* deleteUISpecificValues({ values, resourceId }) {
   if ((csvKeyColumns && !isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && !isEqual(xlsxKeyColumns, groupByFields))) {
     canDeprecateOldFields = true;
   }
-
+  // Existing keycolumns should be removed if any changes are done in group by fields or sort by fields.
   if (canDeprecateOldFields) {
     if (valuesCopy['/file/csv']?.keyColumns) {
       valuesCopy['/file/csv'].keyColumns = undefined;
@@ -202,6 +202,7 @@ export function* deleteUISpecificValues({ values, resourceId }) {
       valuesCopy['/file/xlsx/keyColumns'] = undefined;
     }
   } else if ((csvKeyColumns && isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && isEqual(xlsxKeyColumns, groupByFields))) {
+    // Group by fields is initial copy of key columns, If group by fields is not modified and it is same as key columns, then it should be removed.
     valuesCopy['/file/groupByFields'] = undefined;
   }
 
