@@ -48,6 +48,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'yotpo.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
