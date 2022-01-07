@@ -580,7 +580,7 @@ describe('saveMappings saga', () => {
         {
           op: 'replace',
           path: '/netsuite_da/lookups',
-          value: [],
+          value: [{ name: 'lookup2' }],
         },
       ], SCOPES.VALUE))
       .call(commitStagedChanges, {
@@ -716,7 +716,7 @@ describe('saveMappings saga', () => {
                   generate: 'celigo_inventorydetail',
                   subRecordMapping: {
                     jsonPath: '$',
-                    lookups: [],
+                    lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
                     mapping: {
                       fields: [{
                         extract: 'e1', generate: 'g1', internalId: false,
@@ -1346,56 +1346,6 @@ describe('checkForIncompleteSFGenerateWhilePatch saga', () => {
         api: 'compositerecord',
       },
       adaptorType: 'SalesforceImport',
-    };
-
-    expectSaga(checkForIncompleteSFGenerateWhilePatch, {field: 'generate', value: '_child_Emails'})
-      .provide([
-        [call(validateMappings), undefined],
-        [select(selectors.mappingGenerates, importId, undefined), [
-          {
-            id: '_child_Emails',
-            name: 'Emails : Fields...',
-            type: 'childRelationship',
-            childSObject: 'EmailMessage',
-            relationshipName: 'Emails',
-          },
-        ]],
-        [select(selectors.mapping), {
-          mappings: [{
-            key: 'k1',
-            generate: '_child_Emails',
-          }],
-          lookups: [],
-          importId,
-          flowId,
-        }],
-        [select(selectors.resource, 'imports', importId), importRes],
-      ])
-      .put(actions.mapping.patchIncompleteGenerates('k1', 'Emails'))
-      .put(actions.importSampleData.request(
-        importId,
-        {sObjects: ['EmailMessage']}
-      ))
-      .run();
-  });
-  test('should trigger mapping patchIncompleteGenerates correctly for generate field', () => {
-    const importRes = {
-      _id: importId,
-      _connectionId: connectionId,
-      _integrationId: 'i1',
-      _connectorId: 'conn1',
-      lookups: [
-      ],
-      mapping: {
-        fields: [],
-        lists: [],
-      },
-      salesforce: {
-        operation: 'addupdate',
-        sObjectType: 'Product2',
-        api: 'compositerecord',
-      },
-      adaptorType: 'HTTPImport',
     };
 
     expectSaga(checkForIncompleteSFGenerateWhilePatch, {field: 'generate', value: '_child_Emails'})

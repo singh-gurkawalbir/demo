@@ -1524,10 +1524,6 @@ describe('settings saga', () => {
   describe('initCategoryMappings generator', () => {
     const integrationId = '1';
     const flowId = '1';
-    const sectionId = '1';
-    const depth = '2';
-    const id = '1';
-    const fields = ['lookup'];
 
     test('should return if initialization is cancelled', () => {
       expectSaga(initCategoryMappings, {integrationId, flowId})
@@ -1535,38 +1531,6 @@ describe('settings saga', () => {
           [select(selectors.categoryMappingData, integrationId, flowId), undefined],
           [take(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR), true],
         ])
-        .run();
-    });
-
-    test('should trigger category mapping init complete with correct mapping data', () => {
-      const categoryMappingGenerateFields = selectors.mkCategoryMappingGenerateFields();
-
-      expectSaga(initCategoryMappings, {integrationId, flowId, sectionId, depth})
-        .provide([
-          [select(selectors.categoryMappingData, integrationId, flowId), {}],
-          [matchers.select.selector(selectors.mkCategoryMappingGenerateFields), {fields}],
-          [select(selectors.categoryMappingById, integrationId, flowId, id), {staged: [{key: 'value'}]}],
-        ])
-        .put(
-          actions.integrationApp.settings.categoryMappings.initComplete(
-            integrationId,
-            flowId,
-            id,
-            {
-              mappings: [],
-              lookups: [],
-              isCategoryMapping: true,
-              adaptorType: 'netsuite',
-              application: 'netsuite',
-              flowId,
-              generateFields: fields,
-              deleted: false,
-              isVariationMapping: false,
-              childCategoryId: sectionId,
-              variation: false,
-              isVariationAttributes: false,
-            })
-        )
         .run();
     });
   });
