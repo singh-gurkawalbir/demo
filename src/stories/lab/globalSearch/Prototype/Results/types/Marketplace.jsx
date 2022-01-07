@@ -8,6 +8,9 @@ const useStyles = makeStyles(theme => ({
   rootExpanded: {
     margin: `${theme.spacing(0, 0, 2)} !important`,
   },
+  root: {
+    backgroundColor: ({focussed}) => focussed ? theme.palette.background.paper2 : 'initial',
+  },
   summary: {
     display: 'flex',
     alignItems: 'center',
@@ -30,8 +33,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Marketplace({type, result, includeDivider}) {
-  const classes = useStyles();
+export default React.forwardRef(({type, result, includeDivider, focussed}, ref) => {
+  const classes = useStyles({focussed});
   const history = useHistory();
 
   if (!result) return null;
@@ -43,7 +46,7 @@ export default function Marketplace({type, result, includeDivider}) {
     <>
       {includeDivider && <Divider orientation="horizontal" />}
 
-      <Accordion elevation={0} classes={{expanded: classes.rootExpanded}}>
+      <Accordion ref={ref} tabIndex={0} elevation={0} classes={{expanded: classes.rootExpanded, root: classes.root}}>
         <AccordionSummary
           classes={{root: classes.summary}}
           expandIcon={<UpArrowIcon />}
@@ -65,4 +68,4 @@ export default function Marketplace({type, result, includeDivider}) {
       </Accordion>
     </>
   );
-}
+});

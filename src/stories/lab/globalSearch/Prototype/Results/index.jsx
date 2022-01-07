@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Results({ results }) {
+export default React.forwardRef(({ results, currentFocussed }, ref) => {
   const classes = useStyles();
 
   if (!results?.length) {
@@ -55,6 +55,7 @@ export default function Results({ results }) {
       </div>
     );
   }
+  let currentRowIndex = -1;
 
   return (
     <div className={classes.root}>
@@ -62,14 +63,21 @@ export default function Results({ results }) {
         <div key={type} className={classes.typeContainer}>
           <Typography color="textSecondary" variant="overline">{filterMap[type]?.label}</Typography>
           {typeResults.map((r, i) => {
+            currentRowIndex += 1;
             const Row = rowTypeMap[type];
             const includeDivider = typeResults.length > 1 && i > 0;
 
-            return <Row key={r.id} result={r} type={type} includeDivider={includeDivider} />;
+            return (
+              <Row
+                ref={currentRowIndex === currentFocussed ? ref : null}
+                focussed={currentRowIndex === currentFocussed}
+                key={r.id} result={r} type={type}
+                includeDivider={includeDivider} />
+            );
           })}
         </div>
       ))}
     </div>
   );
-}
+});
 

@@ -99,6 +99,11 @@ const SuiteScriptIntegrationAppInstallation = loadable(() =>
     /* webpackChunkName: 'SuiteScriptIntegrationAppInstallation' */ '../../views/SuiteScript/Integration/App/Install'
   ))
 );
+const GlobalSearch = loadable(() =>
+  retry(() => import(
+    /* webpackChunkName: 'SuiteScriptIntegrationAppInstallation' */ '../../views/GlobalSearch'
+  ))
+);
 
 function ResourceListRouteCatcher(props) {
   const { match } = props;
@@ -133,6 +138,11 @@ export default function AppRouting() {
         path={getRoutePath('/migrate')}
         exact
         component={UpgradeEM}
+        />
+      <Route
+        path={getRoutePath('/search')}
+        exact
+        component={GlobalSearch}
         />
       <Route
         path={getRoutePath('/clone/:resourceType/:resourceId/preview')}

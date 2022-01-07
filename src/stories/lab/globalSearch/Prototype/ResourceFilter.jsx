@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { makeStyles,
   IconButton,
   Typography,
@@ -16,12 +16,20 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from './GlobalSearchContext';
 import FilterIcon from '../../../../components/icons/FilterIcon';
 import { filterMap } from './filterMeta';
+import useKeyboardNavigation from './Results/useKeyboardNavigation';
 
 const useStyles = makeStyles(theme => ({
   root: {
     // display: 'flex',
     // alignItems: 'flex-end',
     // flexDirection: 'column',
+  },
+  itemRoot: {
+    '&:focus': {
+      backgroundColor: theme.palette.background.paper2,
+      cursor: 'pointer',
+      outline: 'unset',
+    },
   },
   arrowContainer: {
     paddingLeft: theme.spacing(2),
@@ -68,9 +76,12 @@ export default function ResourceFilter() {
   const classes = useStyles();
   const { filters, setFilters, filterBlacklist = [], onFiltersChange } = useGlobalSearchContext();
   const [open, setOpen] = useState(false);
+  const itemRef = useRef();
+  const containerRef = useRef();
+  const {currentFocussed} = useKeyboardNavigation({listLength: filterBlacklist?.length + 1, listItemRef: itemRef, containerRef});
 
   const handleArrowClick = () => setOpen(o => !o);
-
+  let rowIndex = -1;
   const FilterLabel = () => {
     if (filters?.length === 0) {
       return (
@@ -107,12 +118,18 @@ export default function ResourceFilter() {
       onFiltersChange?.(newFilters);
     };
 
+    rowIndex += 1;
+
     return (
       <div>
         <FormControlLabel
+          ref={rowIndex === currentFocussed ? itemRef : null}
+          tabIndex={rowIndex === currentFocussed ? 0 : -1}
+          classes={{root: classes.itemRoot}}
           onClick={() => handleMenuItemClick(type)}
           control={(
             <Checkbox
+              tabIndex={-1}
               checked={isChecked}
               name={type}
               className={clsx({[classes.allItemChecked]: isChecked && type === 'all' })}
@@ -149,7 +166,7 @@ export default function ResourceFilter() {
       </div>
 
       {open && (
-        <FloatingPaper className={classes.menu}>
+        <FloatingPaper ref={containerRef} className={classes.menu}>
           <div className={classes.allContainer}>
             <MenuItem type="all" label="All" />
             <IconButton size="small" onClick={handleArrowClick}>

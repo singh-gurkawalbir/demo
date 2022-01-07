@@ -8,6 +8,7 @@ import { useGlobalSearchContext } from './GlobalSearchContext';
 import { filterMap } from './filterMeta';
 import Results from './Results';
 import TextButton from '../../../../components/Buttons/TextButton';
+import useKeyboardNavigation from './Results/useKeyboardNavigation';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -147,9 +148,9 @@ function getResultCount(results, isResource) {
 }
 
 function getTabResults(results, isResource) {
-  return Object.keys(filterMap)
-    .filter(key => filterMap[key].isResource === isResource && results[key] !== undefined)
-    .map(key => ({type: key, results: results[key]}));
+  return Object?.keys(filterMap)
+    ?.filter(key => filterMap[key]?.isResource === isResource && results[key] !== undefined)
+    ?.map(key => ({type: key, results: results[key]}));
 }
 
 export default function SearchBox() {
@@ -165,7 +166,7 @@ export default function SearchBox() {
   const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
   const resourceResultCount = getResultCount(results, true);
   const marketplaceResultCount = getResultCount(results, false);
-
+  const containerRef = useRef();
   const handleSearchStringChange = e => {
     const newSearchString = e.target.value;
 
@@ -229,9 +230,13 @@ export default function SearchBox() {
   // when the result counts change.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceResultCount, marketplaceResultCount]);
+  const currentResults = activeTab === 1 ? marketplaceResults : resourceResults;
+  const listItemLength = currentResults?.reduce((oldState, action) => oldState + action?.results?.length, 0);
+  const listItemRef = useRef();
+  const {currentFocussed} = useKeyboardNavigation({listLength: listItemLength, containerRef, listItemRef});
 
   return (
-    <div className={classes.root}>
+    <div ref={containerRef} className={classes.root}>
       <Paper component="form" className={classes.searchBox} variant="outlined">
         <InputBase
           ref={inputRef}
@@ -240,7 +245,7 @@ export default function SearchBox() {
           classes={{input: classes.inputBase}}
           className={classes.input}
           placeholder="Search integrator.io"
-          inputProps={{ 'aria-label': 'Search integrator.io' }}
+          inputProps={{ 'aria-label': 'Search integrator.io', tabIndex: 0 }}
           onChange={handleSearchStringChange}
       />
         <IconButton size="small" onClick={() => setOpen(false)} className={classes.searchCloseButton}>
@@ -273,7 +278,7 @@ export default function SearchBox() {
               </div>
               )}
 
-              <Results results={resourceResults} />
+              <Results results={resourceResults} currentFocussed={currentFocussed} ref={listItemRef} />
 
               {marketplaceResults?.length > 0 && (
               <div className={classes.resultFooter}>
@@ -290,7 +295,7 @@ export default function SearchBox() {
 
           <TabPanel value={activeTab} index={1}>
             <div className={classes.resultContainer}>
-              <Results results={marketplaceResults} />
+              <Results results={marketplaceResults} currentFocussed={currentFocussed} ref={listItemRef} />
             </div>
           </TabPanel>
         </FloatingPaper>
