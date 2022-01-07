@@ -101,6 +101,8 @@ export default {
         'search:read',
         'stars:read',
         'stars:write',
+        'team.billing:read',
+        'team.preferences:read',
         'team:read',
         'usergroups:read',
         'usergroups:write',
