@@ -79,6 +79,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
 
     if (editorType === 'mappings') {
       const mappings = (yield select(selectors.mapping))?.mappings;
+      const lookups = (yield select(selectors.mapping))?.lookups;
       const importResource = yield select(selectors.resource, 'imports', resourceId);
       const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
 
@@ -89,6 +90,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         importResource,
         exportResource,
       });
+      _mappings = {..._mappings, lookups};
     } else if (editorType === 'responseMappings') {
       const mappings = (yield select(selectors.responseMapping))?.mappings;
 
@@ -349,7 +351,7 @@ export function* autoEvaluateProcessor({ id }) {
   // while a user is typing.
   yield delay(500);
 
-  return yield call(requestPreview, { id });
+  return yield put(actions.editor.previewRequest(id));
 }
 
 export function* autoEvaluateProcessorWithCancel(params) {
