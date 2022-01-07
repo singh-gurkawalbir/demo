@@ -45,9 +45,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: '28px',
     width: `calc(100% - ${theme.spacing(2)}px)`,
   },
-  rowContainerFlex: {
-    display: 'flex',
-  },
 }));
 
 /**
