@@ -10,6 +10,7 @@ import FieldMessage from './FieldMessage';
 import ActionButton from '../../ActionButton';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -47,6 +48,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
     value,
     label,
     options,
+    isLoggable,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -113,6 +115,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
         <TextField
           key={id}
           name={name}
+          {...isLoggableAttr(isLoggable)}
           className={classes.textField}
           placeholder={placeholder}
           disabled

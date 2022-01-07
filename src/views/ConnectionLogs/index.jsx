@@ -128,6 +128,7 @@ export default function ConnectionLogs({ connectionId, flowId }) {
       <div className={classes.editorContainer}>
         {logsText && (
           <AutoScrollEditorTerminal
+            isLoggable={false}
             name="code"
             readOnly
             value={logsText}

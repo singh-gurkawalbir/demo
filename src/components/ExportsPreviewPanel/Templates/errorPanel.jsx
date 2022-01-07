@@ -18,7 +18,7 @@ export default function ErrorPanel({resourceId}) {
   const parseAllErrors = useSelector(state => selectors.getAllParsableErrors(state, resourceId), shallowEqual);
 
   if (parseAllErrors) {
-    return <DefaultPanel value={parseAllErrors} />;
+    return <DefaultPanel value={parseAllErrors} isLoggable={false} />;
   }
 
   return <span className={classes.error}> { DEFAULT_ERROR } </span>;

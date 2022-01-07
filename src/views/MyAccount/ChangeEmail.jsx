@@ -28,6 +28,7 @@ const changeEmailFieldMeta = {
       type: 'text',
       label: 'New email',
       required: true,
+      isLoggable: false,
     },
     password: {
       id: 'password',
@@ -36,6 +37,7 @@ const changeEmailFieldMeta = {
       inputType: 'password',
       label: 'Password',
       required: true,
+      isLoggable: false,
     },
     label: {
       id: 'label',

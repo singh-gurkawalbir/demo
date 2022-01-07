@@ -14,6 +14,7 @@ import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 import FieldHelp from '../FieldHelp';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   nsSavedSearch: {
@@ -71,6 +72,7 @@ export default function DynaNSSavedSearch(props) {
     required,
     disabled,
     commMetaPath,
+    isLoggable,
   } = props;
   const searchIdOptions = {
     placeholder: 'Please select a saved search',
@@ -125,7 +127,8 @@ export default function DynaNSSavedSearch(props) {
             <FormLabel component="legend" className={classes.radioGroupLabel}>
               Saved search type:
             </FormLabel>
-            <div className={classes.radioGroupWrapper}>
+            {/* can be loggable in all circumstances? */}
+            <div className={classes.radioGroupWrapper} {...isLoggableAttr(isLoggable)}>
               <RadioGroup
                 name="searchType"
                 defaultValue="public"

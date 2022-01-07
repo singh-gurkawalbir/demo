@@ -35,7 +35,7 @@ export default function DynaSelectWithInput(props) {
     options = [],
     errorMessages,
     showAllSuggestions = false,
-    dataPublic,
+    isLoggable,
   } = props;
   const classes = useStyles();
   const handleBlur = useCallback(
@@ -56,9 +56,9 @@ export default function DynaSelectWithInput(props) {
       <FormControl
         disabled={disabled}
         className={classes.formControl}
-        data-public={!!dataPublic}
         key={value}>
         <DynaTypeableSelect
+          isLoggable={isLoggable}
           id={id}
           labelName={labelName}
           valueName={valueName}

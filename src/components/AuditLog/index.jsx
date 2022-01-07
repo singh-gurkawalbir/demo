@@ -10,7 +10,6 @@ import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
-import DownloadAuditLogDrawer from './DownloadAuditLogDrawer';
 
 const useStyles = makeStyles(({
   root: {
@@ -84,7 +83,6 @@ export default function AuditLog({
             </div>
           )}
       </>
-      <DownloadAuditLogDrawer resourceType={resourceType} resourceId={resourceId} childId={childId} />
     </LoadResources>
   );
 }

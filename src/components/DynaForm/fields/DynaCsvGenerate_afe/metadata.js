@@ -10,6 +10,7 @@ export default function getFormMetadata(options) {
         type: 'checkbox',
         helpKey: 'import.file.csv.includeHeader',
         defaultValue: options?.includeHeader,
+        isLoggable: true,
       },
       columnDelimiter: {
         id: 'columnDelimiter',
@@ -19,6 +20,7 @@ export default function getFormMetadata(options) {
         helpKey: 'import.file.csv.columnDelimiter',
         defaultValue: options?.columnDelimiter,
         options: csvOptions.ColumnDelimiterOptions,
+        isLoggable: true,
       },
       rowDelimiter: {
         id: 'rowDelimiter',
@@ -28,6 +30,7 @@ export default function getFormMetadata(options) {
         helpKey: 'import.file.csv.rowDelimiter',
         defaultValue: options?.rowDelimiter,
         options: [{items: csvOptions.RowDelimiterOptions}],
+        isLoggable: true,
       },
       replaceNewlineWithSpace: {
         id: 'replaceNewlineWithSpace',
@@ -36,6 +39,7 @@ export default function getFormMetadata(options) {
         type: 'checkbox',
         helpKey: 'import.file.csv.replaceNewlineWithSpace',
         defaultValue: options?.replaceNewlineWithSpace,
+        isLoggable: true,
       },
       replaceTabWithSpace: {
         id: 'replaceTabWithSpace',
@@ -44,6 +48,7 @@ export default function getFormMetadata(options) {
         type: 'checkbox',
         helpKey: 'import.file.csv.replaceTabWithSpace',
         defaultValue: options?.replaceTabWithSpace,
+        isLoggable: true,
       },
       truncateLastRowDelimiter: {
         id: 'truncateLastRowDelimiter',
@@ -52,6 +57,7 @@ export default function getFormMetadata(options) {
         type: 'checkbox',
         helpKey: 'import.file.csv.truncateLastRowDelimiter',
         defaultValue: options?.truncateLastRowDelimiter,
+        isLoggable: true,
       },
       wrapWithQuotes: {
         id: 'wrapWithQuotes',
@@ -60,6 +66,7 @@ export default function getFormMetadata(options) {
         type: 'checkbox',
         helpKey: 'import.file.csv.wrapWithQuotes',
         defaultValue: options?.wrapWithQuotes,
+        isLoggable: true,
       },
       customHeaderRows: {
         id: 'customHeaderRows',
@@ -70,6 +77,7 @@ export default function getFormMetadata(options) {
         multiline: true,
         helpKey: 'import.file.csv.customHeaderRows',
         defaultValue: options?.customHeaderRows || '',
+        isLoggable: true,
       },
     },
 

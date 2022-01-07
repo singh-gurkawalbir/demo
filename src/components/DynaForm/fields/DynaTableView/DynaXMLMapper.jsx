@@ -45,7 +45,7 @@ const generateTableValue = value => {
 
 export default function DynaXMLMapper(props) {
   const classes = useStyles();
-  const { onFieldChange, properties = {}, value, id } = props;
+  const { onFieldChange, properties = {}, value, id, isLoggable } = props;
   const [path, setPath] = useState(properties.path || '');
 
   const [dynaTableValue, setDynaTableValue] = useState(generateTableValue(value));
@@ -67,6 +67,7 @@ export default function DynaXMLMapper(props) {
   return (
     <>
       <DynaText
+        isLoggable={isLoggable}
         value={path}
         label="Path:"
         placeholder="Path"

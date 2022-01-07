@@ -4,7 +4,7 @@ import Delete from '../commonActions/Delete';
 import UploadZipFile from './actions/UploadZipFile';
 import Download from '../commonActions/Download';
 import Edit from '../commonActions/Edit';
-import ApplicationImgCell from './cells/ApplicationImgCell';
+import ApplicationLogostrip from '../../ApplicationLogostrip';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
@@ -16,13 +16,15 @@ export default {
     {
       key: 'applications',
       heading: 'Applications',
-      Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
+      isLoggable: true,
+      Value: ({rowData: r}) => <ApplicationLogostrip applications={r.applications} />,
 
     },
     {
       key: 'name',
       heading: 'Name',
       width: '25%',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <TextOverflowCell
           message={<ResourceDrawerLink resourceType="templates" resource={r} />} />
@@ -32,12 +34,15 @@ export default {
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
       key: 'websiteUrl',
       heading: 'Website URL',
+      // is it always link text...should be loggable...new tab will be outside the ambit of logrocket
+      isLoggable: true,
       Value: ({rowData: r}) => {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
         const websiteURL = r.websiteURL?.startsWith('http') ? r.websiteURL : `https://${r.websiteURL}`;
@@ -54,6 +59,7 @@ export default {
     {
       key: 'published',
       heading: 'Published',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <OnOffCell
           templateId={r._id}

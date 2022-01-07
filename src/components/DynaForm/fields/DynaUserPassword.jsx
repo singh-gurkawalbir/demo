@@ -7,6 +7,7 @@ import actions from '../../../actions';
 import FieldHelp from '../FieldHelp';
 import ActionButton from '../../ActionButton';
 import EditIcon from '../../icons/EditIcon';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(() => ({
   formWrapper: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function DynaUserPassword(props) {
-  const { id, label } = props;
+  const { id, label, isLoggable} = props;
   const classes = useStyles();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ export default function DynaUserPassword(props) {
       </div>
       <div className={classes.fieldWrapper}>
         <TextField
+          {...isLoggableAttr(isLoggable)}
           id={id}
           type="password"
           value="**********"

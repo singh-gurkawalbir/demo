@@ -8,18 +8,21 @@ export default {
     {
       key: 'created',
       heading: 'Created',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
       key: 'status',
       heading: 'Status',
+      isLoggable: true,
       Value: ({rowData: r}) => r._integrationId ? 'Installed' : 'Pending',
       orderBy: 'status',
     },
     {
       key: 'integrationId',
       heading: 'Integration ID',
+      isLoggable: true,
       Value: ({rowData: r}) => r._integrationId,
     },
   ],

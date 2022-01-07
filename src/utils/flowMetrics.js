@@ -209,7 +209,7 @@ export const getTicks = (domainRange, srange, isValue) => {
 
   return ticks;
 };
-export const getXAxisFormat = range => {
+export const getXAxisFormat = (range, dateFormat) => {
   if (!range || typeof range !== 'object') {
     return '';
   }
@@ -218,10 +218,8 @@ export const getXAxisFormat = range => {
 
   if (hours <= 24) {
     xAxisFormat = 'HH:mm';
-  // } else if (hours > 24 && hours < 4 * 24) {
-  //   xAxisFormat = 'ddd HH:mm';
   } else if (hours < 90 * 24) {
-    xAxisFormat = 'MM/DD/YY';
+    xAxisFormat = dateFormat || 'MM/DD/YY';
   } else {
     xAxisFormat = 'MMMM';
   }

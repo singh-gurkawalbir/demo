@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useEffect, useReducer } from 'react';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { generateNewId } from '../../../../../utils/resource';
 import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
@@ -154,7 +155,7 @@ const DynaTable = props => {
     onRowChange,
     disableDeleteRows,
     isVirtualizedTable,
-    dataPublic,
+    isLoggable,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 
@@ -169,29 +170,32 @@ const DynaTable = props => {
 
   return (
     <div className={clsx(classes.container, className)}>
-      {!hideLabel && <Typography data-public={!!dataPublic} variant="h6">{label}</Typography>}
+      {!hideLabel && <Typography {...isLoggableAttr(isLoggable)} variant="h6">{label}</Typography>}
       <div data-test={id} className={classes.root} >
         <div className={classes.fieldsContentColumn}>
           <RefreshHeaders
-            dataPublic={dataPublic}
+            isLoggable={isLoggable}
             hideHeaders={hideHeaders}
             isLoading={isLoading}
             optionsMap={optionsMapFinal}
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
-          <BaseTable
-            isLoading={isLoading}
-            isVirtualizedTable={isVirtualizedTable}
-            onFieldChange={onFieldChange}
-            onRowChange={onRowChange}
-            disableDeleteRows={disableDeleteRows}
-            optionsMapFinal={optionsMapFinal}
-            optionsMapInit={optionsMapInit}
-            id={id}
-            ignoreEmptyRow={ignoreEmptyRow}
-            value={value}
+          {/* do all multicolumn entry tables need to be redacted ? */}
+          <span {...isLoggableAttr(isLoggable)}>
+            <BaseTable
+              isLoading={isLoading}
+              isVirtualizedTable={isVirtualizedTable}
+              onFieldChange={onFieldChange}
+              onRowChange={onRowChange}
+              disableDeleteRows={disableDeleteRows}
+              optionsMapFinal={optionsMapFinal}
+              optionsMapInit={optionsMapInit}
+              id={id}
+              ignoreEmptyRow={ignoreEmptyRow}
+              value={value}
 
           />
+          </span>
 
         </div>
 

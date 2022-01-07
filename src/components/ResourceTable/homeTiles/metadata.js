@@ -39,6 +39,7 @@ export default {
         key: 'name',
         heading: 'Name',
         orderBy: 'name',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <NameCell tile={r} />
         ),
@@ -53,6 +54,7 @@ export default {
             options={getAllApplications()}
             />
         ),
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const classes = useStyles();
           const applications = useSelectorMemo(selectors.mkTileApplications, r);
@@ -72,8 +74,9 @@ export default {
       },
       {
         key: 'status',
-        orderBy: 'totalErrorCount',
+        orderBy: 'status',
         heading: 'Status',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <StatusCell tile={r} />
         ),
@@ -85,6 +88,7 @@ export default {
         key: 'lastErrorAt',
         orderBy: 'lastErrorAt',
         heading: 'Last open error',
+        isLoggable: true,
         Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
       });
     }
@@ -93,6 +97,7 @@ export default {
       key: 'type',
       heading: 'Type',
       orderBy: 'sortablePropType',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <TypeCell tile={r} />
       ),

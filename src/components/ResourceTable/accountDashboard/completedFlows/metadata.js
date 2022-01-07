@@ -48,6 +48,7 @@ export default {
               options={integrationOptions.map(({ _id, name, children}) => ({_id, name, children }))} />
           );
         },
+        isLoggable: true,
         Value: ({rowData: al}) => {
           const tableContext = useGetTableContext();
 
@@ -69,12 +70,14 @@ export default {
               options={flowOptions.map(({ _id, name}) => ({_id, name }))} />
           );
         },
+        isLoggable: true,
         Value: ({rowData: al}) => (<FlowNameWithFlowGroupCell integrationId={al._integrationId} flowId={al._flowId} />),
       },
       {
         key: 'numOpenError',
         orderBy: 'numOpenError',
         heading: 'Open errors',
+        isLoggable: true,
         Value: ({rowData: r}) => {
           const match = useRouteMatch();
 
@@ -90,10 +93,12 @@ export default {
         key: 'lastErrorAt',
         orderBy: 'lastErrorAt',
         heading: 'Last open error',
+        isLoggable: true,
         Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
       },
       {
         key: 'lastExecutedAt',
+        isLoggable: true,
         heading: 'Last run',
         Value: ({rowData: r}) => <CeligoTimeAgo date={new Date(r.lastExecutedAt)} />,
         orderBy: 'lastExecutedAt',
@@ -102,6 +107,7 @@ export default {
         key: 'numRuns',
         HeaderValue: () => <HeaderWithHelpText title="Runs" helpKey="accountdashboard.numRuns" />,
         orderBy: 'numRuns',
+        isLoggable: true,
         Value: props => {
           const {rowData: r} = props;
 
@@ -114,42 +120,49 @@ export default {
       {
         key: 'avgRuntime',
         HeaderValue: () => <HeaderWithHelpText title="Average run time" helpKey="accountdashboard.avgRuntime" />,
+        isLoggable: true,
         Value: ({rowData: r}) => getTimeString(r.avgRuntime),
         orderBy: 'avgRuntime',
       },
       {
         key: 'success',
         heading: 'Success',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numSuccess,
         orderBy: 'numSuccess',
       },
       {
         key: 'numIgnore',
         heading: 'Ignored',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numIgnore,
         orderBy: 'numIgnore',
       },
       {
         key: 'numError',
         heading: 'Errors',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numError,
         orderBy: 'numError',
       },
       {
         key: 'numResolvedByAuto',
         HeaderValue: () => <HeaderWithHelpText title="Auto-resolved" helpKey="accountdashboard.numResolvedByAuto" />,
+        isLoggable: true,
         Value: ({rowData: r}) => r.numResolvedByAuto,
         orderBy: 'numResolvedByAuto',
       },
       {
         key: 'numResolvedByUser',
         heading: 'User-resolved',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numResolvedByUser,
         orderBy: 'numResolvedByUser',
       },
       {
         key: 'numPages',
         heading: 'Pages',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numPages,
         orderBy: 'numPages',
       },
