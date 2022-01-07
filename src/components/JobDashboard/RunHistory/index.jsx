@@ -228,7 +228,7 @@ export default function RunHistory({ flowId, className }) {
 
       {!hasFlowRunHistory &&
         (
-        <NoResultMessageWrapper className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
+        <NoResultMessageWrapper isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
           You don&apos;t have any run history.
         </NoResultMessageWrapper>
         )}

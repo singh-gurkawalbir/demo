@@ -11,7 +11,6 @@ import ActionButton from '../../ActionButton';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import shouldUnmaskInLogRocket from '../../../utils/shouldUnmaskInLogRocket';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
@@ -165,7 +164,7 @@ function DynaText(props) {
         <FieldHelp {...props} />
       </div>
       <TextField
-        {...isLoggableAttr(shouldUnmaskInLogRocket(id, isLoggable))}
+        {...isLoggableAttr(isLoggable)}
         autoComplete="off"
         key={id}
         data-test={id}
