@@ -48,14 +48,14 @@ export default function DynaFileDefinitionEditor_afe(props) {
   const editorType = resourceType === 'imports' ? 'structuredFileGenerator' : 'structuredFileParser';
 
   const handleSave = useCallback(editorValues => {
-    const { rule } = editorValues;
+    const { rule, lastValidData } = editorValues;
 
     // Trigger sample Data update on resource
     const patchSet = [
       {
         op: 'replace',
         path: '/sampleData',
-        value: resourceType === 'imports' ? safeParse(editorValues?.lastValidData) : editorValues?.lastVaidData,
+        value: resourceType === 'imports' ? safeParse(lastValidData) : lastValidData,
       },
     ];
 
@@ -64,7 +64,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
     // It calls processor on final rules to parse file
     // @raghu this would also need to be removed once auto sample data update changes are done
 
-    dispatch(actions.resourceFormSampleData.request(formKey, { lastValidData: editorValues?.lastValidData }));
+    dispatch(actions.resourceFormSampleData.request(formKey));
     // update rules against this field each time it gets saved
     if (rule) {
       onFieldChange(id, rule);
