@@ -273,7 +273,7 @@ export function fieldMeta({ resource, assistantData }) {
       });
       pathParameterFields = pathParameterFieldsMeta({
         operationParameters: operationDetails.pathParameters,
-        values: assistantConfig.pathParams,
+        values: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.pathParams,
       });
       exportTypeFields = exportTypeFieldsMeta({
         supportedExportTypes: operationDetails.supportedExportTypes,

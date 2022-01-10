@@ -631,6 +631,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_keepDeltaBehindExportId',
     'settings',
   ],
+  // According to the backend, none of the async helper fields are editable
+  asyncHelpers: [],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
