@@ -21,6 +21,34 @@ describe('readme processor logic', () => {
     });
   });
   describe('init util', () => {
+    test('should not throw error if resource is null', () => {
+      const options = {
+        arrayIndex: 0,
+        editorType: 'databaseMapping',
+        fieldId: 'rdbms.query',
+        resourceId: '123',
+        resourceType: 'imports',
+        stage: 'flowInput',
+      };
+      const expectedOutput = {
+        arrayIndex: 0,
+        editorSupportsV1V2data: false,
+        editorTitle: '',
+        editorType: 'databaseMapping',
+        fieldId: 'rdbms.query',
+        query: undefined,
+        resourceId: '123',
+        resourceType: 'imports',
+        resultMode: 'text',
+        rule: undefined,
+        stage: 'flowInput',
+        supportsDefaultData: true,
+        v1Rule: undefined,
+        v2Rule: undefined,
+      };
+
+      expect(init({options, resource: null})).toEqual(expectedOutput);
+    });
     test('should correctly return adaptor specific options if type is RDBMSImport', () => {
       const options = {
         arrayIndex: 0,

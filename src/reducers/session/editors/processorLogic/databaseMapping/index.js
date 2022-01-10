@@ -21,25 +21,25 @@ export default {
     let adaptorSpecificOptions = {};
     let query;
 
-    if (resource.adaptorType === 'RDBMSImport') {
+    if (resource?.adaptorType === 'RDBMSImport') {
       adaptorSpecificOptions = {
-        lookups: resource.rdbms.lookups,
+        lookups: resource.rdbms?.lookups,
         modelMetadata: resource.modelMetadata,
         adaptorType: 'RDBMSImport',
       };
-      query = resource.rdbms.query;
-    } else if (resource.adaptorType === 'MongodbImport') {
+      query = resource.rdbms?.query;
+    } else if (resource?.adaptorType === 'MongodbImport') {
       adaptorSpecificOptions = {
-        method: resource.mongodb.method,
+        method: resource.mongodb?.method,
         adaptorType: 'MongodbImport',
       };
-      query = resource.mongodb.method === 'insertMany' ? resource.mongodb.document : resource.mongodb.update;
-    } else if (resource.adaptorType === 'DynamodbImport') {
+      query = resource.mongodb?.method === 'insertMany' ? resource.mongodb?.document : resource.mongodb?.update;
+    } else if (resource?.adaptorType === 'DynamodbImport') {
       adaptorSpecificOptions = {
-        method: resource.dynamodb.method,
+        method: resource.dynamodb?.method,
         adaptorType: 'DynamodbImport',
       };
-      query = resource.dynamodb.method === 'putItem' && resource.dynamodb.itemDocument;
+      query = resource.dynamodb?.method === 'putItem' && resource.dynamodb?.itemDocument;
     }
 
     const formattedRule = typeof options.arrayIndex === 'number' && Array.isArray(query) ? query[options.arrayIndex] : query;
@@ -64,7 +64,7 @@ export default {
       supportsDefaultData: _hasDefaultMetaData(options),
       resultMode: 'text',
       editorSupportsV1V2data,
-      editorTitle: getEditorTitle(resource.adaptorType),
+      editorTitle: getEditorTitle(resource?.adaptorType),
     };
   },
   buildData: sql.buildData,
