@@ -18,28 +18,35 @@ export const getEditorTitle = adaptorType => {
 export default {
   processor: 'handlebars',
   init: ({ resource, connection, isPageGenerator, isStandaloneExport, options }) => {
+    const {adaptorType, rdbms, mongodb, dynamodb, modelMetadata} = resource || {};
     let adaptorSpecificOptions = {};
     let query;
 
-    if (resource?.adaptorType === 'RDBMSImport') {
+    if (adaptorType === 'RDBMSImport') {
+      const {lookups, query: rdbmsQuery} = rdbms || {};
+
       adaptorSpecificOptions = {
-        lookups: resource.rdbms?.lookups,
-        modelMetadata: resource.modelMetadata,
-        adaptorType: 'RDBMSImport',
+        lookups,
+        modelMetadata,
+        adaptorType,
       };
-      query = resource.rdbms?.query;
-    } else if (resource?.adaptorType === 'MongodbImport') {
+      query = rdbmsQuery;
+    } else if (adaptorType === 'MongodbImport') {
+      const {method, document, update} = mongodb || {};
+
       adaptorSpecificOptions = {
-        method: resource.mongodb?.method,
-        adaptorType: 'MongodbImport',
+        method,
+        adaptorType,
       };
-      query = resource.mongodb?.method === 'insertMany' ? resource.mongodb?.document : resource.mongodb?.update;
-    } else if (resource?.adaptorType === 'DynamodbImport') {
+      query = method === 'insertMany' ? document : update;
+    } else if (adaptorType === 'DynamodbImport') {
+      const {method, itemDocument} = dynamodb || {};
+
       adaptorSpecificOptions = {
-        method: resource.dynamodb?.method,
-        adaptorType: 'DynamodbImport',
+        method,
+        adaptorType,
       };
-      query = resource.dynamodb?.method === 'putItem' && resource.dynamodb?.itemDocument;
+      query = method === 'putItem' && itemDocument;
     }
 
     const formattedRule = typeof options.arrayIndex === 'number' && Array.isArray(query) ? query[options.arrayIndex] : query;
@@ -64,7 +71,7 @@ export default {
       supportsDefaultData: _hasDefaultMetaData(options),
       resultMode: 'text',
       editorSupportsV1V2data,
-      editorTitle: getEditorTitle(resource?.adaptorType),
+      editorTitle: getEditorTitle(adaptorType),
     };
   },
   buildData: sql.buildData,
